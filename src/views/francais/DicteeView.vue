@@ -139,6 +139,7 @@
 import { ref, computed, nextTick, onUnmounted } from 'vue'
 import { melanger, charger, sauvegarder, normaliser, confettis } from '../../utils'
 import { CATEGORIES, PHRASES_DEFAUT } from '../../data/dicteeF9'
+import { useTTS } from '../../composables/useTTS'
 
 const config = ref({
   cats:    charger('dictee_cats', Object.keys(CATEGORIES)),
@@ -151,7 +152,7 @@ const apiKeyInput = ref(charger('dictee_apikey', ''))
 const apiKeySaved = ref(!!charger('dictee_apikey', ''))
 
 const phase = ref('config')
-const liste = ref([])     // [{mot, phrase}]
+const liste = ref([])
 const idx   = ref(0)
 const resultats = ref([])
 const reponse = ref('')
@@ -159,22 +160,9 @@ const feedback = ref('')
 const feedbackClass = ref('')
 const inputClass = ref('')
 const loading = ref(false)
-const enLecture = ref(false)
 const inputEl = ref(null)
 
-let synth = window.speechSynthesis
-let voiceFR = null
-
-function chargerVoix() {
-  const voix = synth.getVoices()
-  voiceFR = voix.find(v => v.lang.startsWith('fr') && v.localService)
-           || voix.find(v => v.lang.startsWith('fr'))
-           || null
-}
-if (speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = chargerVoix
-}
-chargerVoix()
+const { enLecture, lire, arreter } = useTTS()
 
 // ── Getters
 const nbBonnes   = computed(() => resultats.value.filter(r => r.ok).length)
@@ -248,7 +236,7 @@ async function genererPhrase(mot) {
 
 // ── Démarrage
 async function demarrer() {
-  synth.cancel()
+  arreter()
   sauvegarder('dictee_cats', config.value.cats)
   sauvegarder('dictee_mode', config.value.mode)
   sauvegarder('dictee_nb', config.value.nb)
@@ -282,25 +270,11 @@ function afficherMot() {
   nextTick(() => inputEl.value?.focus())
 }
 
-// ── TTS
-function lire(texte, apres) {
-  synth.cancel()
-  const u = new SpeechSynthesisUtterance(texte)
-  u.lang = 'fr-FR'
-  u.rate = config.value.vitesse
-  u.pitch = 1.05
-  if (voiceFR) u.voice = voiceFR
-  u.onstart = () => { enLecture.value = true }
-  u.onend   = () => { enLecture.value = false; if (apres) apres() }
-  u.onerror = () => { enLecture.value = false }
-  synth.speak(u)
-}
-
 function ecouterMot() {
-  if (enLecture.value) { synth.cancel(); enLecture.value = false; return }
+  if (enLecture.value) { arreter(); return }
   const { mot, phrase } = liste.value[idx.value] ?? {}
   const texte = (config.value.mode === 'phrases' && phrase) ? phrase : mot
-  if (texte) lire(texte)
+  if (texte) lire(texte, { vitesse: config.value.vitesse })
 }
 
 // ── Validation
@@ -308,7 +282,7 @@ function validerMot() {
   const { mot, phrase } = liste.value[idx.value]
   const val = reponse.value.trim()
   if (!val) return
-  synth.cancel(); enLecture.value = false
+  arreter()
 
   const attendu = (config.value.mode === 'phrases' && phrase) ? phrase : mot
   const ok = normaliser(val) === normaliser(attendu)
@@ -323,7 +297,7 @@ function validerMot() {
   } else {
     feedback.value = `❌ La bonne réponse était : « ${attendu} »`
     feedbackClass.value = 'erreur'
-    setTimeout(() => lire(attendu), 600)
+    setTimeout(() => lire(attendu, { vitesse: config.value.vitesse }), 600)
     setTimeout(suivant, 2400)
   }
 }
@@ -332,7 +306,7 @@ function passerMot() {
   const { mot, phrase } = liste.value[idx.value]
   const attendu = (config.value.mode === 'phrases' && phrase) ? phrase : mot
   resultats.value = [...resultats.value, { mot, attendu, donne: '(passé)', ok: false }]
-  synth.cancel(); enLecture.value = false
+  arreter()
   suivant()
 }
 
@@ -342,7 +316,7 @@ function suivant() {
   else nextTick(() => { afficherMot(); ecouterMot() })
 }
 
-onUnmounted(() => synth.cancel())
+onUnmounted(() => arreter())
 </script>
 
 <style scoped>

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dictée — École Primaire</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    /* ── Panels ── */
+    .panel { display: none; }
+    .panel.visible { display: block; }
+
+    /* ── Config ── */
+    .config-box {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .config-section { margin-bottom: 1.25rem; }
+    .config-section-title {
+      font-weight: 800;
+      font-size: .9rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #888;
+      margin-bottom: .5rem;
+    }
+    .cat-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .cat-btn {
+      padding: .35rem .85rem;
+      border-radius: 20px;
+      border: 2px solid var(--gris-brd);
+      background: white;
+      font-weight: 600;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .cat-btn:hover  { border-color: var(--bleu); color: var(--bleu); }
+    .cat-btn.active { background: var(--bleu); border-color: var(--bleu); color: white; }
+
+    .mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+    }
+    @media (max-width: 480px) { .mode-cards { grid-template-columns: 1fr; } }
+
+    .mode-card {
+      border: 3px solid var(--gris-brd);
+      border-radius: var(--radius);
+      padding: 1rem;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+    }
+    .mode-card:hover  { border-color: var(--bleu); }
+    .mode-card.active { border-color: var(--bleu); background: #eef5ff; }
+    .mode-card .icon  { font-size: 2rem; }
+    .mode-card .title { font-weight: 800; font-size: 1rem; margin: .3rem 0 .2rem; }
+    .mode-card .desc  { font-size: .8rem; color: #666; }
+
+    .api-row {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .api-input {
+      flex: 1;
+      min-width: 200px;
+      border: 2px solid var(--gris-brd);
+      border-radius: 8px;
+      padding: .4rem .75rem;
+      font-size: .9rem;
+      outline: none;
+      font-family: monospace;
+    }
+    .api-input:focus { border-color: var(--bleu); }
+    .api-status { font-size: .8rem; font-weight: 700; }
+    .api-status.ok     { color: var(--vert); }
+    .api-status.erreur { color: var(--rouge); }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .slider-row input[type=range] { flex: 1; }
+    .slider-val { font-weight: 700; min-width: 2.5rem; text-align: right; }
+
+    /* ── Dictée ── */
+    .dictee-box {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .mot-display {
+      /* intentionally hidden */
+      min-height: 4rem;
+    }
+
+    /* Sentence mode: show the sentence with a blank for the current word */
+    .phrase-container {
+      background: var(--gris-bg);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin: 1rem 0;
+      text-align: center;
+      min-height: 5rem;
+    }
+    .phrase-container .blank {
+      display: inline-block;
+      min-width: 80px;
+      border-bottom: 3px solid var(--bleu);
+      vertical-align: bottom;
+      font-weight: 700;
+      color: var(--bleu);
+    }
+
+    /* Progress indicator */
+    .dictee-progress {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 1rem 0;
+      justify-content: center;
+    }
+    .prog-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--gris-brd);
+      transition: background .2s;
+    }
+    .prog-dot.current  { background: var(--bleu); transform: scale(1.3); }
+    .prog-dot.ok       { background: var(--vert); }
+    .prog-dot.erreur   { background: var(--rouge); }
+
+    /* Big listen button */
+    .btn-ecouter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--bleu);
+      color: white;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      margin-bottom: 1rem;
+    }
+    .btn-ecouter:hover { opacity: .88; }
+    .btn-ecouter:active { transform: scale(.98); }
+    .btn-ecouter.playing { background: var(--orange); }
+
+    .dictee-input {
+      display: block;
+      width: 100%;
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      border: 3px solid var(--gris-brd);
+      border-radius: var(--radius);
+      padding: .6rem;
+      outline: none;
+      transition: border-color .15s;
+      margin-bottom: .75rem;
+    }
+    .dictee-input:focus  { border-color: var(--bleu); }
+    .dictee-input.ok     { border-color: var(--vert); background: #f0faf0; }
+    .dictee-input.erreur { border-color: var(--rouge); background: #fef0f0; }
+
+    .hint-text {
+      font-size: .85rem;
+      color: #aaa;
+      text-align: center;
+      margin-bottom: .75rem;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: .5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── Results ── */
+    .result-box {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .result-score  { font-size: 3.5rem; font-weight: 900; }
+    .result-msg    { font-size: 1.2rem; color: #555; margin: .5rem 0 1.5rem; }
+
+    .correction-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: .95rem;
+      margin-bottom: 1.25rem;
+    }
+    .correction-table th {
+      background: var(--gris-bg);
+      padding: .5rem .75rem;
+      font-weight: 800;
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: #666;
+    }
+    .correction-table td {
+      padding: .5rem .75rem;
+      border-bottom: 1px solid var(--gris-brd);
+    }
+    .correction-table tr.ok     td { background: #f0faf0; }
+    .correction-table tr.erreur td { background: #fef0f0; }
+    .mot-attendu { font-weight: 800; }
+    .mot-donne   { color: var(--rouge); text-decoration: line-through; font-size: .9rem; }
+
+    /* Loading overlay for API */
+    .loading-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .85rem;
+      color: #888;
+      padding: .25rem .75rem;
+      border-radius: 20px;
+      border: 2px solid var(--gris-brd);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid var(--gris-brd);
+      border-top-color: var(--bleu);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../../index.html" class="nav-logo">📚 École Primaire</a>
+  <ul class="nav-links">
+    <li><a href="../../maths/index.html">🔢 Maths</a></li>
+    <li><a href="../../francais/index.html" class="active">📝 Français</a></li>
+    <li><a href="../../lecture/index.html">📖 Lecture</a></li>
+    <li><a href="../../autres/index.html">🌍 Autres</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <h1 class="section-heading">🖊️ Dictée</h1>
+
+  <!-- ══════════════════ CONFIG ══════════════════ -->
+  <div id="panelConfig" class="panel visible">
+    <div class="config-box">
+
+      <div class="config-section">
+        <div class="config-section-title">Fiche : F9 — Mots à savoir orthographier à la fin du CP</div>
+        <div class="cat-grid" id="catGrid"></div>
+      </div>
+
+      <div class="config-section">
+        <div class="config-section-title">Mode</div>
+        <div class="mode-cards">
+          <div class="mode-card active" data-mode="mots" onclick="selectMode('mots',this)">
+            <div class="icon">🔤</div>
+            <div class="title">Mots seuls</div>
+            <div class="desc">L'élève entend le mot et le tape</div>
+          </div>
+          <div class="mode-card" data-mode="phrases" onclick="selectMode('phrases',this)">
+            <div class="icon">💬</div>
+            <div class="title">Phrases</div>
+            <div class="desc">Un mot dans une phrase, l'élève tape la phrase complète</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-section" id="apiSection">
+        <div class="config-section-title">
+          Clé API Mistral <span style="font-weight:400;color:#aaa">(optionnel — pour générer les phrases)</span>
+        </div>
+        <div class="api-row">
+          <input class="api-input" type="password" id="apiKeyInput"
+                 placeholder="sk-..." autocomplete="off">
+          <button class="btn btn-ghost" onclick="sauvegarderApiKey()">Enregistrer</button>
+          <span class="api-status" id="apiStatus"></span>
+        </div>
+      </div>
+
+      <div class="config-section">
+        <div class="config-section-title">Nombre de mots</div>
+        <div class="cat-grid" id="nbGrid">
+          <button class="cat-btn" data-nb="5"  onclick="selectNb(this)">5</button>
+          <button class="cat-btn active" data-nb="10" onclick="selectNb(this)">10</button>
+          <button class="cat-btn" data-nb="15" onclick="selectNb(this)">15</button>
+          <button class="cat-btn" data-nb="0"  onclick="selectNb(this)">Tous</button>
+        </div>
+      </div>
+
+      <div class="config-section">
+        <div class="config-section-title">Vitesse de la voix</div>
+        <div class="slider-row">
+          <span>🐢</span>
+          <input type="range" id="vitesseSlider" min="0.5" max="1.2" step="0.05" value="0.75"
+                 oninput="document.getElementById('vitesseVal').textContent=this.value">
+          <span>🐇</span>
+          <span class="slider-val" id="vitesseVal">0.75</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;"
+                onclick="demarrerDictee()">▶ Commencer la dictée</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ DICTÉE ══════════════════ -->
+  <div id="panelDictee" class="panel">
+    <div class="score-bar">
+      <span id="dProgressTxt">Mot 1 / 10</span>
+      <div id="dLoadingBadge" class="loading-badge" style="display:none;">
+        <div class="spinner"></div> Génération…
+      </div>
+      <span>✅ <span id="dBonnes">0</span> &nbsp; ❌ <span id="dMauvaises">0</span></span>
+    </div>
+
+    <div class="dictee-box">
+      <div class="dictee-progress" id="dProgDots"></div>
+
+      <!-- Phrase context (mode phrases) -->
+      <div class="phrase-container" id="phraseCtx" style="display:none;"></div>
+
+      <button class="btn-ecouter" id="btnEcouter" onclick="ecouterMot()">
+        <span id="ecouterIcon">🔊</span>
+        <span id="ecouterLabel">Écouter le mot</span>
+      </button>
+
+      <div class="hint-text">Écoute bien, puis tape ce que tu entends :</div>
+
+      <input class="dictee-input" type="text" id="dInput"
+             placeholder="…" autocomplete="off" autocorrect="off"
+             autocapitalize="none" spellcheck="false">
+
+      <div class="feedback" id="dFeedback"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="ecouterMot()">🔁 Réécouter</button>
+        <button class="btn btn-primary" id="dValiderBtn" onclick="validerMot()">Valider ✔</button>
+        <button class="btn btn-ghost" onclick="passerMot()">Passer ⏭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ RÉSULTATS ══════════════════ -->
+  <div id="panelResultats" class="panel">
+    <div class="result-box">
+      <div class="result-score" id="rScore"></div>
+      <div class="result-msg"   id="rMsg"></div>
+
+      <table class="correction-table">
+        <thead>
+          <tr>
+            <th>Mot attendu</th>
+            <th>Ta réponse</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="correctionBody"></tbody>
+      </table>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="rejouer()">🔄 Rejouer</button>
+        <button class="btn btn-ghost" onclick="allerConfig()">⚙️ Paramètres</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script src="../../js/utils.js"></script>
+<script>
+// ══════════════════════════════════════════════════
+// DONNÉES — Fiche F9 CP
+// ══════════════════════════════════════════════════
+const CATEGORIES = {
+  "Mots outils":      ["avec", "dans", "sur", "chez", "et", "puis", "alors"],
+  "Pronoms":          ["je", "il", "elle", "c'est", "il y a", "il est", "elle est"],
+  "Jours":            ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+  "Nombres":          ["un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf"],
+  "Lieux":            ["à l'école", "à la maison", "à la mer", "à la plage", "à la montagne"],
+  "Transports":       ["en avion", "en voiture", "en bateau", "en train", "en ville"],
+  "Animaux":          ["un chien", "un chat", "un cheval", "un ours", "une poule", "un poisson", "un renard"],
+  "Fruits":           ["une pomme", "une poire", "une banane", "un melon", "une mangue"],
+  "Famille":          ["papa", "maman", "un frère", "une sœur", "un ami"],
+  "Verbes":           ["je mange", "je nage", "je regarde"],
+  "Déterminants":     ["un", "une", "des", "le", "la", "les", "mon", "ma", "mes", "ton", "ta", "tes", "son", "sa", "ses"],
+};
+
+// Phrases de secours (sans API) — une par catégorie clé
+const PHRASES_DEFAUT = {
+  "avec":          "Je joue avec mon ami.",
+  "dans":          "Le chat est dans la maison.",
+  "sur":           "Le livre est sur la table.",
+  "chez":          "Je suis chez maman.",
+  "et":            "Papa et maman sont là.",
+  "puis":          "Je mange, puis je joue.",
+  "alors":         "Il pleut, alors je reste à la maison.",
+  "je":            "Je mange une pomme.",
+  "il":            "Il joue avec le chat.",
+  "elle":          "Elle regarde la mer.",
+  "c'est":         "C'est mon ami.",
+  "il y a":        "Il y a un chien dans le jardin.",
+  "il est":        "Il est à l'école.",
+  "elle est":      "Elle est à la maison.",
+  "lundi":         "Lundi, je vais à l'école.",
+  "mardi":         "Mardi, nous avons sport.",
+  "mercredi":      "Mercredi, je reste à la maison.",
+  "jeudi":         "Jeudi, je mange avec maman.",
+  "vendredi":      "Vendredi, l'école finit tôt.",
+  "samedi":        "Samedi, je joue avec mes amis.",
+  "dimanche":      "Dimanche, nous allons à la mer.",
+  "un":            "Il y a un chien dans le jardin.",
+  "deux":          "J'ai deux pommes dans mon sac.",
+  "trois":         "Il y a trois chats sur le mur.",
+  "quatre":        "Papa a quatre amis.",
+  "cinq":          "J'ai cinq livres à lire.",
+  "six":           "Il y a six poissons dans l'aquarium.",
+  "sept":          "Elle a sept ans.",
+  "huit":          "Il est huit heures du matin.",
+  "neuf":          "J'ai neuf bonbons dans ma poche.",
+  "à l'école":     "Je mange à l'école avec mes amis.",
+  "à la maison":   "Le chien reste à la maison.",
+  "à la mer":      "Nous allons à la mer samedi.",
+  "à la plage":    "Elle joue à la plage avec sa sœur.",
+  "à la montagne": "En hiver, on va à la montagne.",
+  "en avion":      "Nous partons en avion pour les vacances.",
+  "en voiture":    "Papa vient me chercher en voiture.",
+  "en bateau":     "Ils traversent la mer en bateau.",
+  "en train":      "Je vais voir mamie en train.",
+  "en ville":      "Maman fait les courses en ville.",
+  "un chien":      "Mon ami a un chien très doux.",
+  "un chat":       "Il y a un chat sur le canapé.",
+  "un cheval":     "Elle monte sur un cheval blanc.",
+  "un ours":       "Dans le livre, il y a un ours.",
+  "une poule":     "La ferme a une poule rousse.",
+  "un poisson":    "J'ai pêché un poisson dans la rivière.",
+  "un renard":     "Un renard vit dans la forêt.",
+  "une pomme":     "Je mange une pomme à la récréation.",
+  "une poire":     "Maman coupe une poire pour le goûter.",
+  "une banane":    "Le singe mange une banane.",
+  "un melon":      "Nous partageons un melon au déjeuner.",
+  "une mangue":    "Elle croque dans une mangue bien sucrée.",
+  "papa":          "Papa rentre à la maison ce soir.",
+  "maman":         "Maman prépare le goûter.",
+  "un frère":      "J'ai un frère qui s'appelle Léo.",
+  "une sœur":      "Ma sœur aime jouer à la poupée.",
+  "un ami":        "Je joue avec un ami dans la cour.",
+  "je mange":      "Je mange une pomme chaque matin.",
+  "je nage":       "Je nage dans la piscine le jeudi.",
+  "je regarde":    "Je regarde les poissons dans l'aquarium.",
+  "des":           "Il y a des pommes sur la table.",
+  "le":            "Le chat dort sur le canapé.",
+  "la":            "La poule pond un œuf chaque jour.",
+  "les":           "Les enfants jouent dans la cour.",
+  "mon":           "Mon ami s'appelle Hugo.",
+  "ma":            "Ma maman est à la maison.",
+  "mes":           "J'aime mes amis.",
+  "ton":           "C'est ton livre de lecture.",
+  "ta":            "Ta sœur est à l'école.",
+  "tes":           "Tes chaussures sont dans l'entrée.",
+  "son":           "Son chien est très mignon.",
+  "sa":            "Sa maman est venue le chercher.",
+  "ses":           "Ses amis l'attendent dans la cour.",
+  "une":           "J'ai une poire dans mon cartable.",
+};
+
+// ══════════════════════════════════════════════════
+// ÉTAT
+// ══════════════════════════════════════════════════
+let config = {
+  cats:    Utils.charger('dictee_cats', Object.keys(CATEGORIES)),
+  mode:    Utils.charger('dictee_mode', 'mots'),
+  nb:      Utils.charger('dictee_nb', 10),
+  vitesse: Utils.charger('dictee_vitesse', 0.75),
+  apiKey:  Utils.charger('dictee_apikey', ''),
+};
+
+let session = {
+  liste: [],       // [{mot, phrase}]
+  idx: 0,
+  resultats: [],   // {mot, donne, ok}
+  synth: window.speechSynthesis,
+  voiceFR: null,
+  enLecture: false,
+};
+
+// ══════════════════════════════════════════════════
+// INIT VOIX
+// ══════════════════════════════════════════════════
+function chargerVoix() {
+  const voix = session.synth.getVoices();
+  session.voiceFR = voix.find(v => v.lang.startsWith('fr') && v.localService)
+                 || voix.find(v => v.lang.startsWith('fr'))
+                 || null;
+}
+if (speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = chargerVoix;
+}
+chargerVoix();
+
+// ══════════════════════════════════════════════════
+// UI CONFIG
+// ══════════════════════════════════════════════════
+function buildConfigUI() {
+  // Catégories
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = '';
+  Object.keys(CATEGORIES).forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (config.cats.includes(cat) ? ' active' : '');
+    btn.textContent = `${cat} (${CATEGORIES[cat].length})`;
+    btn.addEventListener('click', () => {
+      if (config.cats.includes(cat)) {
+        if (config.cats.length === 1) return;
+        config.cats = config.cats.filter(c => c !== cat);
+        btn.classList.remove('active');
+      } else {
+        config.cats.push(cat);
+        btn.classList.add('active');
+      }
+      Utils.sauvegarder('dictee_cats', config.cats);
+    });
+    grid.appendChild(btn);
+  });
+
+  // API key
+  const apiInp = document.getElementById('apiKeyInput');
+  if (config.apiKey) {
+    apiInp.value = config.apiKey;
+    document.getElementById('apiStatus').textContent = '✓ Clé mémorisée';
+    document.getElementById('apiStatus').className = 'api-status ok';
+  }
+
+  // Vitesse
+  document.getElementById('vitesseSlider').value = config.vitesse;
+  document.getElementById('vitesseVal').textContent = config.vitesse;
+
+  // Nb
+  document.querySelectorAll('#nbGrid .cat-btn').forEach(b => {
+    b.classList.toggle('active', +b.dataset.nb === config.nb);
+  });
+
+  // Mode
+  document.querySelectorAll('.mode-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.mode === config.mode);
+  });
+}
+
+function selectMode(mode, el) {
+  config.mode = mode;
+  Utils.sauvegarder('dictee_mode', mode);
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('apiSection').style.display =
+    (mode === 'phrases') ? '' : 'none';
+}
+
+function selectNb(btn) {
+  config.nb = +btn.dataset.nb;
+  Utils.sauvegarder('dictee_nb', config.nb);
+  document.querySelectorAll('#nbGrid .cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function sauvegarderApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  config.apiKey = val;
+  Utils.sauvegarder('dictee_apikey', val);
+  const st = document.getElementById('apiStatus');
+  if (val) { st.textContent = '✓ Clé mémorisée'; st.className = 'api-status ok'; }
+  else      { st.textContent = ''; }
+}
+
+// ══════════════════════════════════════════════════
+// GÉNÉRATION DE PHRASES (Mistral)
+// ══════════════════════════════════════════════════
+async function genererPhrase(mot) {
+  if (!config.apiKey) return PHRASES_DEFAUT[mot] || `Je vois ${mot}.`;
+
+  const prompt = `Tu es un assistant pédagogique pour enfants de CP (6-7 ans).
+Génère UNE SEULE phrase courte et simple en français (10 mots maximum) qui contient l'expression "${mot}".
+La phrase doit être adaptée à un enfant de 6-7 ans.
+Réponds UNIQUEMENT avec la phrase, sans guillemets, sans explication.`;
+
+  try {
+    const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'mistral-small-latest',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 60,
+      }),
+    });
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content?.trim() || PHRASES_DEFAUT[mot] || `Je vois ${mot}.`;
+  } catch {
+    return PHRASES_DEFAUT[mot] || `Je vois ${mot}.`;
+  }
+}
+
+// ══════════════════════════════════════════════════
+// DÉMARRAGE
+// ══════════════════════════════════════════════════
+async function demarrerDictee() {
+  // Mettre à jour config
+  config.vitesse = +document.getElementById('vitesseSlider').value;
+  Utils.sauvegarder('dictee_vitesse', config.vitesse);
+
+  // Construire la liste de mots
+  let pool = [];
+  config.cats.forEach(cat => { if (CATEGORIES[cat]) pool.push(...CATEGORIES[cat]); });
+  pool = Utils.melanger([...new Set(pool)]);
+  if (config.nb > 0) pool = pool.slice(0, config.nb);
+
+  afficherPanel('panelDictee');
+
+  session.liste = [];
+  session.idx = 0;
+  session.resultats = [];
+
+  // Pré-charger les phrases si mode phrases
+  if (config.mode === 'phrases') {
+    document.getElementById('dLoadingBadge').style.display = '';
+    for (const mot of pool) {
+      const phrase = await genererPhrase(mot);
+      session.liste.push({ mot, phrase });
+    }
+    document.getElementById('dLoadingBadge').style.display = 'none';
+  } else {
+    pool.forEach(mot => session.liste.push({ mot, phrase: null }));
+  }
+
+  // Dots de progression
+  const dots = document.getElementById('dProgDots');
+  dots.innerHTML = session.liste.map((_, i) =>
+    `<div class="prog-dot" id="dot${i}"></div>`
+  ).join('');
+
+  afficherMotCourant();
+}
+
+// ══════════════════════════════════════════════════
+// AFFICHAGE MOT
+// ══════════════════════════════════════════════════
+function afficherMotCourant() {
+  const total = session.liste.length;
+  const { mot, phrase } = session.liste[session.idx];
+
+  document.getElementById('dProgressTxt').textContent =
+    `Mot ${session.idx + 1} / ${total}`;
+  document.getElementById('dBonnes').textContent    = session.resultats.filter(r => r.ok).length;
+  document.getElementById('dMauvaises').textContent = session.resultats.filter(r => !r.ok).length;
+
+  // Dot courant
+  document.querySelectorAll('.prog-dot').forEach((d, i) => {
+    d.classList.remove('current');
+    if (i === session.idx) d.classList.add('current');
+  });
+
+  // Phrase
+  const phraseCtx = document.getElementById('phraseCtx');
+  if (config.mode === 'phrases' && phrase) {
+    phraseCtx.style.display = '';
+    // Cacher le mot dans la phrase avec ___
+    const regex = new RegExp(mot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    phraseCtx.innerHTML = phrase.replace(regex,
+      `<span class="blank" id="phraseBlank">___</span>`);
+  } else {
+    phraseCtx.style.display = 'none';
+  }
+
+  // Bouton écouter
+  const btnLabel = document.getElementById('ecouterLabel');
+  if (config.mode === 'phrases') {
+    btnLabel.textContent = 'Écouter la phrase';
+    document.getElementById('ecouterIcon').textContent = '🔊';
+  } else {
+    btnLabel.textContent = 'Écouter le mot';
+    document.getElementById('ecouterIcon').textContent = '🔊';
+  }
+
+  const inp = document.getElementById('dInput');
+  inp.value = '';
+  inp.className = 'dictee-input';
+  document.getElementById('dFeedback').textContent = '';
+  document.getElementById('dFeedback').className = 'feedback';
+
+  setTimeout(() => inp.focus(), 50);
+
+  // Lire automatiquement
+  ecouterMot();
+}
+
+// ══════════════════════════════════════════════════
+// TTS
+// ══════════════════════════════════════════════════
+function ecouterMot() {
+  if (session.enLecture) {
+    session.synth.cancel();
+    session.enLecture = false;
+    majBtnEcouter(false);
+    return;
+  }
+  const { mot, phrase } = session.liste[session.idx];
+  const texte = (config.mode === 'phrases' && phrase) ? phrase : mot;
+  lire(texte);
+}
+
+function lire(texte, apresRappel) {
+  session.synth.cancel();
+  const utter = new SpeechSynthesisUtterance(texte);
+  utter.lang = 'fr-FR';
+  utter.rate = config.vitesse;
+  utter.pitch = 1.05;
+  if (session.voiceFR) utter.voice = session.voiceFR;
+
+  utter.onstart = () => { session.enLecture = true; majBtnEcouter(true); };
+  utter.onend   = () => {
+    session.enLecture = false;
+    majBtnEcouter(false);
+    if (apresRappel) apresRappel();
+  };
+  utter.onerror = () => { session.enLecture = false; majBtnEcouter(false); };
+
+  session.synth.speak(utter);
+}
+
+function majBtnEcouter(enCours) {
+  const btn = document.getElementById('btnEcouter');
+  const lbl = document.getElementById('ecouterLabel');
+  if (enCours) {
+    btn.classList.add('playing');
+    document.getElementById('ecouterIcon').textContent = '⏹';
+    lbl.textContent = 'Arrêter';
+  } else {
+    btn.classList.remove('playing');
+    document.getElementById('ecouterIcon').textContent = '🔊';
+    lbl.textContent = config.mode === 'phrases' ? 'Écouter la phrase' : 'Écouter le mot';
+  }
+}
+
+// ══════════════════════════════════════════════════
+// VALIDATION
+// ══════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('panelDictee').classList.contains('panel')) return;
+  if (e.key === 'Enter' && document.getElementById('panelDictee').style.display !== 'none'
+      && document.getElementById('panelDictee').classList.contains('visible')) {
+    validerMot();
+  }
+});
+
+document.getElementById('dInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') validerMot();
+});
+
+function normaliser(s) {
+  return s.trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '') // enlève les accents
+    .replace(/[''']/g, "'")
+    .replace(/\s+/g, ' ');
+}
+
+function validerMot() {
+  const { mot, phrase } = session.liste[session.idx];
+  const inp = document.getElementById('dInput');
+  const donne = inp.value.trim();
+  if (!donne) return;
+
+  session.synth.cancel();
+  session.enLecture = false;
+  majBtnEcouter(false);
+
+  // En mode phrases : on compare la phrase entière (normalisée)
+  const attendu = (config.mode === 'phrases' && phrase) ? phrase : mot;
+  const ok = normaliser(donne) === normaliser(attendu);
+
+  session.resultats.push({ mot, attendu, donne, ok });
+
+  // Couleur input
+  inp.className = 'dictee-input ' + (ok ? 'ok' : 'erreur');
+  const fb = document.getElementById('dFeedback');
+
+  // Mettre à jour le dot
+  const dot = document.getElementById('dot' + session.idx);
+  if (dot) { dot.classList.remove('current'); dot.classList.add(ok ? 'ok' : 'erreur'); }
+
+  if (ok) {
+    fb.textContent = ['Bravo ! 🎉', 'Parfait ! ⭐', 'Excellent ! 👏'][Utils.aleatoire(0,2)];
+    fb.className = 'feedback ok';
+    // Si mode phrases, révéler le mot dans la phrase
+    const blank = document.getElementById('phraseBlank');
+    if (blank) blank.textContent = mot;
+    setTimeout(suivantMot, 900);
+  } else {
+    fb.textContent = `❌ La bonne réponse était : « ${attendu} »`;
+    fb.className = 'feedback erreur';
+    // Relire la bonne réponse après un court délai
+    setTimeout(() => lire(attendu), 600);
+    setTimeout(suivantMot, 2200);
+  }
+}
+
+function passerMot() {
+  const { mot, phrase } = session.liste[session.idx];
+  const attendu = (config.mode === 'phrases' && phrase) ? phrase : mot;
+  session.resultats.push({ mot, attendu, donne: '(passé)', ok: false });
+  const dot = document.getElementById('dot' + session.idx);
+  if (dot) { dot.classList.remove('current'); dot.classList.add('erreur'); }
+  session.synth.cancel();
+  suivantMot();
+}
+
+function suivantMot() {
+  session.idx++;
+  if (session.idx >= session.liste.length) {
+    afficherResultats();
+  } else {
+    afficherMotCourant();
+  }
+}
+
+// ══════════════════════════════════════════════════
+// RÉSULTATS
+// ══════════════════════════════════════════════════
+function afficherResultats() {
+  session.synth.cancel();
+  const bonnes = session.resultats.filter(r => r.ok).length;
+  const total  = session.resultats.length;
+  const pct    = Math.round((bonnes / total) * 100);
+
+  document.getElementById('rScore').textContent = `${bonnes} / ${total}`;
+
+  let msg;
+  if (pct === 100) { msg = 'Parfait, zéro faute ! 🏆'; Utils.confettis(50); }
+  else if (pct >= 80) { msg = 'Très bien ! Continue comme ça 🌟'; Utils.confettis(25); }
+  else if (pct >= 60) { msg = 'Bien, mais il y a encore du travail ! 💪'; }
+  else                { msg = 'Courage, relis les mots et réessaie ! 📚'; }
+  document.getElementById('rMsg').textContent = msg;
+
+  const tbody = document.getElementById('correctionBody');
+  tbody.innerHTML = session.resultats.map(r => `
+    <tr class="${r.ok ? 'ok' : 'erreur'}">
+      <td><span class="mot-attendu">${r.attendu}</span></td>
+      <td>${r.ok ? '—' : `<span class="mot-donne">${r.donne}</span>`}</td>
+      <td>${r.ok ? '✅' : '❌'}</td>
+    </tr>
+  `).join('');
+
+  afficherPanel('panelResultats');
+}
+
+// ══════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════
+function afficherPanel(id) {
+  ['panelConfig','panelDictee','panelResultats'].forEach(pid => {
+    const el = document.getElementById(pid);
+    el.classList.toggle('visible', pid === id);
+  });
+}
+
+function rejouer() { demarrerDictee(); }
+function allerConfig() {
+  session.synth.cancel();
+  afficherPanel('panelConfig');
+}
+
+// ══════════════════════════════════════════════════
+// DÉMARRAGE
+// ══════════════════════════════════════════════════
+buildConfigUI();
+// Afficher/masquer section API selon mode initial
+document.getElementById('apiSection').style.display =
+  (config.mode === 'phrases') ? '' : 'none';
+</script>
+
+</body>
+</html>

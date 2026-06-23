@@ -1,22 +1,21 @@
 import { ref } from 'vue'
 
 const synth = window.speechSynthesis
-let voiceFR = null
 
-function chargerVoix() {
+function voixFR() {
   const voix = synth.getVoices()
-  // Préférer une voix locale fr-FR, sinon n'importe quelle voix française
-  voiceFR = voix.find(v => v.lang === 'fr-FR' && v.localService)
-           || voix.find(v => v.lang.startsWith('fr') && v.localService)
-           || voix.find(v => v.lang === 'fr-FR')
-           || voix.find(v => v.lang.startsWith('fr'))
-           || null
+  // Priorité : voix locale fr-FR > locale fr-* > réseau fr-FR > réseau fr-*
+  return voix.find(v => v.lang === 'fr-FR' && v.localService)
+      || voix.find(v => v.lang.startsWith('fr') && v.localService)
+      || voix.find(v => v.lang === 'fr-FR')
+      || voix.find(v => v.lang.startsWith('fr'))
+      || null
 }
 
-if (speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = chargerVoix
+// Pré-charge les voix dès qu'elles sont disponibles (Chrome les charge en async)
+if (typeof speechSynthesis.onvoiceschanged !== 'undefined') {
+  speechSynthesis.onvoiceschanged = () => { voixFR() }
 }
-chargerVoix()
 
 export function useTTS() {
   const enLecture = ref(false)
@@ -27,7 +26,10 @@ export function useTTS() {
     u.lang  = 'fr-FR'
     u.rate  = vitesse
     u.pitch = 1.05
-    if (voiceFR) u.voice = voiceFR
+
+    // Appel au moment du lire() — les voix sont disponibles à ce stade
+    const v = voixFR()
+    if (v) u.voice = v
 
     u.onstart = () => { enLecture.value = true }
     u.onend   = () => { enLecture.value = false; apres?.() }

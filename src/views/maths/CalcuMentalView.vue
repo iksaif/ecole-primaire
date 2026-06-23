@@ -158,9 +158,21 @@ function genererQuestion() {
   return { texte: `${a} ${op} ${b} = ?`, reponse: rep }
 }
 
+function genererSansRepetition(nb) {
+  const vus = new Set()
+  const result = []
+  let essais = 0
+  while (result.length < nb && essais < nb * 50) {
+    essais++
+    const q = genererQuestion()
+    if (!vus.has(q.texte)) { vus.add(q.texte); result.push(q) }
+  }
+  return result
+}
+
 function demarrer() {
   clearInterval(timerInterval)
-  questions.value = Array.from({ length: config.value.nbQ }, genererQuestion)
+  questions.value = genererSansRepetition(config.value.nbQ)
   idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
   phase.value = 'jeu'
   nextTick(() => afficherQuestion())

@@ -246,8 +246,21 @@ function padChiffres(n, len) {
   return String(n).padStart(len, ' ').split('')
 }
 
+function genererSansRepetition(nb) {
+  const vus = new Set()
+  const result = []
+  let essais = 0
+  while (result.length < nb && essais < nb * 50) {
+    essais++
+    const q = generer()
+    const cle = `${q.a}${q.opLabel}${q.b}`
+    if (!vus.has(cle)) { vus.add(cle); result.push(q) }
+  }
+  return result
+}
+
 function demarrer() {
-  questions.value = Array.from({ length: config.value.nbQ }, generer)
+  questions.value = genererSansRepetition(config.value.nbQ)
   idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
   phase.value = 'jeu'
   nextTick(initInputs)

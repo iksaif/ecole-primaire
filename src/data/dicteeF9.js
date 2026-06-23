@@ -1,4 +1,20 @@
 // Fiche F9 — Bilan : mots et structures à savoir orthographier à la fin du CP
+
+// Mots ambigus en mode "mots seuls" : homophones ou graphies multiples valides
+// Sans contexte (phrase), l'enfant ne peut pas deviner laquelle écrire
+export const MOTS_AMBIGUS = new Set([
+  'et',   // → "est"
+  'la',   // → "là", "l'a"
+  'son',  // → "sont"
+  'mes',  // → "mais", "mets"
+  'ses',  // → "ces", "c'est", "sait"
+  'sa',   // → "ça"
+  'ta',   // → "t'a"
+  'tes',  // → "t'es"
+  'ma',   // → "m'a"
+  'un',   // → "hein" (à l'oral peut prêter à confusion)
+])
+
 export const CATEGORIES = {
   'Mots outils':   ['avec', 'dans', 'sur', 'chez', 'et', 'puis', 'alors'],
   'Pronoms':       ['je', 'il', 'elle', "c'est", 'il y a', 'il est', 'elle est'],

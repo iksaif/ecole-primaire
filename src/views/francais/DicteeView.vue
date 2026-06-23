@@ -138,7 +138,7 @@
 <script setup>
 import { ref, computed, nextTick, onUnmounted } from 'vue'
 import { melanger, charger, sauvegarder, normaliser, confettis } from '../../utils'
-import { CATEGORIES, PHRASES_DEFAUT } from '../../data/dicteeF9'
+import { CATEGORIES, PHRASES_DEFAUT, MOTS_AMBIGUS } from '../../data/dicteeF9'
 import { useTTS } from '../../composables/useTTS'
 
 const config = ref({
@@ -244,8 +244,24 @@ async function demarrer() {
 
   let pool = []
   config.value.cats.forEach(cat => { if (CATEGORIES[cat]) pool.push(...CATEGORIES[cat]) })
-  pool = melanger([...new Set(pool)])
+  pool = [...new Set(pool)]
+
+  // En mode "mots seuls", exclure les homophones/ambigus
+  if (config.value.mode === 'mots') {
+    pool = pool.filter(m => !MOTS_AMBIGUS.has(m))
+  }
+
+  // Rotation inter-sessions : repousser les mots vus récemment en fin de pool
+  const cle = `dictee_vus_${config.value.mode}`
+  const vusRecemment = new Set(charger(cle, []))
+  const frais  = melanger(pool.filter(m => !vusRecemment.has(m)))
+  const anciens = melanger(pool.filter(m =>  vusRecemment.has(m)))
+  pool = [...frais, ...anciens]
+
   if (config.value.nb > 0) pool = pool.slice(0, config.value.nb)
+
+  // Mémoriser les mots utilisés pour la prochaine session
+  sauvegarder(cle, pool)
 
   phase.value = 'jeu'
   idx.value = 0; resultats.value = []

@@ -2,11 +2,12 @@
   <nav class="nav">
     <RouterLink to="/" class="nav-logo">📚 École Primaire</RouterLink>
     <ul class="nav-links">
-      <li><RouterLink to="/maternelle" :class="{ active: route.path.startsWith('/maternelle') }">🌱 Maternelle</RouterLink></li>
-      <li><RouterLink to="/maths"      :class="{ active: route.path.startsWith('/maths') }">🔢 Maths</RouterLink></li>
+      <li><RouterLink to="/maths"      :class="{ active: route.path.startsWith('/maths') || route.path.startsWith('/maternelle') }">🔢 Maths</RouterLink></li>
       <li><RouterLink to="/francais"   :class="{ active: route.path.startsWith('/francais') }">📝 Français</RouterLink></li>
       <li><RouterLink to="/lecture"    :class="{ active: route.path.startsWith('/lecture') }">📖 Lecture</RouterLink></li>
       <li><RouterLink to="/autres"     :class="{ active: route.path.startsWith('/autres') }">🌍 Autres</RouterLink></li>
+      <li><RouterLink to="/about"       :class="{ active: route.path === '/about' }">ℹ️ À propos</RouterLink></li>
+      <li><RouterLink to="/parametres"  :class="{ active: route.path === '/parametres' }" class="nav-settings">⚙️</RouterLink></li>
     </ul>
   </nav>
 </template>
@@ -49,4 +50,6 @@ const route = useRoute()
 }
 .nav-links a:hover { background: var(--gris-bg); }
 .nav-links a.active { background: var(--bleu); color: white; }
+.nav-settings { opacity: .55; font-size: 1.1rem; }
+.nav-settings:hover { opacity: 1; }
 </style>

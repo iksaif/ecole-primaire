@@ -19,24 +19,24 @@
       <div class="config-section">
         <div class="config-section-title">Mode</div>
         <div class="mode-cards">
-          <div class="mode-card" :class="{ active: config.mode === 'entrainement' }"
+          <button class="mode-card" :class="{ active: config.mode === 'entrainement' }"
                @click="config.mode = 'entrainement'">
             <div class="mode-icon">📖</div>
             <div class="mode-title">Entraînement</div>
             <div class="mode-desc">Vois la table, puis réponds en ordre</div>
-          </div>
-          <div class="mode-card" :class="{ active: config.mode === 'aleatoire' }"
+          </button>
+          <button class="mode-card" :class="{ active: config.mode === 'aleatoire' }"
                @click="config.mode = 'aleatoire'">
             <div class="mode-icon">🎲</div>
             <div class="mode-title">Aléatoire</div>
             <div class="mode-desc">Questions mélangées sur les tables choisies</div>
-          </div>
-          <div class="mode-card" :class="{ active: config.mode === 'chrono' }"
+          </button>
+          <button class="mode-card" :class="{ active: config.mode === 'chrono' }"
                @click="config.mode = 'chrono'">
             <div class="mode-icon">⏱️</div>
             <div class="mode-title">Défi chrono</div>
             <div class="mode-desc">Le plus de bonnes réponses en 1 minute</div>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -63,10 +63,19 @@
                 :disabled="config.tables.length === 0"
                 @click="demarrer">▶ Commencer</button>
       </div>
+      <div style="text-align:center;margin-top:.75rem;">
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+      </div>
     </div>
 
     <!-- ══ APPRENTISSAGE (mode entraînement : affiche la table avant) ══ -->
     <div v-if="phase === 'apprendre'" class="exercise-box" style="text-align:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;">
+        <button class="btn-quitter" @click="phase = 'config'" title="Quitter">✕ Quitter</button>
+        <span style="font-size:.85rem;color:#888;font-weight:600;">
+          Table {{ tableIdx + 1 }} / {{ config.tables.length }}
+        </span>
+      </div>
       <div class="table-title">Table de × {{ tableActuelle }}</div>
       <div class="table-grid">
         <div v-for="i in config.jusqu" :key="i" class="table-row">
@@ -83,11 +92,13 @@
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
+        <button class="btn-quitter" @click="phase = 'config'" title="Quitter l'exercice">✕ Quitter</button>
         <span v-if="config.mode === 'chrono'">
           ⏱ <span :style="{ color: tempsRestant <= 10 ? 'var(--rouge)' : 'inherit' }">
             {{ tempsRestant }}s
           </span>
         </span>
+        <span v-else-if="config.mode === 'entrainement'">× {{ tableActuelle }} — Q{{ idx + 1 }}/{{ questions.length }}</span>
         <span v-else>Question {{ idx + 1 }} / {{ questions.length }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
@@ -156,17 +167,18 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis } from '../../utils'
+import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
+import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 
 const DUREE_CHRONO = 60 // secondes
 
-const config = ref({
+const config = ref(charger('tables_config', {
   tables: [2, 3, 4, 5, 6, 7, 8, 9],
   mode: 'aleatoire',
   jusqu: 10,
   nbQ: 20,
-})
+}))
+watch(config, v => sauvegarder('tables_config', v), { deep: true })
 
 const phase = ref('config')
 const questions = ref([])
@@ -202,9 +214,9 @@ function toggleTable(n) {
 
 function toggleToutes() {
   if (toutesSelectionnees.value) {
-    config.value.tables = [2]
+    config.value.tables = [2, 3, 4, 5, 6, 7, 8, 9]
   } else {
-    config.value.tables = [1,2,3,4,5,6,7,8,9,10,11,12]
+    config.value.tables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   }
 }
 
@@ -263,13 +275,63 @@ function demarrer(listeForcee) {
   if (config.value.mode === 'chrono') demarrerChrono()
 }
 
+function imprimerFiche() {
+  const tablesTriees = config.value.tables.slice().sort((a, b) => a - b)
+  const jusqu = config.value.jusqu ?? 10
+  const allQ = []
+  for (const t of tablesTriees) {
+    for (let i = 1; i <= jusqu; i++) {
+      allQ.push({ a: t, b: i, r: t * i })
+    }
+  }
+  // Mélanger si plusieurs tables
+  if (tablesTriees.length > 1) {
+    for (let i = allQ.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const tmp = allQ[i]; allQ[i] = allQ[j]; allQ[j] = tmp
+    }
+  }
+
+  const titre = tablesTriees.length === 1
+    ? `Table de ${tablesTriees[0]}`
+    : `Tables : ${tablesTriees.join(', ')}`
+
+  const cols = 2
+  const rows = allQ.map((q, i) => `<div class="question">
+    <span class="num">${i + 1}.</span>
+    <span class="calc">${q.a} × ${q.b} =</span>
+    <span class="ligne"></span>
+  </div>`).join('')
+
+  const html = `<!DOCTYPE html><html lang="fr"><head>
+    <meta charset="UTF-8"><title>${titre}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
+      h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; }
+      .question { display: flex; align-items: baseline; gap: .6rem; margin: .7rem 0; }
+      .num { min-width: 1.6rem; font-weight: 700; color: #777; font-size: .9rem; }
+      .calc { min-width: 120px; font-weight: 800; font-size: 1.2rem; font-family: monospace; }
+      .ligne { flex: 1; border-bottom: 1.5px solid #aaa; }
+    </style></head><body>
+    <h1>${titre}</h1>
+    <p class="entete">× jusqu'à ${jusqu} &nbsp;|&nbsp; ${allQ.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    <div class="grid">${rows}</div>
+    <script>window.print(); window.close();<\/script>
+  </body></html>`
+
+  const w = window.open('', '_blank')
+  w.document.write(html)
+  w.document.close()
+}
+
 function passerApprendre() {
-  // Générer questions pour la table courante
   questions.value = genererQuestions(
     [config.value.tables[tableIdx.value]],
     config.value.jusqu, null, 'entrainement'
   ).map(q => ({ ...q, _resultat: undefined }))
-  idx.value = 0; bonnes.value = 0; mauvaises.value = 0; erreurs.value = []
+  idx.value = 0
   phase.value = 'jeu'
   nextTick(() => afficherQuestion())
 }
@@ -409,8 +471,10 @@ onUnmounted(() => clearInterval(timerInterval))
 .mode-card {
   border: 3px solid var(--gris-brd); border-radius: var(--radius);
   padding: 1rem; cursor: pointer; transition: all .15s; text-align: center;
+  background: white; font-family: inherit; width: 100%;
 }
 .mode-card:hover  { border-color: var(--bleu); }
+.mode-card:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; }
 .mode-card.active { border-color: var(--bleu); background: #eef5ff; }
 .mode-icon  { font-size: 2rem; }
 .mode-title { font-weight: 800; font-size: 1rem; margin: .3rem 0 .2rem; }

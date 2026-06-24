@@ -20,6 +20,18 @@
         <span class="card-desc">Du plus petit au plus grand</span>
         <span class="card-tag">MS / GS</span>
       </RouterLink>
+      <RouterLink to="/maternelle/lettres" class="card maternelle">
+        <span class="card-icon">🔡</span>
+        <span class="card-title">Les lettres</span>
+        <span class="card-desc">Reconnaître et associer majuscules et minuscules</span>
+        <span class="card-tag">GS / CP</span>
+      </RouterLink>
+      <RouterLink to="/maternelle/formes" class="card maternelle">
+        <span class="card-icon">🔷</span>
+        <span class="card-title">Les formes</span>
+        <span class="card-desc">Reconnaître cercle, carré, triangle et plus</span>
+        <span class="card-tag">MS / GS</span>
+      </RouterLink>
     </div>
   </div>
 </template>

@@ -154,6 +154,21 @@ body {
 .feedback.ok     { color: var(--vert); }
 .feedback.erreur { color: var(--rouge); }
 
+/* ── Quit button (inside score-bar) ── */
+.btn-quitter {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: .2rem .6rem;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.btn-quitter:hover { background: #fee2e2; color: #c53030; border-color: #c53030; }
+
 /* ── Score bar ── */
 .score-bar {
   display: flex;

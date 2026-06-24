@@ -5,12 +5,21 @@
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Mots à savoir orthographier à la fin du CP</div>
+        <div class="config-section-title">Niveau</div>
+        <div class="btn-group">
+          <button v-for="niv in ['CP','CE1','CE2','CM']" :key="niv"
+            class="level-btn" :class="{ active: config.niveau === niv }"
+            @click="config.niveau = niv">{{ niv }}</button>
+        </div>
+      </div>
+
+      <div class="config-section">
+        <div class="config-section-title">{{ `Catégories — ${config.niveau}` }}</div>
         <div class="btn-group" style="flex-wrap:wrap;">
-          <button v-for="cat in Object.keys(CATEGORIES)" :key="cat"
+          <button v-for="cat in Object.keys(categoriesActuelles)" :key="cat"
             class="cat-btn" :class="{ active: config.cats.includes(cat) }"
             @click="toggleCat(cat)">
-            {{ cat }} ({{ CATEGORIES[cat].length }})
+            {{ cat }} ({{ categoriesActuelles[cat].length }})
           </button>
         </div>
       </div>
@@ -18,16 +27,16 @@
       <div class="config-section">
         <div class="config-section-title">Mode</div>
         <div class="mode-cards">
-          <div class="mode-card" :class="{ active: config.mode === 'mots' }" @click="config.mode = 'mots'">
+          <button class="mode-card" :class="{ active: config.mode === 'mots' }" @click="config.mode = 'mots'">
             <div class="mode-icon">🔤</div>
             <div class="mode-title">Mots seuls</div>
             <div class="mode-desc">L'élève entend le mot et le tape</div>
-          </div>
-          <div class="mode-card" :class="{ active: config.mode === 'phrases' }" @click="config.mode = 'phrases'">
+          </button>
+          <button class="mode-card" :class="{ active: config.mode === 'phrases' }" @click="config.mode = 'phrases'">
             <div class="mode-icon">💬</div>
             <div class="mode-title">Phrases</div>
             <div class="mode-desc">Un mot dans une phrase, l'élève tape la phrase</div>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -37,9 +46,9 @@
           <span style="font-weight:400;color:#aaa;font-size:.85em"> (optionnel — pour générer des phrases variées)</span>
         </div>
         <div class="api-row">
-          <input class="api-input" type="password" v-model="apiKeyInput" placeholder="sk-..." autocomplete="off">
-          <button class="btn btn-ghost" @click="sauvegarderApiKey">Enregistrer</button>
-          <span v-if="apiKeySaved" class="api-ok">✓ Clé mémorisée</span>
+          <span v-if="apiKeySaved" class="api-ok">✓ Clé configurée</span>
+          <span v-else class="api-ok" style="color:#aaa;">Aucune clé — phrases prédéfinies</span>
+          <RouterLink to="/parametres" class="btn btn-ghost" style="font-size:.85rem;">⚙️ Paramètres parents</RouterLink>
         </div>
       </div>
 
@@ -64,7 +73,7 @@
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;"
-                @click="demarrer" :disabled="config.cats.length === 0">
+                @click="demarrer" :disabled="config.cats.length === 0 || loading">
           ▶ Commencer la dictée
         </button>
       </div>
@@ -73,6 +82,7 @@
     <!-- Dictée -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
+        <button class="btn-quitter" @click="arreter(); phase = 'config'" title="Quitter la dictée">✕ Quitter</button>
         <span>Mot {{ idx + 1 }} / {{ liste.length }}</span>
         <span v-if="loading" class="loading-badge"><span class="spinner"></span> Génération…</span>
         <span>✅ {{ nbBonnes }} &nbsp; ❌ {{ nbMauvaises }}</span>
@@ -136,20 +146,28 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { melanger, charger, sauvegarder, normaliser, confettis } from '../../utils'
-import { CATEGORIES, PHRASES_DEFAUT, MOTS_AMBIGUS } from '../../data/dicteeF9'
+import { CATEGORIES, PHRASES_DEFAUT, MOTS_AMBIGUS, NIVEAUX, PHRASES_DEFAUT_ALL } from '../../data/dicteeMots'
 import { useTTS } from '../../composables/useTTS'
 
 const config = ref({
+  niveau:  charger('dictee_niveau', 'CP'),
   cats:    charger('dictee_cats', Object.keys(CATEGORIES)),
   mode:    charger('dictee_mode', 'mots'),
   nb:      charger('dictee_nb', 10),
   vitesse: charger('dictee_vitesse', 0.75),
 })
 
-const apiKeyInput = ref(charger('dictee_apikey', ''))
-const apiKeySaved = ref(!!charger('dictee_apikey', ''))
+watch(config, v => {
+  sauvegarder('dictee_niveau', v.niveau)
+  sauvegarder('dictee_mode', v.mode)
+  sauvegarder('dictee_nb', v.nb)
+  sauvegarder('dictee_vitesse', v.vitesse)
+  sauvegarder('dictee_cats', v.cats)
+}, { deep: true })
+
+const apiKeySaved = ref(!!localStorage.getItem('ep_mistral_key'))
 
 const phase = ref('config')
 const liste = ref([])
@@ -163,6 +181,14 @@ const loading = ref(false)
 const inputEl = ref(null)
 
 const { enLecture, lire, arreter } = useTTS()
+
+const niveauData = computed(() => NIVEAUX[config.value.niveau] ?? NIVEAUX.CP)
+const categoriesActuelles = computed(() => niveauData.value.categories)
+const ambigsActuels = computed(() => niveauData.value.ambigus)
+
+watch(() => config.value.niveau, () => {
+  config.value.cats = Object.keys(categoriesActuelles.value)
+})
 
 // ── Getters
 const nbBonnes   = computed(() => resultats.value.filter(r => r.ok).length)
@@ -195,12 +221,6 @@ function toggleCat(cat) {
   } else {
     config.value.cats = [...cats, cat]
   }
-  sauvegarder('dictee_cats', config.value.cats)
-}
-
-function sauvegarderApiKey() {
-  sauvegarder('dictee_apikey', apiKeyInput.value)
-  apiKeySaved.value = !!apiKeyInput.value
 }
 
 function dotClass(i) {
@@ -212,8 +232,8 @@ function dotClass(i) {
 
 // ── Mistral
 async function genererPhrase(mot) {
-  const apiKey = charger('dictee_apikey', '')
-  if (!apiKey) return PHRASES_DEFAUT[mot] || `Je vois ${mot}.`
+  const apiKey = localStorage.getItem('ep_mistral_key') || ''
+  if (!apiKey) return PHRASES_DEFAUT_ALL[mot] || `Je vois ${mot}.`
   try {
     const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
@@ -228,27 +248,24 @@ async function genererPhrase(mot) {
     })
     if (!res.ok) throw new Error()
     const data = await res.json()
-    return data.choices?.[0]?.message?.content?.trim() || PHRASES_DEFAUT[mot] || `Je vois ${mot}.`
+    return data.choices?.[0]?.message?.content?.trim() || PHRASES_DEFAUT_ALL[mot] || `Je vois ${mot}.`
   } catch {
-    return PHRASES_DEFAUT[mot] || `Je vois ${mot}.`
+    return PHRASES_DEFAUT_ALL[mot] || `Je vois ${mot}.`
   }
 }
 
 // ── Démarrage
 async function demarrer() {
+  if (loading.value) return  // empêche double-clic pendant la génération
   arreter()
-  sauvegarder('dictee_cats', config.value.cats)
-  sauvegarder('dictee_mode', config.value.mode)
-  sauvegarder('dictee_nb', config.value.nb)
-  sauvegarder('dictee_vitesse', config.value.vitesse)
 
   let pool = []
-  config.value.cats.forEach(cat => { if (CATEGORIES[cat]) pool.push(...CATEGORIES[cat]) })
+  config.value.cats.forEach(cat => { if (categoriesActuelles.value[cat]) pool.push(...categoriesActuelles.value[cat]) })
   pool = [...new Set(pool)]
 
   // En mode "mots seuls", exclure les homophones/ambigus
   if (config.value.mode === 'mots') {
-    pool = pool.filter(m => !MOTS_AMBIGUS.has(m))
+    pool = pool.filter(m => !ambigsActuels.value.has(m))
   }
 
   // Rotation inter-sessions : repousser les mots vus récemment en fin de pool
@@ -355,8 +372,10 @@ onUnmounted(() => arreter())
 .mode-card {
   border: 3px solid var(--gris-brd); border-radius: var(--radius);
   padding: 1rem; cursor: pointer; transition: all .15s; text-align: center;
+  background: white; font-family: inherit; width: 100%;
 }
 .mode-card:hover  { border-color: var(--bleu); }
+.mode-card:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; }
 .mode-card.active { border-color: var(--bleu); background: #eef5ff; }
 .mode-icon { font-size: 2rem; }
 .mode-title { font-weight: 800; font-size: 1rem; margin: .3rem 0 .2rem; }

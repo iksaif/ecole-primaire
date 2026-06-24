@@ -43,11 +43,15 @@
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
       </div>
+      <div style="text-align:center;margin-top:.75rem;">
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+      </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
+        <button class="btn-quitter" @click="phase = 'config'" title="Quitter l'exercice">✕ Quitter</button>
         <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
         <span v-if="config.temps > 0" style="font-weight:700;">⏱ {{ Math.ceil(tempsRestant) }}s</span>
@@ -96,8 +100,8 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis } from '../../utils'
+import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
+import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 
 const TOUTES_OPS = ['+', '−', '×', '÷']
 const niveaux = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
@@ -110,7 +114,8 @@ const NIVEAUX = {
   cm2: { add: [1,999], sou: [1,999], mul: [2,25],  div: [1,25] },
 }
 
-const config = ref({ niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10 })
+const config = ref(charger('calcul_mental_config', { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10 }))
+watch(config, v => sauvegarder('calcul_mental_config', v), { deep: true })
 const phase = ref('config')
 const questions = ref([])
 const idx = ref(0)
@@ -176,6 +181,39 @@ function demarrer() {
   idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
   phase.value = 'jeu'
   nextTick(() => afficherQuestion())
+}
+
+function imprimerFiche() {
+  const qs = genererSansRepetition(config.value.nbQ)
+  const niv = config.value.niveau.toUpperCase()
+  const ops = config.value.ops.join(', ')
+  const rows = qs.map((q, i) => `
+    <div class="question">
+      <span class="num">${i + 1}.</span>
+      <span class="calc">${q.texte.replace(' = ?', ' =')}</span>
+      <span class="ligne"></span>
+    </div>`).join('')
+
+  const html = `<!DOCTYPE html><html lang="fr"><head>
+    <meta charset="UTF-8"><title>Calcul mental — ${niv}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 680px; margin: 1.5cm auto; color: #222; }
+      h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .question { display: flex; align-items: baseline; gap: .75rem; margin: .85rem 0; }
+      .num { min-width: 1.8rem; font-weight: 700; color: #777; font-size: 1rem; }
+      .calc { min-width: 180px; font-weight: 800; font-size: 1.3rem; font-family: monospace; }
+      .ligne { flex: 1; border-bottom: 1.5px solid #aaa; min-width: 80px; }
+    </style></head><body>
+    <h1>Calcul mental — ${niv}</h1>
+    <p class="entete">Opérations : ${ops} &nbsp;|&nbsp; ${qs.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    ${rows}
+    <script>window.print(); window.close();<\/script>
+  </body></html>`
+
+  const w = window.open('', '_blank')
+  w.document.write(html)
+  w.document.close()
 }
 
 function afficherQuestion() {

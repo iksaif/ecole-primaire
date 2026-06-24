@@ -44,11 +44,15 @@
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
       </div>
+      <div style="text-align:center;margin-top:.75rem;">
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+      </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
+        <button class="btn-quitter" @click="phase = 'config'" title="Quitter l'exercice">✕ Quitter</button>
         <span>Exercice {{ idx + 1 }} / {{ questions.length }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
@@ -128,10 +132,11 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
-import { aleatoire, confettis } from '../../utils'
+import { ref, computed, nextTick, watch } from 'vue'
+import { aleatoire, confettis, sauvegarder, charger } from '../../utils'
 
-const config = ref({ op: 'add', taille: '2', retenue: 'non', nbQ: 5 })
+const config = ref(charger('calcul_pose_config', { op: 'add', taille: '2', retenue: 'non', nbQ: 5 }))
+watch(config, v => sauvegarder('calcul_pose_config', v), { deep: true })
 const phase = ref('config')
 const questions = ref([])
 const idx = ref(0)
@@ -266,6 +271,47 @@ function demarrer() {
   nextTick(initInputs)
 }
 
+function imprimerFiche() {
+  const qs = genererSansRepetition(config.value.nbQ)
+  const tailles = { '1': 'GS / CP', '2': 'CP', '3': 'CE', '4': 'CM' }
+  const niveau = tailles[config.value.taille] || ''
+  const opLabel = config.value.op === 'add' ? 'Additions' : config.value.op === 'sou' ? 'Soustractions' : 'Mélangé'
+
+  const cards = qs.map(q => {
+    const cols = q.cols
+    const cell = (ch) => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;">${ch.trim() || '&nbsp;'}</td>`
+    const rowA = q.chiffresA.map(cell).join('')
+    const rowB = q.chiffresB.map(cell).join('')
+    const rowR = q.chiffresR.map(() => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;border-bottom:2px solid #333;">&nbsp;</td>`).join('')
+    const signCell = `<td style="width:1.8rem;text-align:center;font-size:1.5rem;font-weight:900;color:#1a5fb4;vertical-align:middle;">`
+    return `<div style="display:inline-block;margin:1rem 1.5rem;vertical-align:top;">
+      <table style="border-collapse:collapse;">
+        <tr>${signCell}&nbsp;</td>${rowA}</tr>
+        <tr>${signCell}${q.opLabel}</td>${rowB}</tr>
+        <tr><td colspan="${cols + 1}" style="padding:0;"><hr style="border:none;border-top:2.5px solid #222;margin:4px 0;"/></td></tr>
+        <tr>${signCell}&nbsp;</td>${rowR}</tr>
+      </table>
+    </div>`
+  }).join('')
+
+  const html = `<!DOCTYPE html><html lang="fr"><head>
+    <meta charset="UTF-8"><title>Calcul posé — ${niveau}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
+      h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+    </style></head><body>
+    <h1>Calcul posé — ${niveau}</h1>
+    <p class="entete">${opLabel} &nbsp;|&nbsp; ${qs.length} exercices &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    <div style="text-align:center;">${cards}</div>
+    <script>window.print(); window.close();<\/script>
+  </body></html>`
+
+  const w = window.open('', '_blank')
+  w.document.write(html)
+  w.document.close()
+}
+
 function initInputs() {
   const cols = questions.value[idx.value]?.cols || 0
   repInputs.value = Array(cols).fill('')
@@ -273,28 +319,28 @@ function initInputs() {
   feedback.value = ''; feedbackClass.value = ''
   inputRefs.value = []
   nextTick(() => {
-    // Focus on rightmost (units) cell
-    inputRefs.value[cols - 1]?.focus()
+    inputRefs.value[0]?.focus()
   })
 }
 
 function onInput(e, ci) {
   const v = e.target.value.replace(/\D/g, '')
-  repInputs.value[ci] = v.slice(-1) // garde 1 chiffre max
+  repInputs.value[ci] = v.slice(-1)
   if (v) {
-    // Déplacer vers la gauche
-    const prev = ci - 1
-    if (prev >= 0) nextTick(() => inputRefs.value[prev]?.focus())
+    // Avancer vers la droite
+    const next = ci + 1
+    if (next < repInputs.value.length) nextTick(() => inputRefs.value[next]?.focus())
   }
 }
 
 function onKeydown(e, ci) {
   if (e.key === 'Backspace' && !repInputs.value[ci]) {
-    const next = ci + 1
-    if (next < repInputs.value.length) nextTick(() => inputRefs.value[next]?.focus())
+    const prev = ci - 1
+    if (prev >= 0) nextTick(() => inputRefs.value[prev]?.focus())
   }
   if (e.key === 'Enter') valider()
-  if (e.key === 'ArrowLeft' && ci > 0)       nextTick(() => inputRefs.value[ci - 1]?.focus())
+  if (e.key === 'ArrowLeft' && ci > 0)
+    nextTick(() => inputRefs.value[ci - 1]?.focus())
   if (e.key === 'ArrowRight' && ci < repInputs.value.length - 1)
     nextTick(() => inputRefs.value[ci + 1]?.focus())
 }

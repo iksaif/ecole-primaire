@@ -6,32 +6,32 @@
     </div>
 
     <div class="matiere-section">
-      <h2 class="section-heading">🌱 Maternelle — MS / GS</h2>
+      <h2 class="section-heading">🔢 Mathématiques</h2>
       <div class="card-grid">
-        <RouterLink to="/maternelle/compter" class="card maternelle">
+        <RouterLink to="/maternelle/compter" class="card maths">
           <span class="card-icon">🔢</span>
           <span class="card-title">Compter les objets</span>
           <span class="card-desc">Compte et trouve le bon nombre</span>
           <span class="card-tag">MS / GS</span>
         </RouterLink>
-        <RouterLink to="/maternelle/comparer" class="card maternelle">
+        <RouterLink to="/maternelle/comparer" class="card maths">
           <span class="card-icon">⚖️</span>
           <span class="card-title">Comparer les quantités</span>
           <span class="card-desc">Quel groupe a le plus ?</span>
           <span class="card-tag">MS / GS</span>
         </RouterLink>
-        <RouterLink to="/maternelle/ordonner" class="card maternelle">
+        <RouterLink to="/maternelle/ordonner" class="card maths">
           <span class="card-icon">📶</span>
           <span class="card-title">Ranger les nombres</span>
           <span class="card-desc">Du plus petit au plus grand</span>
           <span class="card-tag">MS / GS</span>
         </RouterLink>
-      </div>
-    </div>
-
-    <div class="matiere-section">
-      <h2 class="section-heading">🔢 Mathématiques</h2>
-      <div class="card-grid">
+        <RouterLink to="/maternelle/formes" class="card maths">
+          <span class="card-icon">🔷</span>
+          <span class="card-title">Les formes</span>
+          <span class="card-desc">Reconnaître cercle, carré, triangle et plus</span>
+          <span class="card-tag">MS / GS</span>
+        </RouterLink>
         <RouterLink to="/maths/calcul-mental" class="card maths">
           <span class="card-icon">🧮</span>
           <span class="card-title">Calcul mental</span>
@@ -42,7 +42,7 @@
           <span class="card-icon">📐</span>
           <span class="card-title">Calcul posé</span>
           <span class="card-desc">Pose et effectue des additions et soustractions</span>
-          <span class="card-tag">CP → CE2</span>
+          <span class="card-tag">GS → CE2</span>
         </RouterLink>
         <RouterLink to="/maths/tables" class="card maths">
           <span class="card-icon">✖️</span>
@@ -56,6 +56,12 @@
     <div class="matiere-section">
       <h2 class="section-heading">📝 Français</h2>
       <div class="card-grid">
+        <RouterLink to="/maternelle/lettres" class="card francais">
+          <span class="card-icon">🔡</span>
+          <span class="card-title">Les lettres</span>
+          <span class="card-desc">Reconnaître et associer majuscules et minuscules</span>
+          <span class="card-tag">GS / CP</span>
+        </RouterLink>
         <RouterLink to="/francais/dictee" class="card francais">
           <span class="card-icon">🖊️</span>
           <span class="card-title">Dictée</span>
@@ -63,10 +69,10 @@
           <span class="card-tag">CP → CM2</span>
         </RouterLink>
         <RouterLink to="/francais/conjugaison" class="card francais">
-          <span class="card-icon">🔀</span>
+          <span class="card-icon">✍️</span>
           <span class="card-title">Conjugaison</span>
           <span class="card-desc">Conjugue les verbes aux bons temps</span>
-          <span class="card-tag">CE2 → CM2</span>
+          <span class="card-tag">CE1 → CM2</span>
         </RouterLink>
         <RouterLink to="/francais/orthographe" class="card francais">
           <span class="card-icon">🔤</span>
@@ -81,22 +87,22 @@
       <h2 class="section-heading">📖 Lecture &amp; Compréhension</h2>
       <div class="card-grid">
         <RouterLink to="/lecture" class="card lecture">
-          <span class="card-icon">📰</span>
-          <span class="card-title">Textes &amp; Questions</span>
-          <span class="card-desc">Lis un texte et réponds aux questions</span>
-          <span class="card-tag">CP → CM2</span>
+          <span class="card-icon">🔠</span>
+          <span class="card-title">Syllabes</span>
+          <span class="card-desc">Compte et reconstitue les syllabes des mots</span>
+          <span class="card-tag">CP → CE2</span>
         </RouterLink>
       </div>
     </div>
 
     <div class="matiere-section">
-      <h2 class="section-heading">🌍 Autres matières</h2>
+      <h2 class="section-heading">🌍 Culture générale</h2>
       <div class="card-grid">
         <RouterLink to="/autres" class="card autres">
           <span class="card-icon">🗺️</span>
-          <span class="card-title">Histoire &amp; Géographie</span>
-          <span class="card-desc">Quiz sur le monde et les grandes dates</span>
-          <span class="card-tag">CE2 → CM2</span>
+          <span class="card-title">Quiz culture générale</span>
+          <span class="card-desc">Géographie, histoire, sciences, animaux</span>
+          <span class="card-tag">CP → CM2</span>
         </RouterLink>
       </div>
     </div>

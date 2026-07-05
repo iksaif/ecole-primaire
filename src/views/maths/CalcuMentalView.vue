@@ -18,6 +18,7 @@
         <div class="btn-group">
           <button v-for="op in TOUTES_OPS" :key="op"
             class="level-btn" :class="{ active: config.ops.includes(op) }"
+            :disabled="!opsDisposPourNiveau.includes(op)"
             @click="toggleOp(op)">{{ op }}</button>
         </div>
       </div>
@@ -103,7 +104,7 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 
-const TOUTES_OPS = ['+', '−', '×', '÷']
+const TOUTES_OPS = ['+', '−', '×', '÷', 'Compléments à 10']
 const niveaux = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
 
 const NIVEAUX = {
@@ -116,6 +117,23 @@ const NIVEAUX = {
 
 const config = ref(charger('calcul_mental_config', { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10 }))
 watch(config, v => sauvegarder('calcul_mental_config', v), { deep: true })
+
+const opsDisposPourNiveau = computed(() => {
+  const niv = NIVEAUX[config.value.niveau]
+  if (!niv) return TOUTES_OPS
+  return TOUTES_OPS.filter(op => {
+    if (op === '×' && !niv.mul) return false
+    if (op === '÷' && !niv.div) return false
+    return true
+  })
+})
+
+watch(() => config.value.niveau, () => {
+  const dispos = opsDisposPourNiveau.value
+  const nouvellesOps = config.value.ops.filter(op => dispos.includes(op))
+  config.value.ops = nouvellesOps.length > 0 ? nouvellesOps : ['+']
+})
+
 const phase = ref('config')
 const questions = ref([])
 const idx = ref(0)
@@ -149,6 +167,16 @@ function genererQuestion() {
     return true
   })
   const op = opsDispos[aleatoire(0, opsDispos.length - 1)]
+
+  if (op === 'Compléments à 10') {
+    const a = aleatoire(1, 9)
+    const b = 10 - a
+    if (Math.random() < 0.5) {
+      return { texte: `${a} + ? = 10`, reponse: b }
+    } else {
+      return { texte: `? + ${b} = 10`, reponse: a }
+    }
+  }
 
   let a, b, rep
   if (op === '+') {
@@ -187,12 +215,19 @@ function imprimerFiche() {
   const qs = genererSansRepetition(config.value.nbQ)
   const niv = config.value.niveau.toUpperCase()
   const ops = config.value.ops.join(', ')
-  const rows = qs.map((q, i) => `
-    <div class="question">
-      <span class="num">${i + 1}.</span>
-      <span class="calc">${q.texte.replace(' = ?', ' =')}</span>
-      <span class="ligne"></span>
-    </div>`).join('')
+  const rows = qs.map((q, i) => {
+    const isComplement = !q.texte.endsWith(' = ?')
+    const calcText = isComplement
+      ? q.texte.replace('?', '___')
+      : q.texte.replace(' = ?', ' =')
+    const ligneStyle = isComplement ? 'border-bottom: none;' : ''
+    return `
+      <div class="question">
+        <span class="num">${i + 1}.</span>
+        <span class="calc">${calcText}</span>
+        <span class="ligne" style="${ligneStyle}"></span>
+      </div>`
+  }).join('')
 
   const html = `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>Calcul mental — ${niv}</title>
@@ -208,7 +243,7 @@ function imprimerFiche() {
     <h1>Calcul mental — ${niv}</h1>
     <p class="entete">Opérations : ${ops} &nbsp;|&nbsp; ${qs.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
     ${rows}
-    <script>window.print(); window.close();<\/script>
+    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
   const w = window.open('', '_blank')
@@ -297,4 +332,14 @@ onUnmounted(() => clearInterval(timerInterval))
 }
 .hist-item.ok     { background: #f0faf0; }
 .hist-item.erreur { background: #fef0f0; }
+
+.level-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--gris-brd);
+}
+.level-btn:disabled:hover {
+  border-color: var(--gris-brd);
+  color: inherit;
+}
 </style>

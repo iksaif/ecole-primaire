@@ -304,7 +304,7 @@ function imprimerFiche() {
     <h1>Calcul posé — ${niveau}</h1>
     <p class="entete">${opLabel} &nbsp;|&nbsp; ${qs.length} exercices &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
     <div style="text-align:center;">${cards}</div>
-    <script>window.print(); window.close();<\/script>
+    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
   const w = window.open('', '_blank')

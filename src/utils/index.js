@@ -41,7 +41,7 @@ export function confettis(nb = 30) {
 
 export function normaliser(s) {
   return s.trim().toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[''']/g, "'")
     .replace(/\s+/g, ' ')
 }
+

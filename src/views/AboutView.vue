@@ -29,7 +29,7 @@
         <li><strong>🖊️ Dictée</strong> — Synthèse vocale en français, mots seuls ou phrases générées, correction (CP → CM2)</li>
         <li><strong>✍️ Conjugaison</strong> — Présent, passé composé, imparfait, futur ; mode lacunes ou complet (CE1 → CM2)</li>
         <li><strong>🔤 Orthographe</strong> — Homophones (a/à, ou/où…), accords, lettres manquantes (CP → CM2)</li>
-        <li><strong>🔠 Syllabes</strong> — Compter les syllabes, reconstituer un mot par syllabes (CP → CE2)</li>
+        <li><strong>📖 Lecture &amp; Syllabes</strong> — Compter les syllabes, reconstituer un mot par syllabes, et lecture de phrases ou d'histoires interactives (CP → CE2)</li>
         <li><strong>🌍 Quiz culture générale</strong> — Géographie France et monde, sciences, histoire, animaux (CP → CM2)</li>
       </ul>
 
@@ -37,7 +37,7 @@
       <ul class="about-list">
         <li>Toutes les réponses et scores restent sur l'appareil (stockage local du navigateur).</li>
         <li>La dictée utilise la synthèse vocale intégrée du navigateur — aucun service externe requis.</li>
-        <li>Le mode "phrases" de la dictée peut utiliser <strong>l'API Mistral</strong> pour générer des phrases variées
+        <li>La dictée de phrases et la génération d'histoires en lecture peuvent utiliser <strong>l'API Mistral</strong> pour générer du contenu varié
             (clé configurable dans les <RouterLink to="/parametres">Paramètres parents</RouterLink>).</li>
         <li>Le code source est disponible sur
             <a href="https://github.com/iksaif/ecole-primaire" target="_blank" rel="noopener">GitHub</a>.</li>

@@ -95,8 +95,14 @@
         </div>
 
         <!-- Contexte phrase -->
-        <div v-if="config.mode === 'phrases' && currentPhrase" class="phrase-ctx">
-          <span v-html="phraseAvecBlanc"></span>
+        <div v-if="config.mode === 'phrases' && currentPhrase" class="phrase-ctx-container">
+          <button v-if="!afficherIndice" class="btn btn-ghost btn-sm" style="margin-bottom: 1.25rem;" @click="afficherIndice = true">
+            👁️ Afficher la phrase à trous (indice)
+          </button>
+          <div v-else class="phrase-ctx">
+            <span v-html="phraseAvecBlanc"></span>
+            <button class="btn-masquer-indice" @click="afficherIndice = false" title="Masquer l'indice">🙈</button>
+          </div>
         </div>
 
         <button class="btn-ecouter" :class="{ playing: enLecture }" @click="ecouterMot()">
@@ -174,6 +180,7 @@ const liste = ref([])
 const idx   = ref(0)
 const resultats = ref([])
 const reponse = ref('')
+const afficherIndice = ref(false)
 const feedback = ref('')
 const feedbackClass = ref('')
 const inputClass = ref('')
@@ -300,6 +307,7 @@ async function demarrer() {
 
 function afficherMot() {
   reponse.value = ''; feedback.value = ''; feedbackClass.value = ''; inputClass.value = ''
+  afficherIndice.value = false
   nextTick(() => inputEl.value?.focus())
 }
 
@@ -395,10 +403,19 @@ onUnmounted(() => arreter())
 .slider-val { font-weight: 700; min-width: 2.5rem; text-align: right; }
 
 .phrase-ctx {
+  position: relative;
   background: var(--gris-bg); border-radius: 8px;
-  padding: 1rem 1.25rem; font-size: 1.2rem;
+  padding: 1rem 2.5rem 1rem 1.25rem; font-size: 1.2rem;
   line-height: 1.8; margin: 1rem 0; text-align: center; min-height: 5rem;
+  display: flex; align-items: center; justify-content: center;
 }
+.btn-masquer-indice {
+  position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%);
+  background: none; border: none; font-size: 1.2rem; cursor: pointer;
+  opacity: 0.6; transition: opacity 0.15s;
+}
+.btn-masquer-indice:hover { opacity: 1; }
+.phrase-ctx-container { margin-bottom: 1rem; text-align: center; }
 :deep(.blank) {
   display: inline-block; min-width: 80px;
   border-bottom: 3px solid var(--bleu);

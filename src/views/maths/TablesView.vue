@@ -318,7 +318,7 @@ function imprimerFiche() {
     <h1>${titre}</h1>
     <p class="entete">× jusqu'à ${jusqu} &nbsp;|&nbsp; ${allQ.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
     <div class="grid">${rows}</div>
-    <script>window.print(); window.close();<\/script>
+    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
   const w = window.open('', '_blank')

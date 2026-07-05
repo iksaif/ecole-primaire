@@ -87,9 +87,9 @@
       <h2 class="section-heading">📖 Lecture &amp; Compréhension</h2>
       <div class="card-grid">
         <RouterLink to="/lecture" class="card lecture">
-          <span class="card-icon">🔠</span>
-          <span class="card-title">Syllabes</span>
-          <span class="card-desc">Compte et reconstitue les syllabes des mots</span>
+          <span class="card-icon">📖</span>
+          <span class="card-title">Lecture &amp; Syllabes</span>
+          <span class="card-desc">Syllabes, reconstitution de mots et lecture de textes interactifs</span>
           <span class="card-tag">CP → CE2</span>
         </RouterLink>
       </div>

@@ -318,7 +318,7 @@ function imprimerFiche() {
       <div class="verb-temps">${tempsObj.label}</div>
       <table>${rows}</table>
     </div>
-    <script>window.print(); window.close();<\/script>
+    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
   const w = window.open('', '_blank')

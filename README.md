@@ -1,6 +1,6 @@
 # École Primaire / Skoolik
 
-Des exercices et des fiches à imprimer pour la maternelle et l'école primaire, de la MS au CM2.
+Des exercices et des fiches à imprimer pour la maternelle et l'élémentaire, de la MS au CM2.
 On a commencé ça pour nos enfants, pour réviser à la maison, et c'est devenu un petit site :
 
 - **https://ecoleprimaire.app** — en français

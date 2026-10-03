@@ -1,5 +1,37 @@
 # TODO
 
+## En cours (demandes du 2026-10-03, dans l'ordre)
+
+- [x] **Pages de téléchargement** (`scripts/telechargements.mjs`) :
+  - [x] filtres : classe, langue des fiches, « 📘 Pour apprendre » / « ✏️ Pour s'entraîner »
+  - [x] sélecteur FR / BR de l'interface des pages statiques, partagé avec l'app (même clé localStorage)
+  - [x] fiches d'exercices pré-générées : chaque exercice × chaque classe, 4 variantes avec pagination (fr + br)
+  - [x] recherche sur l'index (champ + raccourcis `/` et Ctrl/⌘+K)
+  - [x] intro de l'index : breton mentionné seulement si la langue régionale est active
+  - [ ] calcul mental CM1/CM2 pré-généré : seulement + et − (réglages par défaut) — choisir des opérations par classe
+- [ ] **Langue régionale = le contexte, partout** (pas le domaine) :
+  - [ ] le réglage « 🏴 Langue régionale » (Paramètres) décide de l'affichage du breton dans l'app ET les pages
+        statiques (fiches bretonnes, mentions « français et breton », titres, intros)
+  - [ ] défaut : breton activé sur skoolik.app, désactivé sur ecoleprimaire.app ; ensuite c'est le choix de l'utilisateur
+  - [x] les deux sites publient les mêmes fiches (fr + br) ; les pages statiques suivent le réglage (lien « afficher le breton »)
+  - [x] `.env` / `src/site.js` : ne garder que nom, URL et valeurs par défaut (plus de `fiches: [...]` par site)
+  - [ ] app : passe sur tous les textes qui parlent du breton (catalogue, accueil, cartes) pour qu'ils suivent le réglage
+- [ ] **Recherche dans l'app** (type Ctrl+K, simple) : activités, pages d'impression, fiches pré-générées
+      (`telechargements/fiches.json` généré au build)
+- [ ] **Journaux d'usage sans cookie** :
+  - [ ] signal léger (même domaine, sans identifiant) à chaque page vue (les routes `#/…` sont invisibles du serveur)
+        et à chaque fiche imprimée, avec le type de fiche et ses réglages → savoir quoi pré-générer
+  - [ ] nginx : `location = /journal` → 204, journal dédié **sans adresse IP** (format JSON) ; relancer setup-nginx.sh (sudo)
+  - [ ] script de stats : pages les plus vues, fiches imprimées (+ réglages), PDF les plus téléchargés
+  - [ ] mentions légales : décrire ces statistiques anonymes (exemptées de consentement, CNIL)
+- [ ] **Pages de fiches (retours)** :
+  - [ ] retirer « ✔️ Gratuit, sans inscription » (peu utile)
+  - [ ] ajouter un bouton « 🖨️ Imprimer » sous « Télécharger le PDF » (impression directe du PDF)
+  - [ ] affiche de l'alphabet breton : ajouter un mot exemple illustré par lettre — liste de mots bretons
+        simples + emoji à vérifier (dictionnaire) avant publication ; aujourd'hui volontairement absent faute de mots vérifiés
+- [ ] **Push** de la branche `ce1-ce2-fiches-vps` sur `main` (ou PR) — active la redirection GitHub Pages : en attente de réponse
+- [x] Formulation « maternelle et élémentaire » (et pas « maternelle et école primaire ») — à commiter
+
 ## Généraliser « français + breton » en « français + langue régionale »
 
 Aujourd'hui le breton est la seule langue régionale, et plusieurs endroits le supposent encore.

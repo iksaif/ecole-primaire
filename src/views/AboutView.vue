@@ -67,7 +67,7 @@
 
       <p class="about-para">
         Ce site propose des exercices interactifs gratuits pour accompagner les enfants
-        de la <strong>Maternelle (MS/GS)</strong> jusqu'au <strong>CM2</strong> dans leurs révisions.
+        de la <strong>maternelle</strong> (MS, GS) à la fin de l'<strong>élémentaire</strong> (CP → CM2) dans leurs révisions.
         Tout fonctionne directement dans le navigateur — sans compte, sans publicité, sans données collectées.
       </p>
 

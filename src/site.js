@@ -1,9 +1,12 @@
 // Sites construits à partir du même code (choisi au build par VITE_SITE, voir .env*).
+// Un site ne fixe que son nom, son adresse et des valeurs par défaut : c'est ensuite le réglage
+// « 🏴 Langue régionale » de l'utilisateur qui décide d'afficher ou non le breton, partout.
 export const SITES = {
-  ecoleprimaire: { id: 'ecoleprimaire', nom: 'École Primaire', emoji: '📚', langue: 'fr', langueRegionale: '', fiches: ['fr'] },
-  // Version bretonne : breton activé par défaut ; l'interface reste en français tant que la traduction n'est pas faite
-  // fiches : langues des fiches publiées (écoles bilingues → français et breton)
-  skoolik: { id: 'skoolik', nom: 'Skoolik', emoji: '📚', langue: 'br', langueRegionale: 'br', fiches: ['fr', 'br'] },
+  ecoleprimaire: { id: 'ecoleprimaire', nom: 'École Primaire', emoji: '📚', url: 'https://ecoleprimaire.app/',
+    langue: 'fr', langueRegionale: '' },
+  // Version bretonne : interface en breton et langue régionale activée par défaut
+  skoolik: { id: 'skoolik', nom: 'Skoolik', emoji: '📚', url: 'https://skoolik.app/',
+    langue: 'br', langueRegionale: 'br' },
 }
 
 // Adresse de contact affichée sur le site (redirigée vers la boîte de l'auteur)

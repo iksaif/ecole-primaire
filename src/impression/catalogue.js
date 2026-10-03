@@ -14,10 +14,10 @@ const NOMS_STYLES = {
 }
 
 export const CATEGORIES = [
-  { id: 'ecriture', titre: "✏️ Fiches d'écriture", intro: "Sur lignage Seyès, avec le modèle en noir, des lettres grises à repasser puis des lignes pour écrire seul." },
-  { id: 'alphabet', titre: "🔤 Affiches de l'alphabet", intro: 'Les lettres en script et en attaché, majuscules et minuscules, à afficher au mur ou à coller dans le cahier.' },
-  { id: 'calcul',   titre: '🧮 Fiches de calcul', intro: 'Tables de multiplication et d\'addition, compléments, doubles et moitiés, calcul mental du programme — avec le corrigé.' },
-  { id: 'nombres',  titre: '🔢 Les nombres en lettres — français et breton', intro: 'Affiches et fiches mémo pour apprendre à écrire les nombres en lettres, en français et en breton.' },
+  { id: 'ecriture', titre: "✏️ Fiches d'écriture", titreBr: '✏️ Fichennoù skrivañ', introBr: "War linennoù Seyès, gant ar skouer e du, lizherennoù gris da adtresañ ha linennoù evit skrivañ e-unan.", intro: "Sur lignage Seyès, avec le modèle en noir, des lettres grises à repasser puis des lignes pour écrire seul." },
+  { id: 'alphabet', titre: "🔤 Affiches de l'alphabet", titreBr: '🔤 Skritelloù al lizherenneg', introBr: "Al lizherennoù e skript hag a-stag, pennlizherennoù ha lizherennoù bihan, da lakaat war ar voger pe er c'haier.", intro: 'Les lettres en script et en attaché, majuscules et minuscules, à afficher au mur ou à coller dans le cahier.' },
+  { id: 'calcul',   titre: '🧮 Fiches de calcul', titreBr: '🧮 Fichennoù jediñ', introBr: 'Taolennoù liesañ ha sammañ, klokaat, doubl hag hanter, jediñ e penn — gant ar reizhadenn.', intro: 'Tables de multiplication et d\'addition, compléments, doubles et moitiés, calcul mental du programme — avec le corrigé.' },
+  { id: 'nombres',  titre: '🔢 Les nombres en lettres — français et breton', titreBr: '🔢 An niveroù e lizherennoù — galleg ha brezhoneg', introBr: 'Skritelloù ha fichennoù-eñvor evit deskiñ skrivañ an niveroù e lizherennoù, e galleg hag e brezhoneg.', intro: 'Affiches et fiches mémo pour apprendre à écrire les nombres en lettres, en français et en breton.' },
 ]
 
 const ecritureBase = { contenu: 'lettres', lier: false, interligne: 3, sauter: false, repasser: 2, copie: 1, couleur: true }
@@ -205,4 +205,5 @@ export const TELECHARGEMENTS = [
 ]
 
 // Fiches publiées sur un site selon sa langue (fr : ecoleprimaire.app, br : skoolik.app)
-export const catalogueDuSite = langue => TELECHARGEMENTS.filter(t => t.langues.includes(langue))
+// langues : liste des langues du site, ex. ['fr', 'br'] pour skoolik.app (écoles bilingues)
+export const catalogueDuSite = langues => TELECHARGEMENTS.filter(t => t.langues.some(l => [].concat(langues).includes(l)))

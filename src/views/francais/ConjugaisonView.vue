@@ -1,67 +1,67 @@
 <template>
   <div class="container">
-    <h1>✍️ Conjugaison</h1>
+    <h1>✍️ {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
 
       <div class="config-section">
-        <div class="config-section-title">Verbe à conjuguer</div>
+        <div class="config-section-title">{{ t('verbeAConjuguer') }}</div>
         <div class="verbe-grid">
           <button v-for="v in VERBES" :key="v.inf"
             class="verbe-btn" :class="{ active: config.verbe === v.inf }"
             @click="config.verbe = v.inf">
             {{ v.inf }}
-            <span class="verbe-groupe">{{ v.groupe }}</span>
+            <span class="verbe-groupe">{{ t('groupe_' + v.groupe) }}</span>
           </button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Temps</div>
+        <div class="config-section-title">{{ t('temps') }}</div>
         <div class="btn-group">
-          <button v-for="t in TEMPS" :key="t.id"
-            class="level-btn" :class="{ active: config.temps === t.id }"
-            @click="config.temps = t.id">{{ t.label }}</button>
+          <button v-for="tp in TEMPS" :key="tp.id"
+            class="level-btn" :class="{ active: config.temps === tp.id }"
+            @click="config.temps = tp.id">{{ t('temps_' + tp.id) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Mode</div>
+        <div class="config-section-title">{{ t('mode') }}</div>
         <div class="mode-cards">
           <button class="mode-card" :class="{ active: config.mode === 'lacunes' }" @click="config.mode = 'lacunes'">
             <div class="mode-icon">✏️</div>
-            <div class="mode-title">Lacunes</div>
-            <div class="mode-desc">Remplis les terminaisons</div>
+            <div class="mode-title">{{ t('lacunes') }}</div>
+            <div class="mode-desc">{{ t('lacunesDesc') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'complet' }" @click="config.mode = 'complet'">
             <div class="mode-icon">📝</div>
-            <div class="mode-title">Complet</div>
-            <div class="mode-desc">Écris la forme entière</div>
+            <div class="mode-title">{{ t('complet') }}</div>
+            <div class="mode-desc">{{ t('completDesc') }}</div>
           </button>
         </div>
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- ══ EXERCICE ══ -->
     <div v-if="phase === 'jeu'" class="exercise-box">
       <div class="score-bar" style="margin-bottom:1.25rem;">
-        <button class="btn-quitter" @click="phase = 'config'">✕ Quitter</button>
+        <button class="btn-quitter" @click="phase = 'config'">{{ t('quitter') }}</button>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
       <div class="conj-header">
         <span class="conj-verb">{{ verbeCourant.inf }}</span>
-        <span class="conj-temps">{{ tempsCourant.label }}</span>
+        <span class="conj-temps">{{ t('temps_' + tempsCourant.id) }}</span>
       </div>
 
       <div class="conj-table">
@@ -107,7 +107,7 @@
       </div>
 
       <div style="text-align:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="validerTout">Valider ✔</button>
+        <button class="btn btn-primary" @click="validerTout">{{ t('valider') }}</button>
       </div>
     </div>
 
@@ -117,7 +117,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <div class="conj-correction">
-        <div class="config-section-title" style="margin-bottom:.5rem;">Correction</div>
+        <div class="config-section-title" style="margin-bottom:.5rem;">{{ t('correction') }}</div>
         <div v-for="(row, i) in conjugaison" :key="i" class="correction-row">
           <span class="pronom">{{ row.pronom }}</span>
           <span class="correction-forme" :class="corrClass(i)">{{ row.forme }}</span>
@@ -125,8 +125,8 @@
       </div>
 
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -135,6 +135,60 @@
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
 import { normaliser, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, langue } = useI18n({
+  fr: {
+    titre: 'Conjugaison',
+    verbeAConjuguer: 'Verbe à conjuguer',
+    'groupe_irrég.': 'irrég.',
+    groupe_1er: '1er',
+    'groupe_2ème': '2ème',
+    temps: 'Temps',
+    temps_present: 'Présent',
+    temps_passe: 'Passé composé',
+    temps_imparfait: 'Imparfait',
+    temps_futur: 'Futur',
+    mode: 'Mode',
+    lacunes: 'Lacunes',
+    lacunesDesc: 'Remplis les terminaisons',
+    complet: 'Complet',
+    completDesc: 'Écris la forme entière',
+    correction: 'Correction',
+    changer: '⚙️ Changer',
+    ficheLacunes: 'Complète les terminaisons',
+    ficheComplet: 'Écris les formes complètes',
+    res100: 'Parfait, sans faute ! 🏆',
+    res80: 'Très bien ! 🌟',
+    res50: "Bien ! Continue à t'entraîner 💪",
+    res0: 'Courage ! Relis la table de conjugaison et recommence 📚',
+  },
+  br: {
+    titre: 'Displegadur',
+    verbeAConjuguer: 'Verb da zisplegañ',
+    'groupe_irrég.': 'direizh', // br: à relire
+    groupe_1er: '1añ strollad', // br: à relire
+    'groupe_2ème': '2vet strollad', // br: à relire
+    temps: 'Amzer',
+    temps_present: 'Amzer-vremañ',
+    temps_passe: 'Tremenet kevrennek', // br: à relire (passé composé)
+    temps_imparfait: 'Amzer-dremenet anstrob', // br: à relire (imparfait)
+    temps_futur: 'Dazont',
+    mode: 'Mod',
+    lacunes: 'Toulloù', // br: à relire
+    lacunesDesc: 'Leunia an dibennoù',
+    complet: 'Klok',
+    completDesc: 'Skriv ar stumm a-bezh',
+    correction: 'Reizhadenn',
+    changer: '⚙️ Cheñch',
+    ficheLacunes: 'Leunia an dibennoù',
+    ficheComplet: 'Skriv ar stummoù klok',
+    res100: 'Dispar, hep fazi ebet ! 🏆',
+    res80: 'Mat-tre ! 🌟',
+    res50: "Mat ! Kendalc'h da embreger 💪",
+    res0: 'Kalon vat ! Adlenn an daolenn-displegañ ha adkrog 📚',
+  },
+})
 
 // ── Données
 const VERBES = [
@@ -298,10 +352,10 @@ function imprimerFiche() {
     </tr>`
   }).join('')
 
-  const modeLabel = config.value.mode === 'lacunes' ? 'Complète les terminaisons' : 'Écris les formes complètes'
+  const modeLabel = config.value.mode === 'lacunes' ? t('ficheLacunes') : t('ficheComplet')
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Conjugaison — ${verbe.inf}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${verbe.inf}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 500px; margin: 2cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -311,11 +365,11 @@ function imprimerFiche() {
       .verb-temps { font-size: 1rem; color: #555; margin-bottom: 1rem; }
       table { width: 100%; border-collapse: collapse; }
     </style></head><body>
-    <h1>Conjugaison</h1>
-    <p class="entete">${modeLabel} &nbsp;&nbsp;&nbsp; Nom : __________________________ &nbsp; Date : ______________</p>
+    <h1>${t('titre')}</h1>
+    <p class="entete">${modeLabel} &nbsp;&nbsp;&nbsp; ${t('nom')} : __________________________ &nbsp; ${t('date')} : ______________</p>
     <div class="verb-box">
-      <div class="verb-title">${verbe.inf} <small style="font-weight:400;font-size:.75em;color:#777;">(${verbe.groupe})</small></div>
-      <div class="verb-temps">${tempsObj.label}</div>
+      <div class="verb-title">${verbe.inf} <small style="font-weight:400;font-size:.75em;color:#777;">(${t('groupe_' + verbe.groupe)})</small></div>
+      <div class="verb-temps">${t('temps_' + tempsObj.id)}</div>
       <table>${rows}</table>
     </div>
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
@@ -357,11 +411,11 @@ function validerTout() {
 }
 
 const resultMsg = computed(() => {
-  const n = bonnes.value; const t = totalLignes.value
-  if (n === t) { confettis(40); return 'Parfait, sans faute ! 🏆' }
-  if (n >= t * 0.8) return 'Très bien ! 🌟'
-  if (n >= t * 0.5) return 'Bien ! Continue à t\'entraîner 💪'
-  return 'Courage ! Relis la table de conjugaison et recommence 📚'
+  const n = bonnes.value; const total = totalLignes.value
+  if (n === total) { confettis(40); return t('res100') }
+  if (n >= total * 0.8) return t('res80')
+  if (n >= total * 0.5) return t('res50')
+  return t('res0')
 })
 </script>
 

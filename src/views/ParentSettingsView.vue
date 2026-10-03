@@ -1,61 +1,58 @@
 <template>
   <div class="container">
-    <h1>⚙️ Paramètres parents</h1>
-    <p class="intro">Ces réglages sont réservés aux parents et enseignants. Ils sont stockés localement sur cet appareil.</p>
+    <h1>{{ t('titre') }}</h1>
+    <p class="intro">{{ t('intro') }}</p>
 
     <section class="card">
-      <h2>🏴 Langue régionale</h2>
-      <p class="hint">
-        Ajoute la langue régionale aux fiches à imprimer : nombres en lettres bilingues, alphabet,
-        jours, mois et mots dans les fiches d'écriture. Pratique pour les écoles bilingues ou immersives.
-      </p>
+      <h2>🏴 {{ t('langueRegionale') }}</h2>
+      <p class="hint">{{ t('langueRegionaleAide') }}</p>
+      <p v-if="langue === 'br'" class="hint">{{ t('langueRegionaleBr') }}</p>
       <div class="langues">
-        <button class="level-btn" :class="{ active: !langueCode }" @click="langueCode = ''">Aucune</button>
+        <button class="level-btn" :class="{ active: !langueCode }" @click="langueCode = ''">{{ t('aucune') }}</button>
         <button v-for="l in LANGUES_REGIONALES" :key="l.id" class="level-btn"
           :class="{ active: langueCode === l.id }" @click="langueCode = l.id">
-          {{ l.drapeau }} {{ l.nom[0].toUpperCase() + l.nom.slice(1) }} ({{ l.nomLocal }})
+          {{ l.drapeau }} {{ langue === 'br' ? l.nomLocal[0].toUpperCase() + l.nomLocal.slice(1) : l.nom[0].toUpperCase() + l.nom.slice(1) + ' (' + l.nomLocal + ')' }}
         </button>
       </div>
     </section>
 
     <section class="card">
-      <h2>🤖 Clé API Mistral</h2>
+      <h2>🤖 {{ t('cleMistral') }}</h2>
       <p class="hint">
-        Utilisée pour générer des phrases en mode dictée. Facultative : sans clé, les phrases prédéfinies sont utilisées.
-        Obtenez une clé gratuite sur <a href="https://console.mistral.ai/" target="_blank" rel="noopener">console.mistral.ai</a>.
+        {{ t('cleMistralAide') }} <a href="https://console.mistral.ai/" target="_blank" rel="noopener">console.mistral.ai</a>.
       </p>
       <div class="field">
-        <label for="cle-mistral">Clé API</label>
+        <label for="cle-mistral">{{ t('cleApi') }}</label>
         <div class="input-row">
           <input
             id="cle-mistral"
             :type="montrerCle ? 'text' : 'password'"
             v-model="cleMistral"
-            placeholder="Votre clé Mistral (ex: DY4O…)"
+            :placeholder="t('clePlaceholder')"
             autocomplete="off"
             spellcheck="false"
           />
-          <button class="btn btn-secondary" @click="montrerCle = !montrerCle" :title="montrerCle ? 'Masquer' : 'Afficher'">
+          <button class="btn btn-secondary" @click="montrerCle = !montrerCle" :title="montrerCle ? t('masquer') : t('afficher')">
             {{ montrerCle ? '🙈' : '👁️' }}
           </button>
         </div>
       </div>
       <div class="actions">
-        <button class="btn btn-primary" @click="sauvegarderCle">Enregistrer</button>
-        <button class="btn btn-danger" @click="supprimerCle" v-if="cleEnregistree">Supprimer la clé</button>
+        <button class="btn btn-primary" @click="sauvegarderCle">{{ t('enregistrer') }}</button>
+        <button class="btn btn-danger" @click="supprimerCle" v-if="cleEnregistree">{{ t('supprimerCle') }}</button>
       </div>
       <p class="success" v-if="messageSucces">{{ messageSucces }}</p>
     </section>
 
     <section class="card">
-      <h2>🗑️ Réinitialiser la progression</h2>
-      <p class="hint">Efface toutes les données de progression stockées sur cet appareil (historique de dictée, scores…).</p>
-      <button class="btn btn-danger" @click="confirmerReset">Tout réinitialiser</button>
+      <h2>🗑️ {{ t('reset') }}</h2>
+      <p class="hint">{{ t('resetAide') }}</p>
+      <button class="btn btn-danger" @click="confirmerReset">{{ t('toutReset') }}</button>
       <p class="success" v-if="messageReset">{{ messageReset }}</p>
     </section>
 
     <div class="back">
-      <RouterLink to="/" class="btn btn-secondary">← Retour à l'accueil</RouterLink>
+      <RouterLink to="/" class="btn btn-secondary">{{ t('retour') }}</RouterLink>
     </div>
   </div>
 </template>
@@ -64,8 +61,36 @@
 import { ref, onMounted } from 'vue'
 import { LANGUES_REGIONALES } from '../data/languesRegionales'
 import { useLangueRegionale } from '../composables/useLangueRegionale'
+import { useI18n } from '../i18n'
 
-const { code: langueCode } = useLangueRegionale()
+const { reglage: langueCode } = useLangueRegionale()
+const { t, langue } = useI18n({
+  fr: {
+    titre: '⚙️ Paramètres parents', intro: 'Ces réglages sont réservés aux parents et enseignants. Ils sont stockés localement sur cet appareil.',
+    langueRegionale: 'Langue régionale',
+    langueRegionaleAide: "Ajoute la langue régionale aux fiches à imprimer : nombres en lettres bilingues, alphabet, jours, mois et mots dans les fiches d'écriture. Pratique pour les écoles bilingues ou immersives.",
+    aucune: 'Aucune', cleMistral: 'Clé API Mistral',
+    cleMistralAide: 'Utilisée pour générer des phrases en mode dictée. Facultative : sans clé, les phrases prédéfinies sont utilisées. Obtenez une clé gratuite sur',
+    cleApi: 'Clé API', clePlaceholder: 'Votre clé Mistral (ex : DY4O…)', masquer: 'Masquer', afficher: 'Afficher',
+    enregistrer: 'Enregistrer', supprimerCle: 'Supprimer la clé', cleOk: '✅ Clé enregistrée.', cleSupprimee: '🗑️ Clé supprimée.',
+    reset: 'Réinitialiser la progression', resetAide: 'Efface toutes les données de progression stockées sur cet appareil (historique de dictée, scores…).',
+    toutReset: 'Tout réinitialiser', confirmer: 'Êtes-vous sûr ? Toute la progression sera effacée.', resetOk: '✅ {n} entrée(s) supprimée(s).',
+    retour: "← Retour à l'accueil",
+  },
+  br: {
+    titre: '⚙️ Arventennoù evit ar gerent', intro: "An arventennoù-mañ a zo evit ar gerent hag ar gelennerien. Enrollet int war an drobarzhell-mañ hepken.",
+    langueRegionale: 'Yezh rannvroel',
+    langueRegionaleAide: "Ouzhpennañ ar yezh rannvroel d'ar fichennoù da voullañ : niveroù divyezhek, lizherenneg, deizioù, mizioù ha gerioù er fichennoù skrivañ. Talvoudus evit ar skolioù divyezhek pe dre soubidigezh.",
+    langueRegionaleBr: "Pa vez an etrefas e brezhoneg, ez eo gweredekaet ar brezhoneg er fichennoù ivez.",
+    aucune: 'Hini ebet', cleMistral: "Alc'hwez API Mistral",
+    cleMistralAide: "Implijet evit krouiñ frazennoù er skrivadeg. Dre zibab : hep alc'hwez e vez implijet frazennoù prientet. Kavit un alc'hwez digoust war",
+    cleApi: "Alc'hwez API", clePlaceholder: "Hoc'h alc'hwez Mistral (sk. : DY4O…)", masquer: 'Kuzhat', afficher: 'Diskouez',
+    enregistrer: 'Enrollañ', supprimerCle: "Dilemel an alc'hwez", cleOk: "✅ Alc'hwez enrollet.", cleSupprimee: "🗑️ Alc'hwez dilamet.",
+    reset: 'Adderaouekaat an araokadenn', resetAide: "Diverkañ an holl roadennoù enrollet war an drobarzhell-mañ (istor ar skrivadeg, skorioù…).",
+    toutReset: 'Adderaouekaat pep tra', confirmer: "Ha sur oc'h ? Diverket e vo an holl araokadenn.", resetOk: '✅ {n} elfenn dilamet.',
+    retour: "← Distreiñ d'an degemer",
+  },
+})
 
 const CLE_KEY = 'ep_mistral_key'
 
@@ -85,7 +110,7 @@ function sauvegarderCle() {
   if (val) {
     localStorage.setItem(CLE_KEY, val)
     cleEnregistree.value = true
-    messageSucces.value = '✅ Clé enregistrée.'
+    messageSucces.value = t('cleOk')
   } else {
     supprimerCle()
   }
@@ -96,15 +121,15 @@ function supprimerCle() {
   localStorage.removeItem(CLE_KEY)
   cleMistral.value = ''
   cleEnregistree.value = false
-  messageSucces.value = '🗑️ Clé supprimée.'
+  messageSucces.value = t('cleSupprimee')
   setTimeout(() => { messageSucces.value = '' }, 3000)
 }
 
 function confirmerReset() {
-  if (!confirm('Êtes-vous sûr ? Toute la progression sera effacée.')) return
+  if (!confirm(t('confirmer'))) return
   const keysToRemove = Object.keys(localStorage).filter(k => k.startsWith('ep_'))
   keysToRemove.forEach(k => localStorage.removeItem(k))
-  messageReset.value = `✅ ${keysToRemove.length} entrée(s) supprimée(s).`
+  messageReset.value = t('resetOk', { n: keysToRemove.length })
   cleEnregistree.value = false
   cleMistral.value = ''
   setTimeout(() => { messageReset.value = '' }, 4000)

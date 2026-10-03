@@ -1,59 +1,59 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔤 Affiche de l'alphabet</h1>
-    <p class="intro">Les 26 lettres dans les quatre écritures, à afficher au mur ou dans le cahier.</p>
+    <h1 class="section-heading">{{ t('titre') }}</h1>
+    <p class="intro">{{ t('intro') }}</p>
 
     <div class="config-box large">
       <div class="config-grid">
         <div class="config-section">
-          <div class="config-section-title">Format</div>
+          <div class="config-section-title">{{ t('format') }}</div>
           <div class="btn-group">
             <button v-for="f in ['A4', 'A3']" :key="f" class="level-btn"
               :class="{ active: config.format === f }" @click="config.format = f">{{ f }}</button>
           </div>
         </div>
         <div class="config-section">
-          <div class="config-section-title">Orientation</div>
+          <div class="config-section-title">{{ t('orientation') }}</div>
           <div class="btn-group">
-            <button class="level-btn" :class="{ active: config.orientation === 'landscape' }" @click="config.orientation = 'landscape'">Paysage</button>
-            <button class="level-btn" :class="{ active: config.orientation === 'portrait' }" @click="config.orientation = 'portrait'">Portrait</button>
+            <button class="level-btn" :class="{ active: config.orientation === 'landscape' }" @click="config.orientation = 'landscape'">{{ t('paysage') }}</button>
+            <button class="level-btn" :class="{ active: config.orientation === 'portrait' }" @click="config.orientation = 'portrait'">{{ t('portrait') }}</button>
           </div>
         </div>
         <div class="config-section">
-          <div class="config-section-title">Disposition</div>
+          <div class="config-section-title">{{ t('disposition') }}</div>
           <div class="btn-group">
-            <button class="level-btn" :class="{ active: config.disposition === 'grille' }" @click="config.disposition = 'grille'">Tout l'alphabet</button>
-            <button class="level-btn" :class="{ active: config.disposition === 'carte' }" @click="config.disposition = 'carte'">Une lettre par page</button>
+            <button class="level-btn" :class="{ active: config.disposition === 'grille' }" @click="config.disposition = 'grille'">{{ t('grille') }}</button>
+            <button class="level-btn" :class="{ active: config.disposition === 'carte' }" @click="config.disposition = 'carte'">{{ t('carte') }}</button>
           </div>
         </div>
       </div>
 
       <div v-if="regionale" class="config-section">
-        <div class="config-section-title">Alphabet</div>
+        <div class="config-section-title">{{ t('alphabet') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.alphabet !== regionale.id }" @click="config.alphabet = 'fr'">Français (26 lettres)</button>
+          <button class="level-btn" :class="{ active: config.alphabet !== regionale.id }" @click="config.alphabet = 'fr'">{{ t('francais') }}</button>
           <button class="level-btn" :class="{ active: config.alphabet === regionale.id }" @click="config.alphabet = regionale.id">
-            {{ regionale.drapeau }} {{ regionale.nom[0].toUpperCase() + regionale.nom.slice(1) }} ({{ regionale.alphabet.length }} lettres)</button>
+            {{ regionale.drapeau }} {{ t('regional', { nom: majuscule(langue === 'br' ? regionale.nomLocal : regionale.nom), n: regionale.alphabet.length }) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Écritures affichées</div>
+        <div class="config-section-title">{{ t('ecritures') }}</div>
         <div class="btn-group">
           <button v-for="s in STYLES" :key="s.id" class="level-btn"
-            :class="{ active: config.styles.includes(s.id) }" @click="basculer(s.id)">{{ s.label }}</button>
+            :class="{ active: config.styles.includes(s.id) }" @click="basculer(s.id)">{{ langue === 'br' ? s.br : s.label }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Options</div>
-        <label class="case" v-if="!regionale || config.alphabet !== regionale.id"><input type="checkbox" v-model="config.mot"> Un mot et une image pour chaque lettre (A comme abeille 🐝)</label>
-        <label class="case"><input type="checkbox" v-model="config.voyelles"> Voyelles en rouge, consonnes en bleu</label>
-        <label class="case"><input type="checkbox" v-model="config.lignes"> Lignes d'écriture sous l'attaché (hauteur des lettres)</label>
+        <div class="config-section-title">{{ t('options') }}</div>
+        <label class="case" v-if="!regionale || config.alphabet !== regionale.id"><input type="checkbox" v-model="config.mot"> {{ t('mot') }}</label>
+        <label class="case"><input type="checkbox" v-model="config.voyelles"> {{ t('voyelles') }}</label>
+        <label class="case"><input type="checkbox" v-model="config.lignes"> {{ t('lignes') }}</label>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Polices</div>
+        <div class="config-section-title">{{ t('polices') }}</div>
         <ChoixPolice />
       </div>
 
@@ -69,10 +69,56 @@ import ChoixPolice from '../../components/ChoixPolice.vue'
 import { usePolices } from '../../composables/usePolices'
 import { useLangueRegionale } from '../../composables/useLangueRegionale'
 import { sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
 import { STYLES, DEFAUTS, genererAlphabet } from '../../impression/alphabet'
 
 const config = ref({ ...DEFAUTS, ...charger('affiche_alphabet_config', {}) })
 watch(config, v => sauvegarder('affiche_alphabet_config', v), { deep: true })
+
+const { t, langue } = useI18n({
+  fr: {
+    titre: "🔤 Affiche de l'alphabet",
+    intro: 'Les 26 lettres dans les quatre écritures, à afficher au mur ou dans le cahier.',
+    format: 'Format',
+    orientation: 'Orientation',
+    paysage: 'Paysage',
+    portrait: 'Portrait',
+    disposition: 'Disposition',
+    grille: "Tout l'alphabet",
+    carte: 'Une lettre par page',
+    alphabet: 'Alphabet',
+    francais: 'Français (26 lettres)',
+    regional: '{nom} ({n} lettres)',
+    ecritures: 'Écritures affichées',
+    options: 'Options',
+    mot: 'Un mot et une image pour chaque lettre (A comme abeille 🐝)',
+    voyelles: 'Voyelles en rouge, consonnes en bleu',
+    lignes: "Lignes d'écriture sous l'attaché (hauteur des lettres)",
+    polices: 'Polices',
+  },
+  br: {
+    titre: '🔤 Skritell al lizherenneg',
+    intro: "Ar 26 lizherenn er peder doare skrivañ, da lakaat ouzh ar voger pe er c'haier.",
+    format: 'Furmad',
+    orientation: 'Tuadur', // br: à relire
+    paysage: 'Gweledva', // br: à relire (terme des logiciels en breton)
+    portrait: 'Poltred',
+    disposition: 'Aozadur', // br: à relire
+    grille: 'An holl lizherenneg',
+    carte: 'Ul lizherenn dre bajenn',
+    alphabet: 'Lizherenneg',
+    francais: 'Galleg (26 lizherenn)',
+    regional: '{nom} ({n} lizherenn)',
+    ecritures: 'Doareoù skrivañ diskouezet',
+    options: 'Dibarzhioù',
+    // les mots illustrés sont français
+    mot: 'Ur ger hag ur skeudenn evit pep lizherenn, e galleg (A evel abeille 🐝)',
+    voyelles: 'Vogalennoù e ruz, kensonennoù e glas',
+    lignes: 'Linennoù skrivañ dindan an a-stag (uhelder al lizherennoù)',
+    polices: 'Nodrezhoù', // br: à relire (nodrezh = police de caractères)
+  },
+})
+const majuscule = s => s[0].toUpperCase() + s.slice(1)
 
 function basculer(id) {
   const s = config.value.styles
@@ -83,7 +129,7 @@ function basculer(id) {
 const polices = usePolices()
 const { langue: regionale } = useLangueRegionale()
 const resultat = computed(() => polices.pret.value
-  ? genererAlphabet({ ...config.value, alphabet: regionale.value?.id === config.value.alphabet ? config.value.alphabet : 'fr' }, { attache: polices.attache.value, script: polices.script.value })
+  ? genererAlphabet({ ...config.value, langue: langue.value, alphabet: regionale.value?.id === config.value.alphabet ? config.value.alphabet : 'fr' }, { attache: polices.attache.value, script: polices.script.value })
   : { html: '', nbPages: 1 })
 const html = computed(() => resultat.value.html)
 const nbPages = computed(() => resultat.value.nbPages)

@@ -1,21 +1,37 @@
 <template>
   <div class="apercu">
     <div class="apercu-barre">
-      <span class="apercu-info">Aperçu — {{ format }} {{ orientation === 'landscape' ? 'paysage' : 'portrait' }}
-        <template v-if="nbPages > 1"> · {{ nbPages }} pages</template></span>
-      <button class="btn btn-primary" :disabled="!html" @click="imprimer">🖨️ Imprimer</button>
+      <span class="apercu-info">{{ t('apercu') }} — {{ format }} {{ orientation === 'landscape' ? t('paysage') : t('portrait') }}
+        <template v-if="nbPages > 1"> · {{ t('pages', { n: nbPages }) }}</template></span>
+      <button class="btn btn-primary" :disabled="!html" @click="imprimer">{{ t('imprimer') }}</button>
     </div>
     <div ref="cadre" class="apercu-cadre" :style="{ height: hauteurCadre + 'px' }">
-      <iframe v-if="html" :srcdoc="html" title="Aperçu avant impression"
+      <iframe v-if="html" :srcdoc="html" :title="t('titreCadre')"
         :style="{ width: largeurPx + 'px', height: hauteurPx + 'px', transform: `scale(${echelle})`, left: decalage + 'px' }"></iframe>
     </div>
-    <p class="apercu-note">Conseil : dans la fenêtre d'impression, choisis « Taille réelle / 100 % » et désactive « Ajuster à la page ».</p>
+    <p class="apercu-note">{{ t('conseil') }}</p>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { dimensionsPage, imprimerDocument } from '../utils/impression'
+import { useI18n } from '../i18n'
+
+const { t } = useI18n({
+  fr: {
+    apercu: 'Aperçu', paysage: 'paysage', portrait: 'portrait', pages: '{n} pages',
+    titreCadre: 'Aperçu avant impression',
+    conseil: "Conseil : dans la fenêtre d'impression, choisis « Taille réelle / 100 % » et désactive « Ajuster à la page ».",
+  },
+  br: {
+    // « pajennoù : 3 » évite la mutation après le chiffre (div bajenn, tri fajenn…)
+    apercu: 'Rakwel', paysage: 'gweledva', portrait: 'poltred', pages: 'pajennoù : {n}', // br: à relire (gweledva = paysage)
+    titreCadre: 'Rakwel a-raok moullañ',
+    // br: à relire — les libellés exacts de la fenêtre d'impression dépendent de la langue du navigateur
+    conseil: "Alioù : er prenestr moullañ, dibab ar ment gwir (100 %) ha na azasait ket ouzh ar bajenn.",
+  },
+})
 
 const props = defineProps({
   html: { type: String, default: '' },

@@ -25,8 +25,8 @@ export async function utiliserPolice(type, nom, dataUrl) {
   return polices[type]
 }
 
-export function catalogue(langue = 'fr') {
-  return [...catalogueDuSite(langue), ...CALCUL.filter(t => t.langues.includes(langue))]
+export function catalogue(langues = ['fr']) {
+  return [...catalogueDuSite(langues), ...CALCUL.filter(t => t.langues.some(l => langues.includes(l)))]
 }
 
 export function generer(slug) {

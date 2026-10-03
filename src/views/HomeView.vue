@@ -1,18 +1,18 @@
 <template>
   <div class="container">
     <div class="hero">
-      <h1>Bienvenue ! 👋</h1>
-      <p>Des exercices interactifs pour réviser et progresser en s'amusant, et des fiches à imprimer.</p>
+      <h1>{{ t('bienvenue') }}</h1>
+      <p>{{ t('accroche') }}</p>
       <p v-if="classe" class="hero-filtre">
-        Activités pour le <strong>{{ labelClasse }}</strong> —
-        <button class="lien" @click="classe = ''">voir toutes les classes</button>
+        {{ t('activitesPour') }} <strong>{{ labelClasse }}</strong> —
+        <button class="lien" @click="classe = ''">{{ t('toutesClasses') }}</button>
       </p>
     </div>
 
     <div v-for="m in matieresVisibles" :key="m.id" class="matiere-section" :class="{ 'imprimer-section': m.id === 'imprimer' }">
       <h2 class="section-heading">
-        {{ m.titre }}
-        <RouterLink v-if="m.id === 'imprimer'" to="/imprimer" class="voir-tout">tout voir →</RouterLink>
+        {{ langue === 'br' ? m.br : m.titre }}
+        <RouterLink v-if="m.id === 'imprimer'" to="/imprimer" class="voir-tout">{{ t('voirTout') }}</RouterLink>
       </h2>
       <GrilleActivites :matiere="m.id" />
     </div>
@@ -24,6 +24,14 @@ import { computed } from 'vue'
 import GrilleActivites from '../components/GrilleActivites.vue'
 import { MATIERES, CLASSES, ACTIVITES } from '../data/activites'
 import { useClasse } from '../composables/useClasse'
+import { useI18n } from '../i18n'
+
+const { t, langue } = useI18n({
+  fr: { bienvenue: 'Bienvenue ! 👋', accroche: "Des exercices interactifs pour réviser et progresser en s'amusant, et des fiches à imprimer.",
+    activitesPour: 'Activités pour le', toutesClasses: 'voir toutes les classes', voirTout: 'tout voir →' },
+  br: { bienvenue: 'Degemer mat ! 👋', accroche: 'Poelladennoù etrewezhiat evit adwelet ha mont war-raok en ur zudiañ, ha fichennoù da voullañ.',
+    activitesPour: 'Poelladennoù evit', toutesClasses: 'gwelet an holl glasoù', voirTout: 'gwelet pep tra →' },
+})
 
 const classe = useClasse()
 const matieresVisibles = computed(() => MATIERES.filter(m =>

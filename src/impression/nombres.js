@@ -17,17 +17,17 @@ export function languesDisponibles(regionale) {
 }
 export const plage = (de, a, pas = 1) => Array.from({ length: Math.floor((a - de) / pas) + 1 }, (_, k) => de + k * pas)
 export const SECTIONS = [
-  { id: 'unites',    label: 'Unités (0 → 9)',          titre: 'Les unités',              nombres: plage(0, 9), repr: 'unites' },
-  { id: 'onze',      label: '10 → 20',                  titre: 'De 10 à 20',              nombres: plage(10, 20) },
-  { id: 'dizaines',  label: 'Dizaines (10 → 100)',      titre: 'Les dizaines',            nombres: plage(10, 100, 10), repr: 'dizaines' },
-  { id: 'centaines', label: 'Centaines (100 → 1000)',   titre: 'Les centaines',           nombres: plage(100, 1000, 100), repr: 'centaines' },
-  { id: 'milliers',  label: 'Milliers (1000 → 9000)',   titre: 'Les milliers',            nombres: plage(1000, 9000, 1000) },
-  { id: 'cent',      label: 'Tableau de 0 à 100',       titre: 'Les nombres de 0 à 100',  nombres: plage(0, 100) },
+  { id: 'unites',    label: 'Unités (0 → 9)',          titre: 'Les unités', br: 'Unanennoù', labelBr: 'Unanennoù (0 → 9)', nombres: plage(0, 9), repr: 'unites' },
+  { id: 'onze',      label: '10 → 20',                  titre: 'De 10 à 20', br: 'Eus 10 da 20', nombres: plage(10, 20) },
+  { id: 'dizaines',  label: 'Dizaines (10 → 100)',      titre: 'Les dizaines', br: 'Degadoù', labelBr: 'Degadoù (10 → 100)', nombres: plage(10, 100, 10), repr: 'dizaines' },
+  { id: 'centaines', label: 'Centaines (100 → 1000)',   titre: 'Les centaines', br: 'Kantadoù', labelBr: 'Kantadoù (100 → 1000)', nombres: plage(100, 1000, 100), repr: 'centaines' },
+  { id: 'milliers',  label: 'Milliers (1000 → 9000)',   titre: 'Les milliers', br: 'Miliadoù', labelBr: 'Miliadoù (1000 → 9000)', nombres: plage(1000, 9000, 1000) },
+  { id: 'cent',      label: 'Tableau de 0 à 100',       titre: 'Les nombres de 0 à 100', br: 'An niveroù eus 0 da 100', labelBr: 'Taolenn eus 0 da 100', nombres: plage(0, 100) },
   { id: 'perso',     label: 'Personnalisé…',            titre: null },
   // une affiche par dizaine : 20 → 30, 30 → 40… (en breton chaque dizaine a sa logique)
   ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
     id: `d${d}`, dizaine: true, label: `${d * 10} → ${d * 10 + 10}`,
-    titre: `De ${d * 10} à ${d * 10 + 10}`, nombres: plage(d * 10, d * 10 + 10),
+    titre: `De ${d * 10} à ${d * 10 + 10}`, br: `Eus ${d * 10} da ${d * 10 + 10}`, nombres: plage(d * 10, d * 10 + 10),
   })),
 ]
 export const SECTIONS_PRINCIPALES = SECTIONS.filter(s => !s.dizaine)
@@ -98,6 +98,9 @@ export function genererNombres(config, polices) {
   const reg = langueRegionale(config.regionale ?? 'br')
   // sans langue régionale : français seul
   const langue = reg ? config.langue : 'fr'
+  // Langue des textes (titres, légende) : config.langueTextes ('fr' | 'br', langue de l'interface) si donnée,
+  // sinon breton pour « breton seul ». (config.langue désigne ici les langues des nombres, pas celle de l'interface.)
+  const textesBr = (config.langueTextes ?? (config.langue === 'br' ? 'br' : 'fr')) === 'br'
   function ecritures(n) {
     const { rectifiee } = config
     return {
@@ -153,7 +156,7 @@ export function genererNombres(config, polices) {
   <span class="mots" style="font-size:${t}mm">${fr ? `<span class="fr">${echapper(fr)}</span>` : ''}${br ? `<span class="br">${echapper(br)}</span>` : ''}</span></div>`
     }
     const legende = langue === 'bilingue'
-      ? `<span class="fr">■ français</span> <span class="br">■ ${reg.nomLocal}</span>` : ''
+      ? `<span class="fr">■ ${textesBr ? 'galleg' : 'français'}</span> <span class="br">■ ${reg.nomLocal}</span>` : ''
     return `<div class="contenu" style="inset:${marge}mm">
   ${titre ? `<h1 style="height:${titreH}mm;font-size:${titreH * 0.6}mm">${echapper(titre)}</h1>` : ''}
   <div class="legende" style="height:${enTeteH}mm">${legende}</div>
@@ -166,18 +169,18 @@ export function genererNombres(config, polices) {
     const { w, h } = dimensionsPage(config.format, config.orientation)
     const choisies = SECTIONS.filter(s => config.sections.includes(s.id)).map(s =>
       s.id === 'perso'
-        ? { ...s, titre: `De ${perso[0]} à ${perso.at(-1)}`, nombres: perso }
-        : s)
+        ? { ...s, titre: `De ${perso[0]} à ${perso.at(-1)}`, br: `Eus ${perso[0]} da ${perso.at(-1)}`, nombres: perso }
+        : s).map(s => (textesBr && s.br ? { ...s, titre: s.br } : s))
     const avecRepr = s => config.representation && !!s.repr
     let pages
     if (config.miseEnPage === 'affiches') {
       pages = choisies.map(s => pageHtml(s.titre, s.nombres.map(n => ({ n, repr: s.repr })), w, h, avecRepr(s)))
     } else {
       const entrees = choisies.flatMap(s => [{ titre: s.titre }, ...s.nombres.map(n => ({ n, repr: s.repr }))])
-      pages = [pageHtml('Les nombres', entrees, w, h, choisies.some(avecRepr))]
+      pages = [pageHtml(textesBr ? 'An niveroù' : 'Les nombres', entrees, w, h, choisies.some(avecRepr))]
     }
     const html = documentImpression({
-      titre: config.titre || 'Les nombres en lettres', format: config.format, orientation: config.orientation, pages,
+      titre: config.titre || (textesBr ? 'An niveroù e lizherennoù' : 'Les nombres en lettres'), format: config.format, orientation: config.orientation, pages,
       css: `body { font-family: '${police}', Arial, sans-serif; }
   .contenu { position: absolute; display: flex; flex-direction: column; }
   h1 { text-align: center; font-weight: 700; line-height: 1; flex: none; }

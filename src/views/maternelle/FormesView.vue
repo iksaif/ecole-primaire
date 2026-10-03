@@ -1,39 +1,39 @@
 <template>
   <div class="container">
-    <h1>🔷 Les formes</h1>
+    <h1>🔷 {{ t('titre') }}</h1>
 
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Exercice</div>
+        <div class="config-section-title">{{ t('exercice') }}</div>
         <div class="mode-cards">
           <button class="mode-card" :class="{ active: config.mode === 'reconnaitre' }" @click="config.mode = 'reconnaitre'">
             <div class="mode-icon">👁️</div>
-            <div class="mode-title">Reconnaître</div>
-            <div class="mode-desc">Trouve le nom de la forme</div>
+            <div class="mode-title">{{ t('reconnaitre') }}</div>
+            <div class="mode-desc">{{ t('reconnaitreDesc') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'compter' }" @click="config.mode = 'compter'">
             <div class="mode-icon">🔢</div>
-            <div class="mode-title">Compter les côtés</div>
-            <div class="mode-desc">Combien de côtés a cette forme ?</div>
+            <div class="mode-title">{{ t('compter') }}</div>
+            <div class="mode-desc">{{ t('combienCotes') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'trouver' }" @click="config.mode = 'trouver'">
             <div class="mode-icon">🔍</div>
-            <div class="mode-title">Trouver la forme</div>
-            <div class="mode-desc">Montre la forme qu'on te demande</div>
+            <div class="mode-title">{{ t('trouver') }}</div>
+            <div class="mode-desc">{{ t('trouverDesc') }}</div>
           </button>
         </div>
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
     </div>
 
     <template v-if="phase === 'jeu' && question">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'">✕ Quitter</button>
+        <button class="btn-quitter" @click="phase = 'config'">{{ t('quitter') }}</button>
         <span>{{ idx + 1 }} / {{ questions.length }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
@@ -45,21 +45,21 @@
 
         <!-- Reconnaître : montre la forme SVG, trouve le nom -->
         <template v-if="config.mode === 'reconnaitre'">
-          <div class="question-label">Comment s'appelle cette forme ?</div>
+          <div class="question-label">{{ t('commentSappelle') }}</div>
           <div class="forme-display" v-html="question.svg"></div>
           <div class="choix-grid-formes">
             <button v-for="c in question.choixObj" :key="c.nom"
               class="choix-forme-nommee" :class="reponduClass(c.nom)"
               :disabled="repondu" @click="valider(c.nom)">
               <span v-html="c.svgSmall"></span>
-              <span class="choix-nom">{{ c.nom }}</span>
+              <span class="choix-nom">{{ nomForme(c.nom) }}</span>
             </button>
           </div>
         </template>
 
         <!-- Compter les côtés -->
         <template v-if="config.mode === 'compter'">
-          <div class="question-label">Combien de côtés a cette forme ?</div>
+          <div class="question-label">{{ t('combienCotes') }}</div>
           <div class="forme-display" v-html="question.svg"></div>
           <div class="choix-grid choix-nb">
             <button v-for="c in question.choixNb" :key="c"
@@ -70,7 +70,7 @@
 
         <!-- Trouver la forme : donne le nom, choisit le bon SVG -->
         <template v-if="config.mode === 'trouver'">
-          <div class="question-label">Montre le / la <strong>{{ question.nom }}</strong></div>
+          <div class="question-label">{{ t('montre') }} <strong>{{ nomForme(question.nom) }}</strong></div>
           <div class="formes-grid">
             <button v-for="(f, i) in question.choixFormes" :key="i"
               class="forme-btn" :class="reponduClassForme(i)"
@@ -82,7 +82,7 @@
 
         <div class="feedback" :class="feedbackCls" v-if="repondu">{{ feedbackTxt }}</div>
         <button v-if="repondu" class="btn btn-primary" style="margin-top:1rem;" @click="suivant">
-          {{ idx + 1 < questions.length ? 'Suivant →' : 'Voir les résultats' }}
+          {{ idx + 1 < questions.length ? t('suivant') : t('voirResultats') }}
         </button>
       </div>
     </template>
@@ -91,8 +91,8 @@
       <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
       <div class="result-msg">{{ resultMsg }}</div>
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -101,6 +101,47 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+// Noms bretons des formes (le nom français sert d'identifiant)
+const NOMS_BR = {
+  cercle: "kelc'h", 'carré': 'karrez', triangle: "tric'horn", rectangle: 'hirgarrez', losange: 'lozanj',
+  pentagone: 'pempkorn',       // br: à relire
+  hexagone: "c'hwec'hkorn",    // br: à relire
+  ovale: "hirgelc'h",          // br: à relire (« ovalenn » ?)
+}
+
+const { t, langue } = useI18n({
+  fr: {
+    titre: 'Les formes',
+    exercice: 'Exercice',
+    reconnaitre: 'Reconnaître', reconnaitreDesc: 'Trouve le nom de la forme',
+    compter: 'Compter les côtés', combienCotes: 'Combien de côtés a cette forme ?',
+    trouver: 'Trouver la forme', trouverDesc: "Montre la forme qu'on te demande",
+    commentSappelle: "Comment s'appelle cette forme ?",
+    montre: 'Montre le / la',
+    changer: '⚙️ Changer',
+    res100: 'Parfait ! Tu connais toutes les formes ! 🏆',
+    res75: 'Très bien ! 🌟',
+    res50: 'Bien ! Regarde les formes autour de toi 💪',
+    res0: 'Courage ! Observe les formes dans la classe 📐',
+  },
+  br: {
+    titre: 'Ar stummoù',
+    exercice: 'Poelladenn',
+    reconnaitre: 'Anaout', reconnaitreDesc: 'Kav anv ar stumm',
+    compter: "Kontañ ar c'hostezioù", combienCotes: 'Pet kostez en deus ar stumm-mañ ?', // br: à relire
+    trouver: 'Kavout ar stumm', trouverDesc: 'Diskouez ar stumm a vez goulennet',
+    commentSappelle: 'Petra eo anv ar stumm-mañ ?',
+    montre: 'Diskouez :',
+    changer: '⚙️ Cheñch',
+    res100: 'Dispar ! Anaout a rez an holl stummoù ! 🏆',
+    res75: 'Mat-tre ! 🌟',
+    res50: "Mat ! Sell ouzh ar stummoù en-dro dit 💪",
+    res0: 'Kalon vat ! Sell ouzh ar stummoù er c\'hlas 📐',
+  },
+})
+const nomForme = nom => (langue.value === 'br' ? NOMS_BR[nom] : null) ?? nom
 
 // ── Formes géométriques avec SVG inline
 const FORMES = [
@@ -200,7 +241,7 @@ function enregistrer(ok) {
   repondu.value = true
   if (ok) {
     bonnes.value++
-    feedbackTxt.value = ['Bravo ! 🎉', 'Exact ! ⭐', 'Super ! 👏'][Math.floor(Math.random() * 3)]
+    const b = t('bravo'); feedbackTxt.value = b[Math.floor(Math.random() * b.length)]
     feedbackCls.value = 'ok'
   } else {
     mauvaises.value++
@@ -212,7 +253,9 @@ function valider(c) {
   if (repondu.value) return
   reponseDonnee.value = c
   const ok = c === question.value.nom
-  if (!ok) feedbackTxt.value = `❌ C'est un ${question.value.nom}`
+  if (!ok) feedbackTxt.value = langue.value === 'br'
+    ? `❌ ${t('laBonneReponse', { r: nomForme(question.value.nom) })}`
+    : `❌ C'est un ${question.value.nom}`
   enregistrer(ok)
 }
 
@@ -220,7 +263,10 @@ function validerNb(c) {
   if (repondu.value) return
   reponseDonnee.value = c
   const ok = c === question.value.cotes
-  if (!ok) feedbackTxt.value = `❌ Un ${question.value.nom} a ${question.value.cotes === 0 ? 'aucun côté droit' : question.value.cotes + ' côté' + (question.value.cotes > 1 ? 's' : '')}`
+  if (!ok) feedbackTxt.value = langue.value === 'br'
+    // br: à relire (« kostez » = côté d'un polygone)
+    ? `❌ ${question.value.cotes === 0 ? 'Kostez eeun ebet' : 'Niver a gostezioù : ' + question.value.cotes}`
+    : `❌ Un ${question.value.nom} a ${question.value.cotes === 0 ? 'aucun côté droit' : question.value.cotes + ' côté' + (question.value.cotes > 1 ? 's' : '')}`
   enregistrer(ok)
 }
 
@@ -228,7 +274,9 @@ function validerForme(i, f) {
   if (repondu.value) return
   reponseDonnee.value = i
   const ok = i === question.value.idxBonne
-  if (!ok) feedbackTxt.value = `❌ C'était ${question.value.nom === 'ovale' || question.value.nom === 'hexagone' ? "l'" : 'le / la '}${question.value.nom}`
+  if (!ok) feedbackTxt.value = langue.value === 'br'
+    ? `❌ ${t('laBonneReponse', { r: nomForme(question.value.nom) })}`
+    : `❌ C'était ${question.value.nom === 'ovale' || question.value.nom === 'hexagone' ? "l'" : 'le / la '}${question.value.nom}`
   enregistrer(ok)
 }
 
@@ -261,10 +309,10 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait ! Tu connais toutes les formes ! 🏆' }
-  if (pct >= 75)   { confettis(25); return 'Très bien ! 🌟' }
-  if (pct >= 50)   return 'Bien ! Regarde les formes autour de toi 💪'
-  return 'Courage ! Observe les formes dans la classe 📐'
+  if (pct === 100) { confettis(50); return t('res100') }
+  if (pct >= 75)   { confettis(25); return t('res75') }
+  if (pct >= 50)   return t('res50')
+  return t('res0')
 })
 </script>
 

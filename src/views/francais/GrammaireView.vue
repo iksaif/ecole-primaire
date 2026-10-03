@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <h1>🧱 Grammaire</h1>
+    <h1>🧱 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
 
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in NIVEAUX_DISPO" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -15,20 +15,20 @@
       </div>
 
       <div v-for="g in typesVisibles" :key="g.groupe" class="config-section">
-        <div class="config-section-title">{{ g.groupe }}</div>
+        <div class="config-section-title">{{ tr({ fr: g.groupe, br: g.br }) }}</div>
         <div class="theme-grid">
-          <button v-for="t in g.items" :key="t.id"
-            class="theme-btn" :class="{ active: config.types.includes(t.id) }"
-            @click="toggleType(t.id)">
-            <span class="theme-icon">{{ t.icon }}</span>
-            <span class="theme-label">{{ t.label }}</span>
+          <button v-for="ty in g.items" :key="ty.id"
+            class="theme-btn" :class="{ active: config.types.includes(ty.id) }"
+            @click="toggleType(ty.id)">
+            <span class="theme-icon">{{ ty.icon }}</span>
+            <span class="theme-label">{{ tr({ fr: ty.label, br: ty.br }) }}</span>
           </button>
         </div>
       </div>
-      <p class="astuce">Tu peux choisir plusieurs exercices : ils seront mélangés.</p>
+      <p class="astuce">{{ t('astuce') }}</p>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nb === n }"
@@ -38,19 +38,19 @@
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="phase = 'config'">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -61,9 +61,9 @@
 
       <div class="exercise-box">
         <div class="consigne">
-          {{ question.consigne }}
+          {{ val(question.consigne) }}
           <button v-if="question.lecture" class="btn-tts" :class="{ actif: enLecture }"
-            title="Écouter la phrase" @click="lire(question.lecture)">🔊</button>
+            :title="t('ecouterPhrase')" @click="lire(question.lecture)">🔊</button>
         </div>
 
         <!-- Phrase à afficher (choix / saisie) -->
@@ -73,20 +73,20 @@
         <div v-if="question.mode === 'choix'" class="choix-grid" :class="{ colonne: question.colonne }">
           <button v-for="c in question.choix" :key="c"
             class="choix-btn" :class="choixClass(c)"
-            :disabled="repondu" @click="validerChoix(c)">{{ c }}</button>
+            :disabled="repondu" @click="validerChoix(c)">{{ tc(c) }}</button>
         </div>
 
         <!-- Mode CLIC sur les mots -->
         <template v-else-if="question.mode === 'clic'">
           <div class="mots-ligne">
-            <template v-for="(t, i) in question.tokens" :key="i">
-              <span v-if="t.n === 'ponct'" class="mot-ponct" :class="{ colle: t.m === '.' || t.m === ',' }">{{ t.m }}</span>
-              <button v-else class="mot-btn" :class="[motClass(i), { elide: t.m.endsWith('\'') }]"
-                :disabled="repondu" @click="toggleMot(i)">{{ t.m }}</button>
+            <template v-for="(tok, i) in question.tokens" :key="i">
+              <span v-if="tok.n === 'ponct'" class="mot-ponct" :class="{ colle: tok.m === '.' || tok.m === ',' }">{{ tok.m }}</span>
+              <button v-else class="mot-btn" :class="[motClass(i), { elide: tok.m.endsWith('\'') }]"
+                :disabled="repondu" @click="toggleMot(i)">{{ tok.m }}</button>
             </template>
           </div>
           <div v-if="!repondu" style="text-align:center;margin-top:1rem;">
-            <button class="btn btn-primary" :disabled="selection.length === 0" @click="validerClic">Valider ✔</button>
+            <button class="btn btn-primary" :disabled="selection.length === 0" @click="validerClic">{{ t('valider') }}</button>
           </div>
         </template>
 
@@ -96,7 +96,7 @@
             <button v-for="(e, k) in placees" :key="'p' + k" class="etiquette placee"
               :disabled="repondu" @click="retirerEtiquette(k)">{{ question.etiquettes[e] }}</button>
             <span class="ordre-point">{{ question.fin }}</span>
-            <span v-if="placees.length === 0" class="ordre-vide">Clique sur les étiquettes dans l'ordre…</span>
+            <span v-if="placees.length === 0" class="ordre-vide">{{ t('cliqueEtiquettes') }}</span>
           </div>
           <div class="etiquettes-reserve">
             <button v-for="(e, k) in question.etiquettes" :key="'r' + k" class="etiquette"
@@ -104,8 +104,8 @@
               :disabled="repondu || placees.includes(k)" @click="placerEtiquette(k)">{{ e }}</button>
           </div>
           <div v-if="!repondu" style="text-align:center;margin-top:1rem;">
-            <button class="btn btn-ghost" style="margin-right:.5rem;" :disabled="placees.length === 0" @click="placees = []">↺ Effacer</button>
-            <button class="btn btn-primary" :disabled="placees.length < question.etiquettes.length" @click="validerOrdre">Valider ✔</button>
+            <button class="btn btn-ghost" style="margin-right:.5rem;" :disabled="placees.length === 0" @click="placees = []">{{ t('effacerOrdre') }}</button>
+            <button class="btn btn-primary" :disabled="placees.length < question.etiquettes.length" @click="validerOrdre">{{ t('valider') }}</button>
           </div>
         </template>
 
@@ -114,16 +114,16 @@
           <input ref="inputEl" class="saisie-input" :class="inputCls"
             v-model="saisie" :disabled="repondu"
             autocomplete="off" spellcheck="false" autocapitalize="off"
-            placeholder="Écris ta réponse…"
+            :placeholder="t('ecrisReponse')"
             @keydown.enter="validerSaisie" />
-          <button v-if="!repondu" class="btn btn-primary" @click="validerSaisie">Valider</button>
+          <button v-if="!repondu" class="btn btn-primary" @click="validerSaisie">{{ t('validerCourt') }}</button>
         </div>
 
         <div class="feedback" :class="feedbackCls" v-if="repondu" v-html="feedbackHtml"></div>
 
         <div v-if="repondu" style="text-align:center;">
           <button class="btn btn-primary" style="margin-top:1rem;" @click="suivant">
-            {{ idx + 1 < questions.length ? 'Suivant →' : 'Voir les résultats' }}
+            {{ idx + 1 < questions.length ? t('suivantFleche') : t('voirResultats') }}
           </button>
         </div>
       </div>
@@ -134,24 +134,24 @@
       <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
       <div class="result-msg">{{ resultMsg }}</div>
 
-      <div class="config-section-title" style="margin-bottom:.5rem;text-align:left;">Correction</div>
+      <div class="config-section-title" style="margin-bottom:.5rem;text-align:left;">{{ t('correction') }}</div>
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Correction</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('correction') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(q, i) in questions" :key="i" :class="q._resultat ? 'ok' : 'erreur'">
             <td>
-              <div class="corr-consigne">{{ q.consigne }}</div>
-              <div v-if="!q._resultat && q._donne" class="corr-donne">Ta réponse : {{ q._donne }}</div>
+              <div class="corr-consigne">{{ val(q.consigne) }}</div>
+              <div v-if="!q._resultat && q._donne" class="corr-donne">{{ t('taReponse') }} : {{ tc(q._donne) }}</div>
             </td>
-            <td v-html="q.solution"></td>
+            <td v-html="val(q.solution)"></td>
             <td>{{ q._resultat ? '✅' : '❌' }}</td>
           </tr>
         </tbody>
       </table>
 
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -161,8 +161,85 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { aleatoire, melanger, confettis, normaliser, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
+import { useI18n } from '../../i18n'
 
 const { enLecture, lire } = useTTS()
+
+// Interface traduite (fr / br). Le contenu étudié (phrases, mots, réponses) reste en français.
+// Breton : à faire relire par un brittophone ; termes grammaticaux incertains marqués « br: à relire ».
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: 'Grammaire',
+    astuce: 'Tu peux choisir plusieurs exercices : ils seront mélangés.',
+    ecouterPhrase: 'Écouter la phrase',
+    cliqueEtiquettes: 'Clique sur les étiquettes dans l\'ordre…',
+    effacerOrdre: '↺ Effacer',
+    ecrisReponse: 'Écris ta réponse…',
+    validerCourt: 'Valider',
+    suivantFleche: 'Suivant →',
+    correction: 'Correction',
+    colQuestion: 'Question',
+    changer: '⚙️ Changer',
+    bravo: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'],
+    bonnePhrase: 'La bonne phrase est : « {r} »',
+    bonneReponseEst: 'La bonne réponse est « {r} »',
+    pasToutAFait: 'Pas tout à fait…',
+    res100: 'Parfait, sans faute ! 🏆',
+    res80: 'Très bien ! 🌟',
+    res60: 'Bien ! Revois les erreurs 💪',
+    res0: 'Courage ! Relis la correction et recommence 📚',
+  },
+  br: {
+    titre: 'Yezhadur',
+    astuce: 'Gallout a rez dibab meur a boelladenn : mesket e vint.',
+    ecouterPhrase: 'Selaou ar frazenn',
+    cliqueEtiquettes: 'Klik war an tikedennoù en urzh…', // br: à relire (étiquette = tikedenn)
+    effacerOrdre: '↺ Diverkañ',
+    ecrisReponse: 'Skriv da respont…',
+    validerCourt: 'Gwiriañ',
+    suivantFleche: 'Da-heul →',
+    correction: 'Reizhadenn',
+    colQuestion: 'Goulenn',
+    changer: '⚙️ Cheñch',
+    bonnePhrase: 'Ar frazenn vat eo : « {r} »',
+    bonneReponseEst: 'Ar respont mat eo « {r} »',
+    pasToutAFait: 'N\'eo ket mat penn-da-benn…',
+    res100: 'Dispar, hep fazi ebet ! 🏆',
+    res80: 'Mat-tre ! 🌟',
+    res60: 'Mat ! Adwel ar fazioù 💪',
+    res0: 'Kalon vat ! Adlenn ar reizhadenn hag adkrog 📚',
+  },
+})
+const br = () => langue.value === 'br'
+// Texte calculé à l'affichage (suit la langue) ou texte fixe
+const val = x => (typeof x === 'function' ? x() : x)
+
+// Libellés bretons des choix « métalangage » (les choix en français étudié restent tels quels)
+const CHOIX_BR = {
+  'Oui, c\'est une phrase': 'Ya, ur frazenn eo',
+  'Non, ce n\'est pas une phrase': 'Nann, n\'eo ket ur frazenn',
+  'phrase simple': 'frazenn eeun', // br: à relire
+  'phrase complexe': 'frazenn gemplezh', // br: à relire
+  'affirmative': 'kadarnaus', // br: à relire
+  'négative': 'nac\'hus', // br: à relire
+  'complément du verbe': 'klokaenn ar verb', // br: à relire (complément = klokaenn)
+  'complément de phrase': 'klokaenn ar frazenn', // br: à relire
+  'Où ?': 'Pelec\'h ?',
+  'Quand ?': 'Pegoulz ?',
+  'singulier': 'unander',
+  'pluriel': 'liester',
+  'masculin': 'gourel',
+  'féminin': 'benel',
+  'nom': 'anv',
+  'verbe': 'verb',
+  'déterminant': 'ger-mont', // br: à relire (déterminant)
+  'adjectif': 'anv-gwan',
+  'pronom': 'raganv',
+  '. (point)': '. (poent)',
+  '? (point d\'interrogation)': '? (pik goulenn)', // br: à relire
+  '! (point d\'exclamation)': '! (pik estlammañ)', // br: à relire
+}
+const tc = c => (br() && CHOIX_BR[c]) || c
 
 // ════════════════════════════════════════════════════════════════════
 // ── LOGIQUE PURE (début) — données + génération, testable hors Vue
@@ -170,38 +247,38 @@ const { enLecture, lire } = useTTS()
 
 // Chaque type indique les niveaux où il est proposé
 const TYPES = [
-  { groupe: 'La phrase', items: [
-    { id: 'ordre',       icon: '🧩', label: 'Mots dans l\'ordre',        niv: ['ce1'] },
-    { id: 'phrase',      icon: '🤔', label: 'Phrase ou pas ?',           niv: ['ce1'] },
-    { id: 'majuscule',   icon: '🔠', label: 'Majuscule et point',        niv: ['ce1'] },
-    { id: 'ponctuation', icon: '❓', label: 'Types de phrases . ? !',    niv: ['ce1'] },
-    { id: 'complexe',    icon: '🔗', label: 'Phrase simple / complexe',  niv: ['ce2'] },
-    { id: 'negation',    icon: '🚫', label: 'Mettre à la forme négative', niv: ['ce1', 'ce2'] },
-    { id: 'negReconnaitre', icon: '🔍', label: 'Affirmative ou négative ?', niv: ['ce1', 'ce2'] },
+  { groupe: 'La phrase', br: 'Ar frazenn', items: [
+    { id: 'ordre',       icon: '🧩', label: 'Mots dans l\'ordre',        br: 'Gerioù en urzh', niv: ['ce1'] },
+    { id: 'phrase',      icon: '🤔', label: 'Phrase ou pas ?',           br: 'Ur frazenn pe get ?', niv: ['ce1'] },
+    { id: 'majuscule',   icon: '🔠', label: 'Majuscule et point',        br: 'Pennlizherenn ha poent', niv: ['ce1'] },
+    { id: 'ponctuation', icon: '❓', label: 'Types de phrases . ? !',    br: 'Seurtoù frazennoù . ? !', niv: ['ce1'] },
+    { id: 'complexe',    icon: '🔗', label: 'Phrase simple / complexe',  br: 'Frazenn eeun / kemplezh', niv: ['ce2'] },
+    { id: 'negation',    icon: '🚫', label: 'Mettre à la forme négative', br: 'Lakaat er stumm nac\'hus', niv: ['ce1', 'ce2'] },
+    { id: 'negReconnaitre', icon: '🔍', label: 'Affirmative ou négative ?', br: 'Kadarnaus pe nac\'hus ?', niv: ['ce1', 'ce2'] },
   ]},
-  { groupe: 'Nature des mots', items: [
-    { id: 'verbe',   icon: '🏃', label: 'Trouver le verbe',         niv: ['ce1', 'ce2'] },
-    { id: 'nom',     icon: '🏠', label: 'Trouver les noms',         niv: ['ce1', 'ce2'] },
-    { id: 'det',     icon: '👉', label: 'Trouver les déterminants', niv: ['ce1', 'ce2'] },
-    { id: 'adj',     icon: '🎨', label: 'Trouver les adjectifs',    niv: ['ce1', 'ce2'] },
-    { id: 'nature',  icon: '🏷️', label: 'Nature d\'un mot',         niv: ['ce1', 'ce2'] },
-    { id: 'gnNoyau', icon: '🎯', label: 'Nom principal du GN',      niv: ['ce2'] },
+  { groupe: 'Nature des mots', br: 'Rummad ar gerioù', items: [ // br: à relire (nature = rummad)
+    { id: 'verbe',   icon: '🏃', label: 'Trouver le verbe',         br: 'Kavout ar verb', niv: ['ce1', 'ce2'] },
+    { id: 'nom',     icon: '🏠', label: 'Trouver les noms',         br: 'Kavout an anvioù', niv: ['ce1', 'ce2'] },
+    { id: 'det',     icon: '👉', label: 'Trouver les déterminants', br: 'Kavout ar gerioù-mont', niv: ['ce1', 'ce2'] },
+    { id: 'adj',     icon: '🎨', label: 'Trouver les adjectifs',    br: 'Kavout an anvioù-gwan', niv: ['ce1', 'ce2'] },
+    { id: 'nature',  icon: '🏷️', label: 'Nature d\'un mot',         br: 'Rummad ur ger', niv: ['ce1', 'ce2'] },
+    { id: 'gnNoyau', icon: '🎯', label: 'Nom principal du GN',      br: 'Anv pennañ ar strollad anv', niv: ['ce2'] },
   ]},
-  { groupe: 'Les fonctions', items: [
-    { id: 'sujet',       icon: '👤', label: 'Trouver le sujet',             niv: ['ce1', 'ce2'] },
-    { id: 'pronom',      icon: '🔁', label: 'Il, elle, ils, elles',         niv: ['ce1', 'ce2'] },
-    { id: 'cplt',        icon: '📍', label: 'Trouver le complément de phrase', niv: ['ce2'] },
-    { id: 'cpltQ',       icon: '⏰', label: 'Où ? Quand ?',                 niv: ['ce2'] },
-    { id: 'cpltNature',  icon: '⚖️', label: 'Complément du verbe ou de phrase ?', niv: ['ce2'] },
+  { groupe: 'Les fonctions', br: 'An arc\'hwelioù', items: [ // br: à relire
+    { id: 'sujet',       icon: '👤', label: 'Trouver le sujet',             br: 'Kavout ar sujed', niv: ['ce1', 'ce2'] },
+    { id: 'pronom',      icon: '🔁', label: 'Il, elle, ils, elles',         br: 'Il, elle, ils, elles', niv: ['ce1', 'ce2'] },
+    { id: 'cplt',        icon: '📍', label: 'Trouver le complément de phrase', br: 'Kavout klokaenn ar frazenn', niv: ['ce2'] },
+    { id: 'cpltQ',       icon: '⏰', label: 'Où ? Quand ?',                 br: 'Pelec\'h ? Pegoulz ?', niv: ['ce2'] },
+    { id: 'cpltNature',  icon: '⚖️', label: 'Complément du verbe ou de phrase ?', br: 'Klokaenn ar verb pe ar frazenn ?', niv: ['ce2'] },
   ]},
-  { groupe: 'Genre et nombre', items: [
-    { id: 'genre',    icon: '♀️', label: 'Masculin / féminin',   niv: ['ce1'] },
-    { id: 'nombre',   icon: '🔢', label: 'Singulier / pluriel',  niv: ['ce1'] },
-    { id: 'pluriel',  icon: '➕', label: 'Mettre au pluriel',    niv: ['ce1', 'ce2'] },
-    { id: 'accordGN', icon: '🤝', label: 'Accorder l\'adjectif', niv: ['ce1', 'ce2'] },
+  { groupe: 'Genre et nombre', br: 'Reizh ha niver', items: [
+    { id: 'genre',    icon: '♀️', label: 'Masculin / féminin',   br: 'Gourel / benel', niv: ['ce1'] },
+    { id: 'nombre',   icon: '🔢', label: 'Singulier / pluriel',  br: 'Unander / liester', niv: ['ce1'] },
+    { id: 'pluriel',  icon: '➕', label: 'Mettre au pluriel',    br: 'Lakaat el liester', niv: ['ce1', 'ce2'] },
+    { id: 'accordGN', icon: '🤝', label: 'Accorder l\'adjectif', br: 'Kenglotañ an anv-gwan', niv: ['ce1', 'ce2'] },
   ]},
-  { groupe: 'Accord sujet-verbe', items: [
-    { id: 'accordSV', icon: '🔗', label: 'Il chante / ils chantent', niv: ['ce1', 'ce2'] },
+  { groupe: 'Accord sujet-verbe', br: 'Kenglotadur sujed-verb', items: [ // br: à relire (accord = kenglotadur)
+    { id: 'accordSV', icon: '🔗', label: 'Il chante / ils chantent', br: 'Il chante / ils chantent', niv: ['ce1', 'ce2'] },
   ]},
 ]
 const IDS_TYPES = TYPES.flatMap(g => g.items.map(t => t.id))
@@ -212,6 +289,7 @@ function typesDuNiveau(niveau) {
 const NATURES = { d: 'det', n: 'nom', N: 'nom', v: 'verbe', a: 'adj', p: 'pronom', x: 'autre' }
 const NOM_NATURE = { det: 'déterminant', nom: 'nom', verbe: 'verbe', adj: 'adjectif', pronom: 'pronom' }
 const LIB_GN = { ms: 'masculin singulier', fs: 'féminin singulier', mp: 'masculin pluriel', fp: 'féminin pluriel' }
+const LIB_GN_BR = { ms: 'gourel unander', fs: 'benel unander', mp: 'gourel liester', fp: 'benel liester' }
 
 // Phrases annotées. Syntaxe : mot:code (d=déterminant, n=nom, N=nom propre, v=verbe conjugué,
 // a=adjectif, p=pronom, x=autre mot).
@@ -915,48 +993,101 @@ function negationDe(e) {
 }
 
 const CONSIGNES = {
-  ordre:       'Remets les mots dans l\'ordre pour faire une phrase.',
-  phrase:      'Est-ce une phrase ?',
-  majuscule:   'Quelle phrase est bien écrite ?',
-  ponctuation: 'Quel signe faut-il mettre à la fin de la phrase ?',
-  complexe:    'Cette phrase est-elle simple ou complexe ?',
-  negation:    'Quelle est la phrase à la forme négative ?',
-  negReconnaitre: 'Cette phrase est-elle affirmative ou négative ?',
-  verbe:       'Clique sur le verbe.',
-  nom:         'Clique sur tous les noms.',
-  det:         'Clique sur tous les déterminants.',
-  adj:         'Clique sur tous les adjectifs.',
-  nature:      'Quelle est la nature du mot en gras ?',
-  gnNoyau:     'Clique sur le nom principal du groupe nominal.',
-  sujet:       'Clique sur tous les mots du groupe sujet.',
-  pronom:      'Par quel pronom peut-on remplacer le sujet souligné ?',
-  cplt:        'Clique sur tous les mots du complément de phrase.',
-  cpltQ:       'Le complément de phrase souligné répond à quelle question ?',
-  cpltNature:  'Le groupe souligné est-il un complément du verbe ou un complément de phrase ?',
-  genre:       'Un ou une ?',
-  nombre:      'Singulier ou pluriel ?',
-  pluriel:     'Écris ce groupe de mots au pluriel.',
-  accordGN:    'Choisis le bon accord de l\'adjectif.',
-  accordSV:    'Choisis la bonne forme du verbe (au présent).',
+  fr: {
+    ordre:       'Remets les mots dans l\'ordre pour faire une phrase.',
+    phrase:      'Est-ce une phrase ?',
+    majuscule:   'Quelle phrase est bien écrite ?',
+    ponctuation: 'Quel signe faut-il mettre à la fin de la phrase ?',
+    complexe:    'Cette phrase est-elle simple ou complexe ?',
+    negation:    'Quelle est la phrase à la forme négative ?',
+    negReconnaitre: 'Cette phrase est-elle affirmative ou négative ?',
+    verbe:       'Clique sur le verbe.',
+    nom:         'Clique sur tous les noms.',
+    det:         'Clique sur tous les déterminants.',
+    adj:         'Clique sur tous les adjectifs.',
+    nature:      'Quelle est la nature du mot en gras ?',
+    gnNoyau:     'Clique sur le nom principal du groupe nominal.',
+    sujet:       'Clique sur tous les mots du groupe sujet.',
+    pronom:      'Par quel pronom peut-on remplacer le sujet souligné ?',
+    cplt:        'Clique sur tous les mots du complément de phrase.',
+    cpltQ:       'Le complément de phrase souligné répond à quelle question ?',
+    cpltNature:  'Le groupe souligné est-il un complément du verbe ou un complément de phrase ?',
+    genre:       'Un ou une ?',
+    nombre:      'Singulier ou pluriel ?',
+    pluriel:     'Écris ce groupe de mots au pluriel.',
+    accordGN:    'Choisis le bon accord de l\'adjectif.',
+    accordSV:    'Choisis la bonne forme du verbe (au présent).',
+  },
+  // br: à relire (ensemble des consignes)
+  br: {
+    ordre:       'Lak ar gerioù en urzh evit ober ur frazenn.',
+    phrase:      'Ur frazenn eo ?',
+    majuscule:   'Peseurt frazenn a zo skrivet mat ?',
+    ponctuation: 'Peseurt arouez a vez lakaet e dibenn ar frazenn ?',
+    complexe:    'Frazenn eeun pe frazenn gemplezh eo ?',
+    negation:    'Peseurt frazenn a zo er stumm nac\'hus ?',
+    negReconnaitre: 'Kadarnaus pe nac\'hus eo ar frazenn-mañ ?',
+    verbe:       'Klik war ar verb.',
+    nom:         'Klik war an holl anvioù.',
+    det:         'Klik war an holl c\'herioù-mont.',
+    adj:         'Klik war an holl anvioù-gwan.',
+    nature:      'Petra eo rummad ar ger e tev ?',
+    gnNoyau:     'Klik war anv pennañ ar strollad anv.',
+    sujet:       'Klik war holl c\'herioù ar strollad sujed.',
+    pronom:      'Gant peseurt raganv e c\'haller erlec\'hiañ ar sujed islinennet ?',
+    cplt:        'Klik war holl c\'herioù klokaenn ar frazenn.',
+    cpltQ:       'Ouzh peseurt goulenn e respont klokaenn ar frazenn islinennet ?',
+    cpltNature:  'Klokaenn ar verb pe klokaenn ar frazenn eo ar strollad islinennet ?',
+    genre:       '« un » pe « une » ?',
+    nombre:      'Unander pe liester ?',
+    pluriel:     'Skriv ar strollad gerioù-mañ el liester.',
+    accordGN:    'Dibab kenglotadur mat an anv-gwan.',
+    accordSV:    'Dibab stumm mat ar verb (en amzer-vremañ).',
+  },
 }
 // Consignes propres à un niveau
 const CONSIGNES_NIVEAU = {
   ce2: {
-    verbe: 'Clique sur tous les verbes conjugués.',
-    negReconnaitre: 'Cette phrase est-elle affirmative ? Sinon, quelle négation contient-elle ?',
+    fr: {
+      verbe: 'Clique sur tous les verbes conjugués.',
+      negReconnaitre: 'Cette phrase est-elle affirmative ? Sinon, quelle négation contient-elle ?',
+    },
+    br: {
+      verbe: 'Klik war an holl verboù displeget.',
+      negReconnaitre: 'Kadarnaus eo ar frazenn-mañ ? Anez, peseurt nac\'hadur a zo enni ?', // br: à relire
+    },
   },
+}
+const consigneDe = (type, niveau) => () => {
+  const l = langue.value
+  return CONSIGNES_NIVEAU[niveau]?.[l]?.[type] || CONSIGNES[l]?.[type] || CONSIGNES.fr[type]
 }
 
 const REGLES_PLURIEL = {
-  al:  'Les noms en -al font leur pluriel en -aux.',
-  eu:  'Les noms en -eu prennent un x au pluriel.',
-  eau: 'Les noms en -eau prennent un x au pluriel.',
-  ou:  'Sept noms en -ou prennent un x au pluriel : bijou, caillou, chou, genou, hibou, joujou, pou.',
-  ou2: 'Les noms en -ou prennent un s au pluriel, sauf bijou, caillou, chou, genou, hibou, joujou, pou.',
-  s:   'Un mot qui finit déjà par -s ne change pas au pluriel.',
-  x:   'Un mot qui finit déjà par -x ne change pas au pluriel.',
-  z:   'Un mot qui finit déjà par -z ne change pas au pluriel.',
+  fr: {
+    al:  'Les noms en -al font leur pluriel en -aux.',
+    eu:  'Les noms en -eu prennent un x au pluriel.',
+    eau: 'Les noms en -eau prennent un x au pluriel.',
+    ou:  'Sept noms en -ou prennent un x au pluriel : bijou, caillou, chou, genou, hibou, joujou, pou.',
+    ou2: 'Les noms en -ou prennent un s au pluriel, sauf bijou, caillou, chou, genou, hibou, joujou, pou.',
+    s:   'Un mot qui finit déjà par -s ne change pas au pluriel.',
+    x:   'Un mot qui finit déjà par -x ne change pas au pluriel.',
+    z:   'Un mot qui finit déjà par -z ne change pas au pluriel.',
+    defaut: 'Au pluriel, le déterminant change (le, la → les ; un, une → des…) et on ajoute un -s à la fin des noms et des adjectifs.',
+  },
+  br: {
+    al:  'An anvioù a echu gant -al a ra o liester gant -aux.',
+    eu:  'An anvioù a echu gant -eu a gemer un x el liester.',
+    eau: 'An anvioù a echu gant -eau a gemer un x el liester.',
+    ou:  'Seizh anv a echu gant -ou a gemer un x el liester : bijou, caillou, chou, genou, hibou, joujou, pou.',
+    ou2: 'An anvioù a echu gant -ou a gemer un s el liester, nemet bijou, caillou, chou, genou, hibou, joujou, pou.',
+    s:   'Ur ger a echu dija gant -s ne cheñch ket el liester.',
+    x:   'Ur ger a echu dija gant -x ne cheñch ket el liester.',
+    z:   'Ur ger a echu dija gant -z ne cheñch ket el liester.',
+    defaut: 'El liester e cheñch ar ger-mont (le, la → les ; un, une → des…) hag e vez ouzhpennet un -s e dibenn an anvioù hag an anvioù-gwan.',
+  },
 }
+const regleDe = cle => () => (REGLES_PLURIEL[langue.value] || REGLES_PLURIEL.fr)[cle]
 
 // Construit les « réservoirs » d'éléments pour chaque type d'exercice
 function construireReservoirs(niveau) {
@@ -1003,11 +1134,18 @@ function construireReservoirs(niveau) {
 }
 
 const LIB_SIGNES = { '.': '. (point)', '?': '? (point d\'interrogation)', '!': '! (point d\'exclamation)' }
-const TYPE_SIGNE = { '.': 'déclarative', '?': 'interrogative', '!': 'exclamative' }
+const TYPE_SIGNE = {
+  fr: { '.': 'phrase déclarative', '?': 'phrase interrogative', '!': 'phrase exclamative' },
+  // br: à relire (types de phrases)
+  br: { '.': 'frazenn disklêriañ', '?': 'frazenn goulenn', '!': 'frazenn estlamm' },
+}
 const LIB_CPLT = { o: 'Où ?', q: 'Quand ?' }
+const libGN = g => tr({ fr: LIB_GN, br: LIB_GN_BR })[g]
+const nombreDe = n => tr({ fr: n === 's' ? 'au singulier' : 'au pluriel', br: n === 's' ? 'en unander' : 'el liester' })
+const ne_ = elide => (elide ? 'n\'' : 'ne')
 
 function construireQuestion(type, e, niveau = 'ce1') {
-  const q = { type, consigne: CONSIGNES_NIVEAU[niveau]?.[type] || CONSIGNES[type] }
+  const q = { type, consigne: consigneDe(type, niveau) }
   switch (type) {
     case 'ordre': {
       const etiq = etiquettesDe(e)
@@ -1019,12 +1157,14 @@ function construireQuestion(type, e, niveau = 'ce1') {
     }
     case 'phrase': {
       const bonne = e.ok ? 'Oui, c\'est une phrase' : 'Non, ce n\'est pas une phrase'
-      const expl = e.ok ? 'Les mots sont dans l\'ordre et la phrase a du sens.'
-        : e.r === 'verbe' ? 'Il manque un verbe : on ne sait pas ce qui se passe.'
-        : 'Les mots ne sont pas dans le bon ordre : on ne comprend pas.'
+      const expl = () => e.ok
+        ? tr({ fr: 'Les mots sont dans l\'ordre et la phrase a du sens.', br: 'Ar gerioù a zo en urzh hag ur ster en deus ar frazenn.' })
+        : e.r === 'verbe'
+          ? tr({ fr: 'Il manque un verbe : on ne sait pas ce qui se passe.', br: 'Mankout a ra ur verb : ne ouzer ket petra a c\'hoarvez.' })
+          : tr({ fr: 'Les mots ne sont pas dans le bon ordre : on ne comprend pas.', br: 'N\'emañ ket ar gerioù en urzh mat : ne gomprener ket.' })
       return { ...q, mode: 'choix', html: e.t, lecture: e.ok ? e.t : null,
         choix: ['Oui, c\'est une phrase', 'Non, ce n\'est pas une phrase'], bonne, explication: expl,
-        solution: `« ${e.t} » → ${bonne.toLowerCase()}. ${expl}` }
+        solution: () => `« ${e.t} » → ${tc(bonne).toLowerCase()}. ${expl()}` }
     }
     case 'majuscule': {
       const juste = texteTokens(e.tokens)
@@ -1032,14 +1172,16 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const sansPoint = juste.slice(0, -1)
       return { ...q, mode: 'choix', colonne: true, lecture: juste,
         choix: melanger([juste, sansMaj, sansPoint]), bonne: juste,
-        explication: 'Une phrase commence par une majuscule et se termine par un point.',
+        explication: () => tr({ fr: 'Une phrase commence par une majuscule et se termine par un point.',
+          br: 'Ur frazenn a grog gant ur bennlizherenn hag a echu gant ur poent.' }), // br: à relire (majuscule = pennlizherenn)
         solution: juste }
     }
     case 'ponctuation': {
-      return { ...q, mode: 'choix', html: `${e.t} <span class="trou">…</span>`,
+      const typ = () => tr(TYPE_SIGNE)[e.s]
+      return { ...q, mode: 'choix', html: `${e.t} <span class="trou">…</span>`,
         choix: ['.', '?', '!'].map(s => LIB_SIGNES[s]), bonne: LIB_SIGNES[e.s],
-        explication: `C'est une phrase ${TYPE_SIGNE[e.s]}.`,
-        solution: `${e.t}${e.s === '.' ? '' : ' '}${b(e.s)} (phrase ${TYPE_SIGNE[e.s]})` }
+        explication: () => tr({ fr: `C'est une ${typ()}.`, br: `Ur ${typ()} eo.` }),
+        solution: () => `${e.t}${e.s === '.' ? '' : ' '}${b(e.s)} (${typ()})` }
     }
     case 'complexe': {
       const iv = indicesOu(e.tokens, t => t.n === 'verbe')
@@ -1047,16 +1189,20 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const verbes = iv.map(i => `« ${e.tokens[i].m} »`).join(', ')
       return { ...q, mode: 'choix', html: texteTokens(e.tokens), lecture: texteTokens(e.tokens),
         choix: ['phrase simple', 'phrase complexe'], bonne,
-        explication: iv.length > 1
-          ? `Il y a ${iv.length} verbes conjugués (${verbes}) : c'est une phrase complexe.`
-          : `Il n'y a qu'un verbe conjugué (${verbes}) : c'est une phrase simple.`,
-        solution: `${surligner(e, iv, u)} → ${bonne}` }
+        explication: () => iv.length > 1
+          ? tr({ fr: `Il y a ${iv.length} verbes conjugués (${verbes}) : c'est une phrase complexe.`,
+            br: `${iv.length} verb displeget a zo (${verbes}) : ur frazenn gemplezh eo.` })
+          : tr({ fr: `Il n'y a qu'un verbe conjugué (${verbes}) : c'est une phrase simple.`,
+            br: `N'eus nemet ur verb displeget (${verbes}) : ur frazenn eeun eo.` }),
+        solution: () => `${surligner(e, iv, u)} → ${tc(bonne)}` }
     }
     case 'negation': {
       return { ...q, mode: 'choix', colonne: true,
-        html: e.aff + (e.mot !== 'pas' ? `<div class="sens">avec « ne … ${e.mot} »</div>` : ''),
+        html: e.aff + (e.mot !== 'pas' ? `<div class="sens">${tr({ fr: 'avec', br: 'gant' })} « ne … ${e.mot} »</div>` : ''),
         lecture: e.aff, choix: melanger([e.neg, ...e.faux]), bonne: e.neg,
-        explication: `On encadre le verbe avec « ${e.elide ? 'n\'' : 'ne'} … ${e.mot} »${e.elide ? ' (n\' devant une voyelle)' : ''}.`,
+        explication: () => tr({
+          fr: `On encadre le verbe avec « ${ne_(e.elide)} … ${e.mot} »${e.elide ? ' (n\' devant une voyelle)' : ''}.`,
+          br: `Lakaat a reer « ${ne_(e.elide)} … ${e.mot} » en-dro d'ar verb${e.elide ? ' (n\' dirak ur vogalenn)' : ''}.` }),
         solution: `${e.aff} → ${b(e.neg)}` }
     }
     case 'negReconnaitre': {
@@ -1067,10 +1213,12 @@ function construireQuestion(type, e, niveau = 'ce1') {
         : ['affirmative', 'ne … pas', 'ne … plus', 'ne … jamais', 'ne … rien']
       const bonne = !e.neg ? 'affirmative' : ce1 ? 'négative' : `ne … ${n.mot}`
       return { ...q, mode: 'choix', html: phrase, lecture: phrase, choix, bonne,
-        explication: e.neg
-          ? `Le verbe est encadré par « ${n.elide ? 'n\'' : 'ne'} … ${n.mot} » : la phrase est négative.`
-          : `Il n'y a pas de « ne … » autour du verbe : la phrase est affirmative.`,
-        solution: `${phrase} → ${bonne}` }
+        explication: () => e.neg
+          ? tr({ fr: `Le verbe est encadré par « ${ne_(n.elide)} … ${n.mot} » : la phrase est négative.`,
+            br: `Emañ ar verb etre « ${ne_(n.elide)} … ${n.mot} » : nac'hus eo ar frazenn.` })
+          : tr({ fr: `Il n'y a pas de « ne … » autour du verbe : la phrase est affirmative.`,
+            br: `N'eus ket a « ne … » en-dro d'ar verb : kadarnaus eo ar frazenn.` }),
+        solution: () => `${phrase} → ${tc(bonne)}` }
     }
     case 'verbe': case 'nom': case 'det': case 'adj': case 'sujet': case 'cplt': case 'gnNoyau': {
       const pred = type === 'sujet' ? (t => t.sujet)
@@ -1080,19 +1228,35 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const cibles = indicesOu(e.tokens, pred)
       let explication
       if (type === 'sujet') {
-        explication = `Le sujet est « ${texteSujet(e)} ». ${phraseCestQui(e)}`
-        if (sujetInverse(e)) explication += ' Ici, le sujet est placé après le verbe.'
+        explication = () => {
+          let x = tr({ fr: `Le sujet est « ${texteSujet(e)} ». ${phraseCestQui(e)}`,
+            br: `Ar sujed eo « ${texteSujet(e)} ». « ${phraseCestQui(e)} »` })
+          if (sujetInverse(e)) x += tr({ fr: ' Ici, le sujet est placé après le verbe.', br: ' Amañ emañ ar sujed goude ar verb.' })
+          return x
+        }
       } else if (type === 'cplt') {
-        explication = `« ${texteGroupe(e, pred)} » est un complément de phrase : il indique ${e.cp === 'o' ? 'où' : 'quand'}. On peut le déplacer ou le supprimer.`
+        explication = () => tr({
+          fr: `« ${texteGroupe(e, pred)} » est un complément de phrase : il indique ${e.cp === 'o' ? 'où' : 'quand'}. On peut le déplacer ou le supprimer.`,
+          br: `« ${texteGroupe(e, pred)} » a zo ur glokaenn frazenn : diskouez a ra ${e.cp === 'o' ? 'pelec\'h' : 'pegoulz'}. Gallout a reer he dilec'hiañ pe he lemel.` })
       } else if (type === 'gnNoyau') {
-        explication = `Le nom principal est « ${e.tokens[cibles[0]].m} » : les autres mots s'accordent avec lui.`
+        explication = () => tr({
+          fr: `Le nom principal est « ${e.tokens[cibles[0]].m} » : les autres mots s'accordent avec lui.`,
+          br: `An anv pennañ eo « ${e.tokens[cibles[0]].m} » : ar gerioù all a genglot gantañ.` })
       } else if (type === 'verbe') {
         const vs = cibles.map(i => `« ${e.tokens[i].m} »`).join(', ')
-        explication = cibles.length > 1 ? `Les verbes conjugués sont ${vs}.` : `Le verbe est ${vs}.`
+        explication = () => cibles.length > 1
+          ? tr({ fr: `Les verbes conjugués sont ${vs}.`, br: `Ar verboù displeget eo ${vs}.` })
+          : tr({ fr: `Le verbe est ${vs}.`, br: `Ar verb eo ${vs}.` })
       } else {
         const mots = cibles.map(i => `« ${e.tokens[i].m} »`).join(', ')
-        const lib = { nom: 'Nom', det: 'Déterminant', adj: 'Adjectif' }[type]
-        explication = `${lib}${cibles.length > 1 ? 's' : ''} : ${mots}.`
+        const pl = cibles.length > 1
+        explication = () => {
+          const lib = tr({
+            fr: { nom: 'Nom', det: 'Déterminant', adj: 'Adjectif' }[type] + (pl ? 's' : ''),
+            br: { nom: pl ? 'Anvioù' : 'Anv', det: pl ? 'Gerioù-mont' : 'Ger-mont', adj: pl ? 'Anvioù-gwan' : 'Anv-gwan' }[type],
+          })
+          return `${lib} : ${mots}.`
+        }
       }
       const solution = (type === 'sujet' || type === 'cplt') ? surlignerGroupe(e, pred)
         : surligner(e, cibles, type === 'verbe' ? u : b)
@@ -1103,8 +1267,10 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const groupe = texteGroupe(e, t => t.cp)
       return { ...q, mode: 'choix', html: surlignerGroupe(e, t => t.cp), lecture: texteTokens(e.tokens),
         choix: ['Où ?', 'Quand ?'], bonne,
-        explication: `« ${groupe} » indique ${e.cp === 'o' ? 'le lieu (où ?)' : 'le moment (quand ?)'}.`,
-        solution: `${surlignerGroupe(e, t => t.cp)} → ${bonne}` }
+        explication: () => tr({
+          fr: `« ${groupe} » indique ${e.cp === 'o' ? 'le lieu (où ?)' : 'le moment (quand ?)'}.`,
+          br: `« ${groupe} » a ziskouez ${e.cp === 'o' ? 'al lec\'h (pelec\'h ?)' : 'ar mare (pegoulz ?)'}.` }),
+        solution: () => `${surlignerGroupe(e, t => t.cp)} → ${tc(bonne)}` }
     }
     case 'cpltNature': {
       const pred = e.g === 'cp' ? (t => t.cp) : (t => t.cv)
@@ -1113,49 +1279,57 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const bonne = e.g === 'cp' ? 'complément de phrase' : 'complément du verbe'
       return { ...q, mode: 'choix', html: surlignerGroupe(e.p, pred), lecture: texteTokens(e.p.tokens),
         choix: ['complément du verbe', 'complément de phrase'], bonne,
-        explication: e.g === 'cp'
-          ? `On peut déplacer ou supprimer « ${groupe} » : c'est un complément de phrase.`
-          : `« ${groupe} » complète le verbe « ${verbe} » : on ne peut pas le déplacer en début de phrase. C'est un complément du verbe.`,
-        solution: `${surlignerGroupe(e.p, pred)} → ${bonne}` }
+        explication: () => e.g === 'cp'
+          ? tr({ fr: `On peut déplacer ou supprimer « ${groupe} » : c'est un complément de phrase.`,
+            br: `Gallout a reer dilec'hiañ pe lemel « ${groupe} » : ur glokaenn frazenn eo.` })
+          : tr({ fr: `« ${groupe} » complète le verbe « ${verbe} » : on ne peut pas le déplacer en début de phrase. C'est un complément du verbe.`,
+            br: `« ${groupe} » a glok ar verb « ${verbe} » : ne c'haller ket he dilec'hiañ e penn kentañ ar frazenn. Ur glokaenn verb eo.` }),
+        solution: () => `${surlignerGroupe(e.p, pred)} → ${tc(bonne)}` }
     }
     case 'nature': {
       const t = e.p.tokens[e.i]
       const bonne = NOM_NATURE[t.n]
-      const precision = t.propre ? ' (nom propre)' : t.n === 'verbe' && niveau !== 'ce1' ? ' conjugué' : ''
+      const precision = () => t.propre ? tr({ fr: ' (nom propre)', br: ' (anv divoutin)' }) // br: à relire (nom propre)
+        : t.n === 'verbe' && niveau !== 'ce1' ? tr({ fr: ' conjugué', br: ' displeget' }) : ''
       return { ...q, mode: 'choix', html: surligner(e.p, [e.i]), lecture: texteTokens(e.p.tokens),
         choix: ['nom', 'verbe', 'déterminant', 'adjectif', 'pronom'], bonne,
-        explication: `« ${t.m} » est un ${bonne}${precision}.`,
-        solution: `${surligner(e.p, [e.i])} → ${bonne}` }
+        explication: () => tr({ fr: `« ${t.m} » est un ${bonne}${precision()}.`,
+          br: `Rummad ar ger « ${t.m} » : ${tc(bonne)}${precision()}.` }),
+        solution: () => `${surligner(e.p, [e.i])} → ${tc(bonne)}` }
     }
     case 'pronom': {
       const bonne = pronomDe(e.gn)
       const nouvelle = phraseAvecPronom(e)
       return { ...q, mode: 'choix', html: surlignerSujet(e), lecture: texteTokens(e.tokens),
         choix: ['il', 'elle', 'ils', 'elles'], bonne,
-        explication: `« ${texteSujet(e)} » est ${LIB_GN[e.gn]} → ${nouvelle}`,
+        explication: () => tr({ fr: `« ${texteSujet(e)} » est ${libGN(e.gn)} → ${nouvelle}`,
+          br: `« ${texteSujet(e)} » a zo ${libGN(e.gn)} → « ${nouvelle} »` }),
         solution: nouvelle }
     }
     case 'genre': {
       const [nom, g] = e
       const bonne = g === 'm' ? 'un' : 'une'
+      const lib = () => tc(g === 'm' ? 'masculin' : 'féminin')
       return { ...q, mode: 'choix', html: `<span class="trou">___</span> ${nom}`, lecture: null,
         choix: ['un', 'une'], bonne,
-        explication: `On dit « ${bonne} ${nom} » : ${nom} est ${g === 'm' ? 'masculin' : 'féminin'}.`,
-        solution: `${b(bonne)} ${nom} (${g === 'm' ? 'masculin' : 'féminin'})` }
+        explication: () => tr({ fr: `On dit « ${bonne} ${nom} » : ${nom} est ${lib()}.`,
+          br: `Lavaret a reer « ${bonne} ${nom} » : « ${nom} » a zo ${lib()}.` }),
+        solution: () => `${b(bonne)} ${nom} (${lib()})` }
     }
     case 'nombre': {
       const bonne = e.n === 's' ? 'singulier' : 'pluriel'
       const det = e.gn.split(' ')[0]
       return { ...q, mode: 'choix', html: e.gn, lecture: e.gn,
         choix: ['singulier', 'pluriel'], bonne,
-        explication: `« ${det} » montre que c'est au ${bonne}.`,
-        solution: `${e.gn} → ${bonne}` }
+        explication: () => tr({ fr: `« ${det} » montre que c'est ${nombreDe(e.n)}.`,
+          br: `« ${det} » a ziskouez emañ ${nombreDe(e.n)}.` }),
+        solution: () => `${e.gn} → ${tc(bonne)}` }
     }
     case 'pluriel': {
       const [s, pl, regle] = e
       return { ...q, mode: 'saisie', html: `${s} → <span class="trou">…</span>`, lecture: null,
         attendu: pl,
-        explication: regle ? REGLES_PLURIEL[regle] : 'Au pluriel, le déterminant change (le, la → les ; un, une → des…) et on ajoute un -s à la fin des noms et des adjectifs.',
+        explication: regleDe(regle || 'defaut'),
         solution: `${s} → ${b(pl)}` }
     }
     case 'accordGN': {
@@ -1164,7 +1338,8 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const choix = [...new Set(e.formes)]
       return { ...q, mode: 'choix', html: `${gn.replace('___', '<span class="trou">___</span>')} <em>(${adj})</em>`,
         lecture: null, choix, bonne,
-        explication: `« ${nom} » est ${LIB_GN[g]} → ${bonne}.`,
+        explication: () => tr({ fr: `« ${nom} » est ${libGN(g)} → ${bonne}.`,
+          br: `« ${nom} » a zo ${libGN(g)} → ${bonne}.` }),
         solution: gn.replace('___', b(bonne)) }
     }
     case 'accordSV': {
@@ -1172,7 +1347,8 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const bonne = n === 's' ? fs : fp
       return { ...q, mode: 'choix', html: `${phrase.replace('___', '<span class="trou">___</span>')} <em>(${inf})</em>`,
         lecture: null, choix: [fs, fp], bonne,
-        explication: `Le verbe s'accorde avec son sujet « ${suj} », qui est au ${n === 's' ? 'singulier' : 'pluriel'} → ${bonne}.`,
+        explication: () => tr({ fr: `Le verbe s'accorde avec son sujet « ${suj} », qui est ${nombreDe(n)} → ${bonne}.`,
+          br: `Ar verb a genglot gant e sujed « ${suj} », a zo ${nombreDe(n)} → ${bonne}.` }),
         solution: phrase.replace('___', b(bonne)) }
     }
   }
@@ -1197,35 +1373,73 @@ function genererQuestions(niveau, types, nb) {
 
 // ── Fiche imprimable : rendu d'une question en HTML papier
 const CONSIGNES_FICHE = {
-  ordre:       'Remets les mots dans l\'ordre et écris la phrase.',
-  phrase:      'Coche la bonne case : est-ce une phrase ?',
-  majuscule:   'Recopie la phrase avec une majuscule et un point.',
-  ponctuation: 'Ajoute le bon signe à la fin : . ? ou !',
-  complexe:    'Souligne les verbes conjugués, puis coche : phrase simple ou complexe ?',
-  negation:    'Écris la phrase à la forme négative.',
-  negReconnaitre: 'Coche : la phrase est-elle affirmative ou négative ?',
-  verbe:       'Souligne le verbe.',
-  nom:         'Entoure tous les noms.',
-  det:         'Entoure tous les déterminants.',
-  adj:         'Entoure tous les adjectifs.',
-  nature:      'Écris la nature du mot en gras : nom, verbe, déterminant, adjectif ou pronom.',
-  gnNoyau:     'Souligne le nom principal du groupe nominal.',
-  sujet:       'Entoure le groupe sujet.',
-  pronom:      'Récris la phrase en remplaçant le sujet souligné par il, elle, ils ou elles.',
-  cplt:        'Entoure le complément de phrase.',
-  cpltQ:       'Le complément souligné indique-t-il où ou quand ? Coche.',
-  cpltNature:  'Le groupe souligné est-il un complément du verbe (V) ou un complément de phrase (P) ?',
-  genre:       'Écris un ou une.',
-  nombre:      'Coche : singulier ou pluriel ?',
-  pluriel:     'Écris au pluriel.',
-  accordGN:    'Accorde l\'adjectif entre parenthèses.',
-  accordSV:    'Écris le verbe au présent.',
+  fr: {
+    ordre:       'Remets les mots dans l\'ordre et écris la phrase.',
+    phrase:      'Coche la bonne case : est-ce une phrase ?',
+    majuscule:   'Recopie la phrase avec une majuscule et un point.',
+    ponctuation: 'Ajoute le bon signe à la fin : . ? ou !',
+    complexe:    'Souligne les verbes conjugués, puis coche : phrase simple ou complexe ?',
+    negation:    'Écris la phrase à la forme négative.',
+    negReconnaitre: 'Coche : la phrase est-elle affirmative ou négative ?',
+    verbe:       'Souligne le verbe.',
+    nom:         'Entoure tous les noms.',
+    det:         'Entoure tous les déterminants.',
+    adj:         'Entoure tous les adjectifs.',
+    nature:      'Écris la nature du mot en gras : nom, verbe, déterminant, adjectif ou pronom.',
+    gnNoyau:     'Souligne le nom principal du groupe nominal.',
+    sujet:       'Entoure le groupe sujet.',
+    pronom:      'Récris la phrase en remplaçant le sujet souligné par il, elle, ils ou elles.',
+    cplt:        'Entoure le complément de phrase.',
+    cpltQ:       'Le complément souligné indique-t-il où ou quand ? Coche.',
+    cpltNature:  'Le groupe souligné est-il un complément du verbe (V) ou un complément de phrase (P) ?',
+    genre:       'Écris un ou une.',
+    nombre:      'Coche : singulier ou pluriel ?',
+    pluriel:     'Écris au pluriel.',
+    accordGN:    'Accorde l\'adjectif entre parenthèses.',
+    accordSV:    'Écris le verbe au présent.',
+  },
+  // br: à relire (cocher = lakaat ur groaz, entourer = lakaat ur c'helc'h en-dro, souligner = islinennañ)
+  br: {
+    ordre:       'Lak ar gerioù en urzh ha skriv ar frazenn.',
+    phrase:      'Lak ur groaz er voest vat : ur frazenn eo ?',
+    majuscule:   'Adskriv ar frazenn gant ur bennlizherenn hag ur poent.',
+    ponctuation: 'Ouzhpenn an arouez vat en dibenn : . ? pe !',
+    complexe:    'Islinenn ar verboù displeget, ha lak ur groaz : frazenn eeun pe gemplezh ?',
+    negation:    'Skriv ar frazenn er stumm nac\'hus.',
+    negReconnaitre: 'Lak ur groaz : kadarnaus pe nac\'hus eo ar frazenn ?',
+    verbe:       'Islinenn ar verb.',
+    nom:         'Lak ur c\'helc\'h en-dro d\'an holl anvioù.',
+    det:         'Lak ur c\'helc\'h en-dro d\'an holl c\'herioù-mont.',
+    adj:         'Lak ur c\'helc\'h en-dro d\'an holl anvioù-gwan.',
+    nature:      'Skriv rummad ar ger e tev : anv, verb, ger-mont, anv-gwan pe raganv.',
+    gnNoyau:     'Islinenn anv pennañ ar strollad anv.',
+    sujet:       'Lak ur c\'helc\'h en-dro d\'ar strollad sujed.',
+    pronom:      'Adskriv ar frazenn en ur lakaat il, elle, ils pe elles e plas ar sujed islinennet.',
+    cplt:        'Lak ur c\'helc\'h en-dro da glokaenn ar frazenn.',
+    cpltQ:       'Diskouez a ra ar glokaenn islinennet pelec\'h pe pegoulz ? Lak ur groaz.',
+    cpltNature:  'Klokaenn ar verb (V) pe klokaenn ar frazenn (F) eo ar strollad islinennet ?',
+    genre:       'Skriv un pe une.',
+    nombre:      'Lak ur groaz : unander pe liester ?',
+    pluriel:     'Skriv el liester.',
+    accordGN:    'Kenglot an anv-gwan etre krommelloù.',
+    accordSV:    'Skriv ar verb en amzer-vremañ.',
+  },
 }
 const CONSIGNES_FICHE_NIVEAU = {
   ce2: {
-    verbe: 'Souligne tous les verbes conjugués.',
-    negReconnaitre: 'Écris A si la phrase est affirmative, sinon écris la négation (ne … pas, plus, jamais, rien).',
+    fr: {
+      verbe: 'Souligne tous les verbes conjugués.',
+      negReconnaitre: 'Écris A si la phrase est affirmative, sinon écris la négation (ne … pas, plus, jamais, rien).',
+    },
+    br: {
+      verbe: 'Islinenn an holl verboù displeget.',
+      negReconnaitre: 'Skriv K ma\'z eo kadarnaus ar frazenn, anez skriv an nac\'hadur (ne … pas, plus, jamais, rien).',
+    },
   },
+}
+const consigneFiche = (type, niveau) => {
+  const l = langue.value
+  return CONSIGNES_FICHE_NIVEAU[niveau]?.[l]?.[type] || CONSIGNES_FICHE[l]?.[type] || CONSIGNES_FICHE.fr[type]
 }
 
 const LIGNE = '<span class="ligne"></span>'
@@ -1237,7 +1451,7 @@ function questionFiche(q) {
     case 'ordre':
       return `<div class="etiqs">${q.etiquettes.map(e => `<span class="etiq">${e}</span>`).join('')} <span class="etiq">${q.fin}</span></div><div class="lignebloc">${LIGNE}</div>`
     case 'phrase':
-      return `<div>${q.html}</div><div class="cases">${CASE} c'est une phrase &nbsp;&nbsp; ${CASE} ce n'est pas une phrase</div>`
+      return `<div>${q.html}</div><div class="cases">${CASE} ${tr({ fr: 'c\'est une phrase', br: 'ur frazenn eo' })} &nbsp;&nbsp; ${CASE} ${tr({ fr: 'ce n\'est pas une phrase', br: 'n\'eo ket ur frazenn' })}</div>`
     case 'majuscule': {
       const brut = minuscule(q.bonne).slice(0, -1)
       return `<div>${brut}</div><div class="lignebloc">${LIGNE}</div>`
@@ -1245,12 +1459,12 @@ function questionFiche(q) {
     case 'ponctuation':
       return `<div>${q.html.replace('<span class="trou">…</span>', CASE)}</div>`
     case 'complexe':
-      return `<div class="grand">${q.html}</div><div class="cases">${CASE} phrase simple &nbsp;&nbsp; ${CASE} phrase complexe</div>`
+      return `<div class="grand">${q.html}</div><div class="cases">${CASE} ${tc('phrase simple')} &nbsp;&nbsp; ${CASE} ${tc('phrase complexe')}</div>`
     case 'negation':
       return `<div>${q.html.replace(/<div class="sens">(.*)<\/div>/, ' <em>($1)</em>')}</div><div class="lignebloc">${LIGNE}</div>`
     case 'negReconnaitre':
       return q.choix.length === 2
-        ? `<div>${q.html}</div><div class="cases">${CASE} affirmative &nbsp;&nbsp; ${CASE} négative</div>`
+        ? `<div>${q.html}</div><div class="cases">${CASE} ${tc('affirmative')} &nbsp;&nbsp; ${CASE} ${tc('négative')}</div>`
         : `<div>${q.html} &nbsp;→ <span class="ligne moyenne"></span></div>`
     case 'verbe': case 'nom': case 'det': case 'adj': case 'sujet': case 'cplt': case 'gnNoyau':
       return `<div class="grand">${tokTxt}</div>`
@@ -1259,13 +1473,13 @@ function questionFiche(q) {
     case 'pronom':
       return `<div>${q.html}</div><div class="lignebloc">${LIGNE}</div>`
     case 'cpltQ':
-      return `<div>${q.html} &nbsp;&nbsp; ${CASE} où ? &nbsp; ${CASE} quand ?</div>`
+      return `<div>${q.html} &nbsp;&nbsp; ${CASE} ${tc('Où ?').toLowerCase()} &nbsp; ${CASE} ${tc('Quand ?').toLowerCase()}</div>`
     case 'cpltNature':
-      return `<div>${q.html} &nbsp;&nbsp; ${CASE} V &nbsp; ${CASE} P</div>`
+      return `<div>${q.html} &nbsp;&nbsp; ${CASE} V &nbsp; ${CASE} ${tr({ fr: 'P', br: 'F' })}</div>`
     case 'genre':
       return `<div>${q.html.replace('<span class="trou">___</span>', '<span class="ligne courte"></span>')}</div>`
     case 'nombre':
-      return `<div>${q.html} &nbsp;&nbsp; ${CASE} singulier &nbsp; ${CASE} pluriel</div>`
+      return `<div>${q.html} &nbsp;&nbsp; ${CASE} ${tc('singulier')} &nbsp; ${CASE} ${tc('pluriel')}</div>`
     case 'pluriel':
       return `<div>${q.html.replace('<span class="trou">…</span>', LIGNE)}</div>`
     case 'accordGN': case 'accordSV':
@@ -1280,13 +1494,13 @@ function htmlFiche(niveau, types, nb) {
   const parType = ordre.map(t => ({ t, qs: qs.filter(q => q.type === t) }))
   let num = 0
   const corps = parType.map(g => `
-    <h2>${CONSIGNES_FICHE_NIVEAU[niveau]?.[g.t] || CONSIGNES_FICHE[g.t]}</h2>
+    <h2>${consigneFiche(g.t, niveau)}</h2>
     ${g.qs.map(q => { num++; return `<div class="q"><span class="num">${num}.</span><div class="contenu">${questionFiche(q)}</div></div>` }).join('')}
   `).join('')
   num = 0
-  const corrige = parType.map(g => g.qs.map(q => { num++; return `<div class="corr"><span class="num">${num}.</span> ${q.solution}</div>` }).join('')).join('')
-  return `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Grammaire — ${niveau.toUpperCase()}</title>
+  const corrige = parType.map(g => g.qs.map(q => { num++; return `<div class="corr"><span class="num">${num}.</span> ${val(q.solution)}</div>` }).join('')).join('')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${niveau.toUpperCase()}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -1308,10 +1522,10 @@ function htmlFiche(niveau, types, nb) {
       u { text-decoration-thickness: 2px; }
       em { color: #555; }
     </style></head><body>
-    <h1>Grammaire — ${niveau.toUpperCase()}</h1>
-    <p class="entete">Nom : ________________________________ &nbsp; Date : ______________</p>
+    <h1>${t('titre')} — ${niveau.toUpperCase()}</h1>
+    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${corps}
-    <div class="corrige"><h1>Corrigé</h1>${corrige}</div>
+    <div class="corrige"><h1>${t('corrige')}</h1>${corrige}</div>
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 }
@@ -1360,7 +1574,7 @@ const idx = ref(0)
 const bonnes = ref(0)
 const mauvaises = ref(0)
 const repondu = ref(false)
-const feedbackHtml = ref('')
+const bravoIdx = ref(0)
 const feedbackCls = ref('')
 const saisie = ref('')
 const inputCls = ref('')
@@ -1372,7 +1586,7 @@ const inputEl = ref(null)
 const question = computed(() => questions.value[idx.value])
 
 function reinitQuestion() {
-  repondu.value = false; feedbackHtml.value = ''; feedbackCls.value = ''
+  repondu.value = false; feedbackCls.value = ''
   saisie.value = ''; inputCls.value = ''; reponseDonnee.value = ''
   selection.value = []; placees.value = []
   nextTick(() => inputEl.value?.focus())
@@ -1460,30 +1674,39 @@ function validerSaisie() {
   enregistrer(normaliser(saisie.value) === normaliser(question.value.attendu), saisie.value.trim())
 }
 
-const BRAVO = ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟']
-
 function enregistrer(ok, donne) {
   const q = question.value
   q._resultat = ok
   q._donne = donne
   repondu.value = true
+  bravoIdx.value = aleatoire(0, 3)
   if (ok) {
     bonnes.value++
-    feedbackHtml.value = BRAVO[aleatoire(0, BRAVO.length - 1)] + (q.explication ? `<div class="fb-expl">${q.explication}</div>` : '')
     feedbackCls.value = 'ok'
     inputCls.value = 'ok'
   } else {
     mauvaises.value++
-    let txt = '❌ '
-    if (q.mode === 'ordre') txt += `La bonne phrase est : « ${q.solution} »`
-    else if (q.mode === 'saisie') txt += `La bonne réponse est « ${q.attendu} »`
-    else if (q.mode === 'choix') txt += `La bonne réponse est « ${q.bonne} »`
-    else txt += 'Pas tout à fait…'
-    feedbackHtml.value = txt + (q.explication ? `<div class="fb-expl">${q.explication}</div>` : '')
     feedbackCls.value = 'erreur'
     inputCls.value = 'erreur'
   }
 }
+
+// Message de retour calculé à l'affichage (suit la langue)
+const feedbackHtml = computed(() => {
+  const q = question.value
+  if (!repondu.value || !q) return ''
+  const expl = q.explication ? `<div class="fb-expl">${val(q.explication)}</div>` : ''
+  if (q._resultat) {
+    const bravo = t('bravo')
+    return bravo[bravoIdx.value % bravo.length] + expl
+  }
+  let txt = '❌ '
+  if (q.mode === 'ordre') txt += t('bonnePhrase', { r: val(q.solution) })
+  else if (q.mode === 'saisie') txt += t('bonneReponseEst', { r: q.attendu })
+  else if (q.mode === 'choix') txt += t('bonneReponseEst', { r: tc(q.bonne) })
+  else txt += t('pasToutAFait')
+  return txt + expl
+})
 
 function suivant() {
   idx.value++
@@ -1496,10 +1719,10 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! 🌟' }
-  if (pct >= 60)   return 'Bien ! Revois les erreurs 💪'
-  return 'Courage ! Relis la correction et recommence 📚'
+  if (pct === 100) { confettis(50); return t('res100') }
+  if (pct >= 80)   { confettis(25); return t('res80') }
+  if (pct >= 60)   return t('res60')
+  return t('res0')
 })
 </script>
 

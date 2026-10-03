@@ -2,10 +2,10 @@
 import { largeurTexte, metriquesPolice, documentImpression, echapper } from '../utils/impression'
 
 export const STYLES = [
-  { id: 'script-maj',  label: 'Script majuscule',   exemple: 'A', attache: false },
-  { id: 'script-min',  label: 'Script minuscule',   exemple: 'a', attache: false },
-  { id: 'attache-maj', label: 'Attaché majuscule',  exemple: 'A', attache: true },
-  { id: 'attache-min', label: 'Attaché minuscule',  exemple: 'a', attache: true },
+  { id: 'script-maj',  label: 'Script majuscule',   br: 'Skript, pennlizherennoù',     exemple: 'A', attache: false },
+  { id: 'script-min',  label: 'Script minuscule',   br: 'Skript, lizherennoù bihan',   exemple: 'a', attache: false },
+  { id: 'attache-maj', label: 'Attaché majuscule',  br: 'A-stag, pennlizherennoù',     exemple: 'A', attache: true },
+  { id: 'attache-min', label: 'Attaché minuscule',  br: 'A-stag, lizherennoù bihan',   exemple: 'a', attache: true },
 ]
 export const CONTENUS = [
   { id: 'lettres', label: '🔤 Lettres et chiffres' },
@@ -204,7 +204,10 @@ export function genererEcriture(config, polices) {
   const g = geometrie(config)
   const groupes = construireGroupes(g, config, polices)
   const pagesLignes = paginer(groupes, g.lignes.length)
-  const titre = config.titre || 'Écriture — ' + STYLES.filter(s => config.styles.includes(s.id)).map(s => s.label.toLowerCase()).join(', ')
+  const br = config.langue === 'br'
+  const titre = config.titre || (br ? 'Skrivañ — ' : 'Écriture — ') +
+    STYLES.filter(s => config.styles.includes(s.id)).map(s => (br ? s.br : s.label).toLowerCase()).join(br ? ' ; ' : ', ')
+  const entete = br ? 'Anv-bihan' : 'Prénom', date = br ? 'Deiziad' : 'Date'
   const pagesHtml = pagesLignes.map(lignes => {
     let texte = ''
     lignes.forEach((l, n) => {
@@ -213,7 +216,7 @@ export function genererEcriture(config, polices) {
         texte += `<text x="${m.x.toFixed(2)}" y="${y}" font-family="'${l.police.famille}'" font-size="${l.police.taille.toFixed(3)}" fill="${m.gris ? '#bdbdbd' : '#1a1a1a'}">${echapper(m.texte)}</text>`
       }
     })
-    return `<div class="entete"><span class="titre">${echapper(titre)}</span><span>Prénom : ____________________ &nbsp; Date : ______________</span></div>
+    return `<div class="entete"><span class="titre">${echapper(titre)}</span><span>${entete} : ____________________ &nbsp; ${date} : ______________</span></div>
 <svg width="210mm" height="297mm" viewBox="0 0 210 297" class="feuille">${svgSeyes(g, config)}${texte}</svg>`
   })
   const html = documentImpression({

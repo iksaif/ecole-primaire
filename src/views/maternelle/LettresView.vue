@@ -1,37 +1,37 @@
 <template>
   <div class="container">
-    <h1>🔡 Les lettres</h1>
+    <h1>🔡 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Exercice</div>
+        <div class="config-section-title">{{ t('exercice') }}</div>
         <div class="mode-cards">
           <button class="mode-card" :class="{ active: config.mode === 'reconnaitre' }" @click="config.mode = 'reconnaitre'">
             <div class="mode-icon">👁️</div>
-            <div class="mode-title">Reconnaître</div>
-            <div class="mode-desc">Trouve la lettre qu'on te montre</div>
+            <div class="mode-title">{{ t('reconnaitre') }}</div>
+            <div class="mode-desc">{{ t('reconnaitreDesc') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'majuscule' }" @click="config.mode = 'majuscule'">
             <div class="mode-icon">🔠</div>
-            <div class="mode-title">Majuscule / Minuscule</div>
-            <div class="mode-desc">Associe la lettre à sa forme</div>
+            <div class="mode-title">{{ t('majMin') }}</div>
+            <div class="mode-desc">{{ t('majMinDesc') }}</div>
           </button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Lettres</div>
+        <div class="config-section-title">{{ t('lettres') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.groupe === 'voyelles' }" @click="config.groupe = 'voyelles'">Voyelles</button>
-          <button class="level-btn" :class="{ active: config.groupe === 'consonnes' }" @click="config.groupe = 'consonnes'">Consonnes</button>
-          <button class="level-btn" :class="{ active: config.groupe === 'toutes' }" @click="config.groupe = 'toutes'">Toutes</button>
+          <button class="level-btn" :class="{ active: config.groupe === 'voyelles' }" @click="config.groupe = 'voyelles'">{{ t('voyelles') }}</button>
+          <button class="level-btn" :class="{ active: config.groupe === 'consonnes' }" @click="config.groupe = 'consonnes'">{{ t('consonnes') }}</button>
+          <button class="level-btn" :class="{ active: config.groupe === 'toutes' }" @click="config.groupe = 'toutes'">{{ t('toutes') }}</button>
         </div>
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
     </div>
@@ -39,7 +39,7 @@
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'">✕ Quitter</button>
+        <button class="btn-quitter" @click="phase = 'config'">{{ t('quitter') }}</button>
         <span>{{ idx + 1 }} / {{ questions.length }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
@@ -51,7 +51,7 @@
         <!-- Reconnaître : montre la lettre, choisir parmi 4 -->
         <template v-if="config.mode === 'reconnaitre'">
           <div class="lettre-display">{{ question.lettre }}</div>
-          <div class="question-label">Quelle lettre est-ce ?</div>
+          <div class="question-label">{{ t('quelleLettre') }}</div>
           <div class="choix-lettres">
             <button v-for="c in question.choix" :key="c"
               class="choix-lettre-btn" :class="reponduClass(c)"
@@ -61,7 +61,7 @@
 
         <!-- Majuscule / Minuscule -->
         <template v-else>
-          <div class="question-label">{{ question.question }}</div>
+          <div class="question-label">{{ t(question.question) }}</div>
           <div class="lettre-display">{{ question.affiche }}</div>
           <div class="choix-lettres">
             <button v-for="c in question.choix" :key="c"
@@ -72,7 +72,7 @@
 
         <div class="feedback" :class="feedbackCls" v-if="repondu">{{ feedbackTxt }}</div>
         <button v-if="repondu" class="btn btn-primary" style="margin-top:1rem;" @click="suivant">
-          {{ idx + 1 < questions.length ? 'Suivant →' : 'Voir les résultats' }}
+          {{ idx + 1 < questions.length ? t('suivant') : t('voirResultats') }}
         </button>
       </div>
     </template>
@@ -82,8 +82,8 @@
       <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
       <div class="result-msg">{{ resultMsg }}</div>
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -92,10 +92,54 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+import { langueRegionale } from '../../data/languesRegionales'
 
 const VOYELLES   = ['A','E','I','O','U','Y']
 const CONSONNES  = ['B','C','D','F','G','H','J','K','L','M','N','P','Q','R','S','T','V','W','X','Z']
 const TOUTES     = [...VOYELLES, ...CONSONNES]
+
+// Breton : lizherenneg peurunvan (ch et c'h sont des lettres ; pas de c, q, x).
+// Majuscule d'un digramme : Ch, C'h (première lettre seulement).
+const majuscule = l => l.charAt(0).toUpperCase() + l.slice(1)
+const ALPHABET_BR  = langueRegionale('br').alphabet.map(majuscule)
+const VOYELLES_BR  = ALPHABET_BR.filter(l => VOYELLES.includes(l))
+const CONSONNES_BR = ALPHABET_BR.filter(l => !VOYELLES.includes(l))
+
+const { t, langue } = useI18n({
+  fr: {
+    titre: 'Les lettres',
+    exercice: 'Exercice',
+    reconnaitre: 'Reconnaître', reconnaitreDesc: "Trouve la lettre qu'on te montre",
+    majMin: 'Majuscule / Minuscule', majMinDesc: 'Associe la lettre à sa forme',
+    lettres: 'Lettres', voyelles: 'Voyelles', consonnes: 'Consonnes', toutes: 'Toutes',
+    quelleLettre: 'Quelle lettre est-ce ?',
+    quelleMinuscule: 'Quelle est la minuscule ?',
+    quelleMajuscule: 'Quelle est la majuscule ?',
+    cetait: "C'était : {r}",
+    changer: '⚙️ Changer',
+    res100: 'Parfait ! Tu connais toutes les lettres ! 🏆',
+    res80: 'Très bien ! 🌟',
+    res60: "Bien ! Continue à t'entraîner 💪",
+    res0: "Courage ! Chante l'alphabet et recommence 🎵",
+  },
+  br: {
+    titre: 'Al lizherennoù',
+    exercice: 'Poelladenn',
+    reconnaitre: 'Anaout', reconnaitreDesc: 'Kav al lizherenn a vez diskouezet dit',
+    majMin: 'Pennlizherenn / Lizherenn vihan', majMinDesc: 'Kav stumm all al lizherenn', // br: à relire
+    lettres: 'Lizherennoù', voyelles: 'Vogalennoù', consonnes: 'Kensonennoù', toutes: 'An holl',
+    quelleLettre: 'Peseurt lizherenn eo ?',
+    quelleMinuscule: 'Pehini eo al lizherenn vihan ?',
+    quelleMajuscule: 'Pehini eo ar bennlizherenn ?',
+    cetait: 'Ar respont mat : {r}',
+    changer: '⚙️ Cheñch',
+    res100: 'Dispar ! Anaout a rez an holl lizherennoù ! 🏆',
+    res80: 'Mat-tre ! 🌟',
+    res60: "Mat ! Kendalc'h da embreger 💪",
+    res0: 'Kalon vat ! Kan al lizherenneg hag adkrog 🎵',
+  },
+})
 
 const config = ref(charger('lettres_config', { mode: 'reconnaitre', groupe: 'toutes' }))
 watch(config, v => sauvegarder('lettres_config', v), { deep: true })
@@ -112,9 +156,10 @@ const reponseDonnee = ref('')
 const question = computed(() => questions.value[idx.value])
 
 function getPool() {
-  if (config.value.groupe === 'voyelles') return VOYELLES
-  if (config.value.groupe === 'consonnes') return CONSONNES
-  return TOUTES
+  const br = langue.value === 'br'
+  if (config.value.groupe === 'voyelles') return br ? VOYELLES_BR : VOYELLES
+  if (config.value.groupe === 'consonnes') return br ? CONSONNES_BR : CONSONNES
+  return br ? ALPHABET_BR : TOUTES
 }
 
 function fausses(pool, exclure, n) {
@@ -137,7 +182,7 @@ function demarrer() {
       const bonne   = versMin ? lettre.toLowerCase() : lettre
       const pool2   = versMin ? pool.map(l => l.toLowerCase()) : pool
       const choix   = melanger([bonne, ...fausses(pool2, bonne, 3)])
-      const question = versMin ? 'Quelle est la minuscule ?' : 'Quelle est la majuscule ?'
+      const question = versMin ? 'quelleMinuscule' : 'quelleMajuscule'
       return { lettre, affiche, choix, bonne, question, _resultat: undefined }
     }
   })
@@ -162,11 +207,11 @@ function valider(c) {
   repondu.value = true
   if (ok) {
     bonnes.value++
-    feedbackTxt.value = ['Bravo ! 🎉', 'Exact ! ⭐', 'Super ! 👏'][Math.floor(Math.random() * 3)]
+    const b = t('bravo'); feedbackTxt.value = b[Math.floor(Math.random() * b.length)]
     feedbackCls.value = 'ok'
   } else {
     mauvaises.value++
-    feedbackTxt.value = `❌ C'était : ${question.value.bonne}`
+    feedbackTxt.value = `❌ ${t('cetait', { r: question.value.bonne })}`
     feedbackCls.value = 'erreur'
   }
 }
@@ -186,10 +231,10 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait ! Tu connais toutes les lettres ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! 🌟' }
-  if (pct >= 60)   return 'Bien ! Continue à t\'entraîner 💪'
-  return 'Courage ! Chante l\'alphabet et recommence 🎵'
+  if (pct === 100) { confettis(50); return t('res100') }
+  if (pct >= 80)   { confettis(25); return t('res80') }
+  if (pct >= 60)   return t('res60')
+  return t('res0')
 })
 </script>
 

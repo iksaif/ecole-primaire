@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <h1>📚 Vocabulaire</h1>
+    <h1>📚 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
 
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in NIVEAUX_DISPO" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -15,20 +15,20 @@
       </div>
 
       <div v-for="g in typesVisibles" :key="g.groupe" class="config-section">
-        <div class="config-section-title">{{ g.groupe }}</div>
+        <div class="config-section-title">{{ t('g_' + g.id) }}</div>
         <div class="theme-grid">
-          <button v-for="t in g.items" :key="t.id"
-            class="theme-btn" :class="{ active: config.types.includes(t.id) }"
-            @click="toggleType(t.id)">
-            <span class="theme-icon">{{ t.icon }}</span>
-            <span class="theme-label">{{ t.label }}</span>
+          <button v-for="ty in g.items" :key="ty.id"
+            class="theme-btn" :class="{ active: config.types.includes(ty.id) }"
+            @click="toggleType(ty.id)">
+            <span class="theme-icon">{{ ty.icon }}</span>
+            <span class="theme-label">{{ t('type_' + ty.id) }}</span>
           </button>
         </div>
       </div>
-      <p class="astuce">Tu peux choisir plusieurs exercices : ils seront mélangés.</p>
+      <p class="astuce">{{ t('astuce') }}</p>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nb === n }"
@@ -38,19 +38,19 @@
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="phase = 'config'">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -61,18 +61,18 @@
 
       <div class="exercise-box">
         <div class="consigne">
-          {{ question.consigne }}
+          {{ v(question.consigne) }}
           <button v-if="question.lecture" class="btn-tts" :class="{ actif: enLecture }"
-            title="Écouter" @click="lire(question.lecture)">🔊</button>
+            :title="t('ecouterTitre')" @click="lire(question.lecture)">🔊</button>
         </div>
 
-        <div v-if="question.html" class="phrase-display" v-html="question.html"></div>
+        <div v-if="question.html" class="phrase-display" v-html="v(question.html)"></div>
 
         <!-- Mode CHOIX -->
         <div v-if="question.mode === 'choix'" class="choix-grid" :class="{ colonne: question.colonne }">
           <button v-for="c in question.choix" :key="c"
             class="choix-btn" :class="choixClass(c)"
-            :disabled="repondu" @click="validerChoix(c)">{{ c }}</button>
+            :disabled="repondu" @click="validerChoix(c)">{{ libelleChoix(question, c) }}</button>
         </div>
 
         <!-- Mode ORDRE (ranger les mots) -->
@@ -82,7 +82,7 @@
               <span v-if="k > 0" class="ordre-sep">→</span>
               <button class="etiquette placee" :disabled="repondu" @click="retirerEtiquette(k)">{{ question.etiquettes[e] }}</button>
             </template>
-            <span v-if="placees.length === 0" class="ordre-vide">Clique sur les mots dans l'ordre alphabétique…</span>
+            <span v-if="placees.length === 0" class="ordre-vide">{{ t('cliqueOrdre') }}</span>
           </div>
           <div class="etiquettes-reserve">
             <button v-for="(e, k) in question.etiquettes" :key="'r' + k" class="etiquette"
@@ -90,8 +90,8 @@
               :disabled="repondu || placees.includes(k)" @click="placerEtiquette(k)">{{ e }}</button>
           </div>
           <div v-if="!repondu" style="text-align:center;margin-top:1rem;">
-            <button class="btn btn-ghost" style="margin-right:.5rem;" :disabled="placees.length === 0" @click="placees = []">↺ Effacer</button>
-            <button class="btn btn-primary" :disabled="placees.length < question.etiquettes.length" @click="validerOrdre">Valider ✔</button>
+            <button class="btn btn-ghost" style="margin-right:.5rem;" :disabled="placees.length === 0" @click="placees = []">{{ t('effacer') }}</button>
+            <button class="btn btn-primary" :disabled="placees.length < question.etiquettes.length" @click="validerOrdre">{{ t('valider') }}</button>
           </div>
         </template>
 
@@ -99,7 +99,7 @@
 
         <div v-if="repondu" style="text-align:center;">
           <button class="btn btn-primary" style="margin-top:1rem;" @click="suivant">
-            {{ idx + 1 < questions.length ? 'Suivant →' : 'Voir les résultats' }}
+            {{ idx + 1 < questions.length ? t('suivant') : t('voirResultats') }}
           </button>
         </div>
       </div>
@@ -110,24 +110,24 @@
       <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
       <div class="result-msg">{{ resultMsg }}</div>
 
-      <div class="config-section-title" style="margin-bottom:.5rem;text-align:left;">Correction</div>
+      <div class="config-section-title" style="margin-bottom:.5rem;text-align:left;">{{ t('correction') }}</div>
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Correction</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('thQuestion') }}</th><th>{{ t('correction') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(q, i) in questions" :key="i" :class="q._resultat ? 'ok' : 'erreur'">
             <td>
-              <div class="corr-consigne">{{ q.consigne }}</div>
-              <div v-if="!q._resultat && q._donne" class="corr-donne">Ta réponse : {{ q._donne }}</div>
+              <div class="corr-consigne">{{ v(q.consigne) }}</div>
+              <div v-if="!q._resultat && q._donne" class="corr-donne">{{ t('taReponse') }} : {{ libelleChoix(q, q._donne) }}</div>
             </td>
-            <td v-html="q.solution"></td>
+            <td v-html="v(q.solution)"></td>
             <td>{{ q._resultat ? '✅' : '❌' }}</td>
           </tr>
         </tbody>
       </table>
 
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -137,8 +137,199 @@
 import { ref, computed, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
+import { useI18n } from '../../i18n'
 
 const { enLecture, lire } = useTTS()
+
+// Interface traduite ; le contenu étudié (mots, phrases, définitions, sens) reste en français.
+// br: à relire — termes techniques en breton à faire valider par un brittophone.
+const { t, langue } = useI18n({
+  fr: {
+    titre: 'Vocabulaire',
+    g_dico: 'Ordre alphabétique et dictionnaire',
+    g_sens: 'Le sens des mots',
+    g_construction: 'Construction des mots et catégories',
+    type_alpha: 'Ranger des mots',
+    type_lettre: 'Lettre avant / après',
+    type_dictionnaire: 'Mots-repères',
+    type_definitions: 'Définitions',
+    type_contexte: 'Le sens dans la phrase',
+    type_contraires: 'Contraires',
+    type_synonymes: 'Mots de même sens',
+    type_homonymes: 'Homonymes',
+    type_sensFigure: 'Sens propre / figuré',
+    type_familles: 'Familles de mots (intrus)',
+    type_prefixes: 'Préfixes re-, dé-, in-',
+    type_suffixes: 'Suffixes -eur, -ette, -ment…',
+    type_categorie: 'Mot étiquette',
+    type_intrus: 'Intrus dans une catégorie',
+    astuce: 'Tu peux choisir plusieurs exercices : ils seront mélangés.',
+    ecouterTitre: 'Écouter',
+    cliqueOrdre: "Clique sur les mots dans l'ordre alphabétique…",
+    effacer: '↺ Effacer',
+    suivant: 'Suivant →',
+    correction: 'Correction',
+    thQuestion: 'Question',
+    changer: '⚙️ Changer',
+    // consignes
+    c_alpha: "Range les mots dans l'ordre alphabétique.",
+    c_lettre: 'Quelle lettre vient juste avant ou juste après ?',
+    c_contraires: 'Trouve le contraire.',
+    c_synonymes: 'Trouve le mot qui a le même sens (ou presque).',
+    c_definitions: 'Quel mot correspond à cette définition ?',
+    c_familles: "Trouve l'intrus : le mot qui n'est pas de la même famille.",
+    c_categorie: 'Trouve le mot étiquette qui va avec tous ces mots.',
+    c_intrus: "Trouve l'intrus : le mot qui ne va pas avec les autres.",
+    c_prefixes: 'Quel préfixe faut-il ajouter au début du mot ?',
+    c_dictionnaire: 'Dans le dictionnaire, entre quels mots-repères se trouve ce mot ?',
+    c_contexte: 'Que veut dire le mot en gras dans cette phrase ?',
+    c_homonymes: 'Choisis le mot qui convient.',
+    c_sensFigure: 'Le mot en gras est-il employé au sens propre ou au sens figuré ?',
+    c_sensFigurePhrase: 'Cette phrase est-elle au sens propre ou au sens figuré ?',
+    c_suffixes: 'Quel suffixe faut-il ajouter à la fin du mot ?',
+    // explications et corrections
+    exAlpha3: 'Les deux premières lettres sont les mêmes : on regarde la 3e lettre.',
+    exAlpha2: 'Tous les mots commencent par la même lettre : on regarde la 2e lettre.',
+    exAlpha1: 'On regarde la première lettre de chaque mot.',
+    lettreAvant: 'Quelle lettre vient juste avant {l} ?',
+    lettreApres: 'Quelle lettre vient juste après {l} ?',
+    exLettre: "Dans l'alphabet : {a}, {l}, {c}.",
+    solAvant: 'Avant {l} : {r} ({a} – {l} – {c})',
+    solApres: 'Après {l} : {r} ({a} – {l} – {c})',
+    exContraire: '« {r} » est le contraire de « {m} ».',
+    exSynonyme: '« {r} » est un mot de même sens que « {m} ».',
+    exFamille: "{liste} sont de la famille de « {f} ». « {i} » n'en fait pas partie.",
+    solIntrus: '{liste} — intrus : {i}',
+    exCategorie: 'Ce sont {e}.',
+    exIntrus: '{liste} sont {e}. « {i} » est {un}.',
+    solIntrusCat: '{liste} ({e}) — intrus : {i}',
+    noteIm: ' On écrit « im » devant m, b, p.',
+    exDico: "Dans l'ordre alphabétique : {a} → {m} → {c}.",
+    solDico: '{m} : entre {a} et {c}',
+    exContexte: 'Ici, « {m} » veut dire : {s}.',
+    sensPropre: 'sens propre',
+    sensFigure: 'sens figuré',
+    fbOrdre: '❌ Le bon ordre est : {r}',
+    fbChoix: '❌ La bonne réponse est « {r} »',
+    bravoListe: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'],
+    res80: 'Très bien ! 🌟',
+    res60: 'Bien ! Revois les erreurs 💪',
+    res0: 'Courage ! Relis la correction et recommence 📚',
+    // fiche imprimable
+    f_alpha: "Range les mots dans l'ordre alphabétique.",
+    f_lettre: 'Écris la lettre qui vient juste avant ou juste après.',
+    f_contraires: 'Entoure le contraire du mot en gras.',
+    f_synonymes: 'Entoure le mot qui a le même sens que le mot en gras.',
+    f_definitions: 'Entoure le mot qui correspond à la définition.',
+    f_familles: "Barre l'intrus : le mot qui n'est pas de la même famille.",
+    f_categorie: 'Écris le mot étiquette.',
+    f_intrus: "Barre l'intrus.",
+    f_prefixes: 'Écris le mot avec le bon préfixe : re, dé, in ou im.',
+    f_dictionnaire: 'Entoure les mots-repères entre lesquels on trouve le mot en gras.',
+    f_contexte: 'Entoure le sens du mot en gras dans la phrase.',
+    f_homonymes: 'Complète avec le bon mot.',
+    f_sensFigure: 'Coche : sens propre (P) ou sens figuré (F) ?',
+    f_suffixes: 'Écris le mot avec le bon suffixe : -eur, -ette, -ment, -age ou -ier.',
+    lettreP: 'P',
+    lettreF: 'F',
+  },
+  br: {
+    titre: 'Geriaoueg',
+    g_dico: 'Urzh al lizherenneg ha geriadur',
+    g_sens: 'Ster ar gerioù',
+    g_construction: 'Savadur ar gerioù ha rummadoù', // br: à relire
+    type_alpha: 'Renkañ gerioù',
+    type_lettre: "Lizherenn a-raok / war-lerc'h",
+    type_dictionnaire: 'Gerioù-merk', // br: à relire (mots-repères du dictionnaire)
+    type_definitions: 'Termenadurioù',
+    type_contexte: 'Ar ster er frazenn',
+    type_contraires: 'Gerioù enep',
+    type_synonymes: 'Heñvelsterioù', // br: à relire
+    type_homonymes: 'Kenstummoù', // br: à relire (homonymes)
+    type_sensFigure: 'Ster rik / ster skeudennek', // br: à relire
+    type_familles: 'Familhoù gerioù (ger estren)', // br: à relire (« intrus » = ger estren)
+    type_prefixes: 'Rakgerioù re-, dé-, in-', // br: à relire (préfixe = rakger)
+    type_suffixes: 'Lostgerioù -eur, -ette, -ment…', // br: à relire (suffixe = lostger)
+    type_categorie: 'Ger-tikedenn', // br: à relire (mot étiquette)
+    type_intrus: 'Ger estren en ur rummad',
+    astuce: "Gallout a rez dibab meur a boelladenn : meskañ a vint.",
+    ecouterTitre: 'Selaou',
+    cliqueOrdre: 'Klik war ar gerioù dre urzh al lizherenneg…',
+    effacer: '↺ Diverkañ',
+    suivant: "Da-heul →",
+    correction: 'Reizhadenn',
+    thQuestion: 'Goulenn',
+    changer: '⚙️ Cheñch',
+    c_alpha: 'Renk ar gerioù dre urzh al lizherenneg.',
+    c_lettre: "Peseurt lizherenn a zeu just a-raok pe just war-lerc'h ?",
+    c_contraires: 'Kav ar ger enep.',
+    c_synonymes: 'Kav ar ger en deus ar memes ster (pe dost).',
+    c_definitions: 'Peseurt ger a glot gant an termenadur-mañ ?',
+    c_familles: "Kav ar ger estren : ar ger n'eo ket eus ar memes familh.",
+    c_categorie: "Kav ar ger-tikedenn a ya gant an holl c'herioù-se.",
+    c_intrus: 'Kav ar ger estren : ar ger na ya ket gant ar re all.',
+    c_prefixes: 'Peseurt rakger a rank bezañ ouzhpennet e penn kentañ ar ger ?',
+    c_dictionnaire: 'Er geriadur, etre peseurt gerioù-merk emañ ar ger-mañ ?',
+    c_contexte: 'Petra eo ster ar ger e tev er frazenn-mañ ?', // br: à relire (« e tev » = en gras)
+    c_homonymes: 'Dibab ar ger a zere.',
+    c_sensFigure: 'Hag implijet eo ar ger e tev gant e ster rik pe gant ur ster skeudennek ?',
+    c_sensFigurePhrase: 'Hag emañ ar frazenn-mañ gant ar ster rik pe gant ar ster skeudennek ?',
+    c_suffixes: 'Peseurt lostger a rank bezañ ouzhpennet e dibenn ar ger ?',
+    exAlpha3: "Heñvel eo an div lizherenn gentañ : sellet e vez ouzh an 3de lizherenn.",
+    exAlpha2: "Gant ar memes lizherenn e krog an holl c'herioù : sellet e vez ouzh an eil lizherenn.",
+    exAlpha1: 'Sellet e vez ouzh lizherenn gentañ pep ger.',
+    lettreAvant: 'Peseurt lizherenn a zeu just a-raok {l} ?',
+    lettreApres: "Peseurt lizherenn a zeu just war-lerc'h {l} ?",
+    exLettre: 'El lizherenneg : {a}, {l}, {c}.',
+    solAvant: 'A-raok {l} : {r} ({a} – {l} – {c})',
+    solApres: "War-lerc'h {l} : {r} ({a} – {l} – {c})",
+    exContraire: '« {r} » eo ar ger enep da « {m} ».',
+    exSynonyme: '« {r} » en deus ar memes ster ha « {m} ».',
+    exFamille: "{liste} a zo eus familh « {f} ». N'emañ ket « {i} » er familh-se.",
+    solIntrus: '{liste} — ger estren : {i}',
+    exCategorie: 'Ar gerioù-se a zo « {e} ».',
+    exIntrus: '{liste} a zo « {e} ». « {i} » a zo « {un} ».',
+    solIntrusCat: '{liste} (« {e} ») — ger estren : {i}',
+    noteIm: ' Skrivet e vez « im » a-raok m, b, p.',
+    exDico: 'Dre urzh al lizherenneg : {a} → {m} → {c}.',
+    solDico: '{m} : etre {a} ha {c}',
+    exContexte: 'Amañ, « {m} » a dalvez : {s}.',
+    sensPropre: 'ster rik', // br: à relire
+    sensFigure: 'ster skeudennek', // br: à relire
+    fbOrdre: '❌ An urzh mat eo : {r}',
+    fbChoix: '❌ Ar respont mat eo « {r} »',
+    bravoListe: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
+    res80: 'Mat-tre ! 🌟',
+    res60: 'Mat ! Adwel ar fazioù 💪',
+    res0: "Kalon vat ! Adlenn ar reizhadenn hag adkrog 📚",
+    f_alpha: 'Renk ar gerioù dre urzh al lizherenneg.',
+    f_lettre: "Skriv al lizherenn a zeu just a-raok pe just war-lerc'h.",
+    f_contraires: "Kelc'hia ar ger enep d'ar ger e tev.", // br: à relire (entourer = kelc'hiañ)
+    f_synonymes: "Kelc'hia ar ger en deus ar memes ster hag ar ger e tev.",
+    f_definitions: "Kelc'hia ar ger a glot gant an termenadur.",
+    f_familles: "Barrenn ar ger estren : ar ger n'eo ket eus ar memes familh.", // br: à relire (barrer = barrennañ)
+    f_categorie: 'Skriv ar ger-tikedenn.',
+    f_intrus: 'Barrenn ar ger estren.',
+    f_prefixes: 'Skriv ar ger gant ar rakger mat : re, dé, in pe im.',
+    f_dictionnaire: "Kelc'hia ar gerioù-merk ma kaver ar ger e tev etrezo.",
+    f_contexte: "Kelc'hia ster ar ger e tev er frazenn.",
+    f_homonymes: 'Klok gant ar ger mat.',
+    f_sensFigure: 'Merk : ster rik (R) pe ster skeudennek (S) ?',
+    f_suffixes: 'Skriv ar ger gant al lostger mat : -eur, -ette, -ment, -age pe -ier.',
+    lettreP: 'R',
+    lettreF: 'S',
+  },
+})
+// Champ de texte calculé à la volée (suit la langue) ou chaîne fixe
+const v = x => (typeof x === 'function' ? x() : x)
+// Libellé affiché pour un choix (seuls « sens propre / figuré » sont des mots d'interface)
+function libelleChoix(q, c) {
+  if (q?.type === 'sensFigure') {
+    if (c === 'sens propre') return t('sensPropre')
+    if (c === 'sens figuré') return t('sensFigure')
+  }
+  return c
+}
 
 // ════════════════════════════════════════════════════════════════════
 // ── LOGIQUE PURE (début) — données + génération, testable hors Vue
@@ -146,20 +337,20 @@ const { enLecture, lire } = useTTS()
 
 // Chaque type indique les niveaux où il est proposé
 const TYPES = [
-  { groupe: 'Ordre alphabétique et dictionnaire', items: [
+  { id: 'dico', groupe: 'Ordre alphabétique et dictionnaire', items: [
     { id: 'alpha',        icon: '🔤', label: 'Ranger des mots',           niv: ['ce1', 'ce2'] },
     { id: 'lettre',       icon: '🅰️', label: 'Lettre avant / après',      niv: ['ce1'] },
     { id: 'dictionnaire', icon: '📕', label: 'Mots-repères',              niv: ['ce2'] },
     { id: 'definitions',  icon: '📖', label: 'Définitions',               niv: ['ce1', 'ce2'] },
     { id: 'contexte',     icon: '🔎', label: 'Le sens dans la phrase',    niv: ['ce2'] },
   ]},
-  { groupe: 'Le sens des mots', items: [
+  { id: 'sens', groupe: 'Le sens des mots', items: [
     { id: 'contraires', icon: '↔️', label: 'Contraires',           niv: ['ce1', 'ce2'] },
     { id: 'synonymes',  icon: '🟰', label: 'Mots de même sens',    niv: ['ce1', 'ce2'] },
     { id: 'homonymes',  icon: '👂', label: 'Homonymes',            niv: ['ce2'] },
     { id: 'sensFigure', icon: '🎭', label: 'Sens propre / figuré', niv: ['ce2'] },
   ]},
-  { groupe: 'Construction des mots et catégories', items: [
+  { id: 'construction', groupe: 'Construction des mots et catégories', items: [
     { id: 'familles',  icon: '👨‍👩‍👧', label: 'Familles de mots (intrus)',   niv: ['ce1', 'ce2'] },
     { id: 'prefixes',  icon: '🧩', label: 'Préfixes re-, dé-, in-',        niv: ['ce1', 'ce2'] },
     { id: 'suffixes',  icon: '🔚', label: 'Suffixes -eur, -ette, -ment…',  niv: ['ce2'] },
@@ -538,22 +729,6 @@ function trierAlpha(mots) { return [...mots].sort(collator.compare) }
 function b(s) { return `<strong>${s}</strong>` }
 function aleaDans(t) { return t[aleatoire(0, t.length - 1)] }
 
-const CONSIGNES = {
-  alpha:       'Range les mots dans l\'ordre alphabétique.',
-  lettre:      'Quelle lettre vient juste avant ou juste après ?',
-  contraires:  'Trouve le contraire.',
-  synonymes:   'Trouve le mot qui a le même sens (ou presque).',
-  definitions: 'Quel mot correspond à cette définition ?',
-  familles:    'Trouve l\'intrus : le mot qui n\'est pas de la même famille.',
-  categorie:   'Trouve le mot étiquette qui va avec tous ces mots.',
-  intrus:      'Trouve l\'intrus : le mot qui ne va pas avec les autres.',
-  prefixes:    'Quel préfixe faut-il ajouter au début du mot ?',
-  dictionnaire: 'Dans le dictionnaire, entre quels mots-repères se trouve ce mot ?',
-  contexte:    'Que veut dire le mot en gras dans cette phrase ?',
-  homonymes:   'Choisis le mot qui convient.',
-  sensFigure:  'Le mot en gras est-il employé au sens propre ou au sens figuré ?',
-  suffixes:    'Quel suffixe faut-il ajouter à la fin du mot ?',
-}
 
 // Questions d'ordre alphabétique générées à l'avance (dédoublonnées)
 function genererAlpha(d) {
@@ -637,16 +812,12 @@ function construireReservoirs(niveau) {
 }
 
 function construireQuestion(type, e, d) {
-  const q = { type, consigne: CONSIGNES[type] }
+  const q = { type, consigne: () => t('c_' + type) }
   switch (type) {
     case 'alpha': {
       const attendu = trierAlpha(e.mots)
       return { ...q, mode: 'ordre', etiquettes: e.mots, attendu: attendu.join(' → '),
-        explication: e.memeLettre === 3
-          ? 'Les deux premières lettres sont les mêmes : on regarde la 3e lettre.'
-          : e.memeLettre === 2
-          ? 'Tous les mots commencent par la même lettre : on regarde la 2e lettre.'
-          : 'On regarde la première lettre de chaque mot.',
+        explication: () => t('exAlpha' + (e.memeLettre === 3 ? 3 : e.memeLettre === 2 ? 2 : 1)),
         solution: attendu.join(' → ') }
     }
     case 'lettre': {
@@ -655,10 +826,11 @@ function construireQuestion(type, e, d) {
       const autre = e.sens === 'avant' ? ALPHABET[i + 1] : ALPHABET[i - 1]
       const pool = [ALPHABET[i - 2], ALPHABET[i + 2]].filter(Boolean)
       const choix = melanger([bonne, autre, ...pool])
-      const ph = `Quelle lettre vient juste ${e.sens === 'avant' ? 'avant' : 'après'} ${b(e.l)} ?`
-      return { ...q, mode: 'choix', html: ph, choix, bonne,
-        explication: `Dans l'alphabet : ${ALPHABET[i - 1]}, ${e.l}, ${ALPHABET[i + 1]}.`,
-        solution: `${e.sens === 'avant' ? 'Avant' : 'Après'} ${e.l} : ${b(bonne)} (${ALPHABET[i - 1]} – ${e.l} – ${ALPHABET[i + 1]})` }
+      const p = { l: e.l, a: ALPHABET[i - 1], c: ALPHABET[i + 1], r: b(bonne) }
+      const avant = e.sens === 'avant'
+      return { ...q, mode: 'choix', html: () => t(avant ? 'lettreAvant' : 'lettreApres', { l: b(e.l) }), choix, bonne,
+        explication: () => t('exLettre', p),
+        solution: () => t(avant ? 'solAvant' : 'solApres', p) }
     }
     case 'contraires': case 'synonymes': {
       const paires = type === 'contraires' ? d.contraires : d.synonymes
@@ -666,9 +838,8 @@ function construireQuestion(type, e, d) {
       const mot = e.inv ? m2 : m1
       const bonne = e.inv ? m1 : m2
       const choix = melanger([bonne, ...distracteurs(paires, e.p, 3)])
-      const lien = type === 'contraires' ? 'le contraire de' : 'un mot de même sens que'
       return { ...q, mode: 'choix', html: mot, lecture: mot, choix, bonne,
-        explication: `« ${bonne} » est ${lien} « ${mot} ».`,
+        explication: () => t(type === 'contraires' ? 'exContraire' : 'exSynonyme', { r: bonne, m: mot }),
         solution: `${mot} → ${b(bonne)}` }
     }
     case 'definitions': {
@@ -682,15 +853,15 @@ function construireQuestion(type, e, d) {
     case 'familles': {
       const [fam, intrus] = e
       return { ...q, mode: 'choix', choix: melanger([...fam, intrus]), bonne: intrus,
-        explication: `${fam.join(', ')} sont de la famille de « ${fam[0]} ». « ${intrus} » n'en fait pas partie.`,
-        solution: `${fam.join(', ')} — intrus : ${b(intrus)}` }
+        explication: () => t('exFamille', { liste: fam.join(', '), f: fam[0], i: intrus }),
+        solution: () => t('solIntrus', { liste: fam.join(', '), i: b(intrus) }) }
     }
     case 'categorie': {
       const mots = melanger(e.c.mots).slice(0, 4)
       const autres = melanger(e.cats.filter(c => c !== e.c)).slice(0, 3).map(c => c.etiquette)
       return { ...q, mode: 'choix', html: mots.join(', '), lecture: mots.join(', '),
         choix: melanger([e.c.etiquette, ...autres]), bonne: e.c.etiquette,
-        explication: `Ce sont ${e.c.etiquette}.`,
+        explication: () => t('exCategorie', { e: e.c.etiquette }),
         solution: `${mots.join(', ')} → ${b(e.c.etiquette)}` }
     }
     case 'intrus': {
@@ -698,17 +869,17 @@ function construireQuestion(type, e, d) {
       const autre = aleaDans(e.cats.filter(c => c !== e.c))
       const intrus = aleaDans(autre.mots)
       return { ...q, mode: 'choix', choix: melanger([...mots, intrus]), bonne: intrus,
-        explication: `${mots.join(', ')} sont ${e.c.etiquette}. « ${intrus} » est ${autre.un}.`,
-        solution: `${mots.join(', ')} (${e.c.etiquette}) — intrus : ${b(intrus)}` }
+        explication: () => t('exIntrus', { liste: mots.join(', '), e: e.c.etiquette, i: intrus, un: autre.un }),
+        solution: () => t('solIntrusCat', { liste: mots.join(', '), e: e.c.etiquette, i: b(intrus) }) }
     }
     case 'prefixes': {
       const [base, pre, sens] = e
       const mot = pre + base
-      const noteIm = pre === 'im' ? ' On écrit « im » devant m, b, p.' : ''
+      const noteIm = () => (pre === 'im' ? t('noteIm') : '')
       return { ...q, mode: 'choix',
         html: `<span class="trou">___</span>${base}<div class="sens">= ${sens}</div>`,
         choix: ['re', 'dé', 'in', 'im'], bonne: pre,
-        explication: `${pre} + ${base} = ${mot} : ${sens}.${noteIm}`,
+        explication: () => `${pre} + ${base} = ${mot} : ${sens}.${noteIm()}`,
         solution: `${b(mot)} = ${sens}` }
     }
     case 'suffixes': {
@@ -726,15 +897,15 @@ function construireQuestion(type, e, d) {
       const bonne = page(i)
       return { ...q, mode: 'choix', colonne: true, html: liste[i], lecture: liste[i],
         choix: melanger([bonne, ...autres.map(page)]), bonne,
-        explication: `Dans l'ordre alphabétique : ${liste[i - 1]} → ${b(liste[i])} → ${liste[i + 1]}.`,
-        solution: `${liste[i]} : entre ${b(liste[i - 1])} et ${b(liste[i + 1])}` }
+        explication: () => t('exDico', { a: liste[i - 1], m: b(liste[i]), c: liste[i + 1] }),
+        solution: () => t('solDico', { m: liste[i], a: b(liste[i - 1]), c: b(liste[i + 1]) }) }
     }
     case 'contexte': {
       const [phrase, mot, sens, autres] = e
       const html = phrase.replace(new RegExp(`(^|[^\\p{L}])(${mot})(?![\\p{L}])`, 'u'), `$1${b(mot)}`)
       return { ...q, mode: 'choix', colonne: true, html, lecture: phrase,
         choix: melanger([sens, ...autres]), bonne: sens,
-        explication: `Ici, « ${mot} » veut dire : ${sens}.`,
+        explication: () => t('exContexte', { m: mot, s: sens }),
         solution: `${html} → ${sens}` }
     }
     case 'homonymes': {
@@ -747,9 +918,9 @@ function construireQuestion(type, e, d) {
     case 'sensFigure': {
       const [phrase, sens, expl] = e
       const bonne = sens === 'propre' ? 'sens propre' : 'sens figuré'
-      return { ...q, consigne: 'Cette phrase est-elle au sens propre ou au sens figuré ?', mode: 'choix',
+      return { ...q, consigne: () => t('c_sensFigurePhrase'), mode: 'choix',
         html: phrase, lecture: phrase, choix: ['sens propre', 'sens figuré'], bonne,
-        explication: expl, solution: `${phrase} → ${b(bonne)}. ${expl}` }
+        explication: expl, solution: () => `${phrase} → ${b(libelleChoix(q, bonne))}. ${expl}` }
     }
   }
   return null
@@ -779,22 +950,6 @@ function genererQuestions(niveau, types, nb) {
 }
 
 // ── Fiche imprimable
-const CONSIGNES_FICHE = {
-  alpha:       'Range les mots dans l\'ordre alphabétique.',
-  lettre:      'Écris la lettre qui vient juste avant ou juste après.',
-  contraires:  'Entoure le contraire du mot en gras.',
-  synonymes:   'Entoure le mot qui a le même sens que le mot en gras.',
-  definitions: 'Entoure le mot qui correspond à la définition.',
-  familles:    'Barre l\'intrus : le mot qui n\'est pas de la même famille.',
-  categorie:   'Écris le mot étiquette.',
-  intrus:      'Barre l\'intrus.',
-  prefixes:    'Écris le mot avec le bon préfixe : re, dé, in ou im.',
-  dictionnaire: 'Entoure les mots-repères entre lesquels on trouve le mot en gras.',
-  contexte:    'Entoure le sens du mot en gras dans la phrase.',
-  homonymes:   'Complète avec le bon mot.',
-  sensFigure:  'Coche : sens propre (P) ou sens figuré (F) ?',
-  suffixes:    'Écris le mot avec le bon suffixe : -eur, -ette, -ment, -age ou -ier.',
-}
 
 const LIGNE = '<span class="ligne"></span>'
 
@@ -804,7 +959,7 @@ function questionFiche(q) {
     case 'alpha':
       return `<div>${q.etiquettes.join(' – ')}</div><div class="lignebloc">${LIGNE}</div>`
     case 'lettre':
-      return `<div>${q.html.replace(/ \?$/, '')} : <span class="ligne courte"></span></div>`
+      return `<div>${v(q.html).replace(/ \?$/, '')} : <span class="ligne courte"></span></div>`
     case 'contraires': case 'synonymes':
       return `<div>${b(q.html)} → ${liste(q.choix)}</div>`
     case 'definitions':
@@ -824,7 +979,7 @@ function questionFiche(q) {
     case 'homonymes':
       return `<div>${q.html.replace('<span class="trou">___</span>', '<span class="ligne courte"></span>')} <em>(${q.choix.join(', ')})</em></div>`
     case 'sensFigure':
-      return `<div>${q.html} &nbsp; <span class="case"></span> P &nbsp; <span class="case"></span> F</div>`
+      return `<div>${q.html} &nbsp; <span class="case"></span> ${t('lettreP')} &nbsp; <span class="case"></span> ${t('lettreF')}</div>`
   }
   return ''
 }
@@ -835,13 +990,13 @@ function htmlFiche(niveau, types, nb) {
   const parType = ordre.map(t => ({ t, qs: qs.filter(q => q.type === t) }))
   let num = 0
   const corps = parType.map(g => `
-    <h2>${CONSIGNES_FICHE[g.t]}</h2>
+    <h2>${t('f_' + g.t)}</h2>
     ${g.qs.map(q => { num++; return `<div class="q"><span class="num">${num}.</span><div class="contenu">${questionFiche(q)}</div></div>` }).join('')}
   `).join('')
   num = 0
-  const corrige = parType.map(g => g.qs.map(q => { num++; return `<div class="corr"><span class="num">${num}.</span> ${q.solution}</div>` }).join('')).join('')
-  return `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Vocabulaire — ${niveau.toUpperCase()}</title>
+  const corrige = parType.map(g => g.qs.map(q => { num++; return `<div class="corr"><span class="num">${num}.</span> ${v(q.solution)}</div>` }).join('')).join('')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${niveau.toUpperCase()}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -860,10 +1015,10 @@ function htmlFiche(niveau, types, nb) {
       .corrige { page-break-before: always; font-size: .95rem; }
       .corr { margin: .3rem 0; }
     </style></head><body>
-    <h1>Vocabulaire — ${niveau.toUpperCase()}</h1>
-    <p class="entete">Nom : ________________________________ &nbsp; Date : ______________</p>
+    <h1>${t('titre')} — ${niveau.toUpperCase()}</h1>
+    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${corps}
-    <div class="corrige"><h1>Corrigé</h1>${corrige}</div>
+    <div class="corrige"><h1>${t('corrige')}</h1>${corrige}</div>
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 }
@@ -911,7 +1066,15 @@ const idx = ref(0)
 const bonnes = ref(0)
 const mauvaises = ref(0)
 const repondu = ref(false)
-const feedbackHtml = ref('')
+const feedback = ref(null) // { ok, bravo } — texte calculé pour suivre la langue
+const feedbackHtml = computed(() => {
+  const f = feedback.value, q = question.value
+  if (!f || !q) return ''
+  const ex = v(q.explication)
+  const expl = ex ? `<div class="fb-expl">${ex}</div>` : ''
+  if (f.ok) return t('bravoListe')[f.bravo] + expl
+  return (q.mode === 'ordre' ? t('fbOrdre', { r: q.attendu }) : t('fbChoix', { r: libelleChoix(q, q.bonne) })) + expl
+})
 const feedbackCls = ref('')
 const zoneCls = ref('')
 const reponseDonnee = ref('')
@@ -920,7 +1083,7 @@ const placees = ref([])
 const question = computed(() => questions.value[idx.value])
 
 function reinitQuestion() {
-  repondu.value = false; feedbackHtml.value = ''; feedbackCls.value = ''
+  repondu.value = false; feedback.value = null; feedbackCls.value = ''
   zoneCls.value = ''; reponseDonnee.value = ''; placees.value = []
 }
 
@@ -976,24 +1139,19 @@ function validerOrdre() {
   enregistrer(rep === q.attendu, rep)
 }
 
-const BRAVO = ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟']
-
 function enregistrer(ok, donne) {
   const q = question.value
   q._resultat = ok
   q._donne = donne
   repondu.value = true
-  const expl = q.explication ? `<div class="fb-expl">${q.explication}</div>` : ''
   if (ok) {
     bonnes.value++
-    feedbackHtml.value = BRAVO[aleatoire(0, BRAVO.length - 1)] + expl
+    feedback.value = { ok: true, bravo: aleatoire(0, t('bravoListe').length - 1) }
     feedbackCls.value = 'ok'
     zoneCls.value = 'ok'
   } else {
     mauvaises.value++
-    feedbackHtml.value = (q.mode === 'ordre'
-      ? `❌ Le bon ordre est : ${q.attendu}`
-      : `❌ La bonne réponse est « ${q.bonne} »`) + expl
+    feedback.value = { ok: false }
     feedbackCls.value = 'erreur'
     zoneCls.value = 'erreur'
   }
@@ -1010,10 +1168,10 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! 🌟' }
-  if (pct >= 60)   return 'Bien ! Revois les erreurs 💪'
-  return 'Courage ! Relis la correction et recommence 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('res80') }
+  if (pct >= 60)   return t('res60')
+  return t('res0')
 })
 </script>
 

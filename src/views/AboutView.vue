@@ -1,6 +1,46 @@
 <template>
   <div class="container">
     <div class="about-box">
+      <template v-if="langue === 'br'">
+      <!-- br: à relire par un brittophone -->
+      <div class="disclaimer">
+        <div class="disclaimer-icon">⚠️</div>
+        <div>
+          <strong>Graet eo bet al lec'hienn-mañ gant tadoù ha mammoù, ha n'eo ket gant kelennerien.</strong>
+          Diazezet eo ar poelladennoù war ar programmoù ofisiel, met n'int ket bet gwiriet gant tud a vicher.
+          Ma vez un douetañs war ur reolenn pe ur respont, goulennit digant kelenner ho pugel.
+        </div>
+      </div>
+      <p class="about-para avis-fr" lang="fr">
+        🤖 La traduction bretonne a été faite automatiquement et n'a pas encore été relue : tout retour est le bienvenu à
+        <a :href="`mailto:${CONTACT}?subject=Traduction%20bretonne`">{{ CONTACT }}</a>.
+      </p>
+
+      <h1 class="section-heading" style="margin-top:1.5rem;">📚 Diwar-benn</h1>
+      <p class="about-para">
+        Poelladennoù etrewezhiat digoust ha fichennoù da voullañ evit ambroug ar vugale eus ar
+        <strong>skol-vamm</strong> betek ar <strong>CM2</strong>.
+        Pep tra a dro er merdeer : hep kont, hep bruderezh, hep dastum roadennoù.
+      </p>
+      <h2 class="about-h2">🎯 Petra a gaver amañ ?</h2>
+      <ul class="about-list">
+        <li><strong>🔢 Matematik</strong> — kontañ, niveroù, jediñ e penn, jedadurioù lakaet, taolennoù liesañ, darnaouennoù, kudennoù, eur, moneiz, muzulioù, mentoniezh</li>
+        <li><strong>📝 Galleg</strong> — skrivadeg, reizhskrivañ, yezhadur, displegañ, geriaoueg, lenn (an danvez a zo e galleg)</li>
+        <li><strong>🖨️ Fichennoù da voullañ</strong> — skrivañ war linennoù Seyès, skritelloù al lizherenneg, niveroù e galleg hag e brezhoneg, fichennoù jediñ</li>
+      </ul>
+      <h2 class="about-h2">🛠️ Penaos e ya en-dro ?</h2>
+      <ul class="about-list">
+        <li>An holl respontoù hag ar skorioù a chom war an drobarzhell.</li>
+        <li>Ar c'hod mammenn a zo war <a href="https://github.com/iksaif/ecole-primaire" target="_blank" rel="noopener">GitHub</a>.</li>
+      </ul>
+      <h2 class="about-h2">💬 Darempred</h2>
+      <p class="about-para">
+        Ur fazi, ur soñj ? Skrivit da <a :href="`mailto:${CONTACT}`">{{ CONTACT }}</a>
+        pe digorit un <a href="https://github.com/iksaif/ecole-primaire/issues" target="_blank" rel="noopener">issue war GitHub</a>.
+      </p>
+      </template>
+
+      <template v-else>
 
       <div class="disclaimer">
         <div class="disclaimer-icon">⚠️</div>
@@ -31,13 +71,14 @@
         <li><strong>🔤 Orthographe</strong> — Homophones (a/à, ou/où…), accords, lettres manquantes (CP → CM2)</li>
         <li><strong>📖 Lecture &amp; Syllabes</strong> — Compter les syllabes, reconstituer un mot par syllabes, et lecture de phrases ou d'histoires interactives (CP → CE2)</li>
         <li><strong>🌍 Quiz culture générale</strong> — Géographie France et monde, sciences, histoire, animaux (CP → CM2)</li>
-        <li><strong>💯 CE1</strong> — Nombres jusqu'à 1 000, fractions, problèmes, heure, monnaie, mesures, géométrie, grammaire, vocabulaire</li>
+        <li><strong>💯 CE1 et CE2</strong> — Nombres jusqu'à 1 000 puis 10 000, fractions, problèmes, heure, monnaie, mesures, géométrie, grammaire, vocabulaire</li>
       </ul>
 
       <h2 class="about-h2">🖨️ Fiches à imprimer</h2>
       <ul class="about-list">
         <li><strong>✏️ Fiches d'écriture</strong> — Script et attaché, majuscules et minuscules, sur lignage Seyès (2 à 4 mm)</li>
         <li><strong>🔤 Affiche de l'alphabet</strong> — Les quatre écritures, en A4 ou A3</li>
+        <li><strong>🧮 Fiches de calcul</strong> — Tables, compléments, doubles et moitiés, calcul mental du programme, avec corrigé ; affiches des tables</li>
         <li><strong>🔢 Nombres en lettres</strong> — Unités, dizaines, centaines, milliers ; affiches ou fiche mémo</li>
         <li><strong>🏴 Breton</strong> — À activer dans les <RouterLink to="/parametres">paramètres</RouterLink> : nombres bilingues, alphabet breton (ch, c'h), jours et mois dans les fiches d'écriture</li>
         <li>Les polices sont incluses : <a href="https://fonts.google.com/specimen/Playwrite+FR+Trad" target="_blank" rel="noopener">Playwrite FR Trad</a>
@@ -86,17 +127,25 @@
 
       <h2 class="about-h2">💬 Contact &amp; contributions</h2>
       <p class="about-para">
-        Des bugs ? Des idées d'exercices ? Ouvrez une
+        Des bugs ? Des idées d'exercices ? Écrivez à <a :href="`mailto:${CONTACT}`">{{ CONTACT }}</a> ou ouvrez une
         <a href="https://github.com/iksaif/ecole-primaire/issues" target="_blank" rel="noopener">
           issue sur GitHub
         </a>.
       </p>
+      </template>
 
     </div>
   </div>
 </template>
 
+<script setup>
+import { langue } from '../i18n'
+import { CONTACT } from '../site'
+</script>
+
+
 <style scoped>
+.avis-fr { background: #f4f6fb; border-radius: 8px; padding: .6rem .9rem; font-size: .9rem; }
 .about-box {
   max-width: 720px;
   margin: 0 auto;

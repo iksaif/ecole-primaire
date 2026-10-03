@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">📏 Mesures</h1>
+    <h1 class="section-heading">📏 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in niveaux" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -14,25 +14,25 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Exercices</div>
+        <div class="config-section-title">{{ t('exercices') }}</div>
         <div class="btn-group">
           <button v-for="ex in EXERCICES" :key="ex.id"
             class="level-btn" :class="{ active: config.exercices.includes(ex.id) }"
             :disabled="!exercicesDispos.includes(ex.id)"
-            @click="toggleExercice(ex.id)">{{ ex.label }}</button>
+            @click="toggleExercice(ex.id)">{{ tr(ex.label) }}</button>
         </div>
       </div>
 
       <div v-if="config.exercices.includes('regle')" class="config-section">
-        <div class="config-section-title">Segments sur la règle</div>
+        <div class="config-section-title">{{ t('segmentsRegle') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: !config.decale }" @click="config.decale = false">Commencent à 0</button>
-          <button class="level-btn" :class="{ active: config.decale }" @click="config.decale = true">Ne commencent pas toujours à 0</button>
+          <button class="level-btn" :class="{ active: !config.decale }" @click="config.decale = false">{{ t('commencent0') }}</button>
+          <button class="level-btn" :class="{ active: config.decale }" @click="config.decale = true">{{ t('pasToujours0') }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -41,18 +41,18 @@
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -93,10 +93,10 @@
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
           <template v-if="!attente">
-            <button class="btn btn-ghost" :disabled="verrou" @click="passer">Passer ⏭</button>
-            <button v-if="q.mode === 'nombre'" class="btn btn-primary" :disabled="verrou" @click="valider">Valider ✔</button>
+            <button class="btn btn-ghost" :disabled="verrou" @click="passer">{{ t('passer') }}</button>
+            <button v-if="q.mode === 'nombre'" class="btn btn-primary" :disabled="verrou" @click="valider">{{ t('valider') }}</button>
           </template>
-          <button v-else class="btn btn-primary" @click="suivant">Suivant ➜</button>
+          <button v-else class="btn btn-primary" @click="suivant">{{ t('suivant') }}</button>
         </div>
       </div>
     </template>
@@ -107,7 +107,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>{{ h.texte }}</td>
@@ -119,8 +119,8 @@
       </table>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -129,56 +129,87 @@
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: 'Mesures',
+    segmentsRegle: 'Segments sur la règle',
+    commencent0: 'Commencent à 0',
+    pasToujours0: 'Ne commencent pas toujours à 0',
+    colQuestion: 'Question',
+  },
+  br: {
+    titre: 'Muzulioù',
+    segmentsRegle: 'Segmentoù war ar reolenn',
+    commencent0: 'A grog e 0',
+    pasToujours0: "Ne gregont ket atav e 0",
+    colQuestion: 'Goulenn',
+  },
+})
+const enBr = () => langue.value === 'br'
+// Choisit le texte selon la langue courante (à la génération de la question)
+const B = (fr, br) => (enBr() ? br : fr)
 
 // ==GEN== (logique pure de génération : testée hors Vue)
-const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
-const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août',
+const JOURS_FR = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+// br : formes adverbiales « dilun… » (« Hiziv eo dilun ») — br: à relire
+const JOURS_BR = ['dilun', 'dimeurzh', "dimerc'her", 'diriaou', 'digwener', 'disadorn', 'disul']
+const MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août',
   'septembre', 'octobre', 'novembre', 'décembre']
+const MOIS_BR = ['Genver', "C'hwevrer", 'Meurzh', 'Ebrel', 'Mae', 'Mezheven', 'Gouere', 'Eost',
+  'Gwengolo', 'Here', 'Du', 'Kerzu']
+let JOURS = JOURS_FR, MOIS = MOIS_FR
+function appliquerLangue() {
+  JOURS = enBr() ? JOURS_BR : JOURS_FR
+  MOIS = enBr() ? MOIS_BR : MOIS_FR
+}
 
 const EXERCICES = [
-  { id: 'regle',      label: '📏 Mesurer à la règle' },
-  { id: 'unite',      label: '🤔 Unité adaptée' },
-  { id: 'conversion', label: '🔁 Conversions' },
-  { id: 'comparer',   label: '🟰 Comparer' },
-  { id: 'masse',      label: '⚖️ Masses (balance)' },
-  { id: 'contenance', label: '🥛 Contenances' },
-  { id: 'calendrier', label: '📅 Calendrier' },
+  { id: 'regle',      label: { fr: '📏 Mesurer à la règle', br: '📏 Muzuliañ gant ar reolenn' } },
+  { id: 'unite',      label: { fr: '🤔 Unité adaptée', br: '🤔 An unanenn a-zere' } },
+  { id: 'conversion', label: { fr: '🔁 Conversions', br: '🔁 Amdroadurioù' } },
+  { id: 'comparer',   label: { fr: '🟰 Comparer', br: '🟰 Keñveriañ' } },
+  { id: 'masse',      label: { fr: '⚖️ Masses (balance)', br: '⚖️ Pouezioù (balañs)' } },
+  { id: 'contenance', label: { fr: '🥛 Contenances', br: "🥛 Endalc'hioù" } },
+  { id: 'calendrier', label: { fr: '📅 Calendrier', br: '📅 Deiziadur' } },
 ]
 
 // Données par niveau. Le CE1 et le CE2 ont la même forme.
 // objetsUnite : la phrase se lit « texte valeur … » (« Une pomme pèse 150 … »).
+// br : textes bretons à relire
 const OBJETS_UNITE_CE1 = [
-  { texte: 'Un crayon mesure', valeur: 15, unite: 'cm' },
-  { texte: 'Une gomme mesure', valeur: 4, unite: 'cm' },
-  { texte: "La largeur d'un cahier est de", valeur: 17, unite: 'cm' },
-  { texte: 'Une petite cuillère mesure', valeur: 12, unite: 'cm' },
-  { texte: "La hauteur d'une porte est de", valeur: 2, unite: 'm' },
-  { texte: "La longueur d'une piscine est de", valeur: 25, unite: 'm' },
-  { texte: 'Un grand arbre mesure', valeur: 15, unite: 'm' },
-  { texte: "La longueur d'une salle de classe est de", valeur: 8, unite: 'm' },
-  { texte: 'La distance entre Paris et Marseille est de', valeur: 775, unite: 'km' },
-  { texte: 'En une heure, une voiture roule', valeur: 90, unite: 'km' },
-  { texte: 'La distance entre deux villes voisines est de', valeur: 30, unite: 'km' },
-  { texte: 'Une pomme pèse', valeur: 150, unite: 'g' },
-  { texte: 'Une gomme pèse', valeur: 20, unite: 'g' },
-  { texte: 'Un stylo pèse', valeur: 10, unite: 'g' },
-  { texte: 'Une tablette de chocolat pèse', valeur: 100, unite: 'g' },
-  { texte: 'Un enfant de 7 ans pèse', valeur: 25, unite: 'kg' },
-  { texte: 'Un chien pèse', valeur: 15, unite: 'kg' },
-  { texte: 'Une pastèque pèse', valeur: 4, unite: 'kg' },
-  { texte: 'Une voiture pèse', valeur: 1000, unite: 'kg' },
-  { texte: 'Une baignoire contient', valeur: 150, unite: 'L' },
-  { texte: 'Un seau contient', valeur: 10, unite: 'L' },
-  { texte: 'Un arrosoir contient', valeur: 5, unite: 'L' },
-  { texte: 'Un aquarium contient', valeur: 50, unite: 'L' },
+  { texte: 'Un crayon mesure', br: "Ur c'hreion a vuzul", valeur: 15, unite: 'cm' },
+  { texte: 'Une gomme mesure', br: 'Ur gomenn a vuzul', valeur: 4, unite: 'cm' },
+  { texte: "La largeur d'un cahier est de", br: "Ledander ur c'haier :", valeur: 17, unite: 'cm' },
+  { texte: 'Une petite cuillère mesure', br: 'Ul loa vihan a vuzul', valeur: 12, unite: 'cm' },
+  { texte: "La hauteur d'une porte est de", br: 'Uhelder un nor :', valeur: 2, unite: 'm' },
+  { texte: "La longueur d'une piscine est de", br: 'Hirder ur poull-neuial :', valeur: 25, unite: 'm' },
+  { texte: 'Un grand arbre mesure', br: 'Ur wezenn vras a vuzul', valeur: 15, unite: 'm' },
+  { texte: "La longueur d'une salle de classe est de", br: 'Hirder ur sal-klas :', valeur: 8, unite: 'm' },
+  { texte: 'La distance entre Paris et Marseille est de', br: 'Ar pellder etre Pariz ha Marseilh :', valeur: 775, unite: 'km' },
+  { texte: 'En une heure, une voiture roule', br: 'En un eur, ur wetur a ra', valeur: 90, unite: 'km' },
+  { texte: 'La distance entre deux villes voisines est de', br: 'Ar pellder etre div gêr amezek :', valeur: 30, unite: 'km' },
+  { texte: 'Une pomme pèse', br: 'Un aval a bouez', valeur: 150, unite: 'g' },
+  { texte: 'Une gomme pèse', br: 'Ur gomenn a bouez', valeur: 20, unite: 'g' },
+  { texte: 'Un stylo pèse', br: 'Ur bluenn a bouez', valeur: 10, unite: 'g' },
+  { texte: 'Une tablette de chocolat pèse', br: 'Un dablezenn chokolad a bouez', valeur: 100, unite: 'g' },
+  { texte: 'Un enfant de 7 ans pèse', br: 'Ur bugel 7 vloaz a bouez', valeur: 25, unite: 'kg' },
+  { texte: 'Un chien pèse', br: "Ur c'hi a bouez", valeur: 15, unite: 'kg' },
+  { texte: 'Une pastèque pèse', br: 'Ur melon-dour a bouez', valeur: 4, unite: 'kg' },
+  { texte: 'Une voiture pèse', br: 'Ur wetur a bouez', valeur: 1000, unite: 'kg' },
+  { texte: 'Une baignoire contient', br: "Ur gibell a zalc'h", valeur: 150, unite: 'L' },
+  { texte: 'Un seau contient', br: "Ur sailh a zalc'h", valeur: 10, unite: 'L' },
+  { texte: 'Un arrosoir contient', br: "Un arroser a zalc'h", valeur: 5, unite: 'L' },
+  { texte: 'Un aquarium contient', br: "Un akwariom a zalc'h", valeur: 50, unite: 'L' },
 ]
 const OBJETS_CONTENANCE_CE1 = [
-  { texte: "Une grande bouteille d'eau contient", valeur: 1, unite: 'L' },
-  { texte: 'Un seau contient', valeur: 10, unite: 'L' },
-  { texte: 'Une baignoire contient', valeur: 150, unite: 'L' },
-  { texte: 'Un arrosoir contient', valeur: 5, unite: 'L' },
-  { texte: 'Une brique de lait contient', valeur: 1, unite: 'L' },
-  { texte: 'Une piscine gonflable contient', valeur: 500, unite: 'L' },
+  { texte: "Une grande bouteille d'eau contient", br: "Ur voutailh dour vras a zalc'h", valeur: 1, unite: 'L' },
+  { texte: 'Un seau contient', br: "Ur sailh a zalc'h", valeur: 10, unite: 'L' },
+  { texte: 'Une baignoire contient', br: "Ur gibell a zalc'h", valeur: 150, unite: 'L' },
+  { texte: 'Un arrosoir contient', br: "Un arroser a zalc'h", valeur: 5, unite: 'L' },
+  { texte: 'Une brique de lait contient', br: "Ur brikenn laezh a zalc'h", valeur: 1, unite: 'L' },
+  { texte: 'Une piscine gonflable contient', br: "Ur poull-neuial c'hwezhet a zalc'h", valeur: 500, unite: 'L' },
 ]
 
 const NIVEAUX = {
@@ -211,13 +242,13 @@ const NIVEAUX = {
     unites: ['mm', 'cm', 'm', 'km', 'g', 'kg', 'L', 'dL', 'cL'],
     objetsUnite: [
       ...OBJETS_UNITE_CE1,
-      { texte: 'Une fourmi mesure', valeur: 4, unite: 'mm' },
-      { texte: "L'épaisseur d'une pièce de 1 € est de", valeur: 2, unite: 'mm' },
-      { texte: "L'épaisseur d'un cahier est de", valeur: 5, unite: 'mm' },
-      { texte: 'Une canette de jus de fruits contient', valeur: 33, unite: 'cL' },
-      { texte: "Un verre d'eau contient", valeur: 20, unite: 'cL' },
-      { texte: 'Un bol contient', valeur: 3, unite: 'dL' },
-      { texte: 'Un pot de yaourt contient', valeur: 12, unite: 'cL' },
+      { texte: 'Une fourmi mesure', br: 'Ur verienn a vuzul', valeur: 4, unite: 'mm' },
+      { texte: "L'épaisseur d'une pièce de 1 € est de", br: 'Tevder ur pezh 1 € :', valeur: 2, unite: 'mm' },
+      { texte: "L'épaisseur d'un cahier est de", br: "Tevder ur c'haier :", valeur: 5, unite: 'mm' },
+      { texte: 'Une canette de jus de fruits contient', br: "Ur voestig chug frouezh a zalc'h", valeur: 33, unite: 'cL' },
+      { texte: "Un verre d'eau contient", br: "Ur werennad dour a zalc'h", valeur: 20, unite: 'cL' },
+      { texte: 'Un bol contient', br: "Ur bolenn a zalc'h", valeur: 3, unite: 'dL' },
+      { texte: 'Un pot de yaourt contient', br: "Ur pod yaourt a zalc'h", valeur: 12, unite: 'cL' },
     ],
     conversions: ['cm-mm', 'cmmm-mm', 'mm-cm', 'm-cm', 'mcm-cm', 'cm-m', 'km-m', 'kmm-m', 'kg-g', 'kgg-g', 'g-kg', 'L-dL', 'L-cL', 'dL-cL'],
     kmMax: 9, kgMax: 9,
@@ -231,10 +262,10 @@ const NIVEAUX = {
     bouteilles: { max1: 5, max2: 4 },
     objetsContenance: [
       ...OBJETS_CONTENANCE_CE1,
-      { texte: "Un verre d'eau contient", valeur: 20, unite: 'cL' },
-      { texte: 'Une canette de jus de fruits contient', valeur: 33, unite: 'cL' },
-      { texte: 'Un bol contient', valeur: 3, unite: 'dL' },
-      { texte: 'Une tasse contient', valeur: 2, unite: 'dL' },
+      { texte: "Un verre d'eau contient", br: "Ur werennad dour a zalc'h", valeur: 20, unite: 'cL' },
+      { texte: 'Une canette de jus de fruits contient', br: "Ur voestig chug frouezh a zalc'h", valeur: 33, unite: 'cL' },
+      { texte: 'Un bol contient', br: "Ur bolenn a zalc'h", valeur: 3, unite: 'dL' },
+      { texte: 'Une tasse contient', br: "Un dasenn a zalc'h", valeur: 2, unite: 'dL' },
     ],
     unitesContenance: ['L', 'dL', 'cL', 'kg', 'm'],
     calendrier: ['dansN', 'moisApres', 'moisAvant', 'numMois', 'semainesJours', 'joursSemaines', 'joursMois', 'dansJours', 'dateDans'],
@@ -243,7 +274,7 @@ const NIVEAUX = {
 }
 
 const JOURS_MOIS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-const DE_MOIS = m => (/^[aeiouy]/.test(MOIS[m]) ? "d'" : 'de ') + MOIS[m]   // « d'avril », « de mars »
+const DE_MOIS = m => enBr() ? `${MOIS[m]}` : (/^[aeiouy]/.test(MOIS[m]) ? "d'" : 'de ') + MOIS[m]   // « d'avril », « de mars »
 
 const hasard = arr => arr[aleatoire(0, arr.length - 1)]
 const fmtMasse = g => g >= 1000 ? `${g / 1000} kg` : `${g} g`
@@ -253,7 +284,7 @@ const SVG_FONT = 'font-family="Arial, sans-serif"'
 
 function svgRegle(max, s, e, S = 32) {
   const m = 18, W = max * S + 2 * m, H = 100, yR = 46
-  let t = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="Règle graduée">`
+  let t = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${B('Règle graduée', 'Reolenn derezennet')}">`
   t += `<rect x="2" y="${yR}" width="${W - 4}" height="50" rx="5" fill="#fdf1b8" stroke="#c9a227" stroke-width="1.5"/>`
   for (let mm = 0; mm <= max * 10; mm++) {
     const x = m + mm * S / 10
@@ -306,7 +337,7 @@ function svgBalance(tilt, gauche, droite) {
   const a = tilt * 0.18
   const gx = cx - half * Math.cos(a), gy = cy + half * Math.sin(a)
   const dx = cx + half * Math.cos(a), dy = cy - half * Math.sin(a)
-  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="Balance à plateaux">`
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${B('Balance à plateaux', 'Balañs')}">`
   s += `<path d="M ${cx - 62} ${H - 6} L ${cx + 62} ${H - 6} L ${cx + 36} ${H - 26} L ${cx - 36} ${H - 26} Z" fill="#7f8c8d"/>`
   s += `<rect x="${cx - 6}" y="${cy}" width="12" height="${H - 26 - cy}" fill="#95a5a6"/>`
   const plateau = (x, y, items) => {
@@ -333,7 +364,7 @@ function svgBalance(tilt, gauche, droite) {
 function svgBroc(max, k, u = 'L') {
   const W = 230, H = 260, xg = 80, xd = 180, yb = 240, yMax = 60
   const yv = v => yb - v * (yb - yMax) / max
-  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="Broc gradué">`
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${B('Broc gradué', 'Pod derezennet')}">`
   s += `<rect x="${xg + 1}" y="${yv(k)}" width="${xd - xg - 2}" height="${yb - yv(k) - 1}" rx="6" fill="#74b9ff" opacity=".85"/>`
   s += `<line x1="${xg + 1}" y1="${yv(k)}" x2="${xd - 1}" y2="${yv(k)}" stroke="#2e86de" stroke-width="2"/>`
   s += `<path d="M ${xd} 80 C ${xd + 42} 80 ${xd + 42} 180 ${xd} 180" fill="none" stroke="#555" stroke-width="7"/>`
@@ -352,7 +383,7 @@ function svgBouteilles(n1, n2) {
   const larg = c => c === 2 ? 42 : 32
   const totalB = items.reduce((acc, c) => acc + larg(c) + gap, 0)
   const W = Math.max(totalB + 130, 260), H = 165
-  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="Bouteilles et seau">`
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${B('Bouteilles et seau', 'Boutailhoù ha sailh')}">`
   let x = 10
   items.forEach(c => {
     const w = larg(c), h = c === 2 ? 100 : 70
@@ -388,14 +419,19 @@ function genRegle(niv, cfg) {
     const eMm = sCm * 10 + L
     return {
       type: 'regle', cle: `regle-${sCm}-${L}`,
-      consigne: 'Combien mesure le segment rouge, en millimètres ?',
+      consigne: B('Combien mesure le segment rouge, en millimètres ?', 'Pegeit eo ar segment ruz, e milimetroù ?'),
       svg: svgRegle(max, sCm, eMm / 10, px),
       mode: 'nombre', unite: 'mm', reponse: L, attendu: `${L} mm (${cmmm(L)})`,
-      texte: `Segment de ${sCm} cm à ${cmmm(eMm)} sur la règle`,
-      explication: (sCm === 0
-        ? `Le segment commence à 0 et finit à ${cmmm(eMm)}.`
-        : `Le segment commence à ${sCm} cm et finit à ${cmmm(eMm)} : il mesure ${cmmm(L)}.`)
-        + ` 1 cm = 10 mm, donc ${cmmm(L)} = ${L} mm.`,
+      texte: B(`Segment de ${sCm} cm à ${cmmm(eMm)} sur la règle`, `Segment eus ${sCm} cm betek ${cmmm(eMm)} war ar reolenn`),
+      explication: enBr()
+        ? (sCm === 0
+          ? `Kregiñ a ra ar segment e 0 hag echuiñ a ra e ${cmmm(eMm)}.`
+          : `Kregiñ a ra ar segment e ${sCm} cm hag echuiñ a ra e ${cmmm(eMm)} : ${cmmm(L)} eo e hirder.`)
+          + ` 1 cm = 10 mm, neuze ${cmmm(L)} = ${L} mm.`
+        : (sCm === 0
+          ? `Le segment commence à 0 et finit à ${cmmm(eMm)}.`
+          : `Le segment commence à ${sCm} cm et finit à ${cmmm(eMm)} : il mesure ${cmmm(L)}.`)
+          + ` 1 cm = 10 mm, donc ${cmmm(L)} = ${L} mm.`,
       s: sCm * 10, e: eMm, max: max * 10,
     }
   }
@@ -405,25 +441,30 @@ function genRegle(niv, cfg) {
   const e = s + L
   return {
     type: 'regle', cle: `regle-${s}-${L}`,
-    consigne: 'Combien mesure le segment rouge ?',
+    consigne: B('Combien mesure le segment rouge ?', 'Pegeit eo ar segment ruz ?'),
     svg: svgRegle(max, s, e, px),
     mode: 'nombre', unite: 'cm', reponse: L, attendu: `${L} cm`,
-    texte: `Segment de ${s} à ${e} sur la règle`,
-    explication: s === 0
-      ? `Le segment commence à 0 et finit à ${e} : il mesure ${L} cm.`
-      : `Le segment commence à ${s} et finit à ${e} : ${e} − ${s} = ${L} cm. On peut aussi compter les centimètres entre ${s} et ${e}.`,
+    texte: B(`Segment de ${s} à ${e} sur la règle`, `Segment eus ${s} betek ${e} war ar reolenn`),
+    explication: enBr()
+      ? (s === 0
+        ? `Kregiñ a ra ar segment e 0 hag echuiñ a ra e ${e} : ${L} cm eo e hirder.`
+        : `Kregiñ a ra ar segment e ${s} hag echuiñ a ra e ${e} : ${e} − ${s} = ${L} cm. Gallout a reer ivez kontañ ar c'hantimetroù etre ${s} ha ${e}.`)
+      : (s === 0
+        ? `Le segment commence à 0 et finit à ${e} : il mesure ${L} cm.`
+        : `Le segment commence à ${s} et finit à ${e} : ${e} − ${s} = ${L} cm. On peut aussi compter les centimètres entre ${s} et ${e}.`),
     s, e, max,
   }
 }
 
 function questionUnite(type, o, choix) {
+  const texte = enBr() ? o.br : o.texte
   return {
     type, cle: `${type}-u-${o.texte}`,
-    consigne: 'Choisis la bonne unité.',
-    affiche: `${o.texte} ${o.valeur} …`,
+    consigne: B('Choisis la bonne unité.', 'Dibab an unanenn vat.'),
+    affiche: `${texte} ${o.valeur} …`,
     mode: 'choix', choix, reponse: o.unite, attendu: o.unite,
-    texte: `${o.texte} ${o.valeur} …`,
-    explication: `${o.texte} ${o.valeur} ${o.unite}.`,
+    texte: `${texte} ${o.valeur} …`,
+    explication: `${texte} ${o.valeur} ${o.unite}.`,
   }
 }
 
@@ -433,23 +474,24 @@ function genUnite(niv) {
 
 function genConversion(niv) {
   const kind = hasard(niv.conversions)
+  const donc = B('donc', 'neuze'), et = B('et', 'ha')
   let affiche, reponse, unite, explication
   if (kind === 'm-cm') {
     const a = aleatoire(1, 9)
     affiche = `${a} m = ? cm`; reponse = a * 100; unite = 'cm'
-    explication = `1 m = 100 cm, donc ${a} m = ${a * 100} cm.`
+    explication = `1 m = 100 cm, ${donc} ${a} m = ${a * 100} cm.`
   } else if (kind === 'mcm-cm') {
     const a = aleatoire(1, 5), b = aleatoire(1, 19) * 5
     affiche = `${a} m ${b} cm = ? cm`; reponse = a * 100 + b; unite = 'cm'
-    explication = `${a} m = ${a * 100} cm, et ${a * 100} + ${b} = ${reponse} cm.`
+    explication = `${a} m = ${a * 100} cm, ${et} ${a * 100} + ${b} = ${reponse} cm.`
   } else if (kind === 'cm-m') {
     const a = aleatoire(1, 9)
     affiche = `${a * 100} cm = ? m`; reponse = a; unite = 'm'
-    explication = `100 cm = 1 m, donc ${a * 100} cm = ${a} m.`
+    explication = `100 cm = 1 m, ${donc} ${a * 100} cm = ${a} m.`
   } else if (kind === 'km-m') {
     const a = aleatoire(1, niv.kmMax)
     affiche = `${a} km = ? m`; reponse = a * 1000; unite = 'm'
-    explication = a === 1 ? '1 km = 1 000 m.' : `1 km = 1 000 m, donc ${a} km = ${a * 1000} m.`
+    explication = a === 1 ? '1 km = 1 000 m.' : `1 km = 1 000 m, ${donc} ${a} km = ${a * 1000} m.`
   } else if (kind === 'm-km') {
     const a = aleatoire(1, niv.kmMax)
     affiche = `${a * 1000} m = ? km`; reponse = a; unite = 'km'
@@ -457,47 +499,47 @@ function genConversion(niv) {
   } else if (kind === 'kmm-m') {
     const a = aleatoire(1, 5), b = aleatoire(1, 9) * 100
     affiche = `${a} km ${b} m = ? m`; reponse = a * 1000 + b; unite = 'm'
-    explication = `${a} km = ${a * 1000} m, et ${a * 1000} + ${b} = ${reponse} m.`
+    explication = `${a} km = ${a * 1000} m, ${et} ${a * 1000} + ${b} = ${reponse} m.`
   } else if (kind === 'kg-g') {
     const a = aleatoire(1, niv.kgMax)
     affiche = `${a} kg = ? g`; reponse = a * 1000; unite = 'g'
-    explication = a === 1 ? '1 kg = 1 000 g.' : `1 kg = 1 000 g, donc ${a} kg = ${a * 1000} g.`
+    explication = a === 1 ? '1 kg = 1 000 g.' : `1 kg = 1 000 g, ${donc} ${a} kg = ${a * 1000} g.`
   } else if (kind === 'kgg-g') {
     const a = aleatoire(1, 3), b = aleatoire(1, 9) * 100
     affiche = `${a} kg ${b} g = ? g`; reponse = a * 1000 + b; unite = 'g'
-    explication = `${a} kg = ${a * 1000} g, et ${a * 1000} + ${b} = ${reponse} g.`
+    explication = `${a} kg = ${a * 1000} g, ${et} ${a * 1000} + ${b} = ${reponse} g.`
   } else if (kind === 'g-kg') {
     const a = aleatoire(1, niv.kgMax)
     affiche = `${a * 1000} g = ? kg`; reponse = a; unite = 'kg'
-    explication = a === 1 ? '1 000 g = 1 kg.' : `1 000 g = 1 kg, donc ${a * 1000} g = ${a} kg.`
+    explication = a === 1 ? '1 000 g = 1 kg.' : `1 000 g = 1 kg, ${donc} ${a * 1000} g = ${a} kg.`
   } else if (kind === 'cm-mm') {
     const a = aleatoire(2, 20)
     affiche = `${a} cm = ? mm`; reponse = a * 10; unite = 'mm'
-    explication = `1 cm = 10 mm, donc ${a} cm = ${a * 10} mm.`
+    explication = `1 cm = 10 mm, ${donc} ${a} cm = ${a * 10} mm.`
   } else if (kind === 'cmmm-mm') {
     const a = aleatoire(1, 15), b = aleatoire(1, 9)
     affiche = `${a} cm ${b} mm = ? mm`; reponse = a * 10 + b; unite = 'mm'
-    explication = `${a} cm = ${a * 10} mm, et ${a * 10} + ${b} = ${reponse} mm.`
+    explication = `${a} cm = ${a * 10} mm, ${et} ${a * 10} + ${b} = ${reponse} mm.`
   } else if (kind === 'mm-cm') {
     const a = aleatoire(2, 20)
     affiche = `${a * 10} mm = ? cm`; reponse = a; unite = 'cm'
-    explication = `10 mm = 1 cm, donc ${a * 10} mm = ${a} cm.`
+    explication = `10 mm = 1 cm, ${donc} ${a * 10} mm = ${a} cm.`
   } else if (kind === 'L-dL') {
     const a = aleatoire(1, 9)
     affiche = `${a} L = ? dL`; reponse = a * 10; unite = 'dL'
-    explication = `1 L = 10 dL, donc ${a} L = ${a * 10} dL.`
+    explication = `1 L = 10 dL, ${donc} ${a} L = ${a * 10} dL.`
   } else if (kind === 'L-cL') {
     const a = aleatoire(1, 9)
     affiche = `${a} L = ? cL`; reponse = a * 100; unite = 'cL'
-    explication = `1 L = 100 cL, donc ${a} L = ${a * 100} cL.`
+    explication = `1 L = 100 cL, ${donc} ${a} L = ${a * 100} cL.`
   } else {
     const a = aleatoire(1, 9)
     affiche = `${a} dL = ? cL`; reponse = a * 10; unite = 'cL'
-    explication = `1 dL = 10 cL, donc ${a} dL = ${a * 10} cL.`
+    explication = `1 dL = 10 cL, ${donc} ${a} dL = ${a * 10} cL.`
   }
   return {
     type: 'conversion', cle: `conv-${affiche}`,
-    consigne: 'Complète.', affiche, mode: 'nombre', unite, reponse,
+    consigne: B('Complète.', 'Leunia.'), affiche, mode: 'nombre', unite, reponse,
     attendu: `${reponse} ${unite}`, texte: affiche, explication,
   }
 }
@@ -549,28 +591,30 @@ function genComparer(niv) {
   const affiche = `${G}  …  ${D}`
   return {
     type: 'comparer', cle: `cmp-${G}-${D}`,
-    consigne: 'Compare avec <, = ou >.', affiche,
+    consigne: enBr() ? 'Keñveria gant <, = pe >.' : 'Compare avec <, = ou >.', affiche,
     mode: 'choix', choix: ['<', '=', '>'], reponse: sym, attendu: `${G} ${sym} ${D}`,
     texte: `${G} … ${D}`,
-    explication: `On compare dans la même unité : ${A} = ${vA} ${u}. ${vG} ${u} ${sym} ${vD} ${u}.`,
+    explication: `${enBr() ? 'Keñveriañ a reer gant an hevelep unanenn' : 'On compare dans la même unité'} : ${A} = ${vA} ${u}. ${vG} ${u} ${sym} ${vD} ${u}.`,
     vG, vD,
   }
 }
 
 // Objets posés sur la balance, choisis selon la masse pour rester vraisemblables
-const OBJETS_G = [{ e: '📦', n: 'le paquet' }, { e: '🎁', n: 'le cadeau' }, { e: '🧸', n: "l'ours en peluche" }]   // ≥ 100 g
+// br: à relire
+const OBJETS_G = [{ e: '📦', n: 'le paquet', br: 'ar pakad' }, { e: '🎁', n: 'le cadeau', br: 'ar prof' }, { e: '🧸', n: "l'ours en peluche", br: 'an arzh pluch' }]   // ≥ 100 g
+const nomObj = o => ({ ...o, n: enBr() ? o.br : o.n })
 function objetPourMasse(g) {
-  if (g < 10) return { e: '🍬', n: 'le bonbon' }
-  if (g < 50) return { e: '🔑', n: 'la clé' }
-  if (g < 100) return { e: '🍊', n: 'la clémentine' }
-  return hasard(OBJETS_G)
+  if (g < 10) return nomObj({ e: '🍬', n: 'le bonbon', br: 'ar bonbon' })
+  if (g < 50) return nomObj({ e: '🔑', n: 'la clé', br: "an alc'hwez" })
+  if (g < 100) return nomObj({ e: '🍊', n: 'la clémentine', br: 'ar vandarinenn' })
+  return nomObj(hasard(OBJETS_G))
 }
-const OBJETS_KG = [{ e: '🍉', n: 'la pastèque' }, { e: '🎃', n: 'la citrouille' }]
+const OBJETS_KG = [{ e: '🍉', n: 'la pastèque', br: 'ar melon-dour' }, { e: '🎃', n: 'la citrouille', br: 'ar sitrouilhenn' }]
 const BOITES = [
-  { couleur: '#e74c3c', n: 'La boîte rouge' },
-  { couleur: '#3498db', n: 'La boîte bleue' },
-  { couleur: '#2ecc71', n: 'La boîte verte' },
-  { couleur: '#f1c40f', n: 'La boîte jaune' },
+  { couleur: '#e74c3c', n: 'La boîte rouge', br: 'Ar voest ruz' },
+  { couleur: '#3498db', n: 'La boîte bleue', br: "Ar voest c'hlas" },
+  { couleur: '#2ecc71', n: 'La boîte verte', br: 'Ar voest wer' },
+  { couleur: '#f1c40f', n: 'La boîte jaune', br: 'Ar voest velen' },
 ]
 
 function sousEnsemble(liste, k) {
@@ -584,15 +628,15 @@ function genMasse(niv) {
     const g = sousEnsemble(niv.boiteMasses.filter(m => m >= 50), aleatoire(1, 2))
     const masses = [1000, ...g]
     const total = masses.reduce((a, b) => a + b, 0)
-    const obj = hasard(OBJETS_KG)
+    const obj = nomObj(hasard(OBJETS_KG))
     const items = masses.map(m => ({ kind: 'masse', g: m }))
     const ecrites = masses.map(fmtMasse).join(' + ')
     return {
       type: 'masse', cle: `masse-mix-${masses.join('+')}`,
-      consigne: `La balance est en équilibre. Combien pèse ${obj.n}, en grammes ?`,
+      consigne: B(`La balance est en équilibre. Combien pèse ${obj.n}, en grammes ?`, `Kempouez eo ar balañs. Pegement e pouez ${obj.n}, e gramoù ?`),
       svg: svgBalance(0, [{ kind: 'emoji', e: obj.e }], items),
       mode: 'nombre', unite: 'g', reponse: total, attendu: `${total} g`,
-      texte: `Balance : ${obj.e} = ${ecrites}`,
+      texte: `${B('Balance', 'Balañs')} : ${obj.e} = ${ecrites}`,
       explication: `1 kg = 1000 g. ${masses.map(m => `${m} g`).join(' + ')} = ${total} g.`,
       masses,
     }
@@ -604,20 +648,20 @@ function genMasse(niv) {
       : sousEnsemble(niv.boiteMasses, aleatoire(2, 4))
     const total = masses.reduce((a, b) => a + b, 0)
     const u = enKg ? 'kg' : 'g'
-    const obj = enKg ? hasard(OBJETS_KG) : objetPourMasse(total)
+    const obj = enKg ? nomObj(hasard(OBJETS_KG)) : objetPourMasse(total)
     const items = masses.map(m => ({ kind: 'masse', g: enKg ? m * 1000 : m }))
     return {
       type: 'masse', cle: `masse-eq-${u}-${masses.join('+')}`,
-      consigne: `La balance est en équilibre. Combien pèse ${obj.n} ?`,
+      consigne: B(`La balance est en équilibre. Combien pèse ${obj.n} ?`, `Kempouez eo ar balañs. Pegement e pouez ${obj.n} ?`),
       svg: svgBalance(0, [{ kind: 'emoji', e: obj.e }], items),
       mode: 'nombre', unite: u, reponse: total, attendu: `${total} ${u}`,
-      texte: `Balance : ${obj.e} = ${masses.map(m => `${m} ${u}`).join(' + ')}`,
-      explication: `La balance est en équilibre : ${obj.n} pèse autant que les masses. ${masses.map(m => `${m} ${u}`).join(' + ')} = ${total} ${u}.`,
+      texte: `${B('Balance', 'Balañs')} : ${obj.e} = ${masses.map(m => `${m} ${u}`).join(' + ')}`,
+      explication: `${B(`La balance est en équilibre : ${obj.n} pèse autant que les masses.`, `Kempouez eo ar balañs : ${obj.n} a bouez kement hag ar pouezioù.`)} ${masses.map(m => `${m} ${u}`).join(' + ')} = ${total} ${u}.`,
       masses,
     }
   }
   if (sous === 'boites') {
-    const [b1, b2] = melanger(BOITES).slice(0, 2)
+    const [b1, b2] = melanger(BOITES).slice(0, 2).map(nomObj)
     const lourd = aleatoire(0, 1)   // 0 : gauche plus lourde
     const t1 = hasard([40, 55, 70]), t2 = hasard([40, 55, 70])
     const gauche = [{ kind: 'boite', couleur: b1.couleur, w: t1, h: t1 * 0.8 }]
@@ -625,27 +669,31 @@ function genMasse(niv) {
     const rep = lourd === 0 ? b1.n : b2.n
     return {
       type: 'masse', cle: `masse-boites-${b1.n}-${b2.n}-${lourd}-${t1}-${t2}`,
-      consigne: 'Regarde la balance. Quelle boîte est la plus lourde ?',
+      consigne: B('Regarde la balance. Quelle boîte est la plus lourde ?', 'Sell ouzh ar balañs. Peseurt boest eo ar pounnerañ ?'),
       svg: svgBalance(lourd === 0 ? 1 : -1, gauche, droite),
       mode: 'choix', choix: [b1.n, b2.n], reponse: rep, attendu: rep,
-      texte: `${b1.n} ou ${b2.n.toLowerCase()} ?`,
-      explication: 'Le plateau qui descend porte l\'objet le plus lourd (même s\'il est plus petit !).',
+      texte: `${b1.n} ${B('ou', 'pe')} ${b2.n.toLowerCase()} ?`,
+      explication: B('Le plateau qui descend porte l\'objet le plus lourd (même s\'il est plus petit !).', "Ar plad a ziskenn a zoug an tra pounnerañ (ha pa vefe bihanoc'h !)."),
       lourd,
     }
   }
   const X = hasard(niv.seuils)
   const plus = Math.random() < 0.5
-  const choix = [`Plus de ${fmtMasse(X)}`, `Moins de ${fmtMasse(X)}`]
+  const choix = enBr() ? [`Muioc'h eget ${fmtMasse(X)}`, `Nebeutoc'h eget ${fmtMasse(X)}`] : [`Plus de ${fmtMasse(X)}`, `Moins de ${fmtMasse(X)}`]
   const rep = plus ? choix[0] : choix[1]
   return {
     type: 'masse', cle: `masse-seuil-${X}-${plus}`,
-    consigne: `Le paquet pèse-t-il plus ou moins de ${fmtMasse(X)} ?`,
+    consigne: B(`Le paquet pèse-t-il plus ou moins de ${fmtMasse(X)} ?`, `Hag-eñ e pouez ar pakad muioc'h pe nebeutoc'h eget ${fmtMasse(X)} ?`),
     svg: svgBalance(plus ? 1 : -1, [{ kind: 'emoji', e: '📦' }], [{ kind: 'masse', g: X }]),
     mode: 'choix', choix, reponse: rep, attendu: rep,
-    texte: `Paquet face à ${fmtMasse(X)}`,
-    explication: plus
-      ? `Le plateau du paquet descend : le paquet est plus lourd que ${fmtMasse(X)}.`
-      : `Le plateau du paquet monte : le paquet est plus léger que ${fmtMasse(X)}.`,
+    texte: B(`Paquet face à ${fmtMasse(X)}`, `Pakad e-keñver ${fmtMasse(X)}`),
+    explication: enBr()
+      ? (plus
+        ? `Diskenn a ra plad ar pakad : pounneroc'h eo ar pakad eget ${fmtMasse(X)}.`
+        : `Pignat a ra plad ar pakad : skañvoc'h eo ar pakad eget ${fmtMasse(X)}.`)
+      : (plus
+        ? `Le plateau du paquet descend : le paquet est plus lourd que ${fmtMasse(X)}.`
+        : `Le plateau du paquet monte : le paquet est plus léger que ${fmtMasse(X)}.`),
     plus,
   }
 }
@@ -661,24 +709,28 @@ function genContenance(niv) {
     const k = aleatoire(1, max)
     return {
       type: 'contenance', cle: `cont-broc-${max}-${u}-${k}`,
-      consigne: u === 'L' ? "Combien de litres d'eau y a-t-il dans le broc ?" : "Combien de décilitres d'eau y a-t-il dans le broc ?",
+      consigne: enBr()
+        ? (u === 'L' ? 'Pet litr dour a zo er pod ?' : 'Pet desilitr dour a zo er pod ?')
+        : (u === 'L' ? "Combien de litres d'eau y a-t-il dans le broc ?" : "Combien de décilitres d'eau y a-t-il dans le broc ?"),
       svg: svgBroc(max, k, u),
       mode: 'nombre', unite: u, reponse: k, attendu: `${k} ${u}`,
-      texte: `Broc gradué jusqu'à ${max} ${u}`,
-      explication: `L'eau arrive au trait « ${k} ${u} ».` + (u === 'dL' && k === 10 ? ' 10 dL = 1 L.' : ''),
+      texte: B(`Broc gradué jusqu'à ${max} ${u}`, `Pod derezennet betek ${max} ${u}`),
+      explication: B(`L'eau arrive au trait « ${k} ${u} ».`, `Betek ar merk « ${k} ${u} » emañ an dour.`) + (u === 'dL' && k === 10 ? ' 10 dL = 1 L.' : ''),
       max, k,
     }
   }
   if (sous === 'verres') {
-    const c = hasard([20, 25, 50]), B = hasard([1, 2])
-    const n = B * 100 / c
+    const c = hasard([20, 25, 50]), Bt = hasard([1, 2])
+    const n = Bt * 100 / c
     return {
       type: 'contenance', cle: `cont-verres-${c}-${B}`,
-      consigne: `Un verre contient ${c} cL. Combien de verres faut-il pour remplir une bouteille de ${B} L ?`,
-      mode: 'nombre', unite: 'verres', reponse: n, attendu: `${n} verres`,
-      texte: `Verres de ${c} cL pour ${B} L`,
-      explication: `${B} L = ${B * 100} cL. ${Array(n).fill(c).join(' + ')} = ${B * 100} cL : il faut ${n} verres.`,
-      c, B,
+      consigne: enBr()
+        ? `Ur werenn a zalc'h ${c} cL. Pet gwerenn a zo ezhomm evit leuniañ ur voutailh ${Bt} L ?`
+        : `Un verre contient ${c} cL. Combien de verres faut-il pour remplir une bouteille de ${Bt} L ?`,
+      mode: 'nombre', unite: B('verres', 'gwerenn'), reponse: n, attendu: `${n} ${B('verres', 'gwerenn')}`,
+      texte: B(`Verres de ${c} cL pour ${Bt} L`, `Gwerennoù ${c} cL evit ${Bt} L`),
+      explication: `${Bt} L = ${Bt * 100} cL. ${Array(n).fill(c).join(' + ')} = ${Bt * 100} cL : ${B(`il faut ${n} verres`, `${n} gwerenn a zo ezhomm`)}.`,
+      c, B: Bt,
     }
   }
   const { max1, max2 } = niv.bouteilles
@@ -686,14 +738,15 @@ function genContenance(niv) {
   const n1 = aleatoire(n2 === 0 ? 2 : n2 === 1 ? 1 : 0, max1)
   const total = n1 + 2 * n2
   const parts = []
-  if (n2) parts.push(`${n2} bouteille${n2 > 1 ? 's' : ''} de 2 L = ${2 * n2} L`)
-  if (n1) parts.push(`${n1} bouteille${n1 > 1 ? 's' : ''} de 1 L = ${n1} L`)
+  if (n2) parts.push(B(`${n2} bouteille${n2 > 1 ? 's' : ''} de 2 L`, `${n2} boutailh 2 L`) + ` = ${2 * n2} L`)
+  if (n1) parts.push(B(`${n1} bouteille${n1 > 1 ? 's' : ''} de 1 L`, `${n1} boutailh 1 L`) + ` = ${n1} L`)
   return {
     type: 'contenance', cle: `cont-bout-${n1}-${n2}`,
-    consigne: 'On vide toutes ces bouteilles dans le seau : il est plein ! Combien de litres contient le seau ?',
+    consigne: B('On vide toutes ces bouteilles dans le seau : il est plein ! Combien de litres contient le seau ?',
+      "Skarzhet e vez an holl voutailhoù-se er sailh : leun eo ! Pet litr a zalc'h ar sailh ?"),
     svg: svgBouteilles(n1, n2),
     mode: 'nombre', unite: 'L', reponse: total, attendu: `${total} L`,
-    texte: `${n2} bouteille(s) de 2 L et ${n1} de 1 L`,
+    texte: B(`${n2} bouteille(s) de 2 L et ${n1} de 1 L`, `${n2} boutailh 2 L ha ${n1} boutailh 1 L`),
     explication: parts.length === 2 ? `${parts.join(' ; ')}. ${2 * n2} + ${n1} = ${total} L.` : `${parts[0]}.`,
     n1, n2,
   }
@@ -703,97 +756,127 @@ function genCalendrier(niv) {
   const sous = hasard(niv.calendrier)
   const j = aleatoire(0, 6), m = aleatoire(0, 11)
   const base = { type: 'calendrier', mode: 'choix', choix: JOURS }
+  // br : dates « an 12 a viz Here », jours « dilun… » — br: à relire
+  const br = enBr()
+  const auj = br ? `Hiziv eo ${JOURS[j]}.` : `Aujourd'hui, nous sommes ${JOURS[j]}.`
+  const jours = n => br ? `${n} devezh` : `${n} jour${n > 1 ? 's' : ''}`
+  const date = (d, mm) => br ? `an ${d} a viz ${MOIS[mm]}` : `le ${d} ${MOIS[mm]}`
+  const memeJour = B('Une semaine = 7 jours : on retombe sur le même jour !', 'Ur sizhun = 7 devezh : adkavout a reer an hevelep devezh !')
   if (sous === 'demain' || sous === 'hier') {
     const r = JOURS[(j + (sous === 'demain' ? 1 : 6)) % 7]
     return { ...base, cle: `cal-${sous}-${j}`,
-      consigne: sous === 'demain'
-        ? `Aujourd'hui, nous sommes ${JOURS[j]}. Quel jour serons-nous demain ?`
-        : `Aujourd'hui, nous sommes ${JOURS[j]}. Quel jour étions-nous hier ?`,
-      reponse: r, attendu: r, texte: `Aujourd'hui ${JOURS[j]} → ${sous} ?`,
-      explication: `Les jours de la semaine : ${JOURS.join(', ')}.` }
+      consigne: br
+        ? `${auj} ${sous === 'demain' ? "Pe zevezh e vo warc'hoazh ?" : "Pe zevezh e oa dec'h ?"}`
+        : sous === 'demain'
+          ? `${auj} Quel jour serons-nous demain ?`
+          : `${auj} Quel jour étions-nous hier ?`,
+      reponse: r, attendu: r,
+      texte: br ? `Hiziv ${JOURS[j]} → ${sous === 'demain' ? "warc'hoazh" : "dec'h"} ?` : `Aujourd'hui ${JOURS[j]} → ${sous} ?`,
+      explication: `${B('Les jours de la semaine', 'Devezhioù ar sizhun')} : ${JOURS.join(', ')}.` }
   }
   if (sous === 'dansN') {
     const n = aleatoire(...niv.dansN)
     const r = JOURS[(j + n) % 7]
+    const consigne = br ? `${auj} Pe zevezh e vo a-benn ${n} devezh ?` : `${auj} Quel jour serons-nous dans ${n} jours ?`
+    const texte = `${JOURS[j]} + ${jours(n)} ?`
     if (n >= 7) {
-      return { ...base, cle: `cal-n-${j}-${n}`,
-        consigne: `Aujourd'hui, nous sommes ${JOURS[j]}. Quel jour serons-nous dans ${n} jours ?`,
-        reponse: r, attendu: r, texte: `${JOURS[j]} + ${n} jours ?`,
+      return { ...base, cle: `cal-n-${j}-${n}`, consigne,
+        reponse: r, attendu: r, texte,
         explication: n === 7
-          ? 'Une semaine = 7 jours : on retombe sur le même jour !'
-          : `Dans 7 jours (une semaine), on est encore ${JOURS[j]}. Encore ${n - 7} jour${n - 7 > 1 ? 's' : ''} : ${r}.`, j, n }
+          ? memeJour
+          : br
+            ? `A-benn 7 devezh (ur sizhun), ${JOURS[j]} e vo c'hoazh. ${n - 7} devezh ouzhpenn : ${r}.`
+            : `Dans 7 jours (une semaine), on est encore ${JOURS[j]}. Encore ${jours(n - 7)} : ${r}.`, j, n }
     }
     const chemin = Array.from({ length: n }, (_, i) => JOURS[(j + i + 1) % 7])
-    return { ...base, cle: `cal-n-${j}-${n}`,
-      consigne: `Aujourd'hui, nous sommes ${JOURS[j]}. Quel jour serons-nous dans ${n} jours ?`,
-      reponse: r, attendu: r, texte: `${JOURS[j]} + ${n} jours ?`,
-      explication: `On compte ${n} jours : ${chemin.map((d, i) => `${i + 1}. ${d}`).join(', ')}.`, j, n }
+    return { ...base, cle: `cal-n-${j}-${n}`, consigne,
+      reponse: r, attendu: r, texte,
+      explication: `${B(`On compte ${n} jours`, `Kontañ a reer ${n} devezh`)} : ${chemin.map((d, i) => `${i + 1}. ${d}`).join(', ')}.`, j, n }
   }
   if (sous === 'semaine') {
     return { ...base, cle: `cal-sem-${j}`,
-      consigne: `Aujourd'hui, nous sommes ${JOURS[j]}. Quel jour serons-nous dans une semaine ?`,
-      reponse: JOURS[j], attendu: JOURS[j], texte: `${JOURS[j]} + 1 semaine ?`,
-      explication: 'Une semaine = 7 jours : on retombe sur le même jour !' }
+      consigne: br ? `${auj} Pe zevezh e vo a-benn ur sizhun ?` : `${auj} Quel jour serons-nous dans une semaine ?`,
+      reponse: JOURS[j], attendu: JOURS[j], texte: `${JOURS[j]} + 1 ${B('semaine', 'sizhun')} ?`,
+      explication: memeJour }
   }
   if (sous === 'moisApres' || sous === 'moisAvant') {
     const r = MOIS[(m + (sous === 'moisApres' ? 1 : 11)) % 12]
+    const apres = sous === 'moisApres'
     return { ...base, choix: MOIS, cle: `cal-${sous}-${m}`,
-      consigne: `Quel mois vient juste ${sous === 'moisApres' ? 'après' : 'avant'} ${MOIS[m]} ?`,
-      reponse: r, attendu: r, texte: `Mois ${sous === 'moisApres' ? 'après' : 'avant'} ${MOIS[m]}`,
-      explication: `Les mois de l'année : ${MOIS.join(', ')}.` }
+      consigne: br
+        ? `Pe viz a zeu ${apres ? "war-lerc'h" : 'a-raok'} miz ${MOIS[m]} ?`
+        : `Quel mois vient juste ${apres ? 'après' : 'avant'} ${MOIS[m]} ?`,
+      reponse: r, attendu: r,
+      texte: br ? `Miz ${apres ? "war-lerc'h" : 'a-raok'} ${MOIS[m]}` : `Mois ${apres ? 'après' : 'avant'} ${MOIS[m]}`,
+      explication: `${B("Les mois de l'année", 'Mizioù ar bloaz')} : ${MOIS.join(', ')}.` }
   }
   if (sous === 'numMois') {
     return { type: 'calendrier', mode: 'nombre', unite: '', cle: `cal-num-${m}`,
-      consigne: `Janvier est le mois n° 1. Quel est le numéro du mois de ${MOIS[m]} ?`,
-      reponse: m + 1, attendu: String(m + 1), texte: `Numéro du mois de ${MOIS[m]}`,
+      consigne: br
+        ? `Genver eo ar miz niverenn 1. Pe niverenn en deus miz ${MOIS[m]} ?`
+        : `Janvier est le mois n° 1. Quel est le numéro du mois de ${MOIS[m]} ?`,
+      reponse: m + 1, attendu: String(m + 1), texte: B(`Numéro du mois de ${MOIS[m]}`, `Niverenn miz ${MOIS[m]}`),
       explication: MOIS.slice(0, m + 1).map((x, i) => `${x} = ${i + 1}`).join(', ') + '.' }
   }
   if (sous === 'semainesJours') {
     const n = aleatoire(1, 4)
-    const aff = `${n} semaine${n > 1 ? 's' : ''} = ? jours`
-    return { type: 'calendrier', mode: 'nombre', unite: 'jours', cle: `cal-sj-${n}`,
-      consigne: 'Complète.', affiche: aff,
-      reponse: 7 * n, attendu: `${7 * n} jours`, texte: aff,
-      explication: n === 1 ? '1 semaine = 7 jours.' : `1 semaine = 7 jours, donc ${n} semaines = ${Array(n).fill(7).join(' + ')} = ${7 * n} jours.` }
+    const aff = br ? `${n} sizhun = ? devezh` : `${n} semaine${n > 1 ? 's' : ''} = ? jours`
+    return { type: 'calendrier', mode: 'nombre', unite: B('jours', 'devezh'), cle: `cal-sj-${n}`,
+      consigne: B('Complète.', 'Leunia.'), affiche: aff,
+      reponse: 7 * n, attendu: jours(7 * n), texte: aff,
+      explication: br
+        ? (n === 1 ? '1 sizhun = 7 devezh.' : `1 sizhun = 7 devezh, neuze ${n} sizhun = ${Array(n).fill(7).join(' + ')} = ${7 * n} devezh.`)
+        : (n === 1 ? '1 semaine = 7 jours.' : `1 semaine = 7 jours, donc ${n} semaines = ${Array(n).fill(7).join(' + ')} = ${7 * n} jours.`) }
   }
   if (sous === 'joursSemaines') {
     const n = aleatoire(2, 6)
-    const aff = `${7 * n} jours = ? semaines`
-    return { type: 'calendrier', mode: 'nombre', unite: 'semaines', cle: `cal-js-${n}`,
-      consigne: 'Complète.', affiche: aff,
-      reponse: n, attendu: `${n} semaines`, texte: aff,
-      explication: `1 semaine = 7 jours. ${n} × 7 = ${7 * n}, donc ${7 * n} jours = ${n} semaines.` }
+    const aff = br ? `${7 * n} devezh = ? sizhun` : `${7 * n} jours = ? semaines`
+    return { type: 'calendrier', mode: 'nombre', unite: B('semaines', 'sizhun'), cle: `cal-js-${n}`,
+      consigne: B('Complète.', 'Leunia.'), affiche: aff,
+      reponse: n, attendu: br ? `${n} sizhun` : `${n} semaines`, texte: aff,
+      explication: br
+        ? `1 sizhun = 7 devezh. ${n} × 7 = ${7 * n}, neuze ${7 * n} devezh = ${n} sizhun.`
+        : `1 semaine = 7 jours. ${n} × 7 = ${7 * n}, donc ${7 * n} jours = ${n} semaines.` }
   }
   if (sous === 'joursMois') {
-    const r = m === 1 ? '28 ou 29' : String(JOURS_MOIS[m])
-    return { type: 'calendrier', mode: 'choix', choix: ['28 ou 29', '30', '31'], cle: `cal-jm-${m}`,
-      consigne: `Combien de jours y a-t-il dans le mois ${DE_MOIS(m)} ?`,
-      reponse: r, attendu: `${r} jours`, texte: `Jours du mois ${DE_MOIS(m)}`,
-      explication: m === 1
-        ? 'Février a 28 jours, et 29 jours les années bissextiles (une fois tous les 4 ans).'
-        : `${MOIS[m][0].toUpperCase() + MOIS[m].slice(1)} a ${r} jours. Astuce : compte sur les bosses de tes poings !` }
+    const fev = B('28 ou 29', '28 pe 29')
+    const r = m === 1 ? fev : String(JOURS_MOIS[m])
+    return { type: 'calendrier', mode: 'choix', choix: [fev, '30', '31'], cle: `cal-jm-${m}`,
+      consigne: br ? `Pet devezh a zo e miz ${MOIS[m]} ?` : `Combien de jours y a-t-il dans le mois ${DE_MOIS(m)} ?`,
+      reponse: r, attendu: br ? `${r} devezh` : `${r} jours`, texte: br ? `Devezhioù miz ${MOIS[m]}` : `Jours du mois ${DE_MOIS(m)}`,
+      explication: br
+        ? (m === 1
+          ? "28 devezh en deus C'hwevrer, ha 29 devezh er bloavezhioù bisextil (ur wech bep 4 bloaz)."
+          : `${r} devezh en deus ${MOIS[m]}. Tun : kont war mellou da zaouarn serret !`)
+        : (m === 1
+          ? 'Février a 28 jours, et 29 jours les années bissextiles (une fois tous les 4 ans).'
+          : `${MOIS[m][0].toUpperCase() + MOIS[m].slice(1)} a ${r} jours. Astuce : compte sur les bosses de tes poings !`) }
   }
   if (sous === 'dansJours') {
     const mm = m === 1 ? 2 : m
     const d1 = aleatoire(1, 15), d2 = aleatoire(d1 + 3, Math.min(JOURS_MOIS[mm], d1 + 20))
-    return { type: 'calendrier', mode: 'nombre', unite: 'jours', cle: `cal-dj-${mm}-${d1}-${d2}`,
-      consigne: `Aujourd'hui, nous sommes le ${d1} ${MOIS[mm]}. Dans combien de jours serons-nous le ${d2} ${MOIS[mm]} ?`,
-      reponse: d2 - d1, attendu: `${d2 - d1} jours`, texte: `Du ${d1} au ${d2} ${MOIS[mm]}`,
-      explication: `${d2} − ${d1} = ${d2 - d1} : il reste ${d2 - d1} jours.`, d1, d2 }
+    return { type: 'calendrier', mode: 'nombre', unite: B('jours', 'devezh'), cle: `cal-dj-${mm}-${d1}-${d2}`,
+      consigne: br
+        ? `Hiziv eo ${date(d1, mm)}. A-benn pet devezh e vo ${date(d2, mm)} ?`
+        : `Aujourd'hui, nous sommes ${date(d1, mm)}. Dans combien de jours serons-nous ${date(d2, mm)} ?`,
+      reponse: d2 - d1, attendu: jours(d2 - d1), texte: br ? `Eus an ${d1} betek an ${d2} a viz ${MOIS[mm]}` : `Du ${d1} au ${d2} ${MOIS[mm]}`,
+      explication: br ? `${d2} − ${d1} = ${d2 - d1} : ${d2 - d1} devezh a chom.` : `${d2} − ${d1} = ${d2 - d1} : il reste ${d2 - d1} jours.`, d1, d2 }
   }
   if (sous === 'dateDans') {
     const mm = m === 1 ? 2 : m
     const n = aleatoire(1, 2), d1 = aleatoire(1, JOURS_MOIS[mm] - 7 * n)
     const d2 = d1 + 7 * n
-    return { type: 'calendrier', mode: 'nombre', unite: MOIS[mm], cle: `cal-dd-${mm}-${d1}-${n}`,
-      consigne: `Nous sommes le ${d1} ${MOIS[mm]}. Quelle date serons-nous dans ${n === 1 ? 'une semaine' : 'deux semaines'} ? Le …`,
-      reponse: d2, attendu: `le ${d2} ${MOIS[mm]}`, texte: `${d1} ${MOIS[mm]} + ${n} semaine${n > 1 ? 's' : ''}`,
-      explication: `${n === 1 ? '1 semaine = 7 jours' : '2 semaines = 14 jours'} : ${d1} + ${7 * n} = ${d2}.`, d1, d2, n }
+    return { type: 'calendrier', mode: 'nombre', unite: br ? `a viz ${MOIS[mm]}` : MOIS[mm], cle: `cal-dd-${mm}-${d1}-${n}`,
+      consigne: br
+        ? `Hiziv eo ${date(d1, mm)}. Pe zeiziad e vo a-benn ${n === 1 ? 'ur sizhun' : 'div sizhun'} ? An …`
+        : `Nous sommes ${date(d1, mm)}. Quelle date serons-nous dans ${n === 1 ? 'une semaine' : 'deux semaines'} ? Le …`,
+      reponse: d2, attendu: date(d2, mm), texte: br ? `${d1} ${MOIS[mm]} + ${n} sizhun` : `${d1} ${MOIS[mm]} + ${n} semaine${n > 1 ? 's' : ''}`,
+      explication: `${br ? (n === 1 ? '1 sizhun = 7 devezh' : '2 sizhun = 14 devezh') : (n === 1 ? '1 semaine = 7 jours' : '2 semaines = 14 jours')} : ${d1} + ${7 * n} = ${d2}.`, d1, d2, n }
   }
-  return { type: 'calendrier', mode: 'nombre', unite: 'mois', cle: 'cal-mois-annee',
-    consigne: 'Combien y a-t-il de mois dans une année ?',
-    reponse: 12, attendu: '12 mois', texte: 'Mois dans une année',
-    explication: `Une année = 12 mois : ${MOIS.join(', ')}.` }
+  return { type: 'calendrier', mode: 'nombre', unite: B('mois', 'miz'), cle: 'cal-mois-annee',
+    consigne: B('Combien y a-t-il de mois dans une année ?', 'Pet miz a zo en ur bloavezh ?'),
+    reponse: 12, attendu: B('12 mois', '12 miz'), texte: B('Mois dans une année', 'Mizioù en ur bloavezh'),
+    explication: `${B('Une année = 12 mois', 'Ur bloavezh = 12 miz')} : ${MOIS.join(', ')}.` }
 }
 
 const GENERATEURS = {
@@ -803,6 +886,7 @@ const GENERATEURS = {
 
 // Répartit les questions entre les exercices choisis, sans répétition (essais bornés)
 function genererSerie(cfg, nb, typesForces) {
+  appliquerLangue()
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   let types = (typesForces || cfg.exercices).filter(t => niv.exercices.includes(t) && GENERATEURS[t])
   if (!types.length) types = ['regle']
@@ -906,13 +990,13 @@ function valider() {
   historique.value.push({ texte: question.texte, donne, attendu: question.attendu, ok })
   if (ok) {
     inputClass.value = 'ok'
-    feedback.value = ['Bravo ! 🎉', 'Excellent ! ⭐', 'Parfait ! 👏', 'Super ! 🌟'][aleatoire(0, 3)]
+    feedback.value = hasard(t('bravo'))
     feedbackClass.value = 'ok'
     bonnes.value++
     timer = setTimeout(suivant, 900)
   } else {
     inputClass.value = 'erreur'
-    feedback.value = `❌ La bonne réponse : ${question.attendu}`
+    feedback.value = `❌ ${t('bonneReponse')} : ${question.attendu}`
     feedbackClass.value = 'erreur'
     mauvaises.value++
     attente.value = true
@@ -923,9 +1007,9 @@ function passer() {
   if (verrou.value) return
   const question = q.value
   verrou.value = true
-  historique.value.push({ texte: question.texte, donne: '(passé)', attendu: question.attendu, ok: false })
+  historique.value.push({ texte: question.texte, donne: t('passe'), attendu: question.attendu, ok: false })
   mauvaises.value++
-  feedback.value = `La bonne réponse : ${question.attendu}`
+  feedback.value = `${t('bonneReponse')} : ${question.attendu}`
   feedbackClass.value = 'erreur'
   attente.value = true
 }
@@ -940,11 +1024,11 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Tu peux encore progresser 💪'
-  if (pct >= 40)   return 'Courage, continue à t\'entraîner ! 🤓'
-  return 'N\'abandonne pas, pratique encore ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  if (pct >= 40)   return t('resultat40')
+  return t('resultat0')
 })
 
 onUnmounted(() => clearTimeout(timer))
@@ -980,9 +1064,9 @@ function questionImprimee(qi) {
     h += `<div class="consigne">${qi.consigne}</div>`
     if (qi.svg) h += `<div class="illus">${qi.svg}</div>`
     if (qi.affiche) h += `<div class="affiche">${qi.affiche}</div>`
-    if (qi.mode === 'nombre') h += `<div class="affiche">Réponse : ${TROU} ${qi.unite || ''}</div>`
-    else if (qi.type === 'calendrier' && qi.choix.length > 3) h += `<div class="affiche">Réponse : ${TROU}${TROU}</div>`
-    else h += `<div class="choix">Entoure : ${qi.choix.map(c => `<span>${c}</span>`).join('')}</div>`
+    if (qi.mode === 'nombre') h += `<div class="affiche">${B('Réponse', 'Respont')} : ${TROU} ${qi.unite || ''}</div>`
+    else if (qi.type === 'calendrier' && qi.choix.length > 3) h += `<div class="affiche">${B('Réponse', 'Respont')} : ${TROU}${TROU}</div>`
+    else h += `<div class="choix">${B('Entoure', "Kelc'hia")} : ${qi.choix.map(c => `<span>${c}</span>`).join('')}</div>`
   }
   return h + '</div>'
 }
@@ -1000,8 +1084,8 @@ function imprimerFiche() {
     const choisis = melanger(longueurs).slice(0, 6)
     const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEF'[i]}</span>${segmentReel(L / 10)}<span class="rep">${TROU} cm ${TROU} mm</span></div>`).join('')
     const traces = melanger(longueurs.filter(L => L <= 100 && !choisis.includes(L))).slice(0, 2)
-      .map(L => `<div class="trace">Trace un segment de <strong>${cmmm(L)}</strong> : <span class="point">×</span></div>`).join('')
-    sections.push(`<h2>📏 Mesure chaque segment avec ta règle (en cm et mm)</h2>${segs}<h2>✏️ Trace avec ta règle</h2>${traces}`)
+      .map(L => `<div class="trace">${B('Trace un segment de', 'Tres ur segment hir a')} <strong>${cmmm(L)}</strong> : <span class="point">×</span></div>`).join('')
+    sections.push(`<h2>📏 ${B('Mesure chaque segment avec ta règle (en cm et mm)', 'Muzulia pep segment gant da reolenn (e cm hag e mm)')}</h2>${segs}<h2>✏️ ${B('Trace avec ta règle', 'Tres gant da reolenn')}</h2>${traces}`)
   } else if (ex.includes('regle')) {
     const longueurs = []
     for (let L = niv.fiche.segMin; L <= niv.fiche.segMax; L++) longueurs.push(L)
@@ -1009,17 +1093,17 @@ function imprimerFiche() {
     const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEF'[i]}</span>${segmentReel(L)}<span class="rep">${TROU} cm</span></div>`).join('')
     const traces = melanger(longueurs.filter(L => L <= 10 && !choisis.includes(L)).concat([5, 8]))
       .filter((v, i, a) => a.indexOf(v) === i).slice(0, 2)
-      .map(L => `<div class="trace">Trace un segment de <strong>${L} cm</strong> : <span class="point">×</span></div>`).join('')
-    sections.push(`<h2>📏 Mesure chaque segment avec ta règle</h2>${segs}<h2>✏️ Trace avec ta règle</h2>${traces}`)
+      .map(L => `<div class="trace">${B('Trace un segment de', 'Tres ur segment hir a')} <strong>${L} cm</strong> : <span class="point">×</span></div>`).join('')
+    sections.push(`<h2>📏 ${B('Mesure chaque segment avec ta règle', 'Muzulia pep segment gant da reolenn')}</h2>${segs}<h2>✏️ ${B('Trace avec ta règle', 'Tres gant da reolenn')}</h2>${traces}`)
   }
 
   const blocs = [
-    ['conversion', '🔁 Complète les conversions', 6],
-    ['unite', `🤔 Écris la bonne unité : ${niv.unites.slice(0, -1).join(', ')} ou ${niv.unites[niv.unites.length - 1]}`, 6],
-    ['comparer', '🟰 Compare avec &lt;, = ou &gt;', 4],
-    ['masse', '⚖️ Les masses', 2],
-    ['contenance', '🥛 Les contenances', 2],
-    ['calendrier', '📅 Le calendrier', 4],
+    ['conversion', B('🔁 Complète les conversions', '🔁 Leunia an amdroadurioù'), 6],
+    ['unite', `🤔 ${B('Écris la bonne unité', 'Skriv an unanenn vat')} : ${niv.unites.slice(0, -1).join(', ')} ${B('ou', 'pe')} ${niv.unites[niv.unites.length - 1]}`, 6],
+    ['comparer', B('🟰 Compare avec &lt;, = ou &gt;', '🟰 Keñveria gant &lt;, = pe &gt;'), 4],
+    ['masse', B('⚖️ Les masses', '⚖️ Ar pouezioù'), 2],
+    ['contenance', B('🥛 Les contenances', "🥛 An endalc'hioù"), 2],
+    ['calendrier', B('📅 Le calendrier', '📅 An deiziadur'), 4],
   ]
   blocs.forEach(([type, titre, nb]) => {
     if (!ex.includes(type)) return
@@ -1028,8 +1112,8 @@ function imprimerFiche() {
     sections.push(`<h2>${titre}</h2><div class="${grille}">${qs.map(questionImprimee).join('')}</div>`)
   })
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Mesures — ${cfg.niveau.toUpperCase()}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${cfg.niveau.toUpperCase()}</title>
     <style>
       @page { size: A4; margin: 1.2cm; }
       body { font-family: Arial, sans-serif; max-width: 18cm; margin: 0 auto; color: #222; }
@@ -1053,10 +1137,10 @@ function imprimerFiche() {
       .illus svg { width: 6.5cm; height: auto; }
       .choix span { display: inline-block; margin: 0 .3cm; padding: .05cm .2cm; }
     </style></head><body>
-    <h1>📏 Mesures — ${cfg.niveau.toUpperCase()}</h1>
-    <p class="entete">Nom : ________________________________ &nbsp; Date : ______________</p>
-    <p class="alerte">⚠️ Imprimer à 100 % (« taille réelle »), sans ajustement à la page, sinon les segments n'auront pas la bonne longueur.</p>
-    ${ex.includes('regle') ? `<div class="temoin">${regleTemoin()}<span>Pour le parent : ce trait gradué doit mesurer exactement 10 cm.</span></div>` : ''}
+    <h1>📏 ${t('titre')} — ${cfg.niveau.toUpperCase()}</h1>
+    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="alerte">⚠️ ${B("Imprimer à 100 % (« taille réelle »), sans ajustement à la page, sinon les segments n'auront pas la bonne longueur.", "Moullañ da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmentoù.")}</p>
+    ${ex.includes('regle') ? `<div class="temoin">${regleTemoin()}<span>${B('Pour le parent : ce trait gradué doit mesurer exactement 10 cm.', 'Evit an dud : 10 cm resis a rank muzuliañ al linenn derezennet-mañ.')}</span></div>` : ''}
     ${sections.join('')}
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`

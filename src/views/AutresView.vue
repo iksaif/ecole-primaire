@@ -1,25 +1,25 @@
 <template>
   <div class="container">
-    <h1>🌍 Quiz — Culture générale</h1>
+    <h1>🌍 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
 
       <div class="config-section">
-        <div class="config-section-title">Thème</div>
+        <div class="config-section-title">{{ t('theme') }}</div>
         <div class="theme-grid">
-          <button v-for="t in THEMES" :key="t.id"
-            class="theme-btn" :class="{ active: config.theme === t.id }"
-            @click="config.theme = t.id">
-            <span class="theme-icon">{{ t.icon }}</span>
-            <span class="theme-label">{{ t.label }}</span>
-            <span class="theme-niveau">{{ t.niveau }}</span>
+          <button v-for="th in THEMES" :key="th.id"
+            class="theme-btn" :class="{ active: config.theme === th.id }"
+            @click="config.theme = th.id">
+            <span class="theme-icon">{{ th.icon }}</span>
+            <span class="theme-label">{{ tr(th.label) }}</span>
+            <span class="theme-niveau">{{ th.niveau }}</span>
           </button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nb === n }"
@@ -29,7 +29,7 @@
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
     </div>
@@ -37,8 +37,8 @@
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="phase = 'config'">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
       <div class="prog-dots" style="max-width:680px;margin:0 auto .5rem;">
@@ -60,7 +60,7 @@
         </div>
 
         <button v-if="repondu" class="btn btn-primary" style="margin-top:1rem;" @click="suivant">
-          {{ idx + 1 < questions.length ? 'Suivant →' : 'Voir les résultats' }}
+          {{ idx + 1 < questions.length ? t('suivant') : t('voirResultats') }}
         </button>
       </div>
     </template>
@@ -71,7 +71,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <div v-if="erreurs.length > 0" class="erreurs-box">
-        <div class="config-section-title" style="margin-bottom:.5rem;">À retenir :</div>
+        <div class="config-section-title" style="margin-bottom:.5rem;">{{ t('aRetenir') }}</div>
         <div v-for="(e, i) in erreurs" :key="i" class="erreur-quiz">
           <span class="erreur-q">{{ e.q }}</span>
           <span class="erreur-r">→ <strong>{{ e.bonne }}</strong></span>
@@ -79,8 +79,8 @@
       </div>
 
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -89,13 +89,41 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../utils'
+import { useI18n } from '../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: 'Quiz — Culture générale',
+    theme: 'Thème',
+    aRetenir: 'À retenir :',
+    changer: '⚙️ Changer',
+    bravoQuiz: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'],
+    mauvaise: 'La bonne réponse était : {r}.',
+    res100: 'Parfait, sans faute ! 🏆',
+    res80: 'Excellent ! 🌟',
+    res60: 'Bien ! Continue à apprendre 💪',
+    res0: 'Courage ! Relis les réponses et réessaie 📚',
+  },
+  br: {
+    titre: 'Kwiz — Sevenadur hollek', // br: à relire
+    theme: 'Tem',
+    aRetenir: "Da zerc'hel soñj :",
+    changer: '⚙️ Cheñch',
+    bravoQuiz: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
+    mauvaise: 'Ar respont mat a oa : {r}.',
+    res100: 'Dispar, hep fazi ebet ! 🏆',
+    res80: 'Gwellañ ! 🌟',
+    res60: "Mat ! Kendalc'h da zeskiñ 💪",
+    res0: "Kalon vat ! Adlenn ar respontoù hag adklask 📚",
+  },
+})
 
 const THEMES = [
-  { id: 'geo-france',  icon: '🗺️', label: 'Géographie France',    niveau: 'CE2→CM2' },
-  { id: 'geo-monde',   icon: '🌍', label: 'Capitales du monde',    niveau: 'CM1→CM2' },
-  { id: 'sciences',    icon: '🔬', label: 'Sciences & nature',     niveau: 'CE1→CM2' },
-  { id: 'histoire',    icon: '📜', label: 'Histoire de France',    niveau: 'CM1→CM2' },
-  { id: 'animaux',     icon: '🦁', label: 'Le monde animal',       niveau: 'CP→CE2' },
+  { id: 'geo-france',  icon: '🗺️', label: { fr: 'Géographie France',  br: "Douaroniezh Bro-C'hall" }, niveau: 'CE2→CM2' },
+  { id: 'geo-monde',   icon: '🌍', label: { fr: 'Capitales du monde',  br: 'Kêrioù-penn ar bed' },     niveau: 'CM1→CM2' },
+  { id: 'sciences',    icon: '🔬', label: { fr: 'Sciences & nature',   br: 'Skiantoù ha natur' },      niveau: 'CE1→CM2' },
+  { id: 'histoire',    icon: '📜', label: { fr: 'Histoire de France',  br: "Istor Bro-C'hall" },       niveau: 'CM1→CM2' },
+  { id: 'animaux',     icon: '🦁', label: { fr: 'Le monde animal',     br: 'Bed al loened' },          niveau: 'CP→CE2' },
 ]
 
 // ── Banque de questions
@@ -193,6 +221,90 @@ const QUESTIONS = {
   ],
 }
 
+// ── Traductions bretonnes des questions (clé = question française).
+// Les questions absentes d'ici (noms propres, nuances délicates) ne sont proposées qu'en français :
+// elles sont filtrées quand l'interface est en breton. « bonne » doit figurer dans « choix ».
+const QUESTIONS_BR = {
+  // ── Douaroniezh Bro-C'hall
+  'Quelle est la capitale de la France ?': { q: "Pehini eo kêr-benn Bro-C'hall ?", bonne: 'Pariz', choix: ['Pariz', 'Lyon', 'Marseilh', 'Bourdel'] },
+  'Quel est le plus long fleuve de France ?': { q: "Pehini eo ar stêr hirañ e Bro-C'hall ?", bonne: 'Al Liger', choix: ['Al Liger', 'Ar Sen', 'Ar Rodan', 'Ar Garonn'] },
+  'Quel fleuve traverse Paris ?': { q: 'Peseurt stêr a dreuz Pariz ?', bonne: 'Ar Sen', choix: ['Ar Sen', 'Al Liger', 'Ar Rodan', 'Ar Garonn'] },
+  // br: à relire (Menez Gwenn, Alpoù, Pireneoù)
+  'Dans quel massif se trouve le Mont Blanc ?': { q: 'E peseurt menezioù emañ ar Menez Gwenn ?', bonne: 'An Alpoù', choix: ['An Alpoù', 'Ar Pireneoù', 'Ar Jura', 'Menez Are'] },
+  'Quelle mer borde le sud de la France ?': { q: "Peseurt mor a zo e su Bro-C'hall ?", bonne: 'Ar Mor Kreizdouar', choix: ['Ar Mor Kreizdouar', 'Mor Breizh', 'Ar Meurvor Atlantel', 'Mor an Hanternoz'] },
+  // br: à relire (« Meurvor Arktik »)
+  "Quel océan borde l'ouest de la France ?": { q: "Peseurt meurvor a zo e kornôg Bro-C'hall ?", bonne: 'Ar Meurvor Atlantel', choix: ['Ar Meurvor Atlantel', 'Ar Mor Kreizdouar', 'Mor Breizh', 'Ar Meurvor Arktik'] },
+  "Quelle montagne sépare la France de l'Espagne ?": { q: "Peseurt menezioù a zispartia Bro-C'hall diouzh Spagn ?", bonne: 'Ar Pireneoù', choix: ['Ar Pireneoù', 'An Alpoù', 'Ar Jura', 'Menez Are'] },
+  'Quel département est une île en Méditerranée ?': { q: 'Peseurt departamant a zo un enez er Mor Kreizdouar ?', bonne: 'Korsika', choix: ['Korsika', 'Ar Reunion', 'Gwadeloup', 'Penn-ar-Bed'] },
+  'Dans quelle ville se trouve la tour Eiffel ?': { q: 'E peseurt kêr emañ tour Eiffel ?', bonne: 'Pariz', choix: ['Pariz', 'Lyon', 'Marseilh', 'Tolosa'] },
+  // br: à relire (« prefeti »)
+  'Quelle ville est la préfecture du Finistère ?': { q: 'Pe gêr eo prefeti Penn-ar-Bed ?', bonne: 'Kemper', choix: ['Kemper', 'Brest', 'Roazhon', 'Sant-Brieg'] },
+
+  // ── Kêrioù-penn ar bed
+  "Quelle est la capitale de l'Allemagne ?": { q: 'Pehini eo kêr-benn Alamagn ?', bonne: 'Berlin', choix: ['Berlin', 'München', 'Hamburg', 'Frankfurt'] },
+  "Quelle est la capitale de l'Espagne ?": { q: 'Pehini eo kêr-benn Spagn ?', bonne: 'Madrid', choix: ['Madrid', 'Barcelona', 'Sevilla', 'Valencia'] },
+  "Quelle est la capitale de l'Italie ?": { q: 'Pehini eo kêr-benn Italia ?', bonne: 'Roma', choix: ['Roma', 'Milano', 'Napoli', 'Torino'] },
+  'Quelle est la capitale du Royaume-Uni ?': { q: 'Pehini eo kêr-benn ar Rouantelezh-Unanet ?', bonne: 'Londrez', choix: ['Londrez', 'Manchester', 'Edinbourg', 'Kerdiz'] },
+  'Quelle est la capitale des États-Unis ?': { q: 'Pehini eo kêr-benn ar Stadoù-Unanet ?', bonne: 'Washington', choix: ['Washington', 'New York', 'Los Angeles', 'Chicago'] },
+  'Quelle est la capitale du Brésil ?': { q: 'Pehini eo kêr-benn Brazil ?', bonne: 'Brasília', choix: ['Brasília', 'Rio de Janeiro', 'São Paulo', 'Salvador'] },
+  'Quelle est la capitale du Japon ?': { q: 'Pehini eo kêr-benn Japan ?', bonne: 'Tokyo', choix: ['Tokyo', 'Osaka', 'Kyoto', 'Hiroshima'] },
+  'Quelle est la capitale de la Chine ?': { q: 'Pehini eo kêr-benn Sina ?', bonne: 'Beijing', choix: ['Beijing', 'Shanghai', 'Guangzhou', 'Chongqing'] },
+  'Quel est le plus grand océan du monde ?': { q: 'Pehini eo ar meurvor brasañ er bed ?', bonne: 'Ar Meurvor Habask', choix: ['Ar Meurvor Habask', 'Ar Meurvor Atlantel', 'Ar Meurvor Indez', 'Ar Meurvor Arktik'] },
+  'Quel est le plus long fleuve du monde ?': { q: 'Pehini eo ar stêr hirañ er bed ?', bonne: 'An Nil', choix: ['An Nil', 'An Amazon', 'Ar Mississippi', 'Ar Yangzi'], info: 'An Nil a zo war-dro 6 650 km hed dezhañ.' }, // br: à relire (info)
+  "Sur quel continent se trouve l'Égypte ?": { q: 'War peseurt kevandir emañ Egipt ?', bonne: 'Afrika', choix: ['Afrika', 'Azia', 'Europa', 'Ar Reter-Kreiz'] },
+  'Combien y a-t-il de continents ?': { q: 'Pet kevandir a zo ?', bonne: '7', choix: ['7', '5', '6', '8'] },
+  "Quelle est la capitale de l'Australie ?": { q: 'Pehini eo kêr-benn Aostralia ?', bonne: 'Canberra', choix: ['Canberra', 'Sydney', 'Melbourne', 'Brisbane'] },
+  'Sur quel continent se trouve le Brésil ?': { q: 'War peseurt kevandir emañ Brazil ?', bonne: 'Amerika ar Su', choix: ['Amerika ar Su', 'Amerika an Norzh', 'Afrika', 'Europa'] },
+  'Quel pays a la plus grande superficie du monde ?': { q: 'Pe vro eo ar brasañ er bed ?', bonne: 'Rusia', choix: ['Rusia', 'Kanada', 'Ar Stadoù-Unanet', 'Sina'] },
+
+  // ── Skiantoù ha natur
+  'Combien y a-t-il de planètes dans le système solaire ?': { q: 'Pet planedenn a zo er reizhiad-heol ?', bonne: '8', choix: ['8', '9', '7', '10'], info: "Merc'her, Gwener, an Douar, Meurzh, Yaou, Sadorn, Ouranos, Neizhan." },
+  'Quelle est la planète la plus proche du Soleil ?': { q: "Pehini eo ar blanedenn tostañ d'an Heol ?", bonne: "Merc'her", choix: ["Merc'her", 'Gwener', 'Meurzh', 'An Douar'] },
+  // br: à relire (« kelc'hioù »)
+  'Quelle planète a des anneaux visibles ?': { q: "Pe blanedenn he deus kelc'hioù a weler mat ?", bonne: 'Sadorn', choix: ['Sadorn', 'Yaou', 'Meurzh', 'Ouranos'] },
+  'Sur quelle planète vivons-nous ?': { q: 'War peseurt planedenn e vevomp ?', bonne: 'An Douar', choix: ['An Douar', 'Meurzh', 'Gwener', "Merc'her"] },
+  // br: à relire
+  'De quoi ont besoin les plantes pour pousser ?': { q: "Petra a zo ezhomm d'ar plant evit kreskiñ ?", bonne: 'Dour, gouloù ha mineraloù', choix: ['Dour, gouloù ha mineraloù', 'Dour hepken', 'Gouloù hepken', 'Sukr ha holen'] },
+  // br: à relire
+  "Combien de litres d'eau boit-on en moyenne par jour ?": { q: 'E keitad, pet litrad dour a evomp bemdez ?', bonne: '1,5 litrad', choix: ['1,5 litrad', '5 litrad', '0,5 litrad', '3 litrad'] },
+  'Quel gaz respirons-nous ?': { q: 'Peseurt gaz a analomp ?', bonne: 'An oksigen', choix: ['An oksigen', 'Ar CO₂', 'An azot', 'An hidrogen'] },
+  "À quelle température l'eau se transforme-t-elle en glace ?": { q: 'Da beseurt temperadur e teu an dour da vezañ skorn ?', bonne: '0°C', choix: ['0°C', '-10°C', '4°C', '100°C'] },
+  "À quelle température l'eau bout-elle ?": { q: 'Da beseurt temperadur e verv an dour ?', bonne: '100°C', choix: ['100°C', '80°C', '120°C', '60°C'] },
+  // br: à relire
+  "Quel est l'organe qui pompe le sang dans notre corps ?": { q: "Peseurt organ a bomp ar gwad en hor c'horf ?", bonne: 'Ar galon', choix: ['Ar galon', 'Ar skevent', 'An avu', 'An empenn'] },
+  // br: à relire (info)
+  "Combien d'os a le corps humain adulte ?": { q: 'Pet askorn en deus korf un den deuet ?', bonne: '206', choix: ['206', '150', '300', '100'], info: 'Ar babigoù a zo war-dro 270 askorn ganto pa vezont ganet.' },
+  'Quelle planète est surnommée la planète rouge ?': { q: 'Pe blanedenn a vez graet « ar blanedenn ruz » anezhi ?', bonne: 'Meurzh', choix: ['Meurzh', 'Yaou', "Merc'her", 'Gwener'] }, // br: à relire
+
+  // ── Istor Bro-C'hall (bloavezhioù hepken, pe dost)
+  'En quelle année a débuté la Révolution française ?': { q: "Pe vloaz e krogas an Dispac'h gall ?", bonne: '1789', choix: ['1789', '1815', '1750', '1848'] },
+  'En quelle année a eu lieu la bataille de Marignan ?': { q: 'Pe vloaz e voe emgann Marignan ?', bonne: '1515', choix: ['1515', '1415', '1618', '1792'] },
+  'En quelle année la Première Guerre mondiale a-t-elle commencé ?': { q: 'Pe vloaz e krogas ar Brezel-bed kentañ ?', bonne: '1914', choix: ['1914', '1918', '1939', '1900'] },
+  "En quelle année la Deuxième Guerre mondiale s'est-elle terminée ?": { q: 'Pe vloaz e echuas an Eil Brezel-bed ?', bonne: '1945', choix: ['1945', '1944', '1918', '1939'] },
+  // br: à relire
+  'En quelle année Charles de Gaulle a-t-il fondé la Ve République ?': { q: 'Pe vloaz e savas Charles de Gaulle ar Pempvet Republik ?', bonne: '1958', choix: ['1958', '1945', '1944', '1962'] },
+  // br: à relire
+  "Comment s'appelait la cité légendaire fondée par Romulus ?": { q: 'Peseurt kêr a voe diazezet gant Romulus, hervez ar vojenn ?', bonne: 'Roma', choix: ['Roma', 'Kartago', 'Atena', 'Sparta'] },
+  'Quelle date est la fête nationale française ?': { q: "Peseurt deiz eo gouel broadel Bro-C'hall ?", bonne: '14 a viz Gouere', choix: ['14 a viz Gouere', '11 a viz Du', '8 a viz Mae', '1añ a viz Mae'] },
+  "En quelle année Christophe Colomb a-t-il découvert l'Amérique ?": { q: 'Pe vloaz e tizhas Kristol Kolomb Amerika ?', bonne: '1492', choix: ['1492', '1502', '1415', '1512'] },
+
+  // ── Bed al loened (br: à relire, anvioù loened gant ar ger-mell)
+  'Quel animal est le plus grand du monde ?': { q: 'Pehini eo al loen brasañ er bed ?', bonne: 'Ar balum glas', choix: ['Ar balum glas', 'An olifant', 'Ar rinkin', 'Ar jirafenn'] },
+  'Quel est le plus rapide des animaux terrestres ?': { q: 'Pehini eo al loen buanañ war an douar ?', bonne: 'Ar gepard', choix: ['Ar gepard', 'Al leon', "Ar marc'h", "Ar c'had"] },
+  "Quel animal fabrique du miel ?": { q: 'Peseurt loen a ra mel ?', bonne: 'Ar wenanenn', choix: ['Ar wenanenn', 'Ar wespedenn', 'Ar verienn', 'Ar valafenn'] },
+  'Combien de pattes a une araignée ?': { q: 'Pet pav he deus ur gevnidenn ?', bonne: '8', choix: ['8', '6', '10', '4'] },
+  'Combien de pattes a un insecte ?': { q: 'Pet pav en deus un amprevan ?', bonne: '6', choix: ['6', '8', '4', '10'] },
+  'Quel animal hiberne en hiver ?': { q: 'Peseurt loen a gousk a-hed ar goañv ?', bonne: 'An arzh', choix: ['An arzh', 'Ar bleiz', "Ar c'harv", 'Al louarn'] },
+  "Quel est l'animal terrestre le plus lourd ?": { q: 'Pehini eo al loen pounnerañ war an douar ?', bonne: 'An olifant', choix: ['An olifant', 'Ar jirafenn', "Ar marc'h", 'An arzh'] },
+  'Quel reptile peut changer de couleur ?': { q: "Peseurt stlejvil a c'hall cheñch liv ?", bonne: "Ar c'hameleon", choix: ["Ar c'hameleon", 'Ar glazard', 'Ar gekko', 'An iguana'] },
+}
+// Contenu d'une question dans la langue demandée (null si pas de traduction)
+function enLangue(q, l) {
+  if (l !== 'br') return q
+  const br = QUESTIONS_BR[q.q]
+  return br ? { ...q, ...br, info: br.info } : null
+}
+
 // ── État
 const config = ref(charger('autres_config', { theme: 'animaux', nb: 10 }))
 watch(config, v => sauvegarder('autres_config', v), { deep: true })
@@ -211,7 +323,7 @@ const reponseDonnee = ref('')
 const question = computed(() => questions.value[idx.value])
 
 function demarrer() {
-  const pool = melanger([...QUESTIONS[config.value.theme]])
+  const pool = melanger(QUESTIONS[config.value.theme].map(q => enLangue(q, langue.value)).filter(Boolean))
     .slice(0, config.value.nb)
     .map(q => ({ ...q, choix: melanger([...q.choix]), _resultat: undefined }))
   questions.value = pool
@@ -237,11 +349,11 @@ function valider(choix) {
   estOk.value = ok
   if (ok) {
     bonnes.value++
-    feedbackTxt.value = ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'][Math.floor(Math.random() * 4)]
+    const b = t('bravoQuiz'); feedbackTxt.value = b[Math.floor(Math.random() * b.length)]
     feedbackCls.value = 'ok'
   } else {
     mauvaises.value++
-    feedbackTxt.value = `❌ La bonne réponse était : ${question.value.bonne}.`
+    feedbackTxt.value = `❌ ${t('mauvaise', { r: question.value.bonne })}`
     feedbackCls.value = 'erreur'
     erreurs.value.push({ q: question.value.q, bonne: question.value.bonne })
   }
@@ -263,10 +375,10 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Excellent ! 🌟' }
-  if (pct >= 60)   return 'Bien ! Continue à apprendre 💪'
-  return 'Courage ! Relis les réponses et réessaie 📚'
+  if (pct === 100) { confettis(50); return t('res100') }
+  if (pct >= 80)   { confettis(25); return t('res80') }
+  if (pct >= 60)   return t('res60')
+  return t('res0')
 })
 </script>
 

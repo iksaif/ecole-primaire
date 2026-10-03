@@ -1,39 +1,39 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">📐 Calcul posé</h1>
+    <h1 class="section-heading">📐 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Opération</div>
+        <div class="config-section-title">{{ t('operation') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.op === 'add' }" @click="config.op = 'add'">+ Addition</button>
-          <button class="level-btn" :class="{ active: config.op === 'sou' }" @click="config.op = 'sou'">− Soustraction</button>
-          <button class="level-btn" :class="{ active: config.op === 'mix' }" @click="config.op = 'mix'">Mélangé</button>
+          <button class="level-btn" :class="{ active: config.op === 'add' }" @click="config.op = 'add'">+ {{ t('addition') }}</button>
+          <button class="level-btn" :class="{ active: config.op === 'sou' }" @click="config.op = 'sou'">− {{ t('soustraction') }}</button>
+          <button class="level-btn" :class="{ active: config.op === 'mix' }" @click="config.op = 'mix'">{{ t('melange') }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Taille des nombres</div>
+        <div class="config-section-title">{{ t('taille') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.taille === '1' }" @click="config.taille = '1'">1 chiffre (GS/CP)</button>
-          <button class="level-btn" :class="{ active: config.taille === '2' }" @click="config.taille = '2'">2 chiffres (CP)</button>
-          <button class="level-btn" :class="{ active: config.taille === '3' }" @click="config.taille = '3'">3 chiffres (CE)</button>
-          <button class="level-btn" :class="{ active: config.taille === '4' }" @click="config.taille = '4'">4 chiffres (CM)</button>
+          <button class="level-btn" :class="{ active: config.taille === '1' }" @click="config.taille = '1'">{{ t('chiffre1') }} (GS/CP)</button>
+          <button class="level-btn" :class="{ active: config.taille === '2' }" @click="config.taille = '2'">{{ t('chiffres', { n: 2 }) }} (CP)</button>
+          <button class="level-btn" :class="{ active: config.taille === '3' }" @click="config.taille = '3'">{{ t('chiffres', { n: 3 }) }} (CE)</button>
+          <button class="level-btn" :class="{ active: config.taille === '4' }" @click="config.taille = '4'">{{ t('chiffres', { n: 4 }) }} (CM)</button>
         </div>
       </div>
 
       <div class="config-section" v-if="config.taille !== '1'">
-        <div class="config-section-title">Retenue</div>
+        <div class="config-section-title">{{ t('retenue') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.retenue === 'non' }" @click="config.retenue = 'non'">Sans retenue</button>
-          <button class="level-btn" :class="{ active: config.retenue === 'oui' }" @click="config.retenue = 'oui'">Avec retenue</button>
-          <button class="level-btn" :class="{ active: config.retenue === 'mix' }" @click="config.retenue = 'mix'">Mélangé</button>
+          <button class="level-btn" :class="{ active: config.retenue === 'non' }" @click="config.retenue = 'non'">{{ t('sansRetenue') }}</button>
+          <button class="level-btn" :class="{ active: config.retenue === 'oui' }" @click="config.retenue = 'oui'">{{ t('avecRetenue') }}</button>
+          <button class="level-btn" :class="{ active: config.retenue === 'mix' }" @click="config.retenue = 'mix'">{{ t('melange') }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre d'exercices</div>
+        <div class="config-section-title">{{ t('nbExercices') }}</div>
         <div class="btn-group">
           <button v-for="n in [3,5,10,20]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -42,18 +42,18 @@
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Exercice {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('exercice', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -100,8 +100,8 @@
         <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button class="btn btn-ghost" @click="passer">Passer ⏭</button>
-          <button class="btn btn-primary" @click="valider">Valider ✔</button>
+          <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+          <button class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
         </div>
       </div>
     </template>
@@ -112,7 +112,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <table class="correction-table">
-        <thead><tr><th>Calcul</th><th>Ta réponse</th><th>Bonne réponse</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colCalcul') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>{{ h.a }} {{ h.opLabel }} {{ h.b }}</td>
@@ -124,8 +124,8 @@
       </table>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -134,6 +134,36 @@
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, langue } = useI18n({
+  fr: {
+    titre: 'Calcul posé',
+    operation: 'Opération',
+    addition: 'Addition', soustraction: 'Soustraction', melange: 'Mélangé',
+    additions: 'Additions', soustractions: 'Soustractions',
+    taille: 'Taille des nombres',
+    chiffre1: '1 chiffre', chiffres: '{n} chiffres',
+    retenue: 'Retenue', sansRetenue: 'Sans retenue', avecRetenue: 'Avec retenue',
+    nbExercices: "Nombre d'exercices",
+    colCalcul: 'Calcul',
+    resultatBas: "Continue à t'entraîner ! 📚",
+    pNbExercices: '{n} exercices',
+  },
+  br: {
+    titre: 'Jedadur lakaet', // br: à relire (« calcul posé »)
+    operation: 'Oberiadur',
+    addition: 'Sammadenn', soustraction: 'Lamadenn', melange: 'Kemmesket',
+    additions: 'Sammadennoù', soustractions: 'Lamadennoù',
+    taille: 'Ment an niveroù',
+    chiffre1: '1 sifr', chiffres: '{n} sifr',
+    retenue: "Dalc'h", sansRetenue: "Hep dalc'h", avecRetenue: "Gant dalc'h", // br: à relire (« dalc'h » = retenue)
+    nbExercices: 'Niver a boelladennoù',
+    colCalcul: 'Jedadur',
+    resultatBas: "Kendalc'h da embreger ! 📚",
+    pNbExercices: '{n} poelladenn',
+  },
+})
 
 const config = ref(charger('calcul_pose_config', { op: 'add', taille: '2', retenue: 'non', nbQ: 5 }))
 watch(config, v => sauvegarder('calcul_pose_config', v), { deep: true })
@@ -296,7 +326,7 @@ function imprimerFiche() {
   const qs = genererSansRepetition(config.value.nbQ)
   const tailles = { '1': 'GS / CP', '2': 'CP', '3': 'CE', '4': 'CM' }
   const niveau = tailles[config.value.taille] || ''
-  const opLabel = config.value.op === 'add' ? 'Additions' : config.value.op === 'sou' ? 'Soustractions' : 'Mélangé'
+  const opLabel = t(config.value.op === 'add' ? 'additions' : config.value.op === 'sou' ? 'soustractions' : 'melange')
 
   const cards = qs.map(q => {
     const cols = q.cols
@@ -315,15 +345,15 @@ function imprimerFiche() {
     </div>`
   }).join('')
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Calcul posé — ${niveau}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${niveau}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
     </style></head><body>
-    <h1>Calcul posé — ${niveau}</h1>
-    <p class="entete">${opLabel} &nbsp;|&nbsp; ${qs.length} exercices &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    <h1>${t('titre')} — ${niveau}</h1>
+    <p class="entete">${opLabel} &nbsp;|&nbsp; ${t('pNbExercices', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     <div style="text-align:center;">${cards}</div>
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
@@ -381,11 +411,12 @@ function valider() {
   etats.value = attChiffres.map((c, i) => donnChiffres[i] === c ? 'ok' : 'erreur')
 
   if (ok) {
-    feedback.value = ['Bravo ! 🎉', 'Parfait ! ⭐', 'Excellent ! 👏'][aleatoire(0,2)]
+    const bravos = t('bravo')
+    feedback.value = bravos[aleatoire(0, bravos.length - 1)]
     feedbackClass.value = 'ok'
     bonnes.value++
   } else {
-    feedback.value = `❌ La bonne réponse était ${q.reponse}`
+    feedback.value = '❌ ' + t('laBonneReponse', { r: q.reponse })
     feedbackClass.value = 'erreur'
     mauvaises.value++
   }
@@ -399,7 +430,7 @@ function passer() {
   verrou = true
   const q = questions.value[idx.value]
   historique.value.push({ a: q.a, b: q.b, opLabel: q.opLabel,
-                          attendu: String(q.reponse), donne: '(passé)', ok: false })
+                          attendu: String(q.reponse), donne: t('passe'), ok: false })
   mauvaises.value++
   suivant()
 }
@@ -416,10 +447,10 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Tu peux encore progresser 💪'
-  return 'Continue à t\'entraîner ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  return t('resultatBas')
 })
 </script>
 

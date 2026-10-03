@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">📐 Géométrie</h1>
+    <h1 class="section-heading">📐 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in Object.keys(NIVEAUX)" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -14,26 +14,26 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Exercices</div>
+        <div class="config-section-title">{{ t('exercices') }}</div>
         <div class="btn-group">
           <button v-for="ex in exercicesDispo" :key="ex.id"
             class="level-btn" :class="{ active: config.exercices.includes(ex.id) }"
-            @click="toggleExercice(ex.id)">{{ ex.label }}</button>
+            @click="toggleExercice(ex.id)">{{ tr(ex.label) }}</button>
         </div>
       </div>
 
       <div class="config-section" v-if="config.exercices.includes('symetrie')">
-        <div class="config-section-title">Options de symétrie</div>
+        <div class="config-section-title">{{ t('optionsSym') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: !config.axeHorizontal }"
-            @click="config.axeHorizontal = false">Axe vertical seulement</button>
+            @click="config.axeHorizontal = false">{{ t('axeV') }}</button>
           <button class="level-btn" :class="{ active: config.axeHorizontal }"
-            @click="config.axeHorizontal = true">Axe horizontal aussi</button>
+            @click="config.axeHorizontal = true">{{ t('axeH') }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [4, 8, 12]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -42,18 +42,18 @@
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -80,7 +80,7 @@
         <!-- Reproduction -->
         <div v-else-if="q.type === 'reproduction'" class="grilles">
           <div class="grille-titre-wrap">
-            <div class="grille-titre">Modèle</div>
+            <div class="grille-titre">{{ t('modele') }}</div>
             <div class="grille" :style="styleGrille(q.cols)">
               <template v-for="r in q.rows" :key="'m' + r">
                 <div v-for="c in q.cols" :key="r + '-' + c" class="case"
@@ -89,7 +89,7 @@
             </div>
           </div>
           <div class="grille-titre-wrap">
-            <div class="grille-titre">À toi !</div>
+            <div class="grille-titre">{{ t('aToi') }}</div>
             <div class="grille" :style="styleGrille(q.cols)">
               <template v-for="r in q.rows" :key="'a' + r">
                 <div v-for="c in q.cols" :key="r + '-' + c" class="case cliquable"
@@ -118,7 +118,7 @@
         <div v-else-if="dessin" class="dessin" v-html="dessin"></div>
 
         <div v-if="(q.type === 'figure' && q.sous === 'angle') || q.type === 'angles'" class="astuce">
-          💡 Astuce : vérifie avec ton équerre ou le coin d'une feuille !
+          💡 {{ t('astuceEquerre') }}
         </div>
 
         <!-- Angles droits : choix multiple de lettres -->
@@ -126,7 +126,7 @@
           <button v-for="l in [...q.lettres].sort()" :key="l" class="choix-btn" :class="classeLettre(l)"
             :disabled="repondu" @click="basculerLettre(l)">{{ l }}</button>
           <button class="choix-btn" :class="classeLettre('aucun')"
-            :disabled="repondu" @click="basculerLettre('aucun')">Aucun</button>
+            :disabled="repondu" @click="basculerLettre('aucun')">{{ t('aucunBtn') }}</button>
         </div>
 
         <!-- Choix -->
@@ -139,18 +139,18 @@
         <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
 
         <div v-if="corrige && !reussi" class="legende">
-          <span><i class="pastille juste"></i> juste</span>
-          <span><i class="pastille manquante"></i> oubliée</span>
-          <span><i class="pastille entrop"></i> en trop</span>
+          <span><i class="pastille juste"></i> {{ t('legJuste') }}</span>
+          <span><i class="pastille manquante"></i> {{ t('legOubliee') }}</span>
+          <span><i class="pastille entrop"></i> {{ t('legEnTrop') }}</span>
         </div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
           <template v-if="!repondu">
-            <button class="btn btn-ghost" @click="passer">Passer ⏭</button>
-            <button v-if="estGrille" class="btn btn-ghost" @click="effacer">🧽 Effacer</button>
-            <button v-if="!q.choix" class="btn btn-primary" @click="valider">Valider ✔</button>
+            <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+            <button v-if="estGrille" class="btn btn-ghost" @click="effacer">{{ t('effacer') }}</button>
+            <button v-if="!q.choix" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
           </template>
-          <button v-else-if="!reussi" class="btn btn-primary" @click="suivant">Suivant ➜</button>
+          <button v-else-if="!reussi" class="btn btn-primary" @click="suivant">{{ t('suivant') }}</button>
         </div>
       </div>
     </template>
@@ -161,7 +161,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>{{ h.texte }}</td>
@@ -173,8 +173,8 @@
       </table>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -183,6 +183,40 @@
 <script setup>
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: 'Géométrie',
+    optionsSym: 'Options de symétrie',
+    axeV: 'Axe vertical seulement',
+    axeH: 'Axe horizontal aussi',
+    modele: 'Modèle',
+    aToi: 'À toi !',
+    astuceEquerre: "Astuce : vérifie avec ton équerre ou le coin d'une feuille !",
+    aucunBtn: 'Aucun',
+    legJuste: 'juste',
+    legOubliee: 'oubliée',
+    legEnTrop: 'en trop',
+    colQuestion: 'Question',
+  },
+  br: {
+    titre: 'Mentoniezh',
+    optionsSym: 'Dibarzhioù ar gemparzhded',
+    axeV: 'Ahel a-serzh hepken',
+    axeH: 'Ahel a-blaen ivez',
+    modele: 'Skouer',
+    aToi: 'Da dro !',
+    astuceEquerre: 'Tun : gwiri gant da skouer pe gant korn ur follenn !',
+    aucunBtn: 'Hini ebet',
+    legJuste: 'mat',
+    legOubliee: 'ankouaet',
+    legEnTrop: 're',
+    colQuestion: 'Goulenn',
+  },
+})
+const enBr = () => langue.value === 'br'
+const B = (fr, br) => (enBr() ? br : fr)
 
 // ==== LOGIQUE (testée hors Vue) ====
 // Données par niveau : ajouter « ce2: {...} » suffit pour un nouveau niveau.
@@ -209,28 +243,30 @@ const NIVEAUX = {
   },
 }
 
+// br: à relire (solud, patrom, adtresañ…)
 const EXERCICES = [
-  { id: 'symetrie',     label: '🦋 Symétrie' },
-  { id: 'reproduction', label: '✏️ Reproduction' },
-  { id: 'reperage',     label: '📍 Repérage' },
-  { id: 'figures',      label: '🔷 Figures' },
-  { id: 'solides',      label: '🧊 Solides' },
-  { id: 'angles',       label: '📐 Angles droits' },
-  { id: 'proprietes',   label: '📋 Propriétés' },
-  { id: 'cercle',       label: '⭕ Cercle' },
-  { id: 'patrons',      label: '🎲 Patrons du cube' },
+  { id: 'symetrie',     label: { fr: '🦋 Symétrie', br: '🦋 Kemparzhded' } },
+  { id: 'reproduction', label: { fr: '✏️ Reproduction', br: '✏️ Adtresañ' } },
+  { id: 'reperage',     label: { fr: '📍 Repérage', br: "📍 Lec'hiañ" } },
+  { id: 'figures',      label: { fr: '🔷 Figures', br: '🔷 Stummoù' } },
+  { id: 'solides',      label: { fr: '🧊 Solides', br: '🧊 Soludoù' } },
+  { id: 'angles',       label: { fr: '📐 Angles droits', br: '📐 Kornioù skouer' } },
+  { id: 'proprietes',   label: { fr: '📋 Propriétés', br: '📋 Perzhioù' } },
+  { id: 'cercle',       label: { fr: '⭕ Cercle', br: "⭕ Kelc'h" } },
+  { id: 'patrons',      label: { fr: '🎲 Patrons du cube', br: "🎲 Patromoù ar c'hub" } },
 ]
 
 const LETTRES = 'ABCDEFGHIJKL'.split('')
 
 const FIGURES = {
-  carre:              { nom: 'carré',              cotes: 4, angleDroit: true },
-  rectangle:          { nom: 'rectangle',          cotes: 4, angleDroit: true },
-  triangle:           { nom: 'triangle',           cotes: 3, angleDroit: false },
-  triangle_rectangle: { nom: 'triangle rectangle', cotes: 3, angleDroit: true },
-  cercle:             { nom: 'cercle',             cotes: 0, angleDroit: false },
-  losange:            { nom: 'losange',            cotes: 4, angleDroit: false },
+  carre:              { nom: 'carré',              br: 'karrez',            cotes: 4, angleDroit: true },
+  rectangle:          { nom: 'rectangle',          br: 'hirgarrez',         cotes: 4, angleDroit: true },
+  triangle:           { nom: 'triangle',           br: "tric'horn",         cotes: 3, angleDroit: false },
+  triangle_rectangle: { nom: 'triangle rectangle', br: "tric'horn skouer",  cotes: 3, angleDroit: true }, // br: à relire
+  cercle:             { nom: 'cercle',             br: "kelc'h",            cotes: 0, angleDroit: false },
+  losange:            { nom: 'losange',            br: 'lozanj',            cotes: 4, angleDroit: false },
 }
+const nomFig = id => (enBr() ? FIGURES[id].br : FIGURES[id].nom)
 // Noms à ne pas proposer comme « mauvaise » réponse car aussi justes (le carré est un losange et un rectangle…)
 const NOMS_CONCURRENTS = {
   carre: ['losange', 'rectangle'],
@@ -254,13 +290,15 @@ const FORMES_LIBRES = {
 }
 
 const SOLIDES = {
-  cube:     { nom: 'cube',      faces: 6, sommets: 8, roule: false },
-  pave:     { nom: 'pavé droit', faces: 6, sommets: 8, roule: false },
-  pyramide: { nom: 'pyramide',  faces: 5, sommets: 5, roule: false },
-  cylindre: { nom: 'cylindre',  roule: true },
-  boule:    { nom: 'boule',     roule: true },
-  cone:     { nom: 'cône',      roule: true },
+  cube:     { nom: 'cube',      br: 'kub',          faces: 6, sommets: 8, roule: false },
+  pave:     { nom: 'pavé droit', br: 'hirgarrezeg', faces: 6, sommets: 8, roule: false }, // br: à relire (pavé droit)
+  pyramide: { nom: 'pyramide',  br: 'piramid',      faces: 5, sommets: 5, roule: false },
+  cylindre: { nom: 'cylindre',  br: 'silindr',      roule: true },
+  boule:    { nom: 'boule',     br: 'boull',        roule: true },
+  cone:     { nom: 'cône',      br: 'kon',          roule: true },
 }
+const nomSol = id => (enBr() ? SOLIDES[id].br : SOLIDES[id].nom)
+const OUI = () => t('oui'), NON = () => t('non')
 
 function k(c, r) { return c + ',' + r }
 function dek(cle) { return cle.split(',').map(Number) }
@@ -310,7 +348,7 @@ function genSymetrie(niv, horizontal) {
   return {
     type: 'symetrie', cle: 'sym-' + axe + '-' + modele.join(';'),
     axe, cols, rows, premier, modele, attendu,
-    texte: `Symétrie (axe ${axe === 'v' ? 'vertical' : 'horizontal'})`,
+    texte: enBr() ? `Kemparzhded (ahel ${axe === 'v' ? 'a-serzh' : 'a-blaen'})` : `Symétrie (axe ${axe === 'v' ? 'vertical' : 'horizontal'})`,
   }
 }
 
@@ -328,7 +366,7 @@ function genReproduction(niv) {
   return {
     type: 'reproduction', cle: 'rep-' + modele.join(';'),
     cols: p.cols, rows: p.rows, modele, attendu: modele, repere,
-    texte: 'Reproduction sur quadrillage',
+    texte: B('Reproduction sur quadrillage', "Adtresañ war ar c'harrezennoù"),
   }
 }
 
@@ -339,7 +377,7 @@ function genReperage(niv) {
   if (Math.random() < 0.5) {
     return {
       type: 'reperage', sous: 'colorie', cle: 'pos-col-' + nom, cols, rows,
-      cible: k(c, r), nom, attendu: [k(c, r)], texte: `Colorie la case ${nom}`,
+      cible: k(c, r), nom, attendu: [k(c, r)], texte: B(`Colorie la case ${nom}`, `Liv ar garrezenn ${nom}`),
     }
   }
   // Pièges : lettre et chiffre inversés, cases voisines
@@ -355,7 +393,7 @@ function genReperage(niv) {
   return {
     type: 'reperage', sous: 'lire', cle: 'pos-lire-' + nom, cols, rows,
     cible: k(c, r), nom, choix: melanger([nom, ...autres]), reponse: nom,
-    texte: 'Quelle case est coloriée ?',
+    texte: B('Quelle case est coloriée ?', 'Peseurt karrezenn a zo livet ?'),
   }
 }
 
@@ -397,15 +435,15 @@ function genFigure(niv) {
   if (sous === 'nom') {
     const exclus = NOMS_CONCURRENTS[forme] || []
     const autres = melanger(niv.figures.filter(x => x !== forme && !exclus.includes(x))).slice(0, 3)
-    return { ...base, choix: melanger([forme, ...autres].map(x => FIGURES[x].nom)), reponse: f.nom,
-      texte: 'Quel est le nom de cette figure ?' }
+    return { ...base, choix: melanger([forme, ...autres].map(nomFig)), reponse: nomFig(forme),
+      texte: B('Quel est le nom de cette figure ?', 'Petra eo anv ar stumm-mañ ?') }
   }
   if (sous === 'cotes') {
     return { ...base, choix: ['3', '4', '5', '6'], reponse: String(f.cotes),
-      texte: 'Combien de côtés a cette figure ?' }
+      texte: B('Combien de côtés a cette figure ?', 'Pet kostez en deus ar stumm-mañ ?') }
   }
-  return { ...base, choix: ['Oui', 'Non'], reponse: f.angleDroit ? 'Oui' : 'Non',
-    texte: 'Cette figure a-t-elle au moins un angle droit ?' }
+  return { ...base, choix: [OUI(), NON()], reponse: f.angleDroit ? OUI() : NON(),
+    texte: B('Cette figure a-t-elle au moins un angle droit ?', "Hag-eñ en deus ar stumm-mañ ur c'horn skouer d'an nebeutañ ?") }
 }
 
 function genSolide(niv) {
@@ -417,19 +455,19 @@ function genSolide(niv) {
   const base = { type: 'solide', sous, solide, cle: `sol-${sous}-${solide}` }
   if (sous === 'nom') {
     const autres = melanger(niv.solides.filter(x => x !== solide)).slice(0, 3)
-    return { ...base, choix: melanger([solide, ...autres].map(x => SOLIDES[x].nom)), reponse: s.nom,
-      texte: 'Comment s\'appelle ce solide ?' }
+    return { ...base, choix: melanger([solide, ...autres].map(nomSol)), reponse: nomSol(solide),
+      texte: B('Comment s\'appelle ce solide ?', 'Petra eo anv ar solud-mañ ?') }
   }
   if (sous === 'rouler') {
-    return { ...base, choix: ['Oui', 'Non'], reponse: s.roule ? 'Oui' : 'Non',
-      texte: 'Ce solide peut-il rouler ?' }
+    return { ...base, choix: [OUI(), NON()], reponse: s.roule ? OUI() : NON(),
+      texte: B('Ce solide peut-il rouler ?', "Hag-eñ e c'hall ar solud-mañ ruilhal ?") }
   }
   if (sous === 'faces') {
     return { ...base, choix: ['4', '5', '6', '8'], reponse: String(s.faces),
-      texte: 'Combien de faces a ce solide ?' }
+      texte: B('Combien de faces a ce solide ?', 'Pet tal en deus ar solud-mañ ?') }
   }
   return { ...base, choix: ['4', '5', '6', '8'], reponse: String(s.sommets),
-    texte: 'Combien de sommets a ce solide ?' }
+    texte: B('Combien de sommets a ce solide ?', 'Pet beg en deus ar solud-mañ ?') }
 }
 
 // ── CE2 : angles droits (lettres aux sommets) ──
@@ -441,7 +479,7 @@ function genAngles(niv) {
   const lettres = fig.points.map((_, i) => 'ABCD'[(i + decal) % n])
   const droits = fig.anglesDroits.map(i => lettres[i]).sort()
   return { type: 'angles', forme, cle: `ang-${forme}-${decal}`, ...fig, lettres, droits,
-    texte: 'Quels angles sont droits ?' }
+    texte: B('Quels angles sont droits ?', 'Peseurt kornioù a zo skouer ?') }
 }
 
 // ── CE2 : propriétés des figures ──
@@ -461,10 +499,36 @@ const PROPRIETES = [
   { id: 'v-losange-ad', texte: 'Vrai ou faux ? Un losange a toujours 4 angles droits.', reponse: 'Faux' },
   { id: 'v-tri-cotes', texte: 'Vrai ou faux ? Un triangle a 4 côtés.', reponse: 'Faux' },
 ]
+// br : mêmes questions, même ordre (br: à relire — mutations après les chiffres non faites : « 4 kostez »)
+const CHOIX_FIG_BR = ['karrez', 'hirgarrez', 'lozanj', "tric'horn skouer"]
+const PROPRIETES_BR = {
+  'q-carre': "Peseurt stumm en deus 4 kostez hir kement-ha-kement ha 4 korn skouer ?",
+  'q-rect': "Peseurt stumm en deus 4 korn skouer, met n'eo ket hir kement-ha-kement e 4 kostez ?",
+  'q-trirect': "Peseurt stumm en deus 3 kostez hag ur c'horn skouer ?",
+  'q-losange': 'Peseurt stumm en deus 4 kostez hir kement-ha-kement, met korn skouer ebet ?',
+  'v-carre-ad': "Gwir pe gaou ? Ur c'harrez en deus 4 korn skouer.",
+  'v-carre-cotes': "Gwir pe gaou ? Hir kement-ha-kement eo 4 kostez ur c'harrez.",
+  'v-rect-cotes': 'Gwir pe gaou ? Hir kement-ha-kement eo atav 4 kostez un hirgarrez.',
+  'v-rect-opp': "Gwir pe gaou ? En un hirgarrez, ar c'hostezioù a-dal a zo hir kement-ha-kement.",
+  'v-rect-ad': 'Gwir pe gaou ? Un hirgarrez en deus 4 korn skouer.',
+  'v-trirect-3': "Gwir pe gaou ? Un tric'horn skouer en deus 3 korn skouer.",
+  'v-trirect-1': "Gwir pe gaou ? Un tric'horn skouer en deus ur c'horn skouer.",
+  'v-carre-rect': "Gwir pe gaou ? Ur c'harrez a zo un hirgarrez dibar.",
+  'v-losange-ad': 'Gwir pe gaou ? Ul lozanj en deus atav 4 korn skouer.',
+  'v-tri-cotes': "Gwir pe gaou ? Un tric'horn en deus 4 kostez.",
+}
+const VF = { Vrai: 'Gwir', Faux: 'Gaou' }
+// Texte d'une propriété dans la langue courante
+function proprieteLocale(p) {
+  if (!enBr()) return p
+  const i = p.choix ? p.choix.indexOf(p.reponse) : -1
+  return { ...p, texte: PROPRIETES_BR[p.id], choix: p.choix ? CHOIX_FIG_BR : undefined,
+    reponse: p.choix ? CHOIX_FIG_BR[i] : VF[p.reponse] }
+}
 function genPropriete() {
-  const p = hasard(PROPRIETES)
+  const p = proprieteLocale(hasard(PROPRIETES))
   return { type: 'proprietes', cle: 'prop-' + p.id, texte: p.texte,
-    choix: p.choix ? melanger(p.choix) : ['Vrai', 'Faux'], reponse: p.reponse }
+    choix: p.choix ? melanger(p.choix) : B(['Vrai', 'Faux'], ['Gwir', 'Gaou']), reponse: p.reponse }
 }
 
 // ── CE2 : cercle (centre, rayon, diamètre) ──
@@ -474,21 +538,23 @@ function genCercle(niv) {
   const [a, b, c, d, e] = melanger(LETTRES_POINTS).slice(0, 5)
   const base = { type: 'cercle', sous, rot: aleatoire(0, 359), pts: { a, b, c, d, e } }
   if (sous === 'centre') {
-    return { ...base, cle: 'cer-centre', choix: melanger(['le centre', 'un rayon', 'un diamètre', 'un sommet']),
-      reponse: 'le centre', texte: 'Comment s\'appelle le point O pour ce cercle ?' }
+    return { ...base, cle: 'cer-centre', choix: melanger(B(['le centre', 'un rayon', 'un diamètre', 'un sommet'], ["ar c'hreiz", 'ur skin', 'un treuzkiz', 'ur beg'])),
+      reponse: B('le centre', "ar c'hreiz"), texte: B('Comment s\'appelle le point O pour ce cercle ?', "Petra eo ar poent O evit ar c'helc'h-mañ ?") }
   }
   if (sous === 'segment') {
     const cible = hasard(['rayon', 'diametre'])
     const nom = cible === 'rayon' ? `[O${a}]` : `[${b}${c}]`
-    return { ...base, cible, cle: 'cer-seg-' + cible, choix: ['un rayon', 'un diamètre', 'un côté'],
-      reponse: cible === 'rayon' ? 'un rayon' : 'un diamètre',
-      texte: `Comment s'appelle le segment rouge ${nom} ?` }
+    return { ...base, cible, cle: 'cer-seg-' + cible, choix: B(['un rayon', 'un diamètre', 'un côté'], ['ur skin', 'un treuzkiz', "ur c'hostez"]),
+      reponse: cible === 'rayon' ? B('un rayon', 'ur skin') : B('un diamètre', 'un treuzkiz'),
+      texte: B(`Comment s'appelle le segment rouge ${nom} ?`, `Petra eo ar segment ruz ${nom} ?`) }
   }
   if (sous === 'lequel') {
     const cible = hasard(['rayon', 'diametre'])
     const segs = { rayon: `[O${a}]`, diametre: `[${b}${c}]`, corde: `[${d}${e}]` }
     return { ...base, cible, cle: 'cer-lequel-' + cible, choix: melanger(Object.values(segs)), reponse: segs[cible],
-      texte: `Quel segment est ${cible === 'rayon' ? 'un rayon' : 'un diamètre'} du cercle ?` }
+      texte: enBr()
+        ? `Peseurt segment a zo ${cible === 'rayon' ? 'ur skin' : 'un treuzkiz'} eus ar c'helc'h ?`
+        : `Quel segment est ${cible === 'rayon' ? 'un rayon' : 'un diamètre'} du cercle ?` }
   }
   const r = aleatoire(...niv.rayons)
   const versDiam = Math.random() < 0.5
@@ -497,8 +563,11 @@ function genCercle(niv) {
   const autres = [...new Set(cands.filter(x => x !== bonne))].slice(0, 3)
   return { ...base, r, cle: `cer-mes-${versDiam ? 'd' : 'r'}-${r}`,
     choix: melanger([bonne, ...autres]).map(x => x + ' cm'), reponse: bonne + ' cm',
-    texte: versDiam ? `Le rayon de ce cercle mesure ${r} cm. Combien mesure son diamètre ?`
-      : `Le diamètre de ce cercle mesure ${2 * r} cm. Combien mesure son rayon ?` }
+    texte: enBr()
+      ? (versDiam ? `Skin ar c'helc'h-mañ a vuzul ${r} cm. Pegeit eo e dreuzkiz ?`
+        : `Treuzkiz ar c'helc'h-mañ a vuzul ${2 * r} cm. Pegeit eo e skin ?`)
+      : (versDiam ? `Le rayon de ce cercle mesure ${r} cm. Combien mesure son diamètre ?`
+        : `Le diamètre de ce cercle mesure ${2 * r} cm. Combien mesure son rayon ?`) }
 }
 
 // ── CE2 : patrons du cube ──
@@ -568,8 +637,8 @@ function genPatron() {
   const i = aleatoire(0, liste.length - 1)
   const cases = normaliserCases(liste[i].map(hasard(SYMETRIES)))
   return { type: 'patron', cle: `pat-${valide ? 'v' : 'i'}-${i}`, cases, valide,
-    choix: ['Oui', 'Non'], reponse: valide ? 'Oui' : 'Non',
-    texte: 'Ce dessin est-il un patron du cube ? (Imagine que tu le plies.)' }
+    choix: [OUI(), NON()], reponse: valide ? OUI() : NON(),
+    texte: B('Ce dessin est-il un patron du cube ? (Imagine que tu le plies.)', "Hag-eñ eo an tresadenn-mañ ur patrom eus ar c'hub ? (Soñj e plegez anezhañ.)") }
 }
 
 function typesDispo(cfg, niv) {
@@ -810,11 +879,13 @@ const attenduSet = computed(() => new Set(q.value?.attendu || []))
 const consigne = computed(() => {
   const x = q.value
   if (!x) return ''
-  if (x.type === 'symetrie') return 'Colorie les cases pour compléter la figure : elle doit être symétrique par rapport à l\'axe rouge.'
-  if (x.type === 'reproduction') return 'Reproduis la figure dans la grille de droite, au même endroit. L\'étoile ★ t\'aide à démarrer.'
+  if (x.type === 'symetrie') return B('Colorie les cases pour compléter la figure : elle doit être symétrique par rapport à l\'axe rouge.',
+    "Liv ar c'harrezennoù evit klokaat ar stumm : kemparzhek e rank bezañ e-keñver an ahel ruz.")
+  if (x.type === 'reproduction') return B('Reproduis la figure dans la grille de droite, au même endroit. L\'étoile ★ t\'aide à démarrer.',
+    "Adtres ar stumm er gael a-zehou, en hevelep lec'h. Ar steredenn ★ a sikour ac'hanout da gregiñ.")
   if (x.type === 'reperage') return x.sous === 'colorie'
-    ? `Colorie la case ${x.nom} (colonne ${x.nom[0]}, ligne ${x.nom.slice(1)}).`
-    : 'Quelle case est coloriée ? (la lettre de la colonne, puis le numéro de la ligne)'
+    ? B(`Colorie la case ${x.nom} (colonne ${x.nom[0]}, ligne ${x.nom.slice(1)}).`, `Liv ar garrezenn ${x.nom} (kolonenn ${x.nom[0]}, linenn ${x.nom.slice(1)}).`)
+    : B('Quelle case est coloriée ? (la lettre de la colonne, puis le numéro de la ligne)', 'Peseurt karrezenn a zo livet ? (lizherenn ar golonenn, ha goude niverenn al linenn)')
   return x.texte
 })
 
@@ -890,12 +961,11 @@ function demarrer() {
   phase.value = 'jeu'
 }
 
-const BRAVO = ['Bravo ! 🎉', 'Excellent ! ⭐', 'Parfait ! 👏', 'Super ! 🌟']
 
 function marquerBon(donne) {
   const x = q.value
   repondu.value = true; reussi.value = true
-  feedback.value = hasard(BRAVO); feedbackClass.value = 'ok'
+  feedback.value = hasard(t('bravo')); feedbackClass.value = 'ok'
   bonnes.value++
   historique.value.push({ texte: x.texte, donne, attendu: attenduTexte(x), ok: true })
   minuterie = setTimeout(suivant, 900)
@@ -909,13 +979,14 @@ function marquerFaux(donne, message) {
   historique.value.push({ texte: x.texte, donne, attendu: attenduTexte(x), ok: false })
 }
 
+const AUCUN = () => B('aucun', 'hini ebet')
 function attenduTexte(x) {
-  if (x.type === 'angles') return x.droits.length ? x.droits.join(', ') : 'aucun'
-  if (x.type === 'figure' && x.sous !== 'nom') return `${x.reponse} (${FIGURES[x.forme].nom})`
-  if (x.type === 'solide' && x.sous !== 'nom') return `${x.reponse} (${SOLIDES[x.solide].nom})`
+  if (x.type === 'angles') return x.droits.length ? x.droits.join(', ') : AUCUN()
+  if (x.type === 'figure' && x.sous !== 'nom') return `${x.reponse} (${nomFig(x.forme)})`
+  if (x.type === 'solide' && x.sous !== 'nom') return `${x.reponse} (${nomSol(x.solide)})`
   if (x.choix) return x.reponse
   if (x.type === 'reperage') return x.nom
-  return `${x.attendu.length} cases`
+  return B(`${x.attendu.length} cases`, `${x.attendu.length} karrezenn`)
 }
 
 function valider() {
@@ -924,32 +995,41 @@ function valider() {
   const sel = Object.keys(selection.value)
   if (!sel.length) return
   if (x.type === 'angles') {
-    const donne = sel.includes('aucun') ? 'aucun' : [...sel].sort().join(', ')
+    const donne = sel.includes('aucun') ? AUCUN() : [...sel].sort().join(', ')
     const attendu = attenduTexte(x)
     if (donne === attendu) marquerBon(donne)
     else marquerFaux(donne, x.droits.length
-      ? `❌ Les angles droits sont : ${attendu} (marqués en rouge).`
-      : '❌ Cette figure n\'a aucun angle droit.')
+      ? B(`❌ Les angles droits sont : ${attendu} (marqués en rouge).`, `❌ Ar c'hornioù skouer a zo : ${attendu} (merket e ruz).`)
+      : B('❌ Cette figure n\'a aucun angle droit.', "❌ N'en deus ar stumm-mañ korn skouer ebet."))
     return
   }
   corrige.value = true
   if (x.type === 'reperage') {
     const donne = nomCase(...dek(sel[0]))
     if (sel[0] === x.cible) marquerBon(donne)
-    else marquerFaux(donne, `❌ Tu as colorié ${donne}. La bonne case ${x.nom} est entourée en orange.`)
+    else marquerFaux(donne, B(`❌ Tu as colorié ${donne}. La bonne case ${x.nom} est entourée en orange.`,
+      `❌ Livet ec'h eus ${donne}. Ar garrezenn vat ${x.nom} a zo kelc'hiet en orañjez.`))
     return
   }
   const justes = sel.filter(c => attenduSet.value.has(c)).length
   const enTrop = sel.length - justes
   const manquantes = x.attendu.length - justes
-  let donne = `${justes} / ${x.attendu.length} cases justes`
-  if (enTrop) donne += `, ${enTrop} en trop`
+  const br = enBr()
+  let donne = br ? `${justes} / ${x.attendu.length} karrezenn mat` : `${justes} / ${x.attendu.length} cases justes`
+  if (enTrop) donne += br ? `, ${enTrop} re` : `, ${enTrop} en trop`
   if (!enTrop && !manquantes) marquerBon(donne)
   else {
     const morceaux = []
-    if (manquantes) morceaux.push(`${manquantes} case${manquantes > 1 ? 's' : ''} oubliée${manquantes > 1 ? 's' : ''}`)
-    if (enTrop) morceaux.push(`${enTrop} case${enTrop > 1 ? 's' : ''} en trop`)
-    marquerFaux(donne, `Presque ! ${morceaux.join(' et ')}. Regarde la correction.`)
+    if (br) {
+      // br: à relire
+      if (manquantes) morceaux.push(`${manquantes} karrezenn ankouaet`)
+      if (enTrop) morceaux.push(`${enTrop} karrezenn re`)
+      marquerFaux(donne, `Tost ! ${morceaux.join(' ha ')}. Sell ouzh ar reizhadenn.`)
+    } else {
+      if (manquantes) morceaux.push(`${manquantes} case${manquantes > 1 ? 's' : ''} oubliée${manquantes > 1 ? 's' : ''}`)
+      if (enTrop) morceaux.push(`${enTrop} case${enTrop > 1 ? 's' : ''} en trop`)
+      marquerFaux(donne, `Presque ! ${morceaux.join(' et ')}. Regarde la correction.`)
+    }
   }
 }
 
@@ -957,14 +1037,14 @@ function repondreChoix(ch) {
   if (repondu.value) return
   choixDonne.value = ch
   if (ch === q.value.reponse) marquerBon(ch)
-  else marquerFaux(ch, `❌ La bonne réponse est : ${q.value.reponse}`)
+  else marquerFaux(ch, `❌ ${t('bonneReponse')} : ${q.value.reponse}`)
 }
 
 function passer() {
   if (repondu.value) return
   const x = q.value
   mauvaises.value++
-  historique.value.push({ texte: x.texte, donne: '(passé)', attendu: attenduTexte(x), ok: false })
+  historique.value.push({ texte: x.texte, donne: t('passe'), attendu: attenduTexte(x), ok: false })
   suivant()
 }
 
@@ -983,11 +1063,11 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Tu peux encore progresser 💪'
-  if (pct >= 40)   return 'Courage, continue à t\'entraîner ! 🤓'
-  return 'N\'abandonne pas, pratique encore ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  if (pct >= 40)   return t('resultat40')
+  return t('resultat0')
 })
 
 // ── Fiche imprimable ──
@@ -999,12 +1079,12 @@ function imprimerFiche() {
 
   if (ex.includes('symetrie')) {
     const qs = genererSansRepetition(cfg, 3, 'symetrie')
-    corps += `<h2>🦋 Symétrie</h2><p class="consigne">Colorie les cases pour que la figure soit symétrique par rapport à l'axe rouge.</p>`
+    corps += `<h2>🦋 ${B('Symétrie', 'Kemparzhded')}</h2><p class="consigne">${B("Colorie les cases pour que la figure soit symétrique par rapport à l'axe rouge.", "Liv ar c'harrezennoù evit ma vo kemparzhek ar stumm e-keñver an ahel ruz.")}</p>`
     corps += qs.map(x => `<div class="bloc">${svgGrilleCm({ cols: x.cols, rows: x.rows, pleines: x.modele, axe: x.axe })}</div>`).join('')
   }
   if (ex.includes('reproduction')) {
     const qs = genererSansRepetition(cfg, 2, 'reproduction')
-    corps += `<h2>✏️ Reproduction</h2><p class="consigne">Reproduis la figure dans la grille de droite, au même endroit. Le point t'aide à démarrer.</p>`
+    corps += `<h2>✏️ ${B('Reproduction', 'Adtresañ')}</h2><p class="consigne">${B("Reproduis la figure dans la grille de droite, au même endroit. Le point t'aide à démarrer.", "Adtres ar stumm er gael a-zehou, en hevelep lec'h. Ar poent a sikour ac'hanout da gregiñ.")}</p>`
     corps += qs.map(x => `<div class="bloc duo">${svgGrilleCm({ cols: x.cols, rows: x.rows, pleines: x.modele, repere: x.repere })}${svgGrilleCm({ cols: x.cols, rows: x.rows, repere: x.repere })}</div>`).join('')
   }
   if (ex.includes('reperage')) {
@@ -1013,51 +1093,51 @@ function imprimerFiche() {
     const aColorier = cases.slice(0, 4).map(c => nomCase(...dek(c)))
     const syms = ['★', '●', '▲', '■']
     const symboles = Object.fromEntries(cases.slice(4).map((c, i) => [c, syms[i]]))
-    corps += `<h2>📍 Repérage</h2><div class="bloc duo">
-      <div><p class="consigne">Colorie les cases : <b>${aColorier.join(', ')}</b></p>${svgGrilleCm({ cols, rows, entetes: true })}</div>
-      <div><p class="consigne">Écris le nom de chaque case :</p>${svgGrilleCm({ cols, rows, entetes: true, symboles })}
+    corps += `<h2>📍 ${B('Repérage', "Lec'hiañ")}</h2><div class="bloc duo">
+      <div><p class="consigne">${B('Colorie les cases', "Liv ar c'harrezennoù")} : <b>${aColorier.join(', ')}</b></p>${svgGrilleCm({ cols, rows, entetes: true })}</div>
+      <div><p class="consigne">${B('Écris le nom de chaque case', 'Skriv anv pep karrezenn')} :</p>${svgGrilleCm({ cols, rows, entetes: true, symboles })}
       <p class="lignes">${syms.map(s => `${s} : ______`).join(' &nbsp; ')}</p></div></div>`
   }
   if (ex.includes('figures')) {
     const formes = melanger(niv.figures)
-    corps += `<h2>🔷 Figures</h2><p class="consigne">Écris le nom de chaque figure.</p><div class="bloc galerie">`
+    corps += `<h2>🔷 ${B('Figures', 'Stummoù')}</h2><p class="consigne">${B('Écris le nom de chaque figure.', 'Skriv anv pep stumm.')}</p><div class="bloc galerie">`
       + formes.map(f => `<div class="item">${svgFigure({ forme: f, ...construireFigure(f) }, true, 110)}<div class="ligne"></div></div>`).join('')
       + `</div>`
   }
   if (ex.includes('solides')) {
     const sol = melanger(niv.solides)
-    corps += `<h2>🧊 Solides</h2><p class="consigne">Écris le nom de chaque solide.</p><div class="bloc galerie">`
+    corps += `<h2>🧊 ${B('Solides', 'Soludoù')}</h2><p class="consigne">${B('Écris le nom de chaque solide.', 'Skriv anv pep solud.')}</p><div class="bloc galerie">`
       + sol.map(s => `<div class="item">${svgSolide(s, 110)}<div class="ligne"></div></div>`).join('')
       + `</div>`
   }
   const dispo = niv.exercices
   if (ex.includes('angles') && dispo.includes('angles')) {
     const qs = genererSansRepetition(cfg, 4, 'angles')
-    corps += `<h2>📐 Angles droits</h2><p class="consigne">Avec ton équerre, cherche les angles droits. Écris leurs lettres (ou « aucun »).</p><div class="bloc galerie">`
+    corps += `<h2>📐 ${B('Angles droits', 'Kornioù skouer')}</h2><p class="consigne">${B('Avec ton équerre, cherche les angles droits. Écris leurs lettres (ou « aucun »).', "Gant da skouer, klask ar c'hornioù skouer. Skriv o lizherennoù (pe « hini ebet »).")}</p><div class="bloc galerie">`
       + qs.map(x => `<div class="item">${svgFigure(x, false, 130)}<div class="ligne"></div></div>`).join('') + `</div>`
   }
   if (ex.includes('proprietes') && dispo.includes('proprietes')) {
-    const vf = melanger(PROPRIETES.filter(p => !p.choix)).slice(0, 6)
-    corps += `<h2>📋 Vrai ou faux ?</h2><p class="consigne">Entoure la bonne réponse.</p>`
-      + vf.map((p, i) => `<p class="lignes">${i + 1}. ${p.texte.replace('Vrai ou faux ? ', '')} &nbsp; <b>Vrai — Faux</b></p>`).join('')
+    const vf = melanger(PROPRIETES.filter(p => !p.choix)).slice(0, 6).map(proprieteLocale)
+    corps += `<h2>📋 ${B('Vrai ou faux ?', 'Gwir pe gaou ?')}</h2><p class="consigne">${B('Entoure la bonne réponse.', "Kelc'hia ar respont mat.")}</p>`
+      + vf.map((p, i) => `<p class="lignes">${i + 1}. ${p.texte.replace('Vrai ou faux ? ', '').replace('Gwir pe gaou ? ', '')} &nbsp; <b>${B('Vrai — Faux', 'Gwir — Gaou')}</b></p>`).join('')
   }
   if (ex.includes('cercle') && dispo.includes('cercle')) {
-    corps += `<h2>⭕ Cercle</h2><div class="bloc duo">
-      <div><p class="consigne">Avec ton compas, trace un cercle de centre O et de rayon 3 cm.</p>
+    corps += `<h2>⭕ ${B('Cercle', "Kelc'h")}</h2><div class="bloc duo">
+      <div><p class="consigne">${B('Avec ton compas, trace un cercle de centre O et de rayon 3 cm.', "Gant da gelc'hier, tres ur c'helc'h a greiz O hag a skin 3 cm.")}</p>
         <svg width="7cm" height="7cm" viewBox="0 0 7 7" xmlns="http://www.w3.org/2000/svg"><circle cx="3.5" cy="3.5" r="0.07" fill="#000"/><text x="3.65" y="3.35" font-size="0.4" font-family="Arial">O</text></svg></div>
-      <div><p class="consigne">Repasse en bleu un rayon et en rouge un diamètre.</p>${svgCercle({ sous: 'lequel', rot: aleatoire(0, 359), pts: { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' } }, 190)}</div></div>`
+      <div><p class="consigne">${B('Repasse en bleu un rayon et en rouge un diamètre.', 'Adtremen e glas ur skin hag e ruz un treuzkiz.')}</p>${svgCercle({ sous: 'lequel', rot: aleatoire(0, 359), pts: { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' } }, 190)}</div></div>`
   }
   if (ex.includes('patrons') && dispo.includes('patrons')) {
     const { valides, invalides } = patrons()
     const choisis = melanger([...melanger(valides).slice(0, 3), ...melanger(invalides).slice(0, 3)])
       .map(h => normaliserCases(h.map(hasard(SYMETRIES))))
-    corps += `<h2>🎲 Patrons du cube</h2><p class="consigne">Entoure les dessins qui sont des patrons du cube. Tu peux les découper pour vérifier !</p><div class="bloc galerie">`
+    corps += `<h2>🎲 ${B('Patrons du cube', "Patromoù ar c'hub")}</h2><p class="consigne">${B('Entoure les dessins qui sont des patrons du cube. Tu peux les découper pour vérifier !', "Kelc'hia an tresadennoù a zo patromoù ar c'hub. Gallout a rez o didroc'hañ evit gwiriañ !")}</p><div class="bloc galerie">`
       + choisis.map(c => `<div class="item libre">${svgPatron(c, { cote: 1, unite: 'cm' })}</div>`).join('') + `</div>`
   }
 
   const nivTxt = cfg.niveau.toUpperCase()
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Géométrie — ${nivTxt}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${nivTxt}</title>
     <style>
       @page { size: A4; margin: 1.2cm; }
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1076,9 +1156,9 @@ function imprimerFiche() {
       .lignes { font-size: 1rem; margin-top: .2cm; }
       svg { display: block; }
     </style></head><body>
-    <h1>Géométrie — ${nivTxt}</h1>
-    <p class="entete">Nom : ________________________________ &nbsp; Date : ______________</p>
-    <p class="avertissement">⚠️ Imprimer à 100 %, sans ajustement à la page : chaque carreau mesure alors 1 cm.</p>
+    <h1>${t('titre')} — ${nivTxt}</h1>
+    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="avertissement">⚠️ ${B('Imprimer à 100 %, sans ajustement à la page : chaque carreau mesure alors 1 cm.', "Moullañ da 100 %, hep azasaat d'ar bajenn : neuze e vuzul pep karrezenn 1 cm.")}</p>
     ${corps}
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`

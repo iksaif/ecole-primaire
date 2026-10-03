@@ -1,43 +1,43 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 Ranger les nombres</h1>
+    <h1 class="section-heading">🔢 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="config.niveau = 'ms'">
-            🌱 MS — nombres 1 à 5
+            🌱 {{ t('nombresDe', { niv: 'MS', n: 5 }) }}
           </button>
           <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="config.niveau = 'gs'">
-            🌳 GS — nombres 1 à 10
+            🌳 {{ t('nombresDe', { niv: 'GS', n: 10 }) }}
           </button>
         </div>
       </div>
       <div class="config-section">
-        <div class="config-section-title">Du plus petit au plus grand</div>
+        <div class="config-section-title">{{ t('petitGrand') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: config.sens === 'croissant' }" @click="config.sens = 'croissant'">
-            ↗ Croissant
+            ↗ {{ t('croissant') }}
           </button>
           <button class="level-btn" :class="{ active: config.sens === 'decroissant' }" @click="config.sens = 'decroissant'">
-            ↘ Décroissant
+            ↘ {{ t('decroissant') }}
           </button>
           <button class="level-btn" :class="{ active: config.sens === 'mix' }" @click="config.sens = 'mix'">
-            🔀 Mélangé
+            🔀 {{ t('melange') }}
           </button>
         </div>
       </div>
       <div class="config-section">
-        <div class="config-section-title">Combien de nombres à ranger ?</div>
+        <div class="config-section-title">{{ t('combien') }}</div>
         <div class="btn-group">
           <button v-for="n in [3, 4, 5]" :key="n"
             class="level-btn" :class="{ active: config.taille === n }" @click="config.taille = n">{{ n }}</button>
         </div>
       </div>
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
@@ -45,7 +45,7 @@
       </div>
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.2rem;padding:.85rem 2.5rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
     </div>
@@ -53,13 +53,13 @@
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>⭐ {{ bonnes }} &nbsp; 💔 {{ mauvaises }}</span>
       </div>
 
       <div class="mat-box">
         <div class="consigne">
-          {{ sensCourant === 'croissant' ? '⬆️ Range du plus petit au plus grand' : '⬇️ Range du plus grand au plus petit' }}
+          {{ sensCourant === 'croissant' ? '⬆️ ' + t('rangeCroissant') : '⬇️ ' + t('rangeDecroissant') }}
         </div>
 
         <!-- Zone de réponse (nombres cliqués dans l'ordre) -->
@@ -77,7 +77,7 @@
         </div>
 
         <div class="fleche-hint">
-          {{ sensCourant === 'croissant' ? '→ du plus petit au plus grand' : '→ du plus grand au plus petit' }}
+          {{ sensCourant === 'croissant' ? '→ ' + t('petitGrandMin') : '→ ' + t('grandPetitMin') }}
         </div>
 
         <!-- Nombres à choisir (désordre) -->
@@ -93,11 +93,11 @@
 
         <div class="btn-row-small">
           <button class="btn btn-ghost" @click="effacer" :disabled="selection.length === 0 || validé">
-            ✏️ Effacer
+            ✏️ {{ t('effacerTxt') }}
           </button>
           <button class="btn btn-primary" @click="valider"
                   :disabled="selection.length < questions[idx].nombres.length || validé">
-            Valider ✔
+            {{ t('valider') }}
           </button>
         </div>
 
@@ -113,8 +113,8 @@
         <span v-for="i in 5" :key="i">{{ i <= etoilesScore ? '⭐' : '☆' }}</span>
       </div>
       <div class="btn-group" style="justify-content:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -123,6 +123,40 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { aleatoire, melanger, confettis } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t } = useI18n({
+  fr: {
+    titre: 'Ranger les nombres',
+    nombresDe: '{niv} — nombres 1 à {n}',
+    petitGrand: 'Du plus petit au plus grand',
+    croissant: 'Croissant', decroissant: 'Décroissant', melange: 'Mélangé',
+    combien: 'Combien de nombres à ranger ?',
+    rangeCroissant: 'Range du plus petit au plus grand',
+    rangeDecroissant: 'Range du plus grand au plus petit',
+    petitGrandMin: 'du plus petit au plus grand',
+    grandPetitMin: 'du plus grand au plus petit',
+    effacerTxt: 'Effacer',
+    ordreCorrect: "L'ordre correct : {ordre}",
+    resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
+    resultat0: "On va s'entraîner encore ! 📚",
+  },
+  br: {
+    titre: 'Renkañ an niveroù',
+    nombresDe: '{niv} — niveroù 1 da {n}',
+    petitGrand: "Eus ar bihanañ d'ar brasañ",
+    croissant: 'O kreskiñ', decroissant: 'O tigreskiñ', melange: 'Kemmesket',
+    combien: 'Pet niver da renkañ ?',
+    rangeCroissant: "Renk eus ar bihanañ d'ar brasañ",
+    rangeDecroissant: "Renk eus ar brasañ d'ar bihanañ",
+    petitGrandMin: "eus ar bihanañ d'ar brasañ",
+    grandPetitMin: "eus ar brasañ d'ar bihanañ",
+    effacerTxt: 'Diverkañ',
+    ordreCorrect: 'An urzh reizh : {ordre}',
+    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
+    resultat0: "Embreger a raimp c'hoazh ! 📚",
+  },
+})
 
 const config = ref({ niveau: 'ms', sens: 'croissant', taille: 4, nbQ: 10 })
 const phase = ref('config')
@@ -182,10 +216,10 @@ function valider() {
   const ok = selection.value.join(',') === q.bonne.join(',')
   reponseOk.value = ok
   if (ok) {
-    feedback.value = ['Bravo ! 🎉', 'Super ! ⭐', 'Parfait ! 🌟'][aleatoire(0,2)]
+    const b = t('bravo'); feedback.value = b[aleatoire(0, b.length - 1)]
     feedbackClass.value = 'ok'; bonnes.value++
   } else {
-    feedback.value = `❌ L'ordre correct : ${q.bonne.join(' → ')}`
+    feedback.value = `❌ ${t('ordreCorrect', { ordre: q.bonne.join(' → ') })}`
     feedbackClass.value = 'erreur'; mauvaises.value++
   }
   setTimeout(() => { idx.value++; if (idx.value >= questions.value.length) phase.value = 'resultats'; else resetQ() }, 1400)
@@ -197,10 +231,10 @@ const etoilesScore = computed(() => {
 })
 const resultMsg = computed(() => {
   const e = etoilesScore.value
-  if (e === 5) { confettis(50); return 'Parfait ! Bravo ! 🏆' }
-  if (e >= 4)  { confettis(25); return 'Très bien ! 🌟' }
-  if (e >= 3)  return 'Bien ! Continue ! 💪'
-  return 'On va s\'entraîner encore ! 📚'
+  if (e === 5) { confettis(50); return t('resultat5') }
+  if (e >= 4)  { confettis(25); return t('resultat4') }
+  if (e >= 3)  return t('resultat3')
+  return t('resultat0')
 })
 </script>
 

@@ -1,22 +1,22 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">⚖️ Comparer les quantités</h1>
+    <h1 class="section-heading">⚖️ {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="config.niveau = 'ms'">
-            🌱 MS — jusqu'à 5
+            🌱 {{ t('jusqua', { niv: 'MS', n: 5 }) }}
           </button>
           <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="config.niveau = 'gs'">
-            🌳 GS — jusqu'à 10
+            🌳 {{ t('jusqua', { niv: 'GS', n: 10 }) }}
           </button>
         </div>
       </div>
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
@@ -24,7 +24,7 @@
       </div>
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.2rem;padding:.85rem 2.5rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
     </div>
@@ -32,12 +32,12 @@
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>⭐ {{ bonnes }} &nbsp; 💔 {{ mauvaises }}</span>
       </div>
 
       <div class="mat-box">
-        <div class="consigne">Quel groupe a le plus ?</div>
+        <div class="consigne">{{ t('consigne') }}</div>
 
         <div class="groupes">
           <!-- Groupe gauche -->
@@ -69,15 +69,15 @@
         <div class="reponses">
           <button class="rep-btn rep-a" :class="etatBtn('gauche')"
                   :disabled="repondu" @click="repondre('gauche')">
-            👈 A a plus
+            👈 {{ t('aPlus', { g: 'A' }) }}
           </button>
           <button class="rep-btn rep-egal" :class="etatBtn('egal')"
                   :disabled="repondu" @click="repondre('egal')">
-            = Pareil
+            = {{ t('pareil') }}
           </button>
           <button class="rep-btn rep-b" :class="etatBtn('droite')"
                   :disabled="repondu" @click="repondre('droite')">
-            B a plus 👉
+            {{ t('aPlus', { g: 'B' }) }} 👉
           </button>
         </div>
 
@@ -93,8 +93,8 @@
         <span v-for="i in 5" :key="i">{{ i <= etoilesScore ? '⭐' : '☆' }}</span>
       </div>
       <div class="btn-group" style="justify-content:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -103,6 +103,30 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { aleatoire, confettis } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t } = useI18n({
+  fr: {
+    titre: 'Comparer les quantités',
+    jusqua: "{niv} — jusqu'à {n}",
+    consigne: 'Quel groupe a le plus ?',
+    aPlus: '{g} a plus',
+    pareil: 'Pareil',
+    memeNombre: 'Les deux groupes ont le même nombre !',
+    resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
+    resultat0: "On va s'entraîner encore ! 📚",
+  },
+  br: {
+    titre: "Keñveriañ ar c'hementadoù", // br: à relire
+    jusqua: '{niv} — betek {n}',
+    consigne: "Peseurt strollad en deus muioc'h ?",
+    aPlus: "Muioc'h gant {g}",
+    pareil: 'Kement ha kement', // br: à relire
+    memeNombre: 'An daou strollad o deus ar memes niver !',
+    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
+    resultat0: "Embreger a raimp c'hoazh ! 📚",
+  },
+})
 
 const EMOJIS = ['🍎','⭐','🐱','🌸','🚗','🦋','🍓','🐸','🐠','🌙','🍪','🎈']
 
@@ -155,12 +179,12 @@ function repondre(val) {
   const q = questions.value[idx.value]
   const ok = val === q.reponse
   if (ok) {
-    feedback.value = ['Super ! 🎉', 'Bravo ! ⭐', 'Parfait ! 🌟'][aleatoire(0,2)]
+    const b = t('bravo'); feedback.value = b[aleatoire(0, b.length - 1)]
     feedbackClass.value = 'ok'; bonnes.value++
   } else {
-    const msg = q.reponse === 'egal' ? 'Les deux groupes ont le même nombre !'
-              : q.reponse === 'gauche' ? `A a plus : ${q.gauche} > ${q.droite}`
-              : `B a plus : ${q.droite} > ${q.gauche}`
+    const msg = q.reponse === 'egal' ? t('memeNombre')
+              : q.reponse === 'gauche' ? `${t('aPlus', { g: 'A' })} : ${q.gauche} > ${q.droite}`
+              : `${t('aPlus', { g: 'B' })} : ${q.droite} > ${q.gauche}`
     feedback.value = `❌ ${msg}`
     feedbackClass.value = 'erreur'; mauvaises.value++
   }
@@ -173,10 +197,10 @@ const etoilesScore = computed(() => {
 })
 const resultMsg = computed(() => {
   const e = etoilesScore.value
-  if (e === 5) { confettis(50); return 'Parfait ! Bravo ! 🏆' }
-  if (e >= 4)  { confettis(25); return 'Très bien ! 🌟' }
-  if (e >= 3)  return 'Bien ! Continue ! 💪'
-  return 'On va s\'entraîner encore ! 📚'
+  if (e === 5) { confettis(50); return t('resultat5') }
+  if (e >= 4)  { confettis(25); return t('resultat4') }
+  if (e >= 3)  return t('resultat3')
+  return t('resultat0')
 })
 </script>
 

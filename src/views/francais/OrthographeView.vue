@@ -1,24 +1,24 @@
 <template>
   <div class="container">
-    <h1>🔤 Orthographe</h1>
+    <h1>🔤 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
 
       <div class="config-section">
-        <div class="config-section-title">Thème</div>
+        <div class="config-section-title">{{ t('theme') }}</div>
         <div class="theme-grid">
-          <button v-for="t in THEMES" :key="t.id"
-            class="theme-btn" :class="{ active: config.theme === t.id }"
-            @click="config.theme = t.id">
-            <span class="theme-icon">{{ t.icon }}</span>
-            <span class="theme-label">{{ t.label }}</span>
+          <button v-for="th in THEMES" :key="th.id"
+            class="theme-btn" :class="{ active: config.theme === th.id }"
+            @click="config.theme = th.id">
+            <span class="theme-icon">{{ th.icon }}</span>
+            <span class="theme-label">{{ t('theme_' + th.id) }}</span>
           </button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nb === n }"
@@ -28,7 +28,7 @@
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
     </div>
@@ -36,8 +36,8 @@
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="phase = 'config'">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -64,9 +64,9 @@
           <input ref="inputEl" class="saisie-input" :class="inputCls"
             v-model="saisie" :disabled="repondu"
             autocomplete="off" spellcheck="false"
-            :placeholder="question.indice || 'Écris le mot…'"
+            :placeholder="question.indice || t('ecrisLeMot')"
             @keydown.enter="validerSaisie" />
-          <button v-if="!repondu" class="btn btn-primary" @click="validerSaisie">Valider</button>
+          <button v-if="!repondu" class="btn btn-primary" @click="validerSaisie">{{ t('valider') }}</button>
         </div>
 
         <div class="feedback" :class="feedbackCls" v-if="repondu">
@@ -74,7 +74,7 @@
         </div>
 
         <button v-if="repondu" class="btn btn-primary" style="margin-top:1rem;" @click="suivant">
-          {{ idx + 1 < questions.length ? 'Suivant →' : 'Voir les résultats' }}
+          {{ idx + 1 < questions.length ? t('suivant') : t('voirResultats') }}
         </button>
       </div>
     </template>
@@ -85,7 +85,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <div v-if="erreurs.length > 0" class="erreurs-box">
-        <div class="config-section-title" style="margin-bottom:.5rem;">À retravailler :</div>
+        <div class="config-section-title" style="margin-bottom:.5rem;">{{ t('aRetravailler') }}</div>
         <div v-for="(e, i) in erreurs" :key="i" class="erreur-orth">
           <span class="erreur-phrase" v-html="e.phraseFull"></span>
           <span class="erreur-reponse">→ <strong>{{ e.bonne }}</strong></span>
@@ -93,8 +93,8 @@
       </div>
 
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -103,6 +103,83 @@
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
 import { melanger, confettis, normaliser, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, tr } = useI18n({
+  fr: {
+    titre: 'Orthographe',
+    theme: 'Thème',
+    theme_homophones: 'Homophones',
+    theme_accords: 'Accords',
+    theme_lettres: 'Lettres manquantes',
+    ecrisLeMot: 'Écris le mot…',
+    aRetravailler: 'À retravailler :',
+    changer: '⚙️ Changer',
+    feedbackOk: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'],
+    feedbackErr: '❌ La bonne réponse est « {r} »{exp}.',
+    res100: 'Parfait, sans faute ! 🏆',
+    res80: 'Très bien ! 🌟',
+    res60: 'Bien ! Revois les erreurs 💪',
+    res0: 'Courage ! Relis les règles et recommence 📚',
+  },
+  br: {
+    titre: 'Reizhskrivañ',
+    theme: 'Tem',
+    theme_homophones: 'Heñvelsonioù', // br: à relire (homophones)
+    theme_accords: 'Kenglotadurioù', // br: à relire (accords)
+    theme_lettres: 'Lizherennoù a vank',
+    ecrisLeMot: 'Skriv ar ger…',
+    aRetravailler: "Da labourat c'hoazh :",
+    changer: '⚙️ Cheñch',
+    feedbackOk: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
+    feedbackErr: '❌ Ar respont mat eo « {r} »{exp}.',
+    res100: 'Dispar, hep fazi ebet ! 🏆',
+    res80: 'Mat-tre ! 🌟',
+    res60: 'Mat ! Adwel ar fazioù 💪',
+    res0: 'Kalon vat ! Adlenn ar reolennoù ha adkrog 📚',
+  },
+})
+
+// Explications en breton (les mots français étudiés restent entre guillemets)
+// br: à relire — préposition = araogenn, conjonction = stagell, déterminant = ger-mont (incertain), pronom réfléchi = raganv emober (incertain)
+const EXPLICATIONS_BR = {
+  '"a" = avoir (il a)': '"a" = ar verb "avoir" (il a)',
+  '"à" = préposition de lieu': '"à" = araogenn al lec\'h',
+  '"a" = avoir (papa a)': '"a" = ar verb "avoir" (papa a)',
+  '"ou" = choix (ou bien)': '"ou" = un dibab (ou bien)',
+  '"où" = lieu (remplace "à quel endroit")': '"où" = al lec\'h (e-lec\'h "à quel endroit")',
+  '"ou" = choix': '"ou" = un dibab',
+  '"on" = pronom sujet': '"on" = raganv sujed',
+  '"ont" = avoir au pluriel (ils ont)': '"ont" = "avoir" el liester (ils ont)',
+  '"on" = pronom (on = nous)': '"on" = raganv (on = nous)',
+  '"et" = conjonction (et puis)': '"et" = stagell (et puis)',
+  '"est" = être (il est)': '"est" = ar verb "être" (il est)',
+  '"et" = conjonction': '"et" = stagell',
+  '"sont" = être au pluriel (ils sont)': '"sont" = "être" el liester (ils sont)',
+  '"son" = déterminant possessif': '"son" = ger-mont perc\'hennañ',
+  '"sont" = être au pluriel': '"sont" = "être" el liester',
+  '"ce" = déterminant démonstratif': '"ce" = ger-mont diskouez',
+  '"se" = pronom réfléchi': '"se" = raganv emober',
+  '"mes" = déterminant possessif (pluriel de mon/ma)': '"mes" = ger-mont perc\'hennañ (liester "mon"/"ma")',
+  '"mais" = conjonction d\'opposition': '"mais" = stagell enebiñ',
+  'garçon est masculin → petit': '"garçon" a zo gourel → "petit"',
+  'fille est féminin → petite': '"fille" a zo benel → "petite"',
+  'chien est masculin → content': '"chien" a zo gourel → "content"',
+  'chatte est féminin → blanche': '"chatte" a zo benel → "blanche"',
+  'un → singulier → château': '"un" → unander → "château"',
+  'beaux → pluriel → châteaux': '"beaux" → liester → "châteaux"',
+  'chiens est pluriel masculin → gros (invariable en -s)': '"chiens" a zo liester gourel → "gros" (ne cheñch ket, echu gant -s)',
+  'voiture est féminin → grosse': '"voiture" a zo benel → "grosse"',
+  'Les noms en -eau font leur pluriel en -eaux': 'An anvioù echu gant -eau : liester gant -eaux',
+  'Les noms en -eu font leur pluriel en -eux': 'An anvioù echu gant -eu : liester gant -eux',
+  'Pluriel irrégulier : genou → genoux': 'Liester direizh : genou → genoux',
+  'Les noms en -al font leur pluriel en -aux': 'An anvioù echu gant -al : liester gant -aux',
+  '"hibou" s\'écrit avec un h': '"hibou" a vez skrivet gant un h',
+  '"oiseau" commence par oi': '"oiseau" a grog gant "oi"',
+  '"clown" vient de l\'anglais, avec w': '"clown" a zeu eus ar saozneg, gant ur w',
+  '"chanter" s\'écrit ch + ante': '"chanter" a vez skrivet ch + ante',
+}
+const explication = q => tr({ fr: q.explication, br: EXPLICATIONS_BR[q.explication] ?? q.explication })
 
 // ── Données par thème
 const THEMES = [
@@ -195,7 +272,15 @@ const bonnes = ref(0)
 const mauvaises = ref(0)
 const erreurs = ref([])
 const repondu = ref(false)
-const feedbackTxt = ref('')
+// feedback mémorisé sous forme de données pour suivre la langue
+const feedback = ref(null)
+const feedbackTxt = computed(() => {
+  const f = feedback.value
+  if (!f) return ''
+  if (f.ok) return t('feedbackOk')[f.i]
+  const exp = f.q.explication ? explication(f.q) : ''
+  return t('feedbackErr', { r: f.q.bonne, exp: exp ? ' — ' + exp : '' })
+})
 const feedbackCls = ref('')
 const saisie = ref('')
 const inputCls = ref('')
@@ -220,7 +305,7 @@ function demarrer() {
   questions.value = pool
   idx.value = 0
   bonnes.value = 0; mauvaises.value = 0; erreurs.value = []
-  repondu.value = false; feedbackTxt.value = ''; feedbackCls.value = ''
+  repondu.value = false; feedback.value = null; feedbackCls.value = ''
   saisie.value = ''; inputCls.value = ''; reponseDonnee.value = ''
   phase.value = 'jeu'
   nextTick(() => inputEl.value?.focus())
@@ -250,13 +335,12 @@ function enregistrer(ok) {
   repondu.value = true
   if (ok) {
     bonnes.value++
-    feedbackTxt.value = ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'][Math.floor(Math.random() * 4)]
+    feedback.value = { ok: true, i: Math.floor(Math.random() * 4) }
     feedbackCls.value = 'ok'
     inputCls.value = 'ok'
   } else {
     mauvaises.value++
-    const exp = question.value.explication || ''
-    feedbackTxt.value = `❌ La bonne réponse est « ${question.value.bonne} »${exp ? ' — ' + exp : ''}.`
+    feedback.value = { ok: false, q: question.value }
     feedbackCls.value = 'erreur'
     inputCls.value = 'erreur'
     erreurs.value.push({
@@ -279,17 +363,17 @@ function suivant() {
     phase.value = 'resultats'
     return
   }
-  repondu.value = false; feedbackTxt.value = ''; feedbackCls.value = ''
+  repondu.value = false; feedback.value = null; feedbackCls.value = ''
   saisie.value = ''; inputCls.value = ''; reponseDonnee.value = ''
   nextTick(() => inputEl.value?.focus())
 }
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! 🌟' }
-  if (pct >= 60)   return 'Bien ! Revois les erreurs 💪'
-  return 'Courage ! Relis les règles et recommence 📚'
+  if (pct === 100) { confettis(50); return t('res100') }
+  if (pct >= 80)   { confettis(25); return t('res80') }
+  if (pct >= 60)   return t('res60')
+  return t('res0')
 })
 </script>
 

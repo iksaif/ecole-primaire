@@ -13,12 +13,24 @@ const ordre = CLASSES.map(c => c.id)
 const de = (a, b) => ordre.slice(ordre.indexOf(a), ordre.indexOf(b) + 1)
 
 export const MATIERES = [
-  { id: 'imprimer', titre: '🖨️ Fiches à imprimer', classe: 'imprimer' },
-  { id: 'maths',    titre: '🔢 Mathématiques',     classe: 'maths' },
-  { id: 'francais', titre: '📝 Français',          classe: 'francais' },
-  { id: 'lecture',  titre: '📖 Lecture & Compréhension', classe: 'lecture' },
-  { id: 'autres',   titre: '🌍 Culture générale',  classe: 'autres' },
+  { id: 'imprimer', titre: '🖨️ Fiches à imprimer', br: '🖨️ Fichennoù da voullañ' },
+  { id: 'maths',    titre: '🔢 Mathématiques',     br: '🔢 Matematik' },
+  { id: 'francais', titre: '📝 Français',          br: '📝 Galleg' },
+  { id: 'lecture',  titre: '📖 Lecture & Compréhension', br: '📖 Lenn ha kompren' },
+  { id: 'autres',   titre: '🌍 Culture générale',  br: '🌍 Sevenadur hollek' },
 ]
+
+// Domaines du programme (titres de groupes dans les pages matières) — breton à faire relire
+export const DOMAINES_BR = {
+  'Nombres et calcul': 'Niveroù ha jediñ',
+  'Résoudre des problèmes': 'Diskoulmañ kudennoù',
+  'Grandeurs et mesures': 'Mentoù ha muzulioù',
+  'Espace et géométrie': 'Egor ha mentoniezh',
+  'Lettres et sons': 'Lizherennoù ha sonioù',
+  'Orthographe': 'Reizhskrivañ',
+  'Grammaire et conjugaison': 'Yezhadur ha displegañ',
+  'Vocabulaire': 'Geriaoueg',
+}
 
 // `domaine` regroupe les activités par grand domaine du programme dans les pages matières
 export const ACTIVITES = [
@@ -58,6 +70,37 @@ export const ACTIVITES = [
   // ── Culture générale ──
   { to: '/autres', matiere: 'autres', icon: '🗺️', titre: 'Quiz culture générale', desc: 'Géographie, histoire, sciences, animaux', niveaux: de('cp', 'cm2') },
 ]
+
+// Traductions bretonnes des activités [titre, description] — à faire relire par un brittophone
+const BR = {
+  '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
+  '/imprimer/alphabet': ['Skritell al lizherenneg', 'Ar 4 doare skrivañ, A4 pe A3'],
+  '/imprimer/calcul':   ['Fichennoù jediñ', 'Taolennoù, klokaat, doubl hag hanter… gant ar reizhadenn'],
+  '/imprimer/nombres':  ['An niveroù e lizherennoù', 'Unanennoù, degadoù, kantadoù… e galleg hag e brezhoneg'],
+  '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
+  '/maternelle/comparer': ["Keñveriañ ar c'hementadoù", 'Peseurt strollad en deus ar muiañ ?'],
+  '/maternelle/ordonner': ['Renkañ an niveroù', "Eus ar bihanañ d'ar brasañ"],
+  '/maths/numeration':    ['An niveroù', 'Betek 1 000 (CE1) ha 10 000 (CE2) : dispartiañ, keñveriañ, renkañ'],
+  '/maths/calcul-mental': ['Jediñ e penn', 'Sammadennoù, lamadennoù, doubl, hanter, taolennoù'],
+  '/maths/calcul-pose':   ['Jedadurioù lakaet', 'Sammadennoù ha lamadennoù e bannoù'],
+  '/maths/tables':        ['Taolennoù liesañ', 'En em bleustr war an holl daolennoù'],
+  '/maths/fractions':     ['An darnaouennoù', "An hanter, an trederenn, ar c'hard…"],
+  '/maths/problemes':     ['Kudennoù', 'Lenn, kompren ha jediñ'],
+  '/maths/heure':         ['Lenn an eur', 'Eurioù, hanterioù ha kardoù war un horolaj'],
+  '/maths/monnaie':       ['Ar moneiz', 'Kontañ ha paeañ gant euroioù'],
+  '/maths/mesures':       ['Muzulioù', "Hirderioù, pouezioù, endalc'hioù, deiziadur"],
+  '/maternelle/formes':   ['Ar stummoù', "Anaout ar c'helc'h, ar c'harrez, an tric'horn ha muioc'h"],
+  '/maths/geometrie':     ['Mentoniezh', 'Kemparzhded, karrezennoù, stummoù ha solidennoù'],
+  '/maternelle/lettres':   ['Al lizherennoù', 'Anaout ha liammañ ar pennlizherennoù hag al lizherennoù bihan'],
+  '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],
+  '/francais/orthographe': ['Reizhskrivañ', 'Heñvelsonioù, kenglotadurioù, lizherennoù a vank (e galleg)'],
+  '/francais/grammaire':   ['Yezhadur', 'Frazenn, natur ar gerioù, sujed, kenglotadurioù (e galleg)'],
+  '/francais/conjugaison': ['Displegañ', 'Displeg ar verboù (e galleg)'],
+  '/francais/vocabulaire': ['Geriaoueg', 'Urzh al lizherenneg, gerioù enep, familhoù gerioù (e galleg)'],
+  '/lecture': ['Lenn ha silabennoù', 'Silabennoù, adsevel gerioù ha testennoù (e galleg)'],
+  '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
+}
+for (const a of ACTIVITES) if (BR[a.to]) a.br = { titre: BR[a.to][0], desc: BR[a.to][1] }
 
 // « CE1 → CM2 », « MS / GS »…
 export function etiquetteNiveaux(niveaux) {

@@ -54,3 +54,12 @@ scripts/deploy-vps.sh skoolik        # un seul site
 
 Chaque site va dans `$DEPLOY_ROOT/<domaine>/`. Exemples de configuration nginx dans `deploy/nginx/`
 (certificats : `sudo certbot --nginx -d ecoleprimaire.app -d www.ecoleprimaire.app`).
+
+## Traduction (français / breton)
+
+- `src/i18n/index.js` : `useI18n({ fr: {...}, br: {...} })` dans chaque composant, textes communs dans
+  `src/i18n/commun.js`, langue choisie dans la barre du haut (breton par défaut sur skoolik.app).
+- Les exercices de français (dictée, grammaire…) gardent leur contenu en français ; seule l'interface est traduite.
+- La traduction bretonne est automatique : les passages incertains sont marqués `// br: à relire`
+  (`grep -rn "br: à relire" src`). Une fenêtre prévient les visiteurs au premier passage en breton.
+- Voir `TODO.md` pour la généralisation à d'autres langues régionales.

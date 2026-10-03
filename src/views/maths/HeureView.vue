@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🕐 Lire l'heure</h1>
+    <h1 class="section-heading">🕐 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in Object.keys(NIVEAUX)" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -14,43 +14,43 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Exercices</div>
+        <div class="config-section-title">{{ t('exercices') }}</div>
         <div class="btn-group">
           <button v-for="ex in niveau.exercices" :key="ex"
             class="level-btn" :class="{ active: config.exercices.includes(ex) }"
-            @click="basculer('exercices', ex)">{{ EXERCICES[ex] }}</button>
+            @click="basculer('exercices', ex)">{{ tr(EXERCICES[ex]) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Précision</div>
+        <div class="config-section-title">{{ t('precision') }}</div>
         <div class="btn-group">
           <button v-for="p in niveau.precisions" :key="p"
             class="level-btn" :class="{ active: config.precisions.includes(p) }"
-            @click="basculer('precisions', p)">{{ PRECISIONS[p] }}</button>
+            @click="basculer('precisions', p)">{{ tr(PRECISIONS[p]) }}</button>
         </div>
-        <div class="aide-config">Au CE1 : heures pile, demi-heures et quarts d'heure. Les 5 minutes sont un bonus.</div>
+        <div class="aide-config">{{ t('aideCe1') }}</div>
       </div>
 
       <div class="config-section" v-if="config.exercices.includes('lire')">
-        <div class="config-section-title">Réponse (lire l'heure)</div>
+        <div class="config-section-title">{{ t('reponseLire') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.saisie === 'choix' }" @click="config.saisie = 'choix'">4 propositions</button>
-          <button class="level-btn" :class="{ active: config.saisie === 'clavier' }" @click="config.saisie = 'clavier'">J'écris l'heure</button>
+          <button class="level-btn" :class="{ active: config.saisie === 'choix' }" @click="config.saisie = 'choix'">{{ t('propositions4') }}</button>
+          <button class="level-btn" :class="{ active: config.saisie === 'clavier' }" @click="config.saisie = 'clavier'">{{ t('jEcris') }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Aide</div>
+        <div class="config-section-title">{{ t('aide') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: config.aideMinutes }" @click="config.aideMinutes = !config.aideMinutes">
-            {{ config.aideMinutes ? '✓ ' : '' }}Afficher les minutes autour du cadran
+            {{ config.aideMinutes ? '✓ ' : '' }}{{ t('afficherMinutes') }}
           </button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -59,18 +59,18 @@
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -82,9 +82,9 @@
 
         <!-- (a) Lire l'heure -->
         <template v-if="q.type === 'lire'">
-          <div class="consigne">Quelle heure est-il ?</div>
+          <div class="consigne">{{ t('quelleHeure') }}</div>
           <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
-          <div class="legende-aiguilles"><span class="leg-h">petite aiguille = heures</span> · <span class="leg-m">grande aiguille = minutes</span></div>
+          <div class="legende-aiguilles"><span class="leg-h">{{ t('legH') }}</span> · <span class="leg-m">{{ t('legM') }}</span></div>
 
           <div v-if="q.mode === 'choix'" class="choix-grille">
             <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
@@ -103,25 +103,25 @@
         <!-- (b) Placer les aiguilles -->
         <template v-else-if="q.type === 'placer'">
           <div class="consigne">
-            Place les aiguilles pour afficher
+            {{ t('placeAiguilles') }}
             <strong v-if="q.consigneOrale">« {{ q.oral }} »</strong>
             <strong v-else>{{ q.ecrit }}</strong>
-            <button class="btn-ecouter" title="Écouter" @click="lire(q.oral)">🔊</button>
+            <button v-if="langue !== 'br'" class="btn-ecouter" :title="t('ecouter')" @click="lire(q.oral)">🔊</button>
           </div>
           <div ref="cadranEl" class="horloge deplacable"
             @pointerdown="debutGlisser" @pointermove="glisser" @pointerup="finGlisser" @pointercancel="finGlisser"
             v-html="horlogeSvg(aiguilles.h, aiguilles.m, repondu && !dernierOk ? { h: q.h, m: q.m } : null)"></div>
-          <div class="legende-aiguilles">Fais glisser les aiguilles avec le doigt, ou utilise les boutons.</div>
+          <div class="legende-aiguilles">{{ t('glisser') }}</div>
           <div class="reglages">
             <div class="reglage">
-              <span class="leg-h">Petite aiguille (heures)</span>
+              <span class="leg-h">{{ t('petiteAiguille') }}</span>
               <div class="btn-group">
                 <button class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterHeures(-1)">−</button>
                 <button class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterHeures(1)">+</button>
               </div>
             </div>
             <div class="reglage">
-              <span class="leg-m">Grande aiguille (minutes)</span>
+              <span class="leg-m">{{ t('grandeAiguille') }}</span>
               <div class="btn-group">
                 <button class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterMinutes(-5)">−5</button>
                 <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterMinutes(-1)">−1</button>
@@ -134,7 +134,7 @@
 
         <!-- (c) Matin / après-midi -->
         <template v-else-if="q.type === 'journee' && q.sous === 'lire24'">
-          <div class="consigne">{{ q.phrase }}<br>Quelle heure est-il ? <small>(écris-la comme sur une horloge numérique)</small></div>
+          <div class="consigne">{{ q.phrase }}<br>{{ t('quelleHeure') }} <small>{{ t('ecrisNumerique') }}</small></div>
           <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
           <div class="saisie-heure">
             <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
@@ -147,7 +147,7 @@
         </template>
 
         <template v-else-if="q.type === 'journee' && q.sous === 'choisir'">
-          <div class="consigne">Il est <strong>{{ q.ecrit24 }}</strong>. Quelle horloge indique cette heure ?</div>
+          <div class="consigne">{{ t('ilEst1') }}<strong>{{ q.ecrit24 }}</strong>{{ t('ilEst2') }} {{ t('quelleHorloge') }}</div>
           <div class="choix-horloges">
             <button v-for="(o, i) in q.options" :key="i" class="choix-horloge"
               :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">
@@ -159,21 +159,21 @@
         <!-- (d) Durées -->
         <template v-else-if="q.type === 'duree'">
           <div class="consigne" v-if="q.sous === 'apres'">
-            Il est <strong>{{ q.ecritDebut }}</strong>.<br>
-            Dans <strong>{{ q.ecritDuree }}</strong>, quelle heure sera-t-il ?
+            {{ t('ilEst1') }}<strong>{{ q.ecritDebut }}</strong>{{ t('ilEst2') }}<br>
+            {{ t('dans1') }}<strong>{{ q.ecritDuree }}</strong>{{ t('dans2') }}
           </div>
           <div class="consigne" v-else>
-            {{ q.activite }} commence à <strong>{{ q.ecritDebut }}</strong> et se termine à <strong>{{ q.ecritFin }}</strong>.<br>
-            Combien de temps dure-t-{{ q.pronom }} ?
+            {{ q.activite }} {{ t('commenceA') }} <strong>{{ q.ecritDebut }}</strong> {{ t('termineA') }} <strong>{{ q.ecritFin }}</strong>.<br>
+            {{ t('combienDure', { pronom: q.pronom }) }}
           </div>
           <div class="horloges-duree">
             <figure>
               <div class="horloge petite" v-html="horlogeSvg(q.h, q.m)"></div>
-              <figcaption>{{ q.sous === 'apres' ? 'Maintenant' : 'Début' }}</figcaption>
+              <figcaption>{{ q.sous === 'apres' ? t('maintenant') : t('debut') }}</figcaption>
             </figure>
             <figure v-if="q.sous === 'combien' || (repondu && !dernierOk)">
               <div class="horloge petite" v-html="horlogeSvg(q.h2, q.m2)"></div>
-              <figcaption>{{ q.sous === 'apres' ? 'Plus tard' : 'Fin' }}</figcaption>
+              <figcaption>{{ q.sous === 'apres' ? t('plusTard') : t('fin') }}</figcaption>
             </figure>
           </div>
           <div class="saisie-heure">
@@ -188,8 +188,8 @@
 
         <!-- (e) Conversions h / min / s (CE2) -->
         <template v-else-if="q.type === 'conversion'">
-          <div class="consigne">Complète&nbsp;: <strong>{{ q.texte.replace(/ = .*/, ' =') }}</strong></div>
-          <div class="aide-config" style="text-align:center;margin-bottom:.75rem;">Rappel : 1 h = 60 min · 1 min = 60 s</div>
+          <div class="consigne">{{ t('complete') }}&nbsp;: <strong>{{ q.texte.replace(/ = .*/, ' =') }}</strong></div>
+          <div class="aide-config" style="text-align:center;margin-bottom:.75rem;">{{ t('rappel') }} : 1 h = 60 min · 1 min = 60 s</div>
           <div class="saisie-heure">
             <template v-for="(u, i) in q.unites" :key="u">
               <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
@@ -201,11 +201,11 @@
 
         <!-- (f) Emploi du temps (CE2) -->
         <template v-else-if="q.type === 'emploi'">
-          <div class="consigne">Lis l'emploi du temps.</div>
+          <div class="consigne">{{ t('lisEmploi') }}</div>
           <table class="correction-table emploi">
-            <thead><tr><th>Début</th><th>Fin</th><th>Activité</th></tr></thead>
+            <thead><tr><th>{{ t('debut') }}</th><th>{{ t('fin') }}</th><th>{{ t('activite') }}</th></tr></thead>
             <tbody>
-              <tr v-for="l in q.emploi" :key="l.debut" :class="{ recre: l.nom === 'Récréation' }">
+              <tr v-for="l in q.emploi" :key="l.debut" :class="{ recre: l.recre }">
                 <td>{{ hm(l.debut) }}</td><td>{{ hm(l.fin) }}</td><td>{{ l.nom }}</td>
               </tr>
             </tbody>
@@ -229,16 +229,16 @@
           {{ feedback }}
           <div v-if="feedbackOral" class="oral">
             « {{ feedbackOral }} »
-            <button class="btn-ecouter" title="Écouter" @click="lire(feedbackOral)">🔊</button>
+            <button v-if="langue !== 'br'" class="btn-ecouter" :title="t('ecouter')" @click="lire(feedbackOral)">🔊</button>
           </div>
         </div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
           <template v-if="!repondu">
-            <button class="btn btn-ghost" @click="passer">Passer ⏭</button>
-            <button v-if="!estChoix" class="btn btn-primary" @click="valider">Valider ✔</button>
+            <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+            <button v-if="!estChoix" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
           </template>
-          <button v-else-if="!dernierOk" class="btn btn-primary" @click="suivant">Suivant ➜</button>
+          <button v-else-if="!dernierOk" class="btn btn-primary" @click="suivant">{{ t('suivant') }}</button>
         </div>
       </div>
     </template>
@@ -249,7 +249,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>
@@ -264,8 +264,8 @@
       </table>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -275,24 +275,99 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
+import { useI18n } from '../../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: "Lire l'heure",
+    precision: 'Précision',
+    aideCe1: "Au CE1 : heures pile, demi-heures et quarts d'heure. Les 5 minutes sont un bonus.",
+    reponseLire: "Réponse (lire l'heure)",
+    propositions4: '4 propositions',
+    jEcris: "J'écris l'heure",
+    aide: 'Aide',
+    afficherMinutes: 'Afficher les minutes autour du cadran',
+    quelleHeure: 'Quelle heure est-il ?',
+    legH: 'petite aiguille = heures',
+    legM: 'grande aiguille = minutes',
+    placeAiguilles: 'Place les aiguilles pour afficher',
+    glisser: 'Fais glisser les aiguilles avec le doigt, ou utilise les boutons.',
+    petiteAiguille: 'Petite aiguille (heures)',
+    grandeAiguille: 'Grande aiguille (minutes)',
+    ecrisNumerique: '(écris-la comme sur une horloge numérique)',
+    ilEst1: 'Il est ',
+    ilEst2: '.',
+    quelleHorloge: 'Quelle horloge indique cette heure ?',
+    dans1: 'Dans ',
+    dans2: ', quelle heure sera-t-il ?',
+    commenceA: 'commence à',
+    termineA: 'et se termine à',
+    combienDure: 'Combien de temps dure-t-{pronom} ?',
+    maintenant: 'Maintenant',
+    plusTard: 'Plus tard',
+    debut: 'Début',
+    fin: 'Fin',
+    activite: 'Activité',
+    complete: 'Complète',
+    rappel: 'Rappel',
+    lisEmploi: "Lis l'emploi du temps.",
+    colQuestion: 'Question',
+  },
+  br: {
+    titre: 'Lenn an eur',
+    precision: 'Resisded', // br: à relire
+    aideCe1: "Er CE1 : an eurioù rik, an hanter-eurioù hag ar c'hardoù-eur. Ar 5 munut a zo ur bonus.", // br: à relire
+    reponseLire: 'Respont (lenn an eur)',
+    propositions4: '4 kinnig',
+    jEcris: 'Skrivañ a ran an eur',
+    aide: 'Skoazell',
+    afficherMinutes: "Diskouez ar munutoù en-dro d'an horolaj",
+    quelleHeure: 'Pe eur eo ?',
+    legH: 'nadoz vihan = eurioù',
+    legM: 'nadoz vras = munutoù',
+    placeAiguilles: 'Lak an nadozioù evit diskouez',
+    glisser: 'Rikla an nadozioù gant da viz, pe implij ar boutonoù.', // br: à relire
+    petiteAiguille: 'Nadoz vihan (eurioù)',
+    grandeAiguille: 'Nadoz vras (munutoù)',
+    ecrisNumerique: '(skriv anezhi evel war un horolaj niverel)',
+    ilEst1: '',
+    ilEst2: ' eo.',
+    quelleHorloge: 'Peseurt horolaj a ziskouez an eur-se ?',
+    dans1: 'A-benn ',
+    dans2: ', pe eur e vo ?',
+    commenceA: 'a grog da',
+    termineA: 'hag a echu da',
+    combienDure: 'Pegeit e pad ?',
+    maintenant: 'Bremañ',
+    plusTard: "Diwezhatoc'h",
+    debut: 'Deroù',
+    fin: 'Fin',
+    activite: 'Obererezh',
+    complete: 'Leunia',
+    rappel: "Dalc'h soñj",
+    lisEmploi: "Lenn an implij-amzer.",
+    colQuestion: 'Goulenn',
+  },
+})
+const enBr = () => langue.value === 'br'
 
 // #region logique (fonctions pures, testées hors Vue)
 
 const EXERCICES = {
-  lire: "Lire l'heure",
-  placer: 'Placer les aiguilles',
-  journee: 'Matin / après-midi',
-  duree: 'Durées',
-  conversion: 'h, min, s',
-  emploi: 'Emploi du temps',
+  lire: { fr: "Lire l'heure", br: 'Lenn an eur' },
+  placer: { fr: 'Placer les aiguilles', br: 'Lakaat an nadozioù' },
+  journee: { fr: 'Matin / après-midi', br: 'Mintin / goude merenn' },
+  duree: { fr: 'Durées', br: 'Padelezhioù' }, // br: à relire
+  conversion: { fr: 'h, min, s', br: 'h, min, s' },
+  emploi: { fr: 'Emploi du temps', br: 'Implij-amzer' },
 }
 
 const PRECISIONS = {
-  heure: 'Heures pile',
-  demi: 'Demi-heures',
-  quart: "Quarts d'heure",
-  cinq: '5 minutes',
-  minute: 'À la minute près',
+  heure: { fr: 'Heures pile', br: 'Eurioù rik' }, // br: à relire
+  demi: { fr: 'Demi-heures', br: 'Hanter-eurioù' },
+  quart: { fr: "Quarts d'heure", br: "Kardoù-eur" },
+  cinq: { fr: '5 minutes', br: '5 munut' },
+  minute: { fr: 'À la minute près', br: 'Betek ar munut' }, // br: à relire
 }
 
 const MINUTES_PAR_PRECISION = {
@@ -304,19 +379,24 @@ const MINUTES_PAR_PRECISION = {
 }
 
 // Activités (avec le genre, pour « il dure » / « elle dure ») et créneaux plausibles (heures sur 24 h).
+// br : noms bretons à relire
 const ACTIVITES = [
-  { nom: 'Le dessin animé', pronom: 'il', debut: [8, 18], dureeMax: 60 },
-  { nom: 'Le film', pronom: 'il', debut: [14, 17], dureeMax: 150 },
-  { nom: 'La promenade', pronom: 'elle', debut: [9, 17], dureeMax: 180 },
-  { nom: 'Le match de foot', pronom: 'il', debut: [9, 17], dureeMax: 120 },
-  { nom: 'La sieste', pronom: 'elle', debut: [13, 15], dureeMax: 120 },
-  { nom: 'Le pique-nique', pronom: 'il', debut: [11, 13], dureeMax: 120 },
-  { nom: 'La séance de piscine', pronom: 'elle', debut: [9, 17], dureeMax: 90 },
-  { nom: 'Le goûter', pronom: 'il', debut: [16, 17], dureeMax: 30 },
-  { nom: "L'atelier de peinture", pronom: 'il', debut: [9, 16], dureeMax: 120 },
+  { nom: 'Le dessin animé', nomBr: 'An tresadenn-vev', pronom: 'il', debut: [8, 18], dureeMax: 60 },
+  { nom: 'Le film', nomBr: 'Ar film', pronom: 'il', debut: [14, 17], dureeMax: 150 },
+  { nom: 'La promenade', nomBr: 'Ar valeadenn', pronom: 'elle', debut: [9, 17], dureeMax: 180 },
+  { nom: 'Le match de foot', nomBr: 'Ar match mell-droad', pronom: 'il', debut: [9, 17], dureeMax: 120 },
+  { nom: 'La sieste', nomBr: "Ar c'housk-kreisteiz", pronom: 'elle', debut: [13, 15], dureeMax: 120 },
+  { nom: 'Le pique-nique', nomBr: 'Ar piknik', pronom: 'il', debut: [11, 13], dureeMax: 120 },
+  { nom: 'La séance de piscine', nomBr: 'An neuial', pronom: 'elle', debut: [9, 17], dureeMax: 90 },
+  { nom: 'Le goûter', nomBr: 'Ar verenn-vihan', pronom: 'il', debut: [16, 17], dureeMax: 30 },
+  { nom: "L'atelier de peinture", nomBr: 'An atalier livañ', pronom: 'il', debut: [9, 16], dureeMax: 120 },
 ]
 
-const MATIERES = ['Lecture', 'Mathématiques', 'Anglais', 'Sport', 'Musique', 'Sciences', 'Dessin', 'Écriture', 'Géographie']
+const MATIERES = {
+  fr: ['Lecture', 'Mathématiques', 'Anglais', 'Sport', 'Musique', 'Sciences', 'Dessin', 'Écriture', 'Géographie'],
+  br: ['Lenn', 'Matematikoù', 'Saozneg', 'Sport', 'Sonerezh', 'Skiantoù', 'Tresañ', 'Skrivañ', 'Douaroniezh'],
+}
+const RECRE = { fr: 'Récréation', br: 'Diskuizh' }
 
 // Données par niveau : pour ajouter un niveau, il suffit d'ajouter une entrée ici.
 const NIVEAUX = {
@@ -382,7 +462,21 @@ function nomHeure12(h) {
   if (h === 12) return 'midi'
   return HEURES_MOTS[h] + (h === 1 ? ' heure' : ' heures')
 }
+// Breton (br: à relire) : « teir eur ha kard », « div eur hanter », « peder eur nemet kard »,
+// « teir eur ha 20 munut », « peder eur nemet 20 munut » (minutes en chiffres, nom au singulier).
+const HEURES_BR = ['', 'un eur', 'div eur', 'teir eur', 'peder eur', 'pemp eur', "c'hwec'h eur", 'seizh eur',
+  'eizh eur', 'nav eur', 'dek eur', 'unnek eur', 'kreisteiz']
+function oral12Br(h, m) {
+  const suivante = (h % 12) + 1
+  if (m === 0) return HEURES_BR[h]
+  if (m === 15) return HEURES_BR[h] + ' ha kard'
+  if (m === 30) return HEURES_BR[h] + ' hanter'
+  if (m === 45) return HEURES_BR[suivante] + ' nemet kard'
+  if (m < 30 || m % 5 !== 0) return `${HEURES_BR[h]} ha ${m} munut`
+  return `${HEURES_BR[suivante]} nemet ${60 - m} munut`
+}
 function oral12(h, m) {
+  if (enBr()) return oral12Br(h, m)
   const suivante = (h % 12) + 1
   if (m === 0) return nomHeure12(h)
   if (m === 15) return nomHeure12(h) + ' et quart'
@@ -395,6 +489,7 @@ function oral12(h, m) {
 // « trois heures et quart de l'après-midi » ; pas de suffixe si l'on dit « midi » (11 h 45 → « midi moins le quart »)
 function oralMoment(h, m, moment) {
   const o = oral12(h, m)
+  if (enBr()) return o.startsWith('kreisteiz') ? o : `${o} ${moment.suffixeBr}`
   return o.startsWith('midi') ? o : `${o} ${moment.suffixe}`
 }
 
@@ -450,9 +545,10 @@ function distracteurs(h, m, pool) {
 }
 
 const MOMENTS = [
-  { nom: 'matin', phrase: "C'est le matin.", suffixe: 'du matin', heures: [7, 8, 9, 10, 11], decalage: 0 },
-  { nom: 'apres-midi', phrase: "C'est l'après-midi.", suffixe: "de l'après-midi", heures: [1, 2, 3, 4, 5], decalage: 12 },
-  { nom: 'soir', phrase: "C'est le soir.", suffixe: 'du soir', heures: [6, 7, 8, 9, 10], decalage: 12 },
+  // br: à relire (« eizh eur vintin », « teir eur goude merenn », « eizh eur noz »)
+  { nom: 'matin', phrase: "C'est le matin.", suffixe: 'du matin', phraseBr: 'Mintin eo.', suffixeBr: 'vintin', heures: [7, 8, 9, 10, 11], decalage: 0 },
+  { nom: 'apres-midi', phrase: "C'est l'après-midi.", suffixe: "de l'après-midi", phraseBr: 'Goude merenn eo.', suffixeBr: 'goude merenn', heures: [1, 2, 3, 4, 5], decalage: 12 },
+  { nom: 'soir', phrase: "C'est le soir.", suffixe: 'du soir', phraseBr: 'Noz eo.', suffixeBr: 'noz', heures: [6, 7, 8, 9, 10], decalage: 12 },
 ]
 
 // Emploi du temps d'une matinée ou d'un après-midi : créneaux consécutifs.
@@ -460,13 +556,13 @@ function genererEmploi(niv) {
   const matin = Math.random() < 0.6
   let t = matin ? 8 * 60 + 30 : 13 * 60 + 30
   const pas = niv.precisions.includes('minute') ? [30, 45, 60, 40, 50] : [30, 45, 60]
-  const noms = melanger(MATIERES)
+  const noms = melanger(enBr() ? MATIERES.br : MATIERES.fr)
   const lignes = []
   for (let i = 0; i < 4; i++) {
     const d = pioche(pas)
     lignes.push({ nom: noms[i], debut: t, fin: t + d })
     t += d
-    if (i === 1) { lignes.push({ nom: 'Récréation', debut: t, fin: t + 15 }); t += 15 }
+    if (i === 1) { lignes.push({ nom: enBr() ? RECRE.br : RECRE.fr, recre: true, debut: t, fin: t + 15 }); t += 15 }
   }
   return lignes
 }
@@ -502,7 +598,7 @@ function genererQuestion(cfg) {
   if (type === 'lire') {
     const h = aleatoire(1, 12), m = pioche(pool)
     const q = { type, cle: `lire-${h}-${m}`, h, m, mode: cfg.saisie === 'clavier' ? 'clavier' : 'choix',
-      texte: "Quelle heure est-il ?", attendu: `${ecrit(h, m)} (${oral12(h, m)})`, oral: oral12(h, m) }
+      texte: enBr() ? 'Pe eur eo ?' : 'Quelle heure est-il ?', attendu: `${ecrit(h, m)} (${oral12(h, m)})`, oral: oral12(h, m) }
     if (q.mode === 'choix') {
       const enLettres = Math.random() < 0.4
       const opts = melanger([{ h, m }, ...distracteurs(h, m, pool)])
@@ -518,7 +614,7 @@ function genererQuestion(cfg) {
     do { depart = { h: aleatoire(0, 11), m: aleatoire(0, 11) * 5 } } while (depart.h === h % 12 && depart.m === m)
     return { type, cle: `placer-${h}-${m}`, h, m, depart, consigneOrale: Math.random() < 0.5,
       ecrit: ecrit(h, m), oral: oral12(h, m),
-      texte: `Placer les aiguilles : ${ecrit(h, m)}`, attendu: `${ecrit(h, m)} (${oral12(h, m)})` }
+      texte: `${enBr() ? 'Lakaat an nadozioù' : 'Placer les aiguilles'} : ${ecrit(h, m)}`, attendu: `${ecrit(h, m)} (${oral12(h, m)})` }
   }
 
   if (type === 'journee') {
@@ -528,12 +624,12 @@ function genererQuestion(cfg) {
     const oral = oralMoment(h, m, moment)
     const sous = Math.random() < 0.5 ? 'lire24' : 'choisir'
     const q = { type, sous, cle: `journee-${sous}-${h24}-${m}`, h, m, h24, ecrit24: ecrit(h24, m),
-      phrase: moment.phrase, oral,
+      phrase: enBr() ? moment.phraseBr : moment.phrase, oral,
       attendu: `${ecrit(h24, m)} (${oral})` }
     if (sous === 'lire24') {
-      q.texte = `${moment.phrase} Quelle heure est-il ?`
+      q.texte = enBr() ? `${moment.phraseBr} Pe eur eo ?` : `${moment.phrase} Quelle heure est-il ?`
     } else {
-      q.texte = `Quelle horloge indique ${ecrit(h24, m)} ?`
+      q.texte = enBr() ? `Peseurt horolaj a ziskouez ${ecrit(h24, m)} ?` : `Quelle horloge indique ${ecrit(h24, m)} ?`
       const cands = [
         { h: h12(h + 2), m },          // « 16 h » confondu avec « 6 h »
         { h: h12(h + 1), m },
@@ -557,21 +653,23 @@ function genererQuestion(cfg) {
 
   if (type === 'emploi') {
     const emploi = genererEmploi(niv)
-    const cours = emploi.filter(l => l.nom !== 'Récréation')
+    const cours = emploi.filter(l => !l.recre)
     const sous = pioche(['debut', 'duree', 'quoi'])
     const l = pioche(sous === 'duree' ? emploi : cours)
     const q = { type, sous, emploi, cle: `emploi-${sous}-${l.nom}-${l.debut}-${l.fin}` }
     if (sous === 'debut') {
-      q.question = `À quelle heure commence la séance de ${l.nom.toLowerCase()} ?`
+      q.question = enBr() ? `Da bet eur e krog ar gentel « ${l.nom} » ?` : `À quelle heure commence la séance de ${l.nom.toLowerCase()} ?`
       q.h24 = Math.floor(l.debut / 60); q.m = l.debut % 60
       q.attendu = hm(l.debut)
     } else if (sous === 'duree') {
-      q.question = l.nom === 'Récréation' ? 'Combien de temps dure la récréation ?' : `Combien de temps dure la séance de ${l.nom.toLowerCase()} ?`
+      q.question = enBr()
+        ? (l.recre ? 'Pegeit e pad an diskuizh ?' : `Pegeit e pad ar gentel « ${l.nom} » ?`)
+        : (l.recre ? 'Combien de temps dure la récréation ?' : `Combien de temps dure la séance de ${l.nom.toLowerCase()} ?`)
       q.d = l.fin - l.debut
       q.attendu = ecritDuree(q.d)
     } else {
       const t = l.debut + aleatoire(1, Math.floor((l.fin - l.debut) / 5) - 1) * 5
-      q.question = `Que fait-on à ${hm(t)} ?`
+      q.question = enBr() ? `Petra a vez graet da ${hm(t)} ?` : `Que fait-on à ${hm(t)} ?`
       const autres = melanger(emploi.filter(x => x.nom !== l.nom).map(x => x.nom)).slice(0, 3)
       q.options = melanger([l.nom, ...autres]).map(n => ({ label: n }))
       q.bonne = q.options.findIndex(o => o.label === l.nom)
@@ -601,12 +699,14 @@ function genererQuestion(cfg) {
   const q = { type, sous, cle: `duree-${sous}-${debut}-${d}`, h: h12(h24), m, h2: h12(h24f), m2, h24, h24f, d,
     ecritDebut: ecrit(h24, m), ecritFin: ecrit(h24f, m2), ecritDuree: ecritDuree(d) }
   if (sous === 'apres') {
-    q.texte = `Il est ${ecrit(h24, m)}. Dans ${ecritDuree(d)}, quelle heure sera-t-il ?`
+    q.texte = enBr() ? `${ecrit(h24, m)} eo. A-benn ${ecritDuree(d)}, pe eur e vo ?` : `Il est ${ecrit(h24, m)}. Dans ${ecritDuree(d)}, quelle heure sera-t-il ?`
     q.attendu = ecrit(h24f, m2)
   } else {
-    q.activite = act.nom
+    q.activite = enBr() ? act.nomBr : act.nom
     q.pronom = act.pronom
-    q.texte = `${act.nom} commence à ${ecrit(h24, m)} et se termine à ${ecrit(h24f, m2)}. Combien de temps dure-t-${act.pronom} ?`
+    q.texte = enBr()
+      ? `${act.nomBr} a grog da ${ecrit(h24, m)} hag a echu da ${ecrit(h24f, m2)}. Pegeit e pad ?`
+      : `${act.nom} commence à ${ecrit(h24, m)} et se termine à ${ecrit(h24f, m2)}. Combien de temps dure-t-${act.pronom} ?`
     q.attendu = ecritDuree(d)
   }
   return q
@@ -658,7 +758,7 @@ function svgHorloge(h, m, { aiguilles = true, aideMinutes = false, fantome = nul
   const couleurM = impression ? '#111' : '#1a5fb4'
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-ext} ${-ext} ${2 * ext} ${2 * ext}"`
     + (taille ? ` width="${taille}" height="${taille}"` : ' width="100%" height="100%"')
-    + ' role="img" aria-label="horloge">'
+    + ` role="img" aria-label="${enBr() ? 'horolaj' : 'horloge'}">`
   s += `<circle r="${R}" fill="${impression ? '#fff' : '#fffdf5'}" stroke="${encre}" stroke-width="5"/>`
   // graduations des minutes (60) et des heures (12)
   for (let i = 0; i < 60; i++) {
@@ -814,7 +914,7 @@ function valider() {
 
 function passer() {
   if (repondu.value) return
-  terminer(false, '(passé)')
+  terminer(false, t('passe'))
 }
 
 function terminer(ok, donne) {
@@ -824,19 +924,21 @@ function terminer(ok, donne) {
   inputClass.value = ok ? 'ok' : 'erreur'
   feedbackClass.value = ok ? 'ok' : 'erreur'
   if (ok) {
-    feedback.value = ['Bravo ! 🎉', 'Excellent ! ⭐', 'Parfait ! 👏', 'Super ! 🌟'][aleatoire(0, 3)]
+    feedback.value = pioche(t('bravo'))
     bonnes.value++
   } else {
     mauvaises.value++
-    if (question.type === 'duree' && question.sous === 'combien') feedback.value = `❌ ${question.pronom === 'elle' ? 'Elle' : 'Il'} dure ${question.attendu}.`
+    const br = enBr()
+    if (question.type === 'duree' && question.sous === 'combien') feedback.value = br ? `❌ Padout a ra ${question.attendu}.` : `❌ ${question.pronom === 'elle' ? 'Elle' : 'Il'} dure ${question.attendu}.`
     else if (question.type === 'conversion') feedback.value = `❌ ${question.attendu}`
-    else if (question.type === 'emploi') feedback.value = `❌ La bonne réponse : ${question.attendu}`
-    else if (question.type === 'duree') feedback.value = `❌ Il sera ${question.attendu}.`
-    else if (question.type === 'journee') feedback.value = `❌ La bonne réponse : ${ecrit(question.h24, question.m)}`
-    else if (question.type === 'placer') feedback.value = `❌ Regarde les aiguilles vertes : ${question.ecrit}`
-    else feedback.value = `❌ Il est ${ecrit(question.h, question.m)}`
+    else if (question.type === 'emploi') feedback.value = `❌ ${t('bonneReponse')} : ${question.attendu}`
+    else if (question.type === 'duree') feedback.value = br ? `❌ ${question.attendu} e vo.` : `❌ Il sera ${question.attendu}.`
+    else if (question.type === 'journee') feedback.value = `❌ ${t('bonneReponse')} : ${ecrit(question.h24, question.m)}`
+    else if (question.type === 'placer') feedback.value = br ? `❌ Sell ouzh an nadozioù gwer : ${question.ecrit}` : `❌ Regarde les aiguilles vertes : ${question.ecrit}`
+    else feedback.value = br ? `❌ ${ecrit(question.h, question.m)} eo.` : `❌ Il est ${ecrit(question.h, question.m)}`
   }
-  if (question.type === 'journee') feedbackOral.value = `${oral24(question.h24, question.m)}, ou ${question.oral}`
+  // br : pas d'heure « sur 24 h » dite en lettres, seulement l'oral du cadran (br: à relire)
+  if (question.type === 'journee') feedbackOral.value = enBr() ? question.oral : `${oral24(question.h24, question.m)}, ou ${question.oral}`
   else if (question.oral) feedbackOral.value = question.oral
 
   const horloge = ['lire', 'journee', 'duree'].includes(question.type) ? { h: question.h, m: question.m } : null
@@ -903,11 +1005,11 @@ function finGlisser() { aiguilleTenue = null }
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80) { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60) return 'Bien ! Tu peux encore progresser 💪'
-  if (pct >= 40) return 'Courage, continue à t\'entraîner ! 🤓'
-  return 'N\'abandonne pas, pratique encore ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80) { confettis(25); return t('resultat80') }
+  if (pct >= 60) return t('resultat60')
+  if (pct >= 40) return t('resultat40')
+  return t('resultat0')
 })
 
 // ── Fiche imprimable ──
@@ -939,9 +1041,11 @@ function imprimerFiche() {
       <div class="num">${i + 1}.</div>${svgHorloge(0, 0, { ...opt, aiguilles: false })}
       <div class="rep cible">${i % 2 ? oral12(t.h, t.m) : ecrit(t.h, t.m)}</div></div>`).join('')
 
+  const br = enBr()
+  const T = (fr, b) => (br ? b : fr)
   let extra = ''
   const corrige = [
-    `<p><b>Lis l'heure :</b> ${aLire.map((t, i) => `${i + 1}. ${ecrit(t.h, t.m)}`).join(' — ')}</p>`,
+    `<p><b>${T("Lis l'heure", 'Lenn an eur')} :</b> ${aLire.map((t, i) => `${i + 1}. ${ecrit(t.h, t.m)}`).join(' — ')}</p>`,
   ]
   if (cfg.exercices.includes('journee')) {
     const lignes = []
@@ -951,41 +1055,45 @@ function imprimerFiche() {
       const mo = pioche(MOMENTS.slice(1)), h = pioche(mo.heures), m = pioche(pool)
       if (vusJ.has(`${h}-${m}-${mo.nom}`)) continue
       vusJ.add(`${h}-${m}-${mo.nom}`)
-      lignes.push({ t: `${ecrit(h, m)} ${mo.suffixe}`, r: ecrit(h + 12, m) })
+      lignes.push({ t: `${ecrit(h, m)} ${br ? mo.suffixeBr : mo.suffixe}`, r: ecrit(h + 12, m) })
     }
-    extra += `<h2>Le matin, l'après-midi, le soir</h2><p class="consigne">Écris l'heure comme sur une horloge numérique.</p>
+    extra += `<h2>${T("Le matin, l'après-midi, le soir", 'Ar mintin, ar goude merenn, an noz')}</h2><p class="consigne">${T("Écris l'heure comme sur une horloge numérique.", 'Skriv an eur evel war un horolaj niverel.')}</p>
       ${lignes.map((l, i) => `<div class="ligne">${i + 1}. ${l.t} &nbsp;→&nbsp; ________ h ________</div>`).join('')}`
-    corrige.push(`<p><b>Matin / après-midi :</b> ${lignes.map((l, i) => `${i + 1}. ${l.r}`).join(' — ')}</p>`)
+    corrige.push(`<p><b>${T('Matin / après-midi', 'Mintin / goude merenn')} :</b> ${lignes.map((l, i) => `${i + 1}. ${l.r}`).join(' — ')}</p>`)
   }
   if (cfg.exercices.includes('duree')) {
     const qs = genererSansRepetition({ ...cfg, exercices: ['duree'] }, 4)
-    extra += `<h2>Les durées</h2>
-      ${qs.map((d, i) => `<div class="ligne">${i + 1}. ${d.sous === 'apres'
-        ? `Il est ${d.ecritDebut}. Dans ${d.ecritDuree}, il sera : ________________`
-        : `${d.activite} commence à ${d.ecritDebut} et se termine à ${d.ecritFin}. ${d.pronom === 'elle' ? 'Elle' : 'Il'} dure : ________________`}</div>`).join('')}`
-    corrige.push(`<p><b>Durées :</b> ${qs.map((d, i) => `${i + 1}. ${d.attendu}`).join(' — ')}</p>`)
+    extra += `<h2>${T('Les durées', 'Ar padelezhioù')}</h2>
+      ${qs.map((d, i) => `<div class="ligne">${i + 1}. ${br
+        ? (d.sous === 'apres'
+          ? `${d.ecritDebut} eo. A-benn ${d.ecritDuree} e vo : ________________`
+          : `${d.activite} a grog da ${d.ecritDebut} hag a echu da ${d.ecritFin}. Padout a ra : ________________`)
+        : (d.sous === 'apres'
+          ? `Il est ${d.ecritDebut}. Dans ${d.ecritDuree}, il sera : ________________`
+          : `${d.activite} commence à ${d.ecritDebut} et se termine à ${d.ecritFin}. ${d.pronom === 'elle' ? 'Elle' : 'Il'} dure : ________________`)}</div>`).join('')}`
+    corrige.push(`<p><b>${T('Durées', 'Padelezhioù')} :</b> ${qs.map((d, i) => `${i + 1}. ${d.attendu}`).join(' — ')}</p>`)
   }
   if (cfg.exercices.includes('conversion') && niv.exercices.includes('conversion')) {
     const qs = genererSansRepetition({ ...cfg, exercices: ['conversion'] }, 6)
-    extra += `<h2>Heures, minutes, secondes</h2><p class="consigne">Rappel : 1 h = 60 min · 1 min = 60 s</p>
+    extra += `<h2>${T('Heures, minutes, secondes', 'Eurioù, munutoù, eilennoù')}</h2><p class="consigne">${t('rappel')} : 1 h = 60 min · 1 min = 60 s</p>
       <div class="deux-col">${qs.map((c, i) => `<div class="ligne">${i + 1}. ${c.texte.replace(/\?/g, '______')}</div>`).join('')}</div>`
-    corrige.push(`<p><b>Conversions :</b> ${qs.map((c, i) => `${i + 1}. ${c.attendu}`).join(' — ')}</p>`)
+    corrige.push(`<p><b>${T('Conversions', 'Amdroadurioù')} :</b> ${qs.map((c, i) => `${i + 1}. ${c.attendu}`).join(' — ')}</p>`)
   }
   if (cfg.exercices.includes('emploi') && niv.exercices.includes('emploi')) {
     const emploi = genererEmploi(niv)
-    const cours = emploi.filter(l => l.nom !== 'Récréation')
+    const cours = emploi.filter(l => !l.recre)
     const [a, b, c] = melanger(cours)
-    extra += `<h2>Emploi du temps</h2>
-      <table class="emploi"><tr><th>Début</th><th>Fin</th><th>Activité</th></tr>
+    extra += `<h2>${T('Emploi du temps', 'Implij-amzer')}</h2>
+      <table class="emploi"><tr><th>${t('debut')}</th><th>${t('fin')}</th><th>${t('activite')}</th></tr>
       ${emploi.map(l => `<tr><td>${hm(l.debut)}</td><td>${hm(l.fin)}</td><td>${l.nom}</td></tr>`).join('')}</table>
-      <div class="ligne">1. À quelle heure commence la séance de ${a.nom.toLowerCase()} ? ________________</div>
-      <div class="ligne">2. Combien de temps dure la séance de ${b.nom.toLowerCase()} ? ________________</div>
-      <div class="ligne">3. Que fait-on à ${hm(c.debut + 10)} ? ________________</div>`
-    corrige.push(`<p><b>Emploi du temps :</b> 1. ${hm(a.debut)} — 2. ${ecritDuree(b.fin - b.debut)} — 3. ${c.nom}</p>`)
+      <div class="ligne">1. ${T(`À quelle heure commence la séance de ${a.nom.toLowerCase()} ?`, `Da bet eur e krog ar gentel « ${a.nom} » ?`)} ________________</div>
+      <div class="ligne">2. ${T(`Combien de temps dure la séance de ${b.nom.toLowerCase()} ?`, `Pegeit e pad ar gentel « ${b.nom} » ?`)} ________________</div>
+      <div class="ligne">3. ${T(`Que fait-on à ${hm(c.debut + 10)} ?`, `Petra a vez graet da ${hm(c.debut + 10)} ?`)} ________________</div>`
+    corrige.push(`<p><b>${T('Emploi du temps', 'Implij-amzer')} :</b> 1. ${hm(a.debut)} — 2. ${ecritDuree(b.fin - b.debut)} — 3. ${c.nom}</p>`)
   }
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Lire l'heure — ${cfg.niveau.toUpperCase()}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${cfg.niveau.toUpperCase()}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 18cm; margin: 1cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -1003,16 +1111,16 @@ function imprimerFiche() {
       table.emploi { border-collapse: collapse; margin: .3cm 0; }
       table.emploi td, table.emploi th { border: 1px solid #555; padding: .15cm .4cm; text-align: left; }
     </style></head><body>
-    <h1>🕐 Lire l'heure — ${cfg.niveau.toUpperCase()}</h1>
-    <p class="entete">Nom : ________________________________ &nbsp; Date : ______________</p>
-    <h2>1. Quelle heure est-il ?</h2>
-    <p class="consigne">La petite aiguille indique les heures, la grande aiguille indique les minutes.</p>
+    <h1>🕐 ${t('titre')} — ${cfg.niveau.toUpperCase()}</h1>
+    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <h2>1. ${t('quelleHeure')}</h2>
+    <p class="consigne">${T('La petite aiguille indique les heures, la grande aiguille indique les minutes.', 'An nadoz vihan a ziskouez an eurioù, an nadoz vras a ziskouez ar munutoù.')}</p>
     <div class="grille">${cellLire}</div>
-    <h2>2. Dessine les aiguilles</h2>
-    <p class="consigne">Dessine la petite aiguille (heures) et la grande aiguille (minutes).</p>
+    <h2>2. ${T('Dessine les aiguilles', 'Tres an nadozioù')}</h2>
+    <p class="consigne">${T('Dessine la petite aiguille (heures) et la grande aiguille (minutes).', 'Tres an nadoz vihan (eurioù) hag an nadoz vras (munutoù).')}</p>
     <div class="grille">${cellDessin}</div>
     ${extra}
-    <div class="page2"><h2>Corrigé (pour l'adulte)</h2>${corrige.join('')}</div>
+    <div class="page2"><h2>${T("Corrigé (pour l'adulte)", 'Reizhadenn (evit an dud deuet)')}</h2>${corrige.join('')}</div>
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 

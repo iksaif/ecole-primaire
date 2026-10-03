@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 Les nombres jusqu'à {{ fmt(niveauData.plages[niveauData.plages.length - 1]) }}</h1>
+    <h1 class="section-heading">🔢 {{ t('titre', { n: fmt(niveauData.plages[niveauData.plages.length - 1]) }) }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in Object.keys(NIVEAUX)" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -14,16 +14,16 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Exercices</div>
+        <div class="config-section-title">{{ t('exercices') }}</div>
         <div class="btn-group">
-          <button v-for="t in TYPES" :key="t.id"
-            class="level-btn" :class="{ active: config.types.includes(t.id) }"
-            @click="toggleType(t.id)">{{ t.label }}</button>
+          <button v-for="ty in TYPES" :key="ty.id"
+            class="level-btn" :class="{ active: config.types.includes(ty.id) }"
+            @click="toggleType(ty.id)">{{ tr(ty.label) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombres jusqu'à</div>
+        <div class="config-section-title">{{ t('nombresJusqua') }}</div>
         <div class="btn-group">
           <button v-for="p in niveauData.plages" :key="p"
             class="level-btn" :class="{ active: config.plage === p }"
@@ -32,7 +32,7 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15, 20]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -41,18 +41,18 @@
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -66,7 +66,7 @@
 
         <div v-if="q.svg" class="visuel" v-html="q.svg"></div>
         <div v-if="q.type === 'representation'" class="legende">
-          <template v-if="q.milliers">1 gros cube = 1000 &nbsp;·&nbsp; </template>1 plaque = 100 &nbsp;·&nbsp; 1 barre = 10 &nbsp;·&nbsp; 1 cube = 1
+          <template v-if="q.milliers">{{ t('legendeMillier') }} &nbsp;·&nbsp; </template>{{ t('legende') }}
         </div>
 
         <div v-if="q.texte" class="exercise-question" :class="{ 'question-lettres': q.texteLong }">{{ q.texte }}</div>
@@ -83,7 +83,7 @@
                    type="text" inputmode="numeric" maxlength="1" autocomplete="off"
                    v-model="cdu[champ]" :disabled="verrou"
                    @input="onCduInput(ci)" @keydown.enter="valider">
-            <span class="cdu-label">{{ LIBELLES_CDU[champ] }}</span>
+            <span class="cdu-label">{{ t(LIBELLES_CDU[champ]) }}</span>
           </label>
         </div>
 
@@ -107,15 +107,15 @@
               :disabled="verrou || ordre.includes(n)" @click="ajouterOrdre(n)">{{ fmt(n) }}</button>
           </div>
           <div style="text-align:center;margin-top:.5rem;">
-            <button class="btn btn-ghost" :disabled="verrou || !ordre.length" @click="ordre.pop()">↩ Annuler</button>
+            <button class="btn btn-ghost" :disabled="verrou || !ordre.length" @click="ordre.pop()">{{ t('annuler') }}</button>
           </div>
         </div>
 
         <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button class="btn btn-ghost" :disabled="verrou" @click="passer">Passer ⏭</button>
-          <button v-if="q.kind !== 'choix'" class="btn btn-primary" :disabled="verrou" @click="valider">Valider ✔</button>
+          <button class="btn btn-ghost" :disabled="verrou" @click="passer">{{ t('passer') }}</button>
+          <button v-if="q.kind !== 'choix'" class="btn btn-primary" :disabled="verrou" @click="valider">{{ t('valider') }}</button>
         </div>
       </div>
     </template>
@@ -126,7 +126,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>{{ h.libelle }}</td>
@@ -138,8 +138,8 @@
       </table>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -148,7 +148,86 @@
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
-import { enLettresFr, decomposer } from '../../utils/nombres'
+import { enLettresFr, enLettresBr, decomposer } from '../../utils/nombres'
+import { useI18n } from '../../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: "Les nombres jusqu'à {n}",
+    nombresJusqua: "Nombres jusqu'à",
+    colQuestion: 'Question',
+    legendeMillier: '1 gros cube = 1000',
+    legende: '1 plaque = 100 · 1 barre = 10 · 1 cube = 1',
+    lib_milliers: 'milliers', lib_centaines: 'centaines', lib_dizaines: 'dizaines', lib_unites: 'unités',
+    et: 'et',
+    cDecomposer: 'Décompose le nombre en {liste}.',
+    cEcrisNombre: 'Écris le nombre.',
+    cRepresente: 'Quel nombre est représenté ?',
+    cEnChiffres: 'Écris ce nombre en chiffres.',
+    cEnLettres: "Comment s'écrit ce nombre en lettres ?",
+    cSigne: 'Choisis le bon signe : < , = ou >',
+    justeApres: 'Le nombre juste après {n}',
+    justeAvant: 'Le nombre juste avant {n}',
+    cTrouve: 'Trouve le nombre.',
+    cCalcule: 'Calcule.',
+    cSuite: 'Complète la suite.',
+    cDroite: 'Quel nombre montre la flèche ? (on avance de {pas} à chaque graduation)',
+    libDroite: 'Droite de {a} à {b}',
+    cRanger: 'Clique sur les nombres du plus petit au plus grand.',
+    cliqueTous: 'Clique sur tous les nombres 😉',
+    laBonne: '❌ La bonne réponse : {r}',
+    pRepresente: 'Quel nombre est représenté ?',
+    pLegende: '({m}plaque = 100, barre = 10, cube = 1)',
+    pLegendeM: 'gros cube = 1000, ',
+    pCestLeNombre: "C'est le nombre",
+    pEnChiffres: 'en chiffres :',
+    pEcrisLettres: 'Écris {n} en lettres :',
+    pFlecheQ: 'Quel nombre montre la flèche ?',
+    pFlecheAide: '(on avance de {pas} à chaque graduation)',
+    pFlecheMontre: 'La flèche montre',
+    pRange: 'Range du plus petit au plus grand :',
+    pSuite: 'Complète la suite :',
+    pNbQuestions: '{n} questions',
+  },
+  br: {
+    titre: 'An niveroù betek {n}',
+    nombresJusqua: 'Niveroù betek',
+    colQuestion: 'Goulenn',
+    legendeMillier: '1 kub bras = 1000',
+    legende: '1 plakenn = 100 · 1 barrenn = 10 · 1 kub = 1',
+    lib_milliers: 'miladoù', lib_centaines: 'kantadoù', lib_dizaines: 'degadoù', lib_unites: 'unanennoù',
+    et: 'ha',
+    cDecomposer: 'Dispenn an niver e {liste}.', // br: à relire (« dispenn » = décomposer)
+    cEcrisNombre: 'Skriv an niver.',
+    cRepresente: 'Pe niver a welez ?',
+    cEnChiffres: 'Skriv an niver-mañ e sifroù.',
+    cEnLettres: 'Penaos e skriver an niver-mañ e lizherennoù ?',
+    cSigne: 'Dibab an arouez mat : < , = pe >',
+    justeApres: 'An niver diouzhtu war-lerc\'h {n}',
+    justeAvant: 'An niver diouzhtu a-raok {n}',
+    cTrouve: 'Kav an niver.',
+    cCalcule: 'Jed.',
+    cSuite: 'Kloka an heuliad.', // br: à relire
+    cDroite: 'Pe niver a ziskouez ar bir ? (+ {pas} bep derez)', // br: à relire (« derez » = graduation)
+    libDroite: 'Linenn eus {a} betek {b}',
+    cRanger: "Klik war an niveroù eus ar bihanañ d'ar brasañ.",
+    cliqueTous: 'Klik war an holl niveroù 😉',
+    laBonne: '❌ Ar respont mat : {r}',
+    pRepresente: 'Pe niver a welez ?',
+    pLegende: '({m}plakenn = 100, barrenn = 10, kub = 1)',
+    pLegendeM: 'kub bras = 1000, ',
+    pCestLeNombre: 'An niver eo',
+    pEnChiffres: 'e sifroù :',
+    pEcrisLettres: 'Skriv {n} e lizherennoù :',
+    pFlecheQ: 'Pe niver a ziskouez ar bir ?',
+    pFlecheAide: '(+ {pas} bep derez)', // br: à relire
+    pFlecheMontre: 'Ar bir a ziskouez',
+    pRange: "Renk eus ar bihanañ d'ar brasañ :",
+    pSuite: 'Kloka an heuliad :', // br: à relire
+    pNbQuestions: '{n} goulenn',
+  },
+})
+const enLettres = n => (langue.value === 'br' ? enLettresBr(n) : enLettresFr(n))
 
 // #region generation — fonctions pures (testables hors de Vue)
 
@@ -171,25 +250,29 @@ const NIVEAUX = {
 }
 
 const TYPES = [
-  { id: 'decomposer',      label: '🧱 Décomposer' },
-  { id: 'representation',  label: '🟦 Représentation' },
-  { id: 'lettresChiffres', label: '✏️ Écrire en chiffres' },
-  { id: 'chiffresLettres', label: '🔤 Écrire en lettres' },
-  { id: 'comparer',        label: '⚖️ Comparer' },
-  { id: 'suites',          label: '➡️ Suivant / suites' },
-  { id: 'droite',          label: '📏 Droite graduée' },
-  { id: 'ranger',          label: '📶 Ranger' },
+  { id: 'decomposer',      label: { fr: '🧱 Décomposer', br: '🧱 Dispenn' } }, // br: à relire
+  { id: 'representation',  label: { fr: '🟦 Représentation', br: '🟦 Skeudenn' } }, // br: à relire
+  { id: 'lettresChiffres', label: { fr: '✏️ Écrire en chiffres', br: '✏️ Skrivañ e sifroù' } },
+  { id: 'chiffresLettres', label: { fr: '🔤 Écrire en lettres', br: '🔤 Skrivañ e lizherennoù' } },
+  { id: 'comparer',        label: { fr: '⚖️ Comparer', br: '⚖️ Keñveriañ' } },
+  { id: 'suites',          label: { fr: '➡️ Suivant / suites', br: "➡️ Da-heul / heuliadoù" } },
+  { id: 'droite',          label: { fr: '📏 Droite graduée', br: '📏 Linenn dereziet' } }, // br: à relire
+  { id: 'ranger',          label: { fr: '📶 Ranger', br: '📶 Renkañ' } },
 ]
 
 // Titres des cases (pluriel) et noms au singulier pour les accords
-const LIBELLES_CDU = { milliers: 'milliers', centaines: 'centaines', dizaines: 'dizaines', unites: 'unités' }
+// (clés de traduction ; en breton le nom reste au singulier après un nombre)
+const LIBELLES_CDU = { milliers: 'lib_milliers', centaines: 'lib_centaines', dizaines: 'lib_dizaines', unites: 'lib_unites' }
 const SINGULIERS_CDU = { milliers: 'millier', centaines: 'centaine', dizaines: 'dizaine', unites: 'unité' }
+const SINGULIERS_CDU_BR = { milliers: 'milad', centaines: 'kantad', dizaines: 'degad', unites: 'unanenn' }
 const VALEURS_CDU = { milliers: 1000, centaines: 100, dizaines: 10, unites: 1 }
 
 function pluriel(n, mot) {
   return n >= 2 ? mot + 's' : mot
 }
-const libCdu = (v, champ) => `${v} ${pluriel(v, SINGULIERS_CDU[champ])}`
+const libCdu = (v, champ) => langue.value === 'br'
+  ? `${v} ${SINGULIERS_CDU_BR[champ]}`
+  : `${v} ${pluriel(v, SINGULIERS_CDU[champ])}`
 
 // 10 000 s'écrit avec une espace ; en dessous on garde 3 400 sans espace (plus simple à recopier)
 const fmt = n => n >= 10000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(n)
@@ -218,11 +301,11 @@ function genDecomposer(niv, max) {
   const champs = champsPour(max)
   const reponse = Object.fromEntries(champs.map(ch => [ch, dec[ch]]))
   const attendu = champs.map(ch => libCdu(reponse[ch], ch)).join(' ')
-  const noms = champs.map(ch => LIBELLES_CDU[ch])
+  const noms = champs.map(ch => t(LIBELLES_CDU[ch]))
   if (Math.random() < 0.5) {
     return {
       type: 'decomposer', kind: 'cdu', cle: 'dec' + n,
-      consigne: `Décompose le nombre en ${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}.`,
+      consigne: t('cDecomposer', { liste: `${noms.slice(0, -1).join(', ')} ${t('et')} ${noms[noms.length - 1]}` }),
       texte: fmt(n), champs, reponse,
       libelle: `${fmt(n)} = ?`, attendu,
     }
@@ -233,7 +316,7 @@ function genDecomposer(niv, max) {
   const texte = termes.join(' + ')
   return {
     type: 'decomposer', kind: 'nombre', cle: 'rec' + texte,
-    consigne: 'Écris le nombre.', texte, texteLong: true, reponse: n,
+    consigne: t('cEcrisNombre'), texte, texteLong: true, reponse: n,
     libelle: `${texte} = ?`, attendu: fmt(n),
   }
 }
@@ -304,22 +387,28 @@ function genRepresentation(niv, max) {
   // Parfois plus de 9 cubes : il faut faire un échange (1 dizaine = 10 unités)
   if (Math.random() < 0.2 && d >= 1 && u <= 4) { d -= 1; u += 10 }
   const morceaux = []
-  if (m) morceaux.push(`${m} gros cube${m > 1 ? 's' : ''}`)
-  if (c) morceaux.push(`${c} plaque${c > 1 ? 's' : ''}`)
-  morceaux.push(`${d} barre${d > 1 ? 's' : ''}`, `${u} cube${u > 1 ? 's' : ''}`)
+  if (langue.value === 'br') {
+    if (m) morceaux.push(`${m} kub bras`)
+    if (c) morceaux.push(`${c} plakenn`)
+    morceaux.push(`${d} barrenn`, `${u} kub`)
+  } else {
+    if (m) morceaux.push(`${m} gros cube${m > 1 ? 's' : ''}`)
+    if (c) morceaux.push(`${c} plaque${c > 1 ? 's' : ''}`)
+    morceaux.push(`${d} barre${d > 1 ? 's' : ''}`, `${u} cube${u > 1 ? 's' : ''}`)
+  }
   return {
     type: 'representation', kind: 'nombre', cle: `rep${m}-${c}-${d}-${u}`,
-    consigne: 'Quel nombre est représenté ?', texte: '', reponse: n, milliers: m > 0 || max > 1000,
+    consigne: t('cRepresente'), texte: '', reponse: n, milliers: m > 0 || max > 1000,
     svg: svgBase10(m, c, d, u), libelle: morceaux.join(', '), attendu: fmt(n),
   }
 }
 
 function genLettresChiffres(niv, max) {
   const n = tirerNombre(max, { dizainesDifficiles: 0.35 })
-  const texte = enLettresFr(n)
+  const texte = enLettres(n)
   return {
     type: 'lettresChiffres', kind: 'nombre', cle: 'lc' + n,
-    consigne: 'Écris ce nombre en chiffres.', texte, texteLong: true, reponse: n,
+    consigne: t('cEnChiffres'), texte, texteLong: true, reponse: n,
     libelle: texte, attendu: fmt(n),
   }
 }
@@ -337,14 +426,14 @@ function distracteurs(n, max, nb = 3) {
   // 0 mal placé : 2 030 / 2 300 / 2 003
   for (let i = 1; i < k; i++) for (let j = 1; j < k; j++) {
     if (i !== j && ch[i] === 0 && ch[j] !== 0) {
-      const t = [...ch]; [t[i], t[j]] = [t[j], t[i]]; pieges.push(+t.join(''))
+      const tab = [...ch]; [tab[i], tab[j]] = [tab[j], tab[i]]; pieges.push(+tab.join(''))
     }
   }
   // chiffres échangés
   const perms = []
   for (let i = 0; i < k; i++) for (let j = i + 1; j < k; j++) {
-    const t = [...ch]; [t[i], t[j]] = [t[j], t[i]]
-    if (t[0] !== 0) perms.push(+t.join(''))
+    const tab = [...ch]; [tab[i], tab[j]] = [tab[j], tab[i]]
+    if (tab[0] !== 0) perms.push(+tab.join(''))
   }
   const voisins = [n + 10, n - 10, n + 1, n - 1]
   if (k >= 3) voisins.push(n + 100, n - 100)
@@ -364,11 +453,11 @@ function distracteurs(n, max, nb = 3) {
 
 function genChiffresLettres(niv, max) {
   const n = tirerNombre(max, { dizainesDifficiles: 0.4 })
-  const bonne = enLettresFr(n)
-  const choix = melanger([bonne, ...distracteurs(n, max).map(v => enLettresFr(v))])
+  const bonne = enLettres(n)
+  const choix = melanger([bonne, ...distracteurs(n, max).map(v => enLettres(v))])
   return {
     type: 'chiffresLettres', kind: 'choix', cle: 'cl' + n,
-    consigne: 'Comment s\'écrit ce nombre en lettres ?', texte: fmt(n), reponse: bonne, choix,
+    consigne: t('cEnLettres'), texte: fmt(n), reponse: bonne, choix,
     libelle: fmt(n), attendu: bonne,
   }
 }
@@ -392,7 +481,7 @@ function genComparer(niv, max) {
   const reponse = x < y ? '<' : x > y ? '>' : '='
   return {
     type: 'comparer', kind: 'choix', cle: `cmp${x}-${y}`,
-    consigne: 'Choisis le bon signe : < , = ou >', texte: `${fmt(x)}  …  ${fmt(y)}`, reponse, choix: ['<', '=', '>'],
+    consigne: t('cSigne'), texte: `${fmt(x)}  …  ${fmt(y)}`, reponse, choix: ['<', '=', '>'],
     libelle: `${fmt(x)} … ${fmt(y)}`, attendu: `${fmt(x)} ${reponse} ${fmt(y)}`,
   }
 }
@@ -408,9 +497,9 @@ function genSuites(niv, max) {
     if (max > 1000 && Math.random() < 0.3) n = apres ? n - n % 1000 + 999 : n - n % 1000
     if (n < 1) n = 10
     const rep = apres ? n + 1 : n - 1
-    const texte = `Le nombre juste ${apres ? 'après' : 'avant'} ${fmt(n)}`
+    const texte = t(apres ? 'justeApres' : 'justeAvant', { n: fmt(n) })
     return {
-      type: 'suites', kind: 'nombre', cle: 'sv' + texte, consigne: 'Trouve le nombre.',
+      type: 'suites', kind: 'nombre', cle: 'sv' + texte, consigne: t('cTrouve'),
       texte, texteLong: true, reponse: rep, libelle: texte, attendu: fmt(rep),
     }
   }
@@ -427,7 +516,7 @@ function genSuites(niv, max) {
     const rep = plus ? n + pas : n - pas
     const texte = `${fmt(n)} ${plus ? '+' : '−'} ${fmt(pas)} = ?`
     return {
-      type: 'suites', kind: 'nombre', cle: 'pm' + texte, consigne: 'Calcule.',
+      type: 'suites', kind: 'nombre', cle: 'pm' + texte, consigne: t('cCalcule'),
       texte, reponse: rep, libelle: texte, attendu: fmt(rep),
     }
   }
@@ -456,7 +545,7 @@ function genSuites(niv, max) {
   const rep = termes[trou]
   const texte = termes.map((t, i) => i === trou ? '?' : fmt(t)).join(', ')
   return {
-    type: 'suites', kind: 'nombre', cle: 'su' + texte, consigne: 'Complète la suite.',
+    type: 'suites', kind: 'nombre', cle: 'su' + texte, consigne: t('cSuite'),
     texte, texteLong: true, reponse: rep, termes, trou, libelle: texte, attendu: fmt(rep),
   }
 }
@@ -489,10 +578,10 @@ function genDroite(niv, max) {
   const rep = debut + k * pas
   return {
     type: 'droite', kind: 'nombre', cle: `dr${debut}-${pas}-${k}`,
-    consigne: `Quel nombre montre la flèche ? (on avance de ${fmt(pas)} à chaque graduation)`,
+    consigne: t('cDroite', { pas: fmt(pas) }),
     texte: '', svg: svgDroite(debut, pas, k), reponse: rep,
     debut, pas, k,
-    libelle: `Droite de ${fmt(debut)} à ${fmt(debut + etendue)}`, attendu: fmt(rep),
+    libelle: t('libDroite', { a: fmt(debut), b: fmt(debut + etendue) }), attendu: fmt(rep),
   }
 }
 
@@ -503,8 +592,8 @@ function genRanger(niv, max) {
   vus.add(base)
   const ch = chiffresDe(base), k = ch.length
   // deux derniers chiffres inversés (piège classique : 352 / 325)
-  const t = [...ch]; [t[k - 2], t[k - 1]] = [t[k - 1], t[k - 2]]
-  const inv = +t.join('')
+  const tab = [...ch]; [tab[k - 2], tab[k - 1]] = [tab[k - 1], tab[k - 2]]
+  const inv = +tab.join('')
   if (inv >= 10 && inv <= max) vus.add(inv)
   const unite = Math.pow(10, k - 1)          // 10, 100 ou 1000
   const tete = ch[0]
@@ -519,7 +608,7 @@ function genRanger(niv, max) {
   const reponse = [...nombres].sort((a, b) => a - b)
   return {
     type: 'ranger', kind: 'ordre', cle: 'rg' + reponse.join('-'),
-    consigne: 'Clique sur les nombres du plus petit au plus grand.', texte: '', nombres, reponse,
+    consigne: t('cRanger'), texte: '', nombres, reponse,
     libelle: nombres.map(fmt).join(' ; '), attendu: reponse.map(fmt).join(' < '),
   }
 }
@@ -671,7 +760,7 @@ function valider() {
     corriger(ok, question.champs.map(ch => libCdu(+cdu.value[ch], ch)).join(' '))
   } else if (question.kind === 'ordre') {
     if (ordre.value.length < question.nombres.length) {
-      feedback.value = 'Clique sur tous les nombres 😉'
+      feedback.value = t('cliqueTous')
       feedbackClass.value = ''
       return
     }
@@ -685,12 +774,13 @@ function corriger(ok, donne) {
   verrou.value = true
   if (ok) {
     inputClass.value = 'ok'
-    feedback.value = ['Bravo ! 🎉', 'Excellent ! ⭐', 'Parfait ! 👏', 'Super ! 🌟'][aleatoire(0, 3)]
+    const bravos = t('bravo')
+    feedback.value = bravos[aleatoire(0, bravos.length - 1)]
     feedbackClass.value = 'ok'
     bonnes.value++
   } else {
     inputClass.value = 'erreur'
-    feedback.value = `❌ La bonne réponse : ${question.attendu}`
+    feedback.value = t('laBonne', { r: question.attendu })
     feedbackClass.value = 'erreur'
     mauvaises.value++
   }
@@ -702,7 +792,7 @@ function passer() {
   if (verrou.value) return
   const question = q.value
   mauvaises.value++
-  historique.value.push({ libelle: question.libelle, donne: '(passé)', attendu: question.attendu, ok: false })
+  historique.value.push({ libelle: question.libelle, donne: t('passe'), attendu: question.attendu, ok: false })
   suivant()
 }
 
@@ -714,11 +804,11 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Tu peux encore progresser 💪'
-  if (pct >= 40)   return 'Courage, continue à t\'entraîner ! 🤓'
-  return 'N\'abandonne pas, pratique encore ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  if (pct >= 40)   return t('resultat40')
+  return t('resultat0')
 })
 
 onUnmounted(() => clearTimeout(timeout))
@@ -730,25 +820,25 @@ function questionPapier(qu, i) {
   switch (qu.type) {
     case 'decomposer':
       if (qu.kind === 'cdu') {
-        const champs = qu.champs.map(ch => `<span class="case"></span> ${LIBELLES_CDU[ch]}`).join(' &nbsp; ')
+        const champs = qu.champs.map(ch => `<span class="case"></span> ${t(LIBELLES_CDU[ch])}`).join(' &nbsp; ')
         return `<div class="q">${num}<b>${qu.texte}</b> = ${champs}</div>`
       }
       return `<div class="q">${num}<b>${qu.texte}</b> = ${ligne}</div>`
     case 'representation':
-      return `<div class="q bloc">${num}Quel nombre est représenté ? <small>(${qu.milliers ? 'gros cube = 1000, ' : ''}plaque = 100, barre = 10, cube = 1)</small><div class="svg">${qu.svg}</div>C'est le nombre ${ligne}</div>`
+      return `<div class="q bloc">${num}${t('pRepresente')} <small>${t('pLegende', { m: qu.milliers ? t('pLegendeM') : '' })}</small><div class="svg">${qu.svg}</div>${t('pCestLeNombre')} ${ligne}</div>`
     case 'lettresChiffres':
-      return `<div class="q">${num}<b>${qu.texte}</b> → en chiffres : ${ligne}</div>`
+      return `<div class="q">${num}<b>${qu.texte}</b> → ${t('pEnChiffres')} ${ligne}</div>`
     case 'chiffresLettres':
-      return `<div class="q">${num}Écris <b>${qu.texte}</b> en lettres : <span class="case-ligne longue"></span></div>`
+      return `<div class="q">${num}${t('pEcrisLettres', { n: `<b>${qu.texte}</b>` })} <span class="case-ligne longue"></span></div>`
     case 'comparer':
       return `<div class="q">${num}<b>${qu.libelle.replace('…', '<span class="case"></span>')}</b> <small>(&lt; , = ou &gt;)</small></div>`
     case 'suites':
       if (qu.texte.endsWith('= ?')) return `<div class="q">${num}<b>${qu.texte.replace('= ?', '=')}</b> ${ligne}</div>`
       return `<div class="q">${num}${qu.texte} : ${ligne}</div>`
     case 'droite':
-      return `<div class="q bloc">${num}Quel nombre montre la flèche ? <small>(on avance de ${fmt(qu.pas)} à chaque graduation)</small><div class="svg">${qu.svg}</div>La flèche montre ${ligne}</div>`
+      return `<div class="q bloc">${num}${t('pFlecheQ')} <small>${t('pFlecheAide', { pas: fmt(qu.pas) })}</small><div class="svg">${qu.svg}</div>${t('pFlecheMontre')} ${ligne}</div>`
     case 'ranger':
-      return `<div class="q bloc">${num}Range du plus petit au plus grand : <b>${qu.nombres.map(fmt).join(' &nbsp; ; &nbsp; ')}</b><div style="margin-top:.6rem;">${qu.nombres.map(() => ligne).join(' &lt; ')}</div></div>`
+      return `<div class="q bloc">${num}${t('pRange')} <b>${qu.nombres.map(fmt).join(' &nbsp; ; &nbsp; ')}</b><div style="margin-top:.6rem;">${qu.nombres.map(() => ligne).join(' &lt; ')}</div></div>`
     default:
       return ''
   }
@@ -758,7 +848,7 @@ function questionPapier(qu, i) {
 function suitePapier(qu, i) {
   const ligne = '<span class="case-ligne"></span>'
   const termes = qu.termes.map((t, k) => k === qu.trou ? ligne : `<b>${fmt(t)}</b>`).join(', ')
-  return `<div class="q"><span class="num">${i + 1}.</span>Complète la suite : ${termes}</div>`
+  return `<div class="q"><span class="num">${i + 1}.</span>${t('pSuite')} ${termes}</div>`
 }
 
 function imprimerFiche() {
@@ -766,8 +856,9 @@ function imprimerFiche() {
   const niv = config.value.niveau.toUpperCase()
   const rows = qs.map((qu, i) => qu.termes ? suitePapier(qu, i) : questionPapier(qu, i)).join('')
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Les nombres jusqu'à ${fmt(config.value.plage)} — ${niv}</title>
+  const titre = t('titre', { n: fmt(config.value.plage) })
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${titre} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -782,8 +873,8 @@ function imprimerFiche() {
       .svg svg { max-width: 100%; }
       small { color: #777; }
     </style></head><body>
-    <h1>Les nombres jusqu'à ${fmt(config.value.plage)} — ${niv}</h1>
-    <p class="entete">${qs.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    <h1>${titre} — ${niv}</h1>
+    <p class="entete">${t('pNbQuestions', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${rows}
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`

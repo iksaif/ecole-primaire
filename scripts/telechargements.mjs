@@ -33,9 +33,32 @@ const SITE = site(env.VITE_SITE)
 // Textes des pages statiques par langue du site (lang="fr" tant qu'ils ne sont pas traduits). TODO : traduction bretonne à faire relire par un
 // brittophone — en attendant, skoolik.app reprend les textes français.
 const T = {
-  fr: { telecharger: 'Fiches à télécharger', creer: 'Créer ma fiche', exercices: 'Exercices en ligne' },
+  fr: {
+    telecharger: 'Fiches à télécharger', creer: 'Créer ma fiche', exercices: 'Exercices en ligne',
+    pdf: '📥 Télécharger le PDF', personnaliser: '✏️ Personnaliser cette fiche', pages: n => `📄 ${n} page${n > 1 ? 's' : ''}`,
+    imprimer100: '🖨️ Imprimer en « taille réelle » (100 %), sans « ajuster à la page »', gratuit: '✔️ Gratuit, sans inscription',
+    persoAide: "Avec « Personnaliser », tu peux changer les lettres ou les mots, la taille du lignage, la police et l'espacement.",
+    autres: 'Autres fiches', titreIndex: '📥 Fiches à imprimer gratuites', toutes: 'Toutes', francais: 'Français', breton: 'Breton',
+    introIndex: "Fiches d'écriture en script et en attaché sur lignes Seyès, affiches de l'alphabet, fiches de calcul, nombres en lettres en français et en breton. Toutes les fiches sont gratuites, en PDF, prêtes à imprimer. Pour une fiche sur mesure (tes mots, ton lignage, ta police), utilise",
+    generateur: 'le générateur de fiches', pied: 'Fiches gratuites, sans publicité, faites par des parents.',
+    paysage: 'paysage', portrait: 'portrait',
+  },
+  // br: à relire par un brittophone
+  br: {
+    telecharger: 'Fichennoù da bellgargañ', creer: 'Krouiñ ma fichenn', exercices: 'Poelladennoù enlinenn',
+    pdf: '📥 Pellgargañ ar PDF', personnaliser: '✏️ Personelaat ar fichenn-mañ', pages: n => `📄 Pajennoù : ${n}`,
+    imprimer100: '🖨️ Moullañ er « vent wir » (100 %), hep « azasaat d\'ar bajenn »', gratuit: '✔️ Digoust, hep enskrivañ',
+    persoAide: "Gant « Personelaat » e c'hallez cheñch al lizherennoù pe ar gerioù, ment al linennoù, an nodrezh hag an esaouennoù.",
+    autres: 'Fichennoù all', titreIndex: '📥 Fichennoù digoust da voullañ', toutes: 'An holl', francais: 'Galleg', breton: 'Brezhoneg',
+    introIndex: "Fichennoù skrivañ e skript hag a-stag war linennoù Seyès, skritelloù al lizherenneg, fichennoù jediñ, niveroù e galleg hag e brezhoneg. Digoust eo an holl fichennoù, e PDF, prest da voullañ. Evit ur fichenn diouzh da c'hoant, implij",
+    generateur: 'ar c\'hrouer fichennoù', pied: 'Fichennoù digoust, hep bruderezh, graet gant tadoù ha mammoù.',
+    paysage: 'gweledva', portrait: 'poltred',
+  },
 }
-const t = cle => (T[SITE.langue] ?? T.fr)[cle] ?? T.fr[cle]
+const tx = (cle, ...a) => {
+  const v = (T[SITE.langue] ?? T.fr)[cle] ?? T.fr[cle]
+  return typeof v === 'function' ? v(...a) : v
+}
 
 function trouverChrome() {
   const candidats = [
@@ -95,13 +118,19 @@ h2 { font-size: 1.3rem; margin: 2rem 0 .75rem; }
   color: var(--texte); display: flex; flex-direction: column; gap: .4rem; border-top: 4px solid var(--orange); }
 .carte img { width: 100%; height: auto; border: 1px solid var(--brd); }
 .carte span { font-weight: 700; font-size: .9rem; }
+.filtre { display: flex; gap: .4rem; margin: 1rem 0 .5rem; flex-wrap: wrap; }
+.filtre button { border: 2px solid var(--brd); background: white; border-radius: 20px; padding: .35rem 1rem; font: inherit; font-weight: 700; cursor: pointer; }
+.filtre button.actif { background: var(--bleu); border-color: var(--bleu); color: white; }
+.badge { font-style: normal; font-size: .7rem; background: #eee; border-radius: 6px; padding: .05rem .35rem; margin-left: .25rem; }
+.badge.br { background: #111; color: white; }
+[hidden] { display: none !important; }
 footer { text-align: center; font-size: .8rem; color: #888; padding: 2rem 1rem; }
 @media (max-width: 720px) { .fiche { grid-template-columns: 1fr; } }
 `
 
 function gabarit({ titre, description, canonique, contenu, image }) {
   return `<!DOCTYPE html>
-<html lang="fr"><head>
+<html lang="${SITE.langue}"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${echapper(titre)} — ${SITE.nom}</title>
 <meta name="description" content="${echapper(description)}">
@@ -113,9 +142,9 @@ ${image ? `<meta property="og:image" content="${image}">` : ''}
 <style>${CSS}</style>
 </head><body>
 <header><a class="logo" href="${BASE}">${SITE.emoji} ${SITE.nom}</a>
-<nav><a href="${BASE}telechargements/">📥 ${t('telecharger')}</a><a href="${BASE}#/imprimer">🖨️ ${t('creer')}</a><a href="${BASE}">🎯 ${t('exercices')}</a></nav></header>
+<nav><a href="${BASE}telechargements/">📥 ${tx('telecharger')}</a><a href="${BASE}#/imprimer">🖨️ ${tx('creer')}</a><a href="${BASE}">🎯 ${tx('exercices')}</a></nav></header>
 <main>${contenu}</main>
-<footer>Fiches gratuites, sans publicité, faites par des parents. Polices : Playwrite FR Trad, Andika (OFL).</footer>
+<footer>${tx('pied')} Polices / Nodrezhoù : Playwrite FR Trad, Andika, OpenDyslexic (OFL), Luciole (CC BY).</footer>
 </body></html>`
 }
 
@@ -139,7 +168,7 @@ async function main() {
       console.log(`Police locale (${type}) : ${nom}`)
     }
 
-    const liste = await app.evaluate(langue => window.__ecolePrimaire.catalogue(langue), SITE.langue)
+    const liste = await app.evaluate(langues => window.__ecolePrimaire.catalogue(langues), SITE.fiches ?? [SITE.langue])
     console.log(`Site ${SITE.nom} (${SITE.langue}) → ${OUT_DIR}/, ${liste.length} fiches, base ${BASE}`)
     const doc = await navigateur.newPage({ deviceScaleFactor: 1 })
     await doc.goto(url)
@@ -154,7 +183,7 @@ async function main() {
       await doc.emulateMedia({ media: 'screen' })
       await doc.locator('.page').first().screenshot({ path: join(dossier, 'apercu.jpg'), type: 'jpeg', quality: 78 })
       t.nbPages = r.nbPages
-      t.format = `${r.format} ${r.orientation === 'landscape' ? 'paysage' : 'portrait'}`
+      t.format = `${r.format} ${tx(r.orientation === 'landscape' ? 'paysage' : 'portrait')}`
       console.log(`✓ ${t.slug} (${r.nbPages} p.)`)
     }
 
@@ -167,31 +196,35 @@ async function main() {
 
 function ecrirePages(liste) {
   const lienFiche = t => `${BASE}telechargements/${t.slug}/`
-  const carte = t => `<a class="carte" href="${lienFiche(t)}"><img src="${lienFiche(t)}apercu.jpg" alt="${echapper(t.titre)}" loading="lazy" width="300"><span>${echapper(t.court)}</span></a>`
+  const bilingue = (SITE.fiches ?? []).length > 1
+  // badge de langue sur les sites bilingues : fiche bretonne (br seul) ou bilingue (fr + br)
+  const badge = t => !bilingue || t.langues.length === 1 && t.langues[0] === 'fr' ? ''
+    : t.langues.includes('fr') ? '<em class="badge">FR · BR</em>' : '<em class="badge br">BR</em>'
+  const carte = t => `<a class="carte" data-langues="${t.langues.join(' ')}" href="${lienFiche(t)}"><img src="${lienFiche(t)}apercu.jpg" alt="${echapper(t.titre)}" loading="lazy" width="300"><span>${echapper(t.court)} ${badge(t)}</span></a>`
 
   for (const t of liste) {
     const cat = CATEGORIES.find(c => c.id === t.categorie)
     const voisines = liste.filter(x => x.categorie === t.categorie && x.slug !== t.slug).slice(0, 8)
     const pdf = `${t.slug}.pdf`
     const contenu = `
-<p class="fil"><a href="${BASE}telechargements/">Fiches à télécharger</a> › ${echapper(cat.titre.replace(/^\S+\s/, ''))}</p>
+<p class="fil"><a href="${BASE}telechargements/">${tx('telecharger')}</a> › ${echapper((SITE.langue === 'br' ? cat.titreBr ?? cat.titre : cat.titre).replace(/^\S+\s/, ''))}</p>
 <h1>${echapper(t.titre)}</h1>
 <p class="intro">${echapper(t.description)}</p>
 <div class="fiche">
   <div class="apercu"><img src="apercu.jpg" alt="Aperçu : ${echapper(t.titre)}" width="600"></div>
   <div class="actions">
-    <a class="btn btn-dl" href="${pdf}" download>📥 Télécharger le PDF</a>
-    <a class="btn btn-perso" href="${BASE}#${t.lien}">✏️ Personnaliser cette fiche</a>
+    <a class="btn btn-dl" href="${pdf}" download>${tx('pdf')}</a>
+    <a class="btn btn-perso" href="${BASE}#${t.lien}">${tx('personnaliser')}</a>
     <ul class="infos">
-      <li>📄 ${t.nbPages} page${t.nbPages > 1 ? 's' : ''} · ${echapper(t.format)}</li>
+      <li>${tx('pages', t.nbPages)} · ${echapper(t.format)}</li>
       <li>🎒 ${echapper(t.niveaux)}</li>
-      <li>🖨️ Imprimer en « taille réelle » (100 %), sans « ajuster à la page »</li>
-      <li>✔️ Gratuit, sans inscription</li>
+      <li>${tx('imprimer100')}</li>
+      <li>${tx('gratuit')}</li>
     </ul>
-    <p class="intro">${echapper(cat.intro)} Avec « Personnaliser », tu peux changer les lettres ou les mots, la taille du lignage, la police et l'espacement.</p>
+    <p class="intro">${echapper(SITE.langue === 'br' ? cat.introBr ?? cat.intro : cat.intro)} ${tx('persoAide')}</p>
   </div>
 </div>
-<h2>Autres fiches</h2>
+<h2>${tx('autres')}</h2>
 <div class="grille">${voisines.map(carte).join('')}</div>`
     writeFileSync(join(dist, 'telechargements', t.slug, 'index.html'), gabarit({
       titre: t.titre, description: t.description, canonique: `${SITE_URL}telechargements/${t.slug}/`,
@@ -200,12 +233,21 @@ function ecrirePages(liste) {
   }
 
   const index = `
-<h1>📥 Fiches à imprimer gratuites</h1>
-<p class="intro">Fiches d'écriture en script et en attaché sur lignes Seyès, affiches de l'alphabet, nombres en lettres en français et en breton.
-Toutes les fiches sont gratuites, en PDF, prêtes à imprimer. Pour une fiche sur mesure (tes mots, ton lignage, ta police), utilise
-<a href="${BASE}#/imprimer">le générateur de fiches</a>.</p>
-${CATEGORIES.map(c => `<h2>${echapper(c.titre)}</h2><p class="intro">${echapper(c.intro)}</p>
-<div class="grille" style="margin-top:.75rem">${liste.filter(t => t.categorie === c.id).map(carte).join('')}</div>`).join('\n')}`
+<h1>${tx('titreIndex')}</h1>
+${bilingue ? `<div class="filtre" role="group" aria-label="Langue des fiches">
+  <button data-filtre="" class="actif">${tx('toutes')}</button><button data-filtre="fr">${tx('francais')}</button><button data-filtre="br">${tx('breton')}</button>
+</div>
+<script>
+document.querySelectorAll('.filtre button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.filtre button').forEach(x => x.classList.toggle('actif', x === b))
+  const f = b.dataset.filtre
+  document.querySelectorAll('.carte').forEach(c => { c.hidden = f && !c.dataset.langues.split(' ').includes(f) })
+  document.querySelectorAll('section.cat').forEach(s => { s.hidden = !s.querySelector('.carte:not([hidden])') })
+})
+</script>` : ''}
+<p class="intro">${tx('introIndex')} <a href="${BASE}#/imprimer">${tx('generateur')}</a>.</p>
+${CATEGORIES.filter(c => liste.some(t => t.categorie === c.id)).map(c => `<section class="cat"><h2>${echapper(SITE.langue === 'br' ? c.titreBr ?? c.titre : c.titre)}</h2><p class="intro">${echapper(SITE.langue === 'br' ? c.introBr ?? c.intro : c.intro)}</p>
+<div class="grille" style="margin-top:.75rem">${liste.filter(t => t.categorie === c.id).map(carte).join('')}</div></section>`).join('\n')}`
   writeFileSync(join(dist, 'telechargements', 'index.html'), gabarit({
     titre: 'Fiches à imprimer gratuites : écriture, alphabet, nombres en breton',
     description: "Fiches d'écriture script et attaché sur lignes Seyès, affiches de l'alphabet A4 et A3, nombres en lettres en français et en breton. PDF gratuits pour la maternelle, le CP et le CE1.",
@@ -218,6 +260,14 @@ ${CATEGORIES.map(c => `<h2>${echapper(c.titre)}</h2><p class="intro">${echapper(
 ${urls.map(u => `  <url><loc>${SITE_URL}${u}</loc></url>`).join('\n')}
 </urlset>
 `)
+  writeFileSync(join(dist, '404.html'), gabarit({
+    titre: SITE.langue === 'br' ? "N'eo ket bet kavet ar bajenn" : 'Page introuvable',
+    description: '', canonique: SITE_URL,
+    contenu: `<h1>🤔 ${SITE.langue === 'br' ? "N'eo ket bet kavet ar bajenn" : 'Page introuvable'}</h1>
+<p class="intro" style="margin:1rem 0">${SITE.langue === 'br' ? "Ar bajenn-mañ n'eus ket anezhi (pe n'eus ket anezhi ken)." : "Cette page n'existe pas (ou plus)."}</p>
+<p><a class="btn btn-dl" href="${BASE}">${SITE.langue === 'br' ? "🏠 Distreiñ d'an degemer" : "🏠 Retour à l'accueil"}</a>
+<a class="btn btn-perso" href="${BASE}telechargements/">${tx('telecharger')}</a></p>`,
+  }))
   writeFileSync(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap.xml\n`)
   console.log(`${liste.length} fiches, sitemap : ${urls.length} URL`)
 }

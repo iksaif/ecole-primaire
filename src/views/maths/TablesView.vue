@@ -1,15 +1,15 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">✖️ Tables de multiplication</h1>
+    <h1 class="section-heading">✖️ {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
 
       <div class="config-section">
-        <div class="config-section-title">Tables à réviser</div>
+        <div class="config-section-title">{{ t('tablesAReviser') }}</div>
         <div class="btn-group" style="flex-wrap:wrap;">
           <button class="level-btn" :class="{ active: toutesSelectionnees }"
-                  @click="toggleToutes">Toutes</button>
+                  @click="toggleToutes">{{ t('toutes') }}</button>
           <button v-for="n in 12" :key="n"
                   class="level-btn" :class="{ active: config.tables.includes(n) }"
                   @click="toggleTable(n)">× {{ n }}</button>
@@ -17,31 +17,31 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Mode</div>
+        <div class="config-section-title">{{ t('mode') }}</div>
         <div class="mode-cards">
           <button class="mode-card" :class="{ active: config.mode === 'entrainement' }"
                @click="config.mode = 'entrainement'">
             <div class="mode-icon">📖</div>
-            <div class="mode-title">Entraînement</div>
-            <div class="mode-desc">Vois la table, puis réponds en ordre</div>
+            <div class="mode-title">{{ t('entrainement') }}</div>
+            <div class="mode-desc">{{ t('entrainementDesc') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'aleatoire' }"
                @click="config.mode = 'aleatoire'">
             <div class="mode-icon">🎲</div>
-            <div class="mode-title">Aléatoire</div>
-            <div class="mode-desc">Questions mélangées sur les tables choisies</div>
+            <div class="mode-title">{{ t('aleatoire') }}</div>
+            <div class="mode-desc">{{ t('aleatoireDesc') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'chrono' }"
                @click="config.mode = 'chrono'">
             <div class="mode-icon">⏱️</div>
-            <div class="mode-title">Défi chrono</div>
-            <div class="mode-desc">Le plus de bonnes réponses en 1 minute</div>
+            <div class="mode-title">{{ t('chrono') }}</div>
+            <div class="mode-desc">{{ t('chronoDesc') }}</div>
           </button>
         </div>
       </div>
 
       <div class="config-section" v-if="config.mode !== 'chrono'">
-        <div class="config-section-title">Multiplier jusqu'à</div>
+        <div class="config-section-title">{{ t('multiplierJusqua') }}</div>
         <div class="btn-group">
           <button v-for="m in [10, 12]" :key="m"
                   class="level-btn" :class="{ active: config.jusqu === m }"
@@ -50,7 +50,7 @@
       </div>
 
       <div class="config-section" v-if="config.mode === 'aleatoire'">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [10, 20, 30]" :key="n"
                   class="level-btn" :class="{ active: config.nbQ === n }"
@@ -61,22 +61,22 @@
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;"
                 :disabled="config.tables.length === 0"
-                @click="demarrer()">▶ Commencer</button>
+                @click="demarrer()">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- ══ APPRENTISSAGE (mode entraînement : affiche la table avant) ══ -->
     <div v-if="phase === 'apprendre'" class="exercise-box" style="text-align:center;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;">
-        <button class="btn-quitter" @click="phase = 'config'" title="Quitter">✕ Quitter</button>
+        <button class="btn-quitter" @click="phase = 'config'" :title="t('quitterTitre')">{{ t('quitter') }}</button>
         <span style="font-size:.85rem;color:#888;font-weight:600;">
-          Table {{ tableIdx + 1 }} / {{ config.tables.length }}
+          {{ t('tableN', { n: tableIdx + 1, total: config.tables.length }) }}
         </span>
       </div>
-      <div class="table-title">Table de × {{ tableActuelle }}</div>
+      <div class="table-title">{{ t('tableDe', { n: tableActuelle }) }}</div>
       <div class="table-grid">
         <div v-for="i in config.jusqu" :key="i" class="table-row">
           <span class="table-cell-a">{{ tableActuelle }} × {{ i }}</span>
@@ -85,21 +85,21 @@
         </div>
       </div>
       <button class="btn btn-primary" style="margin-top:1.5rem;" @click="passerApprendre">
-        Je la connais → Tester ! ✔
+        {{ t('jeLaConnais') }}
       </button>
     </div>
 
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'" title="Quitter l'exercice">✕ Quitter</button>
+        <button class="btn-quitter" @click="phase = 'config'" :title="t('quitterTitre')">{{ t('quitter') }}</button>
         <span v-if="config.mode === 'chrono'">
           ⏱ <span :style="{ color: tempsRestant <= 10 ? 'var(--rouge)' : 'inherit' }">
             {{ tempsRestant }}s
           </span>
         </span>
         <span v-else-if="config.mode === 'entrainement'">× {{ tableActuelle }} — Q{{ idx + 1 }}/{{ questions.length }}</span>
-        <span v-else>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <span v-else>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -126,8 +126,8 @@
         <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button v-if="config.mode !== 'chrono'" class="btn btn-ghost" @click="passer">Passer ⏭</button>
-          <button class="btn btn-primary" @click="valider">Valider ✔</button>
+          <button v-if="config.mode !== 'chrono'" class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+          <button class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
         </div>
       </div>
     </template>
@@ -136,7 +136,7 @@
     <div v-if="phase === 'resultats'" class="exercise-box" style="text-align:center;">
       <div v-if="config.mode === 'chrono'">
         <div class="result-score">{{ bonnes }}</div>
-        <div class="result-msg">bonnes réponses en 1 minute ! {{ resultMsgChrono }}</div>
+        <div class="result-msg">{{ t('bonnesEn1Min') }} {{ resultMsgChrono }}</div>
       </div>
       <div v-else>
         <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
@@ -145,7 +145,7 @@
 
       <!-- Tableau des erreurs -->
       <div v-if="erreurs.length > 0" class="erreurs-box">
-        <div class="config-section-title" style="margin-bottom:.5rem;">À retravailler :</div>
+        <div class="config-section-title" style="margin-bottom:.5rem;">{{ t('aRetravailler') }}</div>
         <div class="erreurs-grid">
           <div v-for="(e, i) in erreurs" :key="i" class="erreur-item">
             <span class="erreur-question">{{ e.texte }}</span>
@@ -155,11 +155,11 @@
       </div>
 
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer()">🔄 Rejouer</button>
+        <button class="btn btn-primary" @click="demarrer()">{{ t('rejouer') }}</button>
         <button v-if="erreurs.length > 0" class="btn btn-warning" @click="rejouerErreurs">
-          ❌ Revoir les erreurs
+          {{ t('revoirErreurs') }}
         </button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
 
@@ -169,6 +169,64 @@
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, langue } = useI18n({
+  fr: {
+    titre: 'Tables de multiplication',
+    tablesAReviser: 'Tables à réviser',
+    toutes: 'Toutes',
+    mode: 'Mode',
+    entrainement: 'Entraînement',
+    entrainementDesc: 'Vois la table, puis réponds en ordre',
+    aleatoire: 'Aléatoire',
+    aleatoireDesc: 'Questions mélangées sur les tables choisies',
+    chrono: 'Défi chrono',
+    chronoDesc: 'Le plus de bonnes réponses en 1 minute',
+    multiplierJusqua: "Multiplier jusqu'à",
+    tableN: 'Table {n} / {total}',
+    tableDe: 'Table de × {n}',
+    jeLaConnais: 'Je la connais → Tester ! ✔',
+    bonnesEn1Min: 'bonnes réponses en 1 minute !',
+    aRetravailler: 'À retravailler :',
+    revoirErreurs: '❌ Revoir les erreurs',
+    resultat60: 'Bien ! Revois les erreurs et recommence 💪',
+    resultatBas: "Continue à t'entraîner ! 📚",
+    chrono50: '🏆 Impressionnant !', chrono30: '🌟 Excellent !', chrono20: '💪 Très bien !',
+    chronoBas: "📚 Continue à t'entraîner !",
+    pTable: 'Table de {n}',
+    pTables: 'Tables : {liste}',
+    pJusqua: "× jusqu'à {n}",
+    pNbQuestions: '{n} questions',
+  },
+  br: {
+    titre: 'Taolennoù liesañ',
+    tablesAReviser: 'Taolennoù da adwelet',
+    toutes: 'An holl',
+    mode: 'Mod',
+    entrainement: 'Embregerezh',
+    entrainementDesc: 'Sell ouzh an daolenn, ha goude respont en urzh', // br: à relire
+    aleatoire: 'Dre zegouezh',
+    aleatoireDesc: 'Goulennoù kemmesket war an taolennoù dibabet',
+    chrono: 'Dae a-enep an amzer', // br: à relire (« défi chrono »)
+    chronoDesc: 'Ar muiañ a respontoù mat e 1 munutenn',
+    multiplierJusqua: 'Liesaat betek',
+    tableN: 'Taolenn {n} / {total}',
+    tableDe: 'Taolenn × {n}',
+    jeLaConnais: 'Gouzout a ran anezhi → Amprouiñ ! ✔',
+    bonnesEn1Min: 'respont mat e 1 munutenn !',
+    aRetravailler: 'Da labourat en-dro :',
+    revoirErreurs: '❌ Adwelet ar fazioù',
+    resultat60: 'Mat ! Adwel ar fazioù hag adkrog 💪',
+    resultatBas: "Kendalc'h da embreger ! 📚",
+    chrono50: '🏆 Souezhus !', chrono30: '🌟 Dispar !', chrono20: '💪 Mat-tre !',
+    chronoBas: "📚 Kendalc'h da embreger !",
+    pTable: 'Taolenn {n}',
+    pTables: 'Taolennoù : {liste}',
+    pJusqua: '× betek {n}',
+    pNbQuestions: '{n} goulenn',
+  },
+})
 
 const DUREE_CHRONO = 60 // secondes
 
@@ -293,8 +351,8 @@ function imprimerFiche() {
   }
 
   const titre = tablesTriees.length === 1
-    ? `Table de ${tablesTriees[0]}`
-    : `Tables : ${tablesTriees.join(', ')}`
+    ? t('pTable', { n: tablesTriees[0] })
+    : t('pTables', { liste: tablesTriees.join(', ') })
 
   const cols = 2
   const rows = allQ.map((q, i) => `<div class="question">
@@ -303,7 +361,7 @@ function imprimerFiche() {
     <span class="ligne"></span>
   </div>`).join('')
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${titre}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
@@ -316,7 +374,7 @@ function imprimerFiche() {
       .ligne { flex: 1; border-bottom: 1.5px solid #aaa; }
     </style></head><body>
     <h1>${titre}</h1>
-    <p class="entete">× jusqu'à ${jusqu} &nbsp;|&nbsp; ${allQ.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    <p class="entete">${t('pJusqua', { n: jusqu })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: allQ.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     <div class="grid">${rows}</div>
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
@@ -377,7 +435,8 @@ function passer() {
 function enregistrerBon(q) {
   q._resultat = true
   inputClass.value = 'ok'
-  feedback.value = ['Bravo ! 🎉', 'Parfait ! ⭐', 'Excellent ! 👏', 'Super ! 🌟'][aleatoire(0,3)]
+  const bravos = t('bravo')
+  feedback.value = bravos[aleatoire(0, bravos.length - 1)]
   feedbackClass.value = 'ok'
   bonnes.value++
   if (config.value.mode === 'chrono') {
@@ -445,17 +504,17 @@ function rejouerErreurs() {
 // ── Messages résultats
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Revois les erreurs et recommence 💪'
-  return 'Continue à t\'entraîner ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  return t('resultatBas')
 })
 
 const resultMsgChrono = computed(() => {
-  if (bonnes.value >= 50) { confettis(50); return '🏆 Impressionnant !' }
-  if (bonnes.value >= 30) { confettis(25); return '🌟 Excellent !' }
-  if (bonnes.value >= 20) return '💪 Très bien !'
-  return '📚 Continue à t\'entraîner !'
+  if (bonnes.value >= 50) { confettis(50); return t('chrono50') }
+  if (bonnes.value >= 30) { confettis(25); return t('chrono30') }
+  if (bonnes.value >= 20) return t('chrono20')
+  return t('chronoBas')
 })
 
 onUnmounted(() => clearInterval(timerInterval))

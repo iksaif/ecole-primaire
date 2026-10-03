@@ -77,6 +77,14 @@ server {
 
     # .app impose déjà HTTPS (préchargement HSTS du domaine de premier niveau)
     add_header Strict-Transport-Security "max-age=31536000" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()" always;
+    # Pas de ressource externe sauf l'API Mistral (facultative) ; styles et scripts inline utilisés
+    # par les pages statiques et les documents d'impression ; polices ajoutées depuis un fichier en data:
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self' data: https://api.mistral.ai; frame-src 'self' about:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'" always;
+
+    error_page 404 /404.html;
 
     gzip on;
     gzip_types text/css application/javascript application/json image/svg+xml application/xml;

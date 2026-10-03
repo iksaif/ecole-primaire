@@ -3,10 +3,10 @@ import { metriquesPolice, largeurTexte, dimensionsPage, documentImpression, echa
 import { langueRegionale } from '../data/languesRegionales'
 
 export const STYLES = [
-  { id: 'script-maj',  label: 'Script majuscule' },
-  { id: 'script-min',  label: 'Script minuscule' },
-  { id: 'attache-maj', label: 'Attaché majuscule' },
-  { id: 'attache-min', label: 'Attaché minuscule' },
+  { id: 'script-maj',  label: 'Script majuscule',  br: 'Skript, pennlizherennoù' },
+  { id: 'script-min',  label: 'Script minuscule',  br: 'Skript, lizherennoù bihan' },
+  { id: 'attache-maj', label: 'Attaché majuscule', br: 'A-stag, pennlizherennoù' },
+  { id: 'attache-min', label: 'Attaché minuscule', br: 'A-stag, lizherennoù bihan' },
 ]
 
 // Un mot simple et imageable par lettre ; la lettre est mise en couleur dans le mot
@@ -90,7 +90,7 @@ export function genererAlphabet(config, polices) {
   const reg = config.alphabet && config.alphabet !== 'fr' ? langueRegionale(config.alphabet) : null
   const LETTRES = reg ? reg.alphabet : LETTRES_FR
   if (reg) config = { ...config, mot: false }
-  const titreAffiche = reg?.titreAlphabet ?? "L'alphabet"
+  const titreAffiche = reg?.titreAlphabet ?? (config.langue === 'br' ? "Al lizherenneg c'hallek" : "L'alphabet")
   const { w, h } = dimensionsPage(format, orientation)
   const marge = 8, ecart = format === 'A3' ? 3 : 2
   let pages

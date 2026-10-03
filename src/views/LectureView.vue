@@ -1,33 +1,33 @@
 <template>
   <div class="container">
-    <h1>📖 Lecture</h1>
+    <h1>📖 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
     <div v-if="phase === 'config'" class="config-box">
 
       <div class="config-section">
-        <div class="config-section-title">Exercice</div>
+        <div class="config-section-title">{{ t('exercice') }}</div>
         <div class="mode-cards" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
           <button class="mode-card" :class="{ active: config.mode === 'syllabes' }" @click="config.mode = 'syllabes'">
             <div class="mode-icon">🔠</div>
-            <div class="mode-title">Syllabes</div>
-            <div class="mode-desc">Compte et reconstitue les syllabes d'un mot</div>
+            <div class="mode-title">{{ t('syllabes') }}</div>
+            <div class="mode-desc">{{ t('syllabesDesc') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'mots' }" @click="config.mode = 'mots'">
             <div class="mode-icon">🧩</div>
-            <div class="mode-title">Reconstituer un mot</div>
-            <div class="mode-desc">Remets les syllabes dans le bon ordre</div>
+            <div class="mode-title">{{ t('reconstituer') }}</div>
+            <div class="mode-desc">{{ t('reconstituerDesc') }}</div>
           </button>
           <button class="mode-card" :class="{ active: config.mode === 'lecture_texte' }" @click="config.mode = 'lecture_texte'">
             <div class="mode-icon">📖</div>
-            <div class="mode-title">Lecture de textes</div>
-            <div class="mode-desc">Lis des phrases ou des histoires et écoute les mots</div>
+            <div class="mode-title">{{ t('lectureTextes') }}</div>
+            <div class="mode-desc">{{ t('lectureTextesDesc') }}</div>
           </button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="n in NIVEAUX" :key="n.id"
             class="level-btn" :class="{ active: config.niveau === n.id }"
@@ -36,7 +36,7 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nb === n }"
@@ -46,12 +46,12 @@
 
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
         <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche" :disabled="printing">
-          <span>{{ printing ? '⌛ Génération...' : '🖨️ Imprimer une fiche' }}</span>
+          <span>{{ printing ? t('generationFiche') : t('imprimerFiche') }}</span>
         </button>
       </div>
     </div>
@@ -59,8 +59,8 @@
     <!-- ══ EXERCICE : Syllabes / Reconstituer / Lecture ══ -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <button class="btn-quitter" @click="arreter(); phase = 'config'">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="arreter(); phase = 'config'">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
       <div class="prog-dots" style="max-width:680px;margin:0 auto .5rem;">
@@ -69,14 +69,14 @@
 
       <div v-if="loading" class="exercise-box" style="text-align:center;padding:3rem;">
         <span class="spinner" style="width:30px;height:30px;border-width:3px;border-top-color:var(--bleu);"></span>
-        <div style="margin-top:1rem;color:#888;">Génération de l'histoire...</div>
+        <div style="margin-top:1rem;color:#888;">{{ t('generationHistoire') }}</div>
       </div>
 
       <div v-else-if="question" class="exercise-box">
 
         <!-- Mode syllabes : combien de syllabes ? -->
         <template v-if="config.mode === 'syllabes'">
-          <div class="question-label">Combien de syllabes dans ce mot ?</div>
+          <div class="question-label">{{ t('combienSyllabes') }}</div>
           <div class="mot-display">{{ question.mot }}</div>
           <div class="choix-grid">
             <button v-for="c in question.choix" :key="c"
@@ -93,7 +93,7 @@
 
         <!-- Mode reconstituer : clique dans le bon ordre -->
         <template v-else-if="config.mode === 'mots'">
-          <div class="question-label">Reconstitue le mot en cliquant sur les syllabes dans le bon ordre :</div>
+          <div class="question-label">{{ t('consigneReconstituer') }}</div>
           <div class="assemblage">
             <span v-for="(s, i) in assemblage" :key="i" class="syllabe-assemblee">{{ s }}</span>
             <span v-if="!assemblage.length" class="assemblage-vide">…</span>
@@ -106,15 +106,15 @@
               @click="ajouterSyllabe(i, s)">{{ s }}</button>
           </div>
           <div class="saisie-row" style="justify-content:center;gap:.5rem;margin-top:.75rem;">
-            <button v-if="!repondu && assemblage.length > 0" class="btn btn-ghost" @click="effacerDerniere">← Effacer</button>
-            <button v-if="!repondu && assemblage.length === question.syllabes.length" class="btn btn-primary" @click="validerMot">Valider ✔</button>
+            <button v-if="!repondu && assemblage.length > 0" class="btn btn-ghost" @click="effacerDerniere">{{ t('effacerDerniere') }}</button>
+            <button v-if="!repondu && assemblage.length === question.syllabes.length" class="btn btn-primary" @click="validerMot">{{ t('valider') }}</button>
           </div>
           <div v-if="repondu" class="feedback" :class="feedbackCls">{{ feedbackTxt }}</div>
         </template>
 
         <!-- Mode lecture_texte : lecture de phrases/textes -->
         <template v-else-if="config.mode === 'lecture_texte'">
-          <div class="question-label">Lis ce texte à haute voix. Clique sur un mot pour l'écouter :</div>
+          <div class="question-label">{{ t('consigneLecture') }}</div>
           
           <div class="lecture-texte-box">
             <template v-for="(mot, mid) in motsDeLaQuestion" :key="mid">
@@ -128,16 +128,16 @@
           <div class="btn-group" style="justify-content:center;margin-top:1.5rem;">
             <button v-if="!repondu" class="btn btn-warning" :class="{ playing: enLecture }" @click="ecouterTout()">
               <span>{{ enLecture ? '⏹' : '🔊' }}</span>
-              <span>{{ enLecture ? 'Arrêter' : 'Écouter tout' }}</span>
+              <span>{{ enLecture ? t('arreter') : t('ecouterTout') }}</span>
             </button>
             <button v-if="!repondu" class="btn btn-success" @click="validerLecture">
-              J'ai lu ! 👍
+              {{ t('jaiLu') }}
             </button>
           </div>
         </template>
 
         <button v-if="repondu" class="btn btn-primary" style="margin-top:1rem;" @click="suivant">
-          {{ idx + 1 < questions.length ? 'Suivant →' : 'Voir les résultats' }}
+          {{ idx + 1 < questions.length ? t('suivant') : t('voirResultats') }}
         </button>
       </div>
     </template>
@@ -147,8 +147,8 @@
       <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
       <div class="result-msg">{{ resultMsg }}</div>
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Changer</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('changer') }}</button>
       </div>
     </div>
   </div>
@@ -158,6 +158,78 @@
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { melanger, confettis, sauvegarder, charger, aleatoire } from '../utils'
 import { useTTS } from '../composables/useTTS'
+import { useI18n } from '../i18n'
+
+const { t, langue } = useI18n({
+  fr: {
+    titre: 'Lecture',
+    exercice: 'Exercice',
+    syllabes: 'Syllabes',
+    syllabesDesc: "Compte et reconstitue les syllabes d'un mot",
+    reconstituer: 'Reconstituer un mot',
+    reconstituerDesc: 'Remets les syllabes dans le bon ordre',
+    lectureTextes: 'Lecture de textes',
+    lectureTextesDesc: 'Lis des phrases ou des histoires et écoute les mots',
+    generationFiche: '⌛ Génération...',
+    generationHistoire: "Génération de l'histoire...",
+    combienSyllabes: 'Combien de syllabes dans ce mot ?',
+    consigneReconstituer: 'Reconstitue le mot en cliquant sur les syllabes dans le bon ordre :',
+    effacerDerniere: '← Effacer',
+    consigneLecture: "Lis ce texte à haute voix. Clique sur un mot pour l'écouter :",
+    arreter: 'Arrêter',
+    ecouterTout: 'Écouter tout',
+    jaiLu: "J'ai lu ! 👍",
+    changer: '⚙️ Changer',
+    feedbackOk: ['Bravo ! 🎉', 'Exact ! ⭐', 'Bien joué ! 👏'],
+    erreurSyllabes: ({ n }) => `❌ {mot} a {n} syllabe${n > 1 ? 's' : ''} : {syll}`,
+    erreurOrdre: '❌ Le bon ordre était : {syll} → {mot}',
+    res100: 'Parfait, sans faute ! 🏆',
+    res80: 'Très bien ! 🌟',
+    res60: "Bien ! Continue à t'entraîner 💪",
+    res0: 'Courage ! Relis les mots à voix haute 📚',
+    ficheLectureTitre: 'Fiche de Lecture — {n}',
+    ficheLectureConsigne: "Lis chaque phrase ou histoire à haute voix, puis coche l'étoile :",
+    ficheSyllabesTitre: 'Compter les syllabes — {n}',
+    ficheSyllabesConsigne: 'Écris le nombre de syllabes pour chaque mot :',
+    ficheSyllabesUnite: 'syllabes',
+    ficheMotsTitre: 'Reconstituer des mots — {n}',
+    ficheMotsConsigne: 'Remets les syllabes dans le bon ordre pour écrire les mots :',
+  },
+  br: {
+    titre: 'Lenn',
+    exercice: 'Poelladenn',
+    syllabes: 'Silabennoù',
+    syllabesDesc: 'Kont hag adsav silabennoù ur ger',
+    reconstituer: 'Adsevel ur ger',
+    reconstituerDesc: 'Laka ar silabennoù en urzh mat',
+    lectureTextes: 'Lenn testennoù',
+    lectureTextesDesc: 'Lenn frazennoù pe istorioù ha selaou ar gerioù',
+    generationFiche: '⌛ O krouiñ...',
+    generationHistoire: "O krouiñ an istor...",
+    combienSyllabes: 'Pet silabenn a zo er ger-mañ ?',
+    consigneReconstituer: 'Adsav ar ger en ur glikañ war ar silabennoù en urzh mat :',
+    effacerDerniere: '← Diverkañ',
+    consigneLecture: 'Lenn an destenn-mañ a vouezh uhel. Klik war ur ger evit e selaou :',
+    arreter: 'Paouez',
+    ecouterTout: 'Selaou pep tra',
+    jaiLu: 'Lennet em eus ! 👍',
+    changer: '⚙️ Cheñch',
+    feedbackOk: ['Brav eo ! 🎉', 'Just eo ! ⭐', 'Mat-tre ! 👏'],
+    erreurSyllabes: '❌ {n} silabenn a zo e « {mot} » : {syll}',
+    erreurOrdre: '❌ An urzh mat a oa : {syll} → {mot}',
+    res100: 'Dispar, hep fazi ebet ! 🏆',
+    res80: 'Mat-tre ! 🌟',
+    res60: "Mat ! Kendalc'h da embreger 💪",
+    res0: 'Kalon vat ! Adlenn ar gerioù a vouezh uhel 📚',
+    ficheLectureTitre: 'Fichenn lenn — {n}',
+    ficheLectureConsigne: 'Lenn pep frazenn pe istor a vouezh uhel, ha goude merk ar steredenn :',
+    ficheSyllabesTitre: 'Kontañ ar silabennoù — {n}',
+    ficheSyllabesConsigne: 'Skriv an niver a silabennoù evit pep ger :',
+    ficheSyllabesUnite: 'silabenn',
+    ficheMotsTitre: 'Adsevel gerioù — {n}',
+    ficheMotsConsigne: 'Laka ar silabennoù en urzh mat evit skrivañ ar gerioù :',
+  },
+})
 
 const NIVEAUX = [
   { id: 'cp',  label: 'CP' },
@@ -295,7 +367,14 @@ const idx = ref(0)
 const bonnes = ref(0)
 const mauvaises = ref(0)
 const repondu = ref(false)
-const feedbackTxt = ref('')
+const feedback = ref(null)  // données du feedback, texte calculé selon la langue
+const feedbackTxt = computed(() => {
+  const f = feedback.value
+  if (!f) return ''
+  if (f.ok) return t('feedbackOk')[f.i]
+  const p = { mot: f.q.mot, n: f.q.syllabes.length, syll: f.q.syllabes.join(' · ') }
+  return f.type === 'syllabes' ? t('erreurSyllabes', p) : t('erreurOrdre', p)
+})
 const feedbackCls = ref('')
 const reponseDonnee = ref(null)
 const loading = ref(false)
@@ -324,7 +403,7 @@ async function chargerQuestionLecture(i) {
 async function demarrer() {
   arreter()
   idx.value = 0; bonnes.value = 0; mauvaises.value = 0
-  repondu.value = false; feedbackTxt.value = ''; feedbackCls.value = ''
+  repondu.value = false; feedback.value = null; feedbackCls.value = ''
   reponseDonnee.value = null
   resetReconstituer()
 
@@ -415,15 +494,11 @@ function enregistrer(ok) {
   repondu.value = true
   if (ok) {
     bonnes.value++
-    feedbackTxt.value = ['Bravo ! 🎉', 'Exact ! ⭐', 'Bien joué ! 👏'][Math.floor(Math.random() * 3)]
+    feedback.value = { ok: true, i: Math.floor(Math.random() * 3) }
     feedbackCls.value = 'ok'
   } else {
     mauvaises.value++
-    if (config.value.mode === 'syllabes') {
-      feedbackTxt.value = `❌ ${question.value.mot} a ${question.value.syllabes.length} syllabe${question.value.syllabes.length > 1 ? 's' : ''} : ${question.value.syllabes.join(' · ')}`
-    } else {
-      feedbackTxt.value = `❌ Le bon ordre était : ${question.value.syllabes.join(' · ')} → ${question.value.mot}`
-    }
+    feedback.value = { ok: false, type: config.value.mode === 'syllabes' ? 'syllabes' : 'ordre', q: question.value }
     feedbackCls.value = 'erreur'
   }
 }
@@ -449,7 +524,7 @@ async function suivant() {
   arreter()
   idx.value++
   if (idx.value >= questions.value.length) { phase.value = 'resultats'; return }
-  repondu.value = false; feedbackTxt.value = ''; feedbackCls.value = ''
+  repondu.value = false; feedback.value = null; feedbackCls.value = ''
   reponseDonnee.value = null
   resetReconstituer()
 
@@ -462,10 +537,10 @@ async function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! 🌟' }
-  if (pct >= 60)   return 'Bien ! Continue à t\'entraîner 💪'
-  return 'Courage ! Relis les mots à voix haute 📚'
+  if (pct === 100) { confettis(50); return t('res100') }
+  if (pct >= 80)   { confettis(25); return t('res80') }
+  if (pct >= 60)   return t('res60')
+  return t('res0')
 })
 
 async function imprimerFiche() {
@@ -494,8 +569,8 @@ async function imprimerFiche() {
   let rowsHtml = ''
 
   if (config.value.mode === 'lecture_texte') {
-    title = `Fiche de Lecture — ${niveau}`
-    instructions = `Lis chaque phrase ou histoire à haute voix, puis coche l'étoile :`
+    title = t('ficheLectureTitre', { n: niveau })
+    instructions = t('ficheLectureConsigne')
     rowsHtml = items.map((it, i) => `
       <div class="lecture-item">
         <span class="num">${i + 1}.</span>
@@ -504,19 +579,19 @@ async function imprimerFiche() {
       </div>
     `).join('')
   } else if (config.value.mode === 'syllabes') {
-    title = `Compter les syllabes — ${niveau}`
-    instructions = `Écris le nombre de syllabes pour chaque mot :`
+    title = t('ficheSyllabesTitre', { n: niveau })
+    instructions = t('ficheSyllabesConsigne')
     rowsHtml = items.map((it, i) => `
       <div class="syllabe-item">
         <span class="num">${i + 1}.</span>
         <span class="word-text">${it.mot}</span>
         <span class="dots">. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</span>
-        <span class="count-box">_______ syllabes</span>
+        <span class="count-box">_______ ${t('ficheSyllabesUnite')}</span>
       </div>
     `).join('')
   } else {
-    title = `Reconstituer des mots — ${niveau}`
-    instructions = `Remets les syllabes dans le bon ordre pour écrire les mots :`
+    title = t('ficheMotsTitre', { n: niveau })
+    instructions = t('ficheMotsConsigne')
     rowsHtml = items.map((it, i) => `
       <div class="mots-item">
         <span class="num">${i + 1}.</span>
@@ -527,7 +602,7 @@ async function imprimerFiche() {
     `).join('')
   }
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${title}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 680px; margin: 1.5cm auto; color: #222; }
@@ -555,7 +630,7 @@ async function imprimerFiche() {
       .mots-item .write-line { flex: 1; color: #aaa; }
     </style></head><body>
     <h1>${title}</h1>
-    <p class="entete">${instructions} &nbsp;&nbsp;&nbsp; Nom : __________________________ &nbsp; Date : ______________</p>
+    <p class="entete">${instructions} &nbsp;&nbsp;&nbsp; ${t('nom')} : __________________________ &nbsp; ${t('date')} : ______________</p>
     <div>${rowsHtml}</div>
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`

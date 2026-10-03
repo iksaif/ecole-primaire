@@ -1,22 +1,22 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 Compter les objets</h1>
+    <h1 class="section-heading">🔢 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="config.niveau = 'ms'">
-            🌱 MS — jusqu'à 6
+            🌱 {{ t('jusqua', { niv: 'MS', n: 6 }) }}
           </button>
           <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="config.niveau = 'gs'">
-            🌳 GS — jusqu'à 10
+            🌳 {{ t('jusqua', { niv: 'GS', n: 10 }) }}
           </button>
         </div>
       </div>
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
@@ -24,7 +24,7 @@
       </div>
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.2rem;padding:.85rem 2.5rem;" @click="demarrer">
-          ▶ Commencer
+          {{ t('commencer') }}
         </button>
       </div>
     </div>
@@ -32,13 +32,13 @@
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>⭐ {{ bonnes }} &nbsp; 💔 {{ mauvaises }}</span>
       </div>
 
       <div class="mat-box">
         <!-- Objets à compter -->
-        <div class="consigne">Combien y a-t-il de {{ questions[idx].nomPluriel }} ?</div>
+        <div class="consigne">{{ t('combien', { nom: tr(questions[idx].noms) }) }}</div>
         <div class="objets-grille">
           <span v-for="i in questions[idx].nb" :key="i" class="objet" :class="animClass">
             {{ questions[idx].emoji }}
@@ -68,8 +68,8 @@
         <span v-for="i in 5" :key="i">{{ i <= etoilesScore ? '⭐' : '☆' }}</span>
       </div>
       <div class="btn-group" style="justify-content:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -78,18 +78,40 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { aleatoire, melanger, confettis } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, tr } = useI18n({
+  fr: {
+    titre: 'Compter les objets',
+    jusqua: "{niv} — jusqu'à {n}",
+    combien: 'Combien y a-t-il de {nom} ?',
+    ilYAvait: 'Il y avait {n} {emoji}',
+    resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
+    resultat0: 'On peut encore progresser ! 📚',
+  },
+  br: {
+    titre: 'Kontañ an traoù',
+    jusqua: '{niv} — betek {n}',
+    // « pet » + anv unan : Pet aval a zo ?
+    combien: 'Pet {nom} a zo ?',
+    ilYAvait: '{n} {emoji} a oa',
+    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
+    resultat0: "Gallout a reer ober gwelloc'h c'hoazh ! 📚",
+  },
+})
 
 const OBJETS = [
-  { emoji: '🍎', nom: 'pomme',     pluriel: 'pommes' },
-  { emoji: '⭐', nom: 'étoile',    pluriel: 'étoiles' },
-  { emoji: '🐱', nom: 'chat',      pluriel: 'chats' },
-  { emoji: '🌸', nom: 'fleur',     pluriel: 'fleurs' },
-  { emoji: '🚗', nom: 'voiture',   pluriel: 'voitures' },
-  { emoji: '🦋', nom: 'papillon',  pluriel: 'papillons' },
-  { emoji: '🐸', nom: 'grenouille',pluriel: 'grenouilles' },
-  { emoji: '🍓', nom: 'fraise',    pluriel: 'fraises' },
-  { emoji: '🐠', nom: 'poisson',   pluriel: 'poissons' },
-  { emoji: '🌙', nom: 'lune',      pluriel: 'lunes' },
+  // br : anv unan (singulier) après « pet »
+  { emoji: '🍎', nom: 'pomme',     pluriel: 'pommes',      br: 'aval' },
+  { emoji: '⭐', nom: 'étoile',    pluriel: 'étoiles',     br: 'steredenn' },
+  { emoji: '🐱', nom: 'chat',      pluriel: 'chats',       br: 'kazh' },
+  { emoji: '🌸', nom: 'fleur',     pluriel: 'fleurs',      br: 'bleunienn' },
+  { emoji: '🚗', nom: 'voiture',   pluriel: 'voitures',    br: 'karr' },
+  { emoji: '🦋', nom: 'papillon',  pluriel: 'papillons',   br: 'balafenn' },
+  { emoji: '🐸', nom: 'grenouille',pluriel: 'grenouilles', br: 'glesker' }, // br: à relire (ou « ran »)
+  { emoji: '🍓', nom: 'fraise',    pluriel: 'fraises',     br: 'sivienn' },
+  { emoji: '🐠', nom: 'poisson',   pluriel: 'poissons',    br: 'pesk' },
+  { emoji: '🌙', nom: 'lune',      pluriel: 'lunes',       br: 'loar' },
 ]
 
 const config = ref({ niveau: 'ms', nbQ: 10 })
@@ -119,7 +141,7 @@ function generer() {
   }
   const choix = melanger([nb, ...mauvais])
 
-  return { nb, emoji: objet.emoji, nomPluriel: objet.pluriel, choix, reponse: nb }
+  return { nb, emoji: objet.emoji, nomPluriel: objet.pluriel, noms: { fr: objet.pluriel, br: objet.br }, choix, reponse: nb }
 }
 
 function demarrer() {
@@ -150,11 +172,11 @@ function repondre(c) {
   reponseChoisie.value = c
   const q = questions.value[idx.value]
   if (c === q.reponse) {
-    feedback.value = ['Bravo ! 🎉', 'Super ! ⭐', 'Parfait ! 🌟', 'Excellent ! 👏'][aleatoire(0,3)]
+    const b = t('bravo'); feedback.value = b[aleatoire(0, b.length - 1)]
     feedbackClass.value = 'ok'
     bonnes.value++
   } else {
-    feedback.value = `Il y avait ${q.reponse} ${q.emoji}`
+    feedback.value = t('ilYAvait', { n: q.reponse, emoji: q.emoji })
     feedbackClass.value = 'erreur'
     mauvaises.value++
   }
@@ -178,10 +200,10 @@ const etoilesScore = computed(() => {
 
 const resultMsg = computed(() => {
   const e = etoilesScore.value
-  if (e === 5) { confettis(50); return 'Parfait ! Bravo ! 🏆' }
-  if (e >= 4)  { confettis(25); return 'Très bien ! 🌟' }
-  if (e >= 3)  return 'Bien ! Continue ! 💪'
-  return 'On peut encore progresser ! 📚'
+  if (e === 5) { confettis(50); return t('resultat5') }
+  if (e >= 4)  { confettis(25); return t('resultat4') }
+  if (e >= 3)  return t('resultat3')
+  return t('resultat0')
 })
 </script>
 

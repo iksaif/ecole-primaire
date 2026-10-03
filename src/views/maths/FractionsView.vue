@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🍕 Les fractions</h1>
+    <h1 class="section-heading">🍕 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in Object.keys(NIVEAUX)" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -14,25 +14,25 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Exercices</div>
+        <div class="config-section-title">{{ t('exercices') }}</div>
         <div class="btn-group">
-          <button v-for="t in typesNiveau" :key="t.id"
-            class="level-btn" :class="{ active: config.types.includes(t.id) }"
-            @click="toggleType(t.id)">{{ t.label }}</button>
+          <button v-for="ty in typesNiveau" :key="ty.id"
+            class="level-btn" :class="{ active: config.types.includes(ty.id) }"
+            @click="toggleType(ty.id)">{{ tr(ty.label) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Fractions</div>
+        <div class="config-section-title">{{ t('fractions') }}</div>
         <div class="btn-group">
           <button v-for="(m, id) in MODES" :key="id"
             class="level-btn" :class="{ active: config.mode === id }"
-            @click="config.mode = id">{{ m }}</button>
+            @click="config.mode = id">{{ tr(m) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15, 20]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -41,18 +41,18 @@
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -79,7 +79,7 @@
                   stroke-linejoin="round" @click="togglepart(i)"/>
           </svg>
           <div v-if="q.kind === 'parts'" class="aide">
-            Touche les parts pour les colorier ({{ coloriees.length }} / {{ q.forme.parts.length }})
+            {{ t('aideColorier', { n: coloriees.length, total: q.forme.parts.length }) }}
           </div>
           <svg v-if="q.formeAide" :viewBox="q.formeAide.viewBox" :width="q.formeAide.largeur" class="forme-svg" style="display:block;margin:.5rem auto 0;">
             <path v-for="(part, i) in q.formeAide.parts" :key="i" :d="part" fill="#ffffff" stroke="#2c3e50" stroke-width="2.5"/>
@@ -146,9 +146,9 @@
         <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button class="btn btn-ghost" :disabled="verrou" @click="passer">Passer ⏭</button>
-          <button v-if="q.kind === 'parts'" class="btn btn-ghost" :disabled="verrou || !coloriees.length" @click="coloriees = []">🧽 Effacer</button>
-          <button v-if="q.kind !== 'choix'" class="btn btn-primary" :disabled="verrou" @click="valider">Valider ✔</button>
+          <button class="btn btn-ghost" :disabled="verrou" @click="passer">{{ t('passer') }}</button>
+          <button v-if="q.kind === 'parts'" class="btn btn-ghost" :disabled="verrou || !coloriees.length" @click="coloriees = []">{{ t('effacer') }}</button>
+          <button v-if="q.kind !== 'choix'" class="btn btn-primary" :disabled="verrou" @click="valider">{{ t('valider') }}</button>
         </div>
       </div>
     </template>
@@ -159,7 +159,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>{{ h.libelle }}</td>
@@ -171,8 +171,8 @@
       </table>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -181,6 +181,113 @@
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: 'Les fractions',
+    fractions: 'Fractions',
+    colQuestion: 'Question',
+    aideColorier: 'Touche les parts pour les colorier ({n} / {total})',
+    cIdentifier: 'Quelle fraction de la figure est coloriée ?',
+    disque: 'Disque', barre: 'Barre', rectangle: 'Rectangle',
+    partsColoriees: '{n} part coloriée sur {d}',
+    partsColorieesPl: '{n} parts coloriées sur {d}',
+    partsSur: '{n} part sur {d}',
+    partsSurPl: '{n} parts sur {d}',
+    cColorie: 'Colorie',
+    cColorieFin: ' de la figure ({l}).',
+    libColorier: 'Colorier {f}',
+    cSeLit: 'Comment se lit cette fraction ?',
+    libEnLettres: '{f} en lettres',
+    cEcrite: 'Quelle fraction est écrite ?',
+    partDeTexte: '{nom} de {total}, c\'est ?',
+    partDeConsigne: '{nom}, c\'est une des {parts} parts égales.',
+    partDeLibelle: '{nom} de {total}',
+    uniteEntiere: "{d}/{d}, c'est l'unité entière",
+    ilManque: 'il manque {x} part pour faire {d}/{d} = 1',
+    ilManquePl: 'il manque {x} parts pour faire {d}/{d} = 1',
+    enPlus: '{d}/{d} = 1 et il y a {x} part en plus',
+    enPlusPl: '{d}/{d} = 1 et il y a {x} parts en plus',
+    cUnite: 'Compare cette fraction à 1 : < , = ou > ?',
+    cEgalesNombre: 'Complète pour que les fractions soient égales.',
+    cEgalesChoix: 'Quelle fraction est égale à',
+    libEgale: 'Égale à {f}',
+    cDroite: "Quelle fraction montre la flèche ? (l'unité est partagée en {d} parts égales)",
+    libDroite: 'Droite de 0 à {u}, flèche',
+    cPlacer: 'Place la fraction',
+    cPlacerFin: ' sur la droite : touche la bonne graduation.',
+    libPlacer: 'Placer {f} (droite de 0 à {u})',
+    graduation: '{o} graduation',
+    graduationApres0: '{o} graduation après 0',
+    laBonne: '❌ La bonne réponse : {r}',
+    pIdentifier: 'Quelle fraction est coloriée ?',
+    pColorie: 'Colorie {f} de la figure.',
+    pEnLettres: "{f} s'écrit en lettres :",
+    pEnChiffres: "{f} s'écrit en chiffres :",
+    pPartDe: "{l}, c'est",
+    pComplete: 'Complète :',
+    pEntoure: 'Entoure la fraction égale à {f} :',
+    pDroite: 'Quelle fraction montre la flèche ?',
+    pReponse: 'Réponse :',
+    pPlacer: 'Dessine une flèche pour placer {f} sur la droite.',
+    pNbQuestions: '{n} questions',
+  },
+  br: {
+    titre: 'An darnaouennoù',
+    fractions: 'Darnaouennoù',
+    colQuestion: 'Goulenn',
+    aideColorier: 'Stok al lodennoù evit o livañ ({n} / {total})',
+    cIdentifier: 'Peseurt darnaouenn eus ar skeudenn a zo livet ?',
+    disque: "Kelc'h", barre: 'Barrenn', rectangle: 'Hirgarrez',
+    partsColoriees: '{n} lodenn livet war {d}',
+    partsColorieesPl: '{n} lodenn livet war {d}',
+    partsSur: '{n} lodenn war {d}',
+    partsSurPl: '{n} lodenn war {d}',
+    cColorie: 'Liv',
+    cColorieFin: ' eus ar skeudenn ({l}).',
+    libColorier: 'Livañ {f}',
+    cSeLit: 'Penaos e lenner an darnaouenn-mañ ?',
+    libEnLettres: '{f} e lizherennoù',
+    cEcrite: 'Peseurt darnaouenn a zo skrivet ?',
+    partDeTexte: '{nom} eus {total}, pegement eo ?',
+    partDeConsigne: '{nom} : unan eus {parts} lodenn gevatal.', // br: à relire
+    partDeLibelle: '{nom} eus {total}',
+    uniteEntiere: '{d}/{d} eo an unanenn a-bezh',
+    ilManque: 'mankout a ra {x} lodenn evit ober {d}/{d} = 1',
+    ilManquePl: 'mankout a ra {x} lodenn evit ober {d}/{d} = 1',
+    enPlus: "{d}/{d} = 1 hag ez eus {x} lodenn ouzhpenn",
+    enPlusPl: "{d}/{d} = 1 hag ez eus {x} lodenn ouzhpenn",
+    cUnite: 'Keñveria an darnaouenn-mañ gant 1 : < , = pe > ?',
+    cEgalesNombre: 'Kloka evit ma vo kevatal an darnaouennoù.', // br: à relire
+    cEgalesChoix: 'Peseurt darnaouenn a zo kevatal da',
+    libEgale: 'Kevatal da {f}',
+    cDroite: 'Peseurt darnaouenn a ziskouez ar bir ? (rannet eo an unanenn e {d} lodenn gevatal)',
+    libDroite: 'Linenn eus 0 betek {u}, bir',
+    cPlacer: 'Laka an darnaouenn',
+    cPlacerFin: ' war al linenn : stok an derez mat.', // br: à relire (« derez » = graduation)
+    libPlacer: 'Lakaat {f} (linenn eus 0 betek {u})',
+    graduation: '{o} derez',
+    graduationApres0: '{o} derez goude 0',
+    laBonne: '❌ Ar respont mat : {r}',
+    pIdentifier: 'Peseurt darnaouenn a zo livet ?',
+    pColorie: 'Liv {f} eus ar skeudenn.',
+    pEnLettres: '{f} e lizherennoù :',
+    pEnChiffres: '{f} e sifroù :',
+    pPartDe: '{l} =',
+    pComplete: 'Kloka :',
+    pEntoure: 'Kelc\'hia an darnaouenn kevatal da {f} :', // br: à relire
+    pDroite: 'Peseurt darnaouenn a ziskouez ar bir ?',
+    pReponse: 'Respont :',
+    pPlacer: 'Tresa ur bir evit lakaat {f} war al linenn.',
+    pNbQuestions: '{n} goulenn',
+  },
+})
+const BR = () => langue.value === 'br'
+// accord simple : clé au singulier ou au pluriel (« Pl ») — en breton les deux sont identiques
+const tn = (cle, n, params) => t(n > 1 ? cle + 'Pl' : cle, { n, ...params })
+// ordinal en chiffres : 1re, 2e… / 1añ, 2vet, 3de, 4re, 5vet… // br: à relire
+const ordinal = n => BR() ? `${n}${n === 1 ? 'añ' : n === 3 ? 'de' : n === 4 ? 're' : 'vet'}` : `${n}${n > 1 ? 'e' : 're'}`
 
 // #region generation — fonctions pures (testables hors de Vue)
 
@@ -213,20 +320,23 @@ const NIVEAUX = {
 }
 
 const TYPES = [
-  { id: 'identifier', label: '👀 Quelle fraction ?' },
-  { id: 'colorier',   label: '🖍️ Colorier' },
-  { id: 'lettres',    label: '🔤 En lettres' },
-  { id: 'partDe',     label: '🍪 La moitié de…' },
-  { id: 'unite',      label: '⚖️ Plus ou moins que 1 ?' },
-  { id: 'egales',     label: '🟰 Fractions égales' },
-  { id: 'droite',     label: '📏 Lire sur la droite' },
-  { id: 'placer',     label: '📍 Placer sur la droite' },
+  { id: 'identifier', label: { fr: '👀 Quelle fraction ?', br: '👀 Peseurt darnaouenn ?' } },
+  { id: 'colorier',   label: { fr: '🖍️ Colorier', br: '🖍️ Livañ' } },
+  { id: 'lettres',    label: { fr: '🔤 En lettres', br: '🔤 E lizherennoù' } },
+  { id: 'partDe',     label: { fr: '🍪 La moitié de…', br: '🍪 An hanter eus…' } },
+  { id: 'unite',      label: { fr: '⚖️ Plus ou moins que 1 ?', br: "⚖️ Muioc'h pe nebeutoc'h eget 1 ?" } },
+  { id: 'egales',     label: { fr: '🟰 Fractions égales', br: '🟰 Darnaouennoù kevatal' } },
+  { id: 'droite',     label: { fr: '📏 Lire sur la droite', br: '📏 Lenn war al linenn' } },
+  { id: 'placer',     label: { fr: '📍 Placer sur la droite', br: '📍 Lakaat war al linenn' } },
 ]
 
 const MODES = {
-  unitaires: 'Un demi, un tiers… (1/2, 1/3…)',
-  toutes: 'Aussi 2/3, 3/4…',
+  unitaires: { fr: 'Un demi, un tiers… (1/2, 1/3…)', br: 'Un hanter, un trede… (1/2, 1/3…)' },
+  toutes: { fr: 'Aussi 2/3, 3/4…', br: '2/3, 3/4… ivez' },
 }
+
+// « La moitié de… » en breton
+const NOMS_PARTDE_BR = { 2: 'An hanter', 3: 'An trede', 4: "Ar c'hard", 5: 'Ar pempvet', 10: 'An dekvet' }
 
 const COULEUR = '#f39c12'
 
@@ -237,7 +347,38 @@ const NOMS_PARTS = {
   9: ['neuvième', 'neuvièmes'], 10: ['dixième', 'dixièmes'],
 }
 
-function enLettres({ n, d }) {
+// Breton : un hanter, un trede, ur c'hard, ur pempvet… ; daou drede, tri c'hard, daou bempvet…
+// (mutation adoucissante après « daou », spirante après « tri, pevar, nav ») // br: à relire
+const CHIFFRES_BR = ['zero', 'un', 'daou', 'tri', 'pevar', 'pemp', "c'hwec'h", 'seizh', 'eizh', 'nav']
+const NOMS_PARTS_BR = {
+  2: 'hanter', 3: 'trede', 4: 'kard', 5: 'pempvet', 6: "c'hwec'hvet", 7: 'seizhvet',
+  8: 'eizhvet', 9: 'navvet', 10: 'dekvet',
+}
+function mutationDouce(m) {
+  for (const [a, b] of [['gw', 'w'], ['k', 'g'], ['t', 'd'], ['p', 'b'], ['g', "c'h"], ['d', 'z'], ['b', 'v'], ['m', 'v']]) {
+    if (m.startsWith(a) && !m.startsWith("c'h")) return b + m.slice(a.length)
+  }
+  return m
+}
+function mutationSpirante(m) {
+  for (const [a, b] of [['k', "c'h"], ['t', 'z'], ['p', 'f']]) if (m.startsWith(a)) return b + m.slice(1)
+  return m
+}
+function enLettresBr({ n, d }) {
+  const nom = NOMS_PARTS_BR[d]
+  if (n === 1) {
+    // article indéfini : un (voyelle, h, n, d, t), ul (l), ur (autres) ; k → c'h après ur
+    if (/^[aeiouhndt]/.test(nom)) return `un ${nom}`
+    if (nom.startsWith('l')) return `ul ${nom}`
+    return `ur ${nom.startsWith('k') ? mutationSpirante(nom) : nom}`
+  }
+  if (n === 2) return `daou ${mutationDouce(nom)}`
+  if (n === 3 || n === 4 || n === 9) return `${CHIFFRES_BR[n]} ${mutationSpirante(nom)}`
+  return `${CHIFFRES_BR[n]} ${nom}`
+}
+function enLettres(f) {
+  if (BR()) return enLettresBr(f)
+  const { n, d } = f
   return `${CHIFFRES_LETTRES[n]} ${NOMS_PARTS[d][n >= 2 ? 1 : 0]}`
 }
 const cle = f => typeof f === 'string' ? f : `${f.n}/${f.d}`
@@ -327,9 +468,9 @@ function genIdentifier(niv, mode) {
   const colorees = partsColoriees(f.n, f.d)
   return {
     type: 'identifier', kind: 'choix', choixEn: 'frac', cle: `id${cle(f)}${forme.type}${colorees.join('-')}`,
-    consigne: 'Quelle fraction de la figure est coloriée ?',
+    consigne: t('cIdentifier'),
     forme, colorees, reponse: f, choix: melanger([f, ...distracteursFraction(f, niv)]),
-    libelle: `${forme.type === 'disque' ? 'Disque' : forme.type === 'barre' ? 'Barre' : 'Rectangle'} : ${f.n} part${f.n > 1 ? 's' : ''} coloriée${f.n > 1 ? 's' : ''} sur ${f.d}`,
+    libelle: `${t(forme.type)} : ${tn('partsColoriees', f.n, { d: f.d })}`,
     attendu: `${cle(f)} (${enLettres(f)})`,
   }
 }
@@ -339,9 +480,9 @@ function genColorier(niv, mode) {
   const forme = tirerForme(f.d)
   return {
     type: 'colorier', kind: 'parts', cle: `co${cle(f)}${forme.type}`,
-    consigne: 'Colorie', fracConsigne: f, consigneFin: ` de la figure (${enLettres(f)}).`,
+    consigne: t('cColorie'), fracConsigne: f, consigneFin: t('cColorieFin', { l: enLettres(f) }),
     forme, reponse: f,
-    libelle: `Colorier ${cle(f)}`, attendu: `${f.n} part${f.n > 1 ? 's' : ''} sur ${f.d}`,
+    libelle: t('libColorier', { f: cle(f) }), attendu: tn('partsSur', f.n, { d: f.d }),
   }
 }
 
@@ -358,13 +499,13 @@ function genLettres(niv, mode) {
   if (Math.random() < 0.5) {
     return {
       type: 'lettres', kind: 'choix', choixEn: 'lettres', cle: `le${cle(f)}`,
-      consigne: 'Comment se lit cette fraction ?', fracAffichee: f, reponse: f, choix,
-      libelle: `${cle(f)} en lettres`, attendu: enLettres(f),
+      consigne: t('cSeLit'), fracAffichee: f, reponse: f, choix,
+      libelle: t('libEnLettres', { f: cle(f) }), attendu: enLettres(f),
     }
   }
   return {
     type: 'lettres', kind: 'choix', choixEn: 'frac', cle: `lc${cle(f)}`,
-    consigne: 'Quelle fraction est écrite ?', texte: enLettres(f), reponse: f, choix,
+    consigne: t('cEcrite'), texte: enLettres(f), reponse: f, choix,
     libelle: enLettres(f), attendu: cle(f),
   }
 }
@@ -393,12 +534,13 @@ function genPartDe(niv) {
   const totaux = Math.random() < 0.8 || !cfg.extra.length ? possibles : cfg.extra
   const total = totaux[aleatoire(0, totaux.length - 1)]
   const rep = total / d
-  const texte = `${cfg.nom} de ${total}, c'est ?`
+  const nom = BR() ? NOMS_PARTDE_BR[d] : cfg.nom
+  const texte = t('partDeTexte', { nom, total })
   return {
     type: 'partDe', kind: 'nombre', cle: `pd${d}-${total}`,
-    consigne: `${cfg.nom}, c'est une des ${d === 10 ? 'dix' : nbParts} parts égales.`,
+    consigne: t('partDeConsigne', { nom, parts: BR() ? d : d === 10 ? 'dix' : nbParts }),
     texte, jetons: total <= 24 ? svgJetons(total) : null, reponse: rep, d, total,
-    libelle: `${cfg.nom} de ${total}`, attendu: `${rep} (${Array(d).fill(rep).join(' + ')} = ${total})`,
+    libelle: t('partDeLibelle', { nom, total }), attendu: `${rep} (${Array(d).fill(rep).join(' + ')} = ${total})`,
   }
 }
 
@@ -409,12 +551,12 @@ function genUnite(niv) {
   const n = r < 0.2 ? d : r < 0.55 ? aleatoire(1, d - 1) : aleatoire(d + 1, 2 * d)
   const f = { n, d }
   const reponse = n < d ? '<' : n > d ? '>' : '='
-  const explication = n === d ? `${d}/${d}, c'est l'unité entière`
-    : n < d ? `il manque ${d - n} part${d - n > 1 ? 's' : ''} pour faire ${d}/${d} = 1`
-    : `${d}/${d} = 1 et il y a ${n - d} part${n - d > 1 ? 's' : ''} en plus`
+  const explication = n === d ? t('uniteEntiere', { d })
+    : n < d ? t(d - n > 1 ? 'ilManquePl' : 'ilManque', { x: d - n, d })
+    : t(n - d > 1 ? 'enPlusPl' : 'enPlus', { x: n - d, d })
   return {
     type: 'unite', kind: 'choix', choixEn: 'signe', cle: `un${cle(f)}`,
-    consigne: 'Compare cette fraction à 1 : < , = ou > ?', fracAffichee: f, suffixe: '…  1',
+    consigne: t('cUnite'), fracAffichee: f, suffixe: '…  1',
     reponse, choix: ['<', '=', '>'],
     libelle: `${cle(f)} … 1`, attendu: `${cle(f)} ${reponse} 1 (${explication})`,
   }
@@ -433,7 +575,7 @@ function genEgales(niv) {
   if (Math.random() < 0.5) {
     return {
       type: 'egales', kind: 'nombre', cle: `egn${cle(f)}-${g.d}`,
-      consigne: 'Complète pour que les fractions soient égales.', forme, colorees, formeAide: formeBarre(g.d),
+      consigne: t('cEgalesNombre'), forme, colorees, formeAide: formeBarre(g.d),
       egalite: { gauche: f, droite: { n: '?', d: g.d } }, reponse: g.n,
       libelle: `${cle(f)} = ?/${g.d}`, attendu: `${cle(f)} = ${cle(g)}`,
     }
@@ -458,9 +600,9 @@ function genEgales(niv) {
   }
   return {
     type: 'egales', kind: 'choix', choixEn: 'frac', cle: `egc${cle(f)}-${g.d}`,
-    consigne: 'Quelle fraction est égale à', fracConsigne: f, consigneFin: ' ?', forme, colorees,
+    consigne: t('cEgalesChoix'), fracConsigne: f, consigneFin: ' ?', forme, colorees,
     reponse: g, choix: melanger(choix),
-    libelle: `Égale à ${cle(f)}`, attendu: `${cle(g)} (${cle(f)} = ${cle(g)})`,
+    libelle: t('libEgale', { f: cle(f) }), attendu: `${cle(g)} (${cle(f)} = ${cle(g)})`,
   }
 }
 
@@ -518,9 +660,9 @@ function genDroite(niv) {
   }
   return {
     type: 'droite', kind: 'choix', choixEn: 'frac', cle: `dr${dr.unites}-${cle(f)}`,
-    consigne: `Quelle fraction montre la flèche ? (l'unité est partagée en ${dr.d} parts égales)`,
+    consigne: t('cDroite', { d: dr.d }),
     svg: svgDroiteFraction(dr, f.n), droite: dr, reponse: f, choix: melanger(choix),
-    libelle: `Droite de 0 à ${dr.unites}, flèche`, attendu: cle(f),
+    libelle: t('libDroite', { u: dr.unites }), attendu: cle(f),
   }
 }
 
@@ -528,9 +670,9 @@ function genPlacer(niv) {
   const { dr, f } = tirerPointDroite(niv)
   return {
     type: 'placer', kind: 'placer', cle: `pl${dr.unites}-${cle(f)}`,
-    consigne: 'Place la fraction', fracConsigne: f, consigneFin: ' sur la droite : touche la bonne graduation.',
+    consigne: t('cPlacer'), fracConsigne: f, consigneFin: t('cPlacerFin'),
     droite: dr, reponse: f,
-    libelle: `Placer ${cle(f)} (droite de 0 à ${dr.unites})`, attendu: `${f.n}${f.n > 1 ? 'e' : 're'} graduation après 0`,
+    libelle: t('libPlacer', { f: cle(f), u: dr.unites }), attendu: t('graduationApres0', { o: ordinal(f.n) }),
   }
 }
 
@@ -674,11 +816,11 @@ function valider() {
   } else if (question.kind === 'placer') {
     if (placement.value === null) return
     const k = placement.value
-    corriger(k === question.reponse.n, `${k}${k > 1 ? 'e' : 're'} graduation`)
+    corriger(k === question.reponse.n, t('graduation', { o: ordinal(k) }))
   } else if (question.kind === 'parts') {
     if (!coloriees.value.length) return
     const n = coloriees.value.length
-    corriger(n === question.reponse.n, `${n} part${n > 1 ? 's' : ''} sur ${question.reponse.d}`)
+    corriger(n === question.reponse.n, tn('partsSur', n, { d: question.reponse.d }))
   }
 }
 
@@ -687,12 +829,13 @@ function corriger(ok, donne) {
   verrou.value = true
   if (ok) {
     inputClass.value = 'ok'
-    feedback.value = ['Bravo ! 🎉', 'Excellent ! ⭐', 'Parfait ! 👏', 'Super ! 🌟'][aleatoire(0, 3)]
+    const bravos = t('bravo')
+    feedback.value = bravos[aleatoire(0, bravos.length - 1)]
     feedbackClass.value = 'ok'
     bonnes.value++
   } else {
     inputClass.value = 'erreur'
-    feedback.value = `❌ La bonne réponse : ${question.attendu}`
+    feedback.value = t('laBonne', { r: question.attendu })
     feedbackClass.value = 'erreur'
     mauvaises.value++
   }
@@ -704,7 +847,7 @@ function passer() {
   if (verrou.value) return
   const question = q.value
   mauvaises.value++
-  historique.value.push({ libelle: question.libelle, donne: '(passé)', attendu: question.attendu, ok: false })
+  historique.value.push({ libelle: question.libelle, donne: t('passe'), attendu: question.attendu, ok: false })
   suivant()
 }
 
@@ -716,11 +859,11 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Tu peux encore progresser 💪'
-  if (pct >= 40)   return 'Courage, continue à t\'entraîner ! 🤓'
-  return 'N\'abandonne pas, pratique encore ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  if (pct >= 40)   return t('resultat40')
+  return t('resultat0')
 })
 
 onUnmounted(() => clearTimeout(timeout))
@@ -733,25 +876,25 @@ function questionPapier(qu, i) {
   const num = `<span class="num">${i + 1}.</span>`
   switch (qu.type) {
     case 'identifier':
-      return `<div class="q">${num}<div class="forme">${formeEnSvg(qu.forme, qu.colorees)}</div><div>Quelle fraction est coloriée ? ${fracVide}</div></div>`
+      return `<div class="q">${num}<div class="forme">${formeEnSvg(qu.forme, qu.colorees)}</div><div>${t('pIdentifier')} ${fracVide}</div></div>`
     case 'colorier':
-      return `<div class="q">${num}<div class="forme">${formeEnSvg(qu.forme)}</div><div>Colorie ${fracHtml(qu.reponse)} de la figure.</div></div>`
+      return `<div class="q">${num}<div class="forme">${formeEnSvg(qu.forme)}</div><div>${t('pColorie', { f: fracHtml(qu.reponse) })}</div></div>`
     case 'lettres':
       return qu.choixEn === 'lettres'
-        ? `<div class="q">${num}<div>${fracHtml(qu.reponse)} s'écrit en lettres : <span class="ligne longue"></span></div></div>`
-        : `<div class="q">${num}<div><b>${qu.texte}</b> s'écrit en chiffres : ${fracVide}</div></div>`
+        ? `<div class="q">${num}<div>${t('pEnLettres', { f: fracHtml(qu.reponse) })} <span class="ligne longue"></span></div></div>`
+        : `<div class="q">${num}<div>${t('pEnChiffres', { f: `<b>${qu.texte}</b>` })} ${fracVide}</div></div>`
     case 'partDe':
-      return `<div class="q">${num}<div>${qu.libelle}, c'est <span class="ligne"></span></div></div>`
+      return `<div class="q">${num}<div>${t('pPartDe', { l: qu.libelle })} <span class="ligne"></span></div></div>`
     case 'unite':
       return `<div class="q">${num}<div>${fracHtml(qu.fracAffichee)} <span class="case"></span> 1 &nbsp; <small>(&lt; , = ou &gt;)</small></div></div>`
     case 'egales':
       return qu.kind === 'nombre'
-        ? `<div class="q">${num}<div>Complète : ${fracHtml(qu.egalite.gauche)} = <span class="frac-vide"><span class="vide"></span><span class="barre"></span><b>${qu.egalite.droite.d}</b></span></div></div>`
-        : `<div class="q">${num}<div>Entoure la fraction égale à ${fracHtml(qu.fracConsigne)} : &nbsp; ${qu.choix.map(fracHtml).join(' &nbsp;&nbsp; ')}</div></div>`
+        ? `<div class="q">${num}<div>${t('pComplete')} ${fracHtml(qu.egalite.gauche)} = <span class="frac-vide"><span class="vide"></span><span class="barre"></span><b>${qu.egalite.droite.d}</b></span></div></div>`
+        : `<div class="q">${num}<div>${t('pEntoure', { f: fracHtml(qu.fracConsigne) })} &nbsp; ${qu.choix.map(fracHtml).join(' &nbsp;&nbsp; ')}</div></div>`
     case 'droite':
-      return `<div class="q">${num}<div style="width:100%">Quelle fraction montre la flèche ?<div>${svgDroiteFraction(qu.droite, qu.reponse.n)}</div>Réponse : ${fracVide}</div></div>`
+      return `<div class="q">${num}<div style="width:100%">${t('pDroite')}<div>${svgDroiteFraction(qu.droite, qu.reponse.n)}</div>${t('pReponse')} ${fracVide}</div></div>`
     case 'placer':
-      return `<div class="q">${num}<div style="width:100%">Dessine une flèche pour placer ${fracHtml(qu.reponse)} sur la droite.<div>${svgDroiteFraction(qu.droite)}</div></div></div>`
+      return `<div class="q">${num}<div style="width:100%">${t('pPlacer', { f: fracHtml(qu.reponse) })}<div>${svgDroiteFraction(qu.droite)}</div></div></div>`
     default:
       return ''
   }
@@ -762,8 +905,8 @@ function imprimerFiche() {
   const niv = config.value.niveau.toUpperCase()
   const rows = qs.map(questionPapier).join('')
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Les fractions — ${niv}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -780,8 +923,8 @@ function imprimerFiche() {
       .ligne { display: inline-block; width: 4rem; border-bottom: 1.5px solid #555; height: 1.3rem; }
       .ligne.longue { width: 14rem; }
     </style></head><body>
-    <h1>Les fractions — ${niv}</h1>
-    <p class="entete">${qs.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    <h1>${t('titre')} — ${niv}</h1>
+    <p class="entete">${t('pNbQuestions', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${rows}
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`

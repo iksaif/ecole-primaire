@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">💶 La monnaie</h1>
+    <h1 class="section-heading">💶 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in Object.keys(NIVEAUX)" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -14,29 +14,29 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Exercices</div>
+        <div class="config-section-title">{{ t('exercices') }}</div>
         <div class="btn-group">
-          <button v-for="t in typesNiveau" :key="t.id"
-            class="level-btn" :class="{ active: config.exercices.includes(t.id) }"
-            @click="toggleExercice(t.id)">{{ t.label }}</button>
+          <button v-for="ty in typesNiveau" :key="ty.id"
+            class="level-btn" :class="{ active: config.exercices.includes(ty.id) }"
+            @click="toggleExercice(ty.id)">{{ tr(ty.label) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Options</div>
+        <div class="config-section-title">{{ t('options') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: !config.centimes }" @click="config.centimes = false">Euros entiers</button>
-          <button class="level-btn" :class="{ active: config.centimes }" @click="config.centimes = true">Avec centimes</button>
+          <button class="level-btn" :class="{ active: !config.centimes }" @click="config.centimes = false">{{ t('eurosEntiers') }}</button>
+          <button class="level-btn" :class="{ active: config.centimes }" @click="config.centimes = true">{{ t('avecCentimes') }}</button>
         </div>
         <div class="btn-group" style="margin-top:.5rem;">
           <button class="level-btn" :class="{ active: config.aideTotal }" @click="config.aideTotal = !config.aideTotal">
-            {{ config.aideTotal ? '✔' : '✖' }} Afficher le total pendant que je compose
+            {{ config.aideTotal ? '✔' : '✖' }} {{ t('afficherTotal') }}
           </button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -49,18 +49,18 @@
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
 
@@ -72,17 +72,17 @@
 
         <!-- Compter -->
         <template v-if="q.type === 'compter'">
-          <div class="consigne">Combien d'argent y a-t-il ?</div>
+          <div class="consigne">{{ t('combienArgent') }}</div>
           <div class="tas">
             <span v-for="(v, i) in q.items" :key="i" class="argent" v-html="svgArgent(v)"></span>
           </div>
           <div v-if="q.avecCentimes && niveau.saisieDecimale" class="saisie-somme">
             <input ref="inputEl" v-model="saisieT" class="exercise-input saisie-large"
-                   :class="inputClass" type="text" inputmode="decimal" placeholder="ex : 3,50 €"
+                   :class="inputClass" type="text" inputmode="decimal" :placeholder="t('exemple')"
                    :disabled="repondu" autocomplete="off" @keydown.enter="entree">
           </div>
           <div v-if="q.avecCentimes && niveau.saisieDecimale" class="astuce" style="text-align:center;">
-            Tu peux écrire « 3,50 € » ou « 3 € 50 c ».
+            {{ t('tuPeuxEcrire') }}
           </div>
           <div v-else class="saisie-somme">
             <input ref="inputEl" v-model="saisieE" class="exercise-input saisie-petite"
@@ -101,44 +101,44 @@
         <!-- Composer / le moins possible / rendre -->
         <template v-if="['composer', 'moins', 'rendre'].includes(q.type)">
           <div v-if="q.type === 'composer'" class="consigne">
-            Clique sur les pièces et les billets pour faire <strong class="somme">{{ f(q.cible) }}</strong>
+            {{ t('composer1') }} <strong class="somme">{{ f(q.cible) }}</strong>
           </div>
           <div v-else-if="q.type === 'moins'" class="consigne">
-            Paye <strong class="somme">{{ f(q.cible) }}</strong>
-            avec <strong>le moins possible</strong> de pièces et de billets
+            {{ t('moins1') }} <strong class="somme">{{ f(q.cible) }}</strong>
+            {{ t('moins2') }} <strong>{{ t('moins3') }}</strong> {{ t('moins4') }}
           </div>
           <template v-else>
             <div class="consigne">
               <span class="objet">{{ q.objet[0] }}</span>
-              Tu achètes {{ q.objet[1] }} {{ coute(q.objet) }} <strong class="somme">{{ f(q.prix) }}</strong>.
+              {{ t('tuAchetes') }} {{ q.objet[1] }} {{ coute(q.objet) }} <strong class="somme">{{ f(q.prix) }}</strong>.
             </div>
             <div class="consigne petite">
-              Tu donnes
+              {{ t('tuDonnes') }}
               <span class="argent" v-html="svgArgent(q.paye, 0.8)"></span>
             </div>
-            <div class="consigne petite">Combien doit-on te rendre ? Montre-le avec les pièces et les billets.</div>
+            <div class="consigne petite">{{ t('combienRendre') }}</div>
           </template>
 
           <div class="plateau" :class="inputClass">
-            <span v-if="!selection.length" class="plateau-vide">Ta monnaie apparaît ici</span>
+            <span v-if="!selection.length" class="plateau-vide">{{ t('plateauVide') }}</span>
             <button v-for="(v, i) in selection" :key="i" class="btn-argent dans-plateau"
-                    :disabled="repondu" :title="'Enlever : ' + nomArgent(v)"
+                    :disabled="repondu" :title="t('enlever') + ' : ' + nomArgent(v)"
                     @click="enlever(i)">
               <span class="argent" v-html="svgArgent(v, 0.8)"></span>
             </button>
           </div>
           <div class="plateau-actions">
-            <span v-if="config.aideTotal" class="total-aide">Total : <strong>{{ f(totalDe(selection)) }}</strong></span>
+            <span v-if="config.aideTotal" class="total-aide">{{ t('total') }} : <strong>{{ f(totalDe(selection)) }}</strong></span>
             <span v-else></span>
             <span class="btn-group">
-              <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="annuler">↩ Annuler</button>
-              <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection = []">🗑 Tout enlever</button>
+              <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="annuler">{{ t('annuler') }}</button>
+              <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection = []">{{ t('toutEnlever') }}</button>
             </span>
           </div>
 
           <div class="palette">
             <button v-for="v in palette" :key="v" class="btn-argent" :disabled="repondu"
-                    :title="'Ajouter : ' + nomArgent(v)" @click="ajouter(v)">
+                    :title="t('ajouter') + ' : ' + nomArgent(v)" @click="ajouter(v)">
               <span class="argent" v-html="svgArgent(v)"></span>
             </button>
           </div>
@@ -146,7 +146,7 @@
 
         <!-- Convertir (CE2) -->
         <template v-if="q.type === 'convertir'">
-          <div class="consigne">Rappel : <strong>1 € = 100 c</strong></div>
+          <div class="consigne">{{ t('rappel') }} : <strong>1 € = 100 c</strong></div>
           <div class="consigne conversion">{{ q.texte.replace(/ = \?.*$/, ' =') }}</div>
           <div class="saisie-somme">
             <template v-if="q.sous === 'c2ec'">
@@ -172,7 +172,7 @@
 
         <!-- Comparer -->
         <template v-if="q.type === 'comparer'">
-          <div class="consigne">Qui a le plus d'argent ?</div>
+          <div class="consigne">{{ t('quiPlus') }}</div>
           <div class="porte-monnaies">
             <div v-for="cote in ['A', 'B']" :key="cote" class="porte-monnaie"
                  :class="{ gagnant: repondu && (q.bonne === cote || q.bonne === 'egal') }">
@@ -187,7 +187,7 @@
           <div class="btn-group" style="justify-content:center;margin-top:1rem;">
             <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('A')">{{ q.nomA }}</button>
             <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('B')">{{ q.nomB }}</button>
-            <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('egal')">Autant tous les deux</button>
+            <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('egal')">{{ t('autantDeux') }}</button>
           </div>
         </template>
 
@@ -196,38 +196,38 @@
         <!-- Correction visuelle -->
         <div v-if="repondu && !dernierOk" class="correction">
           <template v-if="q.type === 'compter'">
-            Il y a <strong>{{ q.attendu }}</strong>.
-            <div class="astuce">Astuce : commence par compter les billets, puis les grosses pièces.<span v-if="config.niveau !== 'ce1'"> N'oublie pas : 100 c = 1 €.</span></div>
+            {{ t('ilYa1') }}<strong>{{ q.attendu }}</strong>{{ t('ilYa2') }}
+            <div class="astuce">{{ t('astuceCompter') }}<span v-if="config.niveau !== 'ce1'"> {{ t('noublie') }} : 100 c = 1 €.</span></div>
           </template>
           <template v-else-if="q.type === 'convertir'">
             {{ q.texte.replace(/ = \?.*$/, '') }} = <strong>{{ q.attendu }}</strong>
-            <div class="astuce">1 € = 100 c : les euros vont avant la virgule, les centimes après (toujours 2 chiffres : 2 € 5 c = 2,05 €).</div>
+            <div class="astuce">{{ t('astuceConvertir') }}</div>
           </template>
           <template v-else-if="q.type === 'comparer'">
-            {{ q.nomA }} a <strong>{{ f(q.totalA) }}</strong>,
-            {{ q.nomB }} a <strong>{{ f(q.totalB) }}</strong>.
-            <div class="astuce">Ce n'est pas le nombre de pièces qui compte, mais leur valeur !</div>
+            {{ q.nomA }}{{ t('aSomme') }} <strong>{{ f(q.totalA) }}</strong>,
+            {{ q.nomB }}{{ t('aSomme') }} <strong>{{ f(q.totalB) }}</strong>.
+            <div class="astuce">{{ t('astuceComparer') }}</div>
           </template>
           <template v-else>
-            <div>{{ q.type === 'moins' ? 'Avec le moins de pièces et billets :' : 'Une bonne réponse :' }}</div>
+            <div>{{ q.type === 'moins' ? t('avecMoins') : t('uneBonne') }}</div>
             <div class="tas">
               <span v-for="(v, i) in q.solution" :key="i" class="argent" v-html="svgArgent(v, 0.75)"></span>
             </div>
             <div v-if="q.type === 'rendre'" class="astuce">
-              On compte de {{ f(q.prix) }} jusqu'à {{ f(q.paye) }} : il manque {{ f(q.cible) }}.
+              {{ t('astuceRendre', { prix: f(q.prix), paye: f(q.paye), cible: f(q.cible) }) }}
             </div>
             <div v-else-if="q.type === 'moins'" class="astuce">
-              Astuce : prends d'abord le plus grand billet ou la plus grande pièce possible.
+              {{ t('astuceMoins') }}
             </div>
           </template>
         </div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
           <template v-if="!repondu">
-            <button class="btn btn-ghost" @click="passer">Passer ⏭</button>
-            <button v-if="q.type !== 'comparer'" class="btn btn-primary" @click="valider">Valider ✔</button>
+            <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+            <button v-if="q.type !== 'comparer'" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
           </template>
-          <button v-else-if="!dernierOk" class="btn btn-primary" @click="suivant">Suivant ➜</button>
+          <button v-else-if="!dernierOk" class="btn btn-primary" @click="suivant">{{ t('suivant') }}</button>
         </div>
       </div>
     </template>
@@ -238,7 +238,7 @@
       <div class="result-msg">{{ resultMsg }}</div>
 
       <table class="correction-table">
-        <thead><tr><th>Question</th><th>Ta réponse</th><th>Bonne réponse</th><th></th></tr></thead>
+        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>{{ h.texte }}</td>
@@ -250,8 +250,8 @@
       </table>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -260,6 +260,105 @@
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: 'La monnaie',
+    options: 'Options',
+    eurosEntiers: 'Euros entiers',
+    avecCentimes: 'Avec centimes',
+    afficherTotal: 'Afficher le total pendant que je compose',
+    combienArgent: "Combien d'argent y a-t-il ?",
+    exemple: 'ex : 3,50 €',
+    tuPeuxEcrire: 'Tu peux écrire « 3,50 € » ou « 3 € 50 c ».',
+    composer1: 'Clique sur les pièces et les billets pour faire',
+    moins1: 'Paye',
+    moins2: 'avec',
+    moins3: 'le moins possible',
+    moins4: 'de pièces et de billets',
+    tuAchetes: 'Tu achètes',
+    tuDonnes: 'Tu donnes',
+    combienRendre: 'Combien doit-on te rendre ? Montre-le avec les pièces et les billets.',
+    plateauVide: 'Ta monnaie apparaît ici',
+    enlever: 'Enlever',
+    ajouter: 'Ajouter',
+    total: 'Total',
+    toutEnlever: '🗑 Tout enlever',
+    rappel: 'Rappel',
+    quiPlus: "Qui a le plus d'argent ?",
+    autantDeux: 'Autant tous les deux',
+    ilYa1: 'Il y a ',
+    ilYa2: '.',
+    astuceCompter: 'Astuce : commence par compter les billets, puis les grosses pièces.',
+    noublie: "N'oublie pas",
+    astuceConvertir: '1 € = 100 c : les euros vont avant la virgule, les centimes après (toujours 2 chiffres : 2 € 5 c = 2,05 €).',
+    aSomme: ' a',
+    astuceComparer: "Ce n'est pas le nombre de pièces qui compte, mais leur valeur !",
+    avecMoins: 'Avec le moins de pièces et billets :',
+    uneBonne: 'Une bonne réponse :',
+    astuceRendre: "On compte de {prix} jusqu'à {paye} : il manque {cible}.",
+    astuceMoins: "Astuce : prends d'abord le plus grand billet ou la plus grande pièce possible.",
+    colQuestion: 'Question',
+    pasTout: 'Pas tout à fait… Regarde la correction.',
+    ecrisSomme: 'Écris la somme comme « 3,50 € » ou « 3 € 50 c ».',
+    auLieuDe: 'Tu as fait {t} au lieu de {c}.',
+    tropDePieces: "C'est bien {t} 👍 mais on peut payer avec seulement {n} pièces et billets.",
+    ilManque: 'Tu as fait {t} : il manque {m}.',
+    deTrop: "Tu as fait {t} : c'est {m} de trop.",
+    autantArgent: "Ils ont autant d'argent tous les deux : {s}.",
+    lePlus: "C'est {nom} qui a le plus d'argent.",
+    autant: 'Autant',
+  },
+  br: {
+    titre: 'Ar moneiz',
+    options: 'Dibarzhioù',
+    eurosEntiers: 'Euro hepken',
+    avecCentimes: 'Gant santimoù',
+    afficherTotal: 'Diskouez ar sammad e-keit ma lakaan an arc\'hant', // br: à relire
+    combienArgent: "Pegement a arc'hant a zo ?",
+    exemple: 'sk. : 3,50 €',
+    tuPeuxEcrire: 'Gallout a rez skrivañ « 3,50 € » pe « 3 € 50 c ».',
+    composer1: 'Klik war ar pezhioù moneiz hag ar bilhedoù evit ober',
+    moins1: 'Paea',
+    moins2: 'gant',
+    moins3: 'an nebeutañ posubl',
+    moins4: 'a bezhioù moneiz hag a vilhedoù',
+    tuAchetes: 'Prenañ a rez',
+    tuDonnes: 'Reiñ a rez',
+    combienRendre: 'Pegement a vo distroet dit ? Diskouez anezhañ gant ar pezhioù moneiz hag ar bilhedoù.',
+    plateauVide: 'Da voneiz a zeuio amañ',
+    enlever: 'Tennañ',
+    ajouter: 'Ouzhpennañ',
+    total: 'Sammad',
+    toutEnlever: '🗑 Tennañ pep tra',
+    rappel: "Dalc'h soñj",
+    quiPlus: "Piv en deus ar muiañ a arc'hant ?",
+    autantDeux: 'Kement o-daou',
+    ilYa1: '',
+    ilYa2: ' a zo.',
+    astuceCompter: "Tun : kont ar bilhedoù da gentañ, ha goude ar pezhioù moneiz bras.",
+    noublie: "N'ankouaha ket",
+    astuceConvertir: "1 € = 100 c : an euro a ya a-raok ar skej, ar santimoù war-lerc'h (atav 2 sifr : 2 € 5 c = 2,05 €).", // br: à relire
+    aSomme: ' :',
+    astuceComparer: "N'eo ket an niver a bezhioù a gont, met o zalvoudegezh !",
+    avecMoins: 'Gant an nebeutañ a bezhioù hag a vilhedoù :',
+    uneBonne: 'Ur respont mat :',
+    astuceRendre: 'Kontañ a reer eus {prix} betek {paye} : mankout a ra {cible}.',
+    astuceMoins: 'Tun : kemer da gentañ ar bilhed pe ar pezh moneiz brasañ posubl.',
+    colQuestion: 'Goulenn',
+    pasTout: "N'eo ket mat c'hoazh… Sell ouzh ar reizhadenn.",
+    ecrisSomme: 'Skriv ar sammad evel « 3,50 € » pe « 3 € 50 c ».',
+    auLieuDe: "Graet ec'h eus {t} e-lec'h {c}.",
+    tropDePieces: "{t} eo, mat 👍 met gallout a reer paeañ gant {n} pezh pe bilhed hepken.", // br: à relire
+    ilManque: "Graet ec'h eus {t} : mankout a ra {m}.",
+    deTrop: "Graet ec'h eus {t} : {m} re a zo.", // br: à relire
+    autantArgent: "Kement a arc'hant o deus o-daou : {s}.",
+    lePlus: "Gant {nom} emañ ar muiañ a arc'hant.",
+    autant: 'Kement',
+  },
+})
+const enBr = () => langue.value === 'br'
 
 // ── LOGIQUE ── (toutes les sommes sont en CENTIMES entiers)
 
@@ -290,12 +389,12 @@ const METAUX = {
 const VALEURS = [10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1]
 
 const TYPES = [
-  { id: 'compter',  label: '🔢 Compter une somme' },
-  { id: 'composer', label: '🧩 Faire une somme' },
-  { id: 'moins',    label: '🪙 Le moins de pièces' },
-  { id: 'rendre',   label: '🛒 Rendre la monnaie' },
-  { id: 'comparer', label: '👛 Comparer' },
-  { id: 'convertir', label: '🔁 1 € = 100 c' },
+  { id: 'compter',  label: { fr: '🔢 Compter une somme', br: '🔢 Kontañ ur sammad' } },
+  { id: 'composer', label: { fr: '🧩 Faire une somme', br: '🧩 Ober ur sammad' } },
+  { id: 'moins',    label: { fr: '🪙 Le moins de pièces', br: '🪙 An nebeutañ a bezhioù' } },
+  { id: 'rendre',   label: { fr: '🛒 Rendre la monnaie', br: '🛒 Distreiñ ar moneiz' } },
+  { id: 'comparer', label: { fr: '👛 Comparer', br: '👛 Keñveriañ' } },
+  { id: 'convertir', label: { fr: '🔁 1 € = 100 c', br: '🔁 1 € = 100 c' } },
 ]
 
 // Données par niveau. notation : 'ec' (« 3 € 50 c ») ou 'les2' (« 3,50 € (3 € 50 c) »).
@@ -385,8 +484,16 @@ const OBJETS = {
   cher:     [['🧸', 'un ours en peluche'], ['🧩', 'un puzzle'], ['📕', 'un livre'], ['🎨', 'une boîte de peinture']],
   tresCher: [['🛴', 'une trottinette'], ['🛼', 'des rollers', true], ['🎲', 'un grand jeu de société'], ['🎧', 'un casque audio']],
 }
-function coute(objet) { return objet[2] ? 'qui coûtent' : 'qui coûte' }
+// Mêmes objets en breton, dans le même ordre (br: à relire)
+const OBJETS_BR = {
+  pasCher:  ['un aval', "ur c'hreion", 'bonbonoù', 'chug frouezh', 'ur bara hir'],
+  moyen:    ['un dablezenn chokolad', "ur c'haier", 'ur volotenn', 'feltroù', "ur c'harr bihan"],
+  cher:     ['un arzh pluch', 'ur puzzle', 'ul levr', 'ur voest livañ'],
+  tresCher: ['un trotinell', 'botoù-ruilh', "ur c'hoari-taol bras", 'ur selaouer'],
+}
+function coute(objet) { return enBr() ? 'a goust' : objet[2] ? 'qui coûtent' : 'qui coûte' }
 const PRENOMS = [['Léa', 'Tom'], ['Inès', 'Hugo'], ['Jade', 'Noah'], ['Chloé', 'Lucas'], ['Emma', 'Adam'], ['Lina', 'Gabriel']]
+const PRENOMS_BR = [['Nolwenn', 'Erwan'], ['Maiwenn', 'Yann'], ['Enora', 'Loig'], ['Gwenn', 'Malo'], ['Azenor', 'Tudual'], ['Lena', 'Gwenole']]
 
 const NB = ' '
 function formatSomme(c) {
@@ -407,7 +514,7 @@ function fmt(c, niv) {
 // Lit une somme écrite par l'enfant : « 3,50 », « 3.5 € », « 3 € 50 », « 3 € 50 c », « 350 c », « 7 ». Renvoie des centimes ou null.
 function lireSomme(texte) {
   const s = String(texte ?? '').toLowerCase().trim()
-    .replace(/euros?/g, '€').replace(/centimes?/g, 'c').replace(/\s+/g, ' ')
+    .replace(/euros?/g, '€').replace(/centimes?|santim(?:où)?/g, 'c').replace(/\s+/g, ' ')
   let m
   if ((m = s.match(/^(\d{1,4}) ?[,.] ?(\d{1,2}) ?€?$/))) return +m[1] * 100 + (m[2].length === 1 ? +m[2] * 10 : +m[2])
   if ((m = s.match(/^(\d{1,4}) ?€ ?(?:(\d{1,2}) ?c?)?$/))) return +m[1] * 100 + (m[2] ? +m[2] : 0)
@@ -416,6 +523,11 @@ function lireSomme(texte) {
   return null
 }
 function nomArgent(v) {
+  if (enBr()) {
+    if (v >= 500) return `bilhed ${v / 100} euro`
+    if (v >= 100) return `pezh ${v / 100} euro`
+    return `pezh ${v} santim`
+  }
   if (v >= 500) return `billet de ${v / 100} €`
   if (v >= 100) return `pièce de ${v / 100} €`
   return `pièce de ${v} centime${v > 1 ? 's' : ''}`
@@ -480,7 +592,7 @@ function genCompter(niv, centimes) {
   const total = totalDe(items)
   return {
     type: 'compter', cle: 'compter:' + items.join(','), items, total, avecCentimes: centimes,
-    texte: 'Compter : ' + items.map(formatSomme).join(' + '),
+    texte: (enBr() ? 'Kontañ : ' : 'Compter : ') + items.map(formatSomme).join(' + '),
     attendu: fmt(total, niv),
   }
 }
@@ -498,7 +610,7 @@ function genComposer(niv, centimes) {
   const cible = cibleComposer(niv, centimes)
   return {
     type: 'composer', cle: 'composer:' + cible, cible, solution: glouton(cible),
-    texte: `Faire ${fmt(cible, niv)}`, attendu: fmt(cible, niv),
+    texte: `${enBr() ? 'Ober' : 'Faire'} ${fmt(cible, niv)}`, attendu: fmt(cible, niv),
   }
 }
 
@@ -512,16 +624,16 @@ function genMoins(niv, centimes) {
   }
   return {
     type: 'moins', cle: 'moins:' + cible, cible, solution,
-    texte: `Payer ${fmt(cible, niv)} avec le moins possible`,
+    texte: enBr() ? `Paeañ ${fmt(cible, niv)} gant an nebeutañ posubl` : `Payer ${fmt(cible, niv)} avec le moins possible`,
     attendu: `${solution.length} : ${solution.map(formatSomme).join(' + ')}`,
   }
 }
 
 function objetPour(prix) {
-  if (prix <= 200) return pioche(OBJETS.pasCher)
-  if (prix <= 1000) return pioche(OBJETS.moyen)
-  if (prix <= 2000) return pioche(OBJETS.cher)
-  return pioche(OBJETS.tresCher)
+  const cat = prix <= 200 ? 'pasCher' : prix <= 1000 ? 'moyen' : prix <= 2000 ? 'cher' : 'tresCher'
+  const i = aleatoire(0, OBJETS[cat].length - 1)
+  const o = OBJETS[cat][i]
+  return enBr() ? [o[0], OBJETS_BR[cat][i], o[2]] : o
 }
 
 function genRendre(niv, centimes) {
@@ -532,7 +644,7 @@ function genRendre(niv, centimes) {
   return {
     type: 'rendre', cle: `rendre:${prix}/${cas.paye}`, paye: cas.paye, prix, cible: rendu, objet,
     solution: glouton(rendu),
-    texte: `${objet[0]} ${fmt(prix, niv)}, payé avec ${formatSomme(cas.paye)}`,
+    texte: `${objet[0]} ${fmt(prix, niv)}, ${enBr() ? 'paeet gant' : 'payé avec'} ${formatSomme(cas.paye)}`,
     attendu: fmt(rendu, niv),
   }
 }
@@ -556,13 +668,13 @@ function genComparer(niv, centimes) {
     }
   }
   const totalB = totalDe(itemsB)
-  const [nomA, nomB] = melanger(pioche(PRENOMS))
+  const [nomA, nomB] = melanger(pioche(enBr() ? PRENOMS_BR : PRENOMS))
   const bonne = totalA > totalB ? 'A' : totalB > totalA ? 'B' : 'egal'
   return {
     type: 'comparer', cle: 'comparer:' + itemsA.join(',') + '|' + itemsB.join(','),
     itemsA, itemsB, totalA, totalB, nomA, nomB, bonne,
-    texte: `${nomA} (${fmt(totalA, niv)}) ou ${nomB} (${fmt(totalB, niv)}) ?`,
-    attendu: bonne === 'A' ? nomA : bonne === 'B' ? nomB : 'Autant',
+    texte: `${nomA} (${fmt(totalA, niv)}) ${enBr() ? 'pe' : 'ou'} ${nomB} (${fmt(totalB, niv)}) ?`,
+    attendu: bonne === 'A' ? nomA : bonne === 'B' ? nomB : t('autant'),
   }
 }
 
@@ -579,7 +691,7 @@ function genConvertir(niv) {
     c2ec:   [`${valeur}${NB}c = ? € ? c`, ec],
     ec2c:   [`${ec} = ? c`, `${valeur}${NB}c`],
     dec2c:  [`${dec} = ? c`, `${valeur}${NB}c`],
-    ec2dec: [`${ec} = ? € (avec une virgule)`, dec],
+    ec2dec: [`${ec} = ? € (${enBr() ? 'gant ur skej' : 'avec une virgule'})`, dec],
   }
   const [texte, attendu] = enonces[sous]
   return { type: 'convertir', sous, cle: `convertir:${sous}:${valeur}`, valeur, texte, attendu }
@@ -746,18 +858,18 @@ function valider() {
     const donne = qu.sous === 'c2ec' ? `${saisieE.value || 0} € ${saisieC.value || 0} c`
       : `${String(saisieT.value).trim()}${qu.sous === 'ec2dec' ? '' : ' c'}`
     terminer(verifierConversion(qu, { e: saisieE.value, c: saisieC.value, texte: saisieT.value }), donne,
-      'Pas tout à fait… Regarde la correction.')
+      t('pasTout'))
     return
   }
   if (qu.type === 'compter' && qu.avecCentimes && niveau.value.saisieDecimale) {
     if (!String(saisieT.value).trim()) return
     const val = lireSomme(saisieT.value)
     if (val === null) {
-      feedback.value = 'Écris la somme comme « 3,50 € » ou « 3 € 50 c ».'
+      feedback.value = t('ecrisSomme')
       feedbackClass.value = 'erreur'
       return
     }
-    terminer(val === qu.total, f(val), 'Pas tout à fait… Regarde la correction.')
+    terminer(val === qu.total, f(val), t('pasTout'))
     return
   }
   if (qu.type === 'compter') {
@@ -767,36 +879,36 @@ function valider() {
     if (isNaN(e) || isNaN(c) || e < 0 || c < 0) return
     const val = e * 100 + c
     const ok = c < 100 && val === qu.total
-    terminer(ok, f(val), 'Pas tout à fait… Regarde la correction.')
+    terminer(ok, f(val), t('pasTout'))
     return
   }
   if (!selection.value.length) return
-  const t = totalDe(selection.value)
+  const tot = totalDe(selection.value)
   const n = selection.value.length
   if (qu.type === 'moins') {
     const donne = `${n} : ${trierDesc(selection.value).map(formatSomme).join(' + ')}`
-    if (t !== qu.cible) {
-      terminer(false, donne, `Tu as fait ${f(t)} au lieu de ${f(qu.cible)}.`)
+    if (tot !== qu.cible) {
+      terminer(false, donne, t('auLieuDe', { t: f(tot), c: f(qu.cible) }))
     } else if (n > qu.solution.length) {
-      terminer(false, donne, `C'est bien ${f(t)} 👍 mais on peut payer avec seulement ${qu.solution.length} pièces et billets.`)
+      terminer(false, donne, t('tropDePieces', { t: f(tot), n: qu.solution.length }))
     } else {
       terminer(true, donne)
     }
     return
   }
   // composer / rendre
-  terminer(t === qu.cible, f(t),
-    t < qu.cible ? `Tu as fait ${f(t)} : il manque ${f(qu.cible - t)}.`
-                 : `Tu as fait ${f(t)} : c'est ${f(t - qu.cible)} de trop.`)
+  terminer(tot === qu.cible, f(tot),
+    tot < qu.cible ? t('ilManque', { t: f(tot), m: f(qu.cible - tot) })
+                   : t('deTrop', { t: f(tot), m: f(tot - qu.cible) }))
 }
 
 function choisirComparer(choix) {
   if (repondu.value) return
   const qu = q.value
-  const donne = choix === 'A' ? qu.nomA : choix === 'B' ? qu.nomB : 'Autant'
+  const donne = choix === 'A' ? qu.nomA : choix === 'B' ? qu.nomB : t('autant')
   const msg = qu.bonne === 'egal'
-    ? `Ils ont autant d'argent tous les deux : ${f(qu.totalA)}.`
-    : `C'est ${qu.attendu} qui a le plus d'argent.`
+    ? t('autantArgent', { s: f(qu.totalA) })
+    : t('lePlus', { nom: qu.attendu })
   terminer(choix === qu.bonne, donne, msg)
 }
 
@@ -809,7 +921,7 @@ function terminer(ok, donne, msgErreur = '') {
   if (ok) {
     bonnes.value++
     inputClass.value = 'ok'
-    feedback.value = ['Bravo ! 🎉', 'Excellent ! ⭐', 'Parfait ! 👏', 'Super ! 🌟'][aleatoire(0, 3)]
+    feedback.value = pioche(t('bravo'))
     feedbackClass.value = 'ok'
     minuterie = setTimeout(suivant, 900)
   } else {
@@ -823,7 +935,7 @@ function terminer(ok, donne, msgErreur = '') {
 function passer() {
   if (repondu.value) return
   const qu = q.value
-  historique.value.push({ texte: qu.texte, donne: '(passé)', attendu: qu.attendu, ok: false })
+  historique.value.push({ texte: qu.texte, donne: t('passe'), attendu: qu.attendu, ok: false })
   etatsDots.value[idx.value] = 'erreur'
   mauvaises.value++
   suivant()
@@ -839,11 +951,11 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Tu peux encore progresser 💪'
-  if (pct >= 40)   return 'Courage, continue à t\'entraîner ! 🤓'
-  return 'N\'abandonne pas, pratique encore ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  if (pct >= 40)   return t('resultat40')
+  return t('resultat0')
 })
 
 onUnmounted(() => clearTimeout(minuterie))
@@ -854,6 +966,8 @@ function imprimerFiche() {
   const centimes = config.value.centimes
   const dessin = items => items.map(v => `<span class="arg">${svgArgent(v, 0.8)}</span>`).join('')
   const decimale = centimes && niv.saisieDecimale
+  const br = enBr()
+  const T = (fr, b) => (br ? b : fr)
   const ligneRep = decimale ? '__________ €' : centimes ? '______ € ______ c' : '__________ €'
 
   // 1. Compter
@@ -862,7 +976,7 @@ function imprimerFiche() {
     <div class="bloc">
       <div class="num">${i + 1}.</div>
       <div class="tas">${dessin(qu.items)}</div>
-      <div class="rep">Il y a : ${ligneRep}</div>
+      <div class="rep">${T('Il y a', 'Sammad')} : ${ligneRep}</div>
     </div>`).join('')
 
   // 2. Entoure pour payer
@@ -880,7 +994,7 @@ function imprimerFiche() {
   const blocEntoure = entoure.map((e, i) => `
     <div class="bloc">
       <div class="num">${i + 1}.</div>
-      <div class="enonce">Entoure ce qu'il faut pour payer exactement <strong>${fmt(e.cible, niv)}</strong>.</div>
+      <div class="enonce">${T("Entoure ce qu'il faut pour payer exactement", 'Kelc\'hia ar pezh a zo ezhomm evit paeañ resis')} <strong>${fmt(e.cible, niv)}</strong>.</div>
       <div class="tas">${dessin(e.items)}</div>
     </div>`).join('')
 
@@ -889,22 +1003,22 @@ function imprimerFiche() {
   const blocRendre = rendre.map((qu, i) => `
     <div class="ligne-rendre">
       <span class="num">${i + 1}.</span>
-      ${qu.objet[0]} Tu achètes ${qu.objet[1]} à <strong>${fmt(qu.prix, niv)}</strong>.
-      Tu donnes <strong>${formatSomme(qu.paye)}</strong>. On te rend : ${centimes ? '______________' : '______ €'}
+      ${qu.objet[0]} ${t('tuAchetes')} ${qu.objet[1]} ${T('à', 'da')} <strong>${fmt(qu.prix, niv)}</strong>.
+      ${t('tuDonnes')} <strong>${formatSomme(qu.paye)}</strong>. ${T('On te rend', 'Distroet e vo dit')} : ${centimes ? '______________' : '______ €'}
     </div>`).join('')
 
   // 4. Conversions (CE2)
   let blocConvertir = ''
   if (niv.types.includes('convertir')) {
     const conv = genererSansRepetition(['convertir'], 8, niv, centimes)
-    blocConvertir = `<h2>4. Complète. <small>(1 € = 100 c)</small></h2><div class="grille">`
+    blocConvertir = `<h2>4. ${T('Complète.', 'Leunia.')} <small>(1 € = 100 c)</small></h2><div class="grille">`
       + conv.map((qu, i) => `<div class="ligne-rendre"><span class="num">${i + 1}.</span> ${qu.texte
-        .replace('? € ? c', '______ € ______ c').replace('? € (avec une virgule)', '__________ €').replace('? c', '__________ c')}</div>`).join('')
+        .replace('? € ? c', '______ € ______ c').replace(/\? € \(.*\)/, '__________ €').replace('? c', '__________ c')}</div>`).join('')
       + '</div>'
   }
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>La monnaie — ${config.value.niveau.toUpperCase()}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${config.value.niveau.toUpperCase()}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.2cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -921,13 +1035,13 @@ function imprimerFiche() {
       .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .75rem; }
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     </style></head><body>
-    <h1>💶 La monnaie — ${config.value.niveau.toUpperCase()}</h1>
-    <p class="entete">${centimes ? 'Euros et centimes' : 'Euros'} &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
-    <h2>1. Compte l'argent.${decimale ? ' <small>(écris par exemple 3,50 €)</small>' : ''}</h2>
+    <h1>💶 ${t('titre')} — ${config.value.niveau.toUpperCase()}</h1>
+    <p class="entete">${centimes ? T('Euros et centimes', 'Euro ha santimoù') : T('Euros', 'Euro')} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <h2>1. ${T("Compte l'argent.", "Kont an arc'hant.")}${decimale ? ` <small>${T('(écris par exemple 3,50 €)', '(skriv da skouer 3,50 €)')}</small>` : ''}</h2>
     <div class="grille">${blocCompter}</div>
-    <h2>2. Entoure les pièces et les billets.</h2>
+    <h2>2. ${T('Entoure les pièces et les billets.', 'Kelc\'hia ar pezhioù moneiz hag ar bilhedoù.')}</h2>
     ${blocEntoure}
-    <h2>3. Combien te rend-on ?</h2>
+    <h2>3. ${T('Combien te rend-on ?', 'Pegement a vez distroet dit ?')}</h2>
     ${blocRendre}
     ${blocConvertir}
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>

@@ -4,18 +4,19 @@
     <div class="card-grid">
       <RouterLink v-for="a in g.activites" :key="a.to" :to="a.to" class="card" :class="a.matiere">
         <span class="card-icon">{{ a.icon }}</span>
-        <span class="card-title">{{ a.titre }}</span>
-        <span class="card-desc">{{ a.desc }}</span>
+        <span class="card-title">{{ langue === 'br' && a.br ? a.br.titre : a.titre }}</span>
+        <span class="card-desc">{{ langue === 'br' && a.br ? a.br.desc : a.desc }}</span>
         <span class="card-tag">{{ etiquetteNiveaux(a.niveaux) }}</span>
       </RouterLink>
     </div>
   </template>
-  <p v-if="!groupes.length" class="vide">Pas encore d'activité pour cette classe ici.</p>
+  <p v-if="!groupes.length" class="vide">{{ t('vide') }}</p>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { ACTIVITES, etiquetteNiveaux } from '../data/activites'
+import { ACTIVITES, DOMAINES_BR, etiquetteNiveaux } from '../data/activites'
+import { useI18n } from '../i18n'
 import { useClasse } from '../composables/useClasse'
 
 const props = defineProps({
@@ -23,6 +24,10 @@ const props = defineProps({
   parDomaine: { type: Boolean, default: false },
 })
 const classe = useClasse()
+const { t, langue } = useI18n({
+  fr: { vide: "Pas encore d'activité pour cette classe ici." },
+  br: { vide: "N'eus poelladenn ebet c'hoazh evit ar c'hlas-mañ amañ." },
+})
 
 const groupes = computed(() => {
   const liste = ACTIVITES.filter(a => a.matiere === props.matiere && (!classe.value || a.niveaux.includes(classe.value)))
@@ -34,7 +39,7 @@ const groupes = computed(() => {
     if (!parDomaine.has(d)) parDomaine.set(d, [])
     parDomaine.get(d).push(a)
   }
-  return [...parDomaine].map(([titre, activites]) => ({ titre, activites }))
+  return [...parDomaine].map(([titre, activites]) => ({ titre: langue.value === 'br' ? DOMAINES_BR[titre] ?? titre : titre, activites }))
 })
 </script>
 

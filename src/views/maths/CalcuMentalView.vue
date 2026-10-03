@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🧮 Calcul mental</h1>
+    <h1 class="section-heading">🧮 {{ t('titre') }}</h1>
 
     <!-- Config -->
     <div v-if="phase === 'config'" class="config-box">
       <div class="config-section">
-        <div class="config-section-title">Niveau</div>
+        <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
           <button v-for="niv in niveaux" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
@@ -14,17 +14,17 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Opérations</div>
+        <div class="config-section-title">{{ t('operations') }}</div>
         <div class="btn-group">
           <button v-for="op in TOUTES_OPS" :key="op"
             class="level-btn" :class="{ active: config.ops.includes(op) }"
             :disabled="!opsDisposPourNiveau.includes(op)"
-            @click="toggleOp(op)">{{ op }}</button>
+            @click="toggleOp(op)">{{ libelleOp(op) }}</button>
         </div>
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Nombre de questions</div>
+        <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5,10,20]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
@@ -33,27 +33,27 @@
       </div>
 
       <div class="config-section">
-        <div class="config-section-title">Temps par question</div>
+        <div class="config-section-title">{{ t('tempsParQuestion') }}</div>
         <div class="btn-group">
-          <button v-for="t in [0,10,20,30]" :key="t"
-            class="level-btn" :class="{ active: config.temps === t }"
-            @click="config.temps = t">{{ t === 0 ? 'Sans limite' : t + ' s' }}</button>
+          <button v-for="s in [0,10,20,30]" :key="s"
+            class="level-btn" :class="{ active: config.temps === s }"
+            @click="config.temps = s">{{ s === 0 ? t('sansLimite') : s + ' s' }}</button>
         </div>
       </div>
 
       <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">▶ Commencer</button>
+        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
+        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
       </div>
     </div>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
-        <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
+        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
         <span v-if="config.temps > 0" style="font-weight:700;">⏱ {{ Math.ceil(tempsRestant) }}s</span>
       </div>
@@ -73,8 +73,8 @@
         <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button class="btn btn-ghost" @click="passer">Passer ⏭</button>
-          <button class="btn btn-primary" @click="valider">Valider ✔</button>
+          <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+          <button class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
         </div>
       </div>
     </template>
@@ -88,13 +88,13 @@
         <div v-for="(h, i) in historique" :key="i"
              :class="['hist-item', h.ok ? 'ok' : 'erreur']">
           <span>{{ h.texte.replace('?', h.ok ? '✓' : h.donne ?? '—') }}</span>
-          <span>{{ h.ok ? '✅' : `❌ (réponse : ${h.attendu})` }}</span>
+          <span>{{ h.ok ? '✅' : t('reponseHist', { r: h.attendu }) }}</span>
         </div>
       </div>
 
       <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">⚙️ Paramètres</button>
+        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
+        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
       </div>
     </div>
   </div>
@@ -103,6 +103,32 @@
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { useI18n } from '../../i18n'
+
+const { t, tr, langue } = useI18n({
+  fr: {
+    titre: 'Calcul mental',
+    operations: 'Opérations',
+    tempsParQuestion: 'Temps par question',
+    reponseHist: '❌ (réponse : {r})',
+    doubleDe: 'Double de {n} = ?',
+    moitieDe: 'Moitié de {n} = ?',
+    tempsEcoule: '⏰ Temps écoulé ! La réponse était {r}',
+    pOperations: 'Opérations : {ops}',
+    pNbQuestions: '{n} questions',
+  },
+  br: {
+    titre: 'Jediñ e penn',
+    operations: 'Oberiadurioù',
+    tempsParQuestion: 'Amzer evit pep goulenn',
+    reponseHist: '❌ (respont : {r})',
+    doubleDe: 'An doubl eus {n} = ?',
+    moitieDe: 'An hanter eus {n} = ?',
+    tempsEcoule: '⏰ Echu eo an amzer ! Ar respont a oa {r}',
+    pOperations: 'Oberiadurioù : {ops}',
+    pNbQuestions: '{n} goulenn',
+  },
+})
 
 const OP_DIZ = '± dizaines (45 + 30)'
 const OP_911 = '± 9 / ± 11'
@@ -111,6 +137,17 @@ const OP_VERS_DIZ = 'Vers la dizaine (37 + ? = 40)'
 const TOUTES_OPS = ['+', '−', '×', '÷', 'Compléments à 10', 'Compléments à 100', OP_VERS_DIZ, OP_DIZ, OP_911, OP_PASSAGE,
   'Doubles', 'Moitiés', '× 10 / × 100']
 const niveaux = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
+// Libellés affichés (les identifiants d'opérations restent ceux de la config enregistrée)
+const LIBELLES_OPS = {
+  'Compléments à 10': { br: 'Klokadurioù da 10' }, // br: à relire (« klokadur » = complément)
+  'Compléments à 100': { br: 'Klokadurioù da 100' },
+  [OP_VERS_DIZ]: { br: 'Betek an degad (37 + ? = 40)' },
+  [OP_DIZ]: { br: '± degadoù (45 + 30)' },
+  [OP_PASSAGE]: { br: 'Tremen an degad (47 + 6)' }, // br: à relire
+  'Doubles': { br: 'Doubloù' },
+  'Moitiés': { br: 'Hanterioù' },
+}
+const libelleOp = op => tr({ fr: op, ...LIBELLES_OPS[op] })
 
 function plage(min, max, pas = 1) {
   const t = []
@@ -283,12 +320,12 @@ function genererQuestion() {
 
   if (op === 'Doubles') {
     const n = niv.doubles[aleatoire(0, niv.doubles.length - 1)]
-    return { texte: `Double de ${n} = ?`, reponse: n * 2 }
+    return { texte: t('doubleDe', { n }), reponse: n * 2 }
   }
 
   if (op === 'Moitiés') {
     const n = niv.doubles[aleatoire(0, niv.doubles.length - 1)]
-    return { texte: `Moitié de ${n * 2} = ?`, reponse: n }
+    return { texte: t('moitieDe', { n: n * 2 }), reponse: n }
   }
 
   if (op === '× 10 / × 100') {
@@ -349,7 +386,7 @@ function demarrer() {
 function imprimerFiche() {
   const qs = genererSansRepetition(config.value.nbQ)
   const niv = config.value.niveau.toUpperCase()
-  const ops = config.value.ops.join(', ')
+  const ops = config.value.ops.map(libelleOp).join(', ')
   const rows = qs.map((q, i) => {
     const isComplement = !q.texte.endsWith(' = ?')
     const calcText = isComplement
@@ -364,8 +401,8 @@ function imprimerFiche() {
       </div>`
   }).join('')
 
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>Calcul mental — ${niv}</title>
+  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 680px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
@@ -375,8 +412,8 @@ function imprimerFiche() {
       .calc { min-width: 180px; font-weight: 800; font-size: 1.3rem; font-family: monospace; }
       .ligne { flex: 1; border-bottom: 1.5px solid #aaa; min-width: 80px; }
     </style></head><body>
-    <h1>Calcul mental — ${niv}</h1>
-    <p class="entete">Opérations : ${ops} &nbsp;|&nbsp; ${qs.length} questions &nbsp;&nbsp;&nbsp; Nom : ________________________________ &nbsp; Date : ______________</p>
+    <h1>${t('titre')} — ${niv}</h1>
+    <p class="entete">${t('pOperations', { ops })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${rows}
     <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
@@ -424,7 +461,7 @@ function passer() {
 function enregistrerBon() {
   const q = questions.value[idx.value]
   inputClass.value = 'ok'
-  const msgs = ['Bravo ! 🎉', 'Excellent ! ⭐', 'Parfait ! 👏', 'Super ! 🌟']
+  const msgs = t('bravo')
   feedback.value = msgs[aleatoire(0, msgs.length - 1)]
   feedbackClass.value = 'ok'
   bonnes.value++
@@ -436,8 +473,8 @@ function enregistrerMauvais(timeout, val) {
   const q = questions.value[idx.value]
   inputClass.value = 'erreur'
   feedback.value = timeout
-    ? `⏰ Temps écoulé ! La réponse était ${q.reponse}`
-    : `❌ La bonne réponse était ${q.reponse}`
+    ? t('tempsEcoule', { r: q.reponse })
+    : '❌ ' + t('laBonneReponse', { r: q.reponse })
   feedbackClass.value = 'erreur'
   mauvaises.value++
   historique.value.push({ texte: q.texte, ok: false, attendu: q.reponse, donne: val })
@@ -454,11 +491,11 @@ function suivant() {
 
 const resultMsg = computed(() => {
   const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return 'Parfait, sans faute ! 🏆' }
-  if (pct >= 80)   { confettis(25); return 'Très bien ! Continue comme ça 🌟' }
-  if (pct >= 60)   return 'Bien ! Tu peux encore progresser 💪'
-  if (pct >= 40)   return 'Courage, continue à t\'entraîner ! 🤓'
-  return 'N\'abandonne pas, pratique encore ! 📚'
+  if (pct === 100) { confettis(50); return t('resultat100') }
+  if (pct >= 80)   { confettis(25); return t('resultat80') }
+  if (pct >= 60)   return t('resultat60')
+  if (pct >= 40)   return t('resultat40')
+  return t('resultat0')
 })
 
 function afficherResultats() {

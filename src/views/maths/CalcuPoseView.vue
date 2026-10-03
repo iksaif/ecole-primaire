@@ -35,7 +35,7 @@
       <div class="config-section">
         <div class="config-section-title">Nombre d'exercices</div>
         <div class="btn-group">
-          <button v-for="n in [3,5,10]" :key="n"
+          <button v-for="n in [3,5,10,20]" :key="n"
             class="level-btn" :class="{ active: config.nbQ === n }"
             @click="config.nbQ = n">{{ n }}</button>
         </div>
@@ -52,7 +52,7 @@
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'" title="Quitter l'exercice">✕ Quitter</button>
+        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
         <span>Exercice {{ idx + 1 }} / {{ questions.length }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
@@ -132,7 +132,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, watch } from 'vue'
+import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, confettis, sauvegarder, charger } from '../../utils'
 
 const config = ref(charger('calcul_pose_config', { op: 'add', taille: '2', retenue: 'non', nbQ: 5 }))
@@ -150,6 +150,23 @@ const feedbackClass = ref('')
 const showReports = ref(false)
 const reports = ref([])
 const inputRefs = ref([])
+
+// Verrou : empêche une double validation (Entrée répétée) de compter deux fois
+let verrou = false
+let timeoutSuivant = null
+
+function nettoyer() {
+  clearTimeout(timeoutSuivant)
+  timeoutSuivant = null
+  verrou = false
+}
+
+function quitter() {
+  nettoyer()
+  phase.value = 'config'
+}
+
+onUnmounted(nettoyer)
 
 function setInputRef(el, ci) {
   if (el) inputRefs.value[ci] = el
@@ -185,18 +202,21 @@ function generer() {
   const avecRetenue = config.value.retenue === 'oui'
                     || (config.value.retenue === 'mix' && Math.random() > 0.5)
 
+  const lo = Math.floor(max / 10)
   let a, b
   if (op === 'add') {
     if (avecRetenue) {
       // Génère deux nombres dont l'addition nécessite une retenue sur au moins un rang
       do {
-        a = aleatoire(Math.floor(max / 10), max)
-        b = aleatoire(Math.floor(max / 10), max - a)
+        // a ≤ max − lo pour que b ∈ [lo, max − a] soit non vide (sinon résultat à cols+1 chiffres)
+        a = aleatoire(lo, max - lo)
+        b = aleatoire(lo, max - a)
       } while (!aRetenue(a, b, 'add'))
     } else {
       do {
-        a = aleatoire(Math.floor(max / 10), max)
-        b = aleatoire(Math.floor(max / 10), max - a)
+        // a ≤ max − lo pour que b ∈ [lo, max − a] soit non vide (sinon résultat à cols+1 chiffres)
+        a = aleatoire(lo, max - lo)
+        b = aleatoire(lo, max - a)
       } while (aRetenue(a, b, 'add'))
     }
   } else {
@@ -265,6 +285,7 @@ function genererSansRepetition(nb) {
 }
 
 function demarrer() {
+  nettoyer()
   questions.value = genererSansRepetition(config.value.nbQ)
   idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
   phase.value = 'jeu'
@@ -308,6 +329,7 @@ function imprimerFiche() {
   </body></html>`
 
   const w = window.open('', '_blank')
+  if (!w) return
   w.document.write(html)
   w.document.close()
 }
@@ -349,7 +371,8 @@ function valider() {
   const q = questions.value[idx.value]
   const attendu = String(q.reponse)
   const donne   = repInputs.value.join('').replace(/\s/g, '')
-  if (!donne) return
+  if (!donne || verrou || phase.value !== 'jeu') return
+  verrou = true
 
   const ok = donne === attendu
   // Colorier chiffre par chiffre
@@ -368,10 +391,12 @@ function valider() {
   }
 
   historique.value.push({ a: q.a, b: q.b, opLabel: q.opLabel, attendu, donne, ok })
-  setTimeout(suivant, ok ? 900 : 1400)
+  timeoutSuivant = setTimeout(suivant, ok ? 900 : 1400)
 }
 
 function passer() {
+  if (verrou || phase.value !== 'jeu') return
+  verrou = true
   const q = questions.value[idx.value]
   historique.value.push({ a: q.a, b: q.b, opLabel: q.opLabel,
                           attendu: String(q.reponse), donne: '(passé)', ok: false })
@@ -380,6 +405,10 @@ function passer() {
 }
 
 function suivant() {
+  clearTimeout(timeoutSuivant)
+  timeoutSuivant = null
+  if (phase.value !== 'jeu') return
+  verrou = false
   idx.value++
   if (idx.value >= questions.value.length) phase.value = 'resultats'
   else nextTick(initInputs)

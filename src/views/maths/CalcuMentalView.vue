@@ -52,7 +52,7 @@
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
       <div class="score-bar">
-        <button class="btn-quitter" @click="phase = 'config'" title="Quitter l'exercice">✕ Quitter</button>
+        <button class="btn-quitter" @click="quitter" title="Quitter l'exercice">✕ Quitter</button>
         <span>Question {{ idx + 1 }} / {{ questions.length }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
         <span v-if="config.temps > 0" style="font-weight:700;">⏱ {{ Math.ceil(tempsRestant) }}s</span>
@@ -64,7 +64,7 @@
                :style="{ width: (tempsRestant / config.temps * 100) + '%' }"></div>
         </div>
 
-        <div class="exercise-question">{{ questions[idx].texte }}</div>
+        <div class="exercise-question" :class="{ long: questions[idx].texte.length > 12 }">{{ questions[idx].texte }}</div>
 
         <input ref="inputEl" class="exercise-input" :class="inputClass"
                type="number" inputmode="numeric" placeholder="?"
@@ -104,28 +104,73 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 
-const TOUTES_OPS = ['+', '−', '×', '÷', 'Compléments à 10']
+const OP_DIZ = '± dizaines (45 + 30)'
+const OP_911 = '± 9 / ± 11'
+const OP_PASSAGE = 'Passage de dizaine (47 + 6)'
+const OP_VERS_DIZ = 'Vers la dizaine (37 + ? = 40)'
+const TOUTES_OPS = ['+', '−', '×', '÷', 'Compléments à 10', 'Compléments à 100', OP_VERS_DIZ, OP_DIZ, OP_911, OP_PASSAGE,
+  'Doubles', 'Moitiés', '× 10 / × 100']
 const niveaux = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
 
-const NIVEAUX = {
-  cp:  { add: [1,10],  sou: [1,10],  mul: null,    div: null },
-  ce1: { add: [1,20],  sou: [1,20],  mul: [2,5],   div: [1,5] },
-  ce2: { add: [1,99],  sou: [1,99],  mul: [2,9],   div: [1,9] },
-  cm1: { add: [1,999], sou: [1,999], mul: [2,12],  div: [1,12] },
-  cm2: { add: [1,999], sou: [1,999], mul: [2,25],  div: [1,25] },
+function plage(min, max, pas = 1) {
+  const t = []
+  for (let n = min; n <= max; n += pas) t.push(n)
+  return t
 }
 
-const config = ref(charger('calcul_mental_config', { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10 }))
+// mul / div : [min, max] (facteurs dans la plage) ou { tables, max } (tables × 1 à max)
+// doubles : nombres dont on demande le double (les moitiés portent sur les doubles correspondants)
+// c100 : 'dizaines' (30 + ? = 100) ou 'quelconque' (37 + ? = 100)
+// x10 : plages des nombres multipliés par 10 et par 100
+// strat : borne max des calculs « stratégiques » (± dizaines, ± 9/11, passage et complément à la dizaine)
+const NIVEAUX = {
+  cp:  { add: [1,10],  sou: [1,10],  mul: null, div: null,
+         doubles: plage(1, 10), c100: null, x10: null, strat: null },
+  // CE1 : pas de division (hors programme), tables de 2, 3, 4, 5 et 10
+  ce1: { add: [1,20],  sou: [1,20],
+         mul: { tables: [2, 3, 4, 5, 10], max: 10 }, div: null,
+         doubles: [...plage(1, 20), 25, 30, 35, 40, 45, 50], c100: 'dizaines', x10: { x10: [1, 99], x100: [1, 9] },
+         strat: 100 },
+  // CE2 : tables de 2 à 9, division = « combien de fois » dans les tables
+  ce2: { add: [1,99],  sou: [1,99],
+         mul: { tables: [2, 3, 4, 5, 6, 7, 8, 9], max: 10 }, div: { tables: [2, 3, 4, 5, 6, 7, 8, 9], max: 10 },
+         doubles: [...plage(1, 50), ...plage(60, 100, 10), ...plage(200, 500, 100)], c100: 'quelconque',
+         x10: { x10: [1, 999], x100: [1, 99] }, strat: 1000 },
+  cm1: { add: [1,999], sou: [1,999], mul: [2,12], div: [1,12],
+         doubles: [...plage(1, 100), ...plage(110, 500, 10), ...plage(600, 1000, 100)], c100: 'quelconque',
+         x10: { x10: [1, 999], x100: [1, 999] }, strat: 1000 },
+  cm2: { add: [1,999], sou: [1,999], mul: [2,25], div: [1,25],
+         doubles: [...plage(1, 100), ...plage(110, 500, 10), ...plage(600, 5000, 100)], c100: 'quelconque',
+         x10: { x10: [1, 9999], x100: [1, 999] }, strat: 1000 },
+}
+
+// Opération → clé de NIVEAUX qui doit être définie pour que l'opération soit proposée
+const CLE_OP = { '×': 'mul', '÷': 'div', 'Compléments à 100': 'c100', 'Doubles': 'doubles', 'Moitiés': 'doubles', '× 10 / × 100': 'x10',
+  [OP_DIZ]: 'strat', [OP_911]: 'strat', [OP_PASSAGE]: 'strat', [OP_VERS_DIZ]: 'strat' }
+function opDispo(niv, op) {
+  if (!TOUTES_OPS.includes(op)) return false
+  const cle = CLE_OP[op]
+  return !cle || !!niv[cle]
+}
+
+// Config sauvegardée : on ignore les valeurs inconnues (anciennes versions)
+const DEFAUT = { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10 }
+const sauvegarde = charger('calcul_mental_config', DEFAUT) || DEFAUT
+const niveauCharge = niveaux.includes(sauvegarde.niveau) ? sauvegarde.niveau : DEFAUT.niveau
+const opsChargees = (Array.isArray(sauvegarde.ops) ? sauvegarde.ops : [])
+  .filter(op => opDispo(NIVEAUX[niveauCharge], op))
+const config = ref({
+  niveau: niveauCharge,
+  ops: opsChargees.length ? opsChargees : ['+'],
+  nbQ: [5, 10, 20].includes(sauvegarde.nbQ) ? sauvegarde.nbQ : DEFAUT.nbQ,
+  temps: [0, 10, 20, 30].includes(sauvegarde.temps) ? sauvegarde.temps : DEFAUT.temps,
+})
 watch(config, v => sauvegarder('calcul_mental_config', v), { deep: true })
 
 const opsDisposPourNiveau = computed(() => {
   const niv = NIVEAUX[config.value.niveau]
   if (!niv) return TOUTES_OPS
-  return TOUTES_OPS.filter(op => {
-    if (op === '×' && !niv.mul) return false
-    if (op === '÷' && !niv.div) return false
-    return true
-  })
+  return TOUTES_OPS.filter(op => opDispo(niv, op))
 })
 
 watch(() => config.value.niveau, () => {
@@ -148,6 +193,20 @@ const tempsRestant = ref(0)
 const inputEl = ref(null)
 
 let timerInterval = null
+let timeoutSuivant = null
+// Verrou : une seule réponse par question (évite qu'une double Entrée compte deux fois)
+let repondu = false
+
+function nettoyer() {
+  clearInterval(timerInterval); timerInterval = null
+  clearTimeout(timeoutSuivant); timeoutSuivant = null
+  repondu = false
+}
+
+function quitter() {
+  nettoyer()
+  phase.value = 'config'
+}
 
 function toggleOp(op) {
   const ops = config.value.ops
@@ -159,23 +218,84 @@ function toggleOp(op) {
   }
 }
 
+function complement(total, a) {
+  const b = total - a
+  return Math.random() < 0.5
+    ? { texte: `${a} + ? = ${total}`, reponse: b }
+    : { texte: `? + ${b} = ${total}`, reponse: a }
+}
+
 function genererQuestion() {
   const niv = NIVEAUX[config.value.niveau]
-  const opsDispos = config.value.ops.filter(op => {
-    if (op === '×' && !niv.mul) return false
-    if (op === '÷' && !niv.div) return false
-    return true
-  })
+  const opsDispos = config.value.ops.filter(op => opDispo(niv, op))
+  if (opsDispos.length === 0) opsDispos.push('+')
   const op = opsDispos[aleatoire(0, opsDispos.length - 1)]
 
-  if (op === 'Compléments à 10') {
-    const a = aleatoire(1, 9)
-    const b = 10 - a
+  if (op === 'Compléments à 10') return complement(10, aleatoire(1, 9))
+
+  if (op === 'Compléments à 100') {
+    const a = niv.c100 === 'dizaines' ? aleatoire(1, 9) * 10 : aleatoire(1, 99)
+    return complement(100, a)
+  }
+
+  if (op === OP_VERS_DIZ) {
+    // 37 + ? = 40
+    let a
+    do { a = aleatoire(11, niv.strat - 1) } while (a % 10 === 0)
+    const cible = Math.ceil(a / 10) * 10
+    return { texte: `${a} + ? = ${cible}`, reponse: cible - a }
+  }
+
+  if (op === OP_DIZ) {
+    // 45 + 30, 76 − 20 (nombre non rond ± dizaines entières)
+    const N = niv.strat
+    let a, d
     if (Math.random() < 0.5) {
-      return { texte: `${a} + ? = 10`, reponse: b }
-    } else {
-      return { texte: `? + ${b} = 10`, reponse: a }
+      do { a = aleatoire(11, N - 11) } while (a % 10 === 0)
+      d = aleatoire(1, Math.min(9, Math.floor((N - 1 - a) / 10))) * 10
+      return { texte: `${a} + ${d} = ?`, reponse: a + d }
     }
+    do { a = aleatoire(21, N - 1) } while (a % 10 === 0)
+    d = aleatoire(1, Math.min(9, Math.floor((a - 1) / 10))) * 10
+    return { texte: `${a} − ${d} = ?`, reponse: a - d }
+  }
+
+  if (op === OP_911) {
+    const n = Math.random() < 0.5 ? 9 : 11
+    const a = aleatoire(12, niv.strat - 12)
+    return Math.random() < 0.5
+      ? { texte: `${a} + ${n} = ?`, reponse: a + n }
+      : { texte: `${a} − ${n} = ?`, reponse: a - n }
+  }
+
+  if (op === OP_PASSAGE) {
+    // 47 + 6 (on dépasse la dizaine) ou 53 − 7 (on redescend sous la dizaine)
+    const N = niv.strat
+    if (Math.random() < 0.5) {
+      let a, b
+      do { a = aleatoire(12, N - 10); b = aleatoire(2, 9) } while (a % 10 + b < 10 || a % 10 === 0)
+      return { texte: `${a} + ${b} = ?`, reponse: a + b }
+    }
+    let a, b
+    do { a = aleatoire(21, N - 1); b = aleatoire(2, 9) } while (a % 10 >= b)
+    return { texte: `${a} − ${b} = ?`, reponse: a - b }
+  }
+
+  if (op === 'Doubles') {
+    const n = niv.doubles[aleatoire(0, niv.doubles.length - 1)]
+    return { texte: `Double de ${n} = ?`, reponse: n * 2 }
+  }
+
+  if (op === 'Moitiés') {
+    const n = niv.doubles[aleatoire(0, niv.doubles.length - 1)]
+    return { texte: `Moitié de ${n * 2} = ?`, reponse: n }
+  }
+
+  if (op === '× 10 / × 100') {
+    const fois100 = Math.random() < 0.5
+    const n = aleatoire(...(fois100 ? niv.x10.x100 : niv.x10.x10))
+    const m = fois100 ? 100 : 10
+    return { texte: `${n} × ${m} = ?`, reponse: n * m }
   }
 
   let a, b, rep
@@ -184,9 +304,24 @@ function genererQuestion() {
   } else if (op === '−') {
     a = aleatoire(...niv.sou); b = aleatoire(1, a); rep = a - b
   } else if (op === '×') {
-    a = aleatoire(...niv.mul); b = aleatoire(...niv.mul); rep = a * b
+    if (Array.isArray(niv.mul)) {
+      a = aleatoire(...niv.mul); b = aleatoire(...niv.mul)
+    } else {
+      // tables du niveau : un facteur dans les tables, l'autre de 1 à max, ordre aléatoire
+      const t = niv.mul.tables[aleatoire(0, niv.mul.tables.length - 1)]
+      const f = aleatoire(1, niv.mul.max)
+      ;[a, b] = Math.random() < 0.5 ? [t, f] : [f, t]
+    }
+    rep = a * b
   } else {
-    b = aleatoire(...niv.div); rep = aleatoire(...niv.div); a = b * rep
+    if (Array.isArray(niv.div)) {
+      b = aleatoire(...niv.div); rep = aleatoire(...niv.div)
+    } else {
+      // partages correspondant aux tables : 35 ÷ 5, 18 ÷ 3…
+      b = niv.div.tables[aleatoire(0, niv.div.tables.length - 1)]
+      rep = aleatoire(1, niv.div.max)
+    }
+    a = b * rep
   }
   return { texte: `${a} ${op} ${b} = ?`, reponse: rep }
 }
@@ -204,7 +339,7 @@ function genererSansRepetition(nb) {
 }
 
 function demarrer() {
-  clearInterval(timerInterval)
+  nettoyer()
   questions.value = genererSansRepetition(config.value.nbQ)
   idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
   phase.value = 'jeu'
@@ -247,18 +382,23 @@ function imprimerFiche() {
   </body></html>`
 
   const w = window.open('', '_blank')
+  if (!w) return
   w.document.write(html)
   w.document.close()
 }
 
 function afficherQuestion() {
+  repondu = false
   reponse.value = ''; feedback.value = ''; feedbackClass.value = ''; inputClass.value = ''
   clearInterval(timerInterval)
   if (config.value.temps > 0) {
     tempsRestant.value = config.value.temps
     timerInterval = setInterval(() => {
       tempsRestant.value -= 0.1
-      if (tempsRestant.value <= 0) { clearInterval(timerInterval); enregistrerMauvais(true) }
+      if (tempsRestant.value <= 0) {
+        clearInterval(timerInterval)
+        if (!repondu && phase.value === 'jeu') { repondu = true; enregistrerMauvais(true) }
+      }
     }, 100)
   }
   nextTick(() => inputEl.value?.focus())
@@ -266,7 +406,8 @@ function afficherQuestion() {
 
 function valider() {
   const val = reponse.value.toString().trim()
-  if (!val) return
+  if (!val || repondu || phase.value !== 'jeu') return
+  repondu = true
   clearInterval(timerInterval)
   const q = questions.value[idx.value]
   if (+val === q.reponse) enregistrerBon()
@@ -274,6 +415,8 @@ function valider() {
 }
 
 function passer() {
+  if (repondu || phase.value !== 'jeu') return
+  repondu = true
   clearInterval(timerInterval)
   enregistrerMauvais(true)
 }
@@ -286,7 +429,7 @@ function enregistrerBon() {
   feedbackClass.value = 'ok'
   bonnes.value++
   historique.value.push({ texte: q.texte, ok: true, attendu: q.reponse })
-  setTimeout(suivant, 800)
+  timeoutSuivant = setTimeout(suivant, 800)
 }
 
 function enregistrerMauvais(timeout, val) {
@@ -298,10 +441,12 @@ function enregistrerMauvais(timeout, val) {
   feedbackClass.value = 'erreur'
   mauvaises.value++
   historique.value.push({ texte: q.texte, ok: false, attendu: q.reponse, donne: val })
-  setTimeout(suivant, 1200)
+  timeoutSuivant = setTimeout(suivant, 1200)
 }
 
 function suivant() {
+  clearTimeout(timeoutSuivant); timeoutSuivant = null
+  if (phase.value !== 'jeu') return
   idx.value++
   if (idx.value >= questions.value.length) afficherResultats()
   else afficherQuestion()
@@ -321,10 +466,13 @@ function afficherResultats() {
   phase.value = 'resultats'
 }
 
-onUnmounted(() => clearInterval(timerInterval))
+onUnmounted(nettoyer)
 </script>
 
 <style scoped>
+.exercise-question.long { font-size: 2.3rem; }
+@media (max-width: 520px) { .exercise-question.long { font-size: 1.7rem; } }
+
 .hist-item {
   display: flex; justify-content: space-between;
   padding: .3rem .5rem; border-radius: 6px;

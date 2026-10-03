@@ -61,7 +61,7 @@
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn btn-primary" style="font-size:1.1rem;"
                 :disabled="config.tables.length === 0"
-                @click="demarrer">▶ Commencer</button>
+                @click="demarrer()">▶ Commencer</button>
       </div>
       <div style="text-align:center;margin-top:.75rem;">
         <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">🖨️ Imprimer une fiche</button>
@@ -155,7 +155,7 @@
       </div>
 
       <div class="btn-group" style="justify-content:center;margin-top:1.25rem;">
-        <button class="btn btn-primary" @click="demarrer">🔄 Rejouer</button>
+        <button class="btn btn-primary" @click="demarrer()">🔄 Rejouer</button>
         <button v-if="erreurs.length > 0" class="btn btn-warning" @click="rejouerErreurs">
           ❌ Revoir les erreurs
         </button>
@@ -322,6 +322,7 @@ function imprimerFiche() {
   </body></html>`
 
   const w = window.open('', '_blank')
+  if (!w) return
   w.document.write(html)
   w.document.close()
 }

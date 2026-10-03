@@ -561,6 +561,7 @@ async function imprimerFiche() {
   </body></html>`
 
   const w = window.open('', '_blank')
+  if (!w) return
   w.document.write(html)
   w.document.close()
   

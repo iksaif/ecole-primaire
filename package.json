@@ -5,15 +5,26 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "dev:skoolik": "vite --mode skoolik",
+    "build": "vite build && node scripts/telechargements.mjs",
+    "build:app": "vite build",
+    "build:ecoleprimaire": "vite build --mode ecoleprimaire --outDir dist-ecoleprimaire && node scripts/telechargements.mjs --mode ecoleprimaire --outDir dist-ecoleprimaire",
+    "build:skoolik": "vite build --mode skoolik --outDir dist-skoolik && node scripts/telechargements.mjs --mode skoolik --outDir dist-skoolik",
+    "build:vps": "npm run build:ecoleprimaire && npm run build:skoolik",
+    "deploy:vps": "scripts/deploy-vps.sh",
+    "telechargements": "node scripts/telechargements.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/andika": "^5.3.0",
+    "@fontsource/opendyslexic": "^5.3.0",
+    "@fontsource/playwrite-fr-trad": "^5.3.0",
     "vue": "^3.5.38",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
+    "playwright-core": "^1.63.0",
     "vite": "^8.1.0"
   }
 }

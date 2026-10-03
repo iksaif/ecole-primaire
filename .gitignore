@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Polices non redistribuables utilisées pour générer les PDF (Belle Allure, Écolier…)
+polices-locales/
+
+# Builds VPS et configuration de déploiement locale
+dist-*/
+.deploy.env

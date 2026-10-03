@@ -31,6 +31,19 @@
         <li><strong>🔤 Orthographe</strong> — Homophones (a/à, ou/où…), accords, lettres manquantes (CP → CM2)</li>
         <li><strong>📖 Lecture &amp; Syllabes</strong> — Compter les syllabes, reconstituer un mot par syllabes, et lecture de phrases ou d'histoires interactives (CP → CE2)</li>
         <li><strong>🌍 Quiz culture générale</strong> — Géographie France et monde, sciences, histoire, animaux (CP → CM2)</li>
+        <li><strong>💯 CE1</strong> — Nombres jusqu'à 1 000, fractions, problèmes, heure, monnaie, mesures, géométrie, grammaire, vocabulaire</li>
+      </ul>
+
+      <h2 class="about-h2">🖨️ Fiches à imprimer</h2>
+      <ul class="about-list">
+        <li><strong>✏️ Fiches d'écriture</strong> — Script et attaché, majuscules et minuscules, sur lignage Seyès (2 à 4 mm)</li>
+        <li><strong>🔤 Affiche de l'alphabet</strong> — Les quatre écritures, en A4 ou A3</li>
+        <li><strong>🔢 Nombres en lettres</strong> — Unités, dizaines, centaines, milliers ; affiches ou fiche mémo</li>
+        <li><strong>🏴 Breton</strong> — À activer dans les <RouterLink to="/parametres">paramètres</RouterLink> : nombres bilingues, alphabet breton (ch, c'h), jours et mois dans les fiches d'écriture</li>
+        <li>Les polices sont incluses : <a href="https://fonts.google.com/specimen/Playwrite+FR+Trad" target="_blank" rel="noopener">Playwrite FR Trad</a>
+          (écriture cursive française) et <a href="https://software.sil.org/andika/" target="_blank" rel="noopener">Andika</a> (script, conçue pour l'apprentissage de la lecture),
+          <a href="https://opendyslexic.org/" target="_blank" rel="noopener">OpenDyslexic</a> (licence OFL) et
+          <a href="https://www.luciole-vision.com/" target="_blank" rel="noopener">Luciole</a> © Laurent Bourcellier &amp; Jonathan Perez (licence CC BY 4.0).</li>
       </ul>
 
       <h2 class="about-h2">🛠️ Comment ça marche ?</h2>

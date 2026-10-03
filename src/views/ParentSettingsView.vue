@@ -4,6 +4,21 @@
     <p class="intro">Ces réglages sont réservés aux parents et enseignants. Ils sont stockés localement sur cet appareil.</p>
 
     <section class="card">
+      <h2>🏴 Langue régionale</h2>
+      <p class="hint">
+        Ajoute la langue régionale aux fiches à imprimer : nombres en lettres bilingues, alphabet,
+        jours, mois et mots dans les fiches d'écriture. Pratique pour les écoles bilingues ou immersives.
+      </p>
+      <div class="langues">
+        <button class="level-btn" :class="{ active: !langueCode }" @click="langueCode = ''">Aucune</button>
+        <button v-for="l in LANGUES_REGIONALES" :key="l.id" class="level-btn"
+          :class="{ active: langueCode === l.id }" @click="langueCode = l.id">
+          {{ l.drapeau }} {{ l.nom[0].toUpperCase() + l.nom.slice(1) }} ({{ l.nomLocal }})
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
       <h2>🤖 Clé API Mistral</h2>
       <p class="hint">
         Utilisée pour générer des phrases en mode dictée. Facultative : sans clé, les phrases prédéfinies sont utilisées.
@@ -47,6 +62,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { LANGUES_REGIONALES } from '../data/languesRegionales'
+import { useLangueRegionale } from '../composables/useLangueRegionale'
+
+const { code: langueCode } = useLangueRegionale()
 
 const CLE_KEY = 'ep_mistral_key'
 
@@ -138,4 +157,5 @@ h2 { margin-top: 0; font-size: 1.15rem; color: var(--texte); }
 .btn-danger:hover { background: #c53030; }
 
 .back { margin-top: 1rem; }
+.langues { display: flex; gap: .5rem; flex-wrap: wrap; }
 </style>

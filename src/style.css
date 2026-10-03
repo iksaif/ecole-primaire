@@ -73,6 +73,7 @@ body {
 .card.francais   { border-color: var(--vert); }
 .card.lecture    { border-color: var(--orange); }
 .card.autres     { border-color: var(--violet); }
+.card.imprimer   { border-color: var(--orange); }
 
 /* ── Buttons ── */
 .btn {

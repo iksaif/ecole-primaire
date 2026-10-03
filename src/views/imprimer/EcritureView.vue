@@ -100,7 +100,7 @@
         <ChoixPolice />
       </div>
 
-      <ApercuImpression :html="html" :nb-pages="nbPages" />
+      <ApercuImpression :reglages="config" :html="html" :nb-pages="nbPages" />
     </div>
   </div>
 </template>

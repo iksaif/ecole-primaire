@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { existsSync, statSync, createReadStream } from 'node:fs'
 import { join, extname } from 'node:path'
 
-const TYPES = { '.html': 'text/html; charset=utf-8', '.pdf': 'application/pdf', '.jpg': 'image/jpeg', '.xml': 'application/xml' }
+const TYPES = { '.html': 'text/html; charset=utf-8', '.pdf': 'application/pdf', '.jpg': 'image/jpeg', '.xml': 'application/xml', '.json': 'application/json' }
 
 // En dev, sert les fiches PDF déjà générées (dist/telechargements, voir scripts/telechargements.mjs)
 function telechargementsEnDev(base) {

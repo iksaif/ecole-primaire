@@ -23,7 +23,7 @@
     <div v-if="mode === 'jouer'" class="actions">
       <button class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')">{{ t('commencer') }}</button>
     </div>
-    <ApercuImpression v-else :html="fiche" :nb-pages="nbPages" :fluide="fluide">
+    <ApercuImpression v-else :html="fiche" :nb-pages="nbPages" :fluide="fluide" :reglages="config">
       <template #actions>
         <button v-if="aleatoire" class="btn btn-ghost" @click="$emit('regenerer')">{{ t('nouvelle') }}</button>
       </template>
@@ -46,6 +46,8 @@ defineProps({
   fluide: { type: Boolean, default: true },
   nbPages: { type: Number, default: 1 },
   desactive: { type: Boolean, default: false },
+  // réglages de l'exercice (pour les statistiques d'impression)
+  config: { type: Object, default: null },
 })
 defineEmits(['update:mode', 'commencer', 'regenerer'])
 

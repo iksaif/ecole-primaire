@@ -10,6 +10,7 @@
       <li><RouterLink to="/parametres"  :class="{ active: route.path === '/parametres' }" class="nav-settings" :title="t('parametres')">⚙️</RouterLink></li>
     </ul>
     <div class="nav-droite">
+      <RechercheGlobale />
       <div class="nav-langue" role="group" :aria-label="t('langue')">
         <button v-for="l in LANGUES_INTERFACE" :key="l.id" :class="{ active: langue === l.id }"
           :title="l.label" :aria-label="l.label" :aria-pressed="langue === l.id" @click="langue = l.id">
@@ -37,6 +38,7 @@ import { SITE } from '../site'
 import { useI18n, LANGUES_INTERFACE } from '../i18n'
 import Drapeau from './Drapeau.vue'
 import AvisTraduction from './AvisTraduction.vue'
+import RechercheGlobale from './RechercheGlobale.vue'
 
 const route = useRoute()
 const classe = useClasse()

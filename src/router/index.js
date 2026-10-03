@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { journaliser } from '../utils/journal'
 
 const routes = [
   { path: '/',                  component: () => import('../views/HomeView.vue') },
@@ -37,8 +38,20 @@ const routes = [
   { path: '/parametres',          component: () => import('../views/ParentSettingsView.vue') },
 ]
 
-export default createRouter({
+const router = createRouter({
   history: createWebHashHistory(),
   routes,
   scrollBehavior: () => ({ top: 0 }),
 })
+
+// page vue (sans le détail des réglages) : langue de l'interface, langue régionale, classe filtrée
+router.afterEach(to => {
+  journaliser('vue', {
+    r: to.path, m: to.query.mode,
+    l: localStorage.getItem('ep_langue_interface')?.replace(/"/g, ''),
+    g: localStorage.getItem('ep_langue_regionale')?.replace(/"/g, ''),
+    c: localStorage.getItem('ep_classe')?.replace(/"/g, ''),
+  })
+})
+
+export default router

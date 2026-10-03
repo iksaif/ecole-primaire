@@ -18,7 +18,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { dimensionsPage, imprimerDocument } from '../utils/impression'
+import { journaliser } from '../utils/journal'
 import { useI18n } from '../i18n'
 
 const { t } = useI18n({
@@ -43,12 +45,15 @@ const props = defineProps({
   nbPages: { type: Number, default: 1 },
   // document qui s'écoule librement (pas de <section class="page"> de taille fixe)
   fluide: { type: Boolean, default: false },
+  // réglages de la fiche, envoyés (anonymement) dans les statistiques quand on imprime
+  reglages: { type: Object, default: null },
 })
 
 // Les anciennes fiches embarquent un script qui lance l'impression à l'ouverture : on le retire
 // (l'aperçu ne doit rien imprimer ; le bouton Imprimer s'en charge)
 const document = computed(() => props.html.replace(/<script>[^<]*print\(\)[^<]*<\/script>/g, ''))
 
+const route = useRoute()
 const MM = 96 / 25.4
 const cadre = ref(null)
 const largeurCadre = ref(600)
@@ -70,6 +75,7 @@ onUnmounted(() => obs?.disconnect())
 
 function imprimer() {
   imprimerDocument(document.value)
+  journaliser('imprimer', { r: route.path, d: props.reglages })
 }
 </script>
 

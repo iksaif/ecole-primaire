@@ -15,6 +15,7 @@
         <li>{{ t('donnees2') }}</li>
         <li>{{ t('donnees3') }}</li>
         <li>{{ t('donnees4') }}</li>
+        <li>{{ t('donnees5') }}</li>
       </ul>
 
       <h2>{{ t('contenus') }}</h2>
@@ -38,10 +39,11 @@ const { t } = useI18n({
     editeur: 'Éditeur', editeurTexte: 'Site personnel et non commercial, édité par',
     hebergeur: 'Hébergeur',
     donnees: 'Données personnelles et cookies',
-    donnees1: "Aucun compte, aucune publicité, aucun cookie, aucun outil de mesure d'audience.",
+    donnees1: 'Aucun compte, aucune publicité, aucun cookie, aucun service tiers.',
     donnees2: "La langue, les réglages des exercices et les scores sont enregistrés uniquement dans votre navigateur (stockage local, « localStorage ») ; ils ne sont jamais envoyés. Ce sont des préférences que vous choisissez vous-même : elles ne nécessitent pas de consentement (recommandations de la CNIL). Vous pouvez les effacer dans les Paramètres.",
     donnees3: "Si vous saisissez une clé API Mistral (facultatif), les demandes de génération de phrases sont envoyées directement de votre navigateur à Mistral AI.",
     donnees4: "Comme tout serveur web, l'hébergeur conserve des journaux techniques (adresse IP, page demandée) pendant une durée limitée, pour la sécurité du service.",
+    donnees5: "Pour savoir quelles pages et quelles fiches sont utiles, le site envoie à notre serveur un signal anonyme : page visitée, fiche imprimée et ses réglages, langue. Ce signal n'est associé à aucun cookie, aucun identifiant ni adresse IP, et n'est pas envoyé si votre navigateur demande à ne pas être suivi (« Do Not Track »). Ces statistiques sont exemptées de consentement (recommandations de la CNIL).",
     contenus: 'Contenus',
     contenusTexte: "Les exercices et fiches sont gratuits pour un usage personnel et en classe. Le code source est disponible sur GitHub (github.com/iksaif/ecole-primaire).",
     polices: 'Polices :',
@@ -54,10 +56,11 @@ const { t } = useI18n({
     editeur: 'Embanner', editeurTexte: "Lec'hienn bersonel ha n'eo ket kenwerzhel, embannet gant",
     hebergeur: 'Herberc\'hier',
     donnees: 'Roadennoù personel ha toupinoù',
-    donnees1: 'Kont ebet, bruderezh ebet, toupin ebet, ostilh muzuliañ ebet.',
+    donnees1: 'Kont ebet, bruderezh ebet, toupin ebet, servij diavaez ebet.',
     donnees2: "Ar yezh, arventennoù ar poelladennoù hag ar skorioù a vez enrollet en ho merdeer hepken (« localStorage ») ; ne vezont morse kaset. Dibaboù a rit hoc'h-unan int : n'eus ket ezhomm a aotre. Gallout a rit o diverkañ en Arventennoù.",
     donnees3: "Ma lakait un alc'hwez API Mistral (dre zibab), e vez kaset ar goulennoù war-eeun eus ho merdeer da Mistral AI.",
     donnees4: "Evel pep servijer web, an herberc'hier a vir kazetennoù teknikel (chomlec'h IP, pajenn goulennet) e-pad ur mare bevennet, evit surentez ar servij.",
+    donnees5: "Evit gouzout peseurt pajennoù ha fichennoù a zo talvoudus, al lec'hienn a gas d'hor servijer ur sinal dizanv : pajenn gweladennet, fichenn moullet hag he arventennoù, yezh. N'eo liammet ouzh toupin, anaouder pe chomlec'h IP ebet, ha ne vez ket kaset ma c'houlenn ho merdeer chom hep bezañ heuliet (« Do Not Track »).", // br: à relire
     contenus: 'Danvez',
     contenusTexte: "Digoust eo ar poelladennoù hag ar fichennoù evit un implij personel pe er c'hlas. Ar c'hod mammenn a zo war GitHub (github.com/iksaif/ecole-primaire).",
     polices: 'Nodrezhoù :',

@@ -66,7 +66,7 @@
         <ChoixPolice :types="['script']" />
       </div>
 
-      <ApercuImpression :html="html" :format="config.format" :orientation="config.orientation" :nb-pages="nbPages" />
+      <ApercuImpression :reglages="config" :html="html" :format="config.format" :orientation="config.orientation" :nb-pages="nbPages" />
     </div>
   </div>
 </template>

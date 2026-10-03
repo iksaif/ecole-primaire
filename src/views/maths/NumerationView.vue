@@ -3,7 +3,7 @@
     <h1 class="section-heading">🔢 {{ t('titre', { n: fmt(niveauData.plages[niveauData.plages.length - 1]) }) }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
       @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>

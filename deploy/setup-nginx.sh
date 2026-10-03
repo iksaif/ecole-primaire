@@ -36,8 +36,12 @@ EOF
   fi
 
   echo "⚙️  $d : configuration finale"
+  fmt="journal_${d//./_}"
   cat > "$conf" <<EOF
 # Généré par deploy/setup-nginx.sh (dépôt ecole-primaire)
+
+# Statistiques d'usage anonymes (voir src/utils/journal.js) : pas d'adresse IP, pas de cookie.
+log_format $fmt escape=json '{"t":"\$time_iso8601","site":"\$host","q":"\$args","ua":"\$http_user_agent","ref":"\$http_referer"}';
 server {
     listen 80;
     listen [::]:80;
@@ -88,6 +92,12 @@ server {
 
     gzip on;
     gzip_types text/css application/javascript application/json image/svg+xml application/xml;
+
+    # signal de statistiques envoyé par l'app : journal dédié, sans IP
+    location = /journal {
+        access_log /var/log/nginx/$d.journal.log $fmt;
+        return 204;
+    }
 
     # fichiers Vite avec empreinte dans le nom
     location /assets/ {

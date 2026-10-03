@@ -3,7 +3,7 @@
     <h1>✍️ {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :aleatoire="false"
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" :aleatoire="false"
       @commencer="demarrer" @regenerer="regenerer">
 
       <div class="config-section">

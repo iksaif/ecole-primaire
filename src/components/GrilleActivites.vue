@@ -5,7 +5,7 @@
       <RouterLink v-for="a in g.activites" :key="a.to" :to="a.to" class="card" :class="a.matiere">
         <span class="card-icon">{{ a.icon }}</span>
         <span class="card-title">{{ langue === 'br' && a.br ? a.br.titre : a.titre }}</span>
-        <span class="card-desc">{{ langue === 'br' && a.br ? a.br.desc : a.desc }}</span>
+        <span class="card-desc">{{ description(a) }}</span>
         <span class="card-tag">{{ etiquetteNiveaux(a.niveaux) }}</span>
       </RouterLink>
     </div>
@@ -17,6 +17,7 @@
 import { computed } from 'vue'
 import { ACTIVITES, DOMAINES_BR, etiquetteNiveaux } from '../data/activites'
 import { useI18n } from '../i18n'
+import { useLangueRegionale } from '../composables/useLangueRegionale'
 import { useClasse } from '../composables/useClasse'
 
 const props = defineProps({
@@ -24,6 +25,12 @@ const props = defineProps({
   parDomaine: { type: Boolean, default: false },
 })
 const classe = useClasse()
+const { code: regionale } = useLangueRegionale()
+// description dans la langue de l'interface, variante « langue régionale » si elle est active
+function description(a) {
+  const d = langue.value === 'br' && a.br ? a.br : a
+  return (regionale.value && d.descRegionale) || d.desc
+}
 const { t, langue } = useI18n({
   fr: { vide: "Pas encore d'activité pour cette classe ici." },
   br: { vide: "N'eus poelladenn ebet c'hoazh evit ar c'hlas-mañ amañ." },

@@ -127,7 +127,7 @@
         <ChoixPolice :types="['script']" />
       </div>
 
-      <ApercuImpression :html="resultat.html" :format="resultat.format" :orientation="resultat.orientation" :nb-pages="resultat.nbPages" />
+      <ApercuImpression :reglages="config" :html="resultat.html" :format="resultat.format" :orientation="resultat.orientation" :nb-pages="resultat.nbPages" />
     </div>
   </div>
 </template>

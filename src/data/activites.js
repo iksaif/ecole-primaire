@@ -32,13 +32,14 @@ export const DOMAINES_BR = {
   'Vocabulaire': 'Geriaoueg',
 }
 
+// `descRegionale` : description quand une langue régionale est active (sinon `desc`)
 // `domaine` regroupe les activités par grand domaine du programme dans les pages matières
 export const ACTIVITES = [
   // ── À imprimer ──
   { to: '/imprimer/ecriture', matiere: 'imprimer', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
   { to: '/imprimer/alphabet', matiere: 'imprimer', icon: '🔤', titre: "Affiche de l'alphabet", desc: 'Les 4 écritures, A4 ou A3', niveaux: de('ms', 'ce1') },
   { to: '/imprimer/calcul',   matiere: 'imprimer', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
-  { to: '/imprimer/nombres',  matiere: 'imprimer', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en français (et en breton si activé)', niveaux: de('gs', 'cm2') },
+  { to: '/imprimer/nombres',  matiere: 'imprimer', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en chiffres et en lettres', descRegionale: 'Unités, dizaines, centaines… en français et en breton', niveaux: de('gs', 'cm2') },
 
   // ── Maths ──
   { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ms', 'gs'] },
@@ -76,7 +77,7 @@ const BR = {
   '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
   '/imprimer/alphabet': ['Skritell al lizherenneg', 'Ar 4 doare skrivañ, A4 pe A3'],
   '/imprimer/calcul':   ['Fichennoù jediñ', 'Taolennoù, klokaat, doubl hag hanter… gant ar reizhadenn'],
-  '/imprimer/nombres':  ['An niveroù e lizherennoù', 'Unanennoù, degadoù, kantadoù… e galleg hag e brezhoneg'],
+  '/imprimer/nombres':  ['An niveroù e lizherennoù', 'Unanennoù, degadoù, kantadoù… e sifroù hag e lizherennoù', 'Unanennoù, degadoù, kantadoù… e galleg hag e brezhoneg'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
   '/maternelle/comparer': ["Keñveriañ ar c'hementadoù", 'Peseurt strollad en deus ar muiañ ?'],
   '/maternelle/ordonner': ['Renkañ an niveroù', "Eus ar bihanañ d'ar brasañ"],
@@ -100,7 +101,7 @@ const BR = {
   '/lecture': ['Lenn ha silabennoù', 'Silabennoù, adsevel gerioù ha testennoù (e galleg)'],
   '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
 }
-for (const a of ACTIVITES) if (BR[a.to]) a.br = { titre: BR[a.to][0], desc: BR[a.to][1] }
+for (const a of ACTIVITES) if (BR[a.to]) a.br = { titre: BR[a.to][0], desc: BR[a.to][1], descRegionale: BR[a.to][2] }
 
 // « CE1 → CM2 », « MS / GS »…
 export function etiquetteNiveaux(niveaux) {

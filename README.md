@@ -16,11 +16,15 @@ pour le cycle 2), mais si une règle ou une réponse vous paraît fausse, dites-
 
 ## Vie privée
 
-Tout tourne dans le navigateur. Il n'y a pas de compte, pas de publicité, pas de cookie, pas de mesure
-d'audience, et aucune requête vers un autre site que le nôtre.
+Tout tourne dans le navigateur. Il n'y a pas de compte, pas de publicité, pas de cookie, et aucune requête
+vers un autre site que le nôtre.
 
 - La langue, les réglages et les scores restent dans le stockage local du navigateur (`localStorage`).
   Rien n'est envoyé au serveur ; on peut tout effacer depuis les Paramètres.
+- Pour savoir ce qui sert, l'app envoie à notre serveur un signal anonyme (page vue, fiche imprimée et ses
+  réglages, langue) : pas de cookie, pas d'identifiant, et nginx l'enregistre **sans adresse IP**
+  (`src/utils/journal.js`, `deploy/setup-nginx.sh`). Rien n'est envoyé si le navigateur demande à ne pas être
+  suivi. `node scripts/stats-vps.mjs` en fait un résumé (pages vues, fiches imprimées, PDF téléchargés).
 - Le serveur ne fait que servir des fichiers statiques. Comme tout serveur web, il garde des journaux
   techniques (IP, page demandée) quelque temps.
 - Seule exception, facultative : si vous entrez votre propre clé API Mistral dans les Paramètres, la dictée

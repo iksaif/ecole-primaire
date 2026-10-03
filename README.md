@@ -1,68 +1,125 @@
-# École Primaire
+# École Primaire / Skoolik
 
-Exercices interactifs et fiches à imprimer pour la maternelle et l'école primaire (MS → CM2), en français.
-Vue 3 + Vite, déployé sur GitHub Pages. Tout fonctionne hors ligne, sans compte.
+Des exercices et des fiches à imprimer pour la maternelle et l'école primaire, de la MS au CM2.
+On a commencé ça pour nos enfants, pour réviser à la maison, et c'est devenu un petit site :
 
-## Développement
+- **https://ecoleprimaire.app** — en français
+- **https://skoolik.app** — la même chose en breton, pour les écoles bilingues et Diwan
+
+Il y a des exercices à faire à l'écran (calcul mental, tables, heure, monnaie, dictée, grammaire…)
+et des fiches à imprimer : écriture sur lignes Seyès en script et en attaché, affiches de l'alphabet,
+nombres en lettres en français et en breton, fiches de calcul avec corrigé. Chaque exercice peut aussi
+sortir en fiche papier.
+
+On n'est pas enseignants. Les exercices suivent les programmes officiels (cycles 1 à 3, programmes 2024
+pour le cycle 2), mais si une règle ou une réponse vous paraît fausse, dites-le nous.
+
+## Vie privée
+
+Tout tourne dans le navigateur. Il n'y a pas de compte, pas de publicité, pas de cookie, pas de mesure
+d'audience, et aucune requête vers un autre site que le nôtre.
+
+- La langue, les réglages et les scores restent dans le stockage local du navigateur (`localStorage`).
+  Rien n'est envoyé au serveur ; on peut tout effacer depuis les Paramètres.
+- Le serveur ne fait que servir des fichiers statiques. Comme tout serveur web, il garde des journaux
+  techniques (IP, page demandée) quelque temps.
+- Seule exception, facultative : si vous entrez votre propre clé API Mistral dans les Paramètres, la dictée
+  et la lecture peuvent générer des phrases. La requête part alors directement de votre navigateur vers
+  Mistral AI, avec votre clé. Sans clé, le site utilise ses phrases prédéfinies.
+
+## À propos de l'IA
+
+Le code a été écrit en grande partie avec l'aide d'un assistant de programmation (Claude). On s'en est
+servi comme d'un outil de développement : écrire du code, des tests, chercher des sources. Le site
+publié, lui, n'utilise pas d'IA : les exercices sont générés par du code classique, dans votre navigateur.
+
+Ce qui a demandé de la vigilance :
+
+- **Le contenu pédagogique** a été relu, et vérifié contre des sources (programmes, dictionnaires) quand on
+  pouvait. Il reste sûrement des erreurs : signalez-les.
+- **Les nombres, l'alphabet, les jours et les mois en breton** ont été vérifiés dans le Wiktionnaire, le
+  Meurgorf (dictionnaire de l'Office public de la langue bretonne) et Kervarker.
+- **Le reste de l'interface en breton est une traduction automatique** qui n'a pas encore été relue par un
+  brittophone. Le site le signale aux visiteurs. Les passages dont on est le moins sûr sont marqués
+  `// br: à relire` dans le code : `grep -rn "br: à relire" src`.
+
+## Contribuer
+
+Les retours sont les bienvenus, même sans écrire de code :
+
+- une erreur, une faute, un bug : ouvrez une [issue](https://github.com/iksaif/ecole-primaire/issues)
+  ou écrivez à contact@skoolik.app ;
+- une idée d'exercice ou de fiche qui vous servirait en classe ou à la maison ;
+- une relecture de la traduction bretonne, même partielle ;
+- pour le code : les pull requests sont bienvenues, voir ci-dessous pour lancer le projet.
+
+## Lancer le projet
+
+Vue 3 + Vite, sans autre dépendance à l'exécution.
 
 ```sh
 npm install
-npm run dev        # http://localhost:5173/ecole-primaire/
-npm run build      # build de l'app + génération des fiches PDF (dist/)
-npm run build:app  # build de l'app seulement
+npm run dev               # http://localhost:5173/ecole-primaire/
+npm run dev:skoolik       # la version bretonne
+npm run build:app         # build de l'app seule (dist/)
 ```
 
-## Fiches PDF « toutes prêtes » (référencement)
+### Organisation
 
-`npm run build` lance `scripts/telechargements.mjs` après `vite build` : le script sert `dist/`,
-pilote Chrome sans interface (playwright-core) et génère, pour chaque fiche de
-`src/impression/catalogue.js`, un PDF, une vignette et une page statique
-`dist/telechargements/<slug>/`, plus `dist/telechargements/index.html`, `sitemap.xml` et `robots.txt`.
-Les documents sont produits par le même code que l'app (`src/impression/*.js`).
+- `src/views/` — une vue par exercice. Toutes utilisent le cadre commun `ConfigExercice` : onglets « Faire
+  l'exercice » / « Imprimer une fiche » (mode dans l'URL, `?mode=imprimer`), aperçu en direct. Une vue
+  fournit son formulaire et une fonction `htmlFiche()` qui renvoie le document à imprimer.
+- `src/impression/` — les générateurs de fiches (écriture, alphabet, nombres, calcul), partagés par l'app
+  et par la génération des PDF au build.
+- `src/i18n/` — traductions : `useI18n({ fr: {...}, br: {...} })` dans chaque composant, textes communs
+  dans `commun.js`.
+- `src/data/` — catalogue des activités (niveaux, filtre par classe), langues régionales.
+- `src/utils/nombres.js` — nombres en lettres en français (orthographe rectifiée ou traditionnelle) et en breton.
 
-- Chrome est cherché aux emplacements habituels, ou via `CHROME_PATH`.
-- `SITE_URL` fixe l'URL publique utilisée dans le sitemap (par défaut `https://iksaif.github.io/ecole-primaire/`).
-- Pour utiliser dans les PDF une police non redistribuable (Belle Allure, Écolier…), déposer le fichier dans
-  `polices-locales/attache/` (ou `polices-locales/script/`). Ce dossier est ignoré par git ; vérifier la licence
-  de la police avant de publier les PDF.
+### Fiches PDF toutes prêtes
 
-## Polices incluses
+`npm run build:ecoleprimaire` et `npm run build:skoolik` construisent le site puis lancent
+`scripts/telechargements.mjs`. Ce script ouvre le site dans Chrome sans interface (playwright-core) et
+génère, pour chaque fiche de `src/impression/catalogue.js` (et des fiches de calcul) :
 
-Playwrite FR Trad (cursive), Andika (script), OpenDyslexic — licence OFL ; Luciole © Laurent Bourcellier &
-Jonathan Perez — licence CC BY 4.0 (`src/assets/fonts/luciole/LICENCE.txt`).
+- un PDF ;
+- une vignette ;
+- une page statique `telechargements/<fiche>/`, que les moteurs de recherche peuvent indexer.
 
-## Sites et déploiement sur VPS
+Il génère aussi l'index des fiches, le `sitemap.xml`, le `robots.txt` et la page 404. Chrome est cherché
+aux emplacements habituels, ou via `CHROME_PATH`.
 
-Le même code produit plusieurs sites, choisis au build par le mode Vite (fichiers `.env*`, `src/site.js`) :
+Pour générer les PDF avec une police qu'on n'a pas le droit de redistribuer (Belle Allure, Écolier…),
+déposez-la dans `polices-locales/attache/` : ce dossier n'est pas versionné. Vérifiez la licence avant
+de publier les PDF.
 
-| Commande | Site | Base | Sortie |
-|---|---|---|---|
-| `npm run build` | build « GitHub » historique (base `/ecole-primaire/`), utilisé en dev | `/ecole-primaire/` | `dist/` |
-| `npm run build:ecoleprimaire` | https://ecoleprimaire.app (français) | `/` | `dist-ecoleprimaire/` |
-| `npm run build:skoolik` | https://skoolik.app (breton activé par défaut, fiches bretonnes) | `/` | `dist-skoolik/` |
+### Sites et déploiement
 
-**GitHub Pages** ne sert plus qu'une redirection vers https://ecoleprimaire.app qui conserve le chemin et la
-route (`scripts/redirection-gh-pages.mjs`, publiée par `.github/workflows/deploy.yml` à chaque push sur `main`).
+Le même code donne les deux sites. Le mode Vite choisit le site (`.env.ecoleprimaire`, `.env.skoolik`,
+`src/site.js`) : nom, adresse, langue par défaut, et langues des fiches publiées.
 
-Chaque fiche pré-générée a des `langues` (`src/impression/catalogue.js`) : un site ne publie que celles de sa langue.
-
-Déploiement (rsync sur SSH) :
+Le déploiement se fait par rsync sur un VPS :
 
 ```sh
-cp .deploy.env.example .deploy.env   # puis adapter (non commité)
-scripts/deploy-vps.sh --dry-run      # voir ce qui serait envoyé
-scripts/deploy-vps.sh                # construit et envoie tous les sites
+cp .deploy.env.example .deploy.env   # hôte et dossiers (non versionné)
+scripts/deploy-vps.sh --dry-run      # ce qui serait envoyé
+scripts/deploy-vps.sh                # construit et envoie les deux sites
 scripts/deploy-vps.sh skoolik        # un seul site
 ```
 
-Chaque site va dans `$DEPLOY_ROOT/<domaine>/`. Exemples de configuration nginx dans `deploy/nginx/`
-(certificats : `sudo certbot --nginx -d ecoleprimaire.app -d www.ecoleprimaire.app`).
+`deploy/setup-nginx.sh` configure nginx et les certificats Let's Encrypt sur le serveur (à lancer avec sudo).
 
-## Traduction (français / breton)
+GitHub Pages ne sert plus qu'une redirection vers https://ecoleprimaire.app, qui garde le chemin et la
+route (`scripts/redirection-gh-pages.mjs`, publiée à chaque push sur `main`).
 
-- `src/i18n/index.js` : `useI18n({ fr: {...}, br: {...} })` dans chaque composant, textes communs dans
-  `src/i18n/commun.js`, langue choisie dans la barre du haut (breton par défaut sur skoolik.app).
-- Les exercices de français (dictée, grammaire…) gardent leur contenu en français ; seule l'interface est traduite.
-- La traduction bretonne est automatique : les passages incertains sont marqués `// br: à relire`
-  (`grep -rn "br: à relire" src`). Une fenêtre prévient les visiteurs au premier passage en breton.
-- Voir `TODO.md` pour la généralisation à d'autres langues régionales.
+## Polices
+
+Toutes les polices utilisées sont livrées avec le site, sous licence libre :
+
+- Playwrite FR Trad (écriture cursive scolaire), Andika (script, pensée pour l'apprentissage de la lecture)
+  et OpenDyslexic, sous licence SIL OFL ;
+- Luciole © Laurent Bourcellier & Jonathan Perez, sous licence CC BY 4.0.
+
+## À faire
+
+Voir [TODO.md](TODO.md) : passage à d'autres langues régionales, relecture du breton, licence, surveillance…

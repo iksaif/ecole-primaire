@@ -13,8 +13,8 @@ import { useI18n } from '../i18n'
 import { CONTACT, DEPOT } from '../site'
 
 const { t } = useI18n({
-  fr: { contribuer: '🤝 Contribuer sur GitHub', apropos: 'À propos', mentions: 'Mentions légales', libre: 'Gratuit · sans publicité · sans cookie' },
-  br: { contribuer: '🤝 Kemer perzh war GitHub', apropos: 'Diwar-benn', mentions: 'Notennoù lezennel', libre: 'Digoust · hep bruderezh · hep toupin' },
+  fr: { contribuer: '🤝 Contribuer sur GitHub', apropos: 'À propos', mentions: 'Mentions légales', libre: 'Gratuit · sans publicité · sans cookie ni pistage' },
+  br: { contribuer: '🤝 Kemer perzh war GitHub', apropos: 'Diwar-benn', mentions: 'Notennoù lezennel', libre: 'Digoust · hep bruderezh · hep toupin na spiadur' },
 })
 </script>
 

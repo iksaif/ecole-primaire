@@ -164,13 +164,30 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--texte); back
 a { color: var(--bleu); }
 html[data-ui="fr"] .l-br, html[data-ui="br"] .l-fr { display: none; }
 html:not([data-regionale="br"]) .si-br, html[data-regionale="br"] .si-pas-br { display: none !important; }
-header { background: white; box-shadow: 0 4px 12px rgba(0,0,0,.08); padding: .6rem 1.25rem; display: flex; gap: .75rem 1rem; align-items: center; flex-wrap: wrap; }
-header .logo { font-size: 1.35rem; font-weight: 800; text-decoration: none; white-space: nowrap; }
-header nav { display: flex; gap: 1rem; flex-wrap: wrap; }
-header nav a { text-decoration: none; font-weight: 600; color: var(--texte); white-space: nowrap; }
-.langue-ui { margin-left: auto; display: flex; gap: 2px; background: var(--gris); border-radius: 20px; padding: 3px; }
-.langue-ui button { border: none; background: none; border-radius: 16px; padding: .25rem .6rem; font: inherit; font-size: .8rem; font-weight: 800; color: #666; cursor: pointer; }
-html[data-ui="fr"] .langue-ui [data-ui="fr"], html[data-ui="br"] .langue-ui [data-ui="br"] { background: white; color: var(--texte); box-shadow: 0 0 0 2px var(--bleu); }
+header.nav { background: white; box-shadow: 0 4px 12px rgba(0,0,0,.1); padding: .6rem 1.25rem; display: flex; align-items: center; gap: .75rem 1rem; }
+header .logo { font-size: 1.4rem; font-weight: 800; text-decoration: none; color: var(--bleu); white-space: nowrap; }
+header .liens { display: flex; gap: .35rem; min-width: 0; }
+header .liens a { text-decoration: none; padding: .35rem .7rem; border-radius: 20px; font-weight: 600; font-size: .9rem; color: var(--texte); white-space: nowrap; }
+header .liens a:hover { background: var(--gris); }
+header .liens a.imprimer { border: 2px solid var(--orange); color: #b35c00; padding: .25rem .65rem; }
+header .liens a.imprimer.actif { background: var(--orange); color: white; }
+header .liens a.reglages { opacity: .55; }
+header .droite { margin-left: auto; display: flex; gap: .5rem; align-items: center; flex-shrink: 0; }
+.loupe { text-decoration: none; background: var(--gris); border-radius: 20px; padding: .3rem .6rem; font-size: .95rem; display: inline-flex; align-items: center; gap: .35rem; }
+.loupe kbd { font: inherit; font-size: .7rem; color: #888; border: 1px solid var(--brd); border-radius: 5px; padding: 0 .3rem; background: white; }
+.classe { display: flex; align-items: center; gap: .35rem; background: var(--gris); border-radius: 20px; padding: .2rem .35rem .2rem .7rem; font-size: .85rem; white-space: nowrap; }
+.classe .lib { font-size: .72rem; font-weight: 800; color: #888; text-transform: uppercase; }
+.classe select { border: none; background: white; border-radius: 14px; padding: .25rem .5rem; font: inherit; font-weight: 700; color: var(--texte); }
+.langue-ui { display: flex; gap: 2px; background: var(--gris); border-radius: 20px; padding: 3px; }
+.langue-ui button { border: none; background: none; border-radius: 16px; padding: .3rem .45rem; cursor: pointer; display: inline-flex; line-height: 1; }
+html[data-ui="fr"] .langue-ui [data-ui="fr"], html[data-ui="br"] .langue-ui [data-ui="br"] { background: white; box-shadow: 0 0 0 2px var(--bleu); }
+.drapeau { width: 1.5em; height: 1em; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.15); display: block; }
+@media (max-width: 900px) {
+  header.nav { flex-wrap: wrap; padding: .5rem .75rem; }
+  header .logo { font-size: 1.15rem; }
+  header .liens { order: 3; flex-basis: 100%; overflow-x: auto; scrollbar-width: none; }
+  .loupe kbd, .classe .lib { display: none; }
+}
 main { max-width: 1040px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
 h1 { font-size: 1.8rem; margin-bottom: .5rem; }
 h2 { font-size: 1.35rem; margin: 2.25rem 0 .25rem; }
@@ -234,7 +251,25 @@ function appliquerContexte() {
   var c = window.__contexte, d = document.documentElement
   d.dataset.ui = c.ui; d.lang = c.ui
   d.dataset.regionale = c.reg || (c.ui === 'br' ? 'br' : 'aucune')
+  document.querySelectorAll('option[data-fr]').forEach(function (o) { o.textContent = o.dataset[c.ui] || o.textContent })
   document.dispatchEvent(new Event('contexte'))
+}
+// classe choisie : même mémoire que l'app (ep_classe) ; sur l'index, elle règle le filtre « Classe »
+function choisirClasse(c) {
+  try { localStorage.setItem('ep_classe', JSON.stringify(c)) } catch (e) {}
+  var b = document.querySelector('.filtre[data-filtre="classe"] [data-v="' + c + '"]')
+  if (b) b.click()
+}
+document.addEventListener('DOMContentLoaded', function () {
+  var c = ''
+  try { c = JSON.parse(localStorage.getItem('ep_classe')) || '' } catch (e) {}
+  var s = document.getElementById('classe-nav')
+  if (s) s.value = c
+})
+function ouvrirRecherche() {
+  var q = document.getElementById('q')
+  if (q) { q.focus(); q.select(); return false }
+  return true
 }
 function choisirLangue(l) {
   window.__contexte.ui = l
@@ -247,6 +282,12 @@ function activerBreton() {
   appliquerContexte()
 }
 </script>`
+
+// mêmes drapeaux que l'app (src/components/Drapeau.vue)
+const DRAPEAU_FR = '<svg class="drapeau" viewBox="0 0 3 2"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>'
+const DRAPEAU_BR = `<svg class="drapeau" viewBox="0 0 18 12"><rect width="18" height="12" fill="#fff"/>${[0, 1, 2, 3, 4].map(k =>
+  `<rect y="${(k * 2 * 12 / 9).toFixed(3)}" width="18" height="${(12 / 9).toFixed(3)}" fill="#000"/>`).join('')}<rect width="8" height="${(5 * 12 / 9).toFixed(3)}" fill="#fff"/><g fill="#000">${
+  [[1.3, .9], [3.9, .9], [6.5, .9], [2.6, 3], [5.2, 3], [1.3, 5], [3.9, 5], [6.5, 5]].map(([x, y]) => `<path d="M${x} ${y}l.45 1.3h-.9z"/>`).join('')}</g></svg>`
 
 function gabarit({ titre, description, canonique, contenu, image }) {
   return `<!DOCTYPE html>
@@ -262,10 +303,24 @@ ${image ? `<meta property="og:image" content="${image}">` : ''}
 <style>${CSS}</style>
 ${SCRIPT_CONTEXTE}
 </head><body>
-<header><a class="logo" href="${BASE}">${SITE.emoji} ${SITE.nom}</a>
-<nav><a href="${BASE}telechargements/">📥 ${bi('telecharger')}</a><a href="${BASE}#/imprimer">🖨️ ${bi('creer')}</a><a href="${BASE}">🎯 ${bi('exercices')}</a></nav>
-<div class="langue-ui" role="group" aria-label="Langue / Yezh">
-  <button data-ui="fr" onclick="choisirLangue('fr')" title="Français">FR</button><button data-ui="br" onclick="choisirLangue('br')" title="Brezhoneg">BR</button>
+<header class="nav">
+<a class="logo" href="${BASE}">${SITE.emoji} ${SITE.nom}</a>
+<nav class="liens">
+  <a href="${BASE}#/maths">🔢 ${duo('Maths', 'Matematik')}</a>
+  <a href="${BASE}#/francais">📝 ${duo('Français', 'Galleg')}</a>
+  <a href="${BASE}#/lecture">📖 ${duo('Lecture', 'Lenn')}</a>
+  <a href="${BASE}#/autres">🌍 ${duo('Autres', 'Traoù all')}</a>
+  <a href="${BASE}#/imprimer" class="imprimer actif">🖨️ ${duo('À imprimer', 'Da voullañ')}</a>
+  <a href="${BASE}#/parametres" class="reglages" title="Paramètres">⚙️</a>
+</nav>
+<div class="droite">
+  <a class="loupe" href="${BASE}telechargements/?chercher=1" title="Rechercher (/)" onclick="return ouvrirRecherche()">🔍<kbd>⌘K</kbd></a>
+  <div class="langue-ui" role="group" aria-label="Langue / Yezh">
+    <button data-ui="fr" onclick="choisirLangue('fr')" title="Français" aria-label="Français">${DRAPEAU_FR}</button><button data-ui="br" onclick="choisirLangue('br')" title="Brezhoneg" aria-label="Brezhoneg">${DRAPEAU_BR}</button>
+  </div>
+  <label class="classe" title="Classe">🎒 <span class="lib">${duo('Classe', 'Klas')}</span>
+    <select id="classe-nav" onchange="choisirClasse(this.value)"><option value="" data-fr="Toutes" data-br="An holl">${SITE.langue === 'br' ? 'An holl' : 'Toutes'}</option>${CLASSES.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('')}</select>
+  </label>
 </div></header>
 <main>${contenu}</main>
 <footer>${bi('pied')} Polices / Nodrezhoù : Playwrite FR Trad, Andika, OpenDyslexic (OFL), Luciole (CC BY).</footer>
@@ -413,13 +468,19 @@ function carte(t) {
   const apercu = t.variantes ? 'apercu-1.jpg' : 'apercu.jpg'
   return `<a class="carte ${t.usage}${brSeule(t) ? ' si-br' : ''}" href="${lienFiche(t)}" data-langues="${t.langues.join(' ')}" data-classes="${t.classes.join(' ')}" data-usage="${t.usage}" data-texte="${echapper(texte)}">
 <img src="${lienFiche(t)}${apercu}" alt="${echapper(titreFr(t))}" loading="lazy" width="300"${t.paysage ? ' class="paysage"' : ''}>
-<span>${courtDuo(t)} ${badge(t)}</span><small>🎒 ${echapper(t.niveaux)}${t.variantes ? ` · ${bi('variantes', t.variantes)}` : ''}</small></a>`
+<span>${t.usage === 'apprendre' ? '📘' : '✏️'} ${courtDuo(t)} ${badge(t)}</span><small>🎒 ${echapper(t.niveaux)}${t.variantes ? ` · ${bi('variantes', t.variantes)}` : ''}</small></a>`
 }
 
 function pageFiche(t, liste) {
   const cat = CATEGORIES.find(c => c.id === t.categorie)
-  // fiches voisines : même rubrique, et même langue pour les fiches bretonnes
-  const voisines = liste.filter(x => x.groupe === t.groupe && x.slug !== t.slug && brSeule(x) === brSeule(t)).slice(0, 8)
+  // fiches voisines : même nature (apprendre / s'entraîner) et même langue ; d'abord le même exercice
+  // dans d'autres classes, puis la même rubrique
+  const racineSlug = x => x.slug.replace(/-(ms|gs|cp|ce1|ce2|cm1|cm2|gs-cp|ms-gs|cp-cm2)(-brezhoneg)?$/, '')
+  const proches = liste.filter(x => x.slug !== t.slug && x.usage === t.usage && brSeule(x) === brSeule(t))
+  const voisines = [
+    ...proches.filter(x => x.variantes && racineSlug(x) === racineSlug(t)),
+    ...proches.filter(x => x.groupe === t.groupe && !(x.variantes && racineSlug(x) === racineSlug(t))),
+  ].slice(0, 8)
   const sansEmoji = s => s.replace(/^\S+\s/, '')
   const rubrique = cat ? duo(sansEmoji(cat.titre), sansEmoji(cat.titreBr ?? cat.titre)) : bi(`g_${t.groupe}`)
   const n = t.variantes ?? 0
@@ -532,6 +593,10 @@ ${section('exercice')}
       b.onclick = function () {
         f.querySelectorAll('button').forEach(function (x) { x.classList.toggle('actif', x === b) })
         filtres[f.dataset.filtre] = b.dataset.v; appliquer()
+        if (f.dataset.filtre === 'classe') {
+          var s = document.getElementById('classe-nav'); if (s) s.value = b.dataset.v
+          try { localStorage.setItem('ep_classe', JSON.stringify(b.dataset.v)) } catch (e) {}
+        }
       }
     })
   })
@@ -546,7 +611,11 @@ ${section('exercice')}
   // ?q=… et ?classe=… dans l'URL (liens depuis l'app)
   var p = new URLSearchParams(location.search)
   if (p.get('q')) q.value = p.get('q')
-  var bc = p.get('classe') && document.querySelector('.filtre[data-filtre="classe"] [data-v="' + p.get('classe') + '"]')
+  if (p.has('chercher')) setTimeout(function () { q.focus() }, 0)
+  var cm = ''
+  try { cm = JSON.parse(localStorage.getItem('ep_classe')) || '' } catch (e) {}
+  var cl = p.get('classe') || cm
+  var bc = cl && document.querySelector('.filtre[data-filtre="classe"] [data-v="' + cl + '"]')
   if (bc) bc.click(); else appliquer()
 })()
 </script>`

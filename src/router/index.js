@@ -38,8 +38,16 @@ const routes = [
   { path: '/parametres',          component: () => import('../views/ParentSettingsView.vue') },
 ]
 
+// L'app ne vit qu'à la racine du site : chargée ailleurs (ex. /telechargements/#/imprimer, quand la page
+// statique n'existe pas encore en dev), on la renvoie à la racine en gardant la route
+const BASE = import.meta.env.BASE_URL
+if (typeof location !== 'undefined' && location.pathname !== BASE && location.pathname !== `${BASE}index.html`) {
+  location.replace(`${BASE}${location.search}${location.hash}`)
+}
+
 const router = createRouter({
-  history: createWebHashHistory(),
+  // base explicite : les liens restent /…/#/route quelle que soit l'adresse de chargement
+  history: createWebHashHistory(BASE),
   routes,
   scrollBehavior: () => ({ top: 0 }),
 })

@@ -175,9 +175,9 @@ const breton = [
   ...[['A4', 'landscape', 'A4'], ['A3', 'landscape', 'A3']].map(([format, orientation, nom]) => ({
     slug: `affiche-alphabet-breton-${nom.toLowerCase()}`, court: `Alphabet breton ${nom}`, type: 'alphabet', categorie: 'alphabet',
     titre: `Affiche de l'alphabet breton ${nom} (al lizherenneg)`,
-    description: `Affiche ${nom} de l'alphabet breton : 25 lettres avec ch et c'h, en script et en attaché, majuscules et minuscules. Pour l'école bilingue ou Diwan.`,
+    description: `Affiche ${nom} de l'alphabet breton : 25 lettres avec ch et c'h, en script et en attaché, majuscules et minuscules, avec un mot illustré (aval, bara, ki…). Pour l'école bilingue ou Diwan.`,
     niveaux: 'MS · GS · CP · CE1', lien: '/imprimer/alphabet',
-    config: { format, orientation, disposition: 'grille', styles: TOUS_STYLES, mot: false, voyelles: true, lignes: false, alphabet: 'br' },
+    config: { format, orientation, disposition: 'grille', styles: TOUS_STYLES, mot: true, voyelles: true, lignes: false, alphabet: 'br' },
   })),
 ]
 
@@ -199,8 +199,10 @@ const avecLangues = (liste, langues) => liste.map(t => ({ langues, ...t }))
 
 export const TELECHARGEMENTS = [
   ...avecLangues([...lettres, ...alphabets, ...mots, ...affiches], ['fr']),
-  ...nombres.map(t => ({ langues: t.config.langue === 'fr' ? ['fr'] : ['fr', 'br'], ...t })),
-  ...avecLangues(breton, ['fr', 'br']),
+  // nombres : français seul, breton seul, ou bilingue
+  ...nombres.map(t => ({ langues: { fr: ['fr'], br: ['br'] }[t.config.langue] ?? ['fr', 'br'], ...t })),
+  // contenu en breton (alphabet, jours, mois, nombres en breton) : fiches bretonnes
+  ...avecLangues(breton, ['br']),
   ...lettresBretonnes,
 ]
 

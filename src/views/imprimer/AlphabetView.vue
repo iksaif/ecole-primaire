@@ -47,7 +47,7 @@
 
       <div class="config-section">
         <div class="config-section-title">{{ t('options') }}</div>
-        <label class="case" v-if="!regionale || config.alphabet !== regionale.id"><input type="checkbox" v-model="config.mot"> {{ t('mot') }}</label>
+        <label class="case"><input type="checkbox" v-model="config.mot"> {{ t('mot') }}</label>
         <label class="case"><input type="checkbox" v-model="config.voyelles"> {{ t('voyelles') }}</label>
         <label class="case"><input type="checkbox" v-model="config.lignes"> {{ t('lignes') }}</label>
       </div>

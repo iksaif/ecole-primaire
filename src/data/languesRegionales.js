@@ -16,6 +16,16 @@ export const LANGUES_REGIONALES = [
     titreAlphabet: 'Al lizherenneg',
     lettresEnPlus: ['ch', "c'h", 'ñ', 'ù'],
     enLettres: enLettresBr,
+    // Mot illustré par lettre pour l'affiche de l'alphabet. Vérifiés dans le Wiktionnaire (ercʼh, frouezh,
+    // jirafenn, ognon, cʼhwil, warcʼhoazh, chokolad, rod, neizh, iliz) ou mots de base ; pas de mot pour Z
+    // (aucun mot courant vérifié : « zebr » est une forme du verbe debriñ).
+    mots: {
+      a: ['aval', '🍎'], b: ['bara', '🍞'], ch: ['chokolad', '🍫'], "c'h": ["c'hwil", '🪲'], d: ['dour', '💧'],
+      e: ["erc'h", '❄️'], f: ['frouezh', '🍓'], g: ['gavr', '🐐'], h: ['heol', '☀️'], i: ['iliz', '⛪'],
+      j: ['jirafenn', '🦒'], k: ['ki', '🐕'], l: ['loar', '🌙'], m: ['mor', '🌊'], n: ['neizh', '🪺'],
+      o: ['ognon', '🧅'], p: ['pesk', '🐟'], r: ['rod', '🛞'], s: ['skol', '🏫'], t: ['ti', '🏠'],
+      u: ['unan', '1️⃣'], v: ['vi', '🥚'], w: ["warc'hoazh", '📅'], y: ['yar', '🐔'],
+    },
     // Les noms de jours et de mois prennent une majuscule en breton
     // label : libellé du bouton dans l'interface en français, labelBr : dans l'interface en breton
     listes: [

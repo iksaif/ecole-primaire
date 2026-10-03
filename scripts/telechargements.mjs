@@ -41,9 +41,9 @@ const BASE = env.VITE_BASE || '/ecole-primaire/'
 const SITE_URL = (env.VITE_SITE_URL || 'https://iksaif.github.io/ecole-primaire/').replace(/\/?$/, '/')
 const SITE = site(env.VITE_SITE)
 const CLASSES = ['ms', 'gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2']
-// Adresse de référence d'une fiche : les fiches uniquement bretonnes vivent sur skoolik.app, les autres
+// Adresse de référence d'une fiche : les fiches qui contiennent du breton vivent sur skoolik.app, les autres
 // sur ecoleprimaire.app (les deux sites publient tout, sans contenu dupliqué pour les moteurs de recherche)
-const urlReference = t => (t.langues.length === 1 && t.langues[0] === 'br' ? SITES.skoolik.url : SITES.ecoleprimaire.url)
+const urlReference = t => (t.langues.includes('br') ? SITES.skoolik.url : SITES.ecoleprimaire.url)
 
 // ── Textes des pages (français / breton) ─────────────────────────────────────
 // Les pages contiennent les deux langues ; le sélecteur FR/BR (même clé localStorage que l'app)
@@ -124,6 +124,8 @@ const GROUPES = {
 }
 const classesDepuisTexte = s => (s || '').toLowerCase().split(/[·→,\s]+/).filter(c => CLASSES.includes(c))
 const brSeule = t => t.langues.length === 1 && t.langues[0] === 'br'
+// fiche qui contient du breton (bretonne ou bilingue) : affichée seulement si la langue régionale est active
+const avecBreton = t => t.langues.includes('br')
 
 function trouverChrome() {
   const candidats = [
@@ -200,8 +202,13 @@ h3 { font-size: 1.05rem; margin: 1.5rem 0 .6rem; color: #555; }
 .apercu { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.1); padding: .75rem; }
 .apercu img { width: 100%; height: auto; display: block; border: 1px solid var(--brd); }
 .pager { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.pager { align-items: center; }
 .pager button { border: 2px solid var(--brd); background: white; border-radius: 8px; padding: .35rem .8rem; font: inherit; font-weight: 800; cursor: pointer; }
 .pager button.actif { background: var(--bleu); border-color: var(--bleu); color: white; }
+.pager .fleche { padding: .35rem .65rem; }
+.pager .position { font-weight: 700; color: #555; padding: 0 .4rem; }
+.badge-pages { position: absolute; top: .5rem; right: .5rem; background: rgba(44,62,80,.85); color: white; font-size: .72rem; font-weight: 800; border-radius: 10px; padding: .1rem .45rem; }
+.carte { position: relative; }
 .actions { display: flex; flex-direction: column; gap: .75rem; }
 .btn { display: inline-flex; justify-content: center; align-items: center; gap: .5rem; padding: .85rem 1.5rem; border-radius: 10px;
   font-weight: 800; font-size: 1.05rem; text-decoration: none; }
@@ -329,7 +336,8 @@ ${SCRIPT_CONTEXTE}
 
 // ── Génération des documents ─────────────────────────────────────────────────
 
-// PDF + aperçu JPEG d'un document ; renvoie true si la page est en paysage
+// PDF + aperçus JPEG d'un document (nomApercu pour la 1re page, nomApercu-p2.jpg… pour les suivantes) ;
+// renvoie { paysage, nbApercus }
 async function enPdf(doc, html, dossier, nomPdf, nomApercu) {
   // assez large pour une page A3 paysage ; les fiches qui s'écoulent sont rendues en largeur A4 plus bas
   await doc.setViewportSize({ width: 1700, height: 1300 })
@@ -339,15 +347,19 @@ async function enPdf(doc, html, dossier, nomPdf, nomApercu) {
   await doc.pdf({ path: join(dossier, nomPdf), preferCSSPageSize: true, printBackground: true })
   await doc.emulateMedia({ media: 'screen' })
   // fiches « à pages » (.page de taille fixe), sinon fiches qui s'écoulent : le haut de la première page
-  const page = doc.locator('.page').first()
-  if (await page.count()) {
-    await page.screenshot({ path: join(dossier, nomApercu), type: 'jpeg', quality: 78 })
-    return page.evaluate(e => e.offsetWidth > e.offsetHeight)
+  const pages = doc.locator('.page')
+  const n = await pages.count()
+  if (n) {
+    for (let k = 0; k < n; k++) {
+      const nom = k ? nomApercu.replace(/\.jpg$/, `-p${k + 1}.jpg`) : nomApercu
+      await pages.nth(k).screenshot({ path: join(dossier, nom), type: 'jpeg', quality: k ? 70 : 78 })
+    }
+    return { paysage: await pages.first().evaluate(e => e.offsetWidth > e.offsetHeight), nbApercus: n }
   }
   await doc.setViewportSize({ width: 794, height: 1123 })
   await doc.evaluate(() => { document.body.style.background = 'white' })
   await doc.screenshot({ path: join(dossier, nomApercu), type: 'jpeg', quality: 78, fullPage: true, clip: { x: 0, y: 0, width: 794, height: 1123 } })
-  return false
+  return { paysage: false, nbApercus: 1 }
 }
 
 // Fiches d'exercices : la page d'exercice de l'app en mode impression, avec un hasard reproductible
@@ -390,7 +402,7 @@ async function genererExercices(navigateur, url, doc) {
           const iframe = page.locator('.cadre-exercice iframe').first()
           await iframe.waitFor({ timeout: 15000 })
           await page.waitForTimeout(300)
-          paysage = await enPdf(doc, await iframe.getAttribute('srcdoc'), dossier, `fiche-${v}.pdf`, `apercu-${v}.jpg`) || paysage
+          paysage = (await enPdf(doc, await iframe.getAttribute('srcdoc'), dossier, `fiche-${v}.pdf`, `apercu-${v}.jpg`)).paysage || paysage
         }
         const niveaux = etiquetteClasse(c.classe)
         res.push({
@@ -438,7 +450,7 @@ async function main() {
       const dossier = join(dist, 'telechargements', t.slug)
       mkdirSync(dossier, { recursive: true })
       const r = await app.evaluate(slug => window.__ecolePrimaire.generer(slug), t.slug)
-      t.paysage = await enPdf(doc, r.html, dossier, `${t.slug}.pdf`, 'apercu.jpg')
+      Object.assign(t, await enPdf(doc, r.html, dossier, `${t.slug}.pdf`, 'apercu.jpg'))
       t.nbPages = r.nbPages
       t.format = `${r.format} ${tx(r.orientation === 'landscape' ? 'paysage' : 'portrait')}`
       Object.assign(t, classer(t), { classes: classesDepuisTexte(t.niveaux) })
@@ -466,8 +478,8 @@ const badge = t => (t.langues.length === 1 && t.langues[0] === 'fr' ? ''
 function carte(t) {
   const texte = normaliser([titreFr(t), t.titreBr, t.courtFr ?? t.court, t.courtBr, t.description, t.niveaux, t.slug.replace(/-/g, ' ')].filter(Boolean).join(' '))
   const apercu = t.variantes ? 'apercu-1.jpg' : 'apercu.jpg'
-  return `<a class="carte ${t.usage}${brSeule(t) ? ' si-br' : ''}" href="${lienFiche(t)}" data-langues="${t.langues.join(' ')}" data-classes="${t.classes.join(' ')}" data-usage="${t.usage}" data-texte="${echapper(texte)}">
-<img src="${lienFiche(t)}${apercu}" alt="${echapper(titreFr(t))}" loading="lazy" width="300"${t.paysage ? ' class="paysage"' : ''}>
+  return `<a class="carte ${t.usage}${avecBreton(t) ? ' si-br' : ''}" href="${lienFiche(t)}" data-langues="${t.langues.join(' ')}" data-classes="${t.classes.join(' ')}" data-usage="${t.usage}" data-texte="${echapper(texte)}">
+${(t.nbApercus ?? 1) > 1 ? `<em class="badge-pages">📄 ${t.nbApercus}</em>` : ''}<img src="${lienFiche(t)}${apercu}" alt="${echapper(titreFr(t))}" loading="lazy" width="300"${t.paysage ? ' class="paysage"' : ''}>
 <span>${t.usage === 'apprendre' ? '📘' : '✏️'} ${courtDuo(t)} ${badge(t)}</span><small>🎒 ${echapper(t.niveaux)}${t.variantes ? ` · ${bi('variantes', t.variantes)}` : ''}</small></a>`
 }
 
@@ -476,7 +488,7 @@ function pageFiche(t, liste) {
   // fiches voisines : même nature (apprendre / s'entraîner) et même langue ; d'abord le même exercice
   // dans d'autres classes, puis la même rubrique
   const racineSlug = x => x.slug.replace(/-(ms|gs|cp|ce1|ce2|cm1|cm2|gs-cp|ms-gs|cp-cm2)(-brezhoneg)?$/, '')
-  const proches = liste.filter(x => x.slug !== t.slug && x.usage === t.usage && brSeule(x) === brSeule(t))
+  const proches = liste.filter(x => x.slug !== t.slug && x.usage === t.usage && avecBreton(x) === avecBreton(t))
   const voisines = [
     ...proches.filter(x => x.variantes && racineSlug(x) === racineSlug(t)),
     ...proches.filter(x => x.groupe === t.groupe && !(x.variantes && racineSlug(x) === racineSlug(t))),
@@ -486,14 +498,38 @@ function pageFiche(t, liste) {
   const n = t.variantes ?? 0
   const pdf = n ? 'fiche-1.pdf' : `${t.slug}.pdf`
   const apercu = n ? 'apercu-1.jpg' : 'apercu.jpg'
-  const pager = n ? `<div class="pager" role="tablist">${Array.from({ length: n }, (_, k) =>
-    `<button role="tab" data-n="${k + 1}"${k ? '' : ' class="actif"'}>${bi('fiche', k + 1)}</button>`).join('')}</div>
+  // visionneuse : fiches différentes (variantes, chacune son PDF) ou pages d'un même document
+  const nbPagesApercu = n ? 0 : (t.nbApercus ?? 1)
+  const images = n ? Array.from({ length: n }, (_, k) => `apercu-${k + 1}.jpg`)
+    : Array.from({ length: nbPagesApercu }, (_, k) => (k ? `apercu-p${k + 1}.jpg` : 'apercu.jpg'))
+  const pdfs = n ? Array.from({ length: n }, (_, k) => `fiche-${k + 1}.pdf`) : null
+  const pager = images.length > 1 ? `<div class="pager">
+  <button type="button" class="fleche" data-pas="-1" aria-label="Précédent">◀</button>
+  ${n ? Array.from({ length: n }, (_, k) => `<button type="button" class="num${k ? '' : ' actif'}" data-k="${k}">${bi('fiche', k + 1)}</button>`).join('')
+    : `<span class="position">${duo('Page', 'Pajenn')} <b id="pos">1</b> / ${images.length}</span>`}
+  <button type="button" class="fleche" data-pas="1" aria-label="Suivant">▶</button>
+</div>
 <script>
-document.querySelectorAll('.pager button').forEach(b => b.onclick = () => {
-  document.querySelectorAll('.pager button').forEach(x => x.classList.toggle('actif', x === b))
-  document.getElementById('apercu').src = 'apercu-' + b.dataset.n + '.jpg'
-  document.getElementById('dl').href = 'fiche-' + b.dataset.n + '.pdf'
-})
+(function () {
+  var images = ${JSON.stringify(images)}, pdfs = ${JSON.stringify(pdfs)}, k = 0
+  function aller(i) {
+    k = (i + images.length) % images.length
+    document.getElementById('apercu').src = images[k]
+    if (pdfs) document.getElementById('dl').href = pdfs[k]
+    var pos = document.getElementById('pos'); if (pos) pos.textContent = k + 1
+    document.querySelectorAll('.pager .num').forEach(function (b) { b.classList.toggle('actif', +b.dataset.k === k) })
+    // précharge les pages voisines pour un passage instantané
+    new Image().src = images[(k + 1) % images.length]; new Image().src = images[(k - 1 + images.length) % images.length]
+  }
+  document.querySelectorAll('.pager .fleche').forEach(function (b) { b.onclick = function () { aller(k + +b.dataset.pas) } })
+  document.querySelectorAll('.pager .num').forEach(function (b) { b.onclick = function () { aller(+b.dataset.k) } })
+  document.addEventListener('keydown', function (e) {
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return
+    if (e.key === 'ArrowRight') aller(k + 1); else if (e.key === 'ArrowLeft') aller(k - 1)
+  })
+  // préchargement des images suivantes
+  images.slice(1, 4).forEach(function (src) { new Image().src = src })
+})()
 </script>` : ''
   const contenu = `
 <p class="fil"><a href="${BASE}telechargements/">${bi('telecharger')}</a> › ${rubrique}</p>
@@ -575,7 +611,7 @@ ${section('exercice')}
     var mots = norm(q.value).split(/\\s+/).filter(Boolean), n = 0
     document.querySelectorAll('.carte').forEach(function (c) {
       var langues = c.dataset.langues.split(' ')
-      var ok = (breton || langues.indexOf('fr') >= 0)
+      var ok = (breton || langues.indexOf('br') < 0)
         && (!filtres.usage || c.dataset.usage === filtres.usage)
         && (!filtres.classe || c.dataset.classes.split(' ').indexOf(filtres.classe) >= 0)
         && (!breton || !filtres.langue || langues.indexOf(filtres.langue) >= 0)

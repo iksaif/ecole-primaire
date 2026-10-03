@@ -73,7 +73,8 @@ const entrees = computed(() => {
     route: a.to, texte: norm([a.titre, a.br?.titre, a.desc, a.br?.desc, a.domaine, a.niveaux.join(' ')].join(' ')),
   }))
   const pdfs = fiches.value
-    .filter(f => regionale.value || f.langues.includes('fr'))
+    // fiches contenant du breton : seulement si la langue régionale est active
+    .filter(f => regionale.value || !f.langues.includes('br'))
     .map(f => ({
       cle: f.slug, type: 'pdf', icone: f.usage === 'apprendre' ? '📘' : '✏️',
       titre: br ? f.br : f.fr, sous: f.niveaux,

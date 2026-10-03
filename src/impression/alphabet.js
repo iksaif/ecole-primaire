@@ -55,7 +55,7 @@ function carte(l, w, h, config, polices) {
   const maj = x => x[0].toLocaleUpperCase('fr-FR') + x.slice(1)
   const aScript = styles.some(s => s.startsWith('script'))
   const aAttache = styles.some(s => s.startsWith('attache'))
-  const hMot = config.mot && MOTS[l] ? h * 0.2 : 0
+  const hMot = config.mot && (config.mots ?? MOTS)[l] ? h * 0.2 : 0
   const nbZones = (aScript ? 1 : 0) + (aAttache ? 1 : 0)
   const hZone = (h - hMot - h * 0.06) / Math.max(1, nbZones)
   const metS = metriquesPolice(polices.script)
@@ -73,11 +73,12 @@ function carte(l, w, h, config, polices) {
       .filter(Boolean).join('&#8199;')
     s += `<div class="zone" style="color:${couleur}">${cellAttache(txt, hZone, w, config.lignes, polices)}</div>`
   }
-  if (config.mot && MOTS[l]) {
-    const [mot, emoji] = MOTS[l]
+  const mots = config.mots ?? MOTS
+  if (config.mot && mots[l]) {
+    const [mot, emoji] = mots[l]
     const tMot = Math.min(hMot * 0.42, w / (mot.length * 0.62 + 3))
     const k = mot.indexOf(l)
-    const motHtml = k < 0 ? mot : `${mot.slice(0, k)}<b style="color:${couleur}">${l}</b>${mot.slice(k + 1)}`
+    const motHtml = k < 0 ? mot : `${mot.slice(0, k)}<b style="color:${couleur}">${l}</b>${mot.slice(k + l.length)}`
     s += `<div class="mot" style="height:${hMot}mm;font-size:${tMot}mm"><span class="emoji">${emoji}</span><span>${motHtml}</span></div>`
   }
   return `<div class="carte" style="width:${w}mm;height:${h}mm">${s}</div>`
@@ -86,10 +87,10 @@ function carte(l, w, h, config, polices) {
 // polices = { attache, script } : noms des familles à utiliser (déjà chargées)
 export function genererAlphabet(config, polices) {
   const { format, orientation, disposition } = config
-  // alphabet d'une langue régionale : pas de mots illustrés (seulement pour le français)
+  // alphabet d'une langue régionale : ses propres mots illustrés (s'il y en a)
   const reg = config.alphabet && config.alphabet !== 'fr' ? langueRegionale(config.alphabet) : null
   const LETTRES = reg ? reg.alphabet : LETTRES_FR
-  if (reg) config = { ...config, mot: false }
+  if (reg) config = { ...config, mots: reg.mots ?? {}, mot: config.mot && !!reg.mots }
   const titreAffiche = reg?.titreAlphabet ?? (config.langue === 'br' ? "Al lizherenneg c'hallek" : "L'alphabet")
   const { w, h } = dimensionsPage(format, orientation)
   const marge = 8, ecart = format === 'A3' ? 3 : 2

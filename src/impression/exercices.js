@@ -6,12 +6,19 @@
 
 export const NB_VARIANTES = 4
 
-const C = (classe, bouton) => ({ classe, bouton })
+// bouton : niveau à choisir ; clics : réglages à activer en plus (texte des boutons, expressions régulières)
+const C = (classe, bouton, clics = []) => ({ classe, bouton, clics })
 
 export const EXERCICES = [
   // ── Maths ──
   { id: 'calcul-mental', route: '/maths/calcul-mental', groupe: 'maths', titre: { fr: 'Calcul mental', br: 'Jediñ e penn' },
-    classes: [C('cp', '^CP$'), C('ce1', '^CE1$'), C('ce2', '^CE2$'), C('cm1', '^CM1$'), C('cm2', '^CM2$')] },
+    classes: [
+      C('cp', '^CP$', ['^Compléments à 10$|^Klokadurioù da 10$', '^Doubles$|^Doubloù$']),
+      C('ce1', '^CE1$', ['^×$', '^Doubles$|^Doubloù$', '^Moitiés$|^Hanterioù$']),
+      C('ce2', '^CE2$', ['^×$', '^÷$', '^Compléments à 100$|^Klokadurioù da 100$']),
+      C('cm1', '^CM1$', ['^×$', '^÷$']),
+      C('cm2', '^CM2$', ['^×$', '^÷$']),
+    ] },
   { id: 'calcul-pose', route: '/maths/calcul-pose', groupe: 'maths', titre: { fr: 'Calcul posé', br: 'Jedadurioù lakaet' },
     classes: [C('cp', '^2'), C('ce1', '^3'), C('cm1', '^4')] },
   { id: 'nombres', route: '/maths/numeration', groupe: 'maths', titre: { fr: 'Les nombres', br: 'An niveroù' },

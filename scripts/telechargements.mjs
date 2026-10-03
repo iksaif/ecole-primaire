@@ -51,7 +51,7 @@ const urlReference = t => (t.langues.length === 1 && t.langues[0] === 'br' ? SIT
 const T = {
   fr: {
     telecharger: 'Fiches à télécharger', creer: 'Créer ma fiche', exercices: 'Exercices en ligne',
-    pdf: '📥 Télécharger le PDF', personnaliser: '✏️ Personnaliser cette fiche', pages: n => `📄 ${n} page${n > 1 ? 's' : ''}`,
+    pdf: '📥 Télécharger le PDF', imprimer: '🖨️ Imprimer', personnaliser: '✏️ Personnaliser cette fiche', pages: n => `📄 ${n} page${n > 1 ? 's' : ''}`,
     imprimer100: '🖨️ Imprimer en « taille réelle » (100 %), sans « ajuster à la page »', gratuit: '✔️ Gratuit, sans inscription',
     persoAide: 'Avec « Personnaliser », tu peux changer les réglages et générer autant de fiches que tu veux.',
     autres: 'Autres fiches', titreIndex: '📥 Fiches à imprimer gratuites',
@@ -74,7 +74,7 @@ const T = {
   },
   br: {
     telecharger: 'Fichennoù da bellgargañ', creer: 'Krouiñ ma fichenn', exercices: 'Poelladennoù enlinenn',
-    pdf: '📥 Pellgargañ ar PDF', personnaliser: '✏️ Personelaat ar fichenn-mañ', pages: n => `📄 Pajennoù : ${n}`,
+    pdf: '📥 Pellgargañ ar PDF', imprimer: '🖨️ Moullañ', personnaliser: '✏️ Personelaat ar fichenn-mañ', pages: n => `📄 Pajennoù : ${n}`,
     imprimer100: '🖨️ Moullañ er « vent wir » (100 %), hep « azasaat d\'ar bajenn »', gratuit: '✔️ Digoust, hep enskrivañ',
     persoAide: "Gant « Personelaat » e c'hallez cheñch an arventennoù ha krouiñ kement a fichennoù ha ma karez.",
     autres: 'Fichennoù all', titreIndex: '📥 Fichennoù digoust da voullañ',
@@ -306,7 +306,8 @@ async function genererExercices(navigateur, url, doc) {
         let s = Number(g) | 0
         Math.random = () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
       }
-      try { localStorage.setItem('ep_langue_interface', JSON.stringify(l)); localStorage.setItem('ep_avis_traduction_vu', 'true') } catch {}
+      // chaque fiche part des réglages par défaut de l'exercice (pas de réglage mémorisé d'une fiche à l'autre)
+    try { localStorage.clear(); localStorage.setItem('ep_langue_interface', JSON.stringify(l)); localStorage.setItem('ep_avis_traduction_vu', 'true') } catch {}
     }, langue)
     const page = await ctx.newPage()
     for (const ex of EXERCICES) {
@@ -322,6 +323,11 @@ async function genererExercices(navigateur, url, doc) {
             const btn = page.locator('.cadre-exercice button', { hasText: new RegExp(c.bouton) }).first()
             if (!(await btn.count())) throw new Error(`${slug} : bouton de niveau /${c.bouton}/ introuvable`)
             await btn.click()
+          }
+          // réglages propres à la classe (ex. opérations du calcul mental)
+          for (const re of c.clics ?? []) {
+            const b = page.locator('.cadre-exercice button', { hasText: new RegExp(re) }).first()
+            if (await b.count() && !(await b.getAttribute('class') ?? '').includes('active')) await b.click()
           }
           // corrigé : le cocher s'il existe
           const corrige = page.locator('.cadre-exercice label', { hasText: /Corrig|Reizhadenn/ }).locator('input[type=checkbox]')
@@ -436,16 +442,30 @@ document.querySelectorAll('.pager button').forEach(b => b.onclick = () => {
   <div class="apercu">${pager}<img id="apercu" src="${apercu}" alt="${echapper(titreFr(t))}" width="600"></div>
   <div class="actions">
     <a class="btn btn-dl" id="dl" href="${pdf}" download>${bi('pdf')}</a>
+    <button class="btn btn-perso" type="button" onclick="imprimerPdf()">${bi('imprimer')}</button>
     <a class="btn btn-perso" href="${BASE}#${t.lien}${n ? '?mode=imprimer' : ''}">${bi('personnaliser')}</a>
     <ul class="infos">
       ${n ? `<li>📚 ${bi('variantes', n)} — ${bi('variantesAide')}</li>` : `<li>${bi('pages', t.nbPages)} · ${echapper(t.format)}</li>`}
       <li>🎒 ${echapper(t.niveaux)}</li>
       <li>${bi('imprimer100')}</li>
-      <li>${bi('gratuit')}</li>
     </ul>
     <p class="intro">${cat ? duo(cat.intro, cat.introBr ?? cat.intro) : ''} ${bi('persoAide')}</p>
   </div>
 </div>
+<script>
+// Imprime le PDF affiché sans le télécharger (iframe cachée) ; sinon l'ouvre dans un onglet
+function imprimerPdf() {
+  var href = document.getElementById('dl').getAttribute('href')
+  var f = document.createElement('iframe')
+  f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0'
+  f.src = href
+  f.onload = function () {
+    try { f.contentWindow.focus(); f.contentWindow.print() } catch (e) { window.open(href, '_blank') }
+    setTimeout(function () { f.remove() }, 60000)
+  }
+  document.body.appendChild(f)
+}
+</script>
 ${voisines.length ? `<h2>${bi('autres')}</h2>
 <div class="grille">${voisines.map(carte).join('')}</div>` : ''}`
   writeFileSync(join(dist, 'telechargements', t.slug, 'index.html'), gabarit({

@@ -703,7 +703,9 @@ function genererSansRepetition(cfg, nb) {
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   let types = cfg.types.filter(t => GENERATEURS[t] && niv.types.includes(t))
   if (!types.length) types = niv.types
-  const ordre = melanger(Array.from({ length: nb }, (_, i) => types[i % types.length]))
+  // types mélangés d'abord : avec moins de questions que de types, pas toujours les mêmes oubliés
+  const typesMelanges = melanger(types)
+  const ordre = melanger(Array.from({ length: nb }, (_, i) => typesMelanges[i % typesMelanges.length]))
   const vus = new Set()
   const result = []
   let essais = 0, echecs = 0

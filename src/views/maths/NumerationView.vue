@@ -648,7 +648,9 @@ function genererQuestion(cfg) {
 // Répartit les types pour bien mélanger, sans répétition de question
 function genererSansRepetition(cfg, nb) {
   const types = cfg.types.filter(t => GENERATEURS[t])
-  const ordre = melanger(Array.from({ length: nb }, (_, i) => types[i % types.length]))
+  // types mélangés d'abord : avec moins de questions que de types, pas toujours les mêmes oubliés
+  const typesMelanges = melanger(types)
+  const ordre = melanger(Array.from({ length: nb }, (_, i) => typesMelanges[i % typesMelanges.length]))
   const vus = new Set()
   const result = []
   let essais = 0, echecs = 0

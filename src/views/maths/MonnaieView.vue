@@ -267,7 +267,7 @@ const { t, tr, langue } = useI18n({
     eurosEntiers: 'Euros entiers',
     avecCentimes: 'Avec centimes',
     afficherTotal: 'Afficher le total pendant que je compose',
-    aideFiche: 'La fiche reprend les exercices choisis : compter, faire une somme (entourer), rendre la monnaie, conversions.',
+    aideFiche: 'La fiche reprend les exercices choisis.',
     combienArgent: "Combien d'argent y a-t-il ?",
     exemple: 'ex : 3,50 €',
     tuPeuxEcrire: 'Tu peux écrire « 3,50 € » ou « 3 € 50 c ».',
@@ -315,7 +315,7 @@ const { t, tr, langue } = useI18n({
     eurosEntiers: 'Euro hepken',
     avecCentimes: 'Gant santimoù',
     afficherTotal: 'Diskouez ar sammad e-keit ma lakaan an arc\'hant', // br: à relire
-    aideFiche: "Er fichenn e vo ar poelladennoù dibabet : kontañ, ober ur sammad (kelc'hiañ), distreiñ ar moneiz, amdroadurioù.", // br: à relire
+    aideFiche: 'Er fichenn e vo ar poelladennoù dibabet.', // br: à relire
     combienArgent: "Pegement a arc'hant a zo ?",
     exemple: 'sk. : 3,50 €',
     tuPeuxEcrire: 'Gallout a rez skrivañ « 3,50 € » pe « 3 € 50 c ».',
@@ -715,7 +715,9 @@ function genererSansRepetition(typesDemandes, nb, niv, centimes) {
   const types = typesDemandes.filter(t => !niv.types || niv.types.includes(t))
   if (!types.length) types.push(niv.types?.[0] || 'compter')
   // Types répartis équitablement puis mélangés
-  const liste = melanger(Array.from({ length: nb }, (_, i) => types[i % types.length]))
+  // types mélangés d'abord : avec moins de questions que de types, pas toujours les mêmes oubliés
+  const typesMelanges = melanger(types)
+  const liste = melanger(Array.from({ length: nb }, (_, i) => typesMelanges[i % typesMelanges.length]))
   const vus = new Set()
   const result = []
   for (const type of liste) {
@@ -967,14 +969,17 @@ function htmlFiche() {
   const choisis = config.value.exercices
   let parties = {
     compter: choisis.includes('compter'),
-    entoure: choisis.includes('composer') || choisis.includes('moins'),
+    entoure: choisis.includes('composer'),
+    moins: choisis.includes('moins'),
     rendre: choisis.includes('rendre'),
+    comparer: choisis.includes('comparer'),
     convertir: choisis.includes('convertir') && niv.types.includes('convertir'),
   }
   if (!Object.values(parties).some(Boolean)) parties = { compter: true, entoure: true, rendre: true, convertir: niv.types.includes('convertir') }
   let numPartie = 0
   const titrePartie = txt => `<h2>${++numPartie}. ${txt}</h2>`
   const centimes = config.value.centimes
+  const valeursPapier = niv.palette[centimes ? 'centimes' : 'entiers'].filter(v => v <= 2000)
   const dessin = items => items.map(v => `<span class="arg">${svgArgent(v, 0.8)}</span>`).join('')
   const decimale = centimes && niv.saisieDecimale
   const br = enBr()
@@ -1007,6 +1012,34 @@ function htmlFiche() {
       <div class="num">${i + 1}.</div>
       <div class="enonce">${T("Entoure ce qu'il faut pour payer exactement", 'Kelc\'hia ar pezh a zo ezhomm evit paeañ resis')} <strong>${fmt(e.cible, niv)}</strong>.</div>
       <div class="tas">${dessin(e.items)}</div>
+    </div>`).join('')
+
+  // Le moins de pièces : deux façons de payer la même somme, entourer la plus économe
+  const moins = parties.moins ? genererSansRepetition(['moins'], 3, niv, centimes).map(qu => {
+    let autre = null
+    for (let essai = 0; essai < 30 && !autre; essai++) {
+      const a = decomposerAuHasard(qu.cible, valeursPapier, qu.solution.length + 4)
+      if (a.length > qu.solution.length) autre = trierDesc(a)
+    }
+    const optimaleEnA = Math.random() < 0.5
+    return { cible: qu.cible, A: optimaleEnA ? qu.solution : autre ?? qu.solution, B: optimaleEnA ? autre ?? qu.solution : qu.solution }
+  }) : []
+  const blocMoins = moins.map((m, i) => `
+    <div class="bloc">
+      <div class="num">${i + 1}.</div>
+      <div class="enonce">${T('Pour payer', 'Evit paeañ')} <strong>${fmt(m.cible, niv)}</strong>, ${T('entoure la lettre de celui qui utilise le moins de pièces et de billets.', 'kelc\'hia lizherenn an hini a implij an nebeutañ a bezhioù hag a vilhedoù.')}</div>
+      <div class="duo"><div><b class="lettre">A</b><div class="tas">${dessin(m.A)}</div></div>
+      <div><b class="lettre">B</b><div class="tas">${dessin(m.B)}</div></div></div>
+    </div>`).join('')
+
+  // Comparer deux porte-monnaie
+  const comparer = parties.comparer ? genererSansRepetition(['comparer'], 3, niv, centimes) : []
+  const blocComparer = comparer.map((qu, i) => `
+    <div class="bloc">
+      <div class="num">${i + 1}.</div>
+      <div class="enonce">${T('Qui a le plus d\'argent ? Entoure son prénom (ou les deux s\'ils ont autant).', 'Piv en deus ar muiañ a arc\'hant ? Kelc\'hia e anv (pe an daou ma o deus kement all).')}</div>
+      <div class="duo"><div><b class="lettre">${qu.nomA}</b><div class="tas">${dessin(qu.itemsA)}</div></div>
+      <div><b class="lettre">${qu.nomB}</b><div class="tas">${dessin(qu.itemsB)}</div></div></div>
     </div>`).join('')
 
   // 3. Rendre la monnaie
@@ -1044,6 +1077,9 @@ function htmlFiche() {
       .enonce { display: inline; }
       .ligne-rendre { margin: .9rem 0; font-size: 1.05rem; line-height: 1.6; }
       .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .75rem; }
+      .duo { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .4rem; }
+      .duo > div { border: 1px dashed #ccc; border-radius: 6px; padding: .3rem .5rem; }
+      .lettre { font-size: 1.1rem; }
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     </style></head><body>
     <h1>💶 ${t('titre')} — ${config.value.niveau.toUpperCase()}</h1>
@@ -1052,6 +1088,10 @@ function htmlFiche() {
     <div class="grille">${blocCompter}</div>` : ''}
     ${parties.entoure ? `${titrePartie(T('Entoure les pièces et les billets.', 'Kelc\'hia ar pezhioù moneiz hag ar bilhedoù.'))}
     ${blocEntoure}` : ''}
+    ${parties.moins ? `${titrePartie(T('Le moins de pièces et de billets.', 'An nebeutañ a bezhioù hag a vilhedoù.'))}
+    ${blocMoins}` : ''}
+    ${parties.comparer ? `${titrePartie(T('Compare les porte-monnaie.', 'Keñveria ar yalc\'hoù.'))}
+    ${blocComparer}` : ''}
     ${parties.rendre ? `${titrePartie(T('Combien te rend-on ?', 'Pegement a vez distroet dit ?'))}
     ${blocRendre}` : ''}
     ${blocConvertir ? `${titrePartie(`${T('Complète.', 'Leunia.')} <small>(1 € = 100 c)</small>`)}${blocConvertir}` : ''}

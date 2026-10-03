@@ -1053,6 +1053,10 @@ function htmlFiche() {
   }
   const vus = new Set()
   const nbH = cfg.nbHorloges || 8
+  // parties « horloges » selon les exercices choisis (les deux si aucune autre partie n'est demandée)
+  const autres = ['journee', 'duree', 'conversion', 'emploi'].some(e => cfg.exercices.includes(e) && niv.exercices.includes(e))
+  let avecLire = cfg.exercices.includes('lire'), avecPlacer = cfg.exercices.includes('placer')
+  if (!avecLire && !avecPlacer && !autres) avecLire = avecPlacer = true
   const aLire = tirer(nbH, vus)
   const aDessiner = tirer(nbH, vus)
 
@@ -1067,9 +1071,9 @@ function htmlFiche() {
   const br = enBr()
   const T = (fr, b) => (br ? b : fr)
   let extra = ''
-  const corrige = [
-    `<p><b>${T("Lis l'heure", 'Lenn an eur')} :</b> ${aLire.map((t, i) => `${i + 1}. ${ecrit(t.h, t.m)}`).join(' — ')}</p>`,
-  ]
+  const corrige = avecLire
+    ? [`<p><b>${T("Lis l'heure", 'Lenn an eur')} :</b> ${aLire.map((t, i) => `${i + 1}. ${ecrit(t.h, t.m)}`).join(' — ')}</p>`]
+    : []
   if (cfg.exercices.includes('journee')) {
     const lignes = []
     const vusJ = new Set()
@@ -1136,12 +1140,12 @@ function htmlFiche() {
     </style></head><body>
     <h1>🕐 ${t('titre')} — ${cfg.niveau.toUpperCase()}</h1>
     <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
-    <h2>1. ${t('quelleHeure')}</h2>
+    ${avecLire ? `<h2>${t('quelleHeure')}</h2>
     <p class="consigne">${T('La petite aiguille indique les heures, la grande aiguille indique les minutes.', 'An nadoz vihan a ziskouez an eurioù, an nadoz vras a ziskouez ar munutoù.')}</p>
-    <div class="grille">${cellLire}</div>
-    <h2>2. ${T('Dessine les aiguilles', 'Tres an nadozioù')}</h2>
+    <div class="grille">${cellLire}</div>` : ''}
+    ${avecPlacer ? `<h2>${T('Dessine les aiguilles', 'Tres an nadozioù')}</h2>
     <p class="consigne">${T('Dessine la petite aiguille (heures) et la grande aiguille (minutes).', 'Tres an nadoz vihan (eurioù) hag an nadoz vras (munutoù).')}</p>
-    <div class="grille">${cellDessin}</div>
+    <div class="grille">${cellDessin}</div>` : ''}
     ${extra}
     ${cfg.corrige !== false ? `<div class="page2"><h2>${T("Corrigé (pour l'adulte)", 'Reizhadenn (evit an dud deuet)')}</h2>${corrige.join('')}</div>` : ''}
   </body></html>`

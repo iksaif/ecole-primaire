@@ -722,7 +722,10 @@ function genererSansRepetition(cfg, nb) {
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   let cats = cfg.categories.filter(c => niv.categories.includes(c))
   if (!cats.length) cats = niv.categories
-  const ordre = melanger(Array.from({ length: nb }, (_, i) => cats[i % cats.length]))
+  // catégories mélangées d'abord : quand il y a moins de problèmes que de catégories,
+  // ce ne sont pas toujours les dernières de la liste qui sont oubliées
+  const melangees = melanger(cats)
+  const ordre = melanger(Array.from({ length: nb }, (_, i) => melangees[i % melangees.length]))
   const vus = new Set()
   const result = []
   let essais = 0

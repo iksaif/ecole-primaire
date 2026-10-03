@@ -123,7 +123,3 @@ Toutes les polices utilisées sont livrées avec le site, sous licence libre :
 - Playwrite FR Trad (écriture cursive scolaire), Andika (script, pensée pour l'apprentissage de la lecture)
   et OpenDyslexic, sous licence SIL OFL ;
 - Luciole © Laurent Bourcellier & Jonathan Perez, sous licence CC BY 4.0.
-
-## À faire
-
-Voir [TODO.md](TODO.md) : passage à d'autres langues régionales, relecture du breton, licence, surveillance…

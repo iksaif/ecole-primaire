@@ -29,3 +29,6 @@ polices-locales/
 # Builds VPS et configuration de déploiement locale
 dist-*/
 .deploy.env
+
+# Liste de travail locale
+TODO.md

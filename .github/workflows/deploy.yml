@@ -1,5 +1,9 @@
 name: Deploy to GitHub Pages
 
+# Le site est hébergé sur https://ecoleprimaire.app (et https://skoolik.app) : GitHub Pages
+# ne sert plus qu'une redirection, qui conserve le chemin et la route (#/…) des anciens liens.
+# Déploiement du vrai site : scripts/deploy-vps.sh (voir README).
+
 on:
   push:
     branches: [main]
@@ -23,17 +27,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - run: npm ci
-      # Emojis des affiches (alphabet) dans les PDF générés par Chrome
-      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fonts-noto-color-emoji
-      # vite build + génération des fiches PDF (Chrome est préinstallé sur ubuntu-latest)
-      - run: npm run build
+      - run: node scripts/redirection-gh-pages.mjs dist-gh-pages
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: dist-gh-pages
 
   deploy:
     needs: build

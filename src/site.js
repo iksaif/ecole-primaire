@@ -8,6 +8,8 @@ export const SITES = {
 
 // Adresse de contact affichée sur le site (redirigée vers la boîte de l'auteur)
 export const CONTACT = 'contact@skoolik.app'
+// Dépôt du code (contributions, signalements)
+export const DEPOT = 'https://github.com/iksaif/ecole-primaire'
 
 export const site = id => SITES[id] ?? SITES.ecoleprimaire
 

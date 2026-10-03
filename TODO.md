@@ -33,12 +33,13 @@ Fait :
 - [x] DNS : CAA Let's Encrypt
 - [x] Cache long sur les fichiers avec empreinte, gzip
 - [x] Avis de traduction automatique (breton) avec adresse de retour
+- [x] Page À propos : section « Contribuer » (dépôt GitHub, issues, relecture bretonne)
 
 À faire :
 - [ ] Appliquer la nouvelle config nginx (en-têtes de sécurité, CSP, page 404) :
       `scp deploy/setup-nginx.sh iksaif@iksaif.net:setup-ecoleprimaire.sh && ssh -t iksaif@iksaif.net sudo bash setup-ecoleprimaire.sh`
 - [ ] Google Search Console (et Bing Webmaster) : déclarer les deux domaines et leurs sitemaps
-- [ ] GitHub Pages : rediriger vers https://ecoleprimaire.app (contenu dupliqué) ou désactiver Pages
+- [x] GitHub Pages : redirection vers https://ecoleprimaire.app (au prochain push sur `main`)
 - [ ] Déploiement automatique sur le VPS depuis GitHub Actions (clé SSH dédiée, rsync) au lieu du script local
 - [ ] Surveillance : sonde de disponibilité (UptimeRobot, Uptime Kuma…) + alerte d'expiration des
       domaines (renouvellement auto désactivé) et des certificats

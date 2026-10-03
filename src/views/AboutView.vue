@@ -33,11 +33,22 @@
         <li>An holl respontoù hag ar skorioù a chom war an drobarzhell.</li>
         <li>Ar c'hod mammenn a zo war <a href="https://github.com/iksaif/ecole-primaire" target="_blank" rel="noopener">GitHub</a>.</li>
       </ul>
-      <h2 class="about-h2">💬 Darempred</h2>
+      <h2 class="about-h2">🤝 Kemer perzh</h2>
       <p class="about-para">
-        Ur fazi, ur soñj ? Skrivit da <a :href="`mailto:${CONTACT}`">{{ CONTACT }}</a>
-        pe digorit un <a href="https://github.com/iksaif/ecole-primaire/issues" target="_blank" rel="noopener">issue war GitHub</a>.
+        Digor eo al lec'hienn : an holl god a zo war
+        <a :href="DEPOT" target="_blank" rel="noopener">GitHub (iksaif/ecole-primaire)</a>.
+        Degemer mat eo pep skoazell, ha pa ne ouifec'h ket programmiñ :
       </p>
+      <ul class="about-list">
+        <li>🐞 <strong>Kemenn ur fazi</strong> : <a :href="`${DEPOT}/issues/new`" target="_blank" rel="noopener">digeriñ un issue</a>
+          pe skrivañ da <a :href="`mailto:${CONTACT}`">{{ CONTACT }}</a>.</li>
+        <li>💡 <strong>Kinnig ur boelladenn pe ur fichenn</strong> talvoudus er c'hlas pe er gêr.</li>
+        <li>🏴 <strong>Adlenn an droidigezh</strong> : merket eo ar frazennoù da wiriañ gant « br: à relire » er c'hod ;
+          ur gemennadenn gant ho reizhadennoù a vo a-walc'h.</li>
+        <li>🛠️ <strong>Diorroerien</strong> : degemer mat d'ar <em>pull requests</em> — sellit ouzh ar
+          <a :href="`${DEPOT}#readme`" target="_blank" rel="noopener">README</a>.</li>
+      </ul>
+      <!-- br: à relire (section Kemer perzh) -->
       </template>
 
       <template v-else>
@@ -125,13 +136,23 @@
         </li>
       </ul>
 
-      <h2 class="about-h2">💬 Contact &amp; contributions</h2>
+      <h2 class="about-h2">🤝 Contribuer</h2>
       <p class="about-para">
-        Des bugs ? Des idées d'exercices ? Écrivez à <a :href="`mailto:${CONTACT}`">{{ CONTACT }}</a> ou ouvrez une
-        <a href="https://github.com/iksaif/ecole-primaire/issues" target="_blank" rel="noopener">
-          issue sur GitHub
-        </a>.
+        Le site est libre et ouvert : tout le code est sur
+        <a :href="DEPOT" target="_blank" rel="noopener">GitHub (iksaif/ecole-primaire)</a>.
+        Toute aide est la bienvenue, même sans savoir programmer :
       </p>
+      <ul class="about-list">
+        <li>🐞 <strong>Signaler une erreur</strong> (une réponse fausse, une faute, un bug) :
+          <a :href="`${DEPOT}/issues/new`" target="_blank" rel="noopener">ouvrir une issue</a> ou écrire à
+          <a :href="`mailto:${CONTACT}`">{{ CONTACT }}</a>.</li>
+        <li>💡 <strong>Proposer un exercice ou une fiche</strong> utile en classe ou à la maison.</li>
+        <li>🏴 <strong>Relire la traduction bretonne</strong> : les passages à vérifier sont marqués
+          « br: à relire » dans le code ; un message avec vos corrections suffit.</li>
+        <li>👩‍🏫 <strong>Enseignant·e ?</strong> Vos retours sur la conformité au programme sont précieux.</li>
+        <li>🛠️ <strong>Développeur·se ?</strong> Les <em>pull requests</em> sont bienvenues — voir le
+          <a :href="`${DEPOT}#readme`" target="_blank" rel="noopener">README</a> pour lancer le projet.</li>
+      </ul>
       </template>
 
     </div>
@@ -140,7 +161,7 @@
 
 <script setup>
 import { langue } from '../i18n'
-import { CONTACT } from '../site'
+import { CONTACT, DEPOT } from '../site'
 </script>
 
 

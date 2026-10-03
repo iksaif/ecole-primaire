@@ -3,18 +3,18 @@
     <RouterLink to="/about">{{ t('apropos') }}</RouterLink>
     <RouterLink to="/mentions-legales">{{ t('mentions') }}</RouterLink>
     <a :href="`mailto:${CONTACT}`">✉️ {{ CONTACT }}</a>
-    <a href="https://github.com/iksaif/ecole-primaire" target="_blank" rel="noopener">GitHub</a>
+    <a :href="DEPOT" target="_blank" rel="noopener">{{ t('contribuer') }}</a>
     <span>{{ t('libre') }}</span>
   </footer>
 </template>
 
 <script setup>
 import { useI18n } from '../i18n'
-import { CONTACT } from '../site'
+import { CONTACT, DEPOT } from '../site'
 
 const { t } = useI18n({
-  fr: { apropos: 'À propos', mentions: 'Mentions légales', libre: 'Gratuit · sans publicité · sans cookie' },
-  br: { apropos: 'Diwar-benn', mentions: 'Notennoù lezennel', libre: 'Digoust · hep bruderezh · hep toupin' },
+  fr: { contribuer: '🤝 Contribuer sur GitHub', apropos: 'À propos', mentions: 'Mentions légales', libre: 'Gratuit · sans publicité · sans cookie' },
+  br: { contribuer: '🤝 Kemer perzh war GitHub', apropos: 'Diwar-benn', mentions: 'Notennoù lezennel', libre: 'Digoust · hep bruderezh · hep toupin' },
 })
 </script>
 

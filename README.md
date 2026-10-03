@@ -37,9 +37,12 @@ Le même code produit plusieurs sites, choisis au build par le mode Vite (fichie
 
 | Commande | Site | Base | Sortie |
 |---|---|---|---|
-| `npm run build` | GitHub Pages | `/ecole-primaire/` | `dist/` |
+| `npm run build` | build « GitHub » historique (base `/ecole-primaire/`), utilisé en dev | `/ecole-primaire/` | `dist/` |
 | `npm run build:ecoleprimaire` | https://ecoleprimaire.app (français) | `/` | `dist-ecoleprimaire/` |
 | `npm run build:skoolik` | https://skoolik.app (breton activé par défaut, fiches bretonnes) | `/` | `dist-skoolik/` |
+
+**GitHub Pages** ne sert plus qu'une redirection vers https://ecoleprimaire.app qui conserve le chemin et la
+route (`scripts/redirection-gh-pages.mjs`, publiée par `.github/workflows/deploy.yml` à chaque push sur `main`).
 
 Chaque fiche pré-générée a des `langues` (`src/impression/catalogue.js`) : un site ne publie que celles de sa langue.
 

@@ -3,7 +3,8 @@
     <h1 class="section-heading">🧩 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -40,13 +41,14 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
+      <div v-if="mode === 'imprimer'" class="config-section">
+        <div class="config-section-title">{{ t('corrigeFin') }}</div>
+        <div class="btn-group">
+          <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
+          <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
+        </div>
       </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
@@ -122,6 +124,8 @@ import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, tr, langue } = useI18n({
   fr: {
@@ -138,6 +142,7 @@ const { t, tr, langue } = useI18n({
     pCalcul: 'Calcul :',
     pReponse: 'Réponse :',
     pNbProblemes: '{n} problèmes',
+    corrigeFin: 'Corrigé (page à part)',
   },
   br: {
     titre: 'Kudennoù',
@@ -153,6 +158,7 @@ const { t, tr, langue } = useI18n({
     pCalcul: 'Jedadur :',
     pReponse: 'Respont :',
     pNbProblemes: '{n} kudenn',
+    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
   },
 })
 
@@ -730,9 +736,10 @@ function genererSansRepetition(cfg, nb) {
 
 // #endregion generation
 
-const config = ref(charger('problemes_config', {
-  niveau: 'ce1', categories: CATEGORIES.map(c => c.id), plage: 'moyens', nbQ: 5,
-}))
+const config = ref({
+  niveau: 'ce1', categories: CATEGORIES.map(c => c.id), plage: 'moyens', nbQ: 5, corrige: false,
+  ...charger('problemes_config', {}),
+})
 watch(config, v => sauvegarder('problemes_config', v), { deep: true })
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
 
@@ -848,7 +855,8 @@ const resultMsg = computed(() => {
 
 onUnmounted(() => { clearTimeout(timeout); arreter() })
 
-function imprimerFiche() {
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
   const qs = genererSansRepetition(config.value, config.value.nbQ)
   const niv = config.value.niveau.toUpperCase()
   const blocs = qs.map((p, i) => `
@@ -858,7 +866,12 @@ function imprimerFiche() {
       <div class="reponse">${t('pReponse')} <span class="ligne"></span> ${p.reponse >= 2 ? p.unite.p : p.unite.s}</div>
     </div>`).join('')
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  const corrige = config.value.corrige
+    ? `<h1 class="saut">${t('corrige')} — ${t('titre')} — ${niv}</h1>
+    <ol class="corrige">${qs.map(p => `<li><b>${p.calcul}</b> → ${p.reponse} ${p.reponse >= 2 ? p.unite.p : p.unite.s}</li>`).join('')}</ol>`
+    : ''
+
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
@@ -870,18 +883,23 @@ function imprimerFiche() {
       .calcul { border: 1.5px solid #999; border-radius: 6px; height: 4.5rem; margin: .5rem 0; padding: .3rem .5rem; color: #777; font-size: .9rem; }
       .reponse { font-size: 1.05rem; }
       .ligne { display: inline-block; width: 5rem; border-bottom: 1.5px solid #555; }
+      h1.saut { page-break-before: always; break-before: page; margin-bottom: 1.5rem; }
+      .corrige { font-size: 1.1rem; line-height: 2; }
     </style></head><body>
     <h1>${t('titre')} — ${niv}</h1>
     <p class="entete">${t('pNbProblemes', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${blocs}
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    ${corrige}
   </body></html>`
-
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 </script>
 
 <style scoped>

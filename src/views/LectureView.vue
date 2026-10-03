@@ -3,7 +3,8 @@
     <h1>📖 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer()" @regenerer="regenerer">
 
       <div class="config-section">
         <div class="config-section-title">{{ t('exercice') }}</div>
@@ -44,17 +45,8 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche" :disabled="printing">
-          <span>{{ printing ? t('generationFiche') : t('imprimerFiche') }}</span>
-        </button>
-      </div>
-    </div>
+      <p v-if="mode === 'imprimer' && config.mode === 'lecture_texte'" class="astuce">{{ t('ficheTextesInfo') }}</p>
+    </ConfigExercice>
 
     <!-- ══ EXERCICE : Syllabes / Reconstituer / Lecture ══ -->
     <template v-if="phase === 'jeu'">
@@ -159,6 +151,8 @@ import { ref, computed, watch, onUnmounted } from 'vue'
 import { melanger, confettis, sauvegarder, charger, aleatoire } from '../utils'
 import { useTTS } from '../composables/useTTS'
 import { useI18n } from '../i18n'
+import ConfigExercice from '../components/ConfigExercice.vue'
+import { useModeExercice } from '../composables/useModeExercice'
 
 const { t, langue } = useI18n({
   fr: {
@@ -170,7 +164,7 @@ const { t, langue } = useI18n({
     reconstituerDesc: 'Remets les syllabes dans le bon ordre',
     lectureTextes: 'Lecture de textes',
     lectureTextesDesc: 'Lis des phrases ou des histoires et écoute les mots',
-    generationFiche: '⌛ Génération...',
+    ficheTextesInfo: 'La fiche reprend les textes de la bibliothèque et ceux déjà générés pendant cette séance.',
     generationHistoire: "Génération de l'histoire...",
     combienSyllabes: 'Combien de syllabes dans ce mot ?',
     consigneReconstituer: 'Reconstitue le mot en cliquant sur les syllabes dans le bon ordre :',
@@ -204,7 +198,7 @@ const { t, langue } = useI18n({
     reconstituerDesc: 'Laka ar silabennoù en urzh mat',
     lectureTextes: 'Lenn testennoù',
     lectureTextesDesc: 'Lenn frazennoù pe istorioù ha selaou ar gerioù',
-    generationFiche: '⌛ O krouiñ...',
+    ficheTextesInfo: "Adkemer a ra ar fichenn testennoù al levraoueg hag ar re krouet e-pad an dalc'h-mañ.", // br: à relire
     generationHistoire: "O krouiñ an istor...",
     combienSyllabes: 'Pet silabenn a zo er ger-mañ ?',
     consigneReconstituer: 'Adsav ar ger en ur glikañ war ar silabennoù en urzh mat :',
@@ -378,7 +372,8 @@ const feedbackTxt = computed(() => {
 const feedbackCls = ref('')
 const reponseDonnee = ref(null)
 const loading = ref(false)
-const printing = ref(false)
+// Textes déjà obtenus (Mistral) pendant la séance, par niveau : réutilisés pour la fiche
+const textesGeneres = { cp: new Set(), ce1: new Set(), ce2: new Set() }
 
 // Mode reconstituer
 const assemblage = ref([])
@@ -396,7 +391,9 @@ const motsDeLaQuestion = computed(() => {
 })
 
 async function chargerQuestionLecture(i) {
-  const txt = await genererTexteMistral(config.value.niveau)
+  const niveau = config.value.niveau
+  const txt = await genererTexteMistral(niveau)
+  textesGeneres[niveau]?.add(txt)
   questions.value[i] = { texte: txt, _resultat: undefined }
 }
 
@@ -543,18 +540,23 @@ const resultMsg = computed(() => {
   return t('res0')
 })
 
-async function imprimerFiche() {
-  if (printing.value) return
-  printing.value = true
+// Textes pour la fiche, sans appel à l'API : bibliothèque du niveau + textes déjà générés
+function textesPourFiche(niveau, nb) {
+  const base = niveau === 'cp' ? PHRASES_DEFAUT_CP : niveau === 'ce1' ? TEXTES_DEFAUT_CE1 : TEXTES_DEFAUT_CE2
+  const pool = [...new Set([...(textesGeneres[niveau] || []), ...base])]
+  const res = []
+  while (res.length < nb) res.push(...melanger(pool))
+  return res.slice(0, Math.min(nb, pool.length))
+}
 
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
   let items = []
   const nb = config.value.nb
   const niveau = config.value.niveau.toUpperCase()
 
   if (config.value.mode === 'lecture_texte') {
-    const apiPromises = Array(nb).fill(null).map(() => genererTexteMistral(config.value.niveau))
-    const list = await Promise.all(apiPromises)
-    items = list.map(texte => ({ texte }))
+    items = textesPourFiche(config.value.niveau, nb).map(texte => ({ texte }))
   } else {
     const pool = melanger(getPool(config.value.niveau)).slice(0, nb)
     items = pool.map(q => {
@@ -632,21 +634,24 @@ async function imprimerFiche() {
     <h1>${title}</h1>
     <p class="entete">${instructions} &nbsp;&nbsp;&nbsp; ${t('nom')} : __________________________ &nbsp; ${t('date')} : ______________</p>
     <div>${rowsHtml}</div>
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
-  
-  printing.value = false
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 onUnmounted(() => arreter())
 </script>
 
 <style scoped>
+.astuce { font-size: .85rem; color: #777; margin: -.5rem 0 1rem; }
 .container { max-width: 680px; margin: 0 auto; padding: 1rem; }
 h1 { color: var(--bleu); margin-bottom: 1rem; }
 

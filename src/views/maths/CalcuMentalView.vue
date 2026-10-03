@@ -3,7 +3,8 @@
     <h1 class="section-heading">🧮 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -23,7 +24,7 @@
         </div>
       </div>
 
-      <div class="config-section">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5,10,20]" :key="n"
@@ -32,7 +33,19 @@
         </div>
       </div>
 
-      <div class="config-section">
+      <template v-else>
+        <div class="config-section">
+          <div class="config-section-title">{{ t('nbCalculsFiche') }}</div>
+          <div class="btn-group">
+            <button v-for="n in NB_FICHE" :key="n"
+              class="level-btn" :class="{ active: config.nbFiche === n }"
+              @click="config.nbFiche = n">{{ n }}</button>
+          </div>
+        </div>
+        <label class="case-corrige"><input type="checkbox" v-model="config.corrige"> {{ t('corrigePage2') }}</label>
+      </template>
+
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('tempsParQuestion') }}</div>
         <div class="btn-group">
           <button v-for="s in [0,10,20,30]" :key="s"
@@ -41,13 +54,7 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
@@ -104,9 +111,12 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, tr, langue } = useI18n({
   fr: {
+    nbCalculsFiche: 'Nombre de calculs sur la fiche', corrigePage2: 'Corrigé en page 2',
     titre: 'Calcul mental',
     operations: 'Opérations',
     tempsParQuestion: 'Temps par question',
@@ -118,6 +128,7 @@ const { t, tr, langue } = useI18n({
     pNbQuestions: '{n} questions',
   },
   br: {
+    nbCalculsFiche: 'Niver a jedadurioù war ar fichenn', corrigePage2: 'Reizhadenn war an eil pajenn', // br: à relire
     titre: 'Jediñ e penn',
     operations: 'Oberiadurioù',
     tempsParQuestion: 'Amzer evit pep goulenn',
@@ -191,7 +202,8 @@ function opDispo(niv, op) {
 }
 
 // Config sauvegardée : on ignore les valeurs inconnues (anciennes versions)
-const DEFAUT = { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10 }
+const NB_FICHE = [10, 20, 30, 40]
+const DEFAUT = { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10, nbFiche: 20, corrige: true }
 const sauvegarde = charger('calcul_mental_config', DEFAUT) || DEFAUT
 const niveauCharge = niveaux.includes(sauvegarde.niveau) ? sauvegarde.niveau : DEFAUT.niveau
 const opsChargees = (Array.isArray(sauvegarde.ops) ? sauvegarde.ops : [])
@@ -200,6 +212,8 @@ const config = ref({
   niveau: niveauCharge,
   ops: opsChargees.length ? opsChargees : ['+'],
   nbQ: [5, 10, 20].includes(sauvegarde.nbQ) ? sauvegarde.nbQ : DEFAUT.nbQ,
+  nbFiche: NB_FICHE.includes(sauvegarde.nbFiche) ? sauvegarde.nbFiche : DEFAUT.nbFiche,
+  corrige: typeof sauvegarde.corrige === 'boolean' ? sauvegarde.corrige : DEFAUT.corrige,
   temps: [0, 10, 20, 30].includes(sauvegarde.temps) ? sauvegarde.temps : DEFAUT.temps,
 })
 watch(config, v => sauvegarder('calcul_mental_config', v), { deep: true })
@@ -383,8 +397,9 @@ function demarrer() {
   nextTick(() => afficherQuestion())
 }
 
-function imprimerFiche() {
-  const qs = genererSansRepetition(config.value.nbQ)
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
+  const qs = genererSansRepetition(config.value.nbFiche)
   const niv = config.value.niveau.toUpperCase()
   const ops = config.value.ops.map(libelleOp).join(', ')
   const rows = qs.map((q, i) => {
@@ -411,18 +426,29 @@ function imprimerFiche() {
       .num { min-width: 1.8rem; font-weight: 700; color: #777; font-size: 1rem; }
       .calc { min-width: 180px; font-weight: 800; font-size: 1.3rem; font-family: monospace; }
       .ligne { flex: 1; border-bottom: 1.5px solid #aaa; min-width: 80px; }
+      .deux-colonnes { columns: 2; column-gap: 2.5rem; }
+      .deux-colonnes .question { break-inside: avoid; margin: .7rem 0; }
+      .corrige { break-before: page; }
+      .corrige li { margin: .3rem 0; font-family: monospace; font-size: 1.05rem; }
+      .corrige ol { columns: 3; }
     </style></head><body>
     <h1>${t('titre')} — ${niv}</h1>
     <p class="entete">${t('pOperations', { ops })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
-    ${rows}
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    <div class="${qs.length > 20 ? 'deux-colonnes' : ''}">${rows}</div>
+    ${config.value.corrige ? `<section class="corrige"><h1>${t('corrige')}</h1><ol>${qs.map(q => `<li>${q.texte.replace('?', `<b>${q.reponse}</b>`)}</li>`).join('')}</ol></section>` : ''}
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
+
 
 function afficherQuestion() {
   repondu = false

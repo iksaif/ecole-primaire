@@ -12,7 +12,7 @@
     <h2 class="section-heading" style="margin-top:2.5rem;">{{ t('fichesExercices') }}</h2>
     <p class="intro">{{ t('fichesIntro', { bouton: t('imprimerFiche') }) }}</p>
     <div class="card-grid">
-      <RouterLink v-for="a in avecFiche" :key="a.to" :to="a.to" class="card" :class="a.matiere">
+      <RouterLink v-for="a in avecFiche" :key="a.to" :to="{ path: a.to, query: { mode: 'imprimer' } }" class="card" :class="a.matiere">
         <span class="card-icon">{{ a.icon }}</span>
         <span class="card-title">{{ langue === 'br' && a.br ? a.br.titre : a.titre }}</span>
         <span class="card-tag">{{ etiquetteNiveaux(a.niveaux) }}</span>

@@ -3,7 +3,8 @@
     <h1 class="section-heading">🖊️ {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      :desactive="config.cats.length === 0 || loading" @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -40,7 +41,7 @@
         </div>
       </div>
 
-      <div class="config-section" v-if="config.mode === 'phrases'">
+      <div class="config-section" v-if="mode === 'jouer' && config.mode === 'phrases'">
         <div class="config-section-title">
           {{ t('cleApi') }}
           <span style="font-weight:400;color:#aaa;font-size:.85em"> {{ t('cleApiOpt') }}</span>
@@ -61,7 +62,7 @@
         </div>
       </div>
 
-      <div class="config-section">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('vitesse') }}</div>
         <div class="slider-row">
           <span>🐢</span>
@@ -71,13 +72,14 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;"
-                @click="demarrer" :disabled="config.cats.length === 0 || loading">
-          {{ t('commencerDictee') }}
-        </button>
+      <div v-if="mode === 'imprimer'" class="config-section">
+        <div class="config-section-title">{{ t('pagesFiche') }}</div>
+        <div class="btn-group">
+          <button class="level-btn" :class="{ active: ficheConfig.liste }" @click="basculerPage('liste')">📋 {{ t('pageListe') }}</button>
+          <button class="level-btn" :class="{ active: ficheConfig.dictee }" @click="basculerPage('dictee')">✏️ {{ t('pageDictee') }}</button>
+        </div>
       </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Dictée -->
     <template v-if="phase === 'jeu'">
@@ -157,8 +159,11 @@ import { melanger, charger, sauvegarder, normaliser, confettis } from '../../uti
 import { CATEGORIES, PHRASES_DEFAUT, MOTS_AMBIGUS, NIVEAUX, PHRASES_DEFAUT_ALL } from '../../data/dicteeMots'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
+import { cssPolices, echapper, POLICE_SCRIPT, POLICE_ATTACHE } from '../../utils/impression'
 
-const { t, tr } = useI18n({
+const { t, tr, langue } = useI18n({
   fr: {
     titre: 'Dictée',
     categories: 'Catégories — {n}',
@@ -175,7 +180,6 @@ const { t, tr } = useI18n({
     nbMots: 'Nombre de mots',
     tous: 'Tous',
     vitesse: 'Vitesse de la voix',
-    commencerDictee: '▶ Commencer la dictée',
     quitterDictee: 'Quitter la dictée',
     motN: 'Mot {n} / {total}',
     generation: 'Génération…',
@@ -193,6 +197,17 @@ const { t, tr } = useI18n({
     res80: 'Très bien ! Continue comme ça 🌟',
     res60: 'Bien, mais il y a encore du travail ! 💪',
     res0: 'Courage, relis les mots et réessaie ! 📚',
+    // fiche imprimable
+    pagesFiche: 'Pages de la fiche',
+    pageListe: 'Mots à apprendre',
+    pageDictee: 'Dictée à faire avec un adulte',
+    fConsigneListe: 'Lis chaque mot, puis recopie-le sur la ligne.',
+    fScript: 'Script',
+    fAttache: 'Attaché',
+    fRecopie: 'Je recopie',
+    fConsigneMots: "Écoute bien et écris le mot que l'adulte te dicte.",
+    fConsignePhrases: "Écoute bien et écris la phrase que l'adulte te dicte.",
+    fADicter: "À dicter par l'adulte, dans l'ordre :",
   },
   br: {
     titre: 'Skrivadeg', // br: à relire (dictée)
@@ -210,7 +225,6 @@ const { t, tr } = useI18n({
     nbMots: 'Niver a c\'herioù',
     tous: 'An holl',
     vitesse: 'Tizh ar vouezh',
-    commencerDictee: '▶ Kregiñ gant ar skrivadeg',
     quitterDictee: 'Kuitaat ar skrivadeg',
     motN: 'Ger {n} / {total}',
     generation: 'O krouiñ…',
@@ -228,6 +242,17 @@ const { t, tr } = useI18n({
     res80: "Mat-tre ! Kendalc'h evel-se 🌟",
     res60: "Mat, met labour a zo c'hoazh ! 💪",
     res0: 'Kalon vat, adlenn ar gerioù hag esae en-dro ! 📚',
+    // fiche imprimable — br: à relire
+    pagesFiche: 'Pajennoù ar fichenn',
+    pageListe: 'Gerioù da zeskiñ',
+    pageDictee: 'Skrivadeg da ober gant un oadour',
+    fConsigneListe: 'Lenn pep ger, hag eilskriv anezhañ war al linenn.',
+    fScript: 'Skript',
+    fAttache: 'A-stag',
+    fRecopie: 'Eilskrivañ a ran',
+    fConsigneMots: "Selaou mat ha skriv ar ger a lavar an oadour dit.",
+    fConsignePhrases: "Selaou mat ha skriv ar frazenn a lavar an oadour dit.",
+    fADicter: "Da lavaret gant an oadour, en urzh :",
   },
 })
 
@@ -376,19 +401,21 @@ async function genererPhrase(mot) {
   }
 }
 
+// Mots des catégories choisies (sans doublon ; sans les homophones/ambigus en mode « mots seuls »)
+function motsChoisis() {
+  let pool = []
+  config.value.cats.forEach(cat => { if (categoriesActuelles.value[cat]) pool.push(...categoriesActuelles.value[cat]) })
+  pool = [...new Set(pool)]
+  if (config.value.mode === 'mots') pool = pool.filter(m => !ambigsActuels.value.has(m))
+  return pool
+}
+
 // ── Démarrage
 async function demarrer() {
   if (loading.value) return  // empêche double-clic pendant la génération
   arreter()
 
-  let pool = []
-  config.value.cats.forEach(cat => { if (categoriesActuelles.value[cat]) pool.push(...categoriesActuelles.value[cat]) })
-  pool = [...new Set(pool)]
-
-  // En mode "mots seuls", exclure les homophones/ambigus
-  if (config.value.mode === 'mots') {
-    pool = pool.filter(m => !ambigsActuels.value.has(m))
-  }
+  let pool = motsChoisis()
 
   // Rotation inter-sessions : repousser les mots vus récemment en fin de pool
   const cle = `dictee_vus_${config.value.mode}`
@@ -419,6 +446,87 @@ async function demarrer() {
 
   nextTick(() => { afficherMot(); ecouterMot() })
 }
+
+// ── Fiche imprimable : liste des mots à apprendre + page de dictée (corrigé à la fin)
+const ficheConfig = ref(charger('dictee_fiche', { liste: true, dictee: true }))
+watch(ficheConfig, v => sauvegarder('dictee_fiche', v), { deep: true })
+function basculerPage(p) {
+  const autre = p === 'liste' ? 'dictee' : 'liste'
+  if (ficheConfig.value[p] && !ficheConfig.value[autre]) return // au moins une page
+  ficheConfig.value[p] = !ficheConfig.value[p]
+}
+
+function htmlFiche() {
+  let mots = melanger(motsChoisis())
+  if (config.value.nb > 0) mots = mots.slice(0, config.value.nb)
+  const phrases = config.value.mode === 'phrases'
+  const e = echapper
+  const titre = `${t('titre')} — ${config.value.niveau}`
+  const entete = `<h1>${e(titre)}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>`
+
+  // Page 1 : mots à apprendre, regroupés par catégorie
+  const parCat = config.value.cats
+    .map(cat => ({ cat, mots: (categoriesActuelles.value[cat] ?? []).filter(m => mots.includes(m)) }))
+    .filter(g => g.mots.length)
+  const vus = new Set()
+  const liste = parCat.map(g => {
+    const ms = g.mots.filter(m => !vus.has(m) && vus.add(m))
+    if (!ms.length) return ''
+    return `<h2>${e(nomCat(g.cat))}</h2>
+      <table><tbody>${ms.map(m => `<tr><td class="script">${e(m)}</td><td class="attache">${e(m)}</td><td class="recopie"></td></tr>`).join('')}</tbody></table>`
+  }).join('')
+  const pageListe = `<section>${entete}
+    <p class="consigne">${t('fConsigneListe')}</p>
+    <table class="cols"><thead><tr><th>${t('fScript')}</th><th>${t('fAttache')}</th><th>${t('fRecopie')}</th></tr></thead></table>
+    ${liste}</section>`
+
+  // Page 2 : lignes numérotées, l'adulte dicte
+  const lignes = mots.map((_, i) => `<div class="ligne"><span class="num">${i + 1}.</span><span class="trait"></span></div>`).join('')
+  const pageDictee = `<section>${entete}
+    <p class="consigne">${t(phrases ? 'fConsignePhrases' : 'fConsigneMots')}</p>
+    <div class="${phrases ? 'lignes-phrases' : 'lignes-mots'}">${lignes}</div></section>`
+
+  // Corrigé : ce que l'adulte dicte
+  const phraseDe = m => PHRASES_DEFAUT_ALL[m] || `Je vois ${m}.`
+  const corrige = `<section><h1>${t('corrige')} — ${e(titre)}</h1>
+    <p class="consigne">${t('fADicter')}</p>
+    <ol class="corrige">${mots.map(m => `<li>${phrases ? e(phraseDe(m)).replace(e(m), `<b>${e(m)}</b>`) : `<b>${e(m)}</b>`}</li>`).join('')}</ol></section>`
+
+  const pages = [ficheConfig.value.liste && pageListe, ficheConfig.value.dictee && pageDictee, ficheConfig.value.dictee && corrige].filter(Boolean)
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${e(titre)}</title>
+    <style>
+      ${cssPolices()}
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
+      section + section { page-break-before: always; break-before: page; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      h2 { font-size: .95rem; margin: 1rem 0 .2rem; background: #f0f3f7; padding: .25rem .6rem; border-radius: 6px; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: .8rem; }
+      .consigne { font-weight: 700; margin: .6rem 0 1rem; }
+      table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+      th { font-size: .75rem; color: #777; text-align: left; font-weight: 600; }
+      td { padding: .35rem .3rem; vertical-align: bottom; page-break-inside: avoid; }
+      .script { font-family: '${POLICE_SCRIPT}', Arial, sans-serif; font-size: 1.35rem; }
+      .attache { font-family: '${POLICE_ATTACHE}', cursive; font-size: 1.15rem; }
+      .recopie { border-bottom: 1.5px solid #999; }
+      .lignes-mots { columns: 2; column-gap: 2.5rem; }
+      .ligne { display: flex; align-items: flex-end; gap: .5rem; height: 2.6rem; break-inside: avoid; }
+      .lignes-phrases .ligne { height: 3.6rem; }
+      .num { font-weight: 700; color: #777; min-width: 1.8rem; }
+      .trait { flex: 1; border-bottom: 1.5px solid #999; }
+      .corrige { columns: ${phrases ? 1 : 3}; font-size: 1.05rem; line-height: 1.9; font-family: '${POLICE_SCRIPT}', Arial, sans-serif; }
+    </style></head><body>
+    ${pages.join('\n')}
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function afficherMot() {
   reponse.value = ''; feedback.value = null; feedbackClass.value = ''; inputClass.value = ''

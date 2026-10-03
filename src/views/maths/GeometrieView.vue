@@ -3,7 +3,8 @@
     <h1 class="section-heading">📐 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -32,7 +33,7 @@
         </div>
       </div>
 
-      <div class="config-section">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [4, 8, 12]" :key="n"
@@ -40,14 +41,7 @@
             @click="config.nbQ = n">{{ n }}</button>
         </div>
       </div>
-
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
@@ -184,6 +178,8 @@
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, tr, langue } = useI18n({
   fr: {
@@ -1070,8 +1066,8 @@ const resultMsg = computed(() => {
   return t('resultat0')
 })
 
-// ── Fiche imprimable ──
-function imprimerFiche() {
+// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+function htmlFiche() {
   const cfg = config.value
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   const ex = cfg.exercices
@@ -1160,14 +1156,18 @@ function imprimerFiche() {
     <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     <p class="avertissement">⚠️ ${B('Imprimer à 100 %, sans ajustement à la page : chaque carreau mesure alors 1 cm.', "Moullañ da 100 %, hep azasaat d'ar bajenn : neuze e vuzul pep karrezenn 1 cm.")}</p>
     ${corps}
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 </script>
 
 <style scoped>

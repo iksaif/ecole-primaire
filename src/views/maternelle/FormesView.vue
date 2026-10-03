@@ -2,8 +2,9 @@
   <div class="container">
     <h1>🔷 {{ t('titre') }}</h1>
 
-    <div v-if="phase === 'config'" class="config-box">
-      <div class="config-section">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('exercice') }}</div>
         <div class="mode-cards">
           <button class="mode-card" :class="{ active: config.mode === 'reconnaitre' }" @click="config.mode = 'reconnaitre'">
@@ -23,13 +24,8 @@
           </button>
         </div>
       </div>
-
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-    </div>
+      <p v-if="mode === 'imprimer'" class="note-fiche">{{ t('noteFiche') }}</p>
+    </ConfigExercice>
 
     <template v-if="phase === 'jeu' && question">
       <div class="score-bar">
@@ -102,6 +98,8 @@
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 // Noms bretons des formes (le nom français sert d'identifiant)
 const NOMS_BR = {
@@ -125,6 +123,10 @@ const { t, langue } = useI18n({
     res75: 'Très bien ! 🌟',
     res50: 'Bien ! Regarde les formes autour de toi 💪',
     res0: 'Courage ! Observe les formes dans la classe 📐',
+    noteFiche: 'Fiche : colorie chaque forme de sa couleur, puis compte-les.',
+    fConsigne: 'Colorie chaque forme de la bonne couleur.',
+    fCompte: 'Combien y en a-t-il ? Écris le nombre.',
+    rouge: 'rouge', bleu: 'bleu', vert: 'vert', jaune: 'jaune',
   },
   br: {
     titre: 'Ar stummoù',
@@ -139,6 +141,11 @@ const { t, langue } = useI18n({
     res75: 'Mat-tre ! 🌟',
     res50: "Mat ! Sell ouzh ar stummoù en-dro dit 💪",
     res0: 'Kalon vat ! Sell ouzh ar stummoù er c\'hlas 📐',
+    // br: à relire
+    noteFiche: 'Fichenn : liv pep stumm gant e liv, ha kont anezho.',
+    fConsigne: 'Liv pep stumm gant al liv mat.',
+    fCompte: 'Pet a zo ? Skriv an niver.',
+    rouge: 'ruz', bleu: 'glas', vert: 'gwer', jaune: 'melen',
   },
 })
 const nomForme = nom => (langue.value === 'br' ? NOMS_BR[nom] : null) ?? nom
@@ -228,6 +235,69 @@ function demarrer() {
   repondu.value = false; feedbackTxt.value = ''; feedbackCls.value = ''; reponseDonnee.value = null
   phase.value = 'jeu'
 }
+
+// ── Fiche imprimable : formes à colorier selon une légende, puis à compter (corrigé page 2)
+const COULEURS_FICHE = [
+  { nom: 'cercle', couleur: 'rouge', hex: '#e53935' },
+  { nom: 'carré', couleur: 'bleu', hex: '#1e88e5' },
+  { nom: 'triangle', couleur: 'vert', hex: '#43a047' },
+  { nom: 'rectangle', couleur: 'jaune', hex: '#fdd835' },
+]
+// Forme dessinée au trait (à colorier)
+const contour = (nom, taille, angle = 0) => FORMES.find(f => f.nom === nom).svg
+  .replace(/width="100" height="100"/, `width="${taille}" height="${taille}" style="transform: rotate(${angle}deg)"`)
+  .replace(/fill="[^"]*" opacity="[^"]*"/, 'fill="none" stroke="#222" stroke-width="3.5" stroke-linejoin="round"')
+
+function htmlFiche() {
+  // 20 formes : au moins 2 de chaque, le reste au hasard
+  const noms = COULEURS_FICHE.map(c => c.nom)
+  const tirage = melanger([...noms, ...noms, ...Array.from({ length: 12 }, () => noms[Math.floor(Math.random() * noms.length)])])
+  const cases = tirage.map(nom => {
+    const taille = 62 + Math.floor(Math.random() * 30)
+    const angle = nom === 'cercle' ? 0 : Math.floor(Math.random() * 31) - 15
+    return `<div class="cell">${contour(nom, taille, angle)}</div>`
+  }).join('')
+  const legende = COULEURS_FICHE.map(c => `<div class="leg">${contour(c.nom, 46)}<span class="nom">${nomForme(c.nom)}</span>
+    <span class="pastille" style="background:${c.hex}"></span><span class="coul">${t(c.couleur)}</span></div>`).join('')
+  const comptes = COULEURS_FICHE.map(c => `<div class="cpt">${contour(c.nom, 40)}<span class="case"></span></div>`).join('')
+  const titre = t('titre')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${titre}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
+      .consigne { font-weight: 700; font-size: 1.1rem; margin: .8rem 0 .6rem; }
+      .legende { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem 2rem; border: 2px solid #ccc; border-radius: 12px; padding: .5rem 1rem; }
+      .leg { display: flex; align-items: center; gap: .6rem; font-size: 1.1rem; font-weight: 700; }
+      .leg .nom { min-width: 6rem; }
+      .pastille { width: 1.6rem; height: 1.6rem; border-radius: 50%; display: inline-block; border: 1px solid #555; }
+      .grille { display: grid; grid-template-columns: repeat(5, 1fr); gap: .3rem; margin: .8rem 0; }
+      .cell { height: 100px; display: flex; align-items: center; justify-content: center; }
+      .comptes { display: flex; justify-content: space-around; page-break-inside: avoid; }
+      .cpt { display: flex; align-items: center; gap: .5rem; }
+      .case { width: 2.6rem; height: 2.6rem; border: 2.5px solid #444; border-radius: 8px; display: inline-block; }
+      .corrige { page-break-before: always; break-before: page; }
+      .corr { font-size: 1.15rem; line-height: 2; }
+    </style></head><body>
+    <h1>${titre}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="consigne">${t('fConsigne')}</p>
+    <div class="legende">${legende}</div>
+    <div class="grille">${cases}</div>
+    <p class="consigne">${t('fCompte')}</p>
+    <div class="comptes">${comptes}</div>
+    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
+      <div class="corr">${COULEURS_FICHE.map(c => `<div>${nomForme(c.nom)} (${t(c.couleur)}) : <b>${tirage.filter(n => n === c.nom).length}</b></div>`).join('')}</div></div>
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function dotClass(i) {
   const r = questions.value[i]?._resultat
@@ -389,4 +459,5 @@ h1 { color: var(--bleu); margin-bottom: 1rem; }
 
 .result-score { font-size: 3rem; font-weight: 900; color: var(--bleu); }
 .result-msg   { font-size: 1.1rem; margin: .5rem 0 1.5rem; }
+.note-fiche { color: #666; font-size: .95rem; margin: 0; }
 </style>

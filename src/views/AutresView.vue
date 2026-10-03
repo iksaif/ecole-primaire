@@ -3,7 +3,8 @@
     <h1>🌍 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
 
       <div class="config-section">
         <div class="config-section-title">{{ t('theme') }}</div>
@@ -26,13 +27,7 @@
             @click="config.nb = n">{{ n }}</button>
         </div>
       </div>
-
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
@@ -90,6 +85,9 @@
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../utils'
 import { useI18n } from '../i18n'
+import ConfigExercice from '../components/ConfigExercice.vue'
+import { useModeExercice } from '../composables/useModeExercice'
+import { echapper } from '../utils/impression'
 
 const { t, tr, langue } = useI18n({
   fr: {
@@ -103,6 +101,7 @@ const { t, tr, langue } = useI18n({
     res80: 'Excellent ! 🌟',
     res60: 'Bien ! Continue à apprendre 💪',
     res0: 'Courage ! Relis les réponses et réessaie 📚',
+    fConsigne: 'Lis chaque question et entoure la bonne réponse.',
   },
   br: {
     titre: 'Kwiz — Sevenadur hollek', // br: à relire
@@ -115,6 +114,7 @@ const { t, tr, langue } = useI18n({
     res80: 'Gwellañ ! 🌟',
     res60: "Mat ! Kendalc'h da zeskiñ 💪",
     res0: "Kalon vat ! Adlenn ar respontoù hag adklask 📚",
+    fConsigne: 'Lenn pep goulenn ha gromm ar respont mat.', // br: à relire
   },
 })
 
@@ -332,6 +332,48 @@ function demarrer() {
   reponseDonnee.value = ''
   phase.value = 'jeu'
 }
+
+// ── Fiche imprimable : questions + choix à entourer, corrigé page 2
+function htmlFiche() {
+  const e = echapper
+  const qs = melanger(QUESTIONS[config.value.theme].map(q => enLangue(q, langue.value)).filter(Boolean))
+    .slice(0, config.value.nb)
+    .map(q => ({ ...q, choix: melanger([...q.choix]) }))
+  const th = THEMES.find(x => x.id === config.value.theme)
+  const titre = `${t('titre')} — ${tr(th.label)}`
+  const corps = qs.map((q, i) => `<div class="q"><div class="enonce"><span class="num">${i + 1}.</span> ${e(q.q)}</div>
+    <div class="choix">${q.choix.map(c => `<span>${e(c)}</span>`).join('')}</div></div>`).join('')
+  const corrige = qs.map((q, i) => `<div class="corr"><span class="num">${i + 1}.</span> <b>${e(q.bonne)}</b>${q.info ? ` <em>— ${e(q.info)}</em>` : ''}</div>`).join('')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${e(titre)}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
+      .consigne { font-weight: 700; margin: .4rem 0 1rem; }
+      .q { margin-bottom: 1rem; page-break-inside: avoid; }
+      .enonce { font-size: 1.1rem; font-weight: 700; margin-bottom: .35rem; }
+      .num { color: #777; }
+      .choix { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; padding-left: 1.6rem; font-size: 1.05rem; }
+      .choix span { padding: .1rem .5rem; }
+      .corrige { page-break-before: always; break-before: page; }
+      .corr { margin: .35rem 0; }
+      em { color: #666; font-size: .9em; }
+    </style></head><body>
+    <h1>${e(titre)}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="consigne">${t('fConsigne')}</p>
+    ${corps}
+    <div class="corrige"><h1>${t('corrige')} — ${e(titre)}</h1>${corrige}</div>
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function dotClass(i) {
   const r = questions.value[i]?._resultat

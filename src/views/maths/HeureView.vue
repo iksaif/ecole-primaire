@@ -3,7 +3,8 @@
     <h1 class="section-heading">🕐 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -32,7 +33,7 @@
         <div class="aide-config">{{ t('aideCe1') }}</div>
       </div>
 
-      <div class="config-section" v-if="config.exercices.includes('lire')">
+      <div class="config-section" v-if="mode === 'jouer' && config.exercices.includes('lire')">
         <div class="config-section-title">{{ t('reponseLire') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: config.saisie === 'choix' }" @click="config.saisie = 'choix'">{{ t('propositions4') }}</button>
@@ -49,7 +50,7 @@
         </div>
       </div>
 
-      <div class="config-section">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
@@ -58,13 +59,25 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+      <template v-if="mode === 'imprimer'">
+        <div class="config-section">
+          <div class="config-section-title">{{ t('nbHorloges') }}</div>
+          <div class="btn-group">
+            <button v-for="n in [4, 8, 12]" :key="n"
+              class="level-btn" :class="{ active: config.nbHorloges === n }"
+              @click="config.nbHorloges = n">{{ n }}</button>
+          </div>
+        </div>
+        <div class="config-section">
+          <div class="config-section-title">{{ t('corrigeTitre') }}</div>
+          <div class="btn-group">
+            <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = !config.corrige">
+              {{ config.corrige ? '✓ ' : '' }}{{ t('corrigePage2') }}
+            </button>
+          </div>
+        </div>
+      </template>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
@@ -276,6 +289,8 @@ import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, tr, langue } = useI18n({
   fr: {
@@ -287,6 +302,9 @@ const { t, tr, langue } = useI18n({
     jEcris: "J'écris l'heure",
     aide: 'Aide',
     afficherMinutes: 'Afficher les minutes autour du cadran',
+    nbHorloges: 'Horloges par exercice',
+    corrigeTitre: 'Corrigé',
+    corrigePage2: 'Ajouter le corrigé en page 2',
     quelleHeure: 'Quelle heure est-il ?',
     legH: 'petite aiguille = heures',
     legM: 'grande aiguille = minutes',
@@ -322,6 +340,9 @@ const { t, tr, langue } = useI18n({
     jEcris: 'Skrivañ a ran an eur',
     aide: 'Skoazell',
     afficherMinutes: "Diskouez ar munutoù en-dro d'an horolaj",
+    nbHorloges: 'Horolajoù dre boelladenn', // br: à relire
+    corrigeTitre: 'Reizhadenn',
+    corrigePage2: 'Ouzhpennañ ar reizhadenn war ar bajenn 2', // br: à relire
     quelleHeure: 'Pe eur eo ?',
     legH: 'nadoz vihan = eurioù',
     legM: 'nadoz vras = munutoù',
@@ -799,9 +820,10 @@ function svgHorloge(h, m, { aiguilles = true, aideMinutes = false, fantome = nul
 
 const { lire } = useTTS()
 
-const DEFAUT = { niveau: 'ce1', exercices: NIVEAUX.ce1.exercicesDefaut, precisions: NIVEAUX.ce1.precisionsDefaut, saisie: 'choix', aideMinutes: true, nbQ: 10 }
+const DEFAUT = { niveau: 'ce1', exercices: NIVEAUX.ce1.exercicesDefaut, precisions: NIVEAUX.ce1.precisionsDefaut, saisie: 'choix', aideMinutes: true, nbQ: 10, nbHorloges: 8, corrige: true }
 const config = ref({ ...DEFAUT, ...charger('heure_config', {}) })
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
+if (![4, 8, 12].includes(config.value.nbHorloges)) config.value.nbHorloges = 8
 watch(config, v => sauvegarder('heure_config', v), { deep: true })
 
 const niveau = computed(() => NIVEAUX[config.value.niveau] || NIVEAUX.ce1)
@@ -1012,8 +1034,8 @@ const resultMsg = computed(() => {
   return t('resultat0')
 })
 
-// ── Fiche imprimable ──
-function imprimerFiche() {
+// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+function htmlFiche() {
   const cfg = config.value
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   const precisions = cfg.precisions.filter(p => niv.precisions.includes(p))
@@ -1030,8 +1052,9 @@ function imprimerFiche() {
     return res
   }
   const vus = new Set()
-  const aLire = tirer(8, vus)
-  const aDessiner = tirer(8, vus)
+  const nbH = cfg.nbHorloges || 8
+  const aLire = tirer(nbH, vus)
+  const aDessiner = tirer(nbH, vus)
 
   const opt = { aideMinutes: aide, taille: '3.8cm', impression: true }
   const cellLire = aLire.map((t, i) => `<div class="cell">
@@ -1120,15 +1143,19 @@ function imprimerFiche() {
     <p class="consigne">${T('Dessine la petite aiguille (heures) et la grande aiguille (minutes).', 'Tres an nadoz vihan (eurioù) hag an nadoz vras (munutoù).')}</p>
     <div class="grille">${cellDessin}</div>
     ${extra}
-    <div class="page2"><h2>${T("Corrigé (pour l'adulte)", 'Reizhadenn (evit an dud deuet)')}</h2>${corrige.join('')}</div>
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    ${cfg.corrige !== false ? `<div class="page2"><h2>${T("Corrigé (pour l'adulte)", 'Reizhadenn (evit an dud deuet)')}</h2>${corrige.join('')}</div>` : ''}
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 onUnmounted(() => clearTimeout(minuteur))
 </script>

@@ -3,7 +3,8 @@
     <h1>📚 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
 
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
@@ -36,15 +37,15 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
+      <div v-if="mode === 'imprimer'" class="config-section">
+        <div class="config-section-title">{{ t('corrigePage2') }}</div>
+        <div class="btn-group">
+          <button v-for="o in [true, false]" :key="String(o)"
+            class="level-btn" :class="{ active: config.corrige === o }"
+            @click="config.corrige = o">{{ o ? t('oui') : t('non') }}</button>
+        </div>
       </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
@@ -138,6 +139,8 @@ import { ref, computed, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { enLecture, lire } = useTTS()
 
@@ -216,6 +219,7 @@ const { t, langue } = useI18n({
     res60: 'Bien ! Revois les erreurs 💪',
     res0: 'Courage ! Relis la correction et recommence 📚',
     // fiche imprimable
+    corrigePage2: 'Corrigé en page 2',
     f_alpha: "Range les mots dans l'ordre alphabétique.",
     f_lettre: 'Écris la lettre qui vient juste avant ou juste après.',
     f_contraires: 'Entoure le contraire du mot en gras.',
@@ -316,6 +320,7 @@ const { t, langue } = useI18n({
     f_homonymes: 'Klok gant ar ger mat.',
     f_sensFigure: 'Merk : ster rik (R) pe ster skeudennek (S) ?',
     f_suffixes: 'Skriv ar ger gant al lostger mat : -eur, -ette, -ment, -age pe -ier.',
+    corrigePage2: 'Reizhadenn war ar bajenn 2', // br: à relire
     lettreP: 'R',
     lettreF: 'S',
   },
@@ -984,10 +989,10 @@ function questionFiche(q) {
   return ''
 }
 
-function htmlFiche(niveau, types, nb) {
+function htmlFiche(niveau, types, nb, avecCorrige = true) {
   const qs = genererQuestions(niveau, types, nb)
   const ordre = [...new Set(qs.map(q => q.type))].sort((a, b) => IDS_TYPES.indexOf(a) - IDS_TYPES.indexOf(b))
-  const parType = ordre.map(t => ({ t, qs: qs.filter(q => q.type === t) }))
+  const parType = ordre.map(ty => ({ t: ty, qs: qs.filter(q => q.type === ty) }))
   let num = 0
   const corps = parType.map(g => `
     <h2>${t('f_' + g.t)}</h2>
@@ -1018,8 +1023,7 @@ function htmlFiche(niveau, types, nb) {
     <h1>${t('titre')} — ${niveau.toUpperCase()}</h1>
     <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${corps}
-    <div class="corrige"><h1>${t('corrige')}</h1>${corrige}</div>
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    ${avecCorrige ? `<div class="corrige"><h1>${t('corrige')}</h1>${corrige}</div>` : ''}
   </body></html>`
 }
 
@@ -1035,6 +1039,7 @@ const config = ref({
   niveau: niveauCharge,
   types: typesCharges.length ? typesCharges : ['contraires'],
   nb: [5, 10, 15].includes(brut.nb) ? brut.nb : 10,
+  corrige: brut.corrige !== false,
 })
 watch(config, v => sauvegarder('vocabulaire_config', v), { deep: true })
 
@@ -1096,13 +1101,13 @@ function demarrer() {
   reinitQuestion()
 }
 
-function imprimerFiche() {
-  const html = htmlFiche(config.value.niveau, config.value.types, config.value.nb)
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
-}
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche(config.value.niveau, config.value.types, config.value.nb, config.value.corrige)
+})
 
 function dotClass(i) {
   const r = questions.value[i]?._resultat

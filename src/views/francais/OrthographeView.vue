@@ -3,7 +3,8 @@
     <h1>🔤 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
 
       <div class="config-section">
         <div class="config-section-title">{{ t('theme') }}</div>
@@ -25,13 +26,7 @@
             @click="config.nb = n">{{ n }}</button>
         </div>
       </div>
-
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
@@ -104,8 +99,11 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { melanger, confettis, normaliser, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
+import { echapper } from '../../utils/impression'
 
-const { t, tr } = useI18n({
+const { t, tr, langue } = useI18n({
   fr: {
     titre: 'Orthographe',
     theme: 'Thème',
@@ -121,6 +119,8 @@ const { t, tr } = useI18n({
     res80: 'Très bien ! 🌟',
     res60: 'Bien ! Revois les erreurs 💪',
     res0: 'Courage ! Relis les règles et recommence 📚',
+    fEntoure: 'Entoure le mot qui convient.',
+    fComplete: 'Complète le mot.',
   },
   br: {
     titre: 'Reizhskrivañ',
@@ -137,6 +137,8 @@ const { t, tr } = useI18n({
     res80: 'Mat-tre ! 🌟',
     res60: 'Mat ! Adwel ar fazioù 💪',
     res0: 'Kalon vat ! Adlenn ar reolennoù ha adkrog 📚',
+    fEntoure: "Gromm ar ger a zere.", // br: à relire (entourer = grommañ ?)
+    fComplete: 'Klok ar ger.',
   },
 })
 
@@ -310,6 +312,66 @@ function demarrer() {
   phase.value = 'jeu'
   nextTick(() => inputEl.value?.focus())
 }
+
+// ── Fiche imprimable : phrases à trous (choix à entourer / mot à compléter), corrigé page 2
+function htmlFiche() {
+  const e = echapper
+  const qs = melanger([...QUESTIONS[config.value.theme]]).slice(0, config.value.nb)
+    .map(q => ({ ...q, type: q.type || 'choix' }))
+  const trou = '<span class="trou"></span>'
+  const groupes = [
+    { type: 'choix', consigne: t('fEntoure') },
+    { type: 'saisie', consigne: t('fComplete') },
+  ].map(g => ({ ...g, qs: qs.filter(q => q.type === g.type) })).filter(g => g.qs.length)
+  const enonce = q => {
+    if (q.type === 'choix') {
+      const choix = melanger([...q.choix]).map(c => `<span class="choix">${e(c)}</span>`).join('<span class="sep">/</span>')
+      return e(q.phrase).replace('___', `<span class="paire">${choix}</span>`)
+    }
+    // mot à compléter : le trou est dans le mot (« la___in ») ou on donne l'indice entre parenthèses
+    const p = e(q.phrase).replace('___', trou)
+    return q.indice && !q.phrase.includes(q.indice) ? `${p} <span class="indice">(${e(q.indice)})</span>` : p
+  }
+  const solution = q => q.type === 'saisie' && q.indice && q.phrase.includes(q.indice)
+    ? e(q.phrase).replace(e(q.indice), `<b>${e(q.bonne)}</b>`)
+    : e(q.phrase).replace('___', `<b>${e(q.bonne)}</b>`)
+  let num = 0
+  const corps = groupes.map(g => `<h2>${g.consigne}</h2>
+    ${g.qs.map(q => `<div class="q"><span class="num">${++num}.</span><span>${enonce(q)}</span></div>`).join('')}`).join('')
+  num = 0
+  const corrige = groupes.map(g => g.qs.map(q => `<div class="corr"><span class="num">${++num}.</span> ${solution(q)}</div>`).join('')).join('')
+  const titre = `${t('titre')} — ${t('theme_' + config.value.theme)}`
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${e(titre)}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      h2 { font-size: 1rem; margin: 1.4rem 0 .4rem; background: #f0f3f7; padding: .3rem .6rem; border-radius: 6px; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: 1rem; }
+      .q { display: flex; gap: .6rem; margin: .9rem 0; font-size: 1.2rem; line-height: 2; page-break-inside: avoid; }
+      .num { min-width: 1.6rem; font-weight: 700; color: #777; }
+      .paire { white-space: nowrap; margin: 0 .2rem; }
+      .choix { display: inline-block; padding: 0 .45rem; font-weight: 700; }
+      .sep { color: #aaa; }
+      .trou { display: inline-block; min-width: 3.5em; border-bottom: 1.5px solid #888; height: 1.2em; vertical-align: bottom; }
+      .indice { color: #777; font-size: .9em; }
+      .corrige { page-break-before: always; break-before: page; font-size: 1rem; }
+      .corr { margin: .35rem 0; }
+      .corr .num { display: inline-block; }
+    </style></head><body>
+    <h1>${e(titre)}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${corps}
+    <div class="corrige"><h1>${t('corrige')} — ${e(titre)}</h1>${corrige}</div>
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function dotClass(i) {
   const r = questions.value[i]?._resultat

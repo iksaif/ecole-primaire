@@ -3,8 +3,9 @@
     <h1>🔡 {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <div v-if="phase === 'config'" class="config-box">
-      <div class="config-section">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('exercice') }}</div>
         <div class="mode-cards">
           <button class="mode-card" :class="{ active: config.mode === 'reconnaitre' }" @click="config.mode = 'reconnaitre'">
@@ -28,13 +29,8 @@
           <button class="level-btn" :class="{ active: config.groupe === 'toutes' }" @click="config.groupe = 'toutes'">{{ t('toutes') }}</button>
         </div>
       </div>
-
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-    </div>
+      <p v-if="mode === 'imprimer'" class="note-fiche">{{ t('noteFiche') }}</p>
+    </ConfigExercice>
 
     <!-- ══ EXERCICE ══ -->
     <template v-if="phase === 'jeu' && question">
@@ -93,6 +89,9 @@
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
+import { cssPolices, echapper, POLICE_SCRIPT } from '../../utils/impression'
 import { langueRegionale } from '../../data/languesRegionales'
 
 const VOYELLES   = ['A','E','I','O','U','Y']
@@ -122,6 +121,8 @@ const { t, langue } = useI18n({
     res80: 'Très bien ! 🌟',
     res60: "Bien ! Continue à t'entraîner 💪",
     res0: "Courage ! Chante l'alphabet et recommence 🎵",
+    noteFiche: 'Fiche : relie chaque majuscule à sa minuscule.',
+    fConsigne: 'Relie chaque majuscule à sa minuscule.',
   },
   br: {
     titre: 'Al lizherennoù',
@@ -138,6 +139,9 @@ const { t, langue } = useI18n({
     res80: 'Mat-tre ! 🌟',
     res60: "Mat ! Kendalc'h da embreger 💪",
     res0: 'Kalon vat ! Kan al lizherenneg hag adkrog 🎵',
+    // br: à relire
+    noteFiche: 'Fichenn : lak pep pennlizherenn gant he lizherenn vihan.',
+    fConsigne: 'Lak ul linenn etre pep pennlizherenn hag he lizherenn vihan.',
   },
 })
 
@@ -191,6 +195,50 @@ function demarrer() {
   repondu.value = false; feedbackTxt.value = ''; feedbackCls.value = ''; reponseDonnee.value = ''
   phase.value = 'jeu'
 }
+
+// ── Fiche imprimable : relier majuscules et minuscules, par blocs de 6 lettres
+function htmlFiche() {
+  const e = echapper
+  const pool = melanger([...getPool()])
+  const nbBlocs = Math.ceil(pool.length / 6)
+  // répartition équilibrée (26 lettres → 6 + 5 + 5 + 5 + 5)
+  const blocs = Array.from({ length: nbBlocs }, (_, i) => pool.filter((_, j) => j % nbBlocs === i))
+  const html = blocs.map(b => {
+    const droite = melanger([...b])
+    return `<div class="bloc">
+      <div class="col">${b.map(l => `<div class="l"><span>${e(l)}</span><i></i></div>`).join('')}</div>
+      <div class="col min">${droite.map(l => `<div class="l"><i></i><span>${e(l.toLowerCase())}</span></div>`).join('')}</div>
+    </div>`
+  }).join('')
+  const titre = t('titre')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${titre}</title>
+    <style>
+      ${cssPolices()}
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
+      .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
+      .blocs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 2.5rem; }
+      .bloc { display: flex; justify-content: space-between; border: 2px solid #ccc; border-radius: 14px; padding: .6rem 1rem; page-break-inside: avoid; }
+      .col { display: flex; flex-direction: column; gap: .35rem; }
+      .l { display: flex; align-items: center; gap: .7rem; font-family: '${POLICE_SCRIPT}', Arial, sans-serif; font-size: 2rem; font-weight: 700; line-height: 1.25; }
+      .l span { min-width: 1.6em; text-align: center; }
+      .l i { width: .5rem; height: .5rem; border-radius: 50%; background: #333; display: inline-block; }
+    </style></head><body>
+    <h1>${titre}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="consigne">${t('fConsigne')}</p>
+    <div class="blocs">${html}</div>
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function dotClass(i) {
   const r = questions.value[i]?._resultat
@@ -288,4 +336,5 @@ h1 { color: var(--bleu); margin-bottom: 1rem; }
 
 .result-score { font-size: 3rem; font-weight: 900; color: var(--bleu); }
 .result-msg   { font-size: 1.1rem; margin: .5rem 0 1.5rem; }
+.note-fiche { color: #666; font-size: .95rem; margin: 0; }
 </style>

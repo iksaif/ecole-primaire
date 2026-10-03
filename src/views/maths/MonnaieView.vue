@@ -3,7 +3,8 @@
     <h1 class="section-heading">💶 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -28,14 +29,14 @@
           <button class="level-btn" :class="{ active: !config.centimes }" @click="config.centimes = false">{{ t('eurosEntiers') }}</button>
           <button class="level-btn" :class="{ active: config.centimes }" @click="config.centimes = true">{{ t('avecCentimes') }}</button>
         </div>
-        <div class="btn-group" style="margin-top:.5rem;">
+        <div v-if="mode === 'jouer'" class="btn-group" style="margin-top:.5rem;">
           <button class="level-btn" :class="{ active: config.aideTotal }" @click="config.aideTotal = !config.aideTotal">
             {{ config.aideTotal ? '✔' : '✖' }} {{ t('afficherTotal') }}
           </button>
         </div>
       </div>
 
-      <div class="config-section">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
@@ -48,13 +49,8 @@
         <span v-for="v in paletteApercu" :key="v" class="argent" v-html="svgArgent(v, 0.7)"></span>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+      <div v-if="mode === 'imprimer'" class="aide-config">{{ t('aideFiche') }}</div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
@@ -261,6 +257,8 @@
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, tr, langue } = useI18n({
   fr: {
@@ -269,6 +267,7 @@ const { t, tr, langue } = useI18n({
     eurosEntiers: 'Euros entiers',
     avecCentimes: 'Avec centimes',
     afficherTotal: 'Afficher le total pendant que je compose',
+    aideFiche: 'La fiche reprend les exercices choisis : compter, faire une somme (entourer), rendre la monnaie, conversions.',
     combienArgent: "Combien d'argent y a-t-il ?",
     exemple: 'ex : 3,50 €',
     tuPeuxEcrire: 'Tu peux écrire « 3,50 € » ou « 3 € 50 c ».',
@@ -316,6 +315,7 @@ const { t, tr, langue } = useI18n({
     eurosEntiers: 'Euro hepken',
     avecCentimes: 'Gant santimoù',
     afficherTotal: 'Diskouez ar sammad e-keit ma lakaan an arc\'hant', // br: à relire
+    aideFiche: "Er fichenn e vo ar poelladennoù dibabet : kontañ, ober ur sammad (kelc'hiañ), distreiñ ar moneiz, amdroadurioù.", // br: à relire
     combienArgent: "Pegement a arc'hant a zo ?",
     exemple: 'sk. : 3,50 €',
     tuPeuxEcrire: 'Gallout a rez skrivañ « 3,50 € » pe « 3 € 50 c ».',
@@ -960,9 +960,20 @@ const resultMsg = computed(() => {
 
 onUnmounted(() => clearTimeout(minuterie))
 
-// ── Fiche imprimable ──
-function imprimerFiche() {
+// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+function htmlFiche() {
   const niv = niveau.value
+  // Parties de la fiche selon les exercices choisis (toutes si aucun n'a d'équivalent papier)
+  const choisis = config.value.exercices
+  let parties = {
+    compter: choisis.includes('compter'),
+    entoure: choisis.includes('composer') || choisis.includes('moins'),
+    rendre: choisis.includes('rendre'),
+    convertir: choisis.includes('convertir') && niv.types.includes('convertir'),
+  }
+  if (!Object.values(parties).some(Boolean)) parties = { compter: true, entoure: true, rendre: true, convertir: niv.types.includes('convertir') }
+  let numPartie = 0
+  const titrePartie = txt => `<h2>${++numPartie}. ${txt}</h2>`
   const centimes = config.value.centimes
   const dessin = items => items.map(v => `<span class="arg">${svgArgent(v, 0.8)}</span>`).join('')
   const decimale = centimes && niv.saisieDecimale
@@ -1009,9 +1020,9 @@ function imprimerFiche() {
 
   // 4. Conversions (CE2)
   let blocConvertir = ''
-  if (niv.types.includes('convertir')) {
+  if (parties.convertir) {
     const conv = genererSansRepetition(['convertir'], 8, niv, centimes)
-    blocConvertir = `<h2>4. ${T('Complète.', 'Leunia.')} <small>(1 € = 100 c)</small></h2><div class="grille">`
+    blocConvertir = `<div class="grille">`
       + conv.map((qu, i) => `<div class="ligne-rendre"><span class="num">${i + 1}.</span> ${qu.texte
         .replace('? € ? c', '______ € ______ c').replace(/\? € \(.*\)/, '__________ €').replace('? c', '__________ c')}</div>`).join('')
       + '</div>'
@@ -1037,24 +1048,29 @@ function imprimerFiche() {
     </style></head><body>
     <h1>💶 ${t('titre')} — ${config.value.niveau.toUpperCase()}</h1>
     <p class="entete">${centimes ? T('Euros et centimes', 'Euro ha santimoù') : T('Euros', 'Euro')} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
-    <h2>1. ${T("Compte l'argent.", "Kont an arc'hant.")}${decimale ? ` <small>${T('(écris par exemple 3,50 €)', '(skriv da skouer 3,50 €)')}</small>` : ''}</h2>
-    <div class="grille">${blocCompter}</div>
-    <h2>2. ${T('Entoure les pièces et les billets.', 'Kelc\'hia ar pezhioù moneiz hag ar bilhedoù.')}</h2>
-    ${blocEntoure}
-    <h2>3. ${T('Combien te rend-on ?', 'Pegement a vez distroet dit ?')}</h2>
-    ${blocRendre}
-    ${blocConvertir}
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    ${parties.compter ? `${titrePartie(`${T("Compte l'argent.", "Kont an arc'hant.")}${decimale ? ` <small>${T('(écris par exemple 3,50 €)', '(skriv da skouer 3,50 €)')}</small>` : ''}`)}
+    <div class="grille">${blocCompter}</div>` : ''}
+    ${parties.entoure ? `${titrePartie(T('Entoure les pièces et les billets.', 'Kelc\'hia ar pezhioù moneiz hag ar bilhedoù.'))}
+    ${blocEntoure}` : ''}
+    ${parties.rendre ? `${titrePartie(T('Combien te rend-on ?', 'Pegement a vez distroet dit ?'))}
+    ${blocRendre}` : ''}
+    ${blocConvertir ? `${titrePartie(`${T('Complète.', 'Leunia.')} <small>(1 € = 100 c)</small>`)}${blocConvertir}` : ''}
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 </script>
 
 <style scoped>
+.aide-config { font-size: .8rem; color: #888; margin-top: .4rem; }
 .consigne {
   font-size: 1.3rem;
   font-weight: 700;

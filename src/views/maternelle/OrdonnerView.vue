@@ -3,7 +3,8 @@
     <h1 class="section-heading">🔢 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -43,12 +44,7 @@
             class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
         </div>
       </div>
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.2rem;padding:.85rem 2.5rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
@@ -124,8 +120,10 @@
 import { ref, computed } from 'vue'
 import { aleatoire, melanger, confettis } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t } = useI18n({
+const { t, langue } = useI18n({
   fr: {
     titre: 'Ranger les nombres',
     nombresDe: '{niv} — nombres 1 à {n}',
@@ -140,6 +138,7 @@ const { t } = useI18n({
     ordreCorrect: "L'ordre correct : {ordre}",
     resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
     resultat0: "On va s'entraîner encore ! 📚",
+    fConsigne: 'Écris les nombres dans les cases, dans le bon ordre.',
   },
   br: {
     titre: 'Renkañ an niveroù',
@@ -155,6 +154,7 @@ const { t } = useI18n({
     ordreCorrect: 'An urzh reizh : {ordre}',
     resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
     resultat0: "Embreger a raimp c'hoazh ! 📚",
+    fConsigne: 'Skriv an niveroù er c\'haoued, en urzh mat.', // br: à relire
   },
 })
 
@@ -188,6 +188,51 @@ function generer() {
   const bonne = [...choix].sort((a, b) => sens === 'croissant' ? a - b : b - a)
   return { nombres: melanger(choix), bonne, sens }
 }
+
+// ── Fiche imprimable : nombres en désordre à recopier dans l'ordre (corrigé page 2)
+function htmlFiche() {
+  const qs = Array.from({ length: config.value.nbQ }, generer)
+  const lignes = qs.map((q, i) => {
+    const cr = q.sens === 'croissant'
+    return `<div class="item"><div class="sens">${i + 1}. ${cr ? '⬆️ ' + t('rangeCroissant') : '⬇️ ' + t('rangeDecroissant')}</div>
+      <div class="ligne"><div class="nombres">${q.nombres.map(n => `<span>${n}</span>`).join('')}</div>
+      <div class="cases">${q.nombres.map(() => '<span class="case"></span>').join(`<span class="signe">${cr ? '&lt;' : '&gt;'}</span>`)}</div></div></div>`
+  }).join('')
+  const titre = t('titre')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${titre}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
+      .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
+      .item { margin-bottom: 1rem; page-break-inside: avoid; }
+      .sens { font-size: .9rem; color: #555; font-weight: 700; margin-bottom: .3rem; }
+      .ligne { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+      .nombres { display: flex; gap: .5rem; }
+      .nombres span { font-size: 1.6rem; font-weight: 800; border: 2px solid #999; border-radius: 50%; width: 2.6rem; height: 2.6rem;
+        display: inline-flex; align-items: center; justify-content: center; }
+      .cases { display: flex; align-items: center; gap: .3rem; }
+      .case { width: 2.8rem; height: 2.8rem; border: 2.5px solid #444; border-radius: 8px; display: inline-block; }
+      .signe { font-size: 1.3rem; color: #888; font-weight: 700; }
+      .corrige { page-break-before: always; break-before: page; }
+      .corr { font-size: 1.1rem; line-height: 2; }
+    </style></head><body>
+    <h1>${titre}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="consigne">${t('fConsigne')}</p>
+    ${lignes}
+    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
+      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.bonne.join(q.sens === 'croissant' ? ' &lt; ' : ' &gt; ')}</div>`).join('')}</div></div>
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function demarrer() {
   questions.value = Array.from({ length: config.value.nbQ }, generer)

@@ -3,7 +3,8 @@
     <h1 class="section-heading">📐 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('operation') }}</div>
         <div class="btn-group">
@@ -35,19 +36,27 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('nbExercices') }}</div>
         <div class="btn-group">
-          <button v-for="n in [3,5,10,20]" :key="n"
-            class="level-btn" :class="{ active: config.nbQ === n }"
-            @click="config.nbQ = n">{{ n }}</button>
+          <template v-if="mode === 'jouer'">
+            <button v-for="n in NB_JOUER" :key="n"
+              class="level-btn" :class="{ active: config.nbQ === n }"
+              @click="config.nbQ = n">{{ n }}</button>
+          </template>
+          <template v-else>
+            <button v-for="n in NB_FICHE" :key="n"
+              class="level-btn" :class="{ active: config.nbFiche === n }"
+              @click="config.nbFiche = n">{{ n }}</button>
+          </template>
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
+      <div v-if="mode === 'imprimer'" class="config-section">
+        <div class="config-section-title">{{ t('corrigePage2') }}</div>
+        <div class="btn-group">
+          <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
+          <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
+        </div>
       </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
@@ -135,6 +144,8 @@
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, langue } = useI18n({
   fr: {
@@ -149,6 +160,7 @@ const { t, langue } = useI18n({
     colCalcul: 'Calcul',
     resultatBas: "Continue à t'entraîner ! 📚",
     pNbExercices: '{n} exercices',
+    corrigePage2: 'Corrigé (2e page)',
   },
   br: {
     titre: 'Jedadur lakaet', // br: à relire (« calcul posé »)
@@ -162,10 +174,17 @@ const { t, langue } = useI18n({
     colCalcul: 'Jedadur',
     resultatBas: "Kendalc'h da embreger ! 📚",
     pNbExercices: '{n} poelladenn',
+    corrigePage2: 'Reizhadenn (2vet pajenn)', // br: à relire
   },
 })
 
-const config = ref(charger('calcul_pose_config', { op: 'add', taille: '2', retenue: 'non', nbQ: 5 }))
+const config = ref({ op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10, corrige: false,
+  ...charger('calcul_pose_config', {}) })
+// nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
+const NB_JOUER = [3, 5, 10, 20]
+const NB_FICHE = [5, 10, 15, 20, 30]
+if (!NB_JOUER.includes(config.value.nbQ)) config.value.nbQ = 5
+if (!NB_FICHE.includes(config.value.nbFiche)) config.value.nbFiche = 10
 watch(config, v => sauvegarder('calcul_pose_config', v), { deep: true })
 const phase = ref('config')
 const questions = ref([])
@@ -322,18 +341,19 @@ function demarrer() {
   nextTick(initInputs)
 }
 
-function imprimerFiche() {
-  const qs = genererSansRepetition(config.value.nbQ)
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
+  const qs = genererSansRepetition(config.value.nbFiche)
   const tailles = { '1': 'GS / CP', '2': 'CP', '3': 'CE', '4': 'CM' }
   const niveau = tailles[config.value.taille] || ''
   const opLabel = t(config.value.op === 'add' ? 'additions' : config.value.op === 'sou' ? 'soustractions' : 'melange')
 
-  const cards = qs.map(q => {
+  const carte = (q, corrige) => {
     const cols = q.cols
     const cell = (ch) => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;">${ch.trim() || '&nbsp;'}</td>`
     const rowA = q.chiffresA.map(cell).join('')
     const rowB = q.chiffresB.map(cell).join('')
-    const rowR = q.chiffresR.map(() => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;border-bottom:2px solid #333;">&nbsp;</td>`).join('')
+    const rowR = q.chiffresR.map(ch => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;color:#1a7f37;border-bottom:2px solid #333;">${corrige ? (ch.trim() || '&nbsp;') : '&nbsp;'}</td>`).join('')
     const signCell = `<td style="width:1.8rem;text-align:center;font-size:1.5rem;font-weight:900;color:#1a5fb4;vertical-align:middle;">`
     return `<div style="display:inline-block;margin:1rem 1.5rem;vertical-align:top;">
       <table style="border-collapse:collapse;">
@@ -343,7 +363,13 @@ function imprimerFiche() {
         <tr>${signCell}&nbsp;</td>${rowR}</tr>
       </table>
     </div>`
-  }).join('')
+  }
+  const cards = qs.map(q => carte(q, false)).join('')
+  const corrige = config.value.corrige
+    ? `<div style="page-break-before:always;break-before:page;"></div>
+    <h1>${t('corrige')} — ${t('titre')} — ${niveau}</h1>
+    <div style="text-align:center;">${qs.map(q => carte(q, true)).join('')}</div>`
+    : ''
 
   const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niveau}</title>
@@ -355,14 +381,19 @@ function imprimerFiche() {
     <h1>${t('titre')} — ${niveau}</h1>
     <p class="entete">${opLabel} &nbsp;|&nbsp; ${t('pNbExercices', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     <div style="text-align:center;">${cards}</div>
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    ${corrige}
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function initInputs() {
   const cols = questions.value[idx.value]?.cols || 0

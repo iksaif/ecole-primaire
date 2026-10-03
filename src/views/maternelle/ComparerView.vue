@@ -3,7 +3,8 @@
     <h1 class="section-heading">⚖️ {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -22,12 +23,7 @@
             class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
         </div>
       </div>
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.2rem;padding:.85rem 2.5rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
@@ -104,8 +100,10 @@
 import { ref, computed } from 'vue'
 import { aleatoire, confettis } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t } = useI18n({
+const { t, langue } = useI18n({
   fr: {
     titre: 'Comparer les quantités',
     jusqua: "{niv} — jusqu'à {n}",
@@ -115,6 +113,7 @@ const { t } = useI18n({
     memeNombre: 'Les deux groupes ont le même nombre !',
     resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
     resultat0: "On va s'entraîner encore ! 📚",
+    fConsigne: 'Dans chaque ligne, entoure le groupe qui a le plus.',
   },
   br: {
     titre: "Keñveriañ ar c'hementadoù", // br: à relire
@@ -125,6 +124,7 @@ const { t } = useI18n({
     memeNombre: 'An daou strollad o deus ar memes niver !',
     resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
     resultat0: "Embreger a raimp c'hoazh ! 📚",
+    fConsigne: "War pep linenn, gromm ar strollad en deus muioc'h.", // br: à relire
   },
 })
 
@@ -154,6 +154,47 @@ function generer() {
   else reponse = 'egal'
   return { gauche, droite, emoji, reponse }
 }
+
+// ── Fiche imprimable : deux groupes par ligne, entourer celui qui a le plus (pas d'égalité sur papier)
+function htmlFiche() {
+  const qs = Array.from({ length: config.value.nbQ }, () => {
+    let q
+    do { q = generer() } while (q.reponse === 'egal')
+    return q
+  })
+  const groupe = (n, emoji) => `<div class="groupe">${`<span>${emoji}</span>`.repeat(n)}</div>`
+  const lignes = qs.map((q, i) => `<div class="ligne"><span class="num">${i + 1}.</span>
+    ${groupe(q.gauche, q.emoji)}${groupe(q.droite, q.emoji)}</div>`).join('')
+  const titre = t('titre')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${titre}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
+      .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
+      .ligne { display: flex; align-items: center; gap: 1.5rem; margin-bottom: .8rem; page-break-inside: avoid; }
+      .num { font-weight: 700; color: #999; min-width: 1.5rem; }
+      .groupe { flex: 1; border: 2px dashed #bbb; border-radius: 18px; padding: .6rem; min-height: 4.2rem;
+        display: flex; flex-wrap: wrap; gap: .3rem; justify-content: center; align-content: center; font-size: 1.6rem; line-height: 1.1; }
+      .corrige { page-break-before: always; break-before: page; }
+      .corr { columns: 3; font-size: 1.1rem; line-height: 2; }
+    </style></head><body>
+    <h1>${titre}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="consigne">${t('fConsigne')}</p>
+    ${lignes}
+    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
+      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.reponse === 'gauche' ? `<b>${q.gauche}</b> &gt; ${q.droite}` : `${q.gauche} &lt; <b>${q.droite}</b>`}</div>`).join('')}</div></div>
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function demarrer() {
   questions.value = Array.from({ length: config.value.nbQ }, generer)

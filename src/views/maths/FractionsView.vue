@@ -3,7 +3,8 @@
     <h1 class="section-heading">🍕 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -34,19 +35,27 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
-          <button v-for="n in [5, 10, 15, 20]" :key="n"
-            class="level-btn" :class="{ active: config.nbQ === n }"
-            @click="config.nbQ = n">{{ n }}</button>
+          <template v-if="mode === 'jouer'">
+            <button v-for="n in NB_JOUER" :key="n"
+              class="level-btn" :class="{ active: config.nbQ === n }"
+              @click="config.nbQ = n">{{ n }}</button>
+          </template>
+          <template v-else>
+            <button v-for="n in NB_FICHE" :key="n"
+              class="level-btn" :class="{ active: config.nbFiche === n }"
+              @click="config.nbFiche = n">{{ n }}</button>
+          </template>
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
+      <div v-if="mode === 'imprimer'" class="config-section">
+        <div class="config-section-title">{{ t('corrigeFin') }}</div>
+        <div class="btn-group">
+          <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
+          <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
+        </div>
       </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
@@ -182,6 +191,8 @@
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, tr, langue } = useI18n({
   fr: {
@@ -232,6 +243,7 @@ const { t, tr, langue } = useI18n({
     pReponse: 'Réponse :',
     pPlacer: 'Dessine une flèche pour placer {f} sur la droite.',
     pNbQuestions: '{n} questions',
+    corrigeFin: 'Corrigé (page à part)',
   },
   br: {
     titre: 'An darnaouennoù',
@@ -281,6 +293,7 @@ const { t, tr, langue } = useI18n({
     pReponse: 'Respont :',
     pPlacer: 'Tresa ur bir evit lakaat {f} war al linenn.',
     pNbQuestions: '{n} goulenn',
+    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
   },
 })
 const BR = () => langue.value === 'br'
@@ -712,9 +725,15 @@ function formeEnSvg(forme, colorees = []) {
 
 // #endregion generation
 
-const config = ref(charger('fractions_config', {
-  niveau: 'ce1', types: TYPES.map(t => t.id), mode: 'unitaires', nbQ: 10,
-}))
+const config = ref({
+  niveau: 'ce1', types: TYPES.map(ty => ty.id), mode: 'unitaires', nbQ: 10, nbFiche: 10, corrige: false,
+  ...charger('fractions_config', {}),
+})
+// nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
+const NB_JOUER = [5, 10, 15, 20]
+const NB_FICHE = [5, 10, 15, 20, 30]
+if (!NB_JOUER.includes(config.value.nbQ)) config.value.nbQ = 10
+if (!NB_FICHE.includes(config.value.nbFiche)) config.value.nbFiche = 10
 watch(config, v => sauvegarder('fractions_config', v), { deep: true })
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
 if (!MODES[config.value.mode]) config.value.mode = 'unitaires'
@@ -900,12 +919,17 @@ function questionPapier(qu, i) {
   }
 }
 
-function imprimerFiche() {
-  const qs = genererSansRepetition(config.value, config.value.nbQ)
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
+  const qs = genererSansRepetition(config.value, config.value.nbFiche)
   const niv = config.value.niveau.toUpperCase()
   const rows = qs.map(questionPapier).join('')
+  const corrige = config.value.corrige
+    ? `<h1 class="saut">${t('corrige')} — ${t('titre')} — ${niv}</h1>
+    <ol class="corrige">${qs.map(qu => `<li>${qu.attendu}</li>`).join('')}</ol>`
+    : ''
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
@@ -922,18 +946,24 @@ function imprimerFiche() {
       small { color: #777; }
       .ligne { display: inline-block; width: 4rem; border-bottom: 1.5px solid #555; height: 1.3rem; }
       .ligne.longue { width: 14rem; }
+      h1.saut { page-break-before: always; break-before: page; margin-bottom: 1.5rem; }
+      .corrige { columns: 2; column-gap: 2rem; font-size: 1.05rem; line-height: 1.9; }
+      .corrige li { break-inside: avoid; font-weight: 700; }
     </style></head><body>
     <h1>${t('titre')} — ${niv}</h1>
     <p class="entete">${t('pNbQuestions', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     ${rows}
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    ${corrige}
   </body></html>`
-
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 </script>
 
 <style scoped>

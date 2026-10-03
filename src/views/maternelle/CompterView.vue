@@ -3,7 +3,8 @@
     <h1 class="section-heading">🔢 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -22,12 +23,14 @@
             class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
         </div>
       </div>
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.2rem;padding:.85rem 2.5rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
+      <div v-if="mode === 'imprimer'" class="config-section">
+        <div class="config-section-title">{{ t('reponseFiche') }}</div>
+        <div class="btn-group">
+          <button class="level-btn" :class="{ active: ficheConfig.reponse === 'ecrire' }" @click="ficheConfig.reponse = 'ecrire'">✏️ {{ t('ecrire') }}</button>
+          <button class="level-btn" :class="{ active: ficheConfig.reponse === 'entourer' }" @click="ficheConfig.reponse = 'entourer'">⭕ {{ t('entourer') }}</button>
+        </div>
       </div>
-    </div>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu'">
@@ -76,11 +79,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { aleatoire, melanger, confettis } from '../../utils'
+import { ref, computed, watch } from 'vue'
+import { aleatoire, melanger, confettis, charger, sauvegarder } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr } = useI18n({
+const { t, tr, langue } = useI18n({
   fr: {
     titre: 'Compter les objets',
     jusqua: "{niv} — jusqu'à {n}",
@@ -88,6 +93,10 @@ const { t, tr } = useI18n({
     ilYAvait: 'Il y avait {n} {emoji}',
     resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
     resultat0: 'On peut encore progresser ! 📚',
+    reponseFiche: "Sur la fiche, l'enfant…",
+    ecrire: 'écrit le nombre', entourer: 'entoure le bon nombre',
+    fConsigneEcrire: 'Compte les objets et écris le nombre dans la case.',
+    fConsigneEntourer: 'Compte les objets et entoure le bon nombre.',
   },
   br: {
     titre: 'Kontañ an traoù',
@@ -97,6 +106,11 @@ const { t, tr } = useI18n({
     ilYAvait: '{n} {emoji} a oa',
     resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
     resultat0: "Gallout a reer ober gwelloc'h c'hoazh ! 📚",
+    // br: à relire
+    reponseFiche: 'War ar fichenn, ar bugel…',
+    ecrire: 'a skriv an niver', entourer: 'a gromm an niver mat',
+    fConsigneEcrire: 'Kont an traoù ha skriv an niver er gaoued.',
+    fConsigneEntourer: 'Kont an traoù ha gromm an niver mat.',
   },
 })
 
@@ -143,6 +157,52 @@ function generer() {
 
   return { nb, emoji: objet.emoji, nomPluriel: objet.pluriel, noms: { fr: objet.pluriel, br: objet.br }, choix, reponse: nb }
 }
+
+// ── Fiche imprimable : collections à compter, nombre à écrire ou à entourer (corrigé page 2)
+const ficheConfig = ref(charger('compter_fiche', { reponse: 'ecrire' }))
+watch(ficheConfig, v => sauvegarder('compter_fiche', v), { deep: true })
+
+function htmlFiche() {
+  const qs = Array.from({ length: config.value.nbQ }, generer)
+  const ecrire = ficheConfig.value.reponse === 'ecrire'
+  const cases = qs.map((q, i) => `<div class="item"><span class="num">${i + 1}</span>
+    <div class="objets">${`<span>${q.emoji}</span>`.repeat(q.nb)}</div>
+    ${ecrire ? '<div class="case"></div>'
+      : `<div class="choix">${[...q.choix].sort((a, b) => a - b).map(c => `<span>${c}</span>`).join('')}</div>`}
+  </div>`).join('')
+  const titre = t('titre')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${titre}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
+      .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
+      .grille { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+      .item { border: 2px solid #bbb; border-radius: 14px; padding: .6rem; display: flex; align-items: center; gap: .6rem; page-break-inside: avoid; position: relative; min-height: 6.2rem; }
+      .num { position: absolute; top: .3rem; left: .5rem; font-size: .8rem; font-weight: 700; color: #999; }
+      .objets { flex: 1; display: flex; flex-wrap: wrap; gap: .25rem; justify-content: center; font-size: 1.7rem; line-height: 1.1; }
+      .case { width: 3.2rem; height: 3.2rem; border: 2.5px solid #444; border-radius: 8px; flex-shrink: 0; }
+      .choix { display: grid; grid-template-columns: 1fr 1fr; gap: .2rem .6rem; font-size: 1.5rem; font-weight: 800; flex-shrink: 0; }
+      .choix span { min-width: 1.5rem; text-align: center; }
+      .corrige { page-break-before: always; break-before: page; }
+      .corr { columns: 4; font-size: 1.15rem; line-height: 2; }
+    </style></head><body>
+    <h1>${titre}</h1>
+    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="consigne">${t(ecrire ? 'fConsigneEcrire' : 'fConsigneEntourer')}</p>
+    <div class="grille">${cases}</div>
+    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
+      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. <b>${q.nb}</b></div>`).join('')}</div></div>
+  </body></html>`
+}
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function demarrer() {
   questions.value = Array.from({ length: config.value.nbQ }, generer)

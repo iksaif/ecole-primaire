@@ -3,7 +3,9 @@
     <h1 class="section-heading">✖️ {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      :aleatoire="ficheAleatoire" :desactive="config.tables.length === 0"
+      @commencer="demarrer()" @regenerer="regenerer">
 
       <div class="config-section">
         <div class="config-section-title">{{ t('tablesAReviser') }}</div>
@@ -16,7 +18,7 @@
         </div>
       </div>
 
-      <div class="config-section">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('mode') }}</div>
         <div class="mode-cards">
           <button class="mode-card" :class="{ active: config.mode === 'entrainement' }"
@@ -40,7 +42,7 @@
         </div>
       </div>
 
-      <div class="config-section" v-if="config.mode !== 'chrono'">
+      <div class="config-section" v-if="mode === 'imprimer' || config.mode !== 'chrono'">
         <div class="config-section-title">{{ t('multiplierJusqua') }}</div>
         <div class="btn-group">
           <button v-for="m in [10, 12]" :key="m"
@@ -49,7 +51,7 @@
         </div>
       </div>
 
-      <div class="config-section" v-if="config.mode === 'aleatoire'">
+      <div class="config-section" v-if="mode === 'jouer' && config.mode === 'aleatoire'">
         <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [10, 20, 30]" :key="n"
@@ -58,15 +60,35 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;"
-                :disabled="config.tables.length === 0"
-                @click="demarrer()">{{ t('commencer') }}</button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+      <template v-if="mode === 'imprimer'">
+        <div class="config-section">
+          <div class="config-section-title">{{ t('ordreFiche') }}</div>
+          <div class="btn-group">
+            <button class="level-btn" :class="{ active: config.ordreFiche === 'ordre' }"
+                    @click="config.ordreFiche = 'ordre'">{{ t('dansLOrdre') }}</button>
+            <button class="level-btn" :class="{ active: config.ordreFiche === 'melange' }"
+                    @click="config.ordreFiche = 'melange'">{{ t('melange') }}</button>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <div class="config-section-title">{{ t('nbCalculs') }}</div>
+          <div class="btn-group">
+            <button v-for="n in [0, 20, 30, 40]" :key="n"
+                    class="level-btn" :class="{ active: config.nbFiche === n }"
+                    @click="config.nbFiche = n">{{ n === 0 ? t('toutes') : n }}</button>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <div class="config-section-title">{{ t('corrigePage2') }}</div>
+          <div class="btn-group">
+            <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
+            <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
+          </div>
+        </div>
+      </template>
+    </ConfigExercice>
 
     <!-- ══ APPRENTISSAGE (mode entraînement : affiche la table avant) ══ -->
     <div v-if="phase === 'apprendre'" class="exercise-box" style="text-align:center;">
@@ -170,6 +192,8 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, langue } = useI18n({
   fr: {
@@ -198,6 +222,11 @@ const { t, langue } = useI18n({
     pTables: 'Tables : {liste}',
     pJusqua: "× jusqu'à {n}",
     pNbQuestions: '{n} questions',
+    ordreFiche: 'Ordre des calculs',
+    dansLOrdre: "Dans l'ordre",
+    melange: 'Mélangé',
+    nbCalculs: 'Nombre de calculs',
+    corrigePage2: 'Corrigé (2e page)',
   },
   br: {
     titre: 'Taolennoù liesañ',
@@ -225,17 +254,27 @@ const { t, langue } = useI18n({
     pTables: 'Taolennoù : {liste}',
     pJusqua: '× betek {n}',
     pNbQuestions: '{n} goulenn',
+    ordreFiche: 'Urzh ar jedadurioù', // br: à relire
+    dansLOrdre: 'En urzh',
+    melange: 'Kemmesket',
+    nbCalculs: 'Niver a jedadurioù', // br: à relire
+    corrigePage2: 'Reizhadenn (2vet pajenn)', // br: à relire
   },
 })
 
 const DUREE_CHRONO = 60 // secondes
 
-const config = ref(charger('tables_config', {
+const config = ref({
   tables: [2, 3, 4, 5, 6, 7, 8, 9],
   mode: 'aleatoire',
   jusqu: 10,
   nbQ: 20,
-}))
+  // réglages de la fiche papier
+  ordreFiche: 'melange',
+  nbFiche: 0, // 0 = tous les calculs des tables choisies
+  corrige: false,
+  ...charger('tables_config', {}),
+})
 watch(config, v => sauvegarder('tables_config', v), { deep: true })
 
 const phase = ref('config')
@@ -333,57 +372,70 @@ function demarrer(listeForcee) {
   if (config.value.mode === 'chrono') demarrerChrono()
 }
 
-function imprimerFiche() {
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
   const tablesTriees = config.value.tables.slice().sort((a, b) => a - b)
   const jusqu = config.value.jusqu ?? 10
-  const allQ = []
-  for (const t of tablesTriees) {
+  let allQ = []
+  for (const tbl of tablesTriees) {
     for (let i = 1; i <= jusqu; i++) {
-      allQ.push({ a: t, b: i, r: t * i })
+      allQ.push({ a: tbl, b: i, r: tbl * i })
     }
   }
-  // Mélanger si plusieurs tables
-  if (tablesTriees.length > 1) {
-    for (let i = allQ.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      const tmp = allQ[i]; allQ[i] = allQ[j]; allQ[j] = tmp
-    }
+  const nb = config.value.nbFiche
+  if (config.value.ordreFiche === 'melange') {
+    allQ = melanger(allQ)
+    if (nb > 0) allQ = allQ.slice(0, nb)
+  } else if (nb > 0 && nb < allQ.length) {
+    // dans l'ordre : on tire les calculs au hasard puis on les remet dans l'ordre des tables
+    const choisis = new Set(melanger(allQ).slice(0, nb))
+    allQ = allQ.filter(q => choisis.has(q))
   }
 
   const titre = tablesTriees.length === 1
     ? t('pTable', { n: tablesTriees[0] })
     : t('pTables', { liste: tablesTriees.join(', ') })
 
-  const cols = 2
-  const rows = allQ.map((q, i) => `<div class="question">
+  const ligne = (q, i, corrige) => `<div class="question">
     <span class="num">${i + 1}.</span>
     <span class="calc">${q.a} × ${q.b} =</span>
-    <span class="ligne"></span>
-  </div>`).join('')
+    <span class="ligne">${corrige ? q.r : ''}</span>
+  </div>`
+  const rows = allQ.map((q, i) => ligne(q, i, false)).join('')
+  const corrige = config.value.corrige
+    ? `<h1 class="saut">${t('corrige')} — ${titre}</h1>
+    <div class="grid">${allQ.map((q, i) => ligne(q, i, true)).join('')}</div>`
+    : ''
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${titre}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      h1.saut { page-break-before: always; break-before: page; margin-bottom: 1.5rem; }
       .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
       .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; }
       .question { display: flex; align-items: baseline; gap: .6rem; margin: .7rem 0; }
       .num { min-width: 1.6rem; font-weight: 700; color: #777; font-size: .9rem; }
       .calc { min-width: 120px; font-weight: 800; font-size: 1.2rem; font-family: monospace; }
-      .ligne { flex: 1; border-bottom: 1.5px solid #aaa; }
+      .ligne { flex: 1; border-bottom: 1.5px solid #aaa; font-weight: 800; font-size: 1.2rem; font-family: monospace; color: #1a7f37; }
     </style></head><body>
     <h1>${titre}</h1>
     <p class="entete">${t('pJusqua', { n: jusqu })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: allQ.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
     <div class="grid">${rows}</div>
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
+    ${corrige}
   </body></html>`
-
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// la fiche ne change au hasard que si les calculs sont mélangés ou tirés parmi tous
+const ficheAleatoire = computed(() => config.value.ordreFiche === 'melange' || config.value.nbFiche > 0)
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function passerApprendre() {
   questions.value = genererQuestions(

@@ -3,7 +3,8 @@
     <h1>✍️ {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :aleatoire="false"
+      @commencer="demarrer" @regenerer="regenerer">
 
       <div class="config-section">
         <div class="config-section-title">{{ t('verbeAConjuguer') }}</div>
@@ -42,15 +43,7 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;padding:.75rem 2rem;" @click="demarrer">
-          {{ t('commencer') }}
-        </button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+    </ConfigExercice>
 
     <!-- ══ EXERCICE ══ -->
     <div v-if="phase === 'jeu'" class="exercise-box">
@@ -136,6 +129,8 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { normaliser, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, langue } = useI18n({
   fr: {
@@ -332,7 +327,8 @@ function demarrer() {
   nextTick(() => inputRefs.value[0]?.focus())
 }
 
-function imprimerFiche() {
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
   const verbe = verbeCourant.value
   const tempsObj = tempsCourant.value
   const formes = verbe.conj[config.value.temps]
@@ -372,14 +368,17 @@ function imprimerFiche() {
       <div class="verb-temps">${t('temps_' + tempsObj.id)}</div>
       <table>${rows}</table>
     </div>
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 
 function validerLigne(i) {
   if (valide.value[i]) { focusSuivant(i); return }

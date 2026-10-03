@@ -3,7 +3,8 @@
     <h1 class="section-heading">📏 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <div v-if="phase === 'config'" class="config-box">
+    <ConfigExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche"
+      @commencer="demarrer" @regenerer="regenerer">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
@@ -23,7 +24,7 @@
         </div>
       </div>
 
-      <div v-if="config.exercices.includes('regle')" class="config-section">
+      <div v-if="mode === 'jouer' && config.exercices.includes('regle')" class="config-section">
         <div class="config-section-title">{{ t('segmentsRegle') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: !config.decale }" @click="config.decale = false">{{ t('commencent0') }}</button>
@@ -31,7 +32,7 @@
         </div>
       </div>
 
-      <div class="config-section">
+      <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('nbQuestions') }}</div>
         <div class="btn-group">
           <button v-for="n in [5, 10, 15]" :key="n"
@@ -40,13 +41,18 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" style="font-size:1.1rem;" @click="demarrer">{{ t('commencer') }}</button>
-      </div>
-      <div style="text-align:center;margin-top:.75rem;">
-        <button class="btn btn-ghost" style="font-size:.95rem;" @click="imprimerFiche">{{ t('imprimerFiche') }}</button>
-      </div>
-    </div>
+      <template v-if="mode === 'imprimer'">
+        <div v-if="config.exercices.includes('regle')" class="config-section">
+          <div class="config-section-title">{{ t('nbSegments') }}</div>
+          <div class="btn-group">
+            <button v-for="n in [4, 6, 8]" :key="n"
+              class="level-btn" :class="{ active: config.nbSegments === n }"
+              @click="config.nbSegments = n">{{ n }}</button>
+          </div>
+        </div>
+        <p class="rappel-100">⚠️ {{ t('rappel100') }}</p>
+      </template>
+    </ConfigExercice>
 
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
@@ -130,6 +136,8 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import ConfigExercice from '../../components/ConfigExercice.vue'
+import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, tr, langue } = useI18n({
   fr: {
@@ -137,6 +145,8 @@ const { t, tr, langue } = useI18n({
     segmentsRegle: 'Segments sur la règle',
     commencent0: 'Commencent à 0',
     pasToujours0: 'Ne commencent pas toujours à 0',
+    nbSegments: 'Segments à mesurer sur la fiche',
+    rappel100: "Imprimez à 100 % (« taille réelle »), sans ajustement à la page, sinon les segments n'auront pas la bonne longueur.",
     colQuestion: 'Question',
   },
   br: {
@@ -144,6 +154,8 @@ const { t, tr, langue } = useI18n({
     segmentsRegle: 'Segmentoù war ar reolenn',
     commencent0: 'A grog e 0',
     pasToujours0: "Ne gregont ket atav e 0",
+    nbSegments: 'Segmentoù da vuzuliañ war ar fichenn', // br: à relire
+    rappel100: "Moullit da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmentoù.",
     colQuestion: 'Goulenn',
   },
 })
@@ -906,9 +918,10 @@ function genererSerie(cfg, nb, typesForces) {
 // ── État & configuration ──
 
 const niveaux = Object.keys(NIVEAUX)
-const DEFAUT = { niveau: 'ce1', exercices: ['regle', 'unite', 'conversion'], nbQ: 10, decale: false }
+const DEFAUT = { niveau: 'ce1', exercices: ['regle', 'unite', 'conversion'], nbQ: 10, decale: false, nbSegments: 6 }
 const charge = { ...DEFAUT, ...charger('mesures_config', {}) }
 if (!NIVEAUX[charge.niveau]) charge.niveau = 'ce1'
+if (![4, 6, 8].includes(charge.nbSegments)) charge.nbSegments = 6
 if (!Array.isArray(charge.exercices) || !charge.exercices.length) charge.exercices = [...DEFAUT.exercices]
 const config = ref(charge)
 watch(config, v => sauvegarder('mesures_config', v), { deep: true })
@@ -1071,8 +1084,10 @@ function questionImprimee(qi) {
   return h + '</div>'
 }
 
-function imprimerFiche() {
+// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
+function htmlFiche() {
   const cfg = config.value
+  const nbSeg = cfg.nbSegments || 6
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   const ex = cfg.exercices.filter(e => niv.exercices.includes(e))
   const sections = []
@@ -1081,16 +1096,16 @@ function imprimerFiche() {
     // CE2 : longueurs en cm et mm (en mm, entre 3 cm et 12 cm), surtout pas des cm entiers
     const longueurs = []
     for (let L = niv.fiche.segMin * 10; L <= niv.fiche.segMax * 10; L++) if (L % 10 !== 0 || L % 30 === 0) longueurs.push(L)
-    const choisis = melanger(longueurs).slice(0, 6)
-    const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEF'[i]}</span>${segmentReel(L / 10)}<span class="rep">${TROU} cm ${TROU} mm</span></div>`).join('')
+    const choisis = melanger(longueurs).slice(0, nbSeg)
+    const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEFGH'[i]}</span>${segmentReel(L / 10)}<span class="rep">${TROU} cm ${TROU} mm</span></div>`).join('')
     const traces = melanger(longueurs.filter(L => L <= 100 && !choisis.includes(L))).slice(0, 2)
       .map(L => `<div class="trace">${B('Trace un segment de', 'Tres ur segment hir a')} <strong>${cmmm(L)}</strong> : <span class="point">×</span></div>`).join('')
     sections.push(`<h2>📏 ${B('Mesure chaque segment avec ta règle (en cm et mm)', 'Muzulia pep segment gant da reolenn (e cm hag e mm)')}</h2>${segs}<h2>✏️ ${B('Trace avec ta règle', 'Tres gant da reolenn')}</h2>${traces}`)
   } else if (ex.includes('regle')) {
     const longueurs = []
     for (let L = niv.fiche.segMin; L <= niv.fiche.segMax; L++) longueurs.push(L)
-    const choisis = melanger(longueurs).slice(0, 6)
-    const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEF'[i]}</span>${segmentReel(L)}<span class="rep">${TROU} cm</span></div>`).join('')
+    const choisis = melanger(longueurs).slice(0, nbSeg)
+    const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEFGH'[i]}</span>${segmentReel(L)}<span class="rep">${TROU} cm</span></div>`).join('')
     const traces = melanger(longueurs.filter(L => L <= 10 && !choisis.includes(L)).concat([5, 8]))
       .filter((v, i, a) => a.indexOf(v) === i).slice(0, 2)
       .map(L => `<div class="trace">${B('Trace un segment de', 'Tres ur segment hir a')} <strong>${L} cm</strong> : <span class="point">×</span></div>`).join('')
@@ -1142,17 +1157,22 @@ function imprimerFiche() {
     <p class="alerte">⚠️ ${B("Imprimer à 100 % (« taille réelle »), sans ajustement à la page, sinon les segments n'auront pas la bonne longueur.", "Moullañ da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmentoù.")}</p>
     ${ex.includes('regle') ? `<div class="temoin">${regleTemoin()}<span>${B('Pour le parent : ce trait gradué doit mesurer exactement 10 cm.', 'Evit an dud : 10 cm resis a rank muzuliañ al linenn derezennet-mañ.')}</span></div>` : ''}
     ${sections.join('')}
-    <script>window.onafterprint = function() { window.close(); }; window.print();<\/script>
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (!w) return
-  w.document.write(html)
-  w.document.close()
+  return html
 }
+
+const { mode, graine, regenerer } = useModeExercice()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+const fiche = computed(() => {
+  if (mode.value !== 'imprimer') return ''
+  graine.value
+  return htmlFiche()
+})
 </script>
 
 <style scoped>
+.rappel-100 { border: 2px solid #c0392b; color: #c0392b; font-weight: 700; padding: .4rem .7rem; border-radius: 8px; font-size: .9rem; margin: .5rem 0 0; }
 .consigne {
   font-size: 1.3rem;
   font-weight: 700;

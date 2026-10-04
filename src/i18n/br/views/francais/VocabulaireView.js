@@ -12,7 +12,8 @@ export default {
     type_contexte: 'Ar ster er frazenn',
     type_contraires: 'Gerioù enep',
     type_synonymes: 'Heñvelsterioù', // br: à relire
-    type_homonymes: 'Kenstummoù', // br: à relire (homonymes)
+    type_homonymes: 'Gerioù distaget memes mod', // br: à relire (mots qui se disent pareil)
+    plusLoin: "evit mont pelloc'h", // br: à relire
     type_sensFigure: 'Ster rik / ster skeudennek', // br: à relire
     type_familles: 'Familhoù gerioù (ger estren)', // br: à relire (« intrus » = ger estren)
     type_prefixes: 'Rakgerioù re-, dé-, in-', // br: à relire (préfixe = rakger)

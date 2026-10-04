@@ -12,7 +12,9 @@ export default {
     type_contexte: 'Le sens dans la phrase',
     type_contraires: 'Contraires',
     type_synonymes: 'Mots de même sens',
-    type_homonymes: 'Homonymes',
+    // « homonyme » est un mot de la terminologie du cycle 3 (CM1) : au CE2, on dit ce que fait l'exercice
+    type_homonymes: 'Mots qui se disent pareil',
+    plusLoin: 'pour aller plus loin',
     type_sensFigure: 'Sens propre / figuré',
     type_familles: 'Familles de mots (intrus)',
     type_prefixes: 'Préfixes re-, dé-, in-',

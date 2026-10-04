@@ -3,6 +3,7 @@
 export default {
     titre: 'Orthographe',
     theme: 'Thème',
+    plusLoin: 'Pour aller plus loin (hors programme)',
     theme_homophones: 'Homophones',
     theme_accords: 'Accords',
     theme_lettres: 'Lettres manquantes',
@@ -53,4 +54,13 @@ export default {
     exp_oiseau_commence_par_oi: '"oiseau" commence par oi',
     exp_clown_vient_de_l_anglais: '"clown" vient de l\'anglais, avec w',
     exp_chanter_s_ecrit_ch_ante: '"chanter" s\'écrit ch + ante',
+    exp_robe_est_feminin_grande: 'robe est féminin → grande',
+    exp_pomme_est_feminin_verte: 'pomme est féminin → verte',
+    exp_chats_est_pluriel_noirs: 'chats est pluriel → noirs',
+    exp_pluriel_en_s_lapins: 'Au pluriel, on ajoute un -s : lapins',
+    exp_pluriel_en_s_olives: 'Au pluriel, on ajoute un -s : olives',
+    exp_velos_est_pluriel_jolis: 'vélos est pluriel → jolis',
+    exp_un_masculin_boulanger: 'un → masculin → boulanger',
+    exp_maisons_est_feminin_pluriel_jolies: 'maisons est féminin pluriel → jolies (+e, +s)',
+    exp_robes_est_feminin_pluriel_vertes: 'robes est féminin pluriel → vertes (+e, +s)',
   }

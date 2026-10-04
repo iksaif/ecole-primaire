@@ -18,8 +18,9 @@
 //     ils sont « inclus dans les nouveaux programmes, sous forme d'objectifs annuels » (page non lue directement :
 //     403 Cloudflare ; constat repris d'un résultat de recherche). Les programmes eux-mêmes sont bien rédigés année
 //     par année (CP, CE1, CE2, CM1, CM2) et, au cycle 1, par âge.
-//   - Non relus : les « exemples de réussite » du cycle 3 en français, publiés à part sur Éduscol ; les livrets
-//     d'accompagnement ; « Questionner le monde » (cycle 2), hors de ces BO.
+//   - Exemples de réussite du cycle 3 en français (Éduscol, CM1, CM2, 6e), publiés à part : cherchés le 2026-10-04 pour
+//     les homophones et les homonymes seulement (SOURCES.exemplesCM1…), pas relus en entier.
+//   - Non relus : les livrets d'accompagnement ; « Questionner le monde » (cycle 2), hors de ces BO.
 //
 // Conventions
 //   - `source` : { texte, page, url, extrait } ; `page` est la page du PDF (pas la page imprimée), `url` y mène
@@ -60,6 +61,30 @@ export const SOURCES = {
     titre: 'Programme de français pour le cycle 3 (annexe du BO n° 16 du 17 avril 2025)',
     url: 'https://www.education.gouv.fr/sites/default/files/programme-de-fran-ais-pour-le-cycle-3-439824.pdf',
     page: 'https://www.education.gouv.fr/bo/2025/Hebdo16/MENE2504620A',
+  },
+  exemplesCM1: {
+    titre: 'Exemples pour la mise en œuvre du programme de français, CM1 (Éduscol, 2025) ; exemples de réussite',
+    url: 'https://eduscol.education.gouv.fr/sites/default/files/document/exemplesmiseenoeuvrecm1-francaispdf-111546.pdf',
+    page: 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3',
+  },
+  exemplesCM2: {
+    titre: 'Exemples pour la mise en œuvre du programme de français, CM2 (Éduscol, 2025) ; exemples de réussite',
+    url: 'https://eduscol.education.gouv.fr/sites/default/files/document/exemplesmiseenoeuvrecm2francaispdf-111540.pdf',
+    page: 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3',
+  },
+  exemples6e: {
+    titre: 'Exemples pour la mise en œuvre du programme de français, 6e (Éduscol, 2025) ; exemples de réussite',
+    url: 'https://eduscol.education.gouv.fr/sites/default/files/document/exemplesmiseenoeuvre6e-francaispdf-111534.pdf',
+    page: 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3',
+  },
+  // Anciens programmes, plus en vigueur : seulement pour dater une notion qui a disparu (copies académiques du texte)
+  c2ancien2015: {
+    titre: 'Ancien programme du cycle 2 (BO spécial n° 11 du 26 novembre 2015), copie de l’académie de Versailles — abrogé',
+    url: 'https://sti.ac-versailles.fr/IMG/pdf/c2.pdf',
+  },
+  c2ancien2020: {
+    titre: 'Ancien programme du cycle 2 consolidé (BO n° 31 du 30 juillet 2020), copie de la circonscription Mulhouse 1 — abrogé',
+    url: 'https://circ-ien-mulhouse1.site.ac-strasbourg.fr/wp-content/uploads/2021/06/2020-07-C2.pdf',
   },
   c1consolide: {
     titre: 'Programme de l’école maternelle consolidé (Éduscol, d’après les BO n° 41 de 2024 et n° 19 de 2026)',
@@ -377,7 +402,8 @@ export const COMPETENCES = [
   c('familles-mots', 'vocabulaire', 'Familles de mots, préfixes et suffixes', depuis('cp'),
     src('bo41', 89, 'CP : lettre muette finale par un mot de la même famille (chat/chaton) ; CE1 p. 89 : préfixes et suffixes ; CE2 p. 91')),
   c('orthographe-lexicale', 'vocabulaire', 'Mémoriser l’orthographe des mots fréquents et des mots invariables', depuis('cp'),
-    src('bo41', 89, 'CP : mémoriser l’orthographe des mots réguliers fréquents ; CE1 p. 90 : réguliers et irréguliers, corpus de mots invariables ; CE2 p. 91')),
+    src('bo41', 89, 'CP : mémoriser l’orthographe des mots réguliers fréquents ; CE1 p. 90 : réguliers et irréguliers, corpus de mots invariables ; CE2 p. 91'),
+    { interpretation: 'les « mots irréguliers » du CE1 (p. 90) sont lus comme des mots du lexique (exemples : mots invariables, lettres muettes), pas comme des formes verbales : les formes irrégulières il fait, il dit, il va… sont dictées au CE2, l’année où ces verbes sont conjugués (p. 94 : « Il orthographie correctement les formes verbales étudiées en situation de dictée »)' }),
   c('accents-lettres', 'vocabulaire', 'Accents et lettres à plusieurs sons (s, c, g ; an/am, on/om…)', entre('cp', 'ce2'),
     src('bo41', 89, 'CP : identifier et nommer les accents ; valeur sonore de s, c, g ; an/am, en/em, on/om, in/im ; CE1 p. 90')),
   // Grammaire et conjugaison
@@ -403,6 +429,32 @@ export const COMPETENCES = [
     src('c3francais', 19, 'CM2 : passé simple, plus-que-parfait d’être, avoir, 1er et 2e groupes et des 8 irréguliers')),
   c('complements', 'grammaire', 'Compléments du verbe (COD, COI) et compléments circonstanciels', ['cm1', 'cm2'],
     src('c3francais', 17, 'CM1 : COD/COI dans des phrases prototypiques, groupes circonstanciels sans les distinguer ; CM2 p. 19 : CC de temps, lieu, cause ; attribut du sujet')),
+]
+
+// ── Pour aller plus loin : notions que nos exercices proposent, mais qui ne sont dans aucun texte relu pour ces
+// niveaux. Elles ne sont jamais choisies par défaut et sont signalées comme telles dans les formulaires.
+// `recherche` dit où l'on a cherché ; `niveaux` : où nous les proposons.
+export const HORS_PROGRAMME = [
+  {
+    id: 'homophones-grammaticaux', domaine: 'grammaire', niveaux: ['ce2', 'cm1', 'cm2'],
+    libelle: 'Homophones grammaticaux : a/à, et/est, on/ont, son/sont, ou/où, ce/se, mes/mais',
+    recherche: '« homophone », « a / à », « et / est », « son / sont », « distinguer » : BO n° 41 (cycle 2, p. 85-94 relues), programme du cycle 3 (p. 13-19), exemples de réussite Éduscol CM1, CM2 et 6e — aucune occurrence (le seul « homophones » est en 6e : morphèmes -mane / -man, exemples 6e p. 11)',
+    sources: [
+      src('bo41', 94, 'CE2 : aucune mention des homophones grammaticaux ; les outils pour les distinguer sont au programme (être et avoir à l’imparfait dès le CE1 p. 93, classes de mots)'),
+      src('c2ancien2015', 23, 'ancien programme (2015) : « Homophones : les formes verbales a / est / ont / sont distinguées des homophones (à / et / on / son) » ; la mention disparaît du programme consolidé de 2020 (c2ancien2020) et du BO n° 41'),
+    ],
+    interpretation: 'les manuels conformes aux programmes de 2025 continuent de les faire travailler au CE2 (substitution par avait, était) : proposés du CE2 au CM2 « pour aller plus loin », jamais par défaut ; dans la fiche « CP → CM2 » (exercices-orthographe-cp-cm2), publiée avant les niveaux',
+  },
+  {
+    id: 'homonymes-ce2', domaine: 'vocabulaire', niveaux: ['ce2'],
+    libelle: 'Homonymes (verre, vert, ver ; mer, mère, maire)',
+    recherche: '« homonyme » : absent du BO n° 41 (cycle 2) ; le cycle 2 parle de polysémie (CP p. 88, CE2 p. 90-91)',
+    sources: [
+      src('c3francais', 16, 'terminologie utilisée au cycle 3 : « Radical, préfixe, suffixe, synonyme, antonyme, homonyme, polysémie »'),
+      src('exemplesCM1', 11, 'CM1 : « Il différencie des homonymes en s’appuyant sur la dérivation ou en ayant recours au dictionnaire, exemple : comte, comtesse/conte »'),
+    ],
+    interpretation: 'gardé au CE2 « pour aller plus loin », sous le libellé « Mots qui se disent pareil » (le mot « homonyme » est du cycle 3)',
+  },
 ]
 
 // ── Contraintes par niveau (valeurs simples, vérifiables par un test) ──
@@ -444,6 +496,8 @@ const plage = (a, b, pas = 1) => Array.from({ length: Math.floor((b - a) / pas) 
 //   figures / solides / solidesDecrits / patrons / symetrie
 //   conjugaison          { temps, groupes, irreguliers }
 //   classesMots          natures de mots à nommer
+//   pluriels             marques du pluriel des noms et adjectifs : 's' ; puis 'x' (-eau, -eu, -ou → -x) et 'al-aux'
+//   feminins             marques du féminin : 'e' (petit → petite) ; puis 'audible' (blanc → blanche, joyeux → joyeuse)
 //   cursive              'initiation' | 'minuscules' | 'majuscules' | 'automatise'
 //   lectureMotsParMinute fluence attendue en fin d'année
 export const CONTRAINTES = [
@@ -482,6 +536,7 @@ export const CONTRAINTES = [
     figures: FIGURES_CP, solides: SOLIDES_CP, solidesDecrits: ['cube', 'pave'], patrons: [], symetrie: false,
     conjugaison: { temps: ['present'], groupes: ['etre-avoir'], irreguliers: [] },
     classesMots: [], cursive: 'minuscules', lectureMotsParMinute: 30,
+    pluriels: ['s'], feminins: ['e'],
     sources: {
       nombreMax: src('c2maths', 3, 'nombres entiers jusqu’à cent (jusqu’à cinquante-neuf au plus tard en période 2, cent en période 3)'),
       nombresEnLettresMax: src('c2maths', 4, '« À la fin du CP, l’élève maitrise l’écriture en lettres des nombres jusqu’à cinquante. »'),
@@ -496,6 +551,7 @@ export const CONTRAINTES = [
       figures: src('c2maths', 32, 'disque, carré, rectangle, triangle ; solides : reconnaitre cube, boule, cône, cylindre, pavé, nommer cube, pavé, boule, décrire avec « face »'),
       conjugaison: src('bo41', 92, 'apprendre à conjuguer être et avoir au présent de l’indicatif'),
       classesMots: src('bo41', 92, 'constituer des corpus par classe de mots (sans les nommer comme objectif)'),
+      pluriels: src('bo41', 92, 'marque du féminin (+e) : petit/petite ; marque du pluriel (+s) : deux lapins, des olives, de jolis vélos'),
       lectureMotsParMinute: src('bo41', 77, 'décoder 30 mots par minute au minimum fin CP'),
     },
     interpretation: 'tableauConversion : le texte (p. 29) parle de tout le cycle 2',
@@ -515,6 +571,7 @@ export const CONTRAINTES = [
     conjugaison: { temps: TEMPS_CYCLE, groupes: ['etre-avoir', '1er-groupe'], irreguliers: [] },
     classesMots: ['determinant', 'nom-commun', 'nom-propre', 'adjectif', 'verbe', 'pronom-personnel-sujet'],
     cursive: 'majuscules', lectureMotsParMinute: 70,
+    pluriels: ['s'], feminins: ['e'],
     sources: {
       nombreMax: src('c2maths', 10, 'nombres jusqu’à mille, dès la période 2'),
       calculMentalMax: src('c2maths', 14, '« nombres en jeu et résultats cherchés sont tous inférieurs ou égaux à 1 000 »'),
@@ -527,6 +584,7 @@ export const CONTRAINTES = [
       figures: src('c2maths', 34, 'cercle, carré, rectangle, triangle, triangle rectangle ; solides p. 33 : + pyramide ; face, sommet, arête'),
       conjugaison: src('bo41', 93, 'présent, imparfait, futur puis passé composé ; être, avoir et verbes du premier groupe'),
       classesMots: src('bo41', 93, 'déterminant, nom commun, nom propre, adjectif, verbe, pronom personnel sujet'),
+      pluriels: src('bo41', 93, 'marques d’accord pour le nom et l’adjectif épithète : « pluriel en –s, féminin en –e »'),
       cursive: src('bo41', 80, 'majuscules cursives en 2e partie d’année'),
       lectureMotsParMinute: src('bo41', 78, 'vitesse de 70 mots par minute'),
     },
@@ -546,6 +604,7 @@ export const CONTRAINTES = [
     conjugaison: { temps: TEMPS_CYCLE, groupes: ['etre-avoir', '1er-groupe'], irreguliers: IRREGULIERS },
     classesMots: ['determinant', 'nom-commun', 'nom-propre', 'adjectif', 'verbe', 'pronom-personnel-sujet', 'adverbe'],
     cursive: 'automatise', lectureMotsParMinute: 90,
+    pluriels: ['s', 'x', 'al-aux'], feminins: ['e', 'audible'],
     sources: {
       nombreMax: src('c2maths', 19, 'nombres jusqu’à 10 000, dès la période 2'),
       calculMentalMax: src('c2maths', 22, '« inférieurs ou égaux à 10 000 »'),
@@ -559,6 +618,7 @@ export const CONTRAINTES = [
       patrons: src('c2maths', 35, 'construire un cube à partir d’un patron'),
       conjugaison: src('bo41', 94, '+ faire, aller, dire, venir, pouvoir, voir, vouloir, prendre'),
       classesMots: src('bo41', 94, '+ adverbe'),
+      pluriels: src('bo41', 94, 'pluriels irréguliers des noms (-x, -al/-aux) ; féminin quand il s’entend dans les noms (lecteur/lectrice) et les adjectifs (joyeux/joyeuse)'),
       lectureMotsParMinute: src('bo41', 79, 'vitesse de 90 mots par minute'),
     },
   },
@@ -575,6 +635,7 @@ export const CONTRAINTES = [
     figures: FIGURES_CM1, solides: SOLIDES_CM1, solidesDecrits: ['cube', 'pave', 'pyramide', 'prisme-droit'], patrons: ['cube'], symetrie: 'construire',
     conjugaison: { temps: TEMPS_CYCLE, groupes: ['etre-avoir', '1er-groupe', '2e-groupe'], irreguliers: IRREGULIERS },
     classesMots: ['determinant', 'nom-commun', 'nom-propre', 'adjectif', 'verbe', 'pronom-personnel', 'adverbe', 'conjonction-coordination'],
+    pluriels: ['s', 'x', 'al-aux'], feminins: ['e', 'audible'],
     sources: {
       nombreMax: src('c3maths', 5, 'au plus six chiffres ; « on se limite, pendant les deux premières périodes de l’année, aux nombres entiers s’écrivant avec au plus quatre chiffres »'),
       operationsPosees: src('c3maths', 7, 'additions et soustractions de décimaux, multiplications de deux entiers, décimal × entier < 10, divisions euclidiennes à diviseur à un chiffre'),
@@ -590,6 +651,7 @@ export const CONTRAINTES = [
       solides: src('c3maths', 21, '+ prisme droit ; reconnaître et construire un patron du cube'),
       conjugaison: src('c3francais', 18, 'présent, imparfait, futur, passé composé : être, avoir, 1er et 2e groupes, 8 irréguliers'),
       classesMots: src('c3francais', 17, 'articles, déterminants possessifs et démonstratifs ; conjonctions de coordination ; adverbes ; pronoms sujets et compléments'),
+      pluriels: src('c3francais', 16, 'pluriels irréguliers (-x ; -al/aux), introduits au cycle 2, « stabilisés et complétés en fin de cycle 3 »'),
     },
     interpretation: 'unités : « du millimètre au kilomètre » est lu comme incluant dam et hm (idem pour les masses et contenances)',
   },
@@ -606,6 +668,7 @@ export const CONTRAINTES = [
     figures: FIGURES_CM2, solides: SOLIDES_CM1, solidesDecrits: ['cube', 'pave', 'pyramide', 'prisme-droit'], patrons: ['cube', 'pave'], symetrie: 'construire',
     conjugaison: { temps: [...TEMPS_CYCLE, 'passe-simple', 'plus-que-parfait'], groupes: ['etre-avoir', '1er-groupe', '2e-groupe'], irreguliers: IRREGULIERS },
     classesMots: ['determinant', 'nom-commun', 'nom-propre', 'adjectif', 'verbe', 'pronom-personnel', 'adverbe', 'conjonction-coordination', 'preposition', 'conjonction-subordination'],
+    pluriels: ['s', 'x', 'al-aux'], feminins: ['e', 'audible'],
     sources: {
       nombreMax: src('c3maths', 9, 'au plus neuf chiffres ; au plus six pendant les deux premières périodes ; le milliard en 6e (p. 13)'),
       operationsPosees: src('c3maths', 11, 'multiplication décimal × entier ; divisions décimales, diviseur à un chiffre'),

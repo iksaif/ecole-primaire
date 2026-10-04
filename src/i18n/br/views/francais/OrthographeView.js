@@ -3,6 +3,7 @@
 export default {
     titre: 'Reizhskrivañ',
     theme: 'Tem',
+    plusLoin: "Evit mont pelloc'h (er-maez ar programm)", // br: à relire
     theme_homophones: 'Heñvelsonioù', // br: à relire (homophones)
     theme_accords: 'Kenglotadurioù', // br: à relire (accords)
     theme_lettres: 'Lizherennoù a vank',
@@ -54,4 +55,13 @@ export default {
     exp_oiseau_commence_par_oi: '"oiseau" a grog gant "oi"',
     exp_clown_vient_de_l_anglais: '"clown" a zeu eus ar saozneg, gant ur w',
     exp_chanter_s_ecrit_ch_ante: '"chanter" a vez skrivet ch + ante',
+    exp_robe_est_feminin_grande: '"robe" a zo benel → "grande"', // br: à relire
+    exp_pomme_est_feminin_verte: '"pomme" a zo benel → "verte"', // br: à relire
+    exp_chats_est_pluriel_noirs: '"chats" a zo liester → "noirs"', // br: à relire
+    exp_pluriel_en_s_lapins: 'El liester e vez ouzhpennet ur -s : "lapins"', // br: à relire
+    exp_pluriel_en_s_olives: 'El liester e vez ouzhpennet ur -s : "olives"', // br: à relire
+    exp_velos_est_pluriel_jolis: '"vélos" a zo liester → "jolis"', // br: à relire
+    exp_un_masculin_boulanger: '"un" → gourel → "boulanger"', // br: à relire
+    exp_maisons_est_feminin_pluriel_jolies: '"maisons" a zo benel liester → "jolies" (+e, +s)', // br: à relire
+    exp_robes_est_feminin_pluriel_vertes: '"robes" a zo benel liester → "vertes" (+e, +s)', // br: à relire
   }

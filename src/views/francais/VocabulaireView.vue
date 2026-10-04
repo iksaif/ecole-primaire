@@ -23,6 +23,7 @@
             @click="toggleType(ty.id)">
             <span class="theme-icon">{{ ty.icon }}</span>
             <span class="theme-label">{{ t('type_' + ty.id) }}</span>
+            <span v-if="ty.bonus" class="plus-loin">{{ t('plusLoin') }}</span>
           </button>
         </div>
       </div>
@@ -169,7 +170,9 @@ const TYPES = [
   { id: 'sens', groupe: 'Le sens des mots', items: [
     { id: 'contraires', icon: '↔️', label: 'Contraires',           niv: ['ce1', 'ce2'] },
     { id: 'synonymes',  icon: '🟰', label: 'Mots de même sens',    niv: ['ce1', 'ce2'] },
-    { id: 'homonymes',  icon: '👂', label: 'Homonymes',            niv: ['ce2'] },
+    // pour aller plus loin (bonus) : le mot « homonyme » et leur étude sont du cycle 3 (programme du cycle 3 p. 16,
+    // exemples de réussite du CM1 p. 11) ; le CE2 travaille la polysémie. Hors des réglages par défaut.
+    { id: 'homonymes',  icon: '👂', label: 'Mots qui se disent pareil', niv: ['ce2'], bonus: true },
     { id: 'sensFigure', icon: '🎭', label: 'Sens propre / figuré', niv: ['ce2'] },
   ]},
   { id: 'construction', groupe: 'Construction des mots et catégories', items: [
@@ -998,6 +1001,7 @@ const resultMsg = computed(() => {
 </script>
 
 <style scoped>
+.plus-loin { font-size: .75rem; font-weight: 400; color: #888; }
 .container { max-width: 720px; margin: 0 auto; padding: 1rem; }
 h1 { color: var(--bleu); margin-bottom: 1rem; }
 

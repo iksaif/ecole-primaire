@@ -7,9 +7,28 @@
       @commencer="demarrer" @regenerer="regenerer">
 
       <div class="config-section">
+        <div class="config-section-title">{{ t('niveau') }}</div>
+        <div class="btn-group">
+          <button v-for="n in NIVEAUX" :key="n"
+            class="level-btn" :class="{ active: config.niveau === n }"
+            @click="config.niveau = n">{{ n === TOUS ? ETIQUETTE_TOUS : n.toUpperCase() }}</button>
+        </div>
+      </div>
+
+      <div class="config-section">
         <div class="config-section-title">{{ t('theme') }}</div>
         <div class="theme-grid">
-          <button v-for="th in THEMES" :key="th.id"
+          <button v-for="th in themesDuNiveau" :key="th.id"
+            class="theme-btn" :class="{ active: config.theme === th.id }"
+            @click="config.theme = th.id">
+            <span class="theme-icon">{{ th.icon }}</span>
+            <span class="theme-label">{{ t('theme_' + th.id) }}</span>
+          </button>
+        </div>
+        <!-- hors programme du niveau : proposé, jamais choisi par défaut -->
+        <div v-if="bonusDuNiveau.length" class="theme-grid bonus">
+          <span class="bonus-titre">{{ t('plusLoin') }} :</span>
+          <button v-for="th in bonusDuNiveau" :key="th.id"
             class="theme-btn" :class="{ active: config.theme === th.id }"
             @click="config.theme = th.id">
             <span class="theme-icon">{{ th.icon }}</span>
@@ -111,11 +130,26 @@ const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 // Explication d'une réponse (interface) : q.explication est une clé du catalogue, ex. exp_a_avoir_il_a
 const explication = q => t(q.explication)
 
-// ── Données par thème
+// ── Niveaux (src/data/programme.js : CONTRAINTES.pluriels et feminins, HORS_PROGRAMME ; vérifié par
+// tests/programme-francais.test.mjs). Chaque question porte `niv`, l'année où elle entre au programme (sinon le
+// `niv` de son thème) : un niveau propose les questions de son année et des années précédentes.
+//   Accords : CP-CE1, féminin en -e et pluriel en -s (BO n° 41 p. 92-93) ; CE2, pluriels en -x et -al/-aux,
+//   féminins qui s'entendent (blanche, grosse) (p. 94).
+//   Lettres manquantes : CP, correspondances graphèmes-phonèmes ; CE1, mots irréguliers fréquents (p. 90).
+//   Homophones grammaticaux (a/à, et/est…) : dans aucun texte du programme en vigueur, ni dans les exemples de
+//   réussite d'Éduscol. Ils sont « pour aller plus loin » du CE2 au CM2 et ne sont jamais choisis par défaut.
+//   « CP → CM2 » propose tout, homophones d'abord : c'est la fiche publiée exercices-orthographe-cp-cm2.
+const TOUS = 'tous'
+const ETIQUETTE_TOUS = 'CP → CM2'
+const NIVEAUX = ['cp', 'ce1', 'ce2', 'cm1', 'cm2', TOUS]
+const rang = n => (n === TOUS ? 99 : NIVEAUX.indexOf(n))
+
+// ── Données par thème (niv : niveau par défaut des questions ; bonus : niveau à partir duquel le thème est
+// proposé « pour aller plus loin »)
 const THEMES = [
-  { id: 'homophones', icon: '👂', label: 'Homophones' },
-  { id: 'accords',    icon: '🤝', label: 'Accords' },
-  { id: 'lettres',    icon: '🔡', label: 'Lettres manquantes' },
+  { id: 'homophones', icon: '👂', label: 'Homophones', niv: 'ce2', bonus: 'ce2' },
+  { id: 'accords',    icon: '🤝', label: 'Accords', niv: 'cp' },
+  { id: 'lettres',    icon: '🔡', label: 'Lettres manquantes', niv: 'cp' },
 ]
 
 const QUESTIONS = {
@@ -151,23 +185,36 @@ const QUESTIONS = {
   ],
 
   accords: [
-    // genre
+    // genre (CP : féminin en -e)
     { phrase: 'Un ___ garçon.',               bonne: 'petit',    choix: ['petit','petite'],    explication: 'exp_garcon_est_masculin_petit' },
     { phrase: 'Une ___ fille.',               bonne: 'petite',   choix: ['petit','petite'],    explication: 'exp_fille_est_feminin_petite' },
     { phrase: 'Un chien ___.',                bonne: 'content',  choix: ['content','contente'], explication: 'exp_chien_est_masculin_content' },
-    { phrase: 'Une chatte ___.',              bonne: 'blanche',  choix: ['blanc','blanche'],   explication: 'exp_chatte_est_feminin_blanche' },
-    { phrase: 'Un beau ___.',                 bonne: 'château',  choix: ['château','châteaux'], explication: 'exp_un_singulier_chateau' },
-    { phrase: 'De beaux ___.',                bonne: 'châteaux', choix: ['château','châteaux'], explication: 'exp_beaux_pluriel_chateaux' },
-    // nombre
-    { phrase: 'Les ___ chiens aboient.',      bonne: 'gros',     choix: ['gros','grosse'],     explication: 'exp_chiens_est_pluriel_masculin_gros' },
-    { phrase: 'La ___ voiture est rouge.',    bonne: 'grosse',   choix: ['gros','grosse'],     explication: 'exp_voiture_est_feminin_grosse' },
-    // pluriel des noms
-    { phrase: 'Un bateau → des ___.',         bonne: 'bateaux',  choix: ['bateaus','bateaux'], explication: 'exp_les_noms_en_eau_font' },
-    { phrase: 'Un jeu → des ___.',            bonne: 'jeux',     choix: ['jeus','jeux'],       explication: 'exp_les_noms_en_eu_font' },
-    { phrase: 'Un gâteau → des ___.',         bonne: 'gâteaux',  choix: ['gâteaus','gâteaux'], explication: 'exp_les_noms_en_eau_font' },
-    { phrase: 'Un genou → des ___.',          bonne: 'genoux',   choix: ['genous','genoux'],   explication: 'exp_pluriel_irregulier_genou_genoux' },
-    { phrase: 'Un animal → des ___.',         bonne: 'animaux',  choix: ['animals','animaux'], explication: 'exp_les_noms_en_al_font' },
-    { phrase: 'Un journal → des ___.',        bonne: 'journaux', choix: ['journals','journaux'], explication: 'exp_les_noms_en_al_font' },
+    // CE2 : féminin irrégulier, pluriel en -x
+    { phrase: 'Une chatte ___.',              bonne: 'blanche',  choix: ['blanc','blanche'],   explication: 'exp_chatte_est_feminin_blanche', niv: 'ce2' },
+    { phrase: 'Un beau ___.',                 bonne: 'château',  choix: ['château','châteaux'], explication: 'exp_un_singulier_chateau', niv: 'ce2' },
+    { phrase: 'De beaux ___.',                bonne: 'châteaux', choix: ['château','châteaux'], explication: 'exp_beaux_pluriel_chateaux', niv: 'ce2' },
+    // nombre (gros, grosse : CE2)
+    { phrase: 'Les ___ chiens aboient.',      bonne: 'gros',     choix: ['gros','grosse'],     explication: 'exp_chiens_est_pluriel_masculin_gros', niv: 'ce2' },
+    { phrase: 'La ___ voiture est rouge.',    bonne: 'grosse',   choix: ['gros','grosse'],     explication: 'exp_voiture_est_feminin_grosse', niv: 'ce2' },
+    // pluriel des noms en -x, -al/-aux (CE2)
+    { phrase: 'Un bateau → des ___.',         bonne: 'bateaux',  choix: ['bateaus','bateaux'], explication: 'exp_les_noms_en_eau_font', niv: 'ce2' },
+    { phrase: 'Un jeu → des ___.',            bonne: 'jeux',     choix: ['jeus','jeux'],       explication: 'exp_les_noms_en_eu_font', niv: 'ce2' },
+    { phrase: 'Un gâteau → des ___.',         bonne: 'gâteaux',  choix: ['gâteaus','gâteaux'], explication: 'exp_les_noms_en_eau_font', niv: 'ce2' },
+    { phrase: 'Un genou → des ___.',          bonne: 'genoux',   choix: ['genous','genoux'],   explication: 'exp_pluriel_irregulier_genou_genoux', niv: 'ce2' },
+    { phrase: 'Un animal → des ___.',         bonne: 'animaux',  choix: ['animals','animaux'], explication: 'exp_les_noms_en_al_font', niv: 'ce2' },
+    { phrase: 'Un journal → des ___.',        bonne: 'journaux', choix: ['journals','journaux'], explication: 'exp_les_noms_en_al_font', niv: 'ce2' },
+    // CP : féminin en -e, pluriel en -s (exemples du programme : deux lapins, une olive/des olives, de jolis vélos,
+    // une boulangère/un boulanger — BO n° 41 p. 92)
+    { phrase: 'Une ___ robe.',                bonne: 'grande',   choix: ['grand','grande'],    explication: 'exp_robe_est_feminin_grande' },
+    { phrase: 'Une pomme ___.',               bonne: 'verte',    choix: ['vert','verte'],      explication: 'exp_pomme_est_feminin_verte' },
+    { phrase: 'Des chats ___.',               bonne: 'noirs',    choix: ['noir','noirs'],      explication: 'exp_chats_est_pluriel_noirs' },
+    { phrase: 'Un lapin → deux ___.',         bonne: 'lapins',   choix: ['lapin','lapins'],    explication: 'exp_pluriel_en_s_lapins' },
+    { phrase: 'Une olive → des ___.',         bonne: 'olives',   choix: ['olive','olives'],    explication: 'exp_pluriel_en_s_olives' },
+    { phrase: 'De ___ vélos.',                bonne: 'jolis',    choix: ['joli','jolis'],      explication: 'exp_velos_est_pluriel_jolis' },
+    { phrase: 'Une boulangère → un ___.',     bonne: 'boulanger', choix: ['boulanger','boulangère'], explication: 'exp_un_masculin_boulanger' },
+    // CE1 : chaîne d'accords dans le groupe nominal (+e et +s)
+    { phrase: 'Les ___ maisons.',             bonne: 'jolies',   choix: ['joli','jolie','jolis','jolies'], explication: 'exp_maisons_est_feminin_pluriel_jolies', niv: 'ce1' },
+    { phrase: 'Des robes ___.',               bonne: 'vertes',   choix: ['verts','verte','vertes'], explication: 'exp_robes_est_feminin_pluriel_vertes', niv: 'ce1' },
   ],
 
   lettres: [
@@ -178,24 +225,47 @@ const QUESTIONS = {
     { type: 'saisie', phrase: 'Le papi___on est joli.',         bonne: 'papillon', indice: 'papi___on' },
     // Mots à compléter (saisie libre du mot entier)
     { type: 'saisie', phrase: 'Je man___ une pomme.',   bonne: 'mange',   indice: 'man___' },
-    { type: 'saisie', phrase: 'Il fa___ froid.',         bonne: 'fait',    indice: 'fa___' },
+    { type: 'saisie', phrase: 'Il fa___ froid.',         bonne: 'fait',    indice: 'fa___', niv: 'ce1' },
     { type: 'saisie', phrase: 'Elle es___ contente.',    bonne: 'est',     indice: 'es___' },
     { type: 'saisie', phrase: 'Le soli___ brille.',      bonne: 'soleil',  indice: 'soli___' },
     { type: 'saisie', phrase: 'Mon ___ s\'appelle Rex.', bonne: 'chien',   indice: '___ien' },
     { type: 'saisie', phrase: 'La ___ est belle.',       bonne: 'fleur',   indice: '___eur' },
     // Mots avec h muet / h aspiré
-    { phrase: 'L\'___ est bleu.',                bonne: 'hibou', choix: ['ibou','hibou'],   explication: 'exp_hibou_s_ecrit_avec_un' },
+    { phrase: 'L\'___ est bleu.',                bonne: 'hibou', choix: ['ibou','hibou'],   explication: 'exp_hibou_s_ecrit_avec_un', niv: 'ce1' },
     { phrase: 'L\'___ chante.',                  bonne: 'oiseau', choix: ['wazeau','oiseau'], explication: 'exp_oiseau_commence_par_oi' },
     // Confusion son c/qu
-    { phrase: 'Le ___ rit.',                     bonne: 'clown', choix: ['cloun','clown'],   explication: 'exp_clown_vient_de_l_anglais' },
+    { phrase: 'Le ___ rit.',                     bonne: 'clown', choix: ['cloun','clown'],   explication: 'exp_clown_vient_de_l_anglais', niv: 'ce1' },
     { phrase: 'Je ___ une chanson.',             bonne: 'chante', choix: ['chante','shante'], explication: 'exp_chanter_s_ecrit_ch_ante' },
   ],
 }
 
-// ── État
-const config = ref(chargerReglages('orthographe_config', { theme: 'homophones', nb: 10 }))
-if (!QUESTIONS[config.value.theme]) config.value.theme = 'homophones'
+// questions d'un thème au niveau choisi (« CP → CM2 » : toutes, dans l'ordre)
+const questionsDu = (niveau, theme) => {
+  const th = THEMES.find(x => x.id === theme)
+  return QUESTIONS[theme].filter(q => rang(q.niv ?? th.niv) <= rang(niveau))
+}
+const disponible = (th, niveau) => questionsDu(niveau, th.id).length > 0
+// thèmes du programme du niveau, puis thèmes « pour aller plus loin » (jamais choisis par défaut)
+const estBonus = (th, niveau) => niveau !== TOUS && !!th.bonus
+const themesDe = niveau => THEMES.filter(th => disponible(th, niveau) && !estBonus(th, niveau))
+const bonusDe = niveau => THEMES.filter(th => disponible(th, niveau) && estBonus(th, niveau))
+const themeParDefaut = niveau => themesDe(niveau)[0].id
+
+// ── État (réglages d'une ancienne version, sans niveau ou avec un thème absent du niveau → défauts du niveau)
+const DEFAUT = { niveau: 'ce1', theme: 'accords', nb: 10 }
+const brut = chargerReglages('orthographe_config', DEFAUT)
+const niv0 = NIVEAUX.includes(brut.niveau) ? brut.niveau : DEFAUT.niveau
+const config = ref({
+  niveau: niv0,
+  theme: [...themesDe(niv0), ...bonusDe(niv0)].some(th => th.id === brut.theme) ? brut.theme : themeParDefaut(niv0),
+  nb: [5, 10, 15].includes(brut.nb) ? brut.nb : 10,
+})
 watch(config, v => sauvegarder('orthographe_config', v), { deep: true })
+// changer de niveau revient au premier thème du programme de ce niveau
+watch(() => config.value.niveau, n => { config.value.theme = themeParDefaut(n) })
+const themesDuNiveau = computed(() => themesDe(config.value.niveau))
+const bonusDuNiveau = computed(() => bonusDe(config.value.niveau))
+const questionsActuelles = () => questionsDu(config.value.niveau, config.value.theme)
 const phase = ref('config')
 const questions = ref([])
 const idx = ref(0)
@@ -226,7 +296,7 @@ const phraseCourante = computed(() => {
 })
 
 function demarrer() {
-  const pool = melanger([...QUESTIONS[config.value.theme]])
+  const pool = melanger([...questionsActuelles()])
     .slice(0, config.value.nb)
     .map(q => ({
       ...q,
@@ -245,7 +315,7 @@ function demarrer() {
 // ── Fiche imprimable : phrases à trous (choix à entourer / mot à compléter) et corrigé
 function htmlFiche() {
   const e = echapper
-  const qs = melanger([...QUESTIONS[config.value.theme]]).slice(0, config.value.nb)
+  const qs = melanger([...questionsActuelles()]).slice(0, config.value.nb)
     .map(q => ({ ...q, type: q.type || 'choix' }))
   const trou = '<span class="trou"></span>'
   const groupes = [
@@ -269,7 +339,9 @@ function htmlFiche() {
     ${g.qs.map(q => `<div class="q"><span class="num">${++num}.</span><span>${enonce(q)}</span></div>`).join('')}`).join('')
   num = 0
   const corrige = groupes.map(g => g.qs.map(q => `<div class="corr"><span class="num">${++num}.</span> ${solution(q)}</div>`).join('')).join('')
-  const titre = `${t('titre')} — ${t('theme_' + config.value.theme)}`
+  // « CP → CM2 » : titre inchangé (fiche publiée exercices-orthographe-cp-cm2)
+  const niv = config.value.niveau === TOUS ? '' : ` — ${config.value.niveau.toUpperCase()}`
+  const titre = `${t('titre')} — ${t('theme_' + config.value.theme)}${niv}`
   return `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>${e(titre)}</title>
     <style>
@@ -387,6 +459,8 @@ h1 { color: var(--bleu); margin-bottom: 1rem; }
 .theme-btn:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; }
 .theme-btn.active { border-color: var(--bleu); background: #eef5ff; }
 .theme-icon { font-size: 1.25rem; }
+.theme-grid.bonus { margin-top: .5rem; align-items: center; }
+.bonus-titre { font-size: .85rem; color: #888; }
 
 .exercise-box { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; }
 

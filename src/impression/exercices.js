@@ -45,7 +45,8 @@ export const EXERCICES = [
   { id: 'vocabulaire', route: '/francais/vocabulaire', groupe: 'francais', titre: { fr: 'Vocabulaire', br: 'Geriaoueg' },
     classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$')] },
   { id: 'orthographe', route: '/francais/orthographe', groupe: 'francais', titre: { fr: 'Orthographe', br: 'Reizhskrivañ' },
-    classes: [C('cp-cm2', null)] },
+    // cp-cm2 : tous les niveaux, homophones (fiche publiée avant les niveaux) ; puis une fiche « Accords » par niveau
+    classes: [C('cp-cm2', '^CP → CM2$'), C('cp', '^CP$'), C('ce1', '^CE1$'), C('ce2', '^CE2$')] },
   // ── Maternelle ──
   { id: 'compter', route: '/maternelle/compter', groupe: 'maternelle', titre: { fr: 'Compter les objets', br: 'Kontañ an traoù' },
     classes: [C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },

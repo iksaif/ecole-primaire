@@ -113,7 +113,6 @@ export const CATEGORIES_CE1 = {
   'Maison':          ['la chambre', 'la cuisine', 'le salon', 'le jardin', 'la fenêtre', 'la porte', 'le toit', "l'escalier"],
   'École':           ['le cahier', 'le crayon', 'la règle', 'la gomme', 'le cartable', 'le stylo', 'le tableau', 'la récréation'],
   'Mots outils':     ['après', 'avant', 'pendant', 'depuis', 'toujours', 'jamais', 'encore', 'souvent', 'très', 'beaucoup', 'même', 'aussi'],
-  'Verbes courants': ['il fait', 'il dit', 'il voit', 'il vient', 'il prend', 'il peut', 'il veut', 'il doit', 'il sait', 'il tient'],
   'Adjectifs':       ['grand', 'petit', 'gros', 'beau', 'vieux', 'nouveau', 'long', 'court', 'bon', 'mauvais', 'chaud', 'froid'],
   'Saisons':         ['le printemps', "l'été", "l'automne", "l'hiver", 'la neige', 'le soleil', 'la pluie', 'le vent'],
   'Aliments':        ['le pain', 'le lait', 'le beurre', 'le fromage', "l'œuf", 'la viande', 'le poisson', 'la soupe', 'le gâteau', 'le yaourt'],
@@ -175,9 +174,7 @@ export const PHRASES_CE1 = {
   'il prend':      'Il prend son cartable et part à l\'école.',
   'il peut':       'Il peut venir jouer avec nous.',
   'il veut':       'Il veut un nouveau livre.',
-  'il doit':       'Il doit rentrer avant la nuit.',
-  'il sait':       'Il sait lire et écrire.',
-  'il tient':      'Il tient la main de sa maman.',
+  'il va':         'Il va à la piscine le mercredi.',
   'grand':         'Mon grand frère a dix ans.',
   'petit':         'Le petit chat dort sur le canapé.',
   'gros':          'Il y a un gros nuage dans le ciel.',
@@ -219,6 +216,9 @@ export const CATEGORIES_CE2 = {
   'Nature et environnement':   ['la forêt', 'la rivière', "l'océan", 'le désert', 'la montagne', 'le volcan', "l'île", 'le glacier', 'la prairie', 'le marécage'],
   'Vocabulaire scientifique':  ["l'énergie", 'la lumière', 'la matière', 'le liquide', 'le solide', "l'air", 'la chaleur', "l'électricité", "l'aimant", 'le circuit'],
   'Adverbes':                  ['rapidement', 'lentement', 'doucement', 'fortement', 'simplement', 'vraiment', 'surtout', 'seulement', 'enfin', 'bientôt'],
+  // les 8 verbes irréguliers du programme de conjugaison du CE2 (BO n° 41 p. 94) ; au CE1, seuls être, avoir et
+  // le 1er groupe sont conjugués (p. 93) : la catégorie était au CE1 jusqu'au 2026-10-04 (plan 09, décisions)
+  'Verbes courants':           ['il fait', 'il va', 'il dit', 'il voit', 'il vient', 'il prend', 'il peut', 'il veut'],
 }
 
 export const MOTS_AMBIGUS_CE2 = new Set()

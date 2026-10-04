@@ -99,48 +99,13 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { melanger, confettis, normaliser, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/francais/OrthographeView.js'
+import messagesBr from '../../i18n/br/views/francais/OrthographeView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { echapper } from '../../utils/impression'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Orthographe',
-    theme: 'Thème',
-    theme_homophones: 'Homophones',
-    theme_accords: 'Accords',
-    theme_lettres: 'Lettres manquantes',
-    ecrisLeMot: 'Écris le mot…',
-    aRetravailler: 'À retravailler :',
-    changer: '⚙️ Changer',
-    feedbackOk: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'],
-    feedbackErr: '❌ La bonne réponse est « {r} »{exp}.',
-    res100: 'Parfait, sans faute ! 🏆',
-    res80: 'Très bien ! 🌟',
-    res60: 'Bien ! Revois les erreurs 💪',
-    res0: 'Courage ! Relis les règles et recommence 📚',
-    fEntoure: 'Entoure le mot qui convient.',
-    fComplete: 'Complète le mot.',
-  },
-  br: {
-    titre: 'Reizhskrivañ',
-    theme: 'Tem',
-    theme_homophones: 'Heñvelsonioù', // br: à relire (homophones)
-    theme_accords: 'Kenglotadurioù', // br: à relire (accords)
-    theme_lettres: 'Lizherennoù a vank',
-    ecrisLeMot: 'Skriv ar ger…',
-    aRetravailler: "Da labourat c'hoazh :",
-    changer: '⚙️ Cheñch',
-    feedbackOk: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
-    feedbackErr: '❌ Ar respont mat eo « {r} »{exp}.',
-    res100: 'Dispar, hep fazi ebet ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res60: 'Mat ! Adwel ar fazioù 💪',
-    res0: 'Kalon vat ! Adlenn ar reolennoù ha adkrog 📚',
-    fEntoure: "Gromm ar ger a zere.", // br: à relire (entourer = grommañ ?)
-    fComplete: 'Klok ar ger.',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 // Explications en breton (les mots français étudiés restent entre guillemets)
 // br: à relire — préposition = araogenn, conjonction = stagell, déterminant = ger-mont (incertain), pronom réfléchi = raganv emober (incertain)

@@ -70,54 +70,14 @@ import { usePolices } from '../../composables/usePolices'
 import { useLangueRegionale } from '../../composables/useLangueRegionale'
 import { sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/imprimer/AlphabetView.js'
+import messagesBr from '../../i18n/br/views/imprimer/AlphabetView.js'
 import { STYLES, DEFAUTS, genererAlphabet } from '../../impression/alphabet'
 
 const config = ref({ ...DEFAUTS, ...charger('affiche_alphabet_config', {}) })
 watch(config, v => sauvegarder('affiche_alphabet_config', v), { deep: true })
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: "🔤 Affiche de l'alphabet",
-    intro: 'Les 26 lettres dans les quatre écritures, à afficher au mur ou dans le cahier.',
-    format: 'Format',
-    orientation: 'Orientation',
-    paysage: 'Paysage',
-    portrait: 'Portrait',
-    disposition: 'Disposition',
-    grille: "Tout l'alphabet",
-    carte: 'Une lettre par page',
-    alphabet: 'Alphabet',
-    francais: 'Français (26 lettres)',
-    regional: '{nom} ({n} lettres)',
-    ecritures: 'Écritures affichées',
-    options: 'Options',
-    mot: 'Un mot et une image pour chaque lettre (A comme abeille 🐝)',
-    voyelles: 'Voyelles en rouge, consonnes en bleu',
-    lignes: "Lignes d'écriture sous l'attaché (hauteur des lettres)",
-    polices: 'Polices',
-  },
-  br: {
-    titre: '🔤 Skritell al lizherenneg',
-    intro: "Ar 26 lizherenn er peder doare skrivañ, da lakaat ouzh ar voger pe er c'haier.",
-    format: 'Furmad',
-    orientation: 'Tuadur', // br: à relire
-    paysage: 'Gweledva', // br: à relire (terme des logiciels en breton)
-    portrait: 'Poltred',
-    disposition: 'Aozadur', // br: à relire
-    grille: 'An holl lizherenneg',
-    carte: 'Ul lizherenn dre bajenn',
-    alphabet: 'Lizherenneg',
-    francais: 'Galleg (26 lizherenn)',
-    regional: '{nom} ({n} lizherenn)',
-    ecritures: 'Doareoù skrivañ diskouezet',
-    options: 'Dibarzhioù',
-    // les mots illustrés sont français
-    mot: 'Ur ger hag ur skeudenn evit pep lizherenn, e galleg (A evel abeille 🐝)',
-    voyelles: 'Vogalennoù e ruz, kensonennoù e glas',
-    lignes: 'Linennoù skrivañ dindan an a-stag (uhelder al lizherennoù)',
-    polices: 'Nodrezhoù', // br: à relire (nodrezh = police de caractères)
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const majuscule = s => s[0].toUpperCase() + s.slice(1)
 
 function basculer(id) {

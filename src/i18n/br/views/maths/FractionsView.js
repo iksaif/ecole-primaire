@@ -1,0 +1,52 @@
+// Textes de l'interface — FractionsView (breton). Traduction automatique : les passages marqués
+// « br: à relire » sont à faire vérifier par un brittophone (`npm run i18n:relecture`).
+export default {
+    titre: 'An darnaouennoù',
+    fractions: 'Darnaouennoù',
+    colQuestion: 'Goulenn',
+    aideColorier: 'Stok al lodennoù evit o livañ ({n} / {total})',
+    cIdentifier: 'Peseurt darnaouenn eus ar skeudenn a zo livet ?',
+    disque: "Kelc'h", barre: 'Barrenn', rectangle: 'Hirgarrez',
+    partsColoriees: '{n} lodenn livet war {d}',
+    partsColorieesPl: '{n} lodenn livet war {d}',
+    partsSur: '{n} lodenn war {d}',
+    partsSurPl: '{n} lodenn war {d}',
+    cColorie: 'Liv',
+    cColorieFin: ' eus ar skeudenn ({l}).',
+    libColorier: 'Livañ {f}',
+    cSeLit: 'Penaos e lenner an darnaouenn-mañ ?',
+    libEnLettres: '{f} e lizherennoù',
+    cEcrite: 'Peseurt darnaouenn a zo skrivet ?',
+    partDeTexte: '{nom} eus {total}, pegement eo ?',
+    partDeConsigne: '{nom} : unan eus {parts} lodenn gevatal.', // br: à relire
+    partDeLibelle: '{nom} eus {total}',
+    uniteEntiere: '{d}/{d} eo an unanenn a-bezh',
+    ilManque: 'mankout a ra {x} lodenn evit ober {d}/{d} = 1',
+    ilManquePl: 'mankout a ra {x} lodenn evit ober {d}/{d} = 1',
+    enPlus: "{d}/{d} = 1 hag ez eus {x} lodenn ouzhpenn",
+    enPlusPl: "{d}/{d} = 1 hag ez eus {x} lodenn ouzhpenn",
+    cUnite: 'Keñveria an darnaouenn-mañ gant 1 : < , = pe > ?',
+    cEgalesNombre: 'Kloka evit ma vo kevatal an darnaouennoù.', // br: à relire
+    cEgalesChoix: 'Peseurt darnaouenn a zo kevatal da',
+    libEgale: 'Kevatal da {f}',
+    cDroite: 'Peseurt darnaouenn a ziskouez ar bir ? (rannet eo an unanenn e {d} lodenn gevatal)',
+    libDroite: 'Linenn eus 0 betek {u}, bir',
+    cPlacer: 'Laka an darnaouenn',
+    cPlacerFin: ' war al linenn : stok an derez mat.', // br: à relire (« derez » = graduation)
+    libPlacer: 'Lakaat {f} (linenn eus 0 betek {u})',
+    graduation: '{o} derez',
+    graduationApres0: '{o} derez goude 0',
+    laBonne: '❌ Ar respont mat : {r}',
+    pIdentifier: 'Peseurt darnaouenn a zo livet ?',
+    pColorie: 'Liv {f} eus ar skeudenn.',
+    pEnLettres: '{f} e lizherennoù :',
+    pEnChiffres: '{f} e sifroù :',
+    pPartDe: '{l} =',
+    pComplete: 'Kloka :',
+    pEntoure: 'Kelc\'hia an darnaouenn kevatal da {f} :', // br: à relire
+    pDroite: 'Peseurt darnaouenn a ziskouez ar bir ?',
+    pReponse: 'Respont :',
+    pPlacer: 'Tresa ur bir evit lakaat {f} war al linenn.',
+    pNbQuestions: '{n} goulenn',
+    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
+  }

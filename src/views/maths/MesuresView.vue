@@ -136,29 +136,12 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/MesuresView.js'
+import messagesBr from '../../i18n/br/views/maths/MesuresView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Mesures',
-    segmentsRegle: 'Segments sur la règle',
-    commencent0: 'Commencent à 0',
-    pasToujours0: 'Ne commencent pas toujours à 0',
-    nbSegments: 'Segments à mesurer sur la fiche',
-    rappel100: "Imprimez à 100 % (« taille réelle »), sans ajustement à la page, sinon les segments n'auront pas la bonne longueur.",
-    colQuestion: 'Question',
-  },
-  br: {
-    titre: 'Muzulioù',
-    segmentsRegle: 'Segmentoù war ar reolenn',
-    commencent0: 'A grog e 0',
-    pasToujours0: "Ne gregont ket atav e 0",
-    nbSegments: 'Segmentoù da vuzuliañ war ar fichenn', // br: à relire
-    rappel100: "Moullit da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmentoù.",
-    colQuestion: 'Goulenn',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const enBr = () => langue.value === 'br'
 // Choisit le texte selon la langue courante (à la génération de la question)
 const B = (fr, br) => (enBr() ? br : fr)

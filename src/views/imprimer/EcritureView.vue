@@ -113,6 +113,8 @@ import { usePolices } from '../../composables/usePolices'
 import { sauvegarder, charger } from '../../utils'
 import { useLangueRegionale } from '../../composables/useLangueRegionale'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/imprimer/EcritureView.js'
+import messagesBr from '../../i18n/br/views/imprimer/EcritureView.js'
 import {
   STYLES, CONTENUS, TOUTES_LETTRES, LETTRES_REGIONALES, LISTES_MOTS, PRESETS, INTERLIGNES, DEFAUTS, genererEcriture,
 } from '../../impression/ecriture'
@@ -120,52 +122,7 @@ import {
 const config = ref({ ...DEFAUTS, ...charger('ecriture_config', {}) })
 watch(config, v => sauvegarder('ecriture_config', v), { deep: true })
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: "✏️ Fiches d'écriture",
-    intro: 'Lignage Seyès (comme le cahier de classe), modèle en noir au début de chaque ligne, lettres grises à repasser puis lignes pour copier seul.',
-    ecriture: 'Écriture (plusieurs choix possibles)',
-    contenu: 'Contenu',
-    lettres: 'Lettres',
-    alphabetRegional: 'Alphabet {nom}',
-    lier: 'En attaché minuscule, lier les lettres par trois (aaa)',
-    mots: 'Mots (un par ligne : prénom, mots de la semaine…)',
-    texte: 'Phrases ou petit texte (un paragraphe par ligne)',
-    taille: 'Taille du lignage',
-    espacement: 'Espacement',
-    uneSurDeux: 'Une ligne sur deux',
-    chaqueLigne: 'Chaque ligne',
-    repasser: 'Lignes à repasser (gris)',
-    copie: 'Lignes à copier seul',
-    couleurLignes: 'Couleur des lignes',
-    couleur: 'Couleur',
-    gris: 'Gris (imprimante N&B)',
-    polices: 'Polices',
-  },
-  br: {
-    titre: '✏️ Fichennoù skrivañ',
-    // br: à relire (« repasser » = tremen war, « copier seul » = eilskrivañ e-unan)
-    intro: "Linennoù Seyès (evel er c'haier klas), ur skouer e du e penn pep linenn, lizherennoù gris da dremen warno ha goude linennoù da eilskrivañ e-unan.",
-    ecriture: 'Doare skrivañ (meur a zibab a c\'haller ober)', // br: à relire
-    contenu: 'Danvez', // br: à relire
-    lettres: 'Lizherennoù',
-    alphabetRegional: 'Lizherenneg ar {nomLocal}',
-    lier: 'En a-stag lizherennoù bihan, liammañ al lizherennoù a dri e tri (aaa)', // br: à relire
-    mots: 'Gerioù (unan dre linenn : anv-bihan, gerioù ar sizhun…)',
-    texte: 'Frazennoù pe un destennig (ur rannbennad dre linenn)', // br: à relire
-    taille: 'Ment al linennoù',
-    espacement: 'Esaouiñ', // br: à relire (espacement)
-    uneSurDeux: 'Ul linenn diwar zaou', // br: à relire
-    chaqueLigne: 'Pep linenn',
-    repasser: 'Linennoù da dremen warno (gris)', // br: à relire
-    copie: 'Linennoù da eilskrivañ e-unan', // br: à relire
-    couleurLignes: 'Liv al linennoù',
-    couleur: 'Liv',
-    gris: 'Gris (moullerez du ha gwenn)',
-    // br: à relire — « nodrezh » (terme officiel pour police de caractères) plutôt que « font » ou « lizherennaoueg »
-    polices: 'Nodrezhoù',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 // Libellés des choix définis dans src/impression/ecriture.js (français là-bas)
 const CONTENUS_TXT = {

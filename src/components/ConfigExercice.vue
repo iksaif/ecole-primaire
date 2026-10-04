@@ -34,6 +34,8 @@
 <script setup>
 import ApercuImpression from './ApercuImpression.vue'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/components/ConfigExercice.js'
+import messagesBr from '../i18n/br/components/ConfigExercice.js'
 
 defineProps({
   mode: { type: String, default: 'jouer' },
@@ -51,10 +53,7 @@ defineProps({
 })
 defineEmits(['update:mode', 'commencer', 'regenerer'])
 
-const { t } = useI18n({
-  fr: { jouer: "🎯 Faire l'exercice", imprimer: '🖨️ Imprimer une fiche', nouvelle: '🎲 Nouvelle fiche' },
-  br: { jouer: '🎯 Ober ar boelladenn', imprimer: '🖨️ Moullañ ur fichenn', nouvelle: '🎲 Fichenn nevez' },
-})
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 </script>
 
 <style scoped>

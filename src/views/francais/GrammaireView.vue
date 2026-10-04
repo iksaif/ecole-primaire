@@ -163,6 +163,8 @@ import { ref, computed, nextTick, watch } from 'vue'
 import { aleatoire, melanger, confettis, normaliser, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/francais/GrammaireView.js'
+import messagesBr from '../../i18n/br/views/francais/GrammaireView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
@@ -170,51 +172,7 @@ const { enLecture, lire } = useTTS()
 
 // Interface traduite (fr / br). Le contenu étudié (phrases, mots, réponses) reste en français.
 // Breton : à faire relire par un brittophone ; termes grammaticaux incertains marqués « br: à relire ».
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Grammaire',
-    astuce: 'Tu peux choisir plusieurs exercices : ils seront mélangés.',
-    ecouterPhrase: 'Écouter la phrase',
-    cliqueEtiquettes: 'Clique sur les étiquettes dans l\'ordre…',
-    effacerOrdre: '↺ Effacer',
-    ecrisReponse: 'Écris ta réponse…',
-    validerCourt: 'Valider',
-    suivantFleche: 'Suivant →',
-    correction: 'Correction',
-    colQuestion: 'Question',
-    changer: '⚙️ Changer',
-    bravo: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'],
-    bonnePhrase: 'La bonne phrase est : « {r} »',
-    bonneReponseEst: 'La bonne réponse est « {r} »',
-    pasToutAFait: 'Pas tout à fait…',
-    res100: 'Parfait, sans faute ! 🏆',
-    res80: 'Très bien ! 🌟',
-    res60: 'Bien ! Revois les erreurs 💪',
-    res0: 'Courage ! Relis la correction et recommence 📚',
-    corrigePage2: 'Corrigé en page 2',
-  },
-  br: {
-    titre: 'Yezhadur',
-    corrigePage2: 'Reizhadenn war ar bajenn 2', // br: à relire
-    astuce: 'Gallout a rez dibab meur a boelladenn : mesket e vint.',
-    ecouterPhrase: 'Selaou ar frazenn',
-    cliqueEtiquettes: 'Klik war an tikedennoù en urzh…', // br: à relire (étiquette = tikedenn)
-    effacerOrdre: '↺ Diverkañ',
-    ecrisReponse: 'Skriv da respont…',
-    validerCourt: 'Gwiriañ',
-    suivantFleche: 'Da-heul →',
-    correction: 'Reizhadenn',
-    colQuestion: 'Goulenn',
-    changer: '⚙️ Cheñch',
-    bonnePhrase: 'Ar frazenn vat eo : « {r} »',
-    bonneReponseEst: 'Ar respont mat eo « {r} »',
-    pasToutAFait: 'N\'eo ket mat penn-da-benn…',
-    res100: 'Dispar, hep fazi ebet ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res60: 'Mat ! Adwel ar fazioù 💪',
-    res0: 'Kalon vat ! Adlenn ar reizhadenn hag adkrog 📚',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const br = () => langue.value === 'br'
 // Texte calculé à l'affichage (suit la langue) ou texte fixe
 const val = x => (typeof x === 'function' ? x() : x)

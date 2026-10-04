@@ -79,6 +79,8 @@ import { usePolices } from '../../composables/usePolices'
 import { useLangueRegionale } from '../../composables/useLangueRegionale'
 import { sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/imprimer/NombresView.js'
+import messagesBr from '../../i18n/br/views/imprimer/NombresView.js'
 import {
   languesDisponibles, SECTIONS, SECTIONS_PRINCIPALES, SECTIONS_DIZAINES, DEFAUTS, nombresPersonnalises, genererNombres,
 } from '../../impression/nombres'
@@ -88,51 +90,7 @@ const { code: codeRegional, langue: regionale } = useLangueRegionale()
 const LANGUES = computed(() => languesDisponibles(codeRegional.value))
 watch(config, v => sauvegarder('nombres_impression_config', v), { deep: true })
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: '🔢 Les nombres en lettres',
-    titreRegional: ' — français et {nom}',
-    intro: 'Affiches et fiches mémo : unités, dizaines, centaines… écrits en chiffres et en lettres.',
-    ajouterBreton: '🏴 Ajouter le breton (paramètres)',
-    langues: 'Langues',
-    bilingue: 'Français + {nom}', francaisSeul: 'Français seul', regionalSeul: '{nom} seul', francais: 'Français',
-    aAfficher: 'Nombres à afficher',
-    parDizaine: 'Dizaine par dizaine :',
-    toutes: 'Toutes',
-    de: 'De', a: 'à', pas: 'de', enPas: 'en {pas}',
-    nbNombres: '{n} nombres', max: ', 200 max',
-    miseEnPage: 'Mise en page',
-    affiches: 'Une affiche par catégorie',
-    fiche: 'Tout sur une page',
-    format: 'Format', portrait: 'Portrait', paysage: 'Paysage',
-    options: 'Options',
-    representation: 'Représentation (points pour les unités, barres de dix, plaques de cent)',
-    rectifiee: "Orthographe rectifiée en français (traits d'union partout : « vingt-et-un », « deux-cent-trois ») — référence à l'école",
-    police: 'Police',
-  },
-  br: {
-    titre: '🔢 An niveroù e lizherennoù',
-    titreRegional: ' — e galleg hag e {nomLocal}',
-    intro: 'Skritelloù ha fichennoù-eñvor : unanennoù, degadoù, kantadoù… skrivet e sifroù hag e lizherennoù.', // br: à relire (fiches mémo)
-    ajouterBreton: '🏴 Ouzhpennañ ar brezhoneg (arventennoù)',
-    langues: 'Yezhoù',
-    bilingue: 'Galleg + {nom}', francaisSeul: 'Galleg hepken', regionalSeul: '{nom} hepken', francais: 'Galleg',
-    aAfficher: 'Niveroù da ziskouez',
-    parDizaine: 'Degad dre zegad :',
-    toutes: 'An holl',
-    // br: à relire — « Eus 20 da 29, a 1 da 1 »
-    de: 'Eus', a: 'da', pas: ', a', enPas: 'da {pas}',
-    nbNombres: '{n} niver', max: ", 200 d'ar muiañ",
-    miseEnPage: 'Pajennaozañ', // br: à relire
-    affiches: 'Ur skritell dre rummad',
-    fiche: 'Pep tra war ur bajenn',
-    format: 'Furmad', portrait: 'Poltred', paysage: 'Gweledva', // br: à relire (gweledva = paysage)
-    options: 'Dibarzhioù',
-    representation: 'Skeudenn an niver (pikoù evit an unanennoù, barrennoù dek, plakennoù kant)', // br: à relire
-    rectifiee: 'Reizhskrivadur nevez e galleg (tiredoù e pep lec\'h : « vingt-et-un », « deux-cent-trois ») — an hini a vez implijet er skol', // br: à relire
-    police: 'Nodrezh', // br: à relire (nodrezh = police de caractères)
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const majuscule = s => s[0].toUpperCase() + s.slice(1)
 // Libellés des choix de langues (languesDisponibles, en français dans src/impression/nombres.js)
 function libelleLangue(l) {

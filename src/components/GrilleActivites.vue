@@ -17,6 +17,8 @@
 import { computed } from 'vue'
 import { ACTIVITES, DOMAINES_BR, etiquetteNiveaux } from '../data/activites'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/components/GrilleActivites.js'
+import messagesBr from '../i18n/br/components/GrilleActivites.js'
 import { useLangueRegionale } from '../composables/useLangueRegionale'
 import { useClasse } from '../composables/useClasse'
 
@@ -31,10 +33,7 @@ function description(a) {
   const d = langue.value === 'br' && a.br ? a.br : a
   return (regionale.value && d.descRegionale) || d.desc
 }
-const { t, langue } = useI18n({
-  fr: { vide: "Pas encore d'activité pour cette classe ici." },
-  br: { vide: "N'eus poelladenn ebet c'hoazh evit ar c'hlas-mañ amañ." },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const groupes = computed(() => {
   const liste = ACTIVITES.filter(a => a.matiere === props.matiere && (!classe.value || a.niveaux.includes(classe.value)))

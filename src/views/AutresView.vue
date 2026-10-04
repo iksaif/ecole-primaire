@@ -85,38 +85,13 @@
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../utils'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/views/AutresView.js'
+import messagesBr from '../i18n/br/views/AutresView.js'
 import ConfigExercice from '../components/ConfigExercice.vue'
 import { useModeExercice } from '../composables/useModeExercice'
 import { echapper } from '../utils/impression'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Quiz — Culture générale',
-    theme: 'Thème',
-    aRetenir: 'À retenir :',
-    changer: '⚙️ Changer',
-    bravoQuiz: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Exact ! 👏', 'Bien joué ! 🌟'],
-    mauvaise: 'La bonne réponse était : {r}.',
-    res100: 'Parfait, sans faute ! 🏆',
-    res80: 'Excellent ! 🌟',
-    res60: 'Bien ! Continue à apprendre 💪',
-    res0: 'Courage ! Relis les réponses et réessaie 📚',
-    fConsigne: 'Lis chaque question et entoure la bonne réponse.',
-  },
-  br: {
-    titre: 'Kwiz — Sevenadur hollek', // br: à relire
-    theme: 'Tem',
-    aRetenir: "Da zerc'hel soñj :",
-    changer: '⚙️ Cheñch',
-    bravoQuiz: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
-    mauvaise: 'Ar respont mat a oa : {r}.',
-    res100: 'Dispar, hep fazi ebet ! 🏆',
-    res80: 'Gwellañ ! 🌟',
-    res60: "Mat ! Kendalc'h da zeskiñ 💪",
-    res0: "Kalon vat ! Adlenn ar respontoù hag adklask 📚",
-    fConsigne: 'Lenn pep goulenn ha gromm ar respont mat.', // br: à relire
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const THEMES = [
   { id: 'geo-france',  icon: '🗺️', label: { fr: 'Géographie France',  br: "Douaroniezh Bro-C'hall" }, niveau: 'CE2→CM2' },

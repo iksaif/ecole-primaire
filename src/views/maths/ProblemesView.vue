@@ -124,43 +124,12 @@ import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/ProblemesView.js'
+import messagesBr from '../../i18n/br/views/maths/ProblemesView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Problèmes',
-    typesProblemes: 'Types de problèmes',
-    nombres: 'Nombres',
-    jusqua: "Jusqu'à {n}",
-    nbProblemes: 'Nombre de problèmes',
-    probleme: 'Problème {n} / {total}',
-    arreter: '⏹ Arrêter',
-    lireEnonce: "🔊 Lire l'énoncé",
-    colProbleme: 'Problème',
-    colCorrection: 'Correction',
-    pCalcul: 'Calcul :',
-    pReponse: 'Réponse :',
-    pNbProblemes: '{n} problèmes',
-    corrigeFin: 'Corrigé (page à part)',
-  },
-  br: {
-    titre: 'Kudennoù',
-    typesProblemes: 'Seurtoù kudennoù',
-    nombres: 'Niveroù',
-    jusqua: 'Betek {n}',
-    nbProblemes: 'Niver a gudennoù',
-    probleme: 'Kudenn {n} / {total}',
-    arreter: '⏹ Paouez',
-    lireEnonce: '🔊 Lenn ar gudenn',
-    colProbleme: 'Kudenn',
-    colCorrection: 'Reizhadenn',
-    pCalcul: 'Jedadur :',
-    pReponse: 'Respont :',
-    pNbProblemes: '{n} kudenn',
-    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 // #region generation — fonctions pures (testables hors de Vue)
 

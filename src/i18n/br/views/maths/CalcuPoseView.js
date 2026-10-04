@@ -1,0 +1,16 @@
+// Textes de l'interface — CalcuPoseView (breton). Traduction automatique : les passages marqués
+// « br: à relire » sont à faire vérifier par un brittophone (`npm run i18n:relecture`).
+export default {
+    titre: 'Jedadur lakaet', // br: à relire (« calcul posé »)
+    operation: 'Oberiadur',
+    addition: 'Sammadenn', soustraction: 'Lamadenn', melange: 'Kemmesket',
+    additions: 'Sammadennoù', soustractions: 'Lamadennoù',
+    taille: 'Ment an niveroù',
+    chiffre1: '1 sifr', chiffres: '{n} sifr',
+    retenue: "Dalc'h", sansRetenue: "Hep dalc'h", avecRetenue: "Gant dalc'h", // br: à relire (« dalc'h » = retenue)
+    nbExercices: 'Niver a boelladennoù',
+    colCalcul: 'Jedadur',
+    resultatBas: "Kendalc'h da embreger ! 📚",
+    pNbExercices: '{n} poelladenn',
+    corrigePage2: 'Reizhadenn (2vet pajenn)', // br: à relire
+  }

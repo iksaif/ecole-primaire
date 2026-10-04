@@ -38,25 +38,10 @@
 
 <script setup>
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maternelle/MaternelleView.js'
+import messagesBr from '../../i18n/br/views/maternelle/MaternelleView.js'
 
-const { t } = useI18n({
-  fr: {
-    titre: 'Maternelle',
-    compter: 'Compter les objets', compterDesc: 'Compte et trouve le bon nombre',
-    comparer: 'Comparer les quantités', comparerDesc: 'Quel groupe a le plus ?',
-    ordonner: 'Ranger les nombres', ordonnerDesc: 'Du plus petit au plus grand',
-    lettres: 'Les lettres', lettresDesc: 'Reconnaître et associer majuscules et minuscules',
-    formes: 'Les formes', formesDesc: 'Reconnaître cercle, carré, triangle et plus',
-  },
-  br: {
-    titre: 'Skol-vamm',
-    compter: 'Kontañ an traoù', compterDesc: 'Kont ha kav an niver mat',
-    comparer: "Keñveriañ ar c'hementadoù", comparerDesc: "Peseurt strollad en deus muioc'h ?", // br: à relire
-    ordonner: 'Renkañ an niveroù', ordonnerDesc: "Eus ar bihanañ d'ar brasañ",
-    lettres: 'Al lizherennoù', lettresDesc: 'Anaout ar pennlizherennoù hag al lizherennoù bihan',
-    formes: 'Ar stummoù', formesDesc: "Anaout kelc'h, karrez, tric'horn ha muioc'h",
-  },
-})
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 </script>
 
 <style>

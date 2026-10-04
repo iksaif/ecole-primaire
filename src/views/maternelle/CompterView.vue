@@ -82,37 +82,12 @@
 import { ref, computed, watch } from 'vue'
 import { aleatoire, melanger, confettis, charger, sauvegarder } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maternelle/CompterView.js'
+import messagesBr from '../../i18n/br/views/maternelle/CompterView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Compter les objets',
-    jusqua: "{niv} — jusqu'à {n}",
-    combien: 'Combien y a-t-il de {nom} ?',
-    ilYAvait: 'Il y avait {n} {emoji}',
-    resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
-    resultat0: 'On peut encore progresser ! 📚',
-    reponseFiche: "Sur la fiche, l'enfant…",
-    ecrire: 'écrit le nombre', entourer: 'entoure le bon nombre',
-    fConsigneEcrire: 'Compte les objets et écris le nombre dans la case.',
-    fConsigneEntourer: 'Compte les objets et entoure le bon nombre.',
-  },
-  br: {
-    titre: 'Kontañ an traoù',
-    jusqua: '{niv} — betek {n}',
-    // « pet » + anv unan : Pet aval a zo ?
-    combien: 'Pet {nom} a zo ?',
-    ilYAvait: '{n} {emoji} a oa',
-    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
-    resultat0: "Gallout a reer ober gwelloc'h c'hoazh ! 📚",
-    // br: à relire
-    reponseFiche: 'War ar fichenn, ar bugel…',
-    ecrire: 'a skriv an niver', entourer: 'a gromm an niver mat',
-    fConsigneEcrire: 'Kont an traoù ha skriv an niver er gaoued.',
-    fConsigneEntourer: 'Kont an traoù ha gromm an niver mat.',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const OBJETS = [
   // br : anv unan (singulier) après « pet »

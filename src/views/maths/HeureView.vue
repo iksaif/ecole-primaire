@@ -289,87 +289,12 @@ import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/HeureView.js'
+import messagesBr from '../../i18n/br/views/maths/HeureView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: "Lire l'heure",
-    precision: 'Précision',
-    aideCe1: "Au CE1 : heures pile, demi-heures et quarts d'heure. Les 5 minutes sont un bonus.",
-    reponseLire: "Réponse (lire l'heure)",
-    propositions4: '4 propositions',
-    jEcris: "J'écris l'heure",
-    aide: 'Aide',
-    afficherMinutes: 'Afficher les minutes autour du cadran',
-    nbHorloges: 'Horloges par exercice',
-    corrigeTitre: 'Corrigé',
-    corrigePage2: 'Ajouter le corrigé en page 2',
-    quelleHeure: 'Quelle heure est-il ?',
-    legH: 'petite aiguille = heures',
-    legM: 'grande aiguille = minutes',
-    placeAiguilles: 'Place les aiguilles pour afficher',
-    glisser: 'Fais glisser les aiguilles avec le doigt, ou utilise les boutons.',
-    petiteAiguille: 'Petite aiguille (heures)',
-    grandeAiguille: 'Grande aiguille (minutes)',
-    ecrisNumerique: '(écris-la comme sur une horloge numérique)',
-    ilEst1: 'Il est ',
-    ilEst2: '.',
-    quelleHorloge: 'Quelle horloge indique cette heure ?',
-    dans1: 'Dans ',
-    dans2: ', quelle heure sera-t-il ?',
-    commenceA: 'commence à',
-    termineA: 'et se termine à',
-    combienDure: 'Combien de temps dure-t-{pronom} ?',
-    maintenant: 'Maintenant',
-    plusTard: 'Plus tard',
-    debut: 'Début',
-    fin: 'Fin',
-    activite: 'Activité',
-    complete: 'Complète',
-    rappel: 'Rappel',
-    lisEmploi: "Lis l'emploi du temps.",
-    colQuestion: 'Question',
-  },
-  br: {
-    titre: 'Lenn an eur',
-    precision: 'Resisded', // br: à relire
-    aideCe1: "Er CE1 : an eurioù rik, an hanter-eurioù hag ar c'hardoù-eur. Ar 5 munut a zo ur bonus.", // br: à relire
-    reponseLire: 'Respont (lenn an eur)',
-    propositions4: '4 kinnig',
-    jEcris: 'Skrivañ a ran an eur',
-    aide: 'Skoazell',
-    afficherMinutes: "Diskouez ar munutoù en-dro d'an horolaj",
-    nbHorloges: 'Horolajoù dre boelladenn', // br: à relire
-    corrigeTitre: 'Reizhadenn',
-    corrigePage2: 'Ouzhpennañ ar reizhadenn war ar bajenn 2', // br: à relire
-    quelleHeure: 'Pe eur eo ?',
-    legH: 'nadoz vihan = eurioù',
-    legM: 'nadoz vras = munutoù',
-    placeAiguilles: 'Lak an nadozioù evit diskouez',
-    glisser: 'Rikla an nadozioù gant da viz, pe implij ar boutonoù.', // br: à relire
-    petiteAiguille: 'Nadoz vihan (eurioù)',
-    grandeAiguille: 'Nadoz vras (munutoù)',
-    ecrisNumerique: '(skriv anezhi evel war un horolaj niverel)',
-    ilEst1: '',
-    ilEst2: ' eo.',
-    quelleHorloge: 'Peseurt horolaj a ziskouez an eur-se ?',
-    dans1: 'A-benn ',
-    dans2: ', pe eur e vo ?',
-    commenceA: 'a grog da',
-    termineA: 'hag a echu da',
-    combienDure: 'Pegeit e pad ?',
-    maintenant: 'Bremañ',
-    plusTard: "Diwezhatoc'h",
-    debut: 'Deroù',
-    fin: 'Fin',
-    activite: 'Obererezh',
-    complete: 'Leunia',
-    rappel: "Dalc'h soñj",
-    lisEmploi: "Lenn an implij-amzer.",
-    colQuestion: 'Goulenn',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const enBr = () => langue.value === 'br'
 
 // #region logique (fonctions pures, testées hors Vue)

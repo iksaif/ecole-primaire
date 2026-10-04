@@ -159,87 +159,12 @@ import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { enLettresFr, enLettresBr, decomposer } from '../../utils/nombres'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/NumerationView.js'
+import messagesBr from '../../i18n/br/views/maths/NumerationView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: "Les nombres jusqu'à {n}",
-    nombresJusqua: "Nombres jusqu'à",
-    colQuestion: 'Question',
-    legendeMillier: '1 gros cube = 1000',
-    legende: '1 plaque = 100 · 1 barre = 10 · 1 cube = 1',
-    lib_milliers: 'milliers', lib_centaines: 'centaines', lib_dizaines: 'dizaines', lib_unites: 'unités',
-    et: 'et',
-    cDecomposer: 'Décompose le nombre en {liste}.',
-    cEcrisNombre: 'Écris le nombre.',
-    cRepresente: 'Quel nombre est représenté ?',
-    cEnChiffres: 'Écris ce nombre en chiffres.',
-    cEnLettres: "Comment s'écrit ce nombre en lettres ?",
-    cSigne: 'Choisis le bon signe : < , = ou >',
-    justeApres: 'Le nombre juste après {n}',
-    justeAvant: 'Le nombre juste avant {n}',
-    cTrouve: 'Trouve le nombre.',
-    cCalcule: 'Calcule.',
-    cSuite: 'Complète la suite.',
-    cDroite: 'Quel nombre montre la flèche ? (on avance de {pas} à chaque graduation)',
-    libDroite: 'Droite de {a} à {b}',
-    cRanger: 'Clique sur les nombres du plus petit au plus grand.',
-    cliqueTous: 'Clique sur tous les nombres 😉',
-    laBonne: '❌ La bonne réponse : {r}',
-    pRepresente: 'Quel nombre est représenté ?',
-    pLegende: '({m}plaque = 100, barre = 10, cube = 1)',
-    pLegendeM: 'gros cube = 1000, ',
-    pCestLeNombre: "C'est le nombre",
-    pEnChiffres: 'en chiffres :',
-    pEcrisLettres: 'Écris {n} en lettres :',
-    pFlecheQ: 'Quel nombre montre la flèche ?',
-    pFlecheAide: '(on avance de {pas} à chaque graduation)',
-    pFlecheMontre: 'La flèche montre',
-    pRange: 'Range du plus petit au plus grand :',
-    pSuite: 'Complète la suite :',
-    pNbQuestions: '{n} questions',
-    corrigeFin: 'Corrigé (page à part)',
-  },
-  br: {
-    titre: 'An niveroù betek {n}',
-    nombresJusqua: 'Niveroù betek',
-    colQuestion: 'Goulenn',
-    legendeMillier: '1 kub bras = 1000',
-    legende: '1 plakenn = 100 · 1 barrenn = 10 · 1 kub = 1',
-    lib_milliers: 'miladoù', lib_centaines: 'kantadoù', lib_dizaines: 'degadoù', lib_unites: 'unanennoù',
-    et: 'ha',
-    cDecomposer: 'Dispenn an niver e {liste}.', // br: à relire (« dispenn » = décomposer)
-    cEcrisNombre: 'Skriv an niver.',
-    cRepresente: 'Pe niver a welez ?',
-    cEnChiffres: 'Skriv an niver-mañ e sifroù.',
-    cEnLettres: 'Penaos e skriver an niver-mañ e lizherennoù ?',
-    cSigne: 'Dibab an arouez mat : < , = pe >',
-    justeApres: 'An niver diouzhtu war-lerc\'h {n}',
-    justeAvant: 'An niver diouzhtu a-raok {n}',
-    cTrouve: 'Kav an niver.',
-    cCalcule: 'Jed.',
-    cSuite: 'Kloka an heuliad.', // br: à relire
-    cDroite: 'Pe niver a ziskouez ar bir ? (+ {pas} bep derez)', // br: à relire (« derez » = graduation)
-    libDroite: 'Linenn eus {a} betek {b}',
-    cRanger: "Klik war an niveroù eus ar bihanañ d'ar brasañ.",
-    cliqueTous: 'Klik war an holl niveroù 😉',
-    laBonne: '❌ Ar respont mat : {r}',
-    pRepresente: 'Pe niver a welez ?',
-    pLegende: '({m}plakenn = 100, barrenn = 10, kub = 1)',
-    pLegendeM: 'kub bras = 1000, ',
-    pCestLeNombre: 'An niver eo',
-    pEnChiffres: 'e sifroù :',
-    pEcrisLettres: 'Skriv {n} e lizherennoù :',
-    pFlecheQ: 'Pe niver a ziskouez ar bir ?',
-    pFlecheAide: '(+ {pas} bep derez)', // br: à relire
-    pFlecheMontre: 'Ar bir a ziskouez',
-    pRange: "Renk eus ar bihanañ d'ar brasañ :",
-    pSuite: 'Kloka an heuliad :', // br: à relire
-    pNbQuestions: '{n} goulenn',
-    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const enLettres = n => (langue.value === 'br' ? enLettresBr(n) : enLettresFr(n))
 
 // #region generation — fonctions pures (testables hors de Vue)

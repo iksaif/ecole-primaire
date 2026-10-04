@@ -139,44 +139,15 @@ import ChoixPolice from '../../components/ChoixPolice.vue'
 import { usePolices } from '../../composables/usePolices'
 import { sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/imprimer/CalculView.js'
+import messagesBr from '../../i18n/br/views/imprimer/CalculView.js'
 import {
   TYPES, NIVEAUX, NB_CALCULS, TAILLES, AFFICHES, DISPOSITIONS, PRESETS_NIVEAU,
   typeParId, normaliserConfig, graineAleatoire, genererCalcul, libelle,
 } from '../../impression/calcul'
 
 // Breton : traduction à faire relire par un brittophone
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Fiches de calcul',
-    intro: "Fiches de calcul mental à imprimer (tables, additions, compléments, doubles…) du CP au CM2, avec corrigé, et affiches des tables de multiplication et d'addition.",
-    modeFiche: "Fiche d'exercices", modeAffiche: 'Affiche des tables',
-    niveauPreset: 'Niveau (présélectionne les calculs du programme)',
-    calculs: 'Calculs (plusieurs choix possibles)', niveaux: 'Niveaux : {l}',
-    nbCalculs: 'Nombre de calculs', colonnes: 'Colonnes', taille: "Taille d'écriture",
-    reponses: 'Réponses', pointilles: 'Pointillés ……', cases: 'Cases ☐', options: 'Options',
-    melanger: 'Mélanger les différents calculs (sinon, regroupés par type)',
-    enTete: 'En-tête Prénom / Date / Score', corrigeSepare: 'Corrigé sur une page séparée',
-    titreFiche: 'Titre', automatique: 'automatique', nouvelle: 'Nouvelle fiche',
-    alerte: 'Seulement {n} calculs différents possibles avec ces choix (sans répétition).',
-    affiche: 'Affiche', disposition: 'Disposition', tables: 'Tables', toutes: 'Toutes',
-    format: 'Format', portrait: 'Portrait', paysage: 'Paysage', police: 'Police',
-  },
-  br: {
-    titre: 'Fichennoù jediñ',
-    intro: "Fichennoù jediñ e penn da voullañ (taolennoù, sammadennoù, klokaat, an doubl…) eus ar CP d'ar CM2, gant ar reizhadenn, ha skritelloù an taolennoù liesañ ha sammañ.",
-    modeFiche: 'Fichenn boelladennoù', modeAffiche: 'Skritell an taolennoù',
-    niveauPreset: 'Live (dibab a ra jedadennoù ar programm)', // br: à relire
-    calculs: 'Jedadennoù (meur a zibab posupl)', niveaux: 'Liveoù : {l}',
-    nbCalculs: 'Niver a jedadennoù', colonnes: 'Bannoù', taille: 'Ment ar skritur', // br: à relire (colonnes)
-    reponses: 'Respontoù', pointilles: 'Pikedennoù ……', cases: 'Boestoù ☐', options: 'Dibarzhioù',
-    melanger: "Meskañ an jedadennoù (a-hend-all e vint strollet dre seurt)", // br: à relire
-    enTete: 'Talbenn Anv-bihan / Deiziad / Skor', corrigeSepare: "Reizhadenn war ur bajenn a-ziforc'h",
-    titreFiche: 'Titl', automatique: 'emgefreek', nouvelle: 'Fichenn nevez',
-    alerte: "{n} jedadenn disheñvel hepken a c'haller kaout gant an dibaboù-se (hep adlavar).", // br: à relire
-    affiche: 'Skritell', disposition: "Lec'hiadur", tables: 'Taolennoù', toutes: 'An holl',
-    format: 'Furmad', portrait: 'A-serzh', paysage: 'A-led', police: 'Nodrezh', // br: à relire (portrait / paysage)
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const lib = v => libelle(v, langue.value)
 
 const CLE = 'calcul_impression_config'

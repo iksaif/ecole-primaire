@@ -62,35 +62,11 @@ import { ref, onMounted } from 'vue'
 import { LANGUES_REGIONALES } from '../data/languesRegionales'
 import { useLangueRegionale } from '../composables/useLangueRegionale'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/views/ParentSettingsView.js'
+import messagesBr from '../i18n/br/views/ParentSettingsView.js'
 
 const { reglage: langueCode } = useLangueRegionale()
-const { t, langue } = useI18n({
-  fr: {
-    titre: '⚙️ Paramètres parents', intro: 'Ces réglages sont réservés aux parents et enseignants. Ils sont stockés localement sur cet appareil.',
-    langueRegionale: 'Langue régionale',
-    langueRegionaleAide: "Ajoute la langue régionale aux fiches à imprimer : nombres en lettres bilingues, alphabet, jours, mois et mots dans les fiches d'écriture. Pratique pour les écoles bilingues ou immersives.",
-    aucune: 'Aucune', cleMistral: 'Clé API Mistral',
-    cleMistralAide: 'Utilisée pour générer des phrases en mode dictée. Facultative : sans clé, les phrases prédéfinies sont utilisées. Obtenez une clé gratuite sur',
-    cleApi: 'Clé API', clePlaceholder: 'Votre clé Mistral (ex : DY4O…)', masquer: 'Masquer', afficher: 'Afficher',
-    enregistrer: 'Enregistrer', supprimerCle: 'Supprimer la clé', cleOk: '✅ Clé enregistrée.', cleSupprimee: '🗑️ Clé supprimée.',
-    reset: 'Réinitialiser la progression', resetAide: 'Efface toutes les données de progression stockées sur cet appareil (historique de dictée, scores…).',
-    toutReset: 'Tout réinitialiser', confirmer: 'Êtes-vous sûr ? Toute la progression sera effacée.', resetOk: '✅ {n} entrée(s) supprimée(s).',
-    retour: "← Retour à l'accueil",
-  },
-  br: {
-    titre: '⚙️ Arventennoù evit ar gerent', intro: "An arventennoù-mañ a zo evit ar gerent hag ar gelennerien. Enrollet int war an drobarzhell-mañ hepken.",
-    langueRegionale: 'Yezh rannvroel',
-    langueRegionaleAide: "Ouzhpennañ ar yezh rannvroel d'ar fichennoù da voullañ : niveroù divyezhek, lizherenneg, deizioù, mizioù ha gerioù er fichennoù skrivañ. Talvoudus evit ar skolioù divyezhek pe dre soubidigezh.",
-    langueRegionaleBr: "Pa vez an etrefas e brezhoneg, ez eo gweredekaet ar brezhoneg er fichennoù ivez.",
-    aucune: 'Hini ebet', cleMistral: "Alc'hwez API Mistral",
-    cleMistralAide: "Implijet evit krouiñ frazennoù er skrivadeg. Dre zibab : hep alc'hwez e vez implijet frazennoù prientet. Kavit un alc'hwez digoust war",
-    cleApi: "Alc'hwez API", clePlaceholder: "Hoc'h alc'hwez Mistral (sk. : DY4O…)", masquer: 'Kuzhat', afficher: 'Diskouez',
-    enregistrer: 'Enrollañ', supprimerCle: "Dilemel an alc'hwez", cleOk: "✅ Alc'hwez enrollet.", cleSupprimee: "🗑️ Alc'hwez dilamet.",
-    reset: 'Adderaouekaat an araokadenn', resetAide: "Diverkañ an holl roadennoù enrollet war an drobarzhell-mañ (istor ar skrivadeg, skorioù…).",
-    toutReset: 'Adderaouekaat pep tra', confirmer: "Ha sur oc'h ? Diverket e vo an holl araokadenn.", resetOk: '✅ {n} elfenn dilamet.',
-    retour: "← Distreiñ d'an degemer",
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const CLE_KEY = 'ep_mistral_key'
 

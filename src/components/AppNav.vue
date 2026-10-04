@@ -36,18 +36,15 @@ import { CLASSES } from '../data/activites'
 import { useClasse } from '../composables/useClasse'
 import { SITE } from '../site'
 import { useI18n, LANGUES_INTERFACE } from '../i18n'
+import messagesFr from '../i18n/fr/components/AppNav.js'
+import messagesBr from '../i18n/br/components/AppNav.js'
 import Drapeau from './Drapeau.vue'
 import AvisTraduction from './AvisTraduction.vue'
 import RechercheGlobale from './RechercheGlobale.vue'
 
 const route = useRoute()
 const classe = useClasse()
-const { t, langue } = useI18n({
-  fr: { maths: 'Maths', francais: 'Français', lecture: 'Lecture', autres: 'Autres', imprimer: 'À imprimer', apropos: 'À propos',
-    parametres: 'Paramètres', langue: 'Langue', classe: 'Classe', toutes: 'Toutes', filtrerClasse: 'Filtrer par classe' },
-  br: { maths: 'Matematik', francais: 'Galleg', lecture: 'Lenn', autres: 'Traoù all', imprimer: 'Da voullañ', apropos: 'Diwar-benn',
-    parametres: 'Arventennoù', langue: 'Yezh', classe: 'Klas', toutes: 'An holl', filtrerClasse: 'Silañ dre glas' },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 </script>
 
 <style scoped>

@@ -120,43 +120,12 @@
 import { ref, computed } from 'vue'
 import { aleatoire, melanger, confettis } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maternelle/OrdonnerView.js'
+import messagesBr from '../../i18n/br/views/maternelle/OrdonnerView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Ranger les nombres',
-    nombresDe: '{niv} — nombres 1 à {n}',
-    petitGrand: 'Du plus petit au plus grand',
-    croissant: 'Croissant', decroissant: 'Décroissant', melange: 'Mélangé',
-    combien: 'Combien de nombres à ranger ?',
-    rangeCroissant: 'Range du plus petit au plus grand',
-    rangeDecroissant: 'Range du plus grand au plus petit',
-    petitGrandMin: 'du plus petit au plus grand',
-    grandPetitMin: 'du plus grand au plus petit',
-    effacerTxt: 'Effacer',
-    ordreCorrect: "L'ordre correct : {ordre}",
-    resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
-    resultat0: "On va s'entraîner encore ! 📚",
-    fConsigne: 'Écris les nombres dans les cases, dans le bon ordre.',
-  },
-  br: {
-    titre: 'Renkañ an niveroù',
-    nombresDe: '{niv} — niveroù 1 da {n}',
-    petitGrand: "Eus ar bihanañ d'ar brasañ",
-    croissant: 'O kreskiñ', decroissant: 'O tigreskiñ', melange: 'Kemmesket',
-    combien: 'Pet niver da renkañ ?',
-    rangeCroissant: "Renk eus ar bihanañ d'ar brasañ",
-    rangeDecroissant: "Renk eus ar brasañ d'ar bihanañ",
-    petitGrandMin: "eus ar bihanañ d'ar brasañ",
-    grandPetitMin: "eus ar brasañ d'ar bihanañ",
-    effacerTxt: 'Diverkañ',
-    ordreCorrect: 'An urzh reizh : {ordre}',
-    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
-    resultat0: "Embreger a raimp c'hoazh ! 📚",
-    fConsigne: 'Skriv an niveroù er c\'haoued, en urzh mat.', // br: à relire
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const config = ref({ niveau: 'ms', sens: 'croissant', taille: 4, nbQ: 10 })
 const phase = ref('config')

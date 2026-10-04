@@ -89,6 +89,8 @@
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maternelle/LettresView.js'
+import messagesBr from '../../i18n/br/views/maternelle/LettresView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { cssPolices, echapper, POLICE_SCRIPT } from '../../utils/impression'
@@ -105,45 +107,7 @@ const ALPHABET_BR  = langueRegionale('br').alphabet.map(majuscule)
 const VOYELLES_BR  = ALPHABET_BR.filter(l => VOYELLES.includes(l))
 const CONSONNES_BR = ALPHABET_BR.filter(l => !VOYELLES.includes(l))
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Les lettres',
-    exercice: 'Exercice',
-    reconnaitre: 'Reconnaître', reconnaitreDesc: "Trouve la lettre qu'on te montre",
-    majMin: 'Majuscule / Minuscule', majMinDesc: 'Associe la lettre à sa forme',
-    lettres: 'Lettres', voyelles: 'Voyelles', consonnes: 'Consonnes', toutes: 'Toutes',
-    quelleLettre: 'Quelle lettre est-ce ?',
-    quelleMinuscule: 'Quelle est la minuscule ?',
-    quelleMajuscule: 'Quelle est la majuscule ?',
-    cetait: "C'était : {r}",
-    changer: '⚙️ Changer',
-    res100: 'Parfait ! Tu connais toutes les lettres ! 🏆',
-    res80: 'Très bien ! 🌟',
-    res60: "Bien ! Continue à t'entraîner 💪",
-    res0: "Courage ! Chante l'alphabet et recommence 🎵",
-    noteFiche: 'Fiche : relie chaque majuscule à sa minuscule.',
-    fConsigne: 'Relie chaque majuscule à sa minuscule.',
-  },
-  br: {
-    titre: 'Al lizherennoù',
-    exercice: 'Poelladenn',
-    reconnaitre: 'Anaout', reconnaitreDesc: 'Kav al lizherenn a vez diskouezet dit',
-    majMin: 'Pennlizherenn / Lizherenn vihan', majMinDesc: 'Kav stumm all al lizherenn', // br: à relire
-    lettres: 'Lizherennoù', voyelles: 'Vogalennoù', consonnes: 'Kensonennoù', toutes: 'An holl',
-    quelleLettre: 'Peseurt lizherenn eo ?',
-    quelleMinuscule: 'Pehini eo al lizherenn vihan ?',
-    quelleMajuscule: 'Pehini eo ar bennlizherenn ?',
-    cetait: 'Ar respont mat : {r}',
-    changer: '⚙️ Cheñch',
-    res100: 'Dispar ! Anaout a rez an holl lizherennoù ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res60: "Mat ! Kendalc'h da embreger 💪",
-    res0: 'Kalon vat ! Kan al lizherenneg hag adkrog 🎵',
-    // br: à relire
-    noteFiche: 'Fichenn : lak pep pennlizherenn gant he lizherenn vihan.',
-    fConsigne: 'Lak ul linenn etre pep pennlizherenn hag he lizherenn vihan.',
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const config = ref(charger('lettres_config', { mode: 'reconnaitre', groupe: 'toutes' }))
 watch(config, v => sauvegarder('lettres_config', v), { deep: true })

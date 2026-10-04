@@ -144,39 +144,12 @@
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/CalcuPoseView.js'
+import messagesBr from '../../i18n/br/views/maths/CalcuPoseView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Calcul posé',
-    operation: 'Opération',
-    addition: 'Addition', soustraction: 'Soustraction', melange: 'Mélangé',
-    additions: 'Additions', soustractions: 'Soustractions',
-    taille: 'Taille des nombres',
-    chiffre1: '1 chiffre', chiffres: '{n} chiffres',
-    retenue: 'Retenue', sansRetenue: 'Sans retenue', avecRetenue: 'Avec retenue',
-    nbExercices: "Nombre d'exercices",
-    colCalcul: 'Calcul',
-    resultatBas: "Continue à t'entraîner ! 📚",
-    pNbExercices: '{n} exercices',
-    corrigePage2: 'Corrigé (2e page)',
-  },
-  br: {
-    titre: 'Jedadur lakaet', // br: à relire (« calcul posé »)
-    operation: 'Oberiadur',
-    addition: 'Sammadenn', soustraction: 'Lamadenn', melange: 'Kemmesket',
-    additions: 'Sammadennoù', soustractions: 'Lamadennoù',
-    taille: 'Ment an niveroù',
-    chiffre1: '1 sifr', chiffres: '{n} sifr',
-    retenue: "Dalc'h", sansRetenue: "Hep dalc'h", avecRetenue: "Gant dalc'h", // br: à relire (« dalc'h » = retenue)
-    nbExercices: 'Niver a boelladennoù',
-    colCalcul: 'Jedadur',
-    resultatBas: "Kendalc'h da embreger ! 📚",
-    pNbExercices: '{n} poelladenn',
-    corrigePage2: 'Reizhadenn (2vet pajenn)', // br: à relire
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const config = ref({ op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10, corrige: false,
   ...charger('calcul_pose_config', {}) })

@@ -98,6 +98,8 @@
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maternelle/FormesView.js'
+import messagesBr from '../../i18n/br/views/maternelle/FormesView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
@@ -109,45 +111,7 @@ const NOMS_BR = {
   ovale: "hirgelc'h",          // br: à relire (« ovalenn » ?)
 }
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Les formes',
-    exercice: 'Exercice',
-    reconnaitre: 'Reconnaître', reconnaitreDesc: 'Trouve le nom de la forme',
-    compter: 'Compter les côtés', combienCotes: 'Combien de côtés a cette forme ?',
-    trouver: 'Trouver la forme', trouverDesc: "Montre la forme qu'on te demande",
-    commentSappelle: "Comment s'appelle cette forme ?",
-    montre: 'Montre le / la',
-    changer: '⚙️ Changer',
-    res100: 'Parfait ! Tu connais toutes les formes ! 🏆',
-    res75: 'Très bien ! 🌟',
-    res50: 'Bien ! Regarde les formes autour de toi 💪',
-    res0: 'Courage ! Observe les formes dans la classe 📐',
-    noteFiche: 'Fiche : colorie chaque forme de sa couleur, puis compte-les.',
-    fConsigne: 'Colorie chaque forme de la bonne couleur.',
-    fCompte: 'Combien y en a-t-il ? Écris le nombre.',
-    rouge: 'rouge', bleu: 'bleu', vert: 'vert', jaune: 'jaune',
-  },
-  br: {
-    titre: 'Ar stummoù',
-    exercice: 'Poelladenn',
-    reconnaitre: 'Anaout', reconnaitreDesc: 'Kav anv ar stumm',
-    compter: "Kontañ ar c'hostezioù", combienCotes: 'Pet kostez en deus ar stumm-mañ ?', // br: à relire
-    trouver: 'Kavout ar stumm', trouverDesc: 'Diskouez ar stumm a vez goulennet',
-    commentSappelle: 'Petra eo anv ar stumm-mañ ?',
-    montre: 'Diskouez :',
-    changer: '⚙️ Cheñch',
-    res100: 'Dispar ! Anaout a rez an holl stummoù ! 🏆',
-    res75: 'Mat-tre ! 🌟',
-    res50: "Mat ! Sell ouzh ar stummoù en-dro dit 💪",
-    res0: 'Kalon vat ! Sell ouzh ar stummoù er c\'hlas 📐',
-    // br: à relire
-    noteFiche: 'Fichenn : liv pep stumm gant e liv, ha kont anezho.',
-    fConsigne: 'Liv pep stumm gant al liv mat.',
-    fCompte: 'Pet a zo ? Skriv an niver.',
-    rouge: 'ruz', bleu: 'glas', vert: 'gwer', jaune: 'melen',
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const nomForme = nom => (langue.value === 'br' ? NOMS_BR[nom] : null) ?? nom
 
 // ── Formes géométriques avec SVG inline

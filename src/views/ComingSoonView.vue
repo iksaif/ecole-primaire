@@ -10,9 +10,8 @@
 
 <script setup>
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/views/ComingSoonView.js'
+import messagesBr from '../i18n/br/views/ComingSoonView.js'
 
-const { t } = useI18n({
-  fr: { bientot: 'Cet exercice arrive bientôt !', retour: "Retour à l'accueil" },
-  br: { bientot: 'Emañ ar boelladenn-mañ o tont a-benn nebeut !', retour: "Distreiñ d'ar bajenn degemer" }, // br: à relire
-})
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 </script>

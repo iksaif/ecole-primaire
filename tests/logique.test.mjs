@@ -15,6 +15,18 @@ const BR = { 21: 'unan warn-ugent', 31: 'unan ha tregont', 42: 'daou ha daou-uge
   200: "daou c'hant", 2000: 'daou vil' }
 for (const [n, attendu] of Object.entries(BR)) verifier(enLettresBr(+n) === attendu, `${n} → ${attendu}`)
 
+console.log('Règles de langue')
+const { regles } = await import('../src/i18n/regles.js')
+const F = regles('fr'), B = regles('br')
+const exemples = [
+  [F.nombre(1, 'bille'), '1 bille'], [F.nombre(3, 'bille'), '3 billes'], [F.nombre(2, { s: 'cheval', p: 'chevaux' }), '2 chevaux'],
+  [F.que('Emma'), "qu'Emma"], [F.que('Léo'), 'que Léo'], [F.de('euros'), "d'euros"],
+  [B.nombre(3, 'bilhenn'), '3 bilhenn'], [B.et('aval'), 'hag'], [B.et('bara'), 'ha'],
+  [B.le('ki'), "ar c'hi"], [B.le('kador', 'f'), 'ar gador'], [B.le('taol', 'f'), 'an daol'], [B.le('mamm', 'f'), 'ar vamm'],
+  [B.le('aval'), 'an aval'], [B.le('loar', 'f'), 'al loar'], [B.le('bara'), 'ar bara'],
+]
+for (const [obtenu, attendu] of exemples) verifier(obtenu === attendu, `${attendu}${obtenu !== attendu ? ` (obtenu : ${obtenu})` : ''}`)
+
 console.log('Catalogue des fiches')
 const slugs = TELECHARGEMENTS.map(t => t.slug)
 verifier(new Set(slugs).size === slugs.length, `${slugs.length} fiches, slugs uniques`)

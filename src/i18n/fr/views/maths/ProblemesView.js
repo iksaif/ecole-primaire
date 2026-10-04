@@ -1,0 +1,18 @@
+// Textes de l'interface — ProblemesView (français).
+// Clés partagées avec src/i18n/br/views/maths/ProblemesView.js (vérifier avec `npm run i18n`).
+export default {
+    titre: 'Problèmes',
+    typesProblemes: 'Types de problèmes',
+    nombres: 'Nombres',
+    jusqua: "Jusqu'à {n}",
+    nbProblemes: 'Nombre de problèmes',
+    probleme: 'Problème {n} / {total}',
+    arreter: '⏹ Arrêter',
+    lireEnonce: "🔊 Lire l'énoncé",
+    colProbleme: 'Problème',
+    colCorrection: 'Correction',
+    pCalcul: 'Calcul :',
+    pReponse: 'Réponse :',
+    pNbProblemes: '{n} problèmes',
+    corrigeFin: 'Corrigé (page à part)',
+  }

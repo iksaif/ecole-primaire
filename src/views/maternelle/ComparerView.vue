@@ -100,33 +100,12 @@
 import { ref, computed } from 'vue'
 import { aleatoire, confettis } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maternelle/ComparerView.js'
+import messagesBr from '../../i18n/br/views/maternelle/ComparerView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Comparer les quantités',
-    jusqua: "{niv} — jusqu'à {n}",
-    consigne: 'Quel groupe a le plus ?',
-    aPlus: '{g} a plus',
-    pareil: 'Pareil',
-    memeNombre: 'Les deux groupes ont le même nombre !',
-    resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
-    resultat0: "On va s'entraîner encore ! 📚",
-    fConsigne: 'Dans chaque ligne, entoure le groupe qui a le plus.',
-  },
-  br: {
-    titre: "Keñveriañ ar c'hementadoù", // br: à relire
-    jusqua: '{niv} — betek {n}',
-    consigne: "Peseurt strollad en deus muioc'h ?",
-    aPlus: "Muioc'h gant {g}",
-    pareil: 'Kement ha kement', // br: à relire
-    memeNombre: 'An daou strollad o deus ar memes niver !',
-    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
-    resultat0: "Embreger a raimp c'hoazh ! 📚",
-    fConsigne: "War pep linenn, gromm ar strollad en deus muioc'h.", // br: à relire
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const EMOJIS = ['🍎','⭐','🐱','🌸','🚗','🦋','🍓','🐸','🐠','🌙','🍪','🎈']
 

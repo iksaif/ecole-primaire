@@ -34,36 +34,15 @@ import { ref } from 'vue'
 import { usePolices } from '../composables/usePolices'
 import { LIENS_POLICES, ajouterPolicePerso, supprimerPolicePerso, policesPerso } from '../utils/impression'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/components/ChoixPolice.js'
+import messagesBr from '../i18n/br/components/ChoixPolice.js'
 
 defineProps({ types: { type: Array, default: () => ['attache', 'script'] } })
 const { choix, disponibles } = usePolices()
 const erreur = ref('')
 
 // tt : la variable « t » du template désigne déjà le type de police
-const { t: tt, langue } = useI18n({
-  fr: {
-    attache: 'Attaché', script: 'Script',
-    exempleAttache: 'belle école', exempleScript: 'a b g école',
-    retirer: 'Retirer cette police',
-    aideTitre: '➕ Utiliser Belle Allure, Écolier ou une autre police…',
-    aideTexte: "Ces polices scolaires sont gratuites pour la classe et la maison, mais leur licence ne permet pas de les livrer avec le site. Deux solutions : les <strong>installer</strong> sur l'ordinateur (elles apparaîtront dans la liste après rechargement de la page), ou <strong>ajouter le fichier</strong> ici (il reste mémorisé dans ce navigateur).",
-    ajouterAttache: '📂 Ajouter une police attachée',
-    ajouterScript: '📂 Ajouter une police script',
-    astuce: 'Astuce Belle Allure : choisis le fichier sans lignes (pas « Ductus » ni « Lignes ») ; la taille est ajustée automatiquement au lignage Seyès.',
-  },
-  br: {
-    attache: 'A-stag', script: 'Skript',
-    exempleAttache: 'skol vrav', exempleScript: 'a b g skol',
-    // br: à relire — « nodrezh » pour police de caractères
-    retirer: 'Lemel an nodrezh-mañ',
-    aideTitre: '➕ Implijout Belle Allure, Écolier pe un nodrezh all…',
-    // br: à relire
-    aideTexte: "An nodrezhoù-skol-se a zo digoust evit ar c'hlas hag ar gêr, met n'eo ket aotreet gant o lañvaz o lakaat gant al lec'hienn. Daou zoare a zo : o <strong>staliañ</strong> war an urzhiataer (war wel e vint er roll goude bezañ adkarget ar bajenn), pe <strong>ouzhpennañ ar restr</strong> amañ (miret e vo er merdeer-mañ).",
-    ajouterAttache: '📂 Ouzhpennañ un nodrezh a-stag',
-    ajouterScript: '📂 Ouzhpennañ un nodrezh skript',
-    astuce: "Alioù evit Belle Allure : dibab ar restr hep linennoù (ket « Ductus » na « Lignes ») ; ment al lizherennoù a vez azasaet ent emgefre ouzh al linennoù Seyès.",
-  },
-})
+const { t: tt, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Textes définis en français dans src/utils/impression.js et src/composables/usePolices.js
 const NOTES_BR = {
   'Belle Allure': "skritur a-stag implijet kalz er c'hlas, meur a stumm (GS, CP, CE…)",

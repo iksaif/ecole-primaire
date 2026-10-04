@@ -111,35 +111,12 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/CalcuMentalView.js'
+import messagesBr from '../../i18n/br/views/maths/CalcuMentalView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    nbCalculsFiche: 'Nombre de calculs sur la fiche', corrigePage2: 'Corrigé en page 2',
-    titre: 'Calcul mental',
-    operations: 'Opérations',
-    tempsParQuestion: 'Temps par question',
-    reponseHist: '❌ (réponse : {r})',
-    doubleDe: 'Double de {n} = ?',
-    moitieDe: 'Moitié de {n} = ?',
-    tempsEcoule: '⏰ Temps écoulé ! La réponse était {r}',
-    pOperations: 'Opérations : {ops}',
-    pNbQuestions: '{n} questions',
-  },
-  br: {
-    nbCalculsFiche: 'Niver a jedadurioù war ar fichenn', corrigePage2: 'Reizhadenn war an eil pajenn', // br: à relire
-    titre: 'Jediñ e penn',
-    operations: 'Oberiadurioù',
-    tempsParQuestion: 'Amzer evit pep goulenn',
-    reponseHist: '❌ (respont : {r})',
-    doubleDe: 'An doubl eus {n} = ?',
-    moitieDe: 'An hanter eus {n} = ?',
-    tempsEcoule: '⏰ Echu eo an amzer ! Ar respont a oa {r}',
-    pOperations: 'Oberiadurioù : {ops}',
-    pNbQuestions: '{n} goulenn',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const OP_DIZ = '± dizaines (45 + 30)'
 const OP_911 = '± 9 / ± 11'

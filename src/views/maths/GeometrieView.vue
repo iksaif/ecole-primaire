@@ -178,39 +178,12 @@
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/GeometrieView.js'
+import messagesBr from '../../i18n/br/views/maths/GeometrieView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Géométrie',
-    optionsSym: 'Options de symétrie',
-    axeV: 'Axe vertical seulement',
-    axeH: 'Axe horizontal aussi',
-    modele: 'Modèle',
-    aToi: 'À toi !',
-    astuceEquerre: "Astuce : vérifie avec ton équerre ou le coin d'une feuille !",
-    aucunBtn: 'Aucun',
-    legJuste: 'juste',
-    legOubliee: 'oubliée',
-    legEnTrop: 'en trop',
-    colQuestion: 'Question',
-  },
-  br: {
-    titre: 'Mentoniezh',
-    optionsSym: 'Dibarzhioù ar gemparzhded',
-    axeV: 'Ahel a-serzh hepken',
-    axeH: 'Ahel a-blaen ivez',
-    modele: 'Skouer',
-    aToi: 'Da dro !',
-    astuceEquerre: 'Tun : gwiri gant da skouer pe gant korn ur follenn !',
-    aucunBtn: 'Hini ebet',
-    legJuste: 'mat',
-    legOubliee: 'ankouaet',
-    legEnTrop: 're',
-    colQuestion: 'Goulenn',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const enBr = () => langue.value === 'br'
 const B = (fr, br) => (enBr() ? br : fr)
 

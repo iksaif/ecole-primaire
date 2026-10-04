@@ -257,107 +257,12 @@
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/MonnaieView.js'
+import messagesBr from '../../i18n/br/views/maths/MonnaieView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'La monnaie',
-    options: 'Options',
-    eurosEntiers: 'Euros entiers',
-    avecCentimes: 'Avec centimes',
-    afficherTotal: 'Afficher le total pendant que je compose',
-    aideFiche: 'La fiche reprend les exercices choisis.',
-    combienArgent: "Combien d'argent y a-t-il ?",
-    exemple: 'ex : 3,50 €',
-    tuPeuxEcrire: 'Tu peux écrire « 3,50 € » ou « 3 € 50 c ».',
-    composer1: 'Clique sur les pièces et les billets pour faire',
-    moins1: 'Paye',
-    moins2: 'avec',
-    moins3: 'le moins possible',
-    moins4: 'de pièces et de billets',
-    tuAchetes: 'Tu achètes',
-    tuDonnes: 'Tu donnes',
-    combienRendre: 'Combien doit-on te rendre ? Montre-le avec les pièces et les billets.',
-    plateauVide: 'Ta monnaie apparaît ici',
-    enlever: 'Enlever',
-    ajouter: 'Ajouter',
-    total: 'Total',
-    toutEnlever: '🗑 Tout enlever',
-    rappel: 'Rappel',
-    quiPlus: "Qui a le plus d'argent ?",
-    autantDeux: 'Autant tous les deux',
-    ilYa1: 'Il y a ',
-    ilYa2: '.',
-    astuceCompter: 'Astuce : commence par compter les billets, puis les grosses pièces.',
-    noublie: "N'oublie pas",
-    astuceConvertir: '1 € = 100 c : les euros vont avant la virgule, les centimes après (toujours 2 chiffres : 2 € 5 c = 2,05 €).',
-    aSomme: ' a',
-    astuceComparer: "Ce n'est pas le nombre de pièces qui compte, mais leur valeur !",
-    avecMoins: 'Avec le moins de pièces et billets :',
-    uneBonne: 'Une bonne réponse :',
-    astuceRendre: "On compte de {prix} jusqu'à {paye} : il manque {cible}.",
-    astuceMoins: "Astuce : prends d'abord le plus grand billet ou la plus grande pièce possible.",
-    colQuestion: 'Question',
-    pasTout: 'Pas tout à fait… Regarde la correction.',
-    ecrisSomme: 'Écris la somme comme « 3,50 € » ou « 3 € 50 c ».',
-    auLieuDe: 'Tu as fait {t} au lieu de {c}.',
-    tropDePieces: "C'est bien {t} 👍 mais on peut payer avec seulement {n} pièces et billets.",
-    ilManque: 'Tu as fait {t} : il manque {m}.',
-    deTrop: "Tu as fait {t} : c'est {m} de trop.",
-    autantArgent: "Ils ont autant d'argent tous les deux : {s}.",
-    lePlus: "C'est {nom} qui a le plus d'argent.",
-    autant: 'Autant',
-  },
-  br: {
-    titre: 'Ar moneiz',
-    options: 'Dibarzhioù',
-    eurosEntiers: 'Euro hepken',
-    avecCentimes: 'Gant santimoù',
-    afficherTotal: 'Diskouez ar sammad e-keit ma lakaan an arc\'hant', // br: à relire
-    aideFiche: 'Er fichenn e vo ar poelladennoù dibabet.', // br: à relire
-    combienArgent: "Pegement a arc'hant a zo ?",
-    exemple: 'sk. : 3,50 €',
-    tuPeuxEcrire: 'Gallout a rez skrivañ « 3,50 € » pe « 3 € 50 c ».',
-    composer1: 'Klik war ar pezhioù moneiz hag ar bilhedoù evit ober',
-    moins1: 'Paea',
-    moins2: 'gant',
-    moins3: 'an nebeutañ posubl',
-    moins4: 'a bezhioù moneiz hag a vilhedoù',
-    tuAchetes: 'Prenañ a rez',
-    tuDonnes: 'Reiñ a rez',
-    combienRendre: 'Pegement a vo distroet dit ? Diskouez anezhañ gant ar pezhioù moneiz hag ar bilhedoù.',
-    plateauVide: 'Da voneiz a zeuio amañ',
-    enlever: 'Tennañ',
-    ajouter: 'Ouzhpennañ',
-    total: 'Sammad',
-    toutEnlever: '🗑 Tennañ pep tra',
-    rappel: "Dalc'h soñj",
-    quiPlus: "Piv en deus ar muiañ a arc'hant ?",
-    autantDeux: 'Kement o-daou',
-    ilYa1: '',
-    ilYa2: ' a zo.',
-    astuceCompter: "Tun : kont ar bilhedoù da gentañ, ha goude ar pezhioù moneiz bras.",
-    noublie: "N'ankouaha ket",
-    astuceConvertir: "1 € = 100 c : an euro a ya a-raok ar skej, ar santimoù war-lerc'h (atav 2 sifr : 2 € 5 c = 2,05 €).", // br: à relire
-    aSomme: ' :',
-    astuceComparer: "N'eo ket an niver a bezhioù a gont, met o zalvoudegezh !",
-    avecMoins: 'Gant an nebeutañ a bezhioù hag a vilhedoù :',
-    uneBonne: 'Ur respont mat :',
-    astuceRendre: 'Kontañ a reer eus {prix} betek {paye} : mankout a ra {cible}.',
-    astuceMoins: 'Tun : kemer da gentañ ar bilhed pe ar pezh moneiz brasañ posubl.',
-    colQuestion: 'Goulenn',
-    pasTout: "N'eo ket mat c'hoazh… Sell ouzh ar reizhadenn.",
-    ecrisSomme: 'Skriv ar sammad evel « 3,50 € » pe « 3 € 50 c ».',
-    auLieuDe: "Graet ec'h eus {t} e-lec'h {c}.",
-    tropDePieces: "{t} eo, mat 👍 met gallout a reer paeañ gant {n} pezh pe bilhed hepken.", // br: à relire
-    ilManque: "Graet ec'h eus {t} : mankout a ra {m}.",
-    deTrop: "Graet ec'h eus {t} : {m} re a zo.", // br: à relire
-    autantArgent: "Kement a arc'hant o deus o-daou : {s}.",
-    lePlus: "Gant {nom} emañ ar muiañ a arc'hant.",
-    autant: 'Kement',
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const enBr = () => langue.value === 'br'
 
 // ── LOGIQUE ── (toutes les sommes sont en CENTIMES entiers)

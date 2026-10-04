@@ -151,79 +151,12 @@ import { ref, computed, watch, onUnmounted } from 'vue'
 import { melanger, confettis, sauvegarder, charger, aleatoire } from '../utils'
 import { useTTS } from '../composables/useTTS'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/views/LectureView.js'
+import messagesBr from '../i18n/br/views/LectureView.js'
 import ConfigExercice from '../components/ConfigExercice.vue'
 import { useModeExercice } from '../composables/useModeExercice'
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Lecture',
-    exercice: 'Exercice',
-    syllabes: 'Syllabes',
-    syllabesDesc: "Compte et reconstitue les syllabes d'un mot",
-    reconstituer: 'Reconstituer un mot',
-    reconstituerDesc: 'Remets les syllabes dans le bon ordre',
-    lectureTextes: 'Lecture de textes',
-    lectureTextesDesc: 'Lis des phrases ou des histoires et écoute les mots',
-    ficheTextesInfo: 'La fiche reprend les textes de la bibliothèque et ceux déjà générés pendant cette séance.',
-    generationHistoire: "Génération de l'histoire...",
-    combienSyllabes: 'Combien de syllabes dans ce mot ?',
-    consigneReconstituer: 'Reconstitue le mot en cliquant sur les syllabes dans le bon ordre :',
-    effacerDerniere: '← Effacer',
-    consigneLecture: "Lis ce texte à haute voix. Clique sur un mot pour l'écouter :",
-    arreter: 'Arrêter',
-    ecouterTout: 'Écouter tout',
-    jaiLu: "J'ai lu ! 👍",
-    changer: '⚙️ Changer',
-    feedbackOk: ['Bravo ! 🎉', 'Exact ! ⭐', 'Bien joué ! 👏'],
-    erreurSyllabes: ({ n }) => `❌ {mot} a {n} syllabe${n > 1 ? 's' : ''} : {syll}`,
-    erreurOrdre: '❌ Le bon ordre était : {syll} → {mot}',
-    res100: 'Parfait, sans faute ! 🏆',
-    res80: 'Très bien ! 🌟',
-    res60: "Bien ! Continue à t'entraîner 💪",
-    res0: 'Courage ! Relis les mots à voix haute 📚',
-    ficheLectureTitre: 'Fiche de Lecture — {n}',
-    ficheLectureConsigne: "Lis chaque phrase ou histoire à haute voix, puis coche l'étoile :",
-    ficheSyllabesTitre: 'Compter les syllabes — {n}',
-    ficheSyllabesConsigne: 'Écris le nombre de syllabes pour chaque mot :',
-    ficheSyllabesUnite: 'syllabes',
-    ficheMotsTitre: 'Reconstituer des mots — {n}',
-    ficheMotsConsigne: 'Remets les syllabes dans le bon ordre pour écrire les mots :',
-  },
-  br: {
-    titre: 'Lenn',
-    exercice: 'Poelladenn',
-    syllabes: 'Silabennoù',
-    syllabesDesc: 'Kont hag adsav silabennoù ur ger',
-    reconstituer: 'Adsevel ur ger',
-    reconstituerDesc: 'Laka ar silabennoù en urzh mat',
-    lectureTextes: 'Lenn testennoù',
-    lectureTextesDesc: 'Lenn frazennoù pe istorioù ha selaou ar gerioù',
-    ficheTextesInfo: "Adkemer a ra ar fichenn testennoù al levraoueg hag ar re krouet e-pad an dalc'h-mañ.", // br: à relire
-    generationHistoire: "O krouiñ an istor...",
-    combienSyllabes: 'Pet silabenn a zo er ger-mañ ?',
-    consigneReconstituer: 'Adsav ar ger en ur glikañ war ar silabennoù en urzh mat :',
-    effacerDerniere: '← Diverkañ',
-    consigneLecture: 'Lenn an destenn-mañ a vouezh uhel. Klik war ur ger evit e selaou :',
-    arreter: 'Paouez',
-    ecouterTout: 'Selaou pep tra',
-    jaiLu: 'Lennet em eus ! 👍',
-    changer: '⚙️ Cheñch',
-    feedbackOk: ['Brav eo ! 🎉', 'Just eo ! ⭐', 'Mat-tre ! 👏'],
-    erreurSyllabes: '❌ {n} silabenn a zo e « {mot} » : {syll}',
-    erreurOrdre: '❌ An urzh mat a oa : {syll} → {mot}',
-    res100: 'Dispar, hep fazi ebet ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res60: "Mat ! Kendalc'h da embreger 💪",
-    res0: 'Kalon vat ! Adlenn ar gerioù a vouezh uhel 📚',
-    ficheLectureTitre: 'Fichenn lenn — {n}',
-    ficheLectureConsigne: 'Lenn pep frazenn pe istor a vouezh uhel, ha goude merk ar steredenn :',
-    ficheSyllabesTitre: 'Kontañ ar silabennoù — {n}',
-    ficheSyllabesConsigne: 'Skriv an niver a silabennoù evit pep ger :',
-    ficheSyllabesUnite: 'silabenn',
-    ficheMotsTitre: 'Adsevel gerioù — {n}',
-    ficheMotsConsigne: 'Laka ar silabennoù en urzh mat evit skrivañ ar gerioù :',
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const NIVEAUX = [
   { id: 'cp',  label: 'CP' },

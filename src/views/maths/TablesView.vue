@@ -192,75 +192,12 @@
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/maths/TablesView.js'
+import messagesBr from '../../i18n/br/views/maths/TablesView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, langue } = useI18n({
-  fr: {
-    titre: 'Tables de multiplication',
-    tablesAReviser: 'Tables à réviser',
-    toutes: 'Toutes',
-    mode: 'Mode',
-    entrainement: 'Entraînement',
-    entrainementDesc: 'Vois la table, puis réponds en ordre',
-    aleatoire: 'Aléatoire',
-    aleatoireDesc: 'Questions mélangées sur les tables choisies',
-    chrono: 'Défi chrono',
-    chronoDesc: 'Le plus de bonnes réponses en 1 minute',
-    multiplierJusqua: "Multiplier jusqu'à",
-    tableN: 'Table {n} / {total}',
-    tableDe: 'Table de × {n}',
-    jeLaConnais: 'Je la connais → Tester ! ✔',
-    bonnesEn1Min: 'bonnes réponses en 1 minute !',
-    aRetravailler: 'À retravailler :',
-    revoirErreurs: '❌ Revoir les erreurs',
-    resultat60: 'Bien ! Revois les erreurs et recommence 💪',
-    resultatBas: "Continue à t'entraîner ! 📚",
-    chrono50: '🏆 Impressionnant !', chrono30: '🌟 Excellent !', chrono20: '💪 Très bien !',
-    chronoBas: "📚 Continue à t'entraîner !",
-    pTable: 'Table de {n}',
-    pTables: 'Tables : {liste}',
-    pJusqua: "× jusqu'à {n}",
-    pNbQuestions: '{n} questions',
-    ordreFiche: 'Ordre des calculs',
-    dansLOrdre: "Dans l'ordre",
-    melange: 'Mélangé',
-    nbCalculs: 'Nombre de calculs',
-    corrigePage2: 'Corrigé (2e page)',
-  },
-  br: {
-    titre: 'Taolennoù liesañ',
-    tablesAReviser: 'Taolennoù da adwelet',
-    toutes: 'An holl',
-    mode: 'Mod',
-    entrainement: 'Embregerezh',
-    entrainementDesc: 'Sell ouzh an daolenn, ha goude respont en urzh', // br: à relire
-    aleatoire: 'Dre zegouezh',
-    aleatoireDesc: 'Goulennoù kemmesket war an taolennoù dibabet',
-    chrono: 'Dae a-enep an amzer', // br: à relire (« défi chrono »)
-    chronoDesc: 'Ar muiañ a respontoù mat e 1 munutenn',
-    multiplierJusqua: 'Liesaat betek',
-    tableN: 'Taolenn {n} / {total}',
-    tableDe: 'Taolenn × {n}',
-    jeLaConnais: 'Gouzout a ran anezhi → Amprouiñ ! ✔',
-    bonnesEn1Min: 'respont mat e 1 munutenn !',
-    aRetravailler: 'Da labourat en-dro :',
-    revoirErreurs: '❌ Adwelet ar fazioù',
-    resultat60: 'Mat ! Adwel ar fazioù hag adkrog 💪',
-    resultatBas: "Kendalc'h da embreger ! 📚",
-    chrono50: '🏆 Souezhus !', chrono30: '🌟 Dispar !', chrono20: '💪 Mat-tre !',
-    chronoBas: "📚 Kendalc'h da embreger !",
-    pTable: 'Taolenn {n}',
-    pTables: 'Taolennoù : {liste}',
-    pJusqua: '× betek {n}',
-    pNbQuestions: '{n} goulenn',
-    ordreFiche: 'Urzh ar jedadurioù', // br: à relire
-    dansLOrdre: 'En urzh',
-    melange: 'Kemmesket',
-    nbCalculs: 'Niver a jedadurioù', // br: à relire
-    corrigePage2: 'Reizhadenn (2vet pajenn)', // br: à relire
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const DUREE_CHRONO = 60 // secondes
 

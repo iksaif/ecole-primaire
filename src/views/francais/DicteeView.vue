@@ -159,102 +159,13 @@ import { melanger, charger, sauvegarder, normaliser, confettis } from '../../uti
 import { CATEGORIES, PHRASES_DEFAUT, MOTS_AMBIGUS, NIVEAUX, PHRASES_DEFAUT_ALL } from '../../data/dicteeMots'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n } from '../../i18n'
+import messagesFr from '../../i18n/fr/views/francais/DicteeView.js'
+import messagesBr from '../../i18n/br/views/francais/DicteeView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { cssPolices, echapper, POLICE_SCRIPT, POLICE_ATTACHE } from '../../utils/impression'
 
-const { t, tr, langue } = useI18n({
-  fr: {
-    titre: 'Dictée',
-    categories: 'Catégories — {n}',
-    mode: 'Mode',
-    motsSeuls: 'Mots seuls',
-    motsSeulsDesc: "L'élève entend le mot et le tape",
-    phrases: 'Phrases',
-    phrasesDesc: "Un mot dans une phrase, l'élève tape la phrase",
-    cleApi: 'Clé API Mistral',
-    cleApiOpt: '(optionnel — pour générer des phrases variées)',
-    cleOk: '✓ Clé configurée',
-    cleAucune: 'Aucune clé — phrases prédéfinies',
-    parametresParents: '⚙️ Paramètres parents',
-    nbMots: 'Nombre de mots',
-    tous: 'Tous',
-    vitesse: 'Vitesse de la voix',
-    quitterDictee: 'Quitter la dictée',
-    motN: 'Mot {n} / {total}',
-    generation: 'Génération…',
-    afficherIndice: '👁️ Afficher la phrase à trous (indice)',
-    masquerIndice: "Masquer l'indice",
-    arreter: 'Arrêter',
-    ecouterPhrase: 'Écouter la phrase',
-    ecouterMot: 'Écouter le mot',
-    consigne: 'Écoute bien, puis tape ce que tu entends :',
-    reecouter: '🔁 Réécouter',
-    attendu: 'Attendu',
-    feedbackOk: ['Bravo ! 🎉', 'Parfait ! ⭐', 'Excellent ! 👏'],
-    feedbackErr: '❌ La bonne réponse était : « {r} »',
-    res100: 'Parfait, zéro faute ! 🏆',
-    res80: 'Très bien ! Continue comme ça 🌟',
-    res60: 'Bien, mais il y a encore du travail ! 💪',
-    res0: 'Courage, relis les mots et réessaie ! 📚',
-    // fiche imprimable
-    pagesFiche: 'Pages de la fiche',
-    pageListe: 'Mots à apprendre',
-    pageDictee: 'Dictée à faire avec un adulte',
-    fConsigneListe: 'Lis chaque mot, puis recopie-le sur la ligne.',
-    fScript: 'Script',
-    fAttache: 'Attaché',
-    fRecopie: 'Je recopie',
-    fConsigneMots: "Écoute bien et écris le mot que l'adulte te dicte.",
-    fConsignePhrases: "Écoute bien et écris la phrase que l'adulte te dicte.",
-    fADicter: "À dicter par l'adulte, dans l'ordre :",
-  },
-  br: {
-    titre: 'Skrivadeg', // br: à relire (dictée)
-    categories: 'Rummadoù — {n}',
-    mode: 'Mod',
-    motsSeuls: 'Gerioù hepken',
-    motsSeulsDesc: 'Ar skoliad a glev ar ger hag e skriv',
-    phrases: 'Frazennoù',
-    phrasesDesc: 'Ur ger en ur frazenn, ar skoliad a skriv ar frazenn',
-    cleApi: "Alc'hwez API Mistral",
-    cleApiOpt: "(diret — evit krouiñ frazennoù liesseurt)",
-    cleOk: "✓ Alc'hwez kefluniet",
-    cleAucune: "Alc'hwez ebet — frazennoù prientet",
-    parametresParents: '⚙️ Arventennoù ar gerent',
-    nbMots: 'Niver a c\'herioù',
-    tous: 'An holl',
-    vitesse: 'Tizh ar vouezh',
-    quitterDictee: 'Kuitaat ar skrivadeg',
-    motN: 'Ger {n} / {total}',
-    generation: 'O krouiñ…',
-    afficherIndice: '👁️ Diskouez ar frazenn gant toulloù (tun)', // br: à relire (indice)
-    masquerIndice: 'Kuzhat an tun',
-    arreter: 'Paouez',
-    ecouterPhrase: 'Selaou ar frazenn',
-    ecouterMot: 'Selaou ar ger',
-    consigne: "Selaou mat, ha skriv ar pezh a glevez :",
-    reecouter: '🔁 Adselaou',
-    attendu: 'Gortozet',
-    feedbackOk: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Mat-tre ! 👏'],
-    feedbackErr: '❌ Ar respont mat a oa : « {r} »',
-    res100: 'Dispar, fazi ebet ! 🏆',
-    res80: "Mat-tre ! Kendalc'h evel-se 🌟",
-    res60: "Mat, met labour a zo c'hoazh ! 💪",
-    res0: 'Kalon vat, adlenn ar gerioù hag esae en-dro ! 📚',
-    // fiche imprimable — br: à relire
-    pagesFiche: 'Pajennoù ar fichenn',
-    pageListe: 'Gerioù da zeskiñ',
-    pageDictee: 'Skrivadeg da ober gant un oadour',
-    fConsigneListe: 'Lenn pep ger, hag eilskriv anezhañ war al linenn.',
-    fScript: 'Skript',
-    fAttache: 'A-stag',
-    fRecopie: 'Eilskrivañ a ran',
-    fConsigneMots: "Selaou mat ha skriv ar ger a lavar an oadour dit.",
-    fConsignePhrases: "Selaou mat ha skriv ar frazenn a lavar an oadour dit.",
-    fADicter: "Da lavaret gant an oadour, en urzh :",
-  },
-})
+const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 // Noms des catégories (définis en français dans data/dicteeMots.js)
 // br: à relire

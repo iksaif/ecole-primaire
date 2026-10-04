@@ -33,6 +33,15 @@ export function traduire(messages, cle, params, l = langue.value) {
   return interpoler(typeof v === 'function' ? v(params ?? {}) : v, params)
 }
 
+// Textes de CONTENU (énoncés, consignes de fiches…) : la langue est passée explicitement, car elle peut
+// différer de l'interface (ex. exercice de français au contenu français dans une interface bretonne).
+//   const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
+//   C.t('enonceAjout', { prenom, n })
+export function contenu(messages, langueDe) {
+  const l = () => (typeof langueDe === 'function' ? langueDe() : langueDe) ?? langue.value
+  return { t: (cle, params) => traduire(messages, cle, params, l()), langue: l }
+}
+
 export function useI18n(messages = {}) {
   return {
     langue,

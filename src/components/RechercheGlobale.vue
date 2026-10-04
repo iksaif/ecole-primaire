@@ -26,22 +26,11 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ACTIVITES, etiquetteNiveaux } from '../data/activites'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/components/RechercheGlobale.js'
+import messagesBr from '../i18n/br/components/RechercheGlobale.js'
 import { useLangueRegionale } from '../composables/useLangueRegionale'
 
-const { t, langue } = useI18n({
-  fr: {
-    ouvrir: 'Rechercher (/)', titre: 'Recherche', placeholder: 'Rechercher un exercice ou une fiche… (heure, tables, alphabet, CE1…)',
-    aide: 'Tape un mot : heure, multiplication, alphabet, dictée, CE1…', aucun: 'Rien trouvé. Essaie un autre mot.',
-    clavier: '↑ ↓ pour choisir · Entrée pour ouvrir · Échap pour fermer',
-    exercice: 'Exercice', imprimer: 'À imprimer', pdf: 'Fiche PDF',
-  },
-  br: {
-    ouvrir: 'Klask (/)', titre: 'Klask', placeholder: 'Klask ur boelladenn pe ur fichenn… (eur, taolennoù, lizherenneg, CE1…)',
-    aide: 'Skriv ur ger : eur, liesadenn, lizherenneg, skrivadeg, CE1…', aucun: "N'eus bet kavet netra. Klask ur ger all.",
-    clavier: '↑ ↓ evit dibab · Enter evit digeriñ · Esc evit serriñ', // br: à relire
-    exercice: 'Poelladenn', imprimer: 'Da voullañ', pdf: 'Fichenn PDF',
-  },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const { code: regionale } = useLangueRegionale()
 const router = useRouter()
 

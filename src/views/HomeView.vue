@@ -25,13 +25,10 @@ import GrilleActivites from '../components/GrilleActivites.vue'
 import { MATIERES, CLASSES, ACTIVITES } from '../data/activites'
 import { useClasse } from '../composables/useClasse'
 import { useI18n } from '../i18n'
+import messagesFr from '../i18n/fr/views/HomeView.js'
+import messagesBr from '../i18n/br/views/HomeView.js'
 
-const { t, langue } = useI18n({
-  fr: { bienvenue: 'Bienvenue ! 👋', accroche: "Des exercices interactifs pour réviser et progresser en s'amusant, et des fiches à imprimer.",
-    activitesPour: 'Activités pour le', toutesClasses: 'voir toutes les classes', voirTout: 'tout voir →' },
-  br: { bienvenue: 'Degemer mat ! 👋', accroche: 'Poelladennoù etrewezhiat evit adwelet ha mont war-raok en ur zudiañ, ha fichennoù da voullañ.',
-    activitesPour: 'Poelladennoù evit', toutesClasses: 'gwelet an holl glasoù', voirTout: 'gwelet pep tra →' },
-})
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const classe = useClasse()
 const matieresVisibles = computed(() => MATIERES.filter(m =>

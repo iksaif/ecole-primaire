@@ -1,0 +1,27 @@
+// Textes de l'interface — ConjugaisonView (français).
+// Clés partagées avec src/i18n/br/views/francais/ConjugaisonView.js (vérifier avec `npm run i18n`).
+export default {
+    titre: 'Conjugaison',
+    verbeAConjuguer: 'Verbe à conjuguer',
+    'groupe_irrég.': 'irrég.',
+    groupe_1er: '1er',
+    'groupe_2ème': '2ème',
+    temps: 'Temps',
+    temps_present: 'Présent',
+    temps_passe: 'Passé composé',
+    temps_imparfait: 'Imparfait',
+    temps_futur: 'Futur',
+    mode: 'Mode',
+    lacunes: 'Lacunes',
+    lacunesDesc: 'Remplis les terminaisons',
+    complet: 'Complet',
+    completDesc: 'Écris la forme entière',
+    correction: 'Correction',
+    changer: '⚙️ Changer',
+    ficheLacunes: 'Complète les terminaisons',
+    ficheComplet: 'Écris les formes complètes',
+    res100: 'Parfait, sans faute ! 🏆',
+    res80: 'Très bien ! 🌟',
+    res50: "Bien ! Continue à t'entraîner 💪",
+    res0: 'Courage ! Relis la table de conjugaison et recommence 📚',
+  }

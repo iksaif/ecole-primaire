@@ -15,7 +15,7 @@ const charger = chemin => vite.ssrLoadModule(chemin)
 const { COMPETENCES, DOMAINES, NIVEAUX } = await charger('/src/data/programme.js')
 const { ACTIVITES } = await charger('/src/data/activites.js')
 const { EXERCICES, classesDe, fichesDe } = await charger('/src/impression/exercices.js')
-const { ressourcesDe } = await charger('/src/impression/couverture.js')
+const { ressourcesDe, competencesActivite } = await charger('/src/impression/couverture.js')
 await vite.close()
 
 // une case = (compétence, classe où elle est travaillée) ; ce qui la couvre, par sorte
@@ -62,7 +62,7 @@ const parExercice = EXERCICES.filter(ex => ex.fiches?.length).map(ex => {
         const ok = k?.niveaux.includes(n)
         return `<span class="${ok ? 'ok' : 'alerte'}">${ok ? '✓' : '⚠'} ${echapper(f.titre)} <small>(${echapper(k?.libelle ?? f.competence)})</small></span>`
       })
-      const sansOption = (activite?.competences ?? []).map(id => COMPETENCES.find(x => x.id === id))
+      const sansOption = (activite ? competencesActivite(activite, n) : []).map(id => COMPETENCES.find(x => x.id === id))
         .filter(k => k?.niveaux.includes(n) && !fiches.some(f => f.competence === k.id))
         .map(k => `<span class="non">— ${echapper(k.libelle)}</span>`)
       const alerte = options.some(o => o.includes('class="alerte"'))

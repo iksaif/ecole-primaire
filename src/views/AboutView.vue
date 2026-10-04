@@ -72,13 +72,13 @@
 
       <p class="about-para">
         Ce site propose des exercices interactifs gratuits pour accompagner les enfants
-        de la <strong>maternelle</strong> (MS, GS) à la fin de l'<strong>élémentaire</strong> (CP → CM2) dans leurs révisions.
+        de la <strong>maternelle</strong> (PS, MS, GS) à la fin de l'<strong>élémentaire</strong> (CP → CM2) dans leurs révisions.
         Tout fonctionne directement dans le navigateur — sans compte, sans publicité, sans données collectées.
       </p>
 
       <h2 class="about-h2">🎯 Exercices disponibles</h2>
       <ul class="about-list">
-        <li><strong>🌱 Maternelle (MS/GS → CP)</strong> — Compter, comparer, ranger des nombres ; reconnaître les lettres</li>
+        <li><strong>🌱 Maternelle (PS → GS, et CP)</strong> — Compter, comparer, ranger des nombres ; reconnaître les lettres</li>
         <li><strong>🧮 Calcul mental</strong> — Addition, soustraction, multiplication, division (CP → CM2)</li>
         <li><strong>📐 Calcul posé</strong> — Additions et soustractions en colonnes, avec ou sans retenue (GS → CM)</li>
         <li><strong>✖️ Tables de multiplication</strong> — Entraînement, aléatoire, défi chrono (CE1 → CM2)</li>
@@ -128,7 +128,7 @@
       </p>
       <ul class="about-list prog-list">
         <li>
-          <strong>Cycle 1 — Maternelle (MS / GS)</strong><br>
+          <strong>Cycle 1 — Maternelle (PS / MS / GS)</strong><br>
           Dénombrer, comparer et ranger des quantités jusqu'à 10 ; reconnaître les formes géométriques simples ;
           identifier et nommer les lettres de l'alphabet en majuscules et minuscules.
         </li>

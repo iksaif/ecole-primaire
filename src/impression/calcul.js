@@ -836,7 +836,7 @@ const FICHES = [
   },
   {
     slug: 'fiche-suites-de-nombres',
-    niveaux: 'CP · CE1',
+    niveaux: 'CE1',  // suites de nombres : CE1 (programme.js) ; les nombres vont jusqu'à 190
     config: fiche(['suites'], { suites: { pas: [2, 5, 10], sens: 'les2' } }, { nb: 20, seed: 2300 }),
   },
   {
@@ -857,9 +857,14 @@ function textesFiche(cle, params, langue) {
 // Réglages d'une fiche de calcul toute prête (?preset=<slug> dans le générateur), graine comprise, ou null
 export const presetCalcul = slug => (slug && TELECHARGEMENTS_CALCUL.find(t => t.slug === slug)?.config) || null
 
-// compétence de programme.js de chaque type de calcul des fiches toutes prêtes
+// compétences de programme.js d'un type de calcul des fiches toutes prêtes (selon ses réglages pour « + 10, × 10 »)
 const COMPETENCES_TYPES = { tables: 'tables-multiplication', tablesAdd: 'tables-addition', addition: 'tables-addition', soustraction: 'tables-addition',
-  complements: 'complement-dizaine', division: 'sens-division', dixCent: 'multiplier-10-100', doubles: 'doubles-moities', neufOnze: 'ajouter-9', suites: 'suites-nombres' }
+  complements: 'complement-dizaine', division: 'sens-division', doubles: 'doubles-moities', neufOnze: 'ajouter-9', suites: 'suites-nombres' }
+function competencesType(type, params) {
+  if (type !== 'dixCent') return COMPETENCES_TYPES[type] ? [COMPETENCES_TYPES[type]] : []
+  const ops = params?.ops ?? []
+  return [...(ops.some(o => /^[+-]/.test(o)) ? ['ajouter-dizaines'] : []), ...(ops.some(o => o.startsWith('x')) ? ['multiplier-10-100'] : [])]
+}
 export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e }) => LANGUES_DOCUMENT.map(langue => ({
   ...e,
   ...textesFiche(cleTextes ?? e.slug, params, langue),
@@ -872,5 +877,5 @@ export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e 
   ...(e.config.mode === 'affiche' ? { domaine: DOMAINES_AFFICHES.tables, genre: 'affiche' } : { domaine: 'nombres-calcul', genre: 'fiche' }),
   // compétences de programme.js (rapport de couverture)
   competences: e.config.mode === 'affiche' ? [e.config.affiche === 'addition' ? 'tables-addition' : 'tables-multiplication']
-    : [...new Set(e.config.types.map(t => COMPETENCES_TYPES[t]).filter(Boolean))],
+    : [...new Set(e.config.types.flatMap(t => competencesType(t, e.config.params?.[t])))],
 }))

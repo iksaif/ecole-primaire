@@ -53,12 +53,19 @@
         </ul>
       </section>
     </template>
+
+    <!-- ce que le site ne couvre pas, pour l'instant : dit explicitement -->
+    <section class="hors-champ">
+      <h2 class="section-heading rubrique">{{ t('horsChamp') }}</h2>
+      <p>{{ t('horsChampVient') }}</p>
+      <p>{{ t('horsChampPas') }}</p>
+    </section>
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref, watch, onMounted, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ACTIVITES, CLASSES } from '../data/activites'
 import { COMPETENCES, DOMAINES, NIVEAUX, nomOfficiel, lienProgramme } from '../data/programme'
 import { ressourcesDe } from '../impression/couverture'
@@ -75,15 +82,29 @@ const { t: nomDomaine } = useI18n({ fr: domainesFr, br: domainesBr })
 // deux sortes : les exercices (à l'écran, ils s'impriment aussi ; avec les générateurs de fiches) et les affiches
 // (générateurs et affiches toutes prêtes). Les fiches toutes prêtes n'y sont pas (rapport `npm run couverture`).
 const SORTES = [{ id: 'exercice', icone: '🎯' }, { id: 'affiche', icone: '📄' }]
-// Tout mène à l'app : un exercice, ou le générateur réglé sur l'affiche (lien du catalogue) ; une seule puce par lien,
-// avec le titre de l'activité quand le lien est celui d'une carte (« Nombres en lettres »), sinon celui de l'affiche
+// Tout mène à l'app : un exercice, ou le générateur réglé sur la fiche (lien du catalogue, ?preset=…). Les fiches qui
+// ne diffèrent que par la présentation (format, orientation, disposition…) ne font qu'une puce ; si elles viennent
+// d'un générateur qui a sa carte (« Affiche de l'alphabet »), elles se fondent dans cette carte.
+const PRESENTATION = ['format', 'orientation', 'disposition', 'colonnes', 'taille', 'seed', 'titre', 'miseEnPage', 'lignes', 'langue']
+const contenu = c => JSON.stringify(Object.fromEntries(Object.entries(c ?? {}).filter(([k]) => !PRESENTATION.includes(k)).sort()))
+const chemin = route => {
+  const [p, q = ''] = route.split('?')
+  const params = new URLSearchParams(q)
+  params.delete('preset')
+  return params.toString() ? `${p}?${params}` : p
+}
 const versApp = liste => {
+  const cartes = new Set(liste.filter(r => r.route).map(r => r.route))
   const vus = new Map()
   for (const r of liste) {
     const route = r.route ?? r.lien
-    if (!route || vus.has(route)) continue
-    const a = ACTIVITES.find(x => x.to === route)
-    vus.set(route, { ...r, route, titre: a?.titre ?? r.titre })
+    if (!route) continue
+    // fiche toute prête : par générateur et par contenu ; fondue dans la carte du générateur si elle est là
+    const generateur = r.route ? null : chemin(route)
+    const cle = r.route ? route : cartes.has(generateur) ? generateur : `${generateur}|${contenu(r.config)}`
+    if (vus.has(cle)) continue
+    const a = ACTIVITES.find(x => x.to === cle)
+    vus.set(cle, { ...r, route: a ? cle : route, titre: a?.titre ?? r.titre })
   }
   return [...vus.values()]
 }
@@ -117,9 +138,18 @@ const groupes = computed(() => ORDRE.map(m => ({
   }).filter(d => d.competences.length),
 })).filter(g => g.domaines.length))
 
-// affichage : liste (une classe) ou tableau (toutes les classes) ; dernier choix gardé dans ce navigateur
-const affichage = ref(chargerValeur('programme_affichage', 'liste'))
+// affichage : liste (une classe) ou tableau (toutes les classes) ; dernier choix gardé dans ce navigateur.
+// L'adresse le porte (?affichage=tableau, ?classe=ce1) et suit les choix : on peut la partager telle quelle.
+const route = useRoute()
+const router = useRouter()
+const affichage = ref(['liste', 'tableau'].includes(route.query.affichage) ? route.query.affichage : chargerValeur('programme_affichage', 'liste'))
+if (CLASSES.some(c => c.id === route.query.classe)) classe.value = route.query.classe
 watch(affichage, v => sauvegarder('programme_affichage', v))
+watch([affichage, niveau], ([a, n]) => {
+  const query = { ...route.query, affichage: a, ...(a === 'liste' ? { classe: n } : {}) }
+  if (a === 'tableau') delete query.classe
+  router.replace({ query })
+}, { immediate: true })
 
 // tableau : pour chaque domaine, chaque compétence × classe (gris hors programme, rouge rien, jaune une sorte, vert plus)
 const ICONES = Object.fromEntries(SORTES.map(s => [s.id, s.icone]))
@@ -159,7 +189,6 @@ async function ouvrir(niveau, id) {
 }
 
 // ?domaine=… (liens de la page « À imprimer ») : on descend jusqu'au domaine, après le retour en haut du routeur
-const route = useRoute()
 onMounted(async () => {
   if (!route.query.domaine) return
   await nextTick()
@@ -205,5 +234,7 @@ onMounted(async () => {
 .grille td.rien { background: #fde2e1; color: #b42318; font-weight: 700; }
 .grille td.peu { background: #fff4d6; } .grille td.bien { background: #ddf3e4; }
 .grille td:not(.hors):hover { outline: 2px solid var(--bleu); outline-offset: -2px; }
+.hors-champ { margin-top: 2rem; color: #666; }
+.hors-champ p { margin: .4rem 0; max-width: 60rem; }
 .plus { border: none; background: none; color: var(--bleu); font: inherit; font-size: .82rem; cursor: pointer; padding: .15rem .3rem; }
 </style>

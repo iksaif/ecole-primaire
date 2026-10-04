@@ -8,10 +8,13 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="config.niveau = 'ms'">
+          <button class="level-btn" :class="{ active: config.niveau === 'ps' }" @click="choisirNiveau('ps')">
+            🐣 {{ t('beaucoupPlus', { niv: 'PS' }) }}
+          </button>
+          <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="choisirNiveau('ms')">
             🌱 {{ t('jusqua', { niv: 'MS', n: 5 }) }}
           </button>
-          <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="config.niveau = 'gs'">
+          <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="choisirNiveau('gs')">
             🌳 {{ t('jusqua', { niv: 'GS', n: 10 }) }}
           </button>
         </div>
@@ -33,36 +36,39 @@
       </div>
 
       <div class="mat-box">
-        <div class="consigne">{{ t('consigne') }}</div>
+        <ConsigneParlee class="consigne" :texte="t(ps ? 'consignePS' : 'consigne')" />
 
         <div class="groupes">
           <!-- Groupe gauche -->
-          <div class="groupe" :class="{ gagnant: repondu && questions[idx].reponse === 'gauche', perdant: repondu && questions[idx].reponse !== 'gauche' && questions[idx].reponse !== 'egal' }">
+          <div class="groupe" :class="{ touchable: ps && !repondu, gagnant: repondu && questions[idx].reponse === 'gauche', perdant: repondu && questions[idx].reponse !== 'gauche' && questions[idx].reponse !== 'egal' }"
+            @click="ps && repondre('gauche')">
             <div class="groupe-label">A</div>
             <div class="groupe-objets">
               <span v-for="i in questions[idx].gauche" :key="i" class="objet">
                 {{ questions[idx].emoji }}
               </span>
             </div>
-            <div class="groupe-nb">{{ questions[idx].gauche }}</div>
+            <!-- le nombre seulement après la réponse : on compare sans compter d'abord -->
+            <div class="groupe-nb" :class="{ cache: !repondu }">{{ questions[idx].gauche }}</div>
           </div>
 
           <div class="vs">?</div>
 
           <!-- Groupe droit -->
-          <div class="groupe" :class="{ gagnant: repondu && questions[idx].reponse === 'droite', perdant: repondu && questions[idx].reponse !== 'droite' && questions[idx].reponse !== 'egal' }">
+          <div class="groupe" :class="{ touchable: ps && !repondu, gagnant: repondu && questions[idx].reponse === 'droite', perdant: repondu && questions[idx].reponse !== 'droite' && questions[idx].reponse !== 'egal' }"
+            @click="ps && repondre('droite')">
             <div class="groupe-label">B</div>
             <div class="groupe-objets">
               <span v-for="i in questions[idx].droite" :key="i" class="objet">
                 {{ questions[idx].emoji }}
               </span>
             </div>
-            <div class="groupe-nb">{{ questions[idx].droite }}</div>
+            <div class="groupe-nb" :class="{ cache: !repondu }">{{ questions[idx].droite }}</div>
           </div>
         </div>
 
         <!-- Boutons réponse -->
-        <div class="reponses">
+        <div v-if="!ps" class="reponses">
           <button class="rep-btn rep-a" :class="etatBtn('gauche')"
                   :disabled="repondu" @click="repondre('gauche')">
             👈 {{ t('aPlus', { g: 'A' }) }}
@@ -103,6 +109,8 @@ import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maternelle/ComparerView.js'
 import messagesBr from '../../i18n/br/views/maternelle/ComparerView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
+import ConsigneParlee from '../../components/ConsigneParlee.vue'
+import { useClasse } from '../../composables/useClasse'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 
@@ -110,7 +118,14 @@ const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const EMOJIS = ['🍎','⭐','🐱','🌸','🚗','🦋','🍓','🐸','🐠','🌙','🍪','🎈']
 
-const config = ref({ niveau: 'ms', nbQ: 10 })
+// niveau : celui de la barre du haut s'il est de maternelle ; PS : 5 questions, on touche le groupe
+const classe = useClasse()
+const config = ref({ niveau: ['ps', 'ms', 'gs'].includes(classe.value) ? classe.value : 'ms', nbQ: classe.value === 'ps' ? 5 : 10 })
+const ps = computed(() => config.value.niveau === 'ps')
+function choisirNiveau(n) {
+  config.value.niveau = n
+  if (n === 'ps') config.value.nbQ = 5
+}
 const phase = ref('config')
 const questions = ref([])
 const idx = ref(0)
@@ -122,7 +137,18 @@ const feedbackClass = ref('')
 
 function maxNb() { return config.value.niveau === 'ms' ? 5 : 10 }
 
+// PS : comparer « à vue » deux collections dont l'une a au moins deux fois plus d'objets, jusqu'à 10, sans égalité
+// (programme.js, contraintes PS : comparaisonGlobale)
+function genererPS() {
+  const petit = aleatoire(1, 4)
+  const grand = aleatoire(Math.max(2 * petit, petit + 2), 10)
+  const plusAGauche = Math.random() < 0.5
+  const emoji = EMOJIS[aleatoire(0, EMOJIS.length - 1)]
+  return { gauche: plusAGauche ? grand : petit, droite: plusAGauche ? petit : grand, emoji, reponse: plusAGauche ? 'gauche' : 'droite' }
+}
+
 function generer() {
+  if (ps.value) return genererPS()
   const max = maxNb()
   const gauche = aleatoire(1, max)
   const forceEgal = Math.random() < 0.2 // 20% de chance d'être égal
@@ -163,7 +189,7 @@ function htmlFiche() {
     <p class="consigne">${t('fConsigne')}</p>
     ${lignes}
     <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
-      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.reponse === 'gauche' ? `<b>${q.gauche}</b> &gt; ${q.droite}` : `${q.gauche} &lt; <b>${q.droite}</b>`}</div>`).join('')}</div></section>
+      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.reponse === 'gauche' ? `<b>${q.gauche}</b> · ${q.droite}` : `${q.gauche} · <b>${q.droite}</b>`}</div>`).join('')}</div></section>
   </body></html>`
 }
 
@@ -247,6 +273,9 @@ const resultMsg = computed(() => {
 .groupe-objets { display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem; min-height: 3.5rem; align-items: center; }
 .objet { font-size: 2rem; }
 .groupe-nb { font-size: 2rem; font-weight: 900; margin-top: .5rem; color: var(--texte); }
+.groupe-nb.cache { visibility: hidden; }
+.groupe.touchable { cursor: pointer; border-color: var(--bleu); }
+.groupe.touchable:hover { background: #eaf2fd; transform: scale(1.02); }
 
 .vs { font-size: 2.5rem; font-weight: 900; color: #ccc; flex-shrink: 0; }
 

@@ -8,10 +8,13 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="config.niveau = 'ms'">
+          <button class="level-btn" :class="{ active: config.niveau === 'ps' }" @click="choisirNiveau('ps')">
+            🐣 {{ t('jusqua', { niv: 'PS', n: 3 }) }}
+          </button>
+          <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="choisirNiveau('ms')">
             🌱 {{ t('jusqua', { niv: 'MS', n: 6 }) }}
           </button>
-          <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="config.niveau = 'gs'">
+          <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="choisirNiveau('gs')">
             🌳 {{ t('jusqua', { niv: 'GS', n: 10 }) }}
           </button>
         </div>
@@ -23,7 +26,7 @@
             class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
         </div>
       </div>
-      <div v-if="mode === 'imprimer'" class="config-section">
+      <div v-if="mode === 'imprimer' && config.niveau !== 'ps'" class="config-section">
         <div class="config-section-title">{{ t('reponseFiche') }}</div>
         <div class="btn-group">
           <button class="level-btn" :class="{ active: ficheConfig.reponse === 'ecrire' }" @click="ficheConfig.reponse = 'ecrire'">✏️ {{ t('ecrire') }}</button>
@@ -41,7 +44,7 @@
 
       <div class="mat-box">
         <!-- Objets à compter -->
-        <div class="consigne">{{ t('combien', { nom: C.t(questions[idx].objet) }) }}</div>
+        <ConsigneParlee class="consigne" :texte="t('combien', { nom: C.t(questions[idx].objet) })" />
         <div class="objets-grille">
           <span v-for="i in questions[idx].nb" :key="i" class="objet" :class="animClass">
             {{ questions[idx].emoji }}
@@ -49,13 +52,15 @@
         </div>
 
         <!-- Choix de réponse -->
-        <div class="choix-grille">
+        <div class="choix-grille" :class="{ ps: config.niveau === 'ps' }" :style="{ gridTemplateColumns: `repeat(${questions[idx].choix.length}, 1fr)` }">
           <button v-for="c in questions[idx].choix" :key="c"
             class="choix-btn"
             :class="etatChoix(c)"
             :disabled="repondu"
             @click="repondre(c)">
-            {{ c }}
+            <!-- PS : la quantité en constellation de points (pas de chiffre seul) -->
+            <span v-if="config.niveau === 'ps'" class="points"><span v-for="i in c" :key="i">●</span></span>
+            <template v-else>{{ c }}</template>
           </button>
         </div>
 
@@ -87,6 +92,8 @@ import messagesBr from '../../i18n/br/views/maternelle/CompterView.js'
 import objetsFr from '../../i18n/fr/contenu/compter.js'
 import objetsBr from '../../i18n/br/contenu/compter.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
+import ConsigneParlee from '../../components/ConsigneParlee.vue'
+import { useClasse } from '../../composables/useClasse'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 
@@ -107,7 +114,13 @@ const OBJETS = [
   { emoji: '🌙', id: 'lune' },
 ]
 
-const config = ref({ niveau: 'ms', nbQ: 10 })
+// niveau : celui de la barre du haut s'il est de maternelle ; PS : 5 questions (enfants de 3 ans)
+const classe = useClasse()
+const config = ref({ niveau: ['ps', 'ms', 'gs'].includes(classe.value) ? classe.value : 'ms', nbQ: classe.value === 'ps' ? 5 : 10 })
+function choisirNiveau(n) {
+  config.value.niveau = n
+  if (n === 'ps') config.value.nbQ = 5
+}
 const phase = ref('config')
 const questions = ref([])
 const idx = ref(0)
@@ -119,20 +132,19 @@ const feedback = ref('')
 const feedbackClass = ref('')
 const animClass = ref('')
 
-function maxNb() { return config.value.niveau === 'ms' ? 6 : 10 }
+// PS : jusqu'à 3 (« voire 4 » : pas systématique) ; MS : 6 ; GS : 10 (programme.js, contraintes nombreMax)
+function maxNb() { return { ps: 3, ms: 6, gs: 10 }[config.value.niveau] ?? 6 }
 
 function generer() {
   const max = maxNb()
   const nb = aleatoire(1, max)
   const objet = OBJETS[aleatoire(0, OBJETS.length - 1)]
 
-  // 4 choix : la bonne réponse + 3 distracteurs proches
-  const mauvais = new Set()
-  while (mauvais.size < 3) {
-    const d = aleatoire(Math.max(1, nb - 3), Math.min(max, nb + 3))
-    if (d !== nb) mauvais.add(d)
-  }
-  const choix = melanger([nb, ...mauvais])
+  // PS : toutes les valeurs (1, 2, 3) dans l'ordre ; sinon la bonne réponse et 3 distracteurs proches, tirés parmi
+  // ceux qui existent (pas de boucle sans fin quand il y en a peu)
+  if (config.value.niveau === 'ps') return { nb, emoji: objet.emoji, objet: objet.id, choix: [1, 2, 3], reponse: nb }
+  const proches = melanger(Array.from({ length: max }, (_, i) => i + 1).filter(d => d !== nb && Math.abs(d - nb) <= 3))
+  const choix = melanger([nb, ...proches.slice(0, 3)])
 
   return { nb, emoji: objet.emoji, objet: objet.id, choix, reponse: nb }
 }
@@ -143,11 +155,14 @@ watch(ficheConfig, v => sauvegarder('compter_fiche', v), { deep: true })
 
 function htmlFiche() {
   const qs = Array.from({ length: config.value.nbQ }, generer)
-  const ecrire = ficheConfig.value.reponse === 'ecrire'
+  // PS : on entoure toujours la bonne constellation (jamais de chiffre à écrire)
+  const ps = config.value.niveau === 'ps'
+  const ecrire = !ps && ficheConfig.value.reponse === 'ecrire'
+  const pointsDe = n => `<span class="pts">${'●'.repeat(n)}</span>`
   const cases = qs.map((q, i) => `<div class="item"><span class="num">${i + 1}</span>
     <div class="objets">${`<span>${q.emoji}</span>`.repeat(q.nb)}</div>
     ${ecrire ? '<div class="case"></div>'
-      : `<div class="choix">${[...q.choix].sort((a, b) => a - b).map(c => `<span>${c}</span>`).join('')}</div>`}
+      : `<div class="choix${ps ? ' ps' : ''}">${[...q.choix].sort((a, b) => a - b).map(c => `<span>${ps ? pointsDe(c) : c}</span>`).join('')}</div>`}
   </div>`).join('')
   const titre = t('titre')
   return `<!DOCTYPE html><html lang="${langue.value}"><head>
@@ -164,6 +179,7 @@ function htmlFiche() {
       .choix { display: grid; grid-template-columns: 1fr 1fr; gap: .2rem .6rem; font-size: 1.5rem; font-weight: 800; flex-shrink: 0; }
       .choix span { min-width: 1.5rem; text-align: center; }
       .corr { columns: 4; font-size: 1.15rem; line-height: 2; }
+      .choix.ps { grid-template-columns: 1fr; gap: .5rem; } .pts { font-size: 1.1rem; letter-spacing: .15rem; }
     </style></head><body>
     <h1>${titre}</h1>
     ${ligneNomDate(langue.value)}
@@ -320,6 +336,9 @@ const resultMsg = computed(() => {
 .choix-btn:disabled { cursor: default; }
 .choix-btn.bonne   { border-color: var(--vert);  background: #f0faf0; }
 .choix-btn.mauvaise { border-color: var(--rouge); background: #fef0f0; }
+/* PS : gros boutons, points comme sur un dé */
+.choix-grille.ps .choix-btn { min-height: 6rem; }
+.points { display: inline-flex; gap: .35rem; font-size: 1.6rem; color: var(--bleu); min-height: 2.6rem; align-items: center; }
 
 .mat-score { font-size: 4rem; font-weight: 900; }
 .mat-msg   { font-size: 1.3rem; color: #555; margin: .5rem 0; }

@@ -157,6 +157,20 @@ console.log('Fiches par compétence : compétence au programme de chaque classe 
   verifier(!hors.length, `chaque option d'exercice correspond à une compétence au programme de la classe${hors.length ? ` (${hors.slice(0, 4).join(', ')})` : ''}`)
 }
 
+console.log('Couverture : une compétence n\'est déclarée qu\'aux classes où elle est au programme')
+{
+  const { COMPETENCES, NIVEAUX } = await import('../src/data/programme.js')
+  const { ACTIVITES } = await import('../src/data/activites.js')
+  const niveauxDe = id => COMPETENCES.find(k => k.id === id)?.niveaux ?? []
+  const parClasse = a => a.niveaux.flatMap(c => (Array.isArray(a.competences) ? [] : (a.competences?.[c] ?? []).filter(id => !niveauxDe(id).includes(c)).map(id => `${a.to} ${c} ${id}`)))
+  const fautesActivites = ACTIVITES.flatMap(parClasse)
+  verifier(!fautesActivites.length, `activités : compétences déclarées par classe au programme de cette classe${fautesActivites.length ? ` (${fautesActivites.slice(0, 4).join(', ')})` : ''}`)
+  // fiches et affiches toutes prêtes : chaque compétence au programme d'au moins une de leurs classes
+  const classes = s => (s || '').toLowerCase().split(/[·,\s]+/).filter(x => NIVEAUX.includes(x))
+  const fautesFiches = TELECHARGEMENTS.flatMap(t => (t.competences ?? []).filter(id => !classes(t.niveaux).some(c => niveauxDe(id).includes(c))).map(id => `${t.slug} ${id}`))
+  verifier(!fautesFiches.length, `fiches toutes prêtes : chaque compétence au programme d'une de leurs classes${fautesFiches.length ? ` (${fautesFiches.slice(0, 4).join(', ')})` : ''}`)
+}
+
 console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')
 {
   const { DOMAINES } = await import('../src/data/programme.js')

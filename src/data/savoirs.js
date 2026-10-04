@@ -5,12 +5,13 @@
 
 export const SAVOIRS = {
   // ── Nombres et calcul ──
+  'denombrer-3': { ps: 'Je compte jusqu’à 3 et je montre le nombre avec mes doigts.' },
   'denombrer-6': { ms: 'Je compte jusqu’à 6 objets et j’écris les chiffres de 1 à 6.' },
   'denombrer-10': { gs: 'Je compte jusqu’à 10 objets et j’écris les nombres de 1 à 10.' },
-  'comparer-quantites': { ms: 'Je dis où il y en a plus, moins ou autant.', gs: 'Je compare deux quantités : plus, moins ou autant.' },
-  'composer-decomposer': { ms: 'Je sais que trois, c’est deux et encore un.', gs: 'Je décompose les nombres jusqu’à 10 : 7, c’est 5 et 2.' },
+  'comparer-quantites': { ps: 'Je montre où il y en a beaucoup plus.', ms: 'Je dis où il y en a plus, moins ou autant.', gs: 'Je compare deux quantités : plus, moins ou autant.' },
+  'composer-decomposer': { ps: 'Je sais que deux et encore un, ça fait trois.', ms: 'Je sais que trois, c’est deux et encore un.', gs: 'Je décompose les nombres jusqu’à 10 : 7, c’est 5 et 2.' },
   'bande-numerique': { ms: 'Je range les nombres jusqu’à 6 sur la bande numérique.', gs: 'Je range les nombres jusqu’à 10 sur la bande numérique.' },
-  'problemes-maternelle': { ms: 'Je résous de petits problèmes : ajouter, retirer, partager.', gs: 'Je résous de petits problèmes : réunir, ajouter, retirer, partager.' },
+  'problemes-maternelle': { ps: 'Je trouve combien il y en a quand on en ajoute un.', ms: 'Je résous de petits problèmes : ajouter, retirer, partager.', gs: 'Je résous de petits problèmes : réunir, ajouter, retirer, partager.' },
   'numeration-100': { cp: 'Je lis, j’écris et je décompose les nombres jusqu’à 100 (dizaines et unités).' },
   'numeration-1000': { ce1: 'Je lis, j’écris et je décompose les nombres jusqu’à 1 000 (centaines, dizaines, unités).' },
   'numeration-10000': { ce2: 'Je lis, j’écris et je décompose les nombres jusqu’à 10 000.' },
@@ -180,7 +181,7 @@ export const SAVOIRS = {
   },
 
   // ── Grandeurs et mesures ──
-  'comparer-longueurs-maternelle': { ms: 'Je range des objets du plus court au plus long.', gs: 'Je compare et je range des objets selon leur longueur.' },
+  'comparer-longueurs-maternelle': { ps: 'Je montre le plus long et le plus court.', ms: 'Je range des objets du plus court au plus long.', gs: 'Je compare et je range des objets selon leur longueur.' },
   'comparer-masses-maternelle': { ms: 'Je dis quel objet est le plus lourd.', gs: 'Je compare deux objets : plus lourd, plus léger.' },
   'longueurs': {
     cp: 'Je mesure avec la règle en centimètres ; je connais le mètre.',
@@ -235,9 +236,9 @@ export const SAVOIRS = {
   },
 
   // ── Espace et géométrie ──
-  'formes-maternelle': { ms: 'Je reconnais le carré, le triangle et le disque.', gs: 'Je nomme le carré, le rectangle, le triangle et le disque.' },
+  'formes-maternelle': { ps: 'Je trouve les objets qui ont la même forme.', ms: 'Je reconnais le carré, le triangle et le disque.', gs: 'Je nomme le carré, le rectangle, le triangle et le disque.' },
   'solides-maternelle': { ms: 'Je reconnais le cube, la boule, la pyramide et le cylindre.', gs: 'Je reconnais le cube, le pavé, la boule, le cylindre, le cône et la pyramide.' },
-  'assemblages-maternelle': { ms: 'Je reproduis un assemblage : puzzle, tour de cubes.', gs: 'Je reproduis un assemblage : puzzle, pavage, tour de cubes.' },
+  'assemblages-maternelle': { ps: 'Je refais un puzzle de 4 pièces.', ms: 'Je reproduis un assemblage : puzzle, tour de cubes.', gs: 'Je reproduis un assemblage : puzzle, pavage, tour de cubes.' },
   'figures-planes': {
     cp: 'Je reconnais et je nomme le carré, le rectangle, le triangle et le disque.',
     ce1: 'Je reconnais aussi le cercle et le triangle rectangle.',
@@ -292,12 +293,17 @@ export const SAVOIRS = {
   'programmes-calcul': { cm1: 'Je suis un programme de calcul pas à pas.', cm2: 'Je suis un programme de calcul ou de construction pas à pas.' },
 
   // ── Maternelle : motifs, temps ──
-  'motifs-maternelle': { ms: 'Je continue un motif : rouge, bleu, rouge, bleu…', gs: 'Je reproduis et je continue un motif.' },
+  'motifs-maternelle': { ps: 'Je continue un motif : un rond, une étoile, un rond…', ms: 'Je continue un motif : rouge, bleu, rouge, bleu…', gs: 'Je reproduis et je continue un motif.' },
+  'moments-journee': { ps: 'Je sais si c’est le jour ou la nuit, le matin ou le soir.', ms: 'Je dis à quel moment de la journée on est.' },
+  'chronologie-maternelle': { ps: 'Je remets dans l’ordre ce qu’on fait dans la journée.', ms: 'Je raconte une histoire dans l’ordre.', gs: 'Je range les étapes d’une recette ou d’une histoire.' },
+  'reperes-espace': { ps: 'Je dis si c’est dans, sur, sous, devant ou derrière.', ms: 'Je dis où est un objet par rapport à un autre.', gs: 'Je décris où sont les objets avec les bons mots.' },
+  'categories-mots': { ps: 'Je range les images : les animaux, les fruits…', ms: 'Je trouve l’intrus.', gs: 'Je trouve le mot qui les regroupe : animal, véhicule.' },
   'jours-mois': { ms: 'Je connais les jours de la semaine.', gs: 'Je connais les jours, les mois et les saisons.' },
 
   // ── Français : lecture ──
-  'syllabes-orales': { ms: 'Je frappe les syllabes d’un mot.', gs: 'Je compte et je change les syllabes d’un mot.' },
+  'syllabes-orales': { ps: 'Je frappe les syllabes de mon prénom.', ms: 'Je frappe les syllabes d’un mot.', gs: 'Je compte et je change les syllabes d’un mot.' },
   'nom-lettres': {
+    ps: 'Je reconnais mon prénom écrit en capitales.',
     ms: 'Je reconnais les lettres de mon prénom.',
     gs: 'Je connais le nom des lettres de l’alphabet.',
     cp: 'Je connais les lettres en capitale, en script et en cursive.',
@@ -320,7 +326,7 @@ export const SAVOIRS = {
   },
 
   // ── Français : écriture ──
-  'geste-ecriture-maternelle': { ms: 'J’écris mon prénom en capitales.', gs: 'J’écris des lettres et mon prénom en cursive.' },
+  'geste-ecriture-maternelle': { ps: 'Je trace des traits, des points, des ronds et des boucles.', ms: 'J’écris mon prénom en capitales.', gs: 'J’écris des lettres et mon prénom en cursive.' },
   'cursive': {
     cp: 'J’écris les lettres minuscules en cursive.',
     ce1: 'J’écris en cursive, aussi les majuscules.',

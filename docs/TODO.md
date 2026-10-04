@@ -28,16 +28,25 @@
 
 ## Manques au programme
 
+- [ ] **Design de l'accueil à retravailler** : l'en-tête empile « Bienvenue », la phrase d'intro, « 🆕 Nouveau… », « 📚 Le programme de la classe… » et « Activités pour le CP — voir toutes les classes » sans hiérarchie claire ; repenser la mise en page (titre, accès au programme, nouveautés, filtre de classe)
+
+- [ ] **Barre de navigation** : Maths / Français / <langue régionale> (Brezhoneg, seulement si une langue régionale est active) / Le Monde — la Lecture passe dans Français, « Autres » (quiz) devient « Le Monde » ; garder « À imprimer » et le choix de classe
+- [ ] **Le reste du programme dans `programme.js` et la page `/programme`** : ce qui a du sens ici (exercices, fiches, affiches) — cycle 1 « Explorer le monde » (BO n° 19), cycle 2 « Questionner le monde » (vivant, matière, objets ; espace et temps), cycle 3 histoire, géographie, sciences et technologie. Pas l'EPS, ni les arts, ni l'EMC, ni la pédagogie ; pas de langue étrangère pour l'instant (anglais…). Ajouter les textes officiels correspondants dans `docs/programmes/`, puis les domaines et compétences avec leurs sources ; le quiz de culture générale s'y rattachera (aujourd'hui « hors programme »)
+- [x] Page `/programme` : lien direct vers un mode et une classe (`?affichage=tableau`, `?classe=ce1`), l'adresse suit les choix
+- [x] Page `/programme` : une section « pas sur ce site pour l'instant » qui liste explicitement ce qui est hors du champ (EPS, arts, EMC, langues vivantes…) et ce qui viendra (le monde, histoire, géographie, sciences)
+- [ ] Langue régionale (breton) : son propre programme (langues vivantes régionales) pour plus tard, quand la rubrique <langue régionale> existera
+
 - [ ] **Couverture complète PS, MS, GS, CP, CE1** : plans écrits (`plans/10-couverture-ps.md` … `-ce1.md`, chacun avec ses décisions à prendre) ; à exécuter niveau par niveau
   - [ ] Ordre : presets → textes des BO → implémenter les plans **classe par classe** (recommandations des plans retenues par défaut, à noter dans chaque plan)
-  - [ ] Rapport de couverture trop optimiste : les compétences sont déclarées par exercice (`COMPETENCES_ROUTES`), pas par classe → déclarer par classe (ou dériver des options) ; compter aussi les fiches bilan des exercices
+  - [x] Rapport de couverture trop optimiste : les compétences sont déclarées par exercice (`COMPETENCES_ROUTES`), pas par classe → déclarer par classe (ou dériver des options) ; compter aussi les fiches bilan des exercices
   - [ ] Défauts trouvés par les plans : `<` et `>` dans les fiches Ordonner et la correction de Comparer (CP) ; Formes sans niveau (rectangle en MS, formes toujours dans la même position) ; Lettres « Reconnaître » compare deux lettres identiques ; fiches d'écriture « GS » avec l'attaché majuscule ; Compter boucle sans fin si le maximum est 3 ; aucune consigne lue à voix haute en maternelle (`useTTS`)
-  - [ ] Données à corriger (plan CP) : `fiche-ajouter-retirer-10` rangée en « multiplier par 10 » ; `fiche-suites-de-nombres` « CP · CE1 » monte à 190 ; Orthographe « Le soli___ brille » est faux ; doubles et moitiés du CP hors des valeurs du programme
+  - [ ] Données à corriger (plan CP) : ~~`fiche-ajouter-retirer-10` rangée en « multiplier par 10 »~~ ✓ ; ~~`fiche-suites-de-nombres` « CP · CE1 » monte à 190~~ ✓ (CE1) ; ~~Orthographe « Le soli___ brille »~~ ✓ ; doubles et moitiés du CP hors des valeurs du programme
   - [ ] Lecture : le mode « Lecture de textes » n'a aucune question (compréhension non couverte, CP et CE1)
 
 - [x] Textes des programmes officiels (BO cycle 1, 2, 3) dans le dépôt, en texte / Markdown (`docs/programmes/`), pour coder et vérifier `programme.js`
 - [x] Liens vers les générateurs réglés sur la fiche exacte (`?preset=<slug>` pour nombres, alphabet, écriture, calcul) : page `/programme` et bouton « Personnaliser » des pages de téléchargement
 - [x] Lien plus visible *vers* la page `/programme` : accueil (sous le titre) et haut des pages Maths et Français (en plus du pied de page, des domaines de « À imprimer » et de « À propos »)
+- [x] Page `/programme` : les fiches qui ne diffèrent que par la présentation (format, orientation, disposition) se fondent dans leur générateur (« Affiche de l'alphabet » au lieu de A4 / A3)
 - [x] Page `/programme` : les liens mènent aux générateurs (affiches, fiches), pas aux pages de téléchargement
 - [x] Page `/programme` : deux sortes seulement — 🎯 exercice (s'imprime aussi ; avec les générateurs de fiches) et 📄 affiche ; pas les fiches toutes prêtes (elles restent dans `npm run couverture`)
 - [x] Page `/programme`, tableau : au clic sur une case, montrer clairement où on arrive (mise en évidence de la compétence)
@@ -57,6 +66,8 @@
       fluence, compréhension, fiches prégénérées ; lettres : cursive, sons, b/d p/q
 
 ## Bugs et dette
+
+- [ ] **Analyse du code et plan d'amélioration** : relire l'ensemble du code actuel (vues, générateurs, catalogues, build, tests) et écrire un plan (`plans/11-qualite-code.md`) : duplications (vues d'exercices, listes de classes, cadres de fiches), composants communs à extraire, données à sortir des vues, cohérence des catalogues et des compétences, performances du build, couverture des tests, dette i18n ; avec l'ordre, l'effort et le risque de chaque étape
 
 - [ ] Géométrie : l'avertissement rouge « Imprimer à 100 %… » est aussi sur la fiche imprimée — le passer en orange dans le formulaire et le retirer de la fiche, comme pour Mesures ?
 

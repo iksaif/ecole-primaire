@@ -3,6 +3,8 @@
 export default {
     titre: "Keñveriañ ar c'hementadoù", // br: à relire
     jusqua: '{niv} — betek {n}',
+    beaucoupPlus: "{niv} — kalz muioc'h", // br: à relire
+    consignePS: "E pelec'h ez eus ar muiañ ? Stok ouzh ar strollad.", // br: à relire
     consigne: "Peseurt strollad en deus muioc'h ?",
     aPlus: "Muioc'h gant {g}",
     pareil: 'Kement ha kement', // br: à relire

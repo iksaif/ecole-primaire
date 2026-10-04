@@ -35,7 +35,7 @@ import textesFr from '../src/i18n/fr/pages-statiques.js'
 import textesBr from '../src/i18n/br/pages-statiques.js'
 import domainesFr from '../src/i18n/fr/domaines.js'
 import domainesBr from '../src/i18n/br/domaines.js'
-import { DOMAINES, nomOfficiel, lienProgramme } from '../src/data/programme.js'
+import { DOMAINES, NIVEAUX, nomOfficiel, lienProgramme } from '../src/data/programme.js'
 
 const arg = (nom, defaut) => {
   const i = process.argv.indexOf(nom)
@@ -51,7 +51,7 @@ const env = loadEnv(MODE, racine)
 const BASE = env.VITE_BASE || '/ecole-primaire/'
 const SITE_URL = (env.VITE_SITE_URL || 'https://iksaif.github.io/ecole-primaire/').replace(/\/?$/, '/')
 const SITE = site(env.VITE_SITE)
-const CLASSES = ['ms', 'gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2']
+const CLASSES = NIVEAUX
 // Adresse de référence d'une fiche : les fiches qui contiennent du breton vivent sur skoolik.app, les autres
 // sur ecoleprimaire.app (les deux sites publient tout, sans contenu dupliqué pour les moteurs de recherche)
 const urlReference = t => (t.langues.includes('br') ? SITES.skoolik.url : SITES.ecoleprimaire.url)

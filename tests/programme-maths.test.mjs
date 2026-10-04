@@ -71,9 +71,21 @@ const figures = (txt, k) => {
   return !!k.symetrie || !/symétri/i.test(txt) || 'symétrie'
 }
 
+// PS, comparer : chaque paire du corrigé (« 5 · 2 ») a un rapport d'au moins 2, sans dépasser le maximum
+const rapport = (txt, k) => {
+  const n = nombres(corrige(txt)), fautes = []
+  for (let i = 0; i + 1 < n.length; i += 2) {
+    const [a, b] = [n[i], n[i + 1]].sort((x, y) => x - y)
+    if (b < k.comparaisonGlobale.rapportMin * a || b > k.comparaisonGlobale.max) fautes.push(`${n[i]} · ${n[i + 1]}`)
+  }
+  return !fautes.length || `rapport < ${k.comparaisonGlobale.rapportMin} ou > ${k.comparaisonGlobale.max} : ${fautes.join(', ')}`
+}
+
 // ── Cas : [route, bouton de niveau (texte), niveau du programme, vérifications, options à activer] ──
 // options : expressions sur le texte des boutons ; `tout:<titre>` active tous les boutons d'une section
 const CAS = [
+  ['/maternelle/compter', '\\bPS\\b', 'ps', [champ('nombreMax', corrige)]],
+  ['/maternelle/comparer', '\\bPS\\b', 'ps', [rapport]],
   ['/maternelle/compter', 'MS', 'ms', [champ('nombreMax', corrige)]],
   ['/maternelle/compter', 'GS', 'gs', [champ('nombreMax', corrige)]],
   ['/maternelle/comparer', 'MS', 'ms', [champ('nombreMax', corrige)]],

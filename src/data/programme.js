@@ -29,14 +29,15 @@
 //     directement (#page=), `extrait` reprend ou résume le passage. Ce qui est une interprétation est marqué
 //     `interpretation: '…'`.
 //   - Cycle 1 : le programme est écrit par âge (« avant 4 ans », « à partir de 4 ans », « à partir de 5 ans ou dès que
-//     les apprentissages précédents ont pu être observés »). Nous lisons « à partir de 4 ans » = MS et « à partir de
-//     5 ans » = GS : c'est une interprétation (le texte laisse l'enseignant avancer plus tôt).
+//     les apprentissages précédents ont pu être observés »). Nous lisons « avant 4 ans » = PS, « à partir de 4 ans » = MS
+//     et « à partir de 5 ans » = GS : c'est une interprétation (le texte laisse l'enseignant avancer plus tôt). PS
+//     ajoutée le 2026-10-04 (plans/10-couverture-ps.md ; pages vérifiées dans docs/programmes/).
 //   - `niveaux` d'une compétence : l'année d'introduction d'abord, puis les années suivantes (jusqu'au CM2) où elle
 //     reste travaillée ou réinvestie.
 //   - `officiel`, `source` et `lien` d'un domaine sont indexés par cycle (1, 2, 3) : le nom change d'un cycle à l'autre.
 
-export const NIVEAUX = ['ms', 'gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2']
-export const CYCLE_DE = { ms: 1, gs: 1, cp: 2, ce1: 2, ce2: 2, cm1: 3, cm2: 3 }
+export const NIVEAUX = ['ps', 'ms', 'gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2']
+export const CYCLE_DE = { ps: 1, ms: 1, gs: 1, cp: 2, ce1: 2, ce2: 2, cm1: 3, cm2: 3 }
 
 export const SOURCES = {
   bo41: {
@@ -165,7 +166,7 @@ export const DOMAINES = [
   {
     // domaine du BO n° 19 (2026), hors mathématiques au cycle 1 ; au cycle 2, l'heure et les durées sont dans
     // « Grandeurs et mesures » et le calendrier relève de « Questionner le monde » (non relu)
-    id: 'temps-espace', court: 'Se repérer dans le temps', matiere: 'autres', cycles: [1],
+    id: 'temps-espace', court: 'Se repérer dans le temps et l’espace', matiere: 'autres', cycles: [1],
     officiel: { 1: 'Se repérer dans le temps et l’espace' },
     source: { 1: src('bo19', 23, 'Se repérer dans le temps et l’espace') },
     lien: { 1: PARENTS[1] },
@@ -221,14 +222,16 @@ export const COMPETENCES = [
     src('bo41', 62, 'À partir de 4 ans : constituer une collection d’un cardinal donné (jusqu’à six objets) ; écrire en chiffres les nombres de un à six ; comptine de un à douze')),
   c('denombrer-10', 'nombres-calcul', 'Compter jusqu’à 10 (voire au-delà), écrire les nombres de 1 à 10, réciter la comptine jusqu’à 30', ['gs'],
     src('bo41', 63, 'À partir de 5 ans : collection d’un cardinal donné (jusqu’à dix, voire au-delà) ; écrire en chiffres les nombres de un à dix ; comptine jusqu’à trente (p. 64)')),
-  c('comparer-quantites', 'nombres-calcul', 'Comparer deux quantités (plus, moins, autant)', ['ms', 'gs'],
-    src('bo41', 61, 'Comparer des quantités (objectif repris à 4 et 5 ans, p. 62-63)')),
-  c('composer-decomposer', 'nombres-calcul', 'Composer et décomposer les petits nombres (« trois, c’est deux et un »)', ['ms', 'gs'],
-    src('bo41', 62, 'Composer et décomposer des nombres inférieurs ou égaux à six (4 ans), à dix (5 ans, p. 63)')),
+  c('denombrer-3', 'nombres-calcul', 'Compter une petite collection jusqu’à 3 (voire 4), la montrer avec ses doigts, réciter la comptine jusqu’à 6', ['ps'],
+    src('bo41', 60, 'Avant 4 ans : dénombrer et constituer une collection jusqu’à trois, voire quatre ; doigts, constellations ; un de plus ; comptine de un à six (p. 61)')),
+  c('comparer-quantites', 'nombres-calcul', 'Comparer deux quantités (plus, moins, autant)', ['ps', 'ms', 'gs'],
+    src('bo41', 61, 'Avant 4 ans : comparer globalement (sans dénombrer) deux collections dont les quantités diffèrent d’un facteur au moins égal à deux ; objectif repris à 4 et 5 ans (p. 62-63)')),
+  c('composer-decomposer', 'nombres-calcul', 'Composer et décomposer les petits nombres (« trois, c’est deux et un »)', ['ps', 'ms', 'gs'],
+    src('bo41', 61, 'Avant 4 ans : deux, trois, voire quatre (« un et un font deux ») ; nombres inférieurs ou égaux à six à 4 ans (p. 62), à dix à 5 ans (p. 63)')),
   c('bande-numerique', 'nombres-calcul', 'Ranger les nombres sur la bande numérique (jusqu’à 6, puis jusqu’à 10)', ['ms', 'gs'],
     src('bo41', 65, 'Se familiariser avec le début de la bande numérique (nombres ≤ 6, 4 ans) ; construire la bande numérique jusqu’à dix (5 ans)')),
-  c('problemes-maternelle', 'nombres-calcul', 'Résoudre de petits problèmes : réunir, ajouter, retirer, partager', ['ms', 'gs'],
-    src('bo41', 66, 'Problèmes de parties-tout, d’ajout et de retrait, de groupement, de partage équitable (p. 66-67)')),
+  c('problemes-maternelle', 'nombres-calcul', 'Résoudre de petits problèmes : réunir, ajouter, retirer, partager', ['ps', 'ms', 'gs'],
+    src('bo41', 66, 'Avant 4 ans : parties-tout avec du matériel (la valise : deux peluches et encore une) ; problèmes d’ajout et de retrait, de groupement, de partage équitable (p. 66-67)')),
   // Nombres et calcul — cycles 2 et 3
   c('numeration-100', 'nombres-calcul', 'Lire, écrire et décomposer les nombres jusqu’à 100 (dizaines et unités)', ['cp'],
     src('c2maths', 3, 'CP : « Les connaissances et les savoir-faire attendus concernent les nombres entiers jusqu’à cent. »')),
@@ -312,8 +315,8 @@ export const COMPETENCES = [
   c('problemes-etapes', 'nombres-calcul', 'Résoudre des problèmes en deux ou trois étapes', depuis('cp'),
     src('c2maths', 9, 'CP : additifs en deux étapes ; CE1 p. 19 : mixtes en deux étapes ; CE2 p. 25 : deux ou trois étapes ; CM1 c3maths p. 8')),
   // Grandeurs et mesures
-  c('comparer-longueurs-maternelle', 'grandeurs-mesures', 'Comparer et ranger des objets selon leur longueur', ['ms', 'gs'],
-    src('bo41', 70, '4 ans : comparer directement, classer, ordonner ; 5 ans : comparer indirectement (bande témoin), ordonner jusqu’à cinq objets')),
+  c('comparer-longueurs-maternelle', 'grandeurs-mesures', 'Comparer et ranger des objets selon leur longueur', ['ps', 'ms', 'gs'],
+    src('bo41', 69, 'Avant 4 ans : même longueur, plus long quand les longueurs sont très différentes ; 4 ans : comparer directement, classer, ordonner ; 5 ans : comparer indirectement (bande témoin), ordonner jusqu’à cinq objets (p. 70)')),
   c('comparer-masses-maternelle', 'grandeurs-mesures', 'Comparer la masse de deux objets (plus lourd, plus léger)', ['ms', 'gs'],
     src('bo41', 70, '« la masse n’est introduite qu’à partir de quatre ans » (p. 69) ; 5 ans : ordonner les masses de trois objets, balance Roberval')),
   c('longueurs', 'grandeurs-mesures', 'Mesurer avec la règle ; m et cm (CP), km (CE1), dm et mm (CE2), du mm au km (CM1)', depuis('cp'),
@@ -341,12 +344,13 @@ export const COMPETENCES = [
   c('durees', 'grandeurs-mesures', 'Calculer une durée (h, min), puis avec les secondes (CM2)', depuis('ce1'),
     src('c2maths', 29, 'CE1 : unités heure et minute, durées en heures, demi-heures et quarts d’heure ; CE2 p. 31 ; CM2 c3maths p. 18 : introduction des secondes')),
   // Espace et géométrie
-  c('formes-maternelle', 'espace-geometrie', 'Reconnaître puis nommer carré, rectangle, triangle et disque', ['ms', 'gs'],
-    src('bo41', 69, '4 ans : reconnaitre et classer des formes planes (triangle, carré, disque) ; 5 ans : décrire et nommer carré, rectangle, triangle, disque')),
+  c('formes-maternelle', 'espace-geometrie', 'Trier les objets selon leur forme (PS), reconnaître (MS) puis nommer (GS) carré, rectangle, triangle et disque', ['ps', 'ms', 'gs'],
+    src('bo41', 68, 'Avant 4 ans : reconnaitre, trier et classer des objets selon leur forme, sans les faire nommer prématurément ; 4 ans (p. 69) : reconnaitre et classer triangle, carré, disque ; 5 ans : décrire et nommer carré, rectangle, triangle, disque'),
+    { interpretation: 'PS : aucune liste de formes dans le texte ; nous utilisons disque, carré, triangle (liste de 4 ans) sans les faire nommer' }),
   c('solides-maternelle', 'espace-geometrie', 'Reconnaître puis décrire cube, pavé, boule, pyramide, cylindre, cône', ['ms', 'gs'],
     src('bo41', 69, '4 ans : reconnaitre et classer cube, boule, pyramide à base carrée, cylindre ; 5 ans : décrire cube, pavé, boule, pyramides, cylindre, cône')),
-  c('assemblages-maternelle', 'espace-geometrie', 'Reproduire un assemblage (puzzle, pavage, tour de cubes)', ['ms', 'gs'],
-    src('bo41', 69, 'Reproduire des assemblages de solides (au maximum cinq) et de formes planes (au maximum huit à 5 ans)')),
+  c('assemblages-maternelle', 'espace-geometrie', 'Reproduire un assemblage (puzzle, pavage, tour de cubes)', ['ps', 'ms', 'gs'],
+    src('bo41', 69, 'Avant 4 ans : au plus quatre éléments ; puis assemblages de solides (au maximum cinq) et de formes planes (au maximum huit à 5 ans)')),
   c('figures-planes', 'espace-geometrie', 'Reconnaître, nommer et décrire les figures planes (liste par année)', depuis('cp'),
     src('c2maths', 32, 'CP : disque, carré, rectangle, triangle ; CE1 p. 34 : + cercle, triangle rectangle ; CE2 p. 36 : + losange ; CM1 c3maths p. 20 : triangles isocèle et équilatéral, quadrilatère ; CM2 p. 21 : + trapèze, trapèze rectangle, pentagone, hexagone')),
   c('angle-droit', 'espace-geometrie', 'Repérer et tracer un angle droit avec l’équerre', depuis('ce1'),
@@ -370,15 +374,24 @@ export const COMPETENCES = [
     src('c3maths', 26, 'CM1 : identifier une situation de proportionnalité, la résoudre par la linéarité ; pas de tableau de proportionnalité au cours moyen')),
   c('programmes-calcul', 'pensee-informatique', 'Suivre un programme de calcul ou de construction pas à pas', ['cm1', 'cm2'],
     src('c3maths', 28, 'CM1 : exécuter des programmes de calcul, codages de déplacements ; CM2 : jusqu’à trois instructions, produire des programmes de construction')),
-  c('motifs-maternelle', 'motifs', 'Reproduire et continuer un motif (rouge, bleu, rouge, bleu…)', ['ms', 'gs'],
-    src('bo41', 70, 'Copier, identifier, compléter, prolonger un motif ; motifs évolutifs seulement à partir de cinq ans')),
+  c('motifs-maternelle', 'motifs', 'Reproduire et continuer un motif (rouge, bleu, rouge, bleu…)', ['ps', 'ms', 'gs'],
+    src('bo41', 71, 'Avant 4 ans : mémoriser, reproduire, compléter un motif répétitif très simple ; copier, identifier, compléter, prolonger un motif (p. 70) ; motifs évolutifs seulement à partir de cinq ans')),
+  c('moments-journee', 'temps-espace', 'Les moments de la journée : matin, soir, jour, nuit ; avant, après, maintenant', ['ps', 'ms'],
+    src('bo19', 24, 'Avant 4 ans : différencier le matin et le soir, le jour et la nuit ; 4 ans : reconnaitre le matin, le midi, l’après-midi, le soir, la nuit')),
+  c('chronologie-maternelle', 'temps-espace', 'Remettre dans l’ordre des moments vécus, puis les étapes d’une histoire', ['ps', 'ms', 'gs'],
+    src('bo19', 25, 'Avant 4 ans : ordonner entre eux des moments rituels vécus ; 4 ans : chronologie d’une histoire simple ; 5 ans : étapes d’un processus')),
+  c('reperes-espace', 'temps-espace', 'Dans, sur, sous, devant, derrière, à côté : situer un objet', ['ps', 'ms', 'gs'],
+    src('bo19', 27, 'Vocabulaire spatial : ici, là-bas, au-dessus, en dessous, dans, dedans, dehors, à côté, devant, derrière ; situer des objets entre eux à 4 ans'),
+    { interpretation: 'progression par âge résumée d’après les p. 26-28, à relire avant d’en tirer des contraintes' }),
+  c('categories-mots', 'oral', 'Ranger des mots-images par catégorie, trouver l’intrus', ['ps', 'ms', 'gs'],
+    src('bo41', 47, 'Avant 4 ans : retrouver un intrus, attribuer un objet à une catégorie ; puis intrus dans une catégorie (4 ans), hyperonymes (5 ans)')),
   c('jours-mois', 'temps-espace', 'Les jours de la semaine (MS), les mois et les saisons (GS)', ['ms', 'gs'],
     src('bo19', 24, '4 ans : savoir que la semaine est une suite de sept jours, nommer les jours ; 5 ans : énoncer la date, nommer la plupart des mois, connaitre les saisons (p. 25)')),
   // Lecture
-  c('syllabes-orales', 'lecture', 'Scander, compter et manipuler les syllabes d’un mot à l’oral', ['ms', 'gs'],
-    src('bo41', 52, '4 ans : manipuler les syllabes (ajout, suppression, permutation…) ; 5 ans : rimes, phonèmes')),
-  c('nom-lettres', 'lecture', 'Connaître le nom des lettres et associer capitale, script et cursive', ['ms', 'gs', 'cp'],
-    src('bo41', 52, '4 ans : lettres du prénom, correspondance lettres scriptes majuscules et minuscules et lettres cursives minuscules ; 5 ans : nom de toutes les lettres (capitale, script, cursive), b/d, p/q')),
+  c('syllabes-orales', 'lecture', 'Scander, compter et manipuler les syllabes d’un mot à l’oral', ['ps', 'ms', 'gs'],
+    src('bo41', 51, 'Avant 4 ans : prononcer son prénom, puis une comptine en scandant les syllabes ; 4 ans (p. 52) : manipuler les syllabes (ajout, suppression, permutation…) ; 5 ans : rimes, phonèmes')),
+  c('nom-lettres', 'lecture', 'Connaître le nom des lettres et associer capitale, script et cursive', ['ps', 'ms', 'gs', 'cp'],
+    src('bo41', 52, 'Avant 4 ans (p. 51) : reconnaitre et nommer certaines lettres de son prénom, retrouver l’étiquette de son prénom en capitales ; 4 ans : lettres du prénom, correspondance lettres scriptes majuscules et minuscules et lettres cursives minuscules ; 5 ans : nom de toutes les lettres (capitale, script, cursive), b/d, p/q')),
   c('son-lettres', 'lecture', 'Connaître le son des lettres', ['gs', 'cp'],
     src('bo41', 53, '5 ans : connaitre le nom des lettres de l’alphabet et leur valeur sonore hormis les occlusives')),
   c('decodage', 'lecture', 'Déchiffrer des syllabes, des mots puis des phrases (correspondances lettres-sons)', ['cp', 'ce1'],
@@ -388,8 +401,8 @@ export const COMPETENCES = [
   c('comprendre-texte', 'lecture', 'Comprendre un texte lu (personnages, informations, ordre des événements)', entre('cp', 'cm2'),
     src('bo41', 77, 'CP : dégager le sens global d’un texte entendu ou lu ; repris chaque année ; cycle 3 c3francais p. 4')),
   // Écriture
-  c('geste-ecriture-maternelle', 'ecriture', 'Tracer les lettres capitales (MS), puis écrire en cursive (GS)', ['ms', 'gs'],
-    src('bo41', 56, '4 ans : tracer des lettres capitales, s’initier aux tracés de l’écriture cursive ; 5 ans : tracer des lettres en écriture cursive, les enchainer')),
+  c('geste-ecriture-maternelle', 'ecriture', 'Tracer des formes de base (PS), les lettres capitales (MS), puis écrire en cursive (GS)', ['ps', 'ms', 'gs'],
+    src('bo41', 56, 'Avant 4 ans : tracer quelques formes de base (traits verticaux, horizontaux, points, boucles, cercles) ; 4 ans : tracer des lettres capitales, s’initier aux tracés de l’écriture cursive ; 5 ans : tracer des lettres en écriture cursive, les enchainer')),
   c('cursive', 'ecriture', 'Écrire en cursive : minuscules (CP), majuscules (CE1), automatiser (CE2)', entre('cp', 'ce2'),
     src('bo41', 80, 'CP : cursive en minuscules ; CE1 : automatise les minuscules, majuscules cursives en 2e partie d’année ; CE2 : automatise minuscules et majuscules')),
   c('copie', 'ecriture', 'Copier sans erreur (lettre, syllabe, mot, phrase)', entre('cp', 'ce2'),
@@ -500,9 +513,36 @@ const plage = (a, b, pas = 1) => Array.from({ length: Math.floor((b - a) / pas) 
 //   classesMots          natures de mots à nommer
 //   pluriels             marques du pluriel des noms et adjectifs : 's' ; puis 'x' (-eau, -eu, -ou → -x) et 'al-aux'
 //   feminins             marques du féminin : 'e' (petit → petite) ; puis 'audible' (blanc → blanche, joyeux → joyeuse)
-//   cursive              'initiation' | 'minuscules' | 'majuscules' | 'automatise'
+//   cursive              'initiation' | 'minuscules' | 'majuscules' | 'automatise' (null en PS)
+//   comparaisonGlobale   PS : { rapportMin, max } comparer à vue deux collections (rapport d'au moins 2)
+//   formesTriees         PS : formes à trier sans les nommer ; assemblageMax : éléments d'un assemblage
+//   motifs               PS : 'alternance' (AB) ; masse / zero : false avant 4 ans
+//   graphisme            PS : formes de base à tracer ; temps : 'journee' (la semaine arrive à 4 ans)
 //   lectureMotsParMinute fluence attendue en fin d'année
 export const CONTRAINTES = [
+  {
+    niveau: 'ps', nombreMax: 3, comptineMax: 6, ecritureChiffresMax: 3,
+    comparaisonGlobale: { rapportMin: 2, max: 10 },
+    figures: [], formesTriees: ['disque', 'carre', 'triangle'], solides: [],
+    assemblageMax: 4, motifs: 'alternance', masse: false, zero: false,
+    lettres: 'prenom-capitales', cursive: null,
+    graphisme: ['vertical', 'horizontal', 'point', 'boucle', 'cercle'],
+    temps: 'journee',
+    sources: {
+      nombreMax: src('bo41', 60, 'Avant 4 ans : dénombrer, constituer une collection jusqu’à trois, voire quatre'),
+      comptineMax: src('bo41', 61, 'Réciter de façon ordonnée et segmentée la comptine jusqu’à six, en partant de un'),
+      comparaisonGlobale: src('bo41', 61, 'Comparer globalement des collections dont les quantités diffèrent d’un facteur au moins égal à deux'),
+      figures: src('bo41', 68, 'Reconnaitre, trier et classer des objets selon leur forme ; ne pas faire nommer prématurément'),
+      assemblageMax: src('bo41', 69, 'À partir d’un modèle, reproduire un assemblage d’au plus quatre éléments'),
+      motifs: src('bo41', 71, 'Mémoriser, reproduire un motif répétitif très simple'),
+      masse: src('bo41', 69, 'la masse n’est introduite qu’à partir de quatre ans'),
+      zero: src('bo41', 60, 'ne pas introduire prématurément le nombre zéro'),
+      lettres: src('bo41', 51, 'Reconnaitre et nommer certaines lettres de son prénom ; retrouver l’étiquette de son prénom (lettres capitales)'),
+      graphisme: src('bo41', 56, 'Tracer quelques formes de base : traits verticaux, traits horizontaux, points, boucles, cercles'),
+      temps: src('bo19', 24, 'Avant 4 ans : différencier le matin et le soir, le jour et la nuit'),
+    },
+    interpretation: 'nombreMax 3 : « voire quatre » n’est pas systématique ; ecritureChiffresMax 3 = chiffre montré pour être associé à une quantité, jamais à tracer ; comparaisonGlobale.max 10 : le texte dit seulement de ne pas se limiter aux petites collections ; formesTriees : liste de 4 ans, sans la faire nommer',
+  },
   {
     niveau: 'ms', nombreMax: 6, comptineMax: 12, ecritureChiffresMax: 6,
     figures: ['triangle', 'carre', 'disque'], solides: ['cube', 'boule', 'pyramide', 'cylindre'],

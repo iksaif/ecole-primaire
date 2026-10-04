@@ -18,14 +18,18 @@ export function classesDuTexte(s) {
 
 // Ressources : { sorte: 'exercice' | 'fiche' | 'affiche', titre, route (app) ou slug (page /telechargements/),
 // competences, classes }. Fiches en français seulement (les versions bretonnes ont le même contenu).
+// compétences d'une activité à une classe : sa liste, ou ce qu'elle propose à cette classe ({ classe: [...] })
+export const competencesActivite = (a, classe) => (Array.isArray(a.competences) ? a.competences : a.competences?.[classe] ?? [])
+
 export const RESSOURCES = [
-  ...ACTIVITES.filter(a => a.competences?.length).map(a => ({
+  // une ressource par classe de l'activité (les compétences peuvent dépendre de la classe)
+  ...ACTIVITES.flatMap(a => a.niveaux.map(classe => ({
     sorte: a.matiere === 'imprimer' ? (a.genre === 'affiche' ? 'affiche' : 'fiche') : 'exercice',
-    generateur: a.matiere === 'imprimer', titre: a.titre, icone: a.icon, route: a.to, competences: a.competences, classes: a.niveaux,
-  })),
+    generateur: a.matiere === 'imprimer', titre: a.titre, icone: a.icon, route: a.to, competences: competencesActivite(a, classe), classes: [classe],
+  }))).filter(r => r.competences.length),
   ...[...TELECHARGEMENTS.filter(t => t.langues.includes('fr')), ...TELECHARGEMENTS_CALCUL.filter(t => t.config.langue !== 'br')].map(t => ({
     // lien : le générateur réglé sur cette fiche ou affiche (`lien` du catalogue) ; slug : sa page de téléchargement
-    sorte: t.genre === 'affiche' ? 'affiche' : 'fiche', titre: t.court ?? t.titre, slug: t.slug, lien: t.lien,
+    sorte: t.genre === 'affiche' ? 'affiche' : 'fiche', titre: t.court ?? t.titre, slug: t.slug, lien: t.lien, config: t.config,
     competences: t.competences ?? [], classes: classesDuTexte(t.niveaux),
   })),
   ...EXERCICES.flatMap(ex => ex.classes.flatMap(c => fichesDe(ex, c.classe).map(f => ({

@@ -227,7 +227,7 @@ const QUESTIONS = {
     { type: 'saisie', phrase: 'Je man___ une pomme.',   bonne: 'mange',   indice: 'man___' },
     { type: 'saisie', phrase: 'Il fa___ froid.',         bonne: 'fait',    indice: 'fa___', niv: 'ce1' },
     { type: 'saisie', phrase: 'Elle es___ contente.',    bonne: 'est',     indice: 'es___' },
-    { type: 'saisie', phrase: 'Le soli___ brille.',      bonne: 'soleil',  indice: 'soli___' },
+    { type: 'saisie', phrase: 'Le sol___ brille.',       bonne: 'soleil',  indice: 'sol___' },
     { type: 'saisie', phrase: 'Mon ___ s\'appelle Rex.', bonne: 'chien',   indice: '___ien' },
     { type: 'saisie', phrase: 'La ___ est belle.',       bonne: 'fleur',   indice: '___eur' },
     // Mots avec h muet / h aspiré

@@ -4,6 +4,7 @@
 
 import { LANGUES_REGIONALES } from '../data/languesRegionales.js'
 import { DOMAINES_AFFICHES, TELECHARGEMENTS_AFFICHES } from './affiches/catalogue.js'
+import { COMPETENCES } from '../data/programme.js'
 
 // Chaque entrée a un `domaine` (id de src/data/programme.js) et un `genre` ('affiche' | 'fiche') : le build range
 // les téléchargements par domaine puis par genre (plan 09). Les fiches d'écriture relèvent toutes de l'écriture,
@@ -194,6 +195,13 @@ function fichesRegionales(r) {
   ].map(t => ({ ...t, langues: [r.id] }))
 }
 
+// compétences d'une fiche au programme d'au moins une de ses classes (« GS · CP · CE1 ») : les fiches d'écriture
+// déclarent le geste d'écriture de maternelle, qui ne vaut que pour celles de GS
+const auProgramme = (competences = [], niveaux = '') => {
+  const classes = niveaux.toLowerCase().split(/[·,\s]+/)
+  return competences.filter(id => COMPETENCES.find(k => k.id === id)?.niveaux.some(n => classes.includes(n)))
+}
+
 // « Personnaliser » et page « Le programme » : le générateur réglé sur cette fiche (?preset=<slug>, voir presetDe)
 export const avecPreset = (lien, slug) => `${lien}${lien.includes('?') ? '&' : '?'}preset=${slug}`
 
@@ -207,7 +215,7 @@ export const TELECHARGEMENTS = [
     ...nombres.map(t => ({ langues: t.config.langues, ...t })),
     // contenu en langue régionale (alphabet, jours, mois, nombres, lettres une à une)
     ...LANGUES_REGIONALES.filter(r => r.fiches).flatMap(fichesRegionales),
-  ].map(t => ({ ...t, lien: avecPreset(t.lien, t.slug) })),
+  ].map(t => ({ ...t, lien: avecPreset(t.lien, t.slug), competences: auProgramme(t.competences, t.niveaux) })),
   // affiches de la droite numérique, de la numération, de l'horloge, des euros, de conjugaison, des formes (français) :
   // leur lien règle déjà l'affiche (?affiche=…&variante=…)
   ...TELECHARGEMENTS_AFFICHES,

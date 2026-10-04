@@ -2,6 +2,7 @@
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
 
 export const CLASSES = [
+  { id: 'ps',  label: 'PS' },
   { id: 'ms',  label: 'MS' },
   { id: 'gs',  label: 'GS' },
   { id: 'cp',  label: 'CP' },
@@ -69,8 +70,8 @@ export const ACTIVITES = [
   })),
 
   // ── Maths ──
-  { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ms', 'gs'] },
-  { fiche: true, to: '/maternelle/comparer', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '⚖️', titre: 'Comparer les quantités', desc: 'Quel groupe a le plus ?', niveaux: ['ms', 'gs'] },
+  { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ps', 'ms', 'gs'] },
+  { fiche: true, to: '/maternelle/comparer', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '⚖️', titre: 'Comparer les quantités', desc: 'Quel groupe a le plus ?', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: ['ms', 'gs'] },
   { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/calcul-mental', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🧮', titre: 'Calcul mental', desc: 'Additions, soustractions, doubles, moitiés, tables', niveaux: de('cp', 'cm2') },
@@ -130,32 +131,56 @@ const BR = {
 }
 // (les deux cartes de /imprimer/calcul n'ont pas le même sens : seule la carte « fiches » reprend la traduction)
 // Compétences de src/data/programme.js travaillées par chaque exercice ou générateur (rapport de couverture :
-// `npm run couverture`) ; seulement aux niveaux de l'activité. Les affiches ont les leurs dans leur catalogue.
+// `npm run couverture`, page /programme), seulement aux niveaux de l'activité. Une liste vaut pour tous ses niveaux ;
+// un objet { classe: [...] } dit ce que l'exercice propose vraiment à chaque classe (options du niveau). Les affiches
+// ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
+const CE = ['ce1', 'ce2']
+const parClasse = (classes, liste) => Object.fromEntries(classes.map(c => [c, liste]))
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
   '/imprimer/alphabet': ['nom-lettres'],
   '/imprimer/nombres': ['nombres-en-lettres', 'numeration-100', 'numeration-1000'],
-  '/maternelle/compter': ['denombrer-6', 'denombrer-10'],
+  '/maternelle/compter': { ps: ['denombrer-3'], ms: ['denombrer-6'], gs: ['denombrer-10'] },
   '/maternelle/comparer': ['comparer-quantites'],
   '/maternelle/ordonner': ['bande-numerique'],
   '/maternelle/formes': ['formes-maternelle'],
   '/maternelle/lettres': ['nom-lettres'],
-  '/maths/numeration': ['numeration-1000', 'numeration-10000', 'nombres-en-lettres', 'comparer-ranger', 'droite-graduee', 'suites-nombres', 'ajouter-dizaines'],
-  '/maths/calcul-mental': ['tables-addition', 'tables-multiplication', 'doubles-moities', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'multiplier-10-100', 'sens-division'],
-  '/maths/calcul-pose': ['addition-posee', 'soustraction-posee'],
+  '/maths/numeration': {
+    ce1: ['numeration-1000', 'nombres-en-lettres', 'comparer-ranger', 'droite-graduee', 'suites-nombres'],
+    ce2: ['numeration-10000', 'nombres-en-lettres', 'comparer-ranger', 'droite-graduee', 'suites-nombres'],
+  },
+  // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
+  '/maths/calcul-mental': {
+    cp: ['tables-addition', 'complement-dizaine', 'doubles-moities'],
+    ce1: ['tables-addition', 'tables-multiplication', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100'],
+    ce2: ['tables-addition', 'tables-multiplication', 'sens-division', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100'],
+    ...parClasse(['cm1', 'cm2'], ['tables-multiplication', 'sens-division', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100']),
+  },
+  '/maths/calcul-pose': { cp: ['addition-posee'], ...parClasse(['ce1', 'ce2', 'cm1', 'cm2'], ['addition-posee', 'soustraction-posee']) },
   '/maths/tables': ['tables-multiplication'],
-  '/maths/fractions': ['fractions-unitaires', 'fractions-inferieures-1', 'fractions-egales', 'fractions-mesure'],
+  '/maths/fractions': { ce1: ['fractions-unitaires', 'fractions-inferieures-1'], ce2: ['fractions-unitaires', 'fractions-inferieures-1', 'fractions-egales', 'fractions-mesure'] },
   '/maths/problemes': ['problemes-additifs', 'problemes-multiplicatifs', 'problemes-etapes'],
-  '/maths/heure': ['heure-entiere', 'heure-demi-quart', 'heure-minutes', 'durees'],
-  '/maths/monnaie': ['monnaie-euros', 'monnaie-centimes'],
-  '/maths/mesures': ['longueurs', 'masses', 'contenances'],
-  '/maths/geometrie': ['figures-planes', 'solides', 'patrons', 'symetrie', 'tracer-figures', 'reperage-deplacements', 'angle-droit'],
+  '/maths/heure': { ce1: ['heure-entiere', 'heure-demi-quart', 'durees'], ce2: ['heure-entiere', 'heure-demi-quart', 'heure-minutes', 'durees'] },
+  '/maths/monnaie': parClasse(CE, ['monnaie-euros', 'monnaie-centimes']),
+  '/maths/mesures': { ce1: ['longueurs', 'masses'], ce2: ['longueurs', 'masses', 'contenances'] },
+  '/maths/geometrie': {
+    ce1: ['figures-planes', 'solides', 'tracer-figures', 'reperage-deplacements'],
+    ce2: ['figures-planes', 'solides', 'tracer-figures', 'reperage-deplacements', 'symetrie', 'angle-droit', 'patrons'],
+  },
   '/francais/dictee': ['dictee', 'orthographe-lexicale'],
-  '/francais/orthographe': ['orthographe-lexicale', 'accents-lettres', 'accords-gn'],
-  '/francais/grammaire': ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn', 'complements'],
-  '/francais/conjugaison': ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'conjugaison-2e-groupe', 'conjugaison-passe-simple', 'radical-terminaison'],
+  // accents et lettres à plusieurs sons : aucune question aujourd'hui
+  '/francais/orthographe': { ...parClasse(['cp', 'ce1', 'ce2'], ['orthographe-lexicale', 'accords-gn']), ...parClasse(['cm1', 'cm2'], ['accords-gn']) },
+  '/francais/grammaire': { ...parClasse(CE, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn']), ...parClasse(['cm1', 'cm2'], ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn', 'complements']) },
+  '/francais/conjugaison': {
+    cp: ['conjugaison-present-etre-avoir'],
+    ce1: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'radical-terminaison'],
+    ce2: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'radical-terminaison'],
+    cm1: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'conjugaison-2e-groupe', 'radical-terminaison'],
+    cm2: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'conjugaison-2e-groupe', 'conjugaison-passe-simple', 'radical-terminaison'],
+  },
   '/francais/vocabulaire': ['ordre-alphabetique', 'synonymes-antonymes', 'familles-mots'],
-  '/lecture': ['decodage', 'comprendre-texte', 'syllabes-orales'],
+  // compréhension : le mode « Lecture de textes » n'a pas encore de questions
+  '/lecture': ['decodage'],
 }
 const COMPETENCES_CALCUL = { affiche: ['tables-addition', 'tables-multiplication'], fiche: ['tables-addition', 'tables-multiplication', 'complement-dizaine', 'doubles-moities', 'ajouter-dizaines', 'ajouter-9', 'multiplier-10-100', 'sens-division', 'suites-nombres'] }
 for (const a of ACTIVITES) {

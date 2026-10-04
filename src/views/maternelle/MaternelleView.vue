@@ -1,36 +1,13 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🌱 {{ t('titre') }} — MS / GS</h1>
+    <h1 class="section-heading">🌱 {{ t('titre') }}</h1>
+    <!-- les exercices de maternelle du catalogue (activites.js), avec leurs classes -->
     <div class="card-grid">
-      <RouterLink to="/maternelle/compter" class="card maternelle">
-        <span class="card-icon">🔢</span>
-        <span class="card-title">{{ t('compter') }}</span>
-        <span class="card-desc">{{ t('compterDesc') }}</span>
-        <span class="card-tag">MS / GS</span>
-      </RouterLink>
-      <RouterLink to="/maternelle/comparer" class="card maternelle">
-        <span class="card-icon">⚖️</span>
-        <span class="card-title">{{ t('comparer') }}</span>
-        <span class="card-desc">{{ t('comparerDesc') }}</span>
-        <span class="card-tag">MS / GS</span>
-      </RouterLink>
-      <RouterLink to="/maternelle/ordonner" class="card maternelle">
-        <span class="card-icon">📶</span>
-        <span class="card-title">{{ t('ordonner') }}</span>
-        <span class="card-desc">{{ t('ordonnerDesc') }}</span>
-        <span class="card-tag">MS / GS</span>
-      </RouterLink>
-      <RouterLink to="/maternelle/lettres" class="card maternelle">
-        <span class="card-icon">🔡</span>
-        <span class="card-title">{{ t('lettres') }}</span>
-        <span class="card-desc">{{ t('lettresDesc') }}</span>
-        <span class="card-tag">GS / CP</span>
-      </RouterLink>
-      <RouterLink to="/maternelle/formes" class="card maternelle">
-        <span class="card-icon">🔷</span>
-        <span class="card-title">{{ t('formes') }}</span>
-        <span class="card-desc">{{ t('formesDesc') }}</span>
-        <span class="card-tag">MS / GS</span>
+      <RouterLink v-for="a in activites" :key="a.to" :to="a.to" class="card maternelle">
+        <span class="card-icon">{{ a.icon }}</span>
+        <span class="card-title">{{ langue === 'br' && a.br ? a.br.titre : a.titre }}</span>
+        <span class="card-desc">{{ langue === 'br' && a.br ? a.br.desc : a.desc }}</span>
+        <span class="card-tag">{{ etiquetteNiveaux(a.niveaux) }}</span>
       </RouterLink>
     </div>
   </div>
@@ -38,10 +15,12 @@
 
 <script setup>
 import { useI18n } from '../../i18n'
+import { ACTIVITES, etiquetteNiveaux } from '../../data/activites'
 import messagesFr from '../../i18n/fr/views/maternelle/MaternelleView.js'
 import messagesBr from '../../i18n/br/views/maternelle/MaternelleView.js'
 
-const { t } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const activites = ACTIVITES.filter(a => a.to.startsWith('/maternelle/'))
 </script>
 
 <style>

@@ -7,7 +7,7 @@ import { COULEURS, hauteurRendue } from './cadre.js'
 
 const NIVEAU = n => n.toUpperCase()
 // « en MS », « au CP »
-export const enClasse = n => `${['ms', 'gs'].includes(n) ? 'en' : 'au'} ${NIVEAU(n)}`
+export const enClasse = n => `${['ps', 'ms', 'gs'].includes(n) ? 'en' : 'au'} ${NIVEAU(n)}`
 export const phrases = c => savoirsDu(COMPETENCES.filter(k => k.domaine === c.domaine), c.niveau)
 
 export const titre = c => `${domaineDe(c.domaine)?.court ?? ''} — ${NIVEAU(c.niveau)}`

@@ -8,7 +8,7 @@ export default {
   proportionnalite: 'Kenfeurded', // br: à relire
   'pensee-informatique': 'Soñjal evel un urzhiataer', // br: à relire
   motifs: 'Patromoù aozet', // br: à relire
-  'temps-espace': "En em lec'hiañ en amzer", // br: à relire
+  'temps-espace': "En em lec'hiañ en amzer hag en egor", // br: à relire
   lecture: 'Lenn', // br: à relire
   ecriture: 'Skrivañ', // br: à relire
   oral: 'Komz', // br: à relire

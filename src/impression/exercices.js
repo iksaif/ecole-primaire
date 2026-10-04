@@ -4,6 +4,7 @@
 // enregistre l'aperçu en PDF — c'est exactement la fiche que l'app produit. Fichier lu aussi par node : il
 // n'importe que des données pures.
 import { ACTIVITES } from '../data/activites.js'
+import { NIVEAUX } from '../data/programme.js'
 
 export const NB_VARIANTES = 4
 
@@ -159,9 +160,9 @@ const LISTE = [
     ] },
   // ── Maternelle ──
   { id: 'compter', route: '/maternelle/compter', groupe: 'maternelle', titre: { fr: 'Compter les objets', br: 'Kontañ an traoù' },
-    classes: [C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
+    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
   { id: 'comparer', route: '/maternelle/comparer', groupe: 'maternelle', titre: { fr: 'Comparer les quantités', br: "Keñveriañ ar c'hementadoù" },
-    classes: [C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
+    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
   { id: 'ranger', route: '/maternelle/ordonner', groupe: 'maternelle', titre: { fr: 'Ranger les nombres', br: 'Renkañ an niveroù' },
     classes: [C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
   { id: 'lettres', route: '/maternelle/lettres', groupe: 'maternelle', titre: { fr: 'Les lettres', br: 'Al lizherennoù' },
@@ -181,7 +182,7 @@ export const fichesDe = (ex, classe) => (ex.fiches ?? []).filter(f => !f.classes
   .map(f => ({ ...f, competence: typeof f.competence === 'object' ? f.competence[classe] : f.competence }))
 
 // « ce1 » → ['ce1'] ; « cp-cm2 » → toutes les classes de CP à CM2
-const ORDRE = ['ms', 'gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2']
+const ORDRE = NIVEAUX
 export function classesDe(code) {
   const [a, b] = code.split('-')
   if (!b) return [a]

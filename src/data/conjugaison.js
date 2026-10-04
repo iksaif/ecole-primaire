@@ -28,7 +28,18 @@ export const TEMPS_CYCLE = ['present', 'imparfait', 'futur', 'passe-compose']
 export const TEMPS_CM2 = ['passe-simple', 'plus-que-parfait']
 
 // Une forme = liste de segments [classe, texte] : « rad » radical, « ter » terminaison, « aux » auxiliaire, « pp » participe, « » texte simple
-const segmentsForme = (def, i) => (Array.isArray(def) ? [['', def[i]]] : [['rad', def.r], ['ter', def.f[i]]])
+// Formes entières (verbes irréguliers) : on colore la terminaison quand elle est régulière (je vai·s, nous all·ons,
+// ils v·ont) ; les vraies exceptions restent sans couleur (j'ai, vous êtes, vous faites). La plus longue d'abord.
+const TERMINAISONS = {
+  pres: [['s', 'x'], ['s', 'x'], ['t', 'd'], ['ons'], ['ez'], ['ent', 'ont']],
+  ps: [['ai', 's'], ['as', 's'], ['a', 't'], ['âmes', 'îmes', 'ûmes', 'mes'], ['âtes', 'îtes', 'ûtes', 'tes'], ['èrent', 'irent', 'urent', 'rent']],
+}
+function decouper(forme, fins) {
+  const f = fins.find(t => forme.endsWith(t) && forme.length > t.length)
+    ?? fins.find(t => forme === t)    // « ils ont » : la forme entière est la terminaison
+  return f ? [['rad', forme.slice(0, -f.length)], ['ter', f]].filter(([, t]) => t) : [['rad', forme]]
+}
+const segmentsForme = (def, i, temps) => (Array.isArray(def) ? decouper(def[i], TERMINAISONS[temps][i]) : [['rad', def.r], ['ter', def.f[i]]])
 const voyelle = f => /^[aeiouyàâéèêëîïôöûüh]/i.test(f)
 
 // Les six lignes d'un temps : [[classe, texte], …] pour chaque personne, pronom compris (« j' » devant une voyelle)
@@ -37,11 +48,11 @@ export function formesTemps(verbe, temps) {
   const auxP = v.aux === 'être' ? ETRE_PRES : AVOIR_PRES, auxI = v.aux === 'être' ? ETRE_IMP : AVOIR_IMP
   const compose = (aux, i) => [['aux', aux[i]], ['', ' '], ['pp', v.pp + (v.aux === 'être' ? (i >= 3 ? '(e)s' : '(e)') : '')]]
   return PRONOMS.map((pronom, i) => {
-    const segs = temps === 'present' ? segmentsForme(v.pres, i)
+    const segs = temps === 'present' ? segmentsForme(v.pres, i, 'pres')
       : temps === 'imparfait' ? [['rad', v.imp], ['ter', FIN_IMP[i]]]
       : temps === 'futur' ? [['rad', v.fut], ['ter', FIN_FUT[i]]]
       : temps === 'passe-compose' ? compose(auxP, i)
-      : temps === 'passe-simple' ? segmentsForme(v.ps, i)
+      : temps === 'passe-simple' ? segmentsForme(v.ps, i, 'ps')
       : compose(auxI, i)    // plus-que-parfait
     const debut = segs[0][1]
     return i === 0 && voyelle(debut) ? [['', "j'"], ...segs] : [['', `${pronom} `], ...segs]

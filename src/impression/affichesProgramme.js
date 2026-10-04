@@ -74,8 +74,12 @@ function numeration(cfg, W, H) {
   const colEntieres = def.classes.flatMap(c => c.rangs)
   const nbCol = colEntieres.length + (def.decimales ? 1 + DECIMALES.length : 0)
   const wCol = Math.min(40, W / (nbCol + 0.2))
-  const fs = Math.min(wCol * 0.4, 16)
   const hLigne = Math.min(28, H / 9)
+  // taille limitée aussi par la hauteur (peu de colonnes en paysage → sinon le tableau sort de la page) :
+  // en-têtes ≈ 1,2 em, chaque exemple ≈ 4,4 em + 4 mm (chiffres + lecture), note ≈ 0,9 em + 5 mm
+  const nEx = def.exemples.length
+  const fsHauteur = (H * 0.92 - hLigne * 0.7 - 4 - nEx * 4 - 5) / (1.2 + nEx * 4.4 + 0.9)
+  const fs = Math.min(wCol * 0.4, 16, fsHauteur)
   const couleurRang = i => COULEURS[Math.floor(i / 3) % COULEURS.length]
   // une ligne de cellules : chiffres alignés à droite des colonnes entières ; la virgule dans sa colonne
   const ligneNombre = nombre => {

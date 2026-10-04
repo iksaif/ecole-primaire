@@ -37,3 +37,9 @@ export function generer(slug) {
   const t = TELECHARGEMENTS.find(x => x.slug === slug)
   return GENERATEURS[t.type](t.config, polices)
 }
+
+// Même fiche avec des réglages modifiés (tests : l'autre orientation, le format A3…)
+export function genererAvec(slug, reglages) {
+  const t = TELECHARGEMENTS.find(x => x.slug === slug)
+  return GENERATEURS[t.type]({ ...t.config, ...reglages }, polices)
+}

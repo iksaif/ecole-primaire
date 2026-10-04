@@ -24,7 +24,7 @@ if (!process.env.TEST_URL) {
   process.env.TEST_URL = 'http://localhost:4190/'
 }
 
-const fichiers = ['logique', 'routes', 'cadre', 'statiques', ...(complet ? ['reglages'] : [])]
+const fichiers = ['logique', 'routes', 'cadre', 'statiques', 'affiches', ...(complet ? ['reglages'] : [])]
 let echec = false
 for (const f of fichiers) {
   console.log(`\n▶ ${f}`)

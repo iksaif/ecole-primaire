@@ -17,15 +17,18 @@
 //
 // Options : --mode <mode Vite> (défaut : production → .env ; ecoleprimaire / skoolik → .env.<mode>)
 //           --outDir <dossier> (défaut : dist)   --sans-exercices (plus rapide, pour tester)
+//           --exercice <id> (fiches d'exercices d'un seul exercice, pour tester ; ex. calcul-mental)
+//           --travailleurs <n> (onglets de Chrome en parallèle ; défaut : un par cœur, 12 au plus)
 // Variables : CHROME_PATH (chemin de Chrome). Le site (VITE_SITE), la base (VITE_BASE) et l'URL publique
 // (VITE_SITE_URL) viennent des fichiers .env*.
 import { preview, loadEnv } from 'vite'
 import { chromium } from 'playwright-core'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, dirname, extname } from 'node:path'
+import { availableParallelism } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { CATEGORIES } from '../src/impression/catalogue.js'
-import { EXERCICES, NB_VARIANTES, classesDe, etiquetteClasse } from '../src/impression/exercices.js'
+import { EXERCICES, NB_VARIANTES, NB_VARIANTES_COMPETENCE, classesDe, etiquetteClasse, fichesDe } from '../src/impression/exercices.js'
 import { site, SITES, CONTACT } from '../src/site.js'
 import { DRAPEAUX } from '../src/data/drapeaux.js'
 import textesFr from '../src/i18n/fr/pages-statiques.js'
@@ -42,6 +45,7 @@ const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 const MODE = arg('--mode', 'production')
 const OUT_DIR = arg('--outDir', 'dist')
 const AVEC_EXERCICES = !process.argv.includes('--sans-exercices')
+const SEUL_EXERCICE = arg('--exercice', null)
 const dist = join(racine, OUT_DIR)
 const env = loadEnv(MODE, racine)
 const BASE = env.VITE_BASE || '/ecole-primaire/'
@@ -354,62 +358,157 @@ async function enPdf(doc, html, dossier, nomPdf, nomApercu) {
   return { paysage: false, nbApercus: 1 }
 }
 
-// Fiches d'exercices : la page d'exercice de l'app en mode impression, avec un hasard reproductible
-async function genererExercices(navigateur, url, doc) {
+// Boutons d'options d'une page d'exercice, dans l'ordre : section, libellé, coché
+const SELECTEUR_OPTIONS = '.cadre-exercice .config-section button'
+const lireOptions = page => page.evaluate(sel => [...document.querySelectorAll(sel)].map(b => ({
+  section: b.closest('.config-section')?.querySelector('.config-section-title')?.textContent.trim() ?? '',
+  texte: b.innerText.trim().replace(/\s+/g, ' '), actif: b.classList.contains('active'), desactive: b.disabled,
+})), SELECTEUR_OPTIONS)
+// position du premier bouton qui correspond à « Section › libellé » ou à « libellé » (expressions régulières)
+function position(options, spec) {
+  const [s, t] = spec.includes(' › ') ? spec.split(' › ') : [null, spec]
+  // un bouton désactivé (option hors du niveau) compte comme absent
+  return options.findIndex(o => !o.desactive && (!s || new RegExp(s, 'i').test(o.section)) && new RegExp(t).test(o.texte))
+}
+// Fiche par compétence, sur la page en français : règle `clics`, coche `seul`, décoche les autres options de
+// `choix`. Chaque clic est recalculé sur la page du moment (une option peut ajouter ou retirer une section) et la
+// suite des positions cliquées est renvoyée, pour la rejouer telle quelle sur la page aux consignes en breton, avec
+// les positions finales des options cochées (pour le titre breton : leurs libellés, déjà traduits).
+async function isolerCompetence(page, ex, f, slug) {
+  const clics = []
+  const cliquer = async (spec, cocher) => {
+    const options = await lireOptions(page)
+    const i = position(options, spec)
+    if (i < 0 || options[i].actif === cocher) return i >= 0
+    await page.locator(SELECTEUR_OPTIONS).nth(i).click()
+    clics.push(i)
+    return true
+  }
+  for (const spec of f.clics ?? []) if (!(await cliquer(spec, true))) throw new Error(`${slug} : réglage /${spec}/ introuvable`)
+  let trouves = 0
+  for (const spec of f.seul) if (await cliquer(spec, true)) trouves++
+  if (!trouves) throw new Error(`${slug} : aucune option de la compétence trouvée (${f.seul.join(', ')})`)
+  for (const spec of ex.choix ?? []) if (!f.seul.includes(spec)) await cliquer(spec, false)
+  const options = await lireOptions(page)
+  return { clics, coches: f.seul.map(spec => position(options, spec)).filter(i => i >= 0) }
+}
+
+// Exécute les tâches avec plusieurs travailleurs en parallèle (un onglet de Chrome chacun) ; renvoie les résultats
+// dans l'ordre des tâches. creer() prépare un travailleur, faire(travailleur, tâche) traite une tâche.
+const NB_TRAVAILLEURS = Math.max(1, Math.min(Number(arg('--travailleurs', 0)) || availableParallelism(), 12))
+async function enParallele(taches, creer, faire) {
+  const travailleurs = await Promise.all(Array.from({ length: Math.min(NB_TRAVAILLEURS, taches.length) }, creer))
+  const res = new Array(taches.length)
+  let k = 0
+  await Promise.all(travailleurs.map(async w => {
+    while (k < taches.length) { const i = k++; res[i] = await faire(w, taches[i]) }
+  }))
+  return { res, travailleurs }
+}
+
+// Fiches d'exercices : la page d'exercice de l'app en mode impression, avec un hasard reproductible.
+// Une tâche = une fiche (bilan d'un exercice × classe, ou fiche par compétence) dans une langue ; toutes les fiches
+// en français d'abord, car celles en breton rejouent les clics relevés en français.
+async function genererExercices(navigateur, url) {
+  // clics des fiches par compétence relevés sur la page en français (clé : slug sans -brezhoneg)
+  const clicsCompetence = new Map()
   const res = []
   for (const langue of ['fr', 'br']) {
-    const ctx = await navigateur.newContext({ viewport: { width: 1100, height: 1000 } })
-    await ctx.addInitScript(l => {
-      const g = new URLSearchParams(location.search).get('graine')
-      if (g) {
-        let s = Number(g) | 0
-        Math.random = () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
-      }
-      // chaque fiche part des réglages par défaut de l'exercice (pas de réglage mémorisé d'une fiche à l'autre)
-    try { localStorage.clear(); localStorage.setItem('ep_langue_interface', JSON.stringify(l)); localStorage.setItem('ep_avis_traduction_vu', 'true') } catch {}
-    }, langue)
-    const page = await ctx.newPage()
-    for (const ex of EXERCICES) {
+    const taches = []
+    for (const ex of EXERCICES.filter(e => !SEUL_EXERCICE || e.id === SEUL_EXERCICE)) {
       for (const c of ex.classes) {
-        const slug = `exercices-${ex.id}-${c.classe}${langue === 'br' ? '-brezhoneg' : ''}`
-        const dossier = join(dist, 'telechargements', slug)
-        mkdirSync(dossier, { recursive: true })
-        let paysage = false
-        for (let v = 1; v <= NB_VARIANTES; v++) {
-          await page.goto(`${url}?graine=${graineDe(slug) + v}#${ex.route}?mode=imprimer`)
-          await page.locator('.cadre-exercice').waitFor({ timeout: 15000 })
-          if (c.bouton) {
-            const btn = page.locator('.cadre-exercice button', { hasText: new RegExp(c.bouton) }).first()
-            if (!(await btn.count())) throw new Error(`${slug} : bouton de niveau /${c.bouton}/ introuvable`)
-            await btn.click()
-          }
-          // réglages propres à la classe (ex. opérations du calcul mental)
-          for (const re of c.clics ?? []) {
-            const b = page.locator('.cadre-exercice button', { hasText: new RegExp(re) }).first()
-            if (await b.count() && !(await b.getAttribute('class') ?? '').includes('active')) await b.click()
-          }
-          // prénom/date et corrigé : options communes du cadre (useOptionsFiche), par défaut l'en-tête et le
-          // corrigé sur une autre page (localStorage vidé ci-dessus)
-          const iframe = page.locator('.cadre-exercice iframe').first()
-          await iframe.waitFor({ timeout: 15000 })
-          await page.waitForTimeout(300)
-          paysage = (await enPdf(doc, await iframe.getAttribute('srcdoc'), dossier, `fiche-${v}.pdf`, `apercu-${v}.jpg`)).paysage || paysage
-        }
-        const niveaux = etiquetteClasse(c.classe)
-        res.push({
-          slug, categorie: 'exercices', domaine: ex.domaine, genre: ex.genre, ...classer({ slug, ...ex }), variantes: NB_VARIANTES,
-          langues: [langue], classes: classesDe(c.classe), niveaux, lien: ex.route, paysage, nbPages: 1,
-          titreFr: `${ex.titre.fr} — ${niveaux} : fiches d'exercices à imprimer${langue === 'br' ? ' (consignes en breton)' : ''}`,
-          titreBr: `${ex.titre.br} — ${niveaux} : fichennoù poelladennoù da voullañ`,
-          courtFr: `${ex.titre.fr} · ${niveaux}`, courtBr: `${ex.titre.br} · ${niveaux}`,
-          description: `${ex.titre.fr} (${niveaux}) : ${NB_VARIANTES} fiches d'exercices différentes à imprimer, avec le corrigé${langue === 'br' ? ', consignes en breton' : ''}. Gratuit, en PDF.`,
-        })
-        console.log(`✓ ${slug} (${NB_VARIANTES} fiches)`)
+        taches.push({ ex, c })
+        for (const f of fichesDe(ex, c.classe)) taches.push({ ex, c, f })
       }
     }
-    await ctx.close()
+    const creer = async () => {
+      const ctx = await navigateur.newContext({ viewport: { width: 1100, height: 1000 } })
+      await ctx.addInitScript(l => {
+        const g = new URLSearchParams(location.search).get('graine')
+        if (g) {
+          let s = Number(g) | 0
+          Math.random = () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+        }
+        // chaque fiche part des réglages par défaut de l'exercice (pas de réglage mémorisé d'une fiche à l'autre)
+        try { localStorage.clear(); localStorage.setItem('ep_langue_interface', JSON.stringify(l)); localStorage.setItem('ep_avis_traduction_vu', 'true') } catch {}
+      }, langue)
+      const doc = await navigateur.newPage({ deviceScaleFactor: 1 })
+      await doc.goto(url)
+      return { ctx, page: await ctx.newPage(), doc }
+    }
+    const { res: fiches, travailleurs } = await enParallele(taches, creer, (w, t) => ficheExercice(w, t, langue, url, clicsCompetence))
+    for (const w of travailleurs) { await w.ctx.close(); await w.doc.close() }
+    res.push(...fiches)
+  }
+  // titre breton des fiches par compétence en français : les libellés relevés sur la page aux consignes en breton
+  for (const t of res.filter(x => x.competence && x.langues[0] === 'fr')) {
+    const br = res.find(x => x.slug === `${t.slug}-brezhoneg`)
+    if (br) Object.assign(t, { titreBr: br.titreBr, courtBr: br.courtBr })
   }
   return res
+}
+
+// Une fiche d'exercices (bilan si `f` est absent, sinon fiche par compétence) : ses variantes en PDF et son entrée
+async function ficheExercice({ page, doc }, { ex, c, f }, langue, url, clicsCompetence) {
+  const base = `exercices-${ex.id}-${c.classe}${f ? `-${f.id}` : ''}`
+  const slug = `${base}${langue === 'br' ? '-brezhoneg' : ''}`
+  const dossier = join(dist, 'telechargements', slug)
+  mkdirSync(dossier, { recursive: true })
+  const nb = f ? NB_VARIANTES_COMPETENCE : NB_VARIANTES
+  let paysage = false, libellesBr = ''
+  for (let v = 1; v <= nb; v++) {
+    await page.goto(`${url}?graine=${graineDe(slug) + v}#${ex.route}?mode=imprimer`)
+    await page.locator('.cadre-exercice').waitFor({ timeout: 15000 })
+    if (c.bouton) {
+      const btn = page.locator('.cadre-exercice button', { hasText: new RegExp(c.bouton) }).first()
+      if (!(await btn.count())) throw new Error(`${slug} : bouton de niveau /${c.bouton}/ introuvable`)
+      await btn.click()
+    }
+    if (!f) {
+      // réglages propres à la classe (ex. opérations du calcul mental)
+      for (const re of c.clics ?? []) {
+        const b = page.locator('.cadre-exercice button', { hasText: new RegExp(re) }).first()
+        if (await b.count() && !(await b.getAttribute('class') ?? '').includes('active')) await b.click()
+      }
+    } else if (langue === 'fr') {
+      const r = await isolerCompetence(page, ex, f, slug)
+      if (v === 1) clicsCompetence.set(base, r)
+    } else {
+      const { clics, coches } = clicsCompetence.get(base)
+      for (const i of clics) await page.locator(SELECTEUR_OPTIONS).nth(i).click()
+      // titre breton : les libellés (déjà traduits) des options cochées de la compétence
+      if (v === 1) { const o = await lireOptions(page); libellesBr = coches.map(i => o[i]?.texte).filter(Boolean).join(' · ') }
+    }
+    // prénom/date et corrigé : options communes du cadre (useOptionsFiche), par défaut l'en-tête et le
+    // corrigé sur une autre page (localStorage vidé au chargement)
+    const iframe = page.locator('.cadre-exercice iframe').first()
+    await iframe.waitFor({ timeout: 15000 })
+    await page.waitForTimeout(300)
+    paysage = (await enPdf(doc, await iframe.getAttribute('srcdoc'), dossier, `fiche-${v}.pdf`, `apercu-${v}.jpg`)).paysage || paysage
+  }
+  const niveaux = etiquetteClasse(c.classe)
+  const commun = {
+    slug, categorie: 'exercices', domaine: ex.domaine, genre: ex.genre, ...classer({ slug, ...ex }), variantes: nb,
+    langues: [langue], classes: classesDe(c.classe), niveaux, lien: ex.route, paysage, nbPages: 1,
+  }
+  const consignesBr = langue === 'br' ? ' (consignes en breton)' : ''
+  console.log(`${f ? '  ' : ''}✓ ${slug} (${nb} fiches)`)
+  if (!f) {
+    return {
+      ...commun,
+      titreFr: `${ex.titre.fr} — ${niveaux} : fiches d'exercices à imprimer${consignesBr}`,
+      titreBr: `${ex.titre.br} — ${niveaux} : fichennoù poelladennoù da voullañ`,
+      courtFr: `${ex.titre.fr} · ${niveaux}`, courtBr: `${ex.titre.br} · ${niveaux}`,
+      description: `${ex.titre.fr} (${niveaux}) : ${nb} fiches d'exercices différentes à imprimer, avec le corrigé${langue === 'br' ? ', consignes en breton' : ''}. Gratuit, en PDF.`,
+    }
+  }
+  return {
+    ...commun, competence: f.competence, bilan: `exercices-${ex.id}-${c.classe}${langue === 'br' ? '-brezhoneg' : ''}`,
+    titreFr: `${ex.titre.fr} — ${niveaux} : ${f.titre}, fiches d'exercices à imprimer${consignesBr}`,
+    titreBr: `${ex.titre.br} — ${niveaux}${libellesBr ? ` : ${libellesBr}` : ''}`,
+    courtFr: `${ex.titre.fr} · ${niveaux} · ${f.titre}`, courtBr: `${ex.titre.br} · ${niveaux}${libellesBr ? ` · ${libellesBr}` : ''}`,
+    description: `${ex.titre.fr} (${niveaux}), ${f.titre} : ${nb} fiches d'exercices à imprimer, avec le corrigé${langue === 'br' ? ', consignes en breton' : ''}. Gratuit, en PDF.`,
+  }
 }
 
 async function main() {
@@ -435,9 +534,9 @@ async function main() {
     // les deux sites publient toutes les fiches, françaises et bretonnes
     const liste = await app.evaluate(() => window.__ecolePrimaire.catalogue(['fr', 'br']))
     console.log(`Site ${SITE.nom} → ${OUT_DIR}/, ${liste.length} fiches, base ${BASE}`)
-    const doc = await navigateur.newPage({ deviceScaleFactor: 1 })
-    await doc.goto(url)
-    for (const t of liste) {
+    // le HTML vient de l'app (rapide) ; le rendu en PDF et en images se fait dans plusieurs onglets en parallèle
+    const creerDoc = async () => { const doc = await navigateur.newPage({ deviceScaleFactor: 1 }); await doc.goto(url); return doc }
+    const { travailleurs: docs } = await enParallele(liste, creerDoc, async (doc, t) => {
       const dossier = join(dist, 'telechargements', t.slug)
       mkdirSync(dossier, { recursive: true })
       const r = await app.evaluate(slug => window.__ecolePrimaire.generer(slug), t.slug)
@@ -446,9 +545,11 @@ async function main() {
       t.format = `${r.format} ${tx(r.orientation === 'landscape' ? 'paysage' : 'portrait')}`
       Object.assign(t, classer(t), { classes: classesDepuisTexte(t.niveaux) })
       console.log(`✓ ${t.slug} (${r.nbPages} p.)`)
-    }
+    })
+    const doc = docs[0]
+    for (const d of docs.slice(1)) await d.close()
 
-    const exercices = AVEC_EXERCICES ? await genererExercices(navigateur, url, doc) : []
+    const exercices = AVEC_EXERCICES ? await genererExercices(navigateur, url) : []
     ecrirePages(trier([...liste, ...exercices]))
     await imagePartage(doc, url, liste)
     ecrireManifeste()
@@ -525,11 +626,14 @@ function pageFiche(t, liste) {
   // dans d'autres classes, puis le même domaine (même catégorie d'abord)
   const racineSlug = x => x.slug.replace(/-(ms|gs|cp|ce1|ce2|cm1|cm2|gs-cp|ms-gs|cp-cm2)(-brezhoneg)?$/, '')
   const proches = liste.filter(x => x.slug !== t.slug && x.usage === t.usage && avecBreton(x) === avecBreton(t))
-  const memeExercice = x => x.variantes && racineSlug(x) === racineSlug(t)
-  const voisines = [
-    ...proches.filter(memeExercice),
-    ...proches.filter(x => !memeExercice(x) && x.domaine === t.domaine && x.categorie === t.categorie),
-    ...proches.filter(x => !memeExercice(x) && x.domaine === t.domaine && x.categorie !== t.categorie),
+  const memeExercice = x => x.variantes && !x.bilan && racineSlug(x) === racineSlug(t)
+  // fiches par compétence : listées sur la page de leur bilan ; une fiche par compétence montre d'abord ses voisines
+  const competences = liste.filter(x => x.bilan === t.slug)
+  const bilan = t.bilan && liste.find(x => x.slug === t.bilan)
+  const voisines = t.bilan ? liste.filter(x => x.bilan === t.bilan && x.slug !== t.slug).slice(0, 8) : [
+    ...proches.filter(x => memeExercice(x) && !x.bilan),
+    ...proches.filter(x => !memeExercice(x) && !x.bilan && x.domaine === t.domaine && x.categorie === t.categorie),
+    ...proches.filter(x => !memeExercice(x) && !x.bilan && x.domaine === t.domaine && x.categorie !== t.categorie),
   ].slice(0, 8)
   const ancre = t.domaine ?? 'hors-programme'
   const n = t.variantes ?? 0
@@ -601,7 +705,10 @@ function imprimerPdf() {
   document.body.appendChild(f)
 }
 </script>
-${voisines.length ? `<h2>${bi('autres')}</h2>
+${competences.length ? `<h2>${bi('parCompetence')}</h2><p class="intro">${bi('parCompetenceAide')}</p>
+<div class="grille">${competences.map(carte).join('')}</div>` : ''}
+${bilan ? `<p class="intro"><a href="${lienFiche(bilan)}">${bi('retourBilan')}</a></p>` : ''}
+${voisines.length ? `<h2>${bi(t.bilan ? 'autresCompetences' : 'autres')}</h2>
 <div class="grille">${voisines.map(carte).join('')}</div>` : ''}`
   writeFileSync(join(dist, 'telechargements', t.slug, 'index.html'), gabarit({
     titre: SITE.langue === 'br' ? t.titreBr ?? titreFr(t) : titreFr(t), description: t.description,
@@ -626,7 +733,8 @@ function pageIndex(liste) {
   // une section par domaine (liste déjà triée par domaine puis genre), puis « pour apprendre » / « pour s'entraîner »
   const domaines = [...new Set(liste.map(t => t.domaine))]
   const section = d => {
-    const fiches = liste.filter(t => t.domaine === d)
+    // les fiches par compétence sont sur la page de leur bilan, pas dans l'index
+    const fiches = liste.filter(t => t.domaine === d && !t.bilan)
     const classes = CLASSES.filter(c => fiches.some(t => t.classes.includes(c)))
     const groupe = usage => {
       const cartes = fiches.filter(t => t.usage === usage)
@@ -741,6 +849,7 @@ ${urls.map(u => `  <url><loc>${SITE_URL}${u}</loc></url>`).join('\n')}
   writeFileSync(join(dist, 'telechargements', 'fiches.json'), JSON.stringify(liste.map(t => ({
     slug: t.slug, fr: t.courtFr ?? t.court, br: t.courtBr ?? t.court, titre: titreFr(t), niveaux: t.niveaux,
     classes: t.classes, usage: t.usage, langues: t.langues, domaine: t.domaine, genre: t.genre,
+    ...(t.competence ? { competence: t.competence } : {}),
   }))))
   console.log(`${liste.length} pages de fiches, sitemap : ${urls.length} URL`)
 }

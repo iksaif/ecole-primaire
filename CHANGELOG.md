@@ -21,6 +21,9 @@
 - **Pièces et billets** : la pièce de 2 € n'est plus coupée, et les tailles respectent les vraies proportions.
 - **Affiches de conjugaison au passé simple** : la dernière ligne (« ils / elles… ») n'est plus coupée.
 - **Alphabet breton** : le Z a son mot, « zebr » (le zèbre).
+- **Fiches toutes prêtes par compétence** : pour chaque exercice et chaque classe, en plus des fiches qui mélangent
+  tout (le bilan), une fiche par compétence du programme (les tables de multiplication, le passé simple, les
+  compléments…), à retrouver sur la page du bilan.
 - Nouveau logo.
 - Un bouton « 💬 Signaler une erreur » en bas de chaque page.
 - Cette page « Nouveautés ».

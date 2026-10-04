@@ -7,7 +7,10 @@ export default {
     pdf: '📥 Pellgargañ ar PDF', imprimer: '🖨️ Moullañ', personnaliser: '✏️ Personelaat ar fichenn-mañ', pages: n => `📄 Pajennoù : ${n}`,
     imprimer100: '🖨️ Moullañ er « vent wir » (100 %), hep « azasaat d\'ar bajenn »', gratuit: '✔️ Digoust, hep enskrivañ',
     persoAide: "Gant « Personelaat » e c'hallez cheñch an arventennoù ha krouiñ kement a fichennoù ha ma karez.",
-    autres: 'Fichennoù all', titreIndex: '📥 Fichennoù digoust da voullañ',
+    autres: 'Fichennoù all', parCompetence: 'Fichennoù dre varregezh', autresCompetences: 'Ar barregezhioù all', // br: à relire
+    parCompetenceAide: "Kemmesket eo holl varregezhioù ar c'hlas er fichennoù a-us (bilañs). Evit labourat war ur barregezh hepken :", // br: à relire
+    retourBilan: "↩ Holl varregezhioù ar c'hlas (bilañs)", // br: à relire
+    titreIndex: '📥 Fichennoù digoust da voullañ',
     toutes: 'An holl', francais: 'Galleg', breton: 'Brezhoneg', tout: 'Pep tra',
     introIndex: 'Fichennoù skrivañ e skript hag a-stag war linennoù Seyès, skritelloù al lizherenneg, fichennoù jediñ, poelladennoù matematik ha galleg, niveroù e lizherennoù. Digoust eo an holl fichennoù, e PDF, prest da voullañ.',
     introBreton: 'E galleg hag e brezhoneg emañ ar fichennoù.',

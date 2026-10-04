@@ -128,12 +128,15 @@ npm run i18n              # vérifie que les traductions sont complètes
 
 `npm run build:ecoleprimaire` et `npm run build:skoolik` construisent le site puis lancent
 `scripts/telechargements.mjs`. Ce script ouvre le site dans Chrome sans interface (playwright-core) et
-génère, pour chaque fiche de `src/impression/catalogue.js` (et des fiches de calcul, et 4 fiches par exercice
-et par classe) :
+génère, pour chaque fiche de `src/impression/catalogue.js` (et des fiches de calcul ; pour chaque exercice et
+chaque classe, 4 fiches « bilan » et 2 fiches par compétence du programme, voir `src/impression/exercices.js`) :
 
 - un PDF ;
 - une vignette ;
 - une page statique `telechargements/<fiche>/`, que les moteurs de recherche peuvent indexer.
+
+Les fiches sont générées en parallèle, un onglet de Chrome par cœur (`--travailleurs <n>` pour changer) :
+environ 2 minutes par site. `--exercice <id>` ne génère qu'un exercice, `--sans-exercices` aucun (pour tester).
 
 Il génère aussi l'index des fiches (rangé par domaine du programme, puis « pour apprendre » /
 « pour s'entraîner »), le `sitemap.xml`, le `robots.txt` et la page 404. Chrome est cherché

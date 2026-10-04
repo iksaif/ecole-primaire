@@ -5,10 +5,9 @@
 
 ## Affiches et fiches
 
-- [ ] **Plan 09, étape 5** (`plans/09-domaines-programme.md`) : fiches prégénérées par compétence, puis un bilan
-      par exercice et par niveau, et une affiche résumé « ce qu'il faut savoir » par domaine et par niveau, tirées
-      des compétences de `programme.js`. À valider avant : la liste des compétences par exercice (étape 2). En
-      attendant, on garde les 4 variantes actuelles de chaque exercice
+- [ ] **Plan 09, étape 5 — affiches résumé** (`plans/09-domaines-programme.md`) : une affiche « ce qu'il faut savoir »
+      par domaine et par niveau, tirée des compétences de `programme.js` (les fiches par compétence et les bilans
+      sont faits : `fiches` dans `src/impression/exercices.js`)
 - [ ] **Affiches en police attachée** : adapter l'horloge (textes qui se chevauchent), pièces et billets (montants qui
       débordent, équivalences coupées) et figures (textes superposés) en mesurant les textes (`largeurTexte`,
       `metriquesPolice`, `hauteurRendue` dans `affiches/cadre.js`, comme la droite, la numération et la
@@ -22,6 +21,7 @@
     CE1 et du CE2, diagramme en barres / tableau à double entrée, classes de mots
   - CM1–CM2 : fractions et décimaux, unités de mesure avec leurs relations (sans tableau de conversion), fonctions
     (sujet, COD, COI, attribut, compléments), préfixes, suffixes et familles de mots
+- [ ] **Affiche de l'alphabet** : il manque de quoi faire une affiche des lettres spéciales (é è ê ë à â î ï ô ù û ü ÿ ç, œ, æ…), en script et en attaché, majuscules et minuscules
 - [ ] **Liens vers le programme officiel** aussi sur les pages matières et les cartes d'activités (déjà sur
       `/imprimer`, `/telechargements/` et les pages de fiches, via `lienProgramme()`)
 
@@ -38,6 +38,10 @@
       fluence, compréhension, fiches prégénérées ; lettres : cursive, sons, b/d p/q
 
 ## Bugs et dette
+
+- [ ] Géométrie : l'avertissement rouge « Imprimer à 100 %… » est aussi sur la fiche imprimée — le passer en orange dans le formulaire et le retirer de la fiche, comme pour Mesures ?
+
+- [ ] **Build des PDF** : parallélisé (≈ 2 min par site au lieu de ≈ 20) ; reste à ne pas générer deux fois les mêmes PDF pour les deux sites (`build:vps`)
 
 - [ ] Lecture : découpages syllabiques discutables dans les données (« rou-ge », « feuil-le », « é-cole »,
       « nu-age »)

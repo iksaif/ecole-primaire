@@ -21,6 +21,9 @@ function droite(cfg, W, H) {
   const pas = max === 1000 ? 10 : 1
   const grosPas = max === 20 ? 10 : max === 100 ? 10 : 100
   const moyenPas = max === 20 ? 5 : max === 100 ? 5 : 50
+  // la légende est un paragraphe sous le dessin (retour à la ligne automatique)
+  const hAide = 14 * Math.min(H / 130, 1.7)
+  H -= hAide
   const u = Math.min(H / 130, 1.7), x0 = 12, x1 = W - 12, y = H * 0.38
   const n = max / pas
   const px = v => x0 + (v / max) * (x1 - x0)
@@ -30,14 +33,16 @@ function droite(cfg, W, H) {
     s += `<rect x="${px(b * grosPas)}" y="${y - 30 * u}" width="${px(grosPas) - x0}" height="${H * 0.66}" fill="${b % 2 ? '#eef3fb' : '#fff8ef'}"/>`
   }
   s += `<line x1="${x0 - 6}" y1="${y}" x2="${x1 + 6}" y2="${y}" stroke="#222" stroke-width="${1.1 * u}" marker-end="url(#fleche)"/>`
-  const taillePolice = (max === 20 ? 8 : 7.5) * u
+  // écart entre deux nombres écrits : de 0 à 20, chaque trait a son nombre (2 chiffres doivent tenir)
+  const ecart = px(max === 20 ? 1 : grosPas) - x0
+  const taillePolice = Math.min(7.5 * u, ecart * 0.85)
   for (let i = 0; i <= n; i++) {
     const v = i * pas
     const gros = v % grosPas === 0, moyen = v % moyenPas === 0
     const h = (gros ? 9 : moyen ? 6 : 3.5) * u
     const couleur = COULEURS[Math.floor(v / grosPas) % COULEURS.length]
     s += `<line x1="${px(v)}" y1="${y - h}" x2="${px(v)}" y2="${y + h}" stroke="${gros ? couleur : '#555'}" stroke-width="${gros ? 0.9 : 0.4}"/>`
-    if (max === 20 || gros) s += txt(px(v), y - h - 6 * u, cm(v), taillePolice, { gras: gros, couleur: gros ? couleur : '#222' })
+    if (max === 20 || gros) s += txt(px(v), y - h - 6 * u, cm(v), gros ? Math.min(taillePolice * 1.1, ecart * 0.95) : taillePolice, { gras: gros, couleur: gros ? couleur : '#222' })
     // le nom du nombre, écrit à la verticale sous la graduation
     if (max === 20 || gros) s += txt(px(v), y + h + 4 * u, enLettresFr(v), (max === 20 ? 5 : 5.2) * u * 1.15, { ancre: 'start', rot: 90, couleur: '#555' })
   }
@@ -46,8 +51,8 @@ function droite(cfg, W, H) {
     100: 'Chaque dizaine est un trait long. Entre deux dizaines, je compte de 1 en 1. Le trait moyen est le milieu (5).',
     1000: 'Chaque centaine est un trait long, chaque dizaine un petit trait. Entre 0 et 1 000, il y a 10 centaines.',
   }[max]
-  s += txt(W / 2, H - 6, aide, 5.2 * u, { couleur: '#555' })
   return `<svg width="${W}mm" height="${H}mm" viewBox="0 0 ${W} ${H}"><defs><marker id="fleche" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#222"/></marker></defs>${s}</svg>`
+    + `<p class="aide-droite" style="height:${hAide}mm;font-size:${5.2 * u}mm">${echapper(aide)}</p>`
 }
 
 // ── Tableau de numération ────────────────────────────────────────────────────
@@ -114,17 +119,20 @@ function horlogeSvg(cx, cy, r, { h = 3, m = 0, minutes = false, heures24 = false
     const r1 = r * (grand ? 0.9 : 0.94)
     s += `<line x1="${cx + Math.cos(a) * r1}" y1="${cy + Math.sin(a) * r1}" x2="${cx + Math.cos(a) * r * 0.97}" y2="${cy + Math.sin(a) * r * 0.97}" stroke="#555" stroke-width="${grand ? r * 0.025 : r * 0.012}"/>`
   }
-  for (let i = 1; i <= 12; i++) {
-    const a = (i * 30 - 90) * Math.PI / 180
-    s += txt(cx + Math.cos(a) * r * (minutes ? 0.68 : 0.76), cy + Math.sin(a) * r * (minutes ? 0.68 : 0.76), String(i), r * (minutes ? 0.2 : 0.22), { gras: true, couleur: '#1d4e9e' })
-    if (minutes) s += txt(cx + Math.cos(a) * r * 1.1, cy + Math.sin(a) * r * 1.1, String(i * 5 === 60 ? 60 : i * 5), r * 0.1, { couleur: '#d9480f', gras: true })
-    if (heures24) s += txt(cx + Math.cos(a) * r * 0.45, cy + Math.sin(a) * r * 0.45, String(i + 12 === 24 ? 24 : i + 12), r * 0.1, { couleur: '#2b8a3e' })
-  }
   const aiguille = (angle, longueur, ep, couleur) => {
     const a = (angle - 90) * Math.PI / 180
     return `<line x1="${cx}" y1="${cy}" x2="${cx + Math.cos(a) * r * longueur}" y2="${cy + Math.sin(a) * r * longueur}" stroke="${couleur}" stroke-width="${r * ep}" stroke-linecap="round"/>`
   }
+  // les aiguilles d'abord, les nombres par-dessus avec un liseré blanc : une aiguille ne cache jamais un nombre
   s += aiguille(((h % 12) + m / 60) * 30, 0.5, 0.06, '#1d4e9e') + aiguille(m * 6, 0.78, 0.035, '#d9480f')
+  let nombres = ''
+  for (let i = 1; i <= 12; i++) {
+    const a = (i * 30 - 90) * Math.PI / 180
+    nombres += txt(cx + Math.cos(a) * r * (minutes ? 0.68 : 0.76), cy + Math.sin(a) * r * (minutes ? 0.68 : 0.76), String(i), r * (minutes ? 0.2 : 0.22), { gras: true, couleur: '#1d4e9e' })
+    if (minutes) nombres += txt(cx + Math.cos(a) * r * 1.1, cy + Math.sin(a) * r * 1.1, String(i * 5 === 60 ? 60 : i * 5), r * 0.1, { couleur: '#d9480f', gras: true })
+    if (heures24) nombres += txt(cx + Math.cos(a) * r * 0.45, cy + Math.sin(a) * r * 0.45, String(i + 12 === 24 ? 24 : i + 12), r * 0.1, { couleur: '#2b8a3e' })
+  }
+  s += `<g stroke="white" stroke-width="${r * 0.025}" stroke-linejoin="round" paint-order="stroke">${nombres}</g>`
   s += `<circle cx="${cx}" cy="${cy}" r="${r * 0.045}" fill="#222"/>`
   return s
 }
@@ -380,6 +388,7 @@ export function genererAffichesProgramme(config, polices) {
   table.num tr.ex td { font-size: 1.6em; font-weight: 700; height: 2.2em; }
   table.num td.virg, table.num th.virg { width: 0.5em; border-left: none; border-right: none; background: transparent; color: #d9480f; }
   table.num tr.lect td { font-size: 0.7em; border: none; color: #555; padding: 1mm 0 3mm; }
+  .aide-droite { flex: none; width: 85%; text-align: center; color: #555; line-height: 1.25; display: flex; align-items: center; justify-content: center; }
   .note { margin-top: 5mm; color: #555; text-align: center; }
   .blocs { display: grid; } .cartes { display: grid; }
   .bloc { border: 0.6mm solid; border-radius: 3mm; overflow: hidden; display: flex; flex-direction: column; background: white; }

@@ -15,14 +15,14 @@
         </div>
       </div>
 
-      <div v-for="g in typesVisibles" :key="g.groupe" class="config-section">
-        <div class="config-section-title">{{ tr({ fr: g.groupe, br: g.br }) }}</div>
+      <div v-for="g in typesVisibles" :key="g.id" class="config-section">
+        <div class="config-section-title">{{ t(`groupe_${g.id}`) }}</div>
         <div class="theme-grid">
           <button v-for="ty in g.items" :key="ty.id"
             class="theme-btn" :class="{ active: config.types.includes(ty.id) }"
             @click="toggleType(ty.id)">
             <span class="theme-icon">{{ ty.icon }}</span>
-            <span class="theme-label">{{ tr({ fr: ty.label, br: ty.br }) }}</span>
+            <span class="theme-label">{{ t(`type_${ty.id}`) }}</span>
           </button>
         </div>
       </div>
@@ -172,76 +172,75 @@ const { enLecture, lire } = useTTS()
 
 // Interface traduite (fr / br). Le contenu étudié (phrases, mots, réponses) reste en français.
 // Breton : à faire relire par un brittophone ; termes grammaticaux incertains marqués « br: à relire ».
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
-const br = () => langue.value === 'br'
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Texte calculé à l'affichage (suit la langue) ou texte fixe
 const val = x => (typeof x === 'function' ? x() : x)
 
-// Libellés bretons des choix « métalangage » (les choix en français étudié restent tels quels)
-const CHOIX_BR = {
-  'Oui, c\'est une phrase': 'Ya, ur frazenn eo',
-  'Non, ce n\'est pas une phrase': 'Nann, n\'eo ket ur frazenn',
-  'phrase simple': 'frazenn eeun', // br: à relire
-  'phrase complexe': 'frazenn gemplezh', // br: à relire
-  'affirmative': 'kadarnaus', // br: à relire
-  'négative': 'nac\'hus', // br: à relire
-  'complément du verbe': 'klokaenn ar verb', // br: à relire (complément = klokaenn)
-  'complément de phrase': 'klokaenn ar frazenn', // br: à relire
-  'Où ?': 'Pelec\'h ?',
-  'Quand ?': 'Pegoulz ?',
-  'singulier': 'unander',
-  'pluriel': 'liester',
-  'masculin': 'gourel',
-  'féminin': 'benel',
-  'nom': 'anv',
-  'verbe': 'verb',
-  'déterminant': 'ger-mont', // br: à relire (déterminant)
-  'adjectif': 'anv-gwan',
-  'pronom': 'raganv',
-  '. (point)': '. (poent)',
-  '? (point d\'interrogation)': '? (pik goulenn)', // br: à relire
-  '! (point d\'exclamation)': '! (pik estlammañ)', // br: à relire
+// Choix « métalangage » traduits dans l'interface : clé du catalogue (les choix en français étudié restent tels quels)
+const CHOIX = {
+  "Oui, c'est une phrase": 'choix_ouiPhrase',
+  "Non, ce n'est pas une phrase": 'choix_nonPhrase',
+  'phrase simple': 'choix_phraseSimple',
+  'phrase complexe': 'choix_phraseComplexe',
+  'affirmative': 'choix_affirmative',
+  'négative': 'choix_negative',
+  'complément du verbe': 'choix_complementVerbe',
+  'complément de phrase': 'choix_complementPhrase',
+  'Où ?': 'choix_ou',
+  'Quand ?': 'choix_quand',
+  'singulier': 'choix_singulier',
+  'pluriel': 'choix_pluriel',
+  'masculin': 'choix_masculin',
+  'féminin': 'choix_feminin',
+  'nom': 'choix_nom',
+  'verbe': 'choix_verbe',
+  'déterminant': 'choix_determinant',
+  'adjectif': 'choix_adjectif',
+  'pronom': 'choix_pronom',
+  '. (point)': 'choix_point',
+  "? (point d'interrogation)": 'choix_interrogation',
+  "! (point d'exclamation)": 'choix_exclamation',
 }
-const tc = c => (br() && CHOIX_BR[c]) || c
+const tc = c => (CHOIX[c] ? t(CHOIX[c]) : c)
 
 // ════════════════════════════════════════════════════════════════════
 // ── LOGIQUE PURE (début) — données + génération, testable hors Vue
 // ════════════════════════════════════════════════════════════════════
 
-// Chaque type indique les niveaux où il est proposé
+// Chaque type indique les niveaux où il est proposé ; libellés : groupe_<id> et type_<id> du catalogue
 const TYPES = [
-  { groupe: 'La phrase', br: 'Ar frazenn', items: [
-    { id: 'ordre',       icon: '🧩', label: 'Mots dans l\'ordre',        br: 'Gerioù en urzh', niv: ['ce1'] },
-    { id: 'phrase',      icon: '🤔', label: 'Phrase ou pas ?',           br: 'Ur frazenn pe get ?', niv: ['ce1'] },
-    { id: 'majuscule',   icon: '🔠', label: 'Majuscule et point',        br: 'Pennlizherenn ha poent', niv: ['ce1'] },
-    { id: 'ponctuation', icon: '❓', label: 'Types de phrases . ? !',    br: 'Seurtoù frazennoù . ? !', niv: ['ce1'] },
-    { id: 'complexe',    icon: '🔗', label: 'Phrase simple / complexe',  br: 'Frazenn eeun / kemplezh', niv: ['ce2'] },
-    { id: 'negation',    icon: '🚫', label: 'Mettre à la forme négative', br: 'Lakaat er stumm nac\'hus', niv: ['ce1', 'ce2'] },
-    { id: 'negReconnaitre', icon: '🔍', label: 'Affirmative ou négative ?', br: 'Kadarnaus pe nac\'hus ?', niv: ['ce1', 'ce2'] },
+  { id: 'phrase', items: [
+    { id: 'ordre',       icon: '🧩', niv: ['ce1'] },
+    { id: 'phrase',      icon: '🤔', niv: ['ce1'] },
+    { id: 'majuscule',   icon: '🔠', niv: ['ce1'] },
+    { id: 'ponctuation', icon: '❓', niv: ['ce1'] },
+    { id: 'complexe',    icon: '🔗', niv: ['ce2'] },
+    { id: 'negation',    icon: '🚫', niv: ['ce1', 'ce2'] },
+    { id: 'negReconnaitre', icon: '🔍', niv: ['ce1', 'ce2'] },
   ]},
-  { groupe: 'Nature des mots', br: 'Rummad ar gerioù', items: [ // br: à relire (nature = rummad)
-    { id: 'verbe',   icon: '🏃', label: 'Trouver le verbe',         br: 'Kavout ar verb', niv: ['ce1', 'ce2'] },
-    { id: 'nom',     icon: '🏠', label: 'Trouver les noms',         br: 'Kavout an anvioù', niv: ['ce1', 'ce2'] },
-    { id: 'det',     icon: '👉', label: 'Trouver les déterminants', br: 'Kavout ar gerioù-mont', niv: ['ce1', 'ce2'] },
-    { id: 'adj',     icon: '🎨', label: 'Trouver les adjectifs',    br: 'Kavout an anvioù-gwan', niv: ['ce1', 'ce2'] },
-    { id: 'nature',  icon: '🏷️', label: 'Nature d\'un mot',         br: 'Rummad ur ger', niv: ['ce1', 'ce2'] },
-    { id: 'gnNoyau', icon: '🎯', label: 'Nom principal du GN',      br: 'Anv pennañ ar strollad anv', niv: ['ce2'] },
+  { id: 'nature', items: [
+    { id: 'verbe',   icon: '🏃', niv: ['ce1', 'ce2'] },
+    { id: 'nom',     icon: '🏠', niv: ['ce1', 'ce2'] },
+    { id: 'det',     icon: '👉', niv: ['ce1', 'ce2'] },
+    { id: 'adj',     icon: '🎨', niv: ['ce1', 'ce2'] },
+    { id: 'nature',  icon: '🏷️', niv: ['ce1', 'ce2'] },
+    { id: 'gnNoyau', icon: '🎯', niv: ['ce2'] },
   ]},
-  { groupe: 'Les fonctions', br: 'An arc\'hwelioù', items: [ // br: à relire
-    { id: 'sujet',       icon: '👤', label: 'Trouver le sujet',             br: 'Kavout ar sujed', niv: ['ce1', 'ce2'] },
-    { id: 'pronom',      icon: '🔁', label: 'Il, elle, ils, elles',         br: 'Il, elle, ils, elles', niv: ['ce1', 'ce2'] },
-    { id: 'cplt',        icon: '📍', label: 'Trouver le complément de phrase', br: 'Kavout klokaenn ar frazenn', niv: ['ce2'] },
-    { id: 'cpltQ',       icon: '⏰', label: 'Où ? Quand ?',                 br: 'Pelec\'h ? Pegoulz ?', niv: ['ce2'] },
-    { id: 'cpltNature',  icon: '⚖️', label: 'Complément du verbe ou de phrase ?', br: 'Klokaenn ar verb pe ar frazenn ?', niv: ['ce2'] },
+  { id: 'fonctions', items: [
+    { id: 'sujet',       icon: '👤', niv: ['ce1', 'ce2'] },
+    { id: 'pronom',      icon: '🔁', niv: ['ce1', 'ce2'] },
+    { id: 'cplt',        icon: '📍', niv: ['ce2'] },
+    { id: 'cpltQ',       icon: '⏰', niv: ['ce2'] },
+    { id: 'cpltNature',  icon: '⚖️', niv: ['ce2'] },
   ]},
-  { groupe: 'Genre et nombre', br: 'Reizh ha niver', items: [
-    { id: 'genre',    icon: '♀️', label: 'Masculin / féminin',   br: 'Gourel / benel', niv: ['ce1'] },
-    { id: 'nombre',   icon: '🔢', label: 'Singulier / pluriel',  br: 'Unander / liester', niv: ['ce1'] },
-    { id: 'pluriel',  icon: '➕', label: 'Mettre au pluriel',    br: 'Lakaat el liester', niv: ['ce1', 'ce2'] },
-    { id: 'accordGN', icon: '🤝', label: 'Accorder l\'adjectif', br: 'Kenglotañ an anv-gwan', niv: ['ce1', 'ce2'] },
+  { id: 'genreNombre', items: [
+    { id: 'genre',    icon: '♀️', niv: ['ce1'] },
+    { id: 'nombre',   icon: '🔢', niv: ['ce1'] },
+    { id: 'pluriel',  icon: '➕', niv: ['ce1', 'ce2'] },
+    { id: 'accordGN', icon: '🤝', niv: ['ce1', 'ce2'] },
   ]},
-  { groupe: 'Accord sujet-verbe', br: 'Kenglotadur sujed-verb', items: [ // br: à relire (accord = kenglotadur)
-    { id: 'accordSV', icon: '🔗', label: 'Il chante / ils chantent', br: 'Il chante / ils chantent', niv: ['ce1', 'ce2'] },
+  { id: 'accordSV', items: [
+    { id: 'accordSV', icon: '🔗', niv: ['ce1', 'ce2'] },
   ]},
 ]
 const IDS_TYPES = TYPES.flatMap(g => g.items.map(t => t.id))
@@ -251,8 +250,6 @@ function typesDuNiveau(niveau) {
 
 const NATURES = { d: 'det', n: 'nom', N: 'nom', v: 'verbe', a: 'adj', p: 'pronom', x: 'autre' }
 const NOM_NATURE = { det: 'déterminant', nom: 'nom', verbe: 'verbe', adj: 'adjectif', pronom: 'pronom' }
-const LIB_GN = { ms: 'masculin singulier', fs: 'féminin singulier', mp: 'masculin pluriel', fp: 'féminin pluriel' }
-const LIB_GN_BR = { ms: 'gourel unander', fs: 'benel unander', mp: 'gourel liester', fp: 'benel liester' }
 
 // Phrases annotées. Syntaxe : mot:code (d=déterminant, n=nom, N=nom propre, v=verbe conjugué,
 // a=adjectif, p=pronom, x=autre mot).
@@ -955,102 +952,13 @@ function negationDe(e) {
   return { aff, neg, mot, elide, faux }
 }
 
-const CONSIGNES = {
-  fr: {
-    ordre:       'Remets les mots dans l\'ordre pour faire une phrase.',
-    phrase:      'Est-ce une phrase ?',
-    majuscule:   'Quelle phrase est bien écrite ?',
-    ponctuation: 'Quel signe faut-il mettre à la fin de la phrase ?',
-    complexe:    'Cette phrase est-elle simple ou complexe ?',
-    negation:    'Quelle est la phrase à la forme négative ?',
-    negReconnaitre: 'Cette phrase est-elle affirmative ou négative ?',
-    verbe:       'Clique sur le verbe.',
-    nom:         'Clique sur tous les noms.',
-    det:         'Clique sur tous les déterminants.',
-    adj:         'Clique sur tous les adjectifs.',
-    nature:      'Quelle est la nature du mot en gras ?',
-    gnNoyau:     'Clique sur le nom principal du groupe nominal.',
-    sujet:       'Clique sur tous les mots du groupe sujet.',
-    pronom:      'Par quel pronom peut-on remplacer le sujet souligné ?',
-    cplt:        'Clique sur tous les mots du complément de phrase.',
-    cpltQ:       'Le complément de phrase souligné répond à quelle question ?',
-    cpltNature:  'Le groupe souligné est-il un complément du verbe ou un complément de phrase ?',
-    genre:       'Un ou une ?',
-    nombre:      'Singulier ou pluriel ?',
-    pluriel:     'Écris ce groupe de mots au pluriel.',
-    accordGN:    'Choisis le bon accord de l\'adjectif.',
-    accordSV:    'Choisis la bonne forme du verbe (au présent).',
-  },
-  // br: à relire (ensemble des consignes)
-  br: {
-    ordre:       'Lak ar gerioù en urzh evit ober ur frazenn.',
-    phrase:      'Ur frazenn eo ?',
-    majuscule:   'Peseurt frazenn a zo skrivet mat ?',
-    ponctuation: 'Peseurt arouez a vez lakaet e dibenn ar frazenn ?',
-    complexe:    'Frazenn eeun pe frazenn gemplezh eo ?',
-    negation:    'Peseurt frazenn a zo er stumm nac\'hus ?',
-    negReconnaitre: 'Kadarnaus pe nac\'hus eo ar frazenn-mañ ?',
-    verbe:       'Klik war ar verb.',
-    nom:         'Klik war an holl anvioù.',
-    det:         'Klik war an holl c\'herioù-mont.',
-    adj:         'Klik war an holl anvioù-gwan.',
-    nature:      'Petra eo rummad ar ger e tev ?',
-    gnNoyau:     'Klik war anv pennañ ar strollad anv.',
-    sujet:       'Klik war holl c\'herioù ar strollad sujed.',
-    pronom:      'Gant peseurt raganv e c\'haller erlec\'hiañ ar sujed islinennet ?',
-    cplt:        'Klik war holl c\'herioù klokaenn ar frazenn.',
-    cpltQ:       'Ouzh peseurt goulenn e respont klokaenn ar frazenn islinennet ?',
-    cpltNature:  'Klokaenn ar verb pe klokaenn ar frazenn eo ar strollad islinennet ?',
-    genre:       '« un » pe « une » ?',
-    nombre:      'Unander pe liester ?',
-    pluriel:     'Skriv ar strollad gerioù-mañ el liester.',
-    accordGN:    'Dibab kenglotadur mat an anv-gwan.',
-    accordSV:    'Dibab stumm mat ar verb (en amzer-vremañ).',
-  },
-}
-// Consignes propres à un niveau
-const CONSIGNES_NIVEAU = {
-  ce2: {
-    fr: {
-      verbe: 'Clique sur tous les verbes conjugués.',
-      negReconnaitre: 'Cette phrase est-elle affirmative ? Sinon, quelle négation contient-elle ?',
-    },
-    br: {
-      verbe: 'Klik war an holl verboù displeget.',
-      negReconnaitre: 'Kadarnaus eo ar frazenn-mañ ? Anez, peseurt nac\'hadur a zo enni ?', // br: à relire
-    },
-  },
-}
-const consigneDe = (type, niveau) => () => {
-  const l = langue.value
-  return CONSIGNES_NIVEAU[niveau]?.[l]?.[type] || CONSIGNES[l]?.[type] || CONSIGNES.fr[type]
-}
+// Consignes (catalogue : consigne_<type>, ou consigne_<niveau>_<type> pour les consignes propres à un niveau)
+const CONSIGNES_NIVEAU = { ce2: ['verbe', 'negReconnaitre'] }
+const consigneDe = (type, niveau) => () =>
+  t(CONSIGNES_NIVEAU[niveau]?.includes(type) ? `consigne_${niveau}_${type}` : `consigne_${type}`)
 
-const REGLES_PLURIEL = {
-  fr: {
-    al:  'Les noms en -al font leur pluriel en -aux.',
-    eu:  'Les noms en -eu prennent un x au pluriel.',
-    eau: 'Les noms en -eau prennent un x au pluriel.',
-    ou:  'Sept noms en -ou prennent un x au pluriel : bijou, caillou, chou, genou, hibou, joujou, pou.',
-    ou2: 'Les noms en -ou prennent un s au pluriel, sauf bijou, caillou, chou, genou, hibou, joujou, pou.',
-    s:   'Un mot qui finit déjà par -s ne change pas au pluriel.',
-    x:   'Un mot qui finit déjà par -x ne change pas au pluriel.',
-    z:   'Un mot qui finit déjà par -z ne change pas au pluriel.',
-    defaut: 'Au pluriel, le déterminant change (le, la → les ; un, une → des…) et on ajoute un -s à la fin des noms et des adjectifs.',
-  },
-  br: {
-    al:  'An anvioù a echu gant -al a ra o liester gant -aux.',
-    eu:  'An anvioù a echu gant -eu a gemer un x el liester.',
-    eau: 'An anvioù a echu gant -eau a gemer un x el liester.',
-    ou:  'Seizh anv a echu gant -ou a gemer un x el liester : bijou, caillou, chou, genou, hibou, joujou, pou.',
-    ou2: 'An anvioù a echu gant -ou a gemer un s el liester, nemet bijou, caillou, chou, genou, hibou, joujou, pou.',
-    s:   'Ur ger a echu dija gant -s ne cheñch ket el liester.',
-    x:   'Ur ger a echu dija gant -x ne cheñch ket el liester.',
-    z:   'Ur ger a echu dija gant -z ne cheñch ket el liester.',
-    defaut: 'El liester e cheñch ar ger-mont (le, la → les ; un, une → des…) hag e vez ouzhpennet un -s e dibenn an anvioù hag an anvioù-gwan.',
-  },
-}
-const regleDe = cle => () => (REGLES_PLURIEL[langue.value] || REGLES_PLURIEL.fr)[cle]
+// Règles du pluriel (catalogue : regle_<cle>)
+const regleDe = cle => () => t(`regle_${cle}`)
 
 // Construit les « réservoirs » d'éléments pour chaque type d'exercice
 function construireReservoirs(niveau) {
@@ -1097,14 +1005,11 @@ function construireReservoirs(niveau) {
 }
 
 const LIB_SIGNES = { '.': '. (point)', '?': '? (point d\'interrogation)', '!': '! (point d\'exclamation)' }
-const TYPE_SIGNE = {
-  fr: { '.': 'phrase déclarative', '?': 'phrase interrogative', '!': 'phrase exclamative' },
-  // br: à relire (types de phrases)
-  br: { '.': 'frazenn disklêriañ', '?': 'frazenn goulenn', '!': 'frazenn estlamm' },
-}
+// Type de phrase selon le signe de fin (catalogue : typePhrase_<nom du signe>)
+const NOM_SIGNE = { '.': 'point', '?': 'interrogation', '!': 'exclamation' }
 const LIB_CPLT = { o: 'Où ?', q: 'Quand ?' }
-const libGN = g => tr({ fr: LIB_GN, br: LIB_GN_BR })[g]
-const nombreDe = n => tr({ fr: n === 's' ? 'au singulier' : 'au pluriel', br: n === 's' ? 'en unander' : 'el liester' })
+const libGN = g => t(`gn_${g}`)
+const nombreDe = n => t(`nombre_${n}`)
 const ne_ = elide => (elide ? 'n\'' : 'ne')
 
 function construireQuestion(type, e, niveau = 'ce1') {
@@ -1121,10 +1026,8 @@ function construireQuestion(type, e, niveau = 'ce1') {
     case 'phrase': {
       const bonne = e.ok ? 'Oui, c\'est une phrase' : 'Non, ce n\'est pas une phrase'
       const expl = () => e.ok
-        ? tr({ fr: 'Les mots sont dans l\'ordre et la phrase a du sens.', br: 'Ar gerioù a zo en urzh hag ur ster en deus ar frazenn.' })
-        : e.r === 'verbe'
-          ? tr({ fr: 'Il manque un verbe : on ne sait pas ce qui se passe.', br: 'Mankout a ra ur verb : ne ouzer ket petra a c\'hoarvez.' })
-          : tr({ fr: 'Les mots ne sont pas dans le bon ordre : on ne comprend pas.', br: 'N\'emañ ket ar gerioù en urzh mat : ne gomprener ket.' })
+        ? t('expl_phraseOk')
+        : e.r === 'verbe' ? t('expl_phraseVerbe') : t('expl_phraseOrdre')
       return { ...q, mode: 'choix', html: e.t, lecture: e.ok ? e.t : null,
         choix: ['Oui, c\'est une phrase', 'Non, ce n\'est pas une phrase'], bonne, explication: expl,
         solution: () => `« ${e.t} » → ${tc(bonne).toLowerCase()}. ${expl()}` }
@@ -1135,15 +1038,14 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const sansPoint = juste.slice(0, -1)
       return { ...q, mode: 'choix', colonne: true, lecture: juste,
         choix: melanger([juste, sansMaj, sansPoint]), bonne: juste,
-        explication: () => tr({ fr: 'Une phrase commence par une majuscule et se termine par un point.',
-          br: 'Ur frazenn a grog gant ur bennlizherenn hag a echu gant ur poent.' }), // br: à relire (majuscule = pennlizherenn)
+        explication: () => t('expl_majuscule'),
         solution: juste }
     }
     case 'ponctuation': {
-      const typ = () => tr(TYPE_SIGNE)[e.s]
+      const typ = () => t(`typePhrase_${NOM_SIGNE[e.s]}`)
       return { ...q, mode: 'choix', html: `${e.t} <span class="trou">…</span>`,
         choix: ['.', '?', '!'].map(s => LIB_SIGNES[s]), bonne: LIB_SIGNES[e.s],
-        explication: () => tr({ fr: `C'est une ${typ()}.`, br: `Ur ${typ()} eo.` }),
+        explication: () => t('expl_ponctuation', { type: typ() }),
         solution: () => `${e.t}${e.s === '.' ? '' : ' '}${b(e.s)} (${typ()})` }
     }
     case 'complexe': {
@@ -1153,19 +1055,15 @@ function construireQuestion(type, e, niveau = 'ce1') {
       return { ...q, mode: 'choix', html: texteTokens(e.tokens), lecture: texteTokens(e.tokens),
         choix: ['phrase simple', 'phrase complexe'], bonne,
         explication: () => iv.length > 1
-          ? tr({ fr: `Il y a ${iv.length} verbes conjugués (${verbes}) : c'est une phrase complexe.`,
-            br: `${iv.length} verb displeget a zo (${verbes}) : ur frazenn gemplezh eo.` })
-          : tr({ fr: `Il n'y a qu'un verbe conjugué (${verbes}) : c'est une phrase simple.`,
-            br: `N'eus nemet ur verb displeget (${verbes}) : ur frazenn eeun eo.` }),
+          ? t('expl_complexe', { n: iv.length, verbes })
+          : t('expl_simple', { verbes }),
         solution: () => `${surligner(e, iv, u)} → ${tc(bonne)}` }
     }
     case 'negation': {
       return { ...q, mode: 'choix', colonne: true,
-        html: e.aff + (e.mot !== 'pas' ? `<div class="sens">${tr({ fr: 'avec', br: 'gant' })} « ne … ${e.mot} »</div>` : ''),
+        html: e.aff + (e.mot !== 'pas' ? `<div class="sens">${t('avec')} « ne … ${e.mot} »</div>` : ''),
         lecture: e.aff, choix: melanger([e.neg, ...e.faux]), bonne: e.neg,
-        explication: () => tr({
-          fr: `On encadre le verbe avec « ${ne_(e.elide)} … ${e.mot} »${e.elide ? ' (n\' devant une voyelle)' : ''}.`,
-          br: `Lakaat a reer « ${ne_(e.elide)} … ${e.mot} » en-dro d'ar verb${e.elide ? ' (n\' dirak ur vogalenn)' : ''}.` }),
+        explication: () => t('expl_negation', { ne: ne_(e.elide), mot: e.mot, elision: e.elide ? t('expl_negationElision') : '' }),
         solution: `${e.aff} → ${b(e.neg)}` }
     }
     case 'negReconnaitre': {
@@ -1177,10 +1075,8 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const bonne = !e.neg ? 'affirmative' : ce1 ? 'négative' : `ne … ${n.mot}`
       return { ...q, mode: 'choix', html: phrase, lecture: phrase, choix, bonne,
         explication: () => e.neg
-          ? tr({ fr: `Le verbe est encadré par « ${ne_(n.elide)} … ${n.mot} » : la phrase est négative.`,
-            br: `Emañ ar verb etre « ${ne_(n.elide)} … ${n.mot} » : nac'hus eo ar frazenn.` })
-          : tr({ fr: `Il n'y a pas de « ne … » autour du verbe : la phrase est affirmative.`,
-            br: `N'eus ket a « ne … » en-dro d'ar verb : kadarnaus eo ar frazenn.` }),
+          ? t('expl_negative', { ne: ne_(n.elide), mot: n.mot })
+          : t('expl_affirmative'),
         solution: () => `${phrase} → ${tc(bonne)}` }
     }
     case 'verbe': case 'nom': case 'det': case 'adj': case 'sujet': case 'cplt': case 'gnNoyau': {
@@ -1192,34 +1088,23 @@ function construireQuestion(type, e, niveau = 'ce1') {
       let explication
       if (type === 'sujet') {
         explication = () => {
-          let x = tr({ fr: `Le sujet est « ${texteSujet(e)} ». ${phraseCestQui(e)}`,
-            br: `Ar sujed eo « ${texteSujet(e)} ». « ${phraseCestQui(e)} »` })
-          if (sujetInverse(e)) x += tr({ fr: ' Ici, le sujet est placé après le verbe.', br: ' Amañ emañ ar sujed goude ar verb.' })
+          let x = t('expl_sujet', { sujet: texteSujet(e), cestQui: phraseCestQui(e) })
+          if (sujetInverse(e)) x += t('expl_sujetInverse')
           return x
         }
       } else if (type === 'cplt') {
-        explication = () => tr({
-          fr: `« ${texteGroupe(e, pred)} » est un complément de phrase : il indique ${e.cp === 'o' ? 'où' : 'quand'}. On peut le déplacer ou le supprimer.`,
-          br: `« ${texteGroupe(e, pred)} » a zo ur glokaenn frazenn : diskouez a ra ${e.cp === 'o' ? 'pelec\'h' : 'pegoulz'}. Gallout a reer he dilec'hiañ pe he lemel.` })
+        explication = () => t('expl_cplt', { groupe: texteGroupe(e, pred), question: t(e.cp === 'o' ? 'expl_cpltOu' : 'expl_cpltQuand') })
       } else if (type === 'gnNoyau') {
-        explication = () => tr({
-          fr: `Le nom principal est « ${e.tokens[cibles[0]].m} » : les autres mots s'accordent avec lui.`,
-          br: `An anv pennañ eo « ${e.tokens[cibles[0]].m} » : ar gerioù all a genglot gantañ.` })
+        explication = () => t('expl_gnNoyau', { nom: e.tokens[cibles[0]].m })
       } else if (type === 'verbe') {
         const vs = cibles.map(i => `« ${e.tokens[i].m} »`).join(', ')
         explication = () => cibles.length > 1
-          ? tr({ fr: `Les verbes conjugués sont ${vs}.`, br: `Ar verboù displeget eo ${vs}.` })
-          : tr({ fr: `Le verbe est ${vs}.`, br: `Ar verb eo ${vs}.` })
+          ? t('expl_verbes', { verbes: vs })
+          : t('expl_verbe', { verbes: vs })
       } else {
         const mots = cibles.map(i => `« ${e.tokens[i].m} »`).join(', ')
         const pl = cibles.length > 1
-        explication = () => {
-          const lib = tr({
-            fr: { nom: 'Nom', det: 'Déterminant', adj: 'Adjectif' }[type] + (pl ? 's' : ''),
-            br: { nom: pl ? 'Anvioù' : 'Anv', det: pl ? 'Gerioù-mont' : 'Ger-mont', adj: pl ? 'Anvioù-gwan' : 'Anv-gwan' }[type],
-          })
-          return `${lib} : ${mots}.`
-        }
+        explication = () => `${t(`lib_${type}${pl ? 's' : ''}`)} : ${mots}.`
       }
       const solution = (type === 'sujet' || type === 'cplt') ? surlignerGroupe(e, pred)
         : surligner(e, cibles, type === 'verbe' ? u : b)
@@ -1230,9 +1115,7 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const groupe = texteGroupe(e, t => t.cp)
       return { ...q, mode: 'choix', html: surlignerGroupe(e, t => t.cp), lecture: texteTokens(e.tokens),
         choix: ['Où ?', 'Quand ?'], bonne,
-        explication: () => tr({
-          fr: `« ${groupe} » indique ${e.cp === 'o' ? 'le lieu (où ?)' : 'le moment (quand ?)'}.`,
-          br: `« ${groupe} » a ziskouez ${e.cp === 'o' ? 'al lec\'h (pelec\'h ?)' : 'ar mare (pegoulz ?)'}.` }),
+        explication: () => t('expl_cpltQ', { groupe, quoi: t(e.cp === 'o' ? 'expl_cpltQLieu' : 'expl_cpltQMoment') }),
         solution: () => `${surlignerGroupe(e, t => t.cp)} → ${tc(bonne)}` }
     }
     case 'cpltNature': {
@@ -1243,21 +1126,18 @@ function construireQuestion(type, e, niveau = 'ce1') {
       return { ...q, mode: 'choix', html: surlignerGroupe(e.p, pred), lecture: texteTokens(e.p.tokens),
         choix: ['complément du verbe', 'complément de phrase'], bonne,
         explication: () => e.g === 'cp'
-          ? tr({ fr: `On peut déplacer ou supprimer « ${groupe} » : c'est un complément de phrase.`,
-            br: `Gallout a reer dilec'hiañ pe lemel « ${groupe} » : ur glokaenn frazenn eo.` })
-          : tr({ fr: `« ${groupe} » complète le verbe « ${verbe} » : on ne peut pas le déplacer en début de phrase. C'est un complément du verbe.`,
-            br: `« ${groupe} » a glok ar verb « ${verbe} » : ne c'haller ket he dilec'hiañ e penn kentañ ar frazenn. Ur glokaenn verb eo.` }),
+          ? t('expl_cpltPhrase', { groupe })
+          : t('expl_cpltVerbe', { groupe, verbe }),
         solution: () => `${surlignerGroupe(e.p, pred)} → ${tc(bonne)}` }
     }
     case 'nature': {
-      const t = e.p.tokens[e.i]
-      const bonne = NOM_NATURE[t.n]
-      const precision = () => t.propre ? tr({ fr: ' (nom propre)', br: ' (anv divoutin)' }) // br: à relire (nom propre)
-        : t.n === 'verbe' && niveau !== 'ce1' ? tr({ fr: ' conjugué', br: ' displeget' }) : ''
+      const tok = e.p.tokens[e.i]
+      const bonne = NOM_NATURE[tok.n]
+      const precision = () => tok.propre ? t('expl_nomPropre')
+        : tok.n === 'verbe' && niveau !== 'ce1' ? t('expl_conjugue') : ''
       return { ...q, mode: 'choix', html: surligner(e.p, [e.i]), lecture: texteTokens(e.p.tokens),
         choix: ['nom', 'verbe', 'déterminant', 'adjectif', 'pronom'], bonne,
-        explication: () => tr({ fr: `« ${t.m} » est un ${bonne}${precision()}.`,
-          br: `Rummad ar ger « ${t.m} » : ${tc(bonne)}${precision()}.` }),
+        explication: () => t('expl_nature', { mot: tok.m, nature: tc(bonne), precision: precision() }),
         solution: () => `${surligner(e.p, [e.i])} → ${tc(bonne)}` }
     }
     case 'pronom': {
@@ -1265,8 +1145,7 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const nouvelle = phraseAvecPronom(e)
       return { ...q, mode: 'choix', html: surlignerSujet(e), lecture: texteTokens(e.tokens),
         choix: ['il', 'elle', 'ils', 'elles'], bonne,
-        explication: () => tr({ fr: `« ${texteSujet(e)} » est ${libGN(e.gn)} → ${nouvelle}`,
-          br: `« ${texteSujet(e)} » a zo ${libGN(e.gn)} → « ${nouvelle} »` }),
+        explication: () => t('expl_pronom', { sujet: texteSujet(e), gn: libGN(e.gn), phrase: nouvelle }),
         solution: nouvelle }
     }
     case 'genre': {
@@ -1275,8 +1154,7 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const lib = () => tc(g === 'm' ? 'masculin' : 'féminin')
       return { ...q, mode: 'choix', html: `<span class="trou">___</span> ${nom}`, lecture: null,
         choix: ['un', 'une'], bonne,
-        explication: () => tr({ fr: `On dit « ${bonne} ${nom} » : ${nom} est ${lib()}.`,
-          br: `Lavaret a reer « ${bonne} ${nom} » : « ${nom} » a zo ${lib()}.` }),
+        explication: () => t('expl_genre', { det: bonne, nom, genre: lib() }),
         solution: () => `${b(bonne)} ${nom} (${lib()})` }
     }
     case 'nombre': {
@@ -1284,8 +1162,7 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const det = e.gn.split(' ')[0]
       return { ...q, mode: 'choix', html: e.gn, lecture: e.gn,
         choix: ['singulier', 'pluriel'], bonne,
-        explication: () => tr({ fr: `« ${det} » montre que c'est ${nombreDe(e.n)}.`,
-          br: `« ${det} » a ziskouez emañ ${nombreDe(e.n)}.` }),
+        explication: () => t('expl_nombre', { det, nombre: nombreDe(e.n) }),
         solution: () => `${e.gn} → ${tc(bonne)}` }
     }
     case 'pluriel': {
@@ -1301,8 +1178,7 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const choix = [...new Set(e.formes)]
       return { ...q, mode: 'choix', html: `${gn.replace('___', '<span class="trou">___</span>')} <em>(${adj})</em>`,
         lecture: null, choix, bonne,
-        explication: () => tr({ fr: `« ${nom} » est ${libGN(g)} → ${bonne}.`,
-          br: `« ${nom} » a zo ${libGN(g)} → ${bonne}.` }),
+        explication: () => t('expl_accordGN', { nom, gn: libGN(g), bonne }),
         solution: gn.replace('___', b(bonne)) }
     }
     case 'accordSV': {
@@ -1310,8 +1186,7 @@ function construireQuestion(type, e, niveau = 'ce1') {
       const bonne = n === 's' ? fs : fp
       return { ...q, mode: 'choix', html: `${phrase.replace('___', '<span class="trou">___</span>')} <em>(${inf})</em>`,
         lecture: null, choix: [fs, fp], bonne,
-        explication: () => tr({ fr: `Le verbe s'accorde avec son sujet « ${suj} », qui est ${nombreDe(n)} → ${bonne}.`,
-          br: `Ar verb a genglot gant e sujed « ${suj} », a zo ${nombreDe(n)} → ${bonne}.` }),
+        explication: () => t('expl_accordSV', { sujet: suj, nombre: nombreDe(n), bonne }),
         solution: phrase.replace('___', b(bonne)) }
     }
   }
@@ -1335,75 +1210,10 @@ function genererQuestions(niveau, types, nb) {
 }
 
 // ── Fiche imprimable : rendu d'une question en HTML papier
-const CONSIGNES_FICHE = {
-  fr: {
-    ordre:       'Remets les mots dans l\'ordre et écris la phrase.',
-    phrase:      'Coche la bonne case : est-ce une phrase ?',
-    majuscule:   'Recopie la phrase avec une majuscule et un point.',
-    ponctuation: 'Ajoute le bon signe à la fin : . ? ou !',
-    complexe:    'Souligne les verbes conjugués, puis coche : phrase simple ou complexe ?',
-    negation:    'Écris la phrase à la forme négative.',
-    negReconnaitre: 'Coche : la phrase est-elle affirmative ou négative ?',
-    verbe:       'Souligne le verbe.',
-    nom:         'Entoure tous les noms.',
-    det:         'Entoure tous les déterminants.',
-    adj:         'Entoure tous les adjectifs.',
-    nature:      'Écris la nature du mot en gras : nom, verbe, déterminant, adjectif ou pronom.',
-    gnNoyau:     'Souligne le nom principal du groupe nominal.',
-    sujet:       'Entoure le groupe sujet.',
-    pronom:      'Récris la phrase en remplaçant le sujet souligné par il, elle, ils ou elles.',
-    cplt:        'Entoure le complément de phrase.',
-    cpltQ:       'Le complément souligné indique-t-il où ou quand ? Coche.',
-    cpltNature:  'Le groupe souligné est-il un complément du verbe (V) ou un complément de phrase (P) ?',
-    genre:       'Écris un ou une.',
-    nombre:      'Coche : singulier ou pluriel ?',
-    pluriel:     'Écris au pluriel.',
-    accordGN:    'Accorde l\'adjectif entre parenthèses.',
-    accordSV:    'Écris le verbe au présent.',
-  },
-  // br: à relire (cocher = lakaat ur groaz, entourer = lakaat ur c'helc'h en-dro, souligner = islinennañ)
-  br: {
-    ordre:       'Lak ar gerioù en urzh ha skriv ar frazenn.',
-    phrase:      'Lak ur groaz er voest vat : ur frazenn eo ?',
-    majuscule:   'Adskriv ar frazenn gant ur bennlizherenn hag ur poent.',
-    ponctuation: 'Ouzhpenn an arouez vat en dibenn : . ? pe !',
-    complexe:    'Islinenn ar verboù displeget, ha lak ur groaz : frazenn eeun pe gemplezh ?',
-    negation:    'Skriv ar frazenn er stumm nac\'hus.',
-    negReconnaitre: 'Lak ur groaz : kadarnaus pe nac\'hus eo ar frazenn ?',
-    verbe:       'Islinenn ar verb.',
-    nom:         'Lak ur c\'helc\'h en-dro d\'an holl anvioù.',
-    det:         'Lak ur c\'helc\'h en-dro d\'an holl c\'herioù-mont.',
-    adj:         'Lak ur c\'helc\'h en-dro d\'an holl anvioù-gwan.',
-    nature:      'Skriv rummad ar ger e tev : anv, verb, ger-mont, anv-gwan pe raganv.',
-    gnNoyau:     'Islinenn anv pennañ ar strollad anv.',
-    sujet:       'Lak ur c\'helc\'h en-dro d\'ar strollad sujed.',
-    pronom:      'Adskriv ar frazenn en ur lakaat il, elle, ils pe elles e plas ar sujed islinennet.',
-    cplt:        'Lak ur c\'helc\'h en-dro da glokaenn ar frazenn.',
-    cpltQ:       'Diskouez a ra ar glokaenn islinennet pelec\'h pe pegoulz ? Lak ur groaz.',
-    cpltNature:  'Klokaenn ar verb (V) pe klokaenn ar frazenn (F) eo ar strollad islinennet ?',
-    genre:       'Skriv un pe une.',
-    nombre:      'Lak ur groaz : unander pe liester ?',
-    pluriel:     'Skriv el liester.',
-    accordGN:    'Kenglot an anv-gwan etre krommelloù.',
-    accordSV:    'Skriv ar verb en amzer-vremañ.',
-  },
-}
-const CONSIGNES_FICHE_NIVEAU = {
-  ce2: {
-    fr: {
-      verbe: 'Souligne tous les verbes conjugués.',
-      negReconnaitre: 'Écris A si la phrase est affirmative, sinon écris la négation (ne … pas, plus, jamais, rien).',
-    },
-    br: {
-      verbe: 'Islinenn an holl verboù displeget.',
-      negReconnaitre: 'Skriv K ma\'z eo kadarnaus ar frazenn, anez skriv an nac\'hadur (ne … pas, plus, jamais, rien).',
-    },
-  },
-}
-const consigneFiche = (type, niveau) => {
-  const l = langue.value
-  return CONSIGNES_FICHE_NIVEAU[niveau]?.[l]?.[type] || CONSIGNES_FICHE[l]?.[type] || CONSIGNES_FICHE.fr[type]
-}
+// Consignes de la fiche (catalogue : fiche_<type>, ou fiche_<niveau>_<type> pour un niveau)
+const CONSIGNES_FICHE_NIVEAU = { ce2: ['verbe', 'negReconnaitre'] }
+const consigneFiche = (type, niveau) =>
+  t(CONSIGNES_FICHE_NIVEAU[niveau]?.includes(type) ? `fiche_${niveau}_${type}` : `fiche_${type}`)
 
 const LIGNE = '<span class="ligne"></span>'
 const CASE = '<span class="case"></span>'
@@ -1414,7 +1224,7 @@ function questionFiche(q) {
     case 'ordre':
       return `<div class="etiqs">${q.etiquettes.map(e => `<span class="etiq">${e}</span>`).join('')} <span class="etiq">${q.fin}</span></div><div class="lignebloc">${LIGNE}</div>`
     case 'phrase':
-      return `<div>${q.html}</div><div class="cases">${CASE} ${tr({ fr: 'c\'est une phrase', br: 'ur frazenn eo' })} &nbsp;&nbsp; ${CASE} ${tr({ fr: 'ce n\'est pas une phrase', br: 'n\'eo ket ur frazenn' })}</div>`
+      return `<div>${q.html}</div><div class="cases">${CASE} ${t('fiche_cestPhrase')} &nbsp;&nbsp; ${CASE} ${t('fiche_pasPhrase')}</div>`
     case 'majuscule': {
       const brut = minuscule(q.bonne).slice(0, -1)
       return `<div>${brut}</div><div class="lignebloc">${LIGNE}</div>`
@@ -1438,7 +1248,7 @@ function questionFiche(q) {
     case 'cpltQ':
       return `<div>${q.html} &nbsp;&nbsp; ${CASE} ${tc('Où ?').toLowerCase()} &nbsp; ${CASE} ${tc('Quand ?').toLowerCase()}</div>`
     case 'cpltNature':
-      return `<div>${q.html} &nbsp;&nbsp; ${CASE} V &nbsp; ${CASE} ${tr({ fr: 'P', br: 'F' })}</div>`
+      return `<div>${q.html} &nbsp;&nbsp; ${CASE} V &nbsp; ${CASE} ${t('fiche_lettrePhrase')}</div>`
     case 'genre':
       return `<div>${q.html.replace('<span class="trou">___</span>', '<span class="ligne courte"></span>')}</div>`
     case 'nombre':

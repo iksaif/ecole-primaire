@@ -37,4 +37,15 @@ export default {
     rappel: "Dalc'h soñj",
     lisEmploi: "Lenn an implij-amzer.",
     colQuestion: 'Goulenn',
+    ex_lire: 'Lenn an eur',
+    ex_placer: 'Lakaat an nadozioù',
+    ex_journee: 'Mintin / goude merenn',
+    ex_duree: 'Padelezhioù', // br: à relire
+    ex_conversion: 'h, min, s',
+    ex_emploi: 'Implij-amzer',
+    prec_heure: 'Eurioù rik', // br: à relire
+    prec_demi: 'Hanter-eurioù',
+    prec_quart: "Kardoù-eur",
+    prec_cinq: '5 munut',
+    prec_minute: 'Betek ar munut', // br: à relire
   }

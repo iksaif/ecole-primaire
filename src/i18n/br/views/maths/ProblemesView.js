@@ -15,4 +15,11 @@ export default {
     pReponse: 'Respont :',
     pNbProblemes: '{n} kudenn',
     corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
+    cat_ajoutRetrait: '➕➖ Ouzhpennañ / lemel',
+    cat_comparaison: '⚖️ Keñveriañ',
+    cat_partiesTout: '🧺 Lodennoù hag an holl', // br: à relire
+    cat_multiplication: '✖️ Liesadenn',
+    cat_partage: '🍰 Rannañ / strollañ',
+    cat_foisPlus: '🔁 « Gwech kement »', // br: à relire
+    cat_deuxEtapes: '🪜 Meur a bazenn',
   }

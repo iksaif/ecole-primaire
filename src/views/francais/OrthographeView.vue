@@ -105,48 +105,10 @@ import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { echapper } from '../../utils/impression'
 
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
-// Explications en breton (les mots français étudiés restent entre guillemets)
-// br: à relire — préposition = araogenn, conjonction = stagell, déterminant = ger-mont (incertain), pronom réfléchi = raganv emober (incertain)
-const EXPLICATIONS_BR = {
-  '"a" = avoir (il a)': '"a" = ar verb "avoir" (il a)',
-  '"à" = préposition de lieu': '"à" = araogenn al lec\'h',
-  '"a" = avoir (papa a)': '"a" = ar verb "avoir" (papa a)',
-  '"ou" = choix (ou bien)': '"ou" = un dibab (ou bien)',
-  '"où" = lieu (remplace "à quel endroit")': '"où" = al lec\'h (e-lec\'h "à quel endroit")',
-  '"ou" = choix': '"ou" = un dibab',
-  '"on" = pronom sujet': '"on" = raganv sujed',
-  '"ont" = avoir au pluriel (ils ont)': '"ont" = "avoir" el liester (ils ont)',
-  '"on" = pronom (on = nous)': '"on" = raganv (on = nous)',
-  '"et" = conjonction (et puis)': '"et" = stagell (et puis)',
-  '"est" = être (il est)': '"est" = ar verb "être" (il est)',
-  '"et" = conjonction': '"et" = stagell',
-  '"sont" = être au pluriel (ils sont)': '"sont" = "être" el liester (ils sont)',
-  '"son" = déterminant possessif': '"son" = ger-mont perc\'hennañ',
-  '"sont" = être au pluriel': '"sont" = "être" el liester',
-  '"ce" = déterminant démonstratif': '"ce" = ger-mont diskouez',
-  '"se" = pronom réfléchi': '"se" = raganv emober',
-  '"mes" = déterminant possessif (pluriel de mon/ma)': '"mes" = ger-mont perc\'hennañ (liester "mon"/"ma")',
-  '"mais" = conjonction d\'opposition': '"mais" = stagell enebiñ',
-  'garçon est masculin → petit': '"garçon" a zo gourel → "petit"',
-  'fille est féminin → petite': '"fille" a zo benel → "petite"',
-  'chien est masculin → content': '"chien" a zo gourel → "content"',
-  'chatte est féminin → blanche': '"chatte" a zo benel → "blanche"',
-  'un → singulier → château': '"un" → unander → "château"',
-  'beaux → pluriel → châteaux': '"beaux" → liester → "châteaux"',
-  'chiens est pluriel masculin → gros (invariable en -s)': '"chiens" a zo liester gourel → "gros" (ne cheñch ket, echu gant -s)',
-  'voiture est féminin → grosse': '"voiture" a zo benel → "grosse"',
-  'Les noms en -eau font leur pluriel en -eaux': 'An anvioù echu gant -eau : liester gant -eaux',
-  'Les noms en -eu font leur pluriel en -eux': 'An anvioù echu gant -eu : liester gant -eux',
-  'Pluriel irrégulier : genou → genoux': 'Liester direizh : genou → genoux',
-  'Les noms en -al font leur pluriel en -aux': 'An anvioù echu gant -al : liester gant -aux',
-  '"hibou" s\'écrit avec un h': '"hibou" a vez skrivet gant un h',
-  '"oiseau" commence par oi': '"oiseau" a grog gant "oi"',
-  '"clown" vient de l\'anglais, avec w': '"clown" a zeu eus ar saozneg, gant ur w',
-  '"chanter" s\'écrit ch + ante': '"chanter" a vez skrivet ch + ante',
-}
-const explication = q => tr({ fr: q.explication, br: EXPLICATIONS_BR[q.explication] ?? q.explication })
+// Explication d'une réponse (interface) : q.explication est une clé du catalogue, ex. exp_a_avoir_il_a
+const explication = q => t(q.explication)
 
 // ── Données par thème
 const THEMES = [
@@ -158,53 +120,53 @@ const THEMES = [
 const QUESTIONS = {
   homophones: [
     // a / à
-    { phrase: 'Il ___ une belle maison.',     bonne: 'a',   choix: ['a','à'],   explication: '"a" = avoir (il a)' },
-    { phrase: 'Elle va ___ l\'école.',        bonne: 'à',   choix: ['a','à'],   explication: '"à" = préposition de lieu' },
-    { phrase: 'Papa ___ faim.',               bonne: 'a',   choix: ['a','à'],   explication: '"a" = avoir (papa a)' },
-    { phrase: 'Je vais ___ la piscine.',      bonne: 'à',   choix: ['a','à'],   explication: '"à" = préposition de lieu' },
+    { phrase: 'Il ___ une belle maison.',     bonne: 'a',   choix: ['a','à'],   explication: 'exp_a_avoir_il_a' },
+    { phrase: 'Elle va ___ l\'école.',        bonne: 'à',   choix: ['a','à'],   explication: 'exp_a_preposition_de_lieu' },
+    { phrase: 'Papa ___ faim.',               bonne: 'a',   choix: ['a','à'],   explication: 'exp_a_avoir_papa_a' },
+    { phrase: 'Je vais ___ la piscine.',      bonne: 'à',   choix: ['a','à'],   explication: 'exp_a_preposition_de_lieu' },
     // ou / où
-    { phrase: 'Tu veux du lait ___ du jus ?', bonne: 'ou',  choix: ['ou','où'], explication: '"ou" = choix (ou bien)' },
-    { phrase: '___ est mon cartable ?',        bonne: 'Où',  choix: ['Ou','Où'], explication: '"où" = lieu (remplace "à quel endroit")' },
-    { phrase: 'Chat ___ chien, j\'aime les deux.', bonne: 'ou', choix: ['ou','où'], explication: '"ou" = choix' },
+    { phrase: 'Tu veux du lait ___ du jus ?', bonne: 'ou',  choix: ['ou','où'], explication: 'exp_ou_choix_ou_bien' },
+    { phrase: '___ est mon cartable ?',        bonne: 'Où',  choix: ['Ou','Où'], explication: 'exp_ou_lieu_remplace_a_quel' },
+    { phrase: 'Chat ___ chien, j\'aime les deux.', bonne: 'ou', choix: ['ou','où'], explication: 'exp_ou_choix' },
     // on / ont
-    { phrase: '___ mange à midi.',            bonne: 'On',  choix: ['On','Ont'], explication: '"on" = pronom sujet' },
-    { phrase: 'Ils ___ fini leurs devoirs.',  bonne: 'ont', choix: ['on','ont'], explication: '"ont" = avoir au pluriel (ils ont)' },
-    { phrase: '___ part en vacances demain.', bonne: 'On',  choix: ['On','Ont'], explication: '"on" = pronom (on = nous)' },
+    { phrase: '___ mange à midi.',            bonne: 'On',  choix: ['On','Ont'], explication: 'exp_on_pronom_sujet' },
+    { phrase: 'Ils ___ fini leurs devoirs.',  bonne: 'ont', choix: ['on','ont'], explication: 'exp_ont_avoir_au_pluriel_ils' },
+    { phrase: '___ part en vacances demain.', bonne: 'On',  choix: ['On','Ont'], explication: 'exp_on_pronom_on_nous' },
     // est / et
-    { phrase: 'Le chat ___ la souris.',       bonne: 'et',  choix: ['est','et'], explication: '"et" = conjonction (et puis)' },
-    { phrase: 'Il ___ content.',              bonne: 'est', choix: ['est','et'], explication: '"est" = être (il est)' },
-    { phrase: 'Le soleil ___ chaud.',         bonne: 'est', choix: ['est','et'], explication: '"est" = être (il est)' },
-    { phrase: 'J\'aime les pommes ___ les poires.', bonne: 'et', choix: ['est','et'], explication: '"et" = conjonction' },
+    { phrase: 'Le chat ___ la souris.',       bonne: 'et',  choix: ['est','et'], explication: 'exp_et_conjonction_et_puis' },
+    { phrase: 'Il ___ content.',              bonne: 'est', choix: ['est','et'], explication: 'exp_est_etre_il_est' },
+    { phrase: 'Le soleil ___ chaud.',         bonne: 'est', choix: ['est','et'], explication: 'exp_est_etre_il_est' },
+    { phrase: 'J\'aime les pommes ___ les poires.', bonne: 'et', choix: ['est','et'], explication: 'exp_et_conjonction' },
     // son / sont
-    { phrase: 'Ils ___ partis tôt.',          bonne: 'sont', choix: ['son','sont'], explication: '"sont" = être au pluriel (ils sont)' },
-    { phrase: '___ chien s\'appelle Rex.',    bonne: 'Son',  choix: ['Son','Sont'], explication: '"son" = déterminant possessif' },
-    { phrase: 'Elles ___ heureuses.',         bonne: 'sont', choix: ['son','sont'], explication: '"sont" = être au pluriel' },
+    { phrase: 'Ils ___ partis tôt.',          bonne: 'sont', choix: ['son','sont'], explication: 'exp_sont_etre_au_pluriel_ils' },
+    { phrase: '___ chien s\'appelle Rex.',    bonne: 'Son',  choix: ['Son','Sont'], explication: 'exp_son_determinant_possessif' },
+    { phrase: 'Elles ___ heureuses.',         bonne: 'sont', choix: ['son','sont'], explication: 'exp_sont_etre_au_pluriel' },
     // ce / se
-    { phrase: '___ livre est à moi.',         bonne: 'Ce',  choix: ['Ce','Se'],  explication: '"ce" = déterminant démonstratif' },
-    { phrase: 'Il ___ lave les mains.',       bonne: 'se',  choix: ['ce','se'],  explication: '"se" = pronom réfléchi' },
+    { phrase: '___ livre est à moi.',         bonne: 'Ce',  choix: ['Ce','Se'],  explication: 'exp_ce_determinant_demonstratif' },
+    { phrase: 'Il ___ lave les mains.',       bonne: 'se',  choix: ['ce','se'],  explication: 'exp_se_pronom_reflechi' },
     // mes / mais
-    { phrase: 'Je cherche ___ lunettes.',     bonne: 'mes', choix: ['mes','mais'], explication: '"mes" = déterminant possessif (pluriel de mon/ma)' },
-    { phrase: 'J\'aime le sport ___ je suis fatigué.', bonne: 'mais', choix: ['mes','mais'], explication: '"mais" = conjonction d\'opposition' },
+    { phrase: 'Je cherche ___ lunettes.',     bonne: 'mes', choix: ['mes','mais'], explication: 'exp_mes_determinant_possessif_pluriel_de' },
+    { phrase: 'J\'aime le sport ___ je suis fatigué.', bonne: 'mais', choix: ['mes','mais'], explication: 'exp_mais_conjonction_d_opposition' },
   ],
 
   accords: [
     // genre
-    { phrase: 'Un ___ garçon.',               bonne: 'petit',    choix: ['petit','petite'],    explication: 'garçon est masculin → petit' },
-    { phrase: 'Une ___ fille.',               bonne: 'petite',   choix: ['petit','petite'],    explication: 'fille est féminin → petite' },
-    { phrase: 'Un chien ___.',                bonne: 'content',  choix: ['content','contente'], explication: 'chien est masculin → content' },
-    { phrase: 'Une chatte ___.',              bonne: 'blanche',  choix: ['blanc','blanche'],   explication: 'chatte est féminin → blanche' },
-    { phrase: 'Un beau ___.',                 bonne: 'château',  choix: ['château','châteaux'], explication: 'un → singulier → château' },
-    { phrase: 'De beaux ___.',                bonne: 'châteaux', choix: ['château','châteaux'], explication: 'beaux → pluriel → châteaux' },
+    { phrase: 'Un ___ garçon.',               bonne: 'petit',    choix: ['petit','petite'],    explication: 'exp_garcon_est_masculin_petit' },
+    { phrase: 'Une ___ fille.',               bonne: 'petite',   choix: ['petit','petite'],    explication: 'exp_fille_est_feminin_petite' },
+    { phrase: 'Un chien ___.',                bonne: 'content',  choix: ['content','contente'], explication: 'exp_chien_est_masculin_content' },
+    { phrase: 'Une chatte ___.',              bonne: 'blanche',  choix: ['blanc','blanche'],   explication: 'exp_chatte_est_feminin_blanche' },
+    { phrase: 'Un beau ___.',                 bonne: 'château',  choix: ['château','châteaux'], explication: 'exp_un_singulier_chateau' },
+    { phrase: 'De beaux ___.',                bonne: 'châteaux', choix: ['château','châteaux'], explication: 'exp_beaux_pluriel_chateaux' },
     // nombre
-    { phrase: 'Les ___ chiens aboient.',      bonne: 'gros',     choix: ['gros','grosse'],     explication: 'chiens est pluriel masculin → gros (invariable en -s)' },
-    { phrase: 'La ___ voiture est rouge.',    bonne: 'grosse',   choix: ['gros','grosse'],     explication: 'voiture est féminin → grosse' },
+    { phrase: 'Les ___ chiens aboient.',      bonne: 'gros',     choix: ['gros','grosse'],     explication: 'exp_chiens_est_pluriel_masculin_gros' },
+    { phrase: 'La ___ voiture est rouge.',    bonne: 'grosse',   choix: ['gros','grosse'],     explication: 'exp_voiture_est_feminin_grosse' },
     // pluriel des noms
-    { phrase: 'Un bateau → des ___.',         bonne: 'bateaux',  choix: ['bateaus','bateaux'], explication: 'Les noms en -eau font leur pluriel en -eaux' },
-    { phrase: 'Un jeu → des ___.',            bonne: 'jeux',     choix: ['jeus','jeux'],       explication: 'Les noms en -eu font leur pluriel en -eux' },
-    { phrase: 'Un gâteau → des ___.',         bonne: 'gâteaux',  choix: ['gâteaus','gâteaux'], explication: 'Les noms en -eau font leur pluriel en -eaux' },
-    { phrase: 'Un genou → des ___.',          bonne: 'genoux',   choix: ['genous','genoux'],   explication: 'Pluriel irrégulier : genou → genoux' },
-    { phrase: 'Un animal → des ___.',         bonne: 'animaux',  choix: ['animals','animaux'], explication: 'Les noms en -al font leur pluriel en -aux' },
-    { phrase: 'Un journal → des ___.',        bonne: 'journaux', choix: ['journals','journaux'], explication: 'Les noms en -al font leur pluriel en -aux' },
+    { phrase: 'Un bateau → des ___.',         bonne: 'bateaux',  choix: ['bateaus','bateaux'], explication: 'exp_les_noms_en_eau_font' },
+    { phrase: 'Un jeu → des ___.',            bonne: 'jeux',     choix: ['jeus','jeux'],       explication: 'exp_les_noms_en_eu_font' },
+    { phrase: 'Un gâteau → des ___.',         bonne: 'gâteaux',  choix: ['gâteaus','gâteaux'], explication: 'exp_les_noms_en_eau_font' },
+    { phrase: 'Un genou → des ___.',          bonne: 'genoux',   choix: ['genous','genoux'],   explication: 'exp_pluriel_irregulier_genou_genoux' },
+    { phrase: 'Un animal → des ___.',         bonne: 'animaux',  choix: ['animals','animaux'], explication: 'exp_les_noms_en_al_font' },
+    { phrase: 'Un journal → des ___.',        bonne: 'journaux', choix: ['journals','journaux'], explication: 'exp_les_noms_en_al_font' },
   ],
 
   lettres: [
@@ -221,11 +183,11 @@ const QUESTIONS = {
     { type: 'saisie', phrase: 'Mon ___ s\'appelle Rex.', bonne: 'chien',   indice: '___ien' },
     { type: 'saisie', phrase: 'La ___ est belle.',       bonne: 'fleur',   indice: '___eur' },
     // Mots avec h muet / h aspiré
-    { phrase: 'L\'___ est bleu.',                bonne: 'hibou', choix: ['ibou','hibou'],   explication: '"hibou" s\'écrit avec un h' },
-    { phrase: 'L\'___ chante.',                  bonne: 'oiseau', choix: ['wazeau','oiseau'], explication: '"oiseau" commence par oi' },
+    { phrase: 'L\'___ est bleu.',                bonne: 'hibou', choix: ['ibou','hibou'],   explication: 'exp_hibou_s_ecrit_avec_un' },
+    { phrase: 'L\'___ chante.',                  bonne: 'oiseau', choix: ['wazeau','oiseau'], explication: 'exp_oiseau_commence_par_oi' },
     // Confusion son c/qu
-    { phrase: 'Le ___ rit.',                     bonne: 'clown', choix: ['cloun','clown'],   explication: '"clown" vient de l\'anglais, avec w' },
-    { phrase: 'Je ___ une chanson.',             bonne: 'chante', choix: ['chante','shante'], explication: '"chanter" s\'écrit ch + ante' },
+    { phrase: 'Le ___ rit.',                     bonne: 'clown', choix: ['cloun','clown'],   explication: 'exp_clown_vient_de_l_anglais' },
+    { phrase: 'Je ___ une chanson.',             bonne: 'chante', choix: ['chante','shante'], explication: 'exp_chanter_s_ecrit_ch_ante' },
   ],
 }
 

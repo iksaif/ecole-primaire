@@ -19,7 +19,7 @@
         <div class="btn-group">
           <button v-for="ty in TYPES" :key="ty.id"
             class="level-btn" :class="{ active: config.types.includes(ty.id) }"
-            @click="toggleType(ty.id)">{{ tr(ty.label) }}</button>
+            @click="toggleType(ty.id)">{{ t(ty.label) }}</button>
         </div>
       </div>
 
@@ -158,14 +158,22 @@
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
 import { enLettresFr, enLettresBr, decomposer } from '../../utils/nombres'
-import { useI18n } from '../../i18n'
+import { useI18n, contenu } from '../../i18n'
+import { regles } from '../../i18n/regles'
 import messagesFr from '../../i18n/fr/views/maths/NumerationView.js'
 import messagesBr from '../../i18n/br/views/maths/NumerationView.js'
+import contenuFr from '../../i18n/fr/contenu/numeration.js'
+import contenuBr from '../../i18n/br/contenu/numeration.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
-const enLettres = n => (langue.value === 'br' ? enLettresBr(n) : enLettresFr(n))
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+// Langue du contenu généré (nombres en lettres, unités) : celle de l'interface pour les maths
+const langueContenu = computed(() => langue.value)
+const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
+const R = computed(() => regles(langueContenu.value))
+const EN_LETTRES = { fr: enLettresFr, br: enLettresBr }
+const enLettres = n => (EN_LETTRES[langueContenu.value] ?? enLettresFr)(n)
 
 // #region generation — fonctions pures (testables hors de Vue)
 
@@ -187,30 +195,16 @@ const NIVEAUX = {
   },
 }
 
-const TYPES = [
-  { id: 'decomposer',      label: { fr: '🧱 Décomposer', br: '🧱 Dispenn' } }, // br: à relire
-  { id: 'representation',  label: { fr: '🟦 Représentation', br: '🟦 Skeudenn' } }, // br: à relire
-  { id: 'lettresChiffres', label: { fr: '✏️ Écrire en chiffres', br: '✏️ Skrivañ e sifroù' } },
-  { id: 'chiffresLettres', label: { fr: '🔤 Écrire en lettres', br: '🔤 Skrivañ e lizherennoù' } },
-  { id: 'comparer',        label: { fr: '⚖️ Comparer', br: '⚖️ Keñveriañ' } },
-  { id: 'suites',          label: { fr: '➡️ Suivant / suites', br: "➡️ Da-heul / heuliadoù" } },
-  { id: 'droite',          label: { fr: '📏 Droite graduée', br: '📏 Linenn dereziet' } }, // br: à relire
-  { id: 'ranger',          label: { fr: '📶 Ranger', br: '📶 Renkañ' } },
-]
+// label : clé du catalogue d'interface
+const TYPES = ['decomposer', 'representation', 'lettresChiffres', 'chiffresLettres', 'comparer', 'suites', 'droite', 'ranger']
+  .map(id => ({ id, label: `type_${id}` }))
 
-// Titres des cases (pluriel) et noms au singulier pour les accords
-// (clés de traduction ; en breton le nom reste au singulier après un nombre)
+// Titres des cases (pluriel, clés de l'interface) ; « 3 centaines » : nom au singulier du catalogue de
+// contenu (cdu_<champ>), accordé par regles().nombre (en breton le nom reste au singulier après un nombre)
 const LIBELLES_CDU = { milliers: 'lib_milliers', centaines: 'lib_centaines', dizaines: 'lib_dizaines', unites: 'lib_unites' }
-const SINGULIERS_CDU = { milliers: 'millier', centaines: 'centaine', dizaines: 'dizaine', unites: 'unité' }
-const SINGULIERS_CDU_BR = { milliers: 'milad', centaines: 'kantad', dizaines: 'degad', unites: 'unanenn' }
 const VALEURS_CDU = { milliers: 1000, centaines: 100, dizaines: 10, unites: 1 }
 
-function pluriel(n, mot) {
-  return n >= 2 ? mot + 's' : mot
-}
-const libCdu = (v, champ) => langue.value === 'br'
-  ? `${v} ${SINGULIERS_CDU_BR[champ]}`
-  : `${v} ${pluriel(v, SINGULIERS_CDU[champ])}`
+const libCdu = (v, champ) => R.value.nombre(v, C.t(`cdu_${champ}`))
 
 // 10 000 s'écrit avec une espace ; en dessous on garde 3 400 sans espace (plus simple à recopier)
 const fmt = n => n >= 10000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(n)
@@ -324,16 +318,11 @@ function genRepresentation(niv, max) {
   let { milliers: m, centaines: c, dizaines: d, unites: u } = decomposer(n)
   // Parfois plus de 9 cubes : il faut faire un échange (1 dizaine = 10 unités)
   if (Math.random() < 0.2 && d >= 1 && u <= 4) { d -= 1; u += 10 }
+  const morceau = (n, nom) => R.value.nombre(n, C.t(`base10_${nom}`))
   const morceaux = []
-  if (langue.value === 'br') {
-    if (m) morceaux.push(`${m} kub bras`)
-    if (c) morceaux.push(`${c} plakenn`)
-    morceaux.push(`${d} barrenn`, `${u} kub`)
-  } else {
-    if (m) morceaux.push(`${m} gros cube${m > 1 ? 's' : ''}`)
-    if (c) morceaux.push(`${c} plaque${c > 1 ? 's' : ''}`)
-    morceaux.push(`${d} barre${d > 1 ? 's' : ''}`, `${u} cube${u > 1 ? 's' : ''}`)
-  }
+  if (m) morceaux.push(morceau(m, 'millier'))
+  if (c) morceaux.push(morceau(c, 'centaine'))
+  morceaux.push(morceau(d, 'dizaine'), morceau(u, 'unite'))
   return {
     type: 'representation', kind: 'nombre', cle: `rep${m}-${c}-${d}-${u}`,
     consigne: t('cRepresente'), texte: '', reponse: n, milliers: m > 0 || max > 1000,
@@ -808,7 +797,7 @@ function htmlFiche() {
     ? `<h1 class="saut">${t('corrige')} — ${titre} — ${niv}</h1>
     <ol class="corrige">${qs.map(qu => `<li>${qu.attendu}</li>`).join('')}</ol>`
     : ''
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${titre} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }

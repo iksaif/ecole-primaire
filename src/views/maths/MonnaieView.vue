@@ -19,7 +19,7 @@
         <div class="btn-group">
           <button v-for="ty in typesNiveau" :key="ty.id"
             class="level-btn" :class="{ active: config.exercices.includes(ty.id) }"
-            @click="toggleExercice(ty.id)">{{ tr(ty.label) }}</button>
+            @click="toggleExercice(ty.id)">{{ t(`type_${ty.id}`) }}</button>
         </div>
       </div>
 
@@ -105,8 +105,8 @@
           </div>
           <template v-else>
             <div class="consigne">
-              <span class="objet">{{ q.objet[0] }}</span>
-              {{ t('tuAchetes') }} {{ q.objet[1] }} {{ coute(q.objet) }} <strong class="somme">{{ f(q.prix) }}</strong>.
+              <span class="objet">{{ q.objet.e }}</span>
+              {{ t('tuAchetes') }} {{ q.objet.nom }} {{ coute(q.objet) }} <strong class="somme">{{ f(q.prix) }}</strong>.
             </div>
             <div class="consigne petite">
               {{ t('tuDonnes') }}
@@ -256,14 +256,18 @@
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
-import { useI18n } from '../../i18n'
+import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/MonnaieView.js'
 import messagesBr from '../../i18n/br/views/maths/MonnaieView.js'
+import contenuFr from '../../i18n/fr/contenu/monnaie.js'
+import contenuBr from '../../i18n/br/contenu/monnaie.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
-const enBr = () => langue.value === 'br'
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+// Maths : le contenu (énoncés, fiche) suit la langue de l'interface
+const langueContenu = computed(() => langue.value)
+const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
 
 // ── LOGIQUE ── (toutes les sommes sont en CENTIMES entiers)
 
@@ -293,14 +297,8 @@ const METAUX = {
 }
 const VALEURS = [10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1]
 
-const TYPES = [
-  { id: 'compter',  label: { fr: '🔢 Compter une somme', br: '🔢 Kontañ ur sammad' } },
-  { id: 'composer', label: { fr: '🧩 Faire une somme', br: '🧩 Ober ur sammad' } },
-  { id: 'moins',    label: { fr: '🪙 Le moins de pièces', br: '🪙 An nebeutañ a bezhioù' } },
-  { id: 'rendre',   label: { fr: '🛒 Rendre la monnaie', br: '🛒 Distreiñ ar moneiz' } },
-  { id: 'comparer', label: { fr: '👛 Comparer', br: '👛 Keñveriañ' } },
-  { id: 'convertir', label: { fr: '🔁 1 € = 100 c', br: '🔁 1 € = 100 c' } },
-]
+// libellés : clés `type_<id>` du catalogue d'interface
+const TYPES = ['compter', 'composer', 'moins', 'rendre', 'comparer', 'convertir'].map(id => ({ id }))
 
 // Données par niveau. notation : 'ec' (« 3 € 50 c ») ou 'les2' (« 3,50 € (3 € 50 c) »).
 const NIVEAUX = {
@@ -382,23 +380,15 @@ const NIVEAUX = {
   },
 }
 
-// [emoji, nom, pluriel ?] — rangés par prix plausible
-const OBJETS = {
-  pasCher:  [['🍎', 'une pomme'], ['✏️', 'un crayon'], ['🍬', 'des bonbons', true], ['🧃', 'un jus de fruits'], ['🥖', 'une baguette']],
-  moyen:    [['🍫', 'une tablette de chocolat'], ['📒', 'un cahier'], ['⚽', 'un ballon'], ['🖍️', 'des feutres', true], ['🚗', 'une petite voiture']],
-  cher:     [['🧸', 'un ours en peluche'], ['🧩', 'un puzzle'], ['📕', 'un livre'], ['🎨', 'une boîte de peinture']],
-  tresCher: [['🛴', 'une trottinette'], ['🛼', 'des rollers', true], ['🎲', 'un grand jeu de société'], ['🎧', 'un casque audio']],
+// Emojis des objets à acheter, rangés par prix plausible ; noms dans le catalogue de contenu (`objets`, même ordre)
+const EMOJIS = {
+  pasCher:  ['🍎', '✏️', '🍬', '🧃', '🥖'],
+  moyen:    ['🍫', '📒', '⚽', '🖍️', '🚗'],
+  cher:     ['🧸', '🧩', '📕', '🎨'],
+  tresCher: ['🛴', '🛼', '🎲', '🎧'],
 }
-// Mêmes objets en breton, dans le même ordre (br: à relire)
-const OBJETS_BR = {
-  pasCher:  ['un aval', "ur c'hreion", 'bonbonoù', 'chug frouezh', 'ur bara hir'],
-  moyen:    ['un dablezenn chokolad', "ur c'haier", 'ur volotenn', 'feltroù', "ur c'harr bihan"],
-  cher:     ['un arzh pluch', 'ur puzzle', 'ul levr', 'ur voest livañ'],
-  tresCher: ['un trotinell', 'botoù-ruilh', "ur c'hoari-taol bras", 'ur selaouer'],
-}
-function coute(objet) { return enBr() ? 'a goust' : objet[2] ? 'qui coûtent' : 'qui coûte' }
-const PRENOMS = [['Léa', 'Tom'], ['Inès', 'Hugo'], ['Jade', 'Noah'], ['Chloé', 'Lucas'], ['Emma', 'Adam'], ['Lina', 'Gabriel']]
-const PRENOMS_BR = [['Nolwenn', 'Erwan'], ['Maiwenn', 'Yann'], ['Enora', 'Loig'], ['Gwenn', 'Malo'], ['Azenor', 'Tudual'], ['Lena', 'Gwenole']]
+// « qui coûte » / « qui coûtent »
+const coute = objet => C.t('coute', objet)
 
 const NB = ' '
 function formatSomme(c) {
@@ -427,16 +417,8 @@ function lireSomme(texte) {
   if ((m = s.match(/^(\d{1,4})$/))) return +m[1] * 100
   return null
 }
-function nomArgent(v) {
-  if (enBr()) {
-    if (v >= 500) return `bilhed ${v / 100} euro`
-    if (v >= 100) return `pezh ${v / 100} euro`
-    return `pezh ${v} santim`
-  }
-  if (v >= 500) return `billet de ${v / 100} €`
-  if (v >= 100) return `pièce de ${v / 100} €`
-  return `pièce de ${v} centime${v > 1 ? 's' : ''}`
-}
+// « billet de 5 € », « pièce de 2 centimes »
+const nomArgent = v => C.t('nomArgent', { v })
 function totalDe(items) { return items.reduce((s, v) => s + v, 0) }
 function trierDesc(items) { return [...items].sort((a, b) => b - a) }
 function aleatoirePas(min, max, pas) { return min + pas * aleatoire(0, Math.floor((max - min) / pas)) }
@@ -497,7 +479,7 @@ function genCompter(niv, centimes) {
   const total = totalDe(items)
   return {
     type: 'compter', cle: 'compter:' + items.join(','), items, total, avecCentimes: centimes,
-    texte: (enBr() ? 'Kontañ : ' : 'Compter : ') + items.map(formatSomme).join(' + '),
+    texte: C.t('compterQ', { items: items.map(formatSomme).join(' + ') }),
     attendu: fmt(total, niv),
   }
 }
@@ -515,7 +497,7 @@ function genComposer(niv, centimes) {
   const cible = cibleComposer(niv, centimes)
   return {
     type: 'composer', cle: 'composer:' + cible, cible, solution: glouton(cible),
-    texte: `${enBr() ? 'Ober' : 'Faire'} ${fmt(cible, niv)}`, attendu: fmt(cible, niv),
+    texte: C.t('composerQ', { somme: fmt(cible, niv) }), attendu: fmt(cible, niv),
   }
 }
 
@@ -529,16 +511,15 @@ function genMoins(niv, centimes) {
   }
   return {
     type: 'moins', cle: 'moins:' + cible, cible, solution,
-    texte: enBr() ? `Paeañ ${fmt(cible, niv)} gant an nebeutañ posubl` : `Payer ${fmt(cible, niv)} avec le moins possible`,
+    texte: C.t('moinsQ', { somme: fmt(cible, niv) }),
     attendu: `${solution.length} : ${solution.map(formatSomme).join(' + ')}`,
   }
 }
 
 function objetPour(prix) {
   const cat = prix <= 200 ? 'pasCher' : prix <= 1000 ? 'moyen' : prix <= 2000 ? 'cher' : 'tresCher'
-  const i = aleatoire(0, OBJETS[cat].length - 1)
-  const o = OBJETS[cat][i]
-  return enBr() ? [o[0], OBJETS_BR[cat][i], o[2]] : o
+  const i = aleatoire(0, EMOJIS[cat].length - 1)
+  return { e: EMOJIS[cat][i], ...C.t('objets')[cat][i] }   // { e, nom, pluriel }
 }
 
 function genRendre(niv, centimes) {
@@ -549,7 +530,7 @@ function genRendre(niv, centimes) {
   return {
     type: 'rendre', cle: `rendre:${prix}/${cas.paye}`, paye: cas.paye, prix, cible: rendu, objet,
     solution: glouton(rendu),
-    texte: `${objet[0]} ${fmt(prix, niv)}, ${enBr() ? 'paeet gant' : 'payé avec'} ${formatSomme(cas.paye)}`,
+    texte: C.t('rendreQ', { e: objet.e, prix: fmt(prix, niv), paye: formatSomme(cas.paye) }),
     attendu: fmt(rendu, niv),
   }
 }
@@ -573,12 +554,12 @@ function genComparer(niv, centimes) {
     }
   }
   const totalB = totalDe(itemsB)
-  const [nomA, nomB] = melanger(pioche(enBr() ? PRENOMS_BR : PRENOMS))
+  const [nomA, nomB] = melanger(pioche(C.t('prenoms')))
   const bonne = totalA > totalB ? 'A' : totalB > totalA ? 'B' : 'egal'
   return {
     type: 'comparer', cle: 'comparer:' + itemsA.join(',') + '|' + itemsB.join(','),
     itemsA, itemsB, totalA, totalB, nomA, nomB, bonne,
-    texte: `${nomA} (${fmt(totalA, niv)}) ${enBr() ? 'pe' : 'ou'} ${nomB} (${fmt(totalB, niv)}) ?`,
+    texte: C.t('comparerQ', { a: nomA, ta: fmt(totalA, niv), b: nomB, tb: fmt(totalB, niv) }),
     attendu: bonne === 'A' ? nomA : bonne === 'B' ? nomB : t('autant'),
   }
 }
@@ -596,7 +577,7 @@ function genConvertir(niv) {
     c2ec:   [`${valeur}${NB}c = ? € ? c`, ec],
     ec2c:   [`${ec} = ? c`, `${valeur}${NB}c`],
     dec2c:  [`${dec} = ? c`, `${valeur}${NB}c`],
-    ec2dec: [`${ec} = ? € (${enBr() ? 'gant ur skej' : 'avec une virgule'})`, dec],
+    ec2dec: [`${ec} = ? € (${C.t('avecVirgule')})`, dec],
   }
   const [texte, attendu] = enonces[sous]
   return { type: 'convertir', sous, cle: `convertir:${sous}:${valeur}`, valeur, texte, attendu }
@@ -887,8 +868,6 @@ function htmlFiche() {
   const valeursPapier = niv.palette[centimes ? 'centimes' : 'entiers'].filter(v => v <= 2000)
   const dessin = items => items.map(v => `<span class="arg">${svgArgent(v, 0.8)}</span>`).join('')
   const decimale = centimes && niv.saisieDecimale
-  const br = enBr()
-  const T = (fr, b) => (br ? b : fr)
   const ligneRep = decimale ? '__________ €' : centimes ? '______ € ______ c' : '__________ €'
 
   // 1. Compter
@@ -897,7 +876,7 @@ function htmlFiche() {
     <div class="bloc">
       <div class="num">${i + 1}.</div>
       <div class="tas">${dessin(qu.items)}</div>
-      <div class="rep">${T('Il y a', 'Sammad')} : ${ligneRep}</div>
+      <div class="rep">${C.t('ficheIlYa')} : ${ligneRep}</div>
     </div>`).join('')
 
   // 2. Entoure pour payer
@@ -915,7 +894,7 @@ function htmlFiche() {
   const blocEntoure = entoure.map((e, i) => `
     <div class="bloc">
       <div class="num">${i + 1}.</div>
-      <div class="enonce">${T("Entoure ce qu'il faut pour payer exactement", 'Kelc\'hia ar pezh a zo ezhomm evit paeañ resis')} <strong>${fmt(e.cible, niv)}</strong>.</div>
+      <div class="enonce">${C.t('ficheEntoure')} <strong>${fmt(e.cible, niv)}</strong>.</div>
       <div class="tas">${dessin(e.items)}</div>
     </div>`).join('')
 
@@ -932,7 +911,7 @@ function htmlFiche() {
   const blocMoins = moins.map((m, i) => `
     <div class="bloc">
       <div class="num">${i + 1}.</div>
-      <div class="enonce">${T('Pour payer', 'Evit paeañ')} <strong>${fmt(m.cible, niv)}</strong>, ${T('entoure la lettre de celui qui utilise le moins de pièces et de billets.', 'kelc\'hia lizherenn an hini a implij an nebeutañ a bezhioù hag a vilhedoù.')}</div>
+      <div class="enonce">${C.t('fichePourPayer')} <strong>${fmt(m.cible, niv)}</strong>, ${C.t('ficheMoinsConsigne')}</div>
       <div class="duo"><div><b class="lettre">A</b><div class="tas">${dessin(m.A)}</div></div>
       <div><b class="lettre">B</b><div class="tas">${dessin(m.B)}</div></div></div>
     </div>`).join('')
@@ -942,7 +921,7 @@ function htmlFiche() {
   const blocComparer = comparer.map((qu, i) => `
     <div class="bloc">
       <div class="num">${i + 1}.</div>
-      <div class="enonce">${T('Qui a le plus d\'argent ? Entoure son prénom (ou les deux s\'ils ont autant).', 'Piv en deus ar muiañ a arc\'hant ? Kelc\'hia e anv (pe an daou ma o deus kement all).')}</div>
+      <div class="enonce">${C.t('ficheComparerConsigne')}</div>
       <div class="duo"><div><b class="lettre">${qu.nomA}</b><div class="tas">${dessin(qu.itemsA)}</div></div>
       <div><b class="lettre">${qu.nomB}</b><div class="tas">${dessin(qu.itemsB)}</div></div></div>
     </div>`).join('')
@@ -952,8 +931,8 @@ function htmlFiche() {
   const blocRendre = rendre.map((qu, i) => `
     <div class="ligne-rendre">
       <span class="num">${i + 1}.</span>
-      ${qu.objet[0]} ${t('tuAchetes')} ${qu.objet[1]} ${T('à', 'da')} <strong>${fmt(qu.prix, niv)}</strong>.
-      ${t('tuDonnes')} <strong>${formatSomme(qu.paye)}</strong>. ${T('On te rend', 'Distroet e vo dit')} : ${centimes ? '______________' : '______ €'}
+      ${qu.objet.e} ${t('tuAchetes')} ${qu.objet.nom} ${C.t('ficheA')} <strong>${fmt(qu.prix, niv)}</strong>.
+      ${t('tuDonnes')} <strong>${formatSomme(qu.paye)}</strong>. ${C.t('ficheOnTeRend')} : ${centimes ? '______________' : '______ €'}
     </div>`).join('')
 
   // 4. Conversions (CE2)
@@ -966,7 +945,7 @@ function htmlFiche() {
       + '</div>'
   }
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${config.value.niveau.toUpperCase()}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.2cm auto; color: #222; }
@@ -988,18 +967,18 @@ function htmlFiche() {
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     </style></head><body>
     <h1>💶 ${t('titre')} — ${config.value.niveau.toUpperCase()}</h1>
-    <p class="entete">${centimes ? T('Euros et centimes', 'Euro ha santimoù') : T('Euros', 'Euro')} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
-    ${parties.compter ? `${titrePartie(`${T("Compte l'argent.", "Kont an arc'hant.")}${decimale ? ` <small>${T('(écris par exemple 3,50 €)', '(skriv da skouer 3,50 €)')}</small>` : ''}`)}
+    <p class="entete">${centimes ? C.t('ficheEurosCentimes') : C.t('ficheEuros')} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    ${parties.compter ? `${titrePartie(`${C.t('ficheCompterTitre')}${decimale ? ` <small>${C.t('ficheExempleVirgule')}</small>` : ''}`)}
     <div class="grille">${blocCompter}</div>` : ''}
-    ${parties.entoure ? `${titrePartie(T('Entoure les pièces et les billets.', 'Kelc\'hia ar pezhioù moneiz hag ar bilhedoù.'))}
+    ${parties.entoure ? `${titrePartie(C.t('ficheEntoureTitre'))}
     ${blocEntoure}` : ''}
-    ${parties.moins ? `${titrePartie(T('Le moins de pièces et de billets.', 'An nebeutañ a bezhioù hag a vilhedoù.'))}
+    ${parties.moins ? `${titrePartie(C.t('ficheMoinsTitre'))}
     ${blocMoins}` : ''}
-    ${parties.comparer ? `${titrePartie(T('Compare les porte-monnaie.', 'Keñveria ar yalc\'hoù.'))}
+    ${parties.comparer ? `${titrePartie(C.t('ficheComparerTitre'))}
     ${blocComparer}` : ''}
-    ${parties.rendre ? `${titrePartie(T('Combien te rend-on ?', 'Pegement a vez distroet dit ?'))}
+    ${parties.rendre ? `${titrePartie(C.t('ficheRendreTitre'))}
     ${blocRendre}` : ''}
-    ${blocConvertir ? `${titrePartie(`${T('Complète.', 'Leunia.')} <small>(1 € = 100 c)</small>`)}${blocConvertir}` : ''}
+    ${blocConvertir ? `${titrePartie(`${C.t('ficheConvertirTitre')} <small>(1 € = 100 c)</small>`)}${blocConvertir}` : ''}
   </body></html>`
 
   return html

@@ -97,22 +97,18 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { melanger, confettis, sauvegarder, charger } from '../../utils'
-import { useI18n } from '../../i18n'
+import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maternelle/FormesView.js'
 import messagesBr from '../../i18n/br/views/maternelle/FormesView.js'
+import formesFr from '../../i18n/fr/contenu/formes.js'
+import formesBr from '../../i18n/br/contenu/formes.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-// Noms bretons des formes (le nom français sert d'identifiant)
-const NOMS_BR = {
-  cercle: "kelc'h", 'carré': 'karrez', triangle: "tric'horn", rectangle: 'hirgarrez', losange: 'lozanj',
-  pentagone: 'pempkorn',       // br: à relire
-  hexagone: "c'hwec'hkorn",    // br: à relire
-  ovale: "hirgelc'h",          // br: à relire (« ovalenn » ?)
-}
-
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
-const nomForme = nom => (langue.value === 'br' ? NOMS_BR[nom] : null) ?? nom
+// Contenu dans la langue de l'interface : noms des formes (le nom français sert d'identifiant)
+const C = contenu({ fr: formesFr, br: formesBr }, () => langue.value)
+const nomForme = nom => C.t(nom.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
 
 // ── Formes géométriques avec SVG inline
 const FORMES = [
@@ -287,9 +283,7 @@ function valider(c) {
   if (repondu.value) return
   reponseDonnee.value = c
   const ok = c === question.value.nom
-  if (!ok) feedbackTxt.value = langue.value === 'br'
-    ? `❌ ${t('laBonneReponse', { r: nomForme(question.value.nom) })}`
-    : `❌ C'est un ${question.value.nom}`
+  if (!ok) feedbackTxt.value = t('erreurNom', { nom: nomForme(question.value.nom) })
   enregistrer(ok)
 }
 
@@ -297,10 +291,7 @@ function validerNb(c) {
   if (repondu.value) return
   reponseDonnee.value = c
   const ok = c === question.value.cotes
-  if (!ok) feedbackTxt.value = langue.value === 'br'
-    // br: à relire (« kostez » = côté d'un polygone)
-    ? `❌ ${question.value.cotes === 0 ? 'Kostez eeun ebet' : 'Niver a gostezioù : ' + question.value.cotes}`
-    : `❌ Un ${question.value.nom} a ${question.value.cotes === 0 ? 'aucun côté droit' : question.value.cotes + ' côté' + (question.value.cotes > 1 ? 's' : '')}`
+  if (!ok) feedbackTxt.value = t('erreurCotes', { nom: nomForme(question.value.nom), n: question.value.cotes })
   enregistrer(ok)
 }
 
@@ -308,9 +299,7 @@ function validerForme(i, f) {
   if (repondu.value) return
   reponseDonnee.value = i
   const ok = i === question.value.idxBonne
-  if (!ok) feedbackTxt.value = langue.value === 'br'
-    ? `❌ ${t('laBonneReponse', { r: nomForme(question.value.nom) })}`
-    : `❌ C'était ${question.value.nom === 'ovale' || question.value.nom === 'hexagone' ? "l'" : 'le / la '}${question.value.nom}`
+  if (!ok) feedbackTxt.value = t('erreurForme', { nom: nomForme(question.value.nom) })
   enregistrer(ok)
 }
 

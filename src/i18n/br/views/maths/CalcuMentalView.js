@@ -11,4 +11,11 @@ export default {
     tempsEcoule: '⏰ Echu eo an amzer ! Ar respont a oa {r}',
     pOperations: 'Oberiadurioù : {ops}',
     pNbQuestions: '{n} goulenn',
+    op_complements10: 'Klokadurioù da 10', // br: à relire (« klokadur » = complément)
+    op_complements100: 'Klokadurioù da 100',
+    op_versDizaine: 'Betek an degad (37 + ? = 40)',
+    op_dizaines: '± degadoù (45 + 30)',
+    op_passage: 'Tremen an degad (47 + 6)', // br: à relire
+    op_doubles: 'Doubloù',
+    op_moities: 'Hanterioù',
   }

@@ -19,7 +19,7 @@
         <div class="btn-group">
           <button v-for="ty in typesNiveau" :key="ty.id"
             class="level-btn" :class="{ active: config.types.includes(ty.id) }"
-            @click="toggleType(ty.id)">{{ tr(ty.label) }}</button>
+            @click="toggleType(ty.id)">{{ t(ty.label) }}</button>
         </div>
       </div>
 
@@ -28,7 +28,7 @@
         <div class="btn-group">
           <button v-for="(m, id) in MODES" :key="id"
             class="level-btn" :class="{ active: config.mode === id }"
-            @click="config.mode = id">{{ tr(m) }}</button>
+            @click="config.mode = id">{{ t(m) }}</button>
         </div>
       </div>
 
@@ -190,18 +190,22 @@
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
 import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
-import { useI18n } from '../../i18n'
+import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/FractionsView.js'
 import messagesBr from '../../i18n/br/views/maths/FractionsView.js'
+import contenuFr from '../../i18n/fr/contenu/fractions.js'
+import contenuBr from '../../i18n/br/contenu/fractions.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
-const BR = () => langue.value === 'br'
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+// Langue du contenu généré (fractions en lettres, ordinaux) : celle de l'interface pour les maths
+const langueContenu = computed(() => langue.value)
+const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
 // accord simple : clé au singulier ou au pluriel (« Pl ») — en breton les deux sont identiques
 const tn = (cle, n, params) => t(n > 1 ? cle + 'Pl' : cle, { n, ...params })
-// ordinal en chiffres : 1re, 2e… / 1añ, 2vet, 3de, 4re, 5vet… // br: à relire
-const ordinal = n => BR() ? `${n}${n === 1 ? 'añ' : n === 3 ? 'de' : n === 4 ? 're' : 'vet'}` : `${n}${n > 1 ? 'e' : 're'}`
+// ordinal en chiffres : 1re, 2e… / 1añ, 2vet, 3de…
+const ordinal = n => C.t('ordinal', { n })
 
 // #region generation — fonctions pures (testables hors de Vue)
 
@@ -211,11 +215,11 @@ const NIVEAUX = {
     denominateurs: [2, 3, 4, 5, 6, 8, 10],
     types: ['identifier', 'colorier', 'lettres', 'partDe'],
     modeDefaut: 'unitaires',
-    // « la moitié de 8 », « le tiers de 9 », « le quart de 12 » : totaux possibles
+    // « la moitié de 8 », « le tiers de 9 », « le quart de 12 » : totaux possibles (nom : catalogue partDe_<d>)
     partDe: {
-      2: { nom: 'La moitié', max: 20, extra: [30, 40, 50, 60, 80, 100] },
-      3: { nom: 'Le tiers', max: 30, extra: [] },
-      4: { nom: 'Le quart', max: 40, extra: [100] },
+      2: { max: 20, extra: [30, 40, 50, 60, 80, 100] },
+      3: { max: 30, extra: [] },
+      4: { max: 40, extra: [100] },
     },
   },
   ce2: {
@@ -224,77 +228,26 @@ const NIVEAUX = {
     modeDefaut: 'toutes',
     droiteUnites: [1, 2],          // droite graduée de 0 à 1 ou de 0 à 2 (fractions > 1)
     partDe: {
-      2: { nom: 'La moitié', max: 40, extra: [50, 60, 80, 100, 200, 500] },
-      3: { nom: 'Le tiers', max: 30, extra: [36, 45, 60, 90] },
-      4: { nom: 'Le quart', max: 40, extra: [60, 80, 100] },
-      5: { nom: 'Le cinquième', max: 50, extra: [100] },
-      10: { nom: 'Le dixième', max: 100, extra: [] },
+      2: { max: 40, extra: [50, 60, 80, 100, 200, 500] },
+      3: { max: 30, extra: [36, 45, 60, 90] },
+      4: { max: 40, extra: [60, 80, 100] },
+      5: { max: 50, extra: [100] },
+      10: { max: 100, extra: [] },
     },
   },
 }
 
-const TYPES = [
-  { id: 'identifier', label: { fr: '👀 Quelle fraction ?', br: '👀 Peseurt darnaouenn ?' } },
-  { id: 'colorier',   label: { fr: '🖍️ Colorier', br: '🖍️ Livañ' } },
-  { id: 'lettres',    label: { fr: '🔤 En lettres', br: '🔤 E lizherennoù' } },
-  { id: 'partDe',     label: { fr: '🍪 La moitié de…', br: '🍪 An hanter eus…' } },
-  { id: 'unite',      label: { fr: '⚖️ Plus ou moins que 1 ?', br: "⚖️ Muioc'h pe nebeutoc'h eget 1 ?" } },
-  { id: 'egales',     label: { fr: '🟰 Fractions égales', br: '🟰 Darnaouennoù kevatal' } },
-  { id: 'droite',     label: { fr: '📏 Lire sur la droite', br: '📏 Lenn war al linenn' } },
-  { id: 'placer',     label: { fr: '📍 Placer sur la droite', br: '📍 Lakaat war al linenn' } },
-]
+// label : clé du catalogue d'interface
+const TYPES = ['identifier', 'colorier', 'lettres', 'partDe', 'unite', 'egales', 'droite', 'placer']
+  .map(id => ({ id, label: `type_${id}` }))
 
-const MODES = {
-  unitaires: { fr: 'Un demi, un tiers… (1/2, 1/3…)', br: 'Un hanter, un trede… (1/2, 1/3…)' },
-  toutes: { fr: 'Aussi 2/3, 3/4…', br: '2/3, 3/4… ivez' },
-}
-
-// « La moitié de… » en breton
-const NOMS_PARTDE_BR = { 2: 'An hanter', 3: 'An trede', 4: "Ar c'hard", 5: 'Ar pempvet', 10: 'An dekvet' }
+// fractions proposées → clé du libellé dans le catalogue d'interface
+const MODES = { unitaires: 'mode_unitaires', toutes: 'mode_toutes' }
 
 const COULEUR = '#f39c12'
 
-const CHIFFRES_LETTRES = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf']
-const NOMS_PARTS = {
-  2: ['demi', 'demis'], 3: ['tiers', 'tiers'], 4: ['quart', 'quarts'], 5: ['cinquième', 'cinquièmes'],
-  6: ['sixième', 'sixièmes'], 7: ['septième', 'septièmes'], 8: ['huitième', 'huitièmes'],
-  9: ['neuvième', 'neuvièmes'], 10: ['dixième', 'dixièmes'],
-}
-
-// Breton : un hanter, un trede, ur c'hard, ur pempvet… ; daou drede, tri c'hard, daou bempvet…
-// (mutation adoucissante après « daou », spirante après « tri, pevar, nav ») // br: à relire
-const CHIFFRES_BR = ['zero', 'un', 'daou', 'tri', 'pevar', 'pemp', "c'hwec'h", 'seizh', 'eizh', 'nav']
-const NOMS_PARTS_BR = {
-  2: 'hanter', 3: 'trede', 4: 'kard', 5: 'pempvet', 6: "c'hwec'hvet", 7: 'seizhvet',
-  8: 'eizhvet', 9: 'navvet', 10: 'dekvet',
-}
-function mutationDouce(m) {
-  for (const [a, b] of [['gw', 'w'], ['k', 'g'], ['t', 'd'], ['p', 'b'], ['g', "c'h"], ['d', 'z'], ['b', 'v'], ['m', 'v']]) {
-    if (m.startsWith(a) && !m.startsWith("c'h")) return b + m.slice(a.length)
-  }
-  return m
-}
-function mutationSpirante(m) {
-  for (const [a, b] of [['k', "c'h"], ['t', 'z'], ['p', 'f']]) if (m.startsWith(a)) return b + m.slice(1)
-  return m
-}
-function enLettresBr({ n, d }) {
-  const nom = NOMS_PARTS_BR[d]
-  if (n === 1) {
-    // article indéfini : un (voyelle, h, n, d, t), ul (l), ur (autres) ; k → c'h après ur
-    if (/^[aeiouhndt]/.test(nom)) return `un ${nom}`
-    if (nom.startsWith('l')) return `ul ${nom}`
-    return `ur ${nom.startsWith('k') ? mutationSpirante(nom) : nom}`
-  }
-  if (n === 2) return `daou ${mutationDouce(nom)}`
-  if (n === 3 || n === 4 || n === 9) return `${CHIFFRES_BR[n]} ${mutationSpirante(nom)}`
-  return `${CHIFFRES_BR[n]} ${nom}`
-}
-function enLettres(f) {
-  if (BR()) return enLettresBr(f)
-  const { n, d } = f
-  return `${CHIFFRES_LETTRES[n]} ${NOMS_PARTS[d][n >= 2 ? 1 : 0]}`
-}
+// fraction en lettres : « trois quarts », « tri c'hard » (catalogue de contenu)
+const enLettres = f => C.t('enLettres', f)
 const cle = f => typeof f === 'string' ? f : `${f.n}/${f.d}`
 const egales = (a, b) => a.n * b.d === b.n * a.d
 
@@ -441,18 +394,17 @@ function svgJetons(total) {
 function genPartDe(niv) {
   const ds = Object.keys(niv.partDe).map(Number)
   const d = ds[aleatoire(0, ds.length - 1)]
-  const nbParts = d === 2 ? 'deux' : CHIFFRES_LETTRES[d] ?? String(d)
   const cfg = niv.partDe[d]
   const possibles = []
   for (let t = 2 * d; t <= cfg.max; t += d) possibles.push(t)
   const totaux = Math.random() < 0.8 || !cfg.extra.length ? possibles : cfg.extra
   const total = totaux[aleatoire(0, totaux.length - 1)]
   const rep = total / d
-  const nom = BR() ? NOMS_PARTDE_BR[d] : cfg.nom
+  const nom = C.t(`partDe_${d}`)
   const texte = t('partDeTexte', { nom, total })
   return {
     type: 'partDe', kind: 'nombre', cle: `pd${d}-${total}`,
-    consigne: t('partDeConsigne', { nom, parts: BR() ? d : d === 10 ? 'dix' : nbParts }),
+    consigne: t('partDeConsigne', { nom, parts: C.t('nbParts', { d }) }),
     texte, jetons: total <= 24 ? svgJetons(total) : null, reponse: rep, d, total,
     libelle: t('partDeLibelle', { nom, total }), attendu: `${rep} (${Array(d).fill(rep).join(' + ')} = ${total})`,
   }
@@ -832,7 +784,7 @@ function htmlFiche() {
     <ol class="corrige">${qs.map(qu => `<li>${qu.attendu}</li>`).join('')}</ol>`
     : ''
 
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }

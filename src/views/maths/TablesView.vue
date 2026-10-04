@@ -198,6 +198,8 @@ import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+// Langue du contenu imprimé : celle de l'interface pour les maths
+const langueContenu = computed(() => langue.value)
 
 const DUREE_CHRONO = 60 // secondes
 
@@ -344,7 +346,7 @@ function htmlFiche() {
     <div class="grid">${allQ.map((q, i) => ligne(q, i, true)).join('')}</div>`
     : ''
 
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${titre}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }

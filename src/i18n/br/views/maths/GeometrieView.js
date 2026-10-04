@@ -13,4 +13,13 @@ export default {
     legOubliee: 'ankouaet',
     legEnTrop: 're',
     colQuestion: 'Goulenn',
+    ex_symetrie: '🦋 Kemparzhded',
+    ex_reproduction: '✏️ Adtresañ', // br: à relire
+    ex_reperage: "📍 Lec'hiañ",
+    ex_figures: '🔷 Stummoù',
+    ex_solides: '🧊 Soludoù', // br: à relire
+    ex_angles: '📐 Kornioù skouer',
+    ex_proprietes: '📋 Perzhioù',
+    ex_cercle: "⭕ Kelc'h",
+    ex_patrons: "🎲 Patromoù ar c'hub", // br: à relire
   }

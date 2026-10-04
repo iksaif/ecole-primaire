@@ -8,4 +8,12 @@ export default {
     nbSegments: 'Segments à mesurer sur la fiche',
     rappel100: "Imprimez à 100 % (« taille réelle »), sans ajustement à la page, sinon les segments n'auront pas la bonne longueur.",
     colQuestion: 'Question',
+    // exercices (réglages)
+    ex_regle: '📏 Mesurer à la règle',
+    ex_unite: '🤔 Unité adaptée',
+    ex_conversion: '🔁 Conversions',
+    ex_comparer: '🟰 Comparer',
+    ex_masse: '⚖️ Masses (balance)',
+    ex_contenance: '🥛 Contenances',
+    ex_calendrier: '📅 Calendrier',
   }

@@ -1,13 +1,18 @@
 // Génération de l'affiche de l'alphabet — partagée par l'app et le build des PDF.
 import { metriquesPolice, largeurTexte, dimensionsPage, documentImpression, echapper } from '../utils/impression'
 import { langueRegionale } from '../data/languesRegionales'
+import textesFr from '../i18n/fr/contenu/alphabet.js'
+import textesBr from '../i18n/br/contenu/alphabet.js'
 
-export const STYLES = [
-  { id: 'script-maj',  label: 'Script majuscule',  br: 'Skript, pennlizherennoù' },
-  { id: 'script-min',  label: 'Script minuscule',  br: 'Skript, lizherennoù bihan' },
-  { id: 'attache-maj', label: 'Attaché majuscule', br: 'A-stag, pennlizherennoù' },
-  { id: 'attache-min', label: 'Attaché minuscule', br: 'A-stag, lizherennoù bihan' },
-]
+// Textes des affiches (contenu) par langue : src/i18n/<langue>/contenu/alphabet.js, choisis par config.langue
+const TEXTES = { fr: textesFr, br: textesBr }
+const textePour = (langue, cle) => (TEXTES[langue] ?? textesFr)[cle] ?? textesFr[cle]
+// Libellé d'un style dans une langue
+export const libelleStyle = (id, langue) => textePour(langue, `style_${id}`)
+
+// label (français) et br : libellés tirés des catalogues, gardés pour les vues ; préférer libelleStyle(id, langue)
+export const STYLES = ['script-maj', 'script-min', 'attache-maj', 'attache-min']
+  .map(id => ({ id, label: libelleStyle(id, 'fr'), br: libelleStyle(id, 'br') }))
 
 // Un mot simple et imageable par lettre ; la lettre est mise en couleur dans le mot
 export const MOTS = {
@@ -91,7 +96,7 @@ export function genererAlphabet(config, polices) {
   const reg = config.alphabet && config.alphabet !== 'fr' ? langueRegionale(config.alphabet) : null
   const LETTRES = reg ? reg.alphabet : LETTRES_FR
   if (reg) config = { ...config, mots: reg.mots ?? {}, mot: config.mot && !!reg.mots }
-  const titreAffiche = reg?.titreAlphabet ?? (config.langue === 'br' ? "Al lizherenneg c'hallek" : "L'alphabet")
+  const titreAffiche = reg?.titreAlphabet ?? textePour(config.langue, 'titreAlphabet')
   const { w, h } = dimensionsPage(format, orientation)
   const marge = 8, ecart = format === 'A3' ? 3 : 2
   let pages

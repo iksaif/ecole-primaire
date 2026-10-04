@@ -41,7 +41,7 @@
 
       <div class="mat-box">
         <!-- Objets à compter -->
-        <div class="consigne">{{ t('combien', { nom: tr(questions[idx].noms) }) }}</div>
+        <div class="consigne">{{ t('combien', { nom: C.t(questions[idx].objet) }) }}</div>
         <div class="objets-grille">
           <span v-for="i in questions[idx].nb" :key="i" class="objet" :class="animClass">
             {{ questions[idx].emoji }}
@@ -81,26 +81,29 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { aleatoire, melanger, confettis, charger, sauvegarder } from '../../utils'
-import { useI18n } from '../../i18n'
+import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maternelle/CompterView.js'
 import messagesBr from '../../i18n/br/views/maternelle/CompterView.js'
+import objetsFr from '../../i18n/fr/contenu/compter.js'
+import objetsBr from '../../i18n/br/contenu/compter.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const C = contenu({ fr: objetsFr, br: objetsBr }, () => langue.value)
 
+// Objets à compter ; leur nom (contenu, langue de l'interface) est dans src/i18n/<langue>/contenu/compter.js
 const OBJETS = [
-  // br : anv unan (singulier) après « pet »
-  { emoji: '🍎', nom: 'pomme',     pluriel: 'pommes',      br: 'aval' },
-  { emoji: '⭐', nom: 'étoile',    pluriel: 'étoiles',     br: 'steredenn' },
-  { emoji: '🐱', nom: 'chat',      pluriel: 'chats',       br: 'kazh' },
-  { emoji: '🌸', nom: 'fleur',     pluriel: 'fleurs',      br: 'bleunienn' },
-  { emoji: '🚗', nom: 'voiture',   pluriel: 'voitures',    br: 'karr' },
-  { emoji: '🦋', nom: 'papillon',  pluriel: 'papillons',   br: 'balafenn' },
-  { emoji: '🐸', nom: 'grenouille',pluriel: 'grenouilles', br: 'glesker' }, // br: à relire (ou « ran »)
-  { emoji: '🍓', nom: 'fraise',    pluriel: 'fraises',     br: 'sivienn' },
-  { emoji: '🐠', nom: 'poisson',   pluriel: 'poissons',    br: 'pesk' },
-  { emoji: '🌙', nom: 'lune',      pluriel: 'lunes',       br: 'loar' },
+  { emoji: '🍎', id: 'pomme' },
+  { emoji: '⭐', id: 'etoile' },
+  { emoji: '🐱', id: 'chat' },
+  { emoji: '🌸', id: 'fleur' },
+  { emoji: '🚗', id: 'voiture' },
+  { emoji: '🦋', id: 'papillon' },
+  { emoji: '🐸', id: 'grenouille' },
+  { emoji: '🍓', id: 'fraise' },
+  { emoji: '🐠', id: 'poisson' },
+  { emoji: '🌙', id: 'lune' },
 ]
 
 const config = ref({ niveau: 'ms', nbQ: 10 })
@@ -130,7 +133,7 @@ function generer() {
   }
   const choix = melanger([nb, ...mauvais])
 
-  return { nb, emoji: objet.emoji, nomPluriel: objet.pluriel, noms: { fr: objet.pluriel, br: objet.br }, choix, reponse: nb }
+  return { nb, emoji: objet.emoji, objet: objet.id, choix, reponse: nb }
 }
 
 // ── Fiche imprimable : collections à compter, nombre à écrire ou à entourer (corrigé page 2)

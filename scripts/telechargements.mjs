@@ -290,9 +290,10 @@ ${SCRIPT_CONTEXTE}
 <footer><a id="signaler" href="mailto:${CONTACT}">${bi('signaler')}</a> · <a href="${BASE}#/nouveautes">${bi('nouveautes')}</a><br>
 ${bi('pied')} Polices / Nodrezhoù : Playwrite FR Trad, Andika, OpenDyslexic (OFL), Luciole (CC BY).</footer>
 <script>
-// mail prérempli avec l'adresse de la page (pas de formulaire, rien n'est stocké)
+// mail prérempli avec l'adresse de la page (pas de formulaire, rien n'est stocké).
+// Dans ce gabarit, les échappements sont doublés (\\n) pour arriver tels quels dans la page.
 document.getElementById('signaler').href = 'mailto:${CONTACT}?subject=' + encodeURIComponent('[${SITE.nom}] Erreur — ' + location.pathname)
-  + '&body=' + encodeURIComponent('Bonjour,\n\nJ\'ai trouvé une erreur sur cette fiche :\n\n…\n\n———\nPage : ' + location.href)
+  + '&body=' + encodeURIComponent('Bonjour,\\n\\nJ\\'ai trouvé une erreur sur cette fiche :\\n\\n…\\n\\n———\\nPage : ' + location.href)
 </script>
 </body></html>`
 }

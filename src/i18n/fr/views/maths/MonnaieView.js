@@ -47,4 +47,11 @@ export default {
     autantArgent: "Ils ont autant d'argent tous les deux : {s}.",
     lePlus: "C'est {nom} qui a le plus d'argent.",
     autant: 'Autant',
+    // types d'exercices (réglages)
+    type_compter: '🔢 Compter une somme',
+    type_composer: '🧩 Faire une somme',
+    type_moins: '🪙 Le moins de pièces',
+    type_rendre: '🛒 Rendre la monnaie',
+    type_comparer: '👛 Comparer',
+    type_convertir: '🔁 1 € = 100 c',
   }

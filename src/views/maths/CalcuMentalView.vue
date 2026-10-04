@@ -116,7 +116,9 @@ import messagesBr from '../../i18n/br/views/maths/CalcuMentalView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+// Langue du contenu imprimé : celle de l'interface pour les maths
+const langueContenu = computed(() => langue.value)
 
 const OP_DIZ = '± dizaines (45 + 30)'
 const OP_911 = '± 9 / ± 11'
@@ -125,17 +127,18 @@ const OP_VERS_DIZ = 'Vers la dizaine (37 + ? = 40)'
 const TOUTES_OPS = ['+', '−', '×', '÷', 'Compléments à 10', 'Compléments à 100', OP_VERS_DIZ, OP_DIZ, OP_911, OP_PASSAGE,
   'Doubles', 'Moitiés', '× 10 / × 100']
 const niveaux = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
-// Libellés affichés (les identifiants d'opérations restent ceux de la config enregistrée)
+// Libellés affichés : clés du catalogue d'interface (les identifiants d'opérations restent ceux de la config
+// enregistrée) ; les opérations sans clé (+, −, ± 9 / ± 11…) s'affichent telles quelles
 const LIBELLES_OPS = {
-  'Compléments à 10': { br: 'Klokadurioù da 10' }, // br: à relire (« klokadur » = complément)
-  'Compléments à 100': { br: 'Klokadurioù da 100' },
-  [OP_VERS_DIZ]: { br: 'Betek an degad (37 + ? = 40)' },
-  [OP_DIZ]: { br: '± degadoù (45 + 30)' },
-  [OP_PASSAGE]: { br: 'Tremen an degad (47 + 6)' }, // br: à relire
-  'Doubles': { br: 'Doubloù' },
-  'Moitiés': { br: 'Hanterioù' },
+  'Compléments à 10': 'op_complements10',
+  'Compléments à 100': 'op_complements100',
+  [OP_VERS_DIZ]: 'op_versDizaine',
+  [OP_DIZ]: 'op_dizaines',
+  [OP_PASSAGE]: 'op_passage',
+  'Doubles': 'op_doubles',
+  'Moitiés': 'op_moities',
 }
-const libelleOp = op => tr({ fr: op, ...LIBELLES_OPS[op] })
+const libelleOp = op => (LIBELLES_OPS[op] ? t(LIBELLES_OPS[op]) : op)
 
 function plage(min, max, pas = 1) {
   const t = []
@@ -393,7 +396,7 @@ function htmlFiche() {
       </div>`
   }).join('')
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 680px; margin: 1.5cm auto; color: #222; }

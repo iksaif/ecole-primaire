@@ -37,4 +37,16 @@ export default {
     rappel: 'Rappel',
     lisEmploi: "Lis l'emploi du temps.",
     colQuestion: 'Question',
+    // exercices et précisions (réglages)
+    ex_lire: "Lire l'heure",
+    ex_placer: 'Placer les aiguilles',
+    ex_journee: 'Matin / après-midi',
+    ex_duree: 'Durées',
+    ex_conversion: 'h, min, s',
+    ex_emploi: 'Emploi du temps',
+    prec_heure: 'Heures pile',
+    prec_demi: 'Demi-heures',
+    prec_quart: "Quarts d'heure",
+    prec_cinq: '5 minutes',
+    prec_minute: 'À la minute près',
   }

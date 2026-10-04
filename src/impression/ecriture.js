@@ -1,12 +1,21 @@
 // Génération des fiches d'écriture (lignage Seyès) — partagée par l'app et le build des PDF.
 import { largeurTexte, metriquesPolice, documentImpression, echapper } from '../utils/impression'
+import textesFr from '../i18n/fr/contenu/ecriture.js'
+import textesBr from '../i18n/br/contenu/ecriture.js'
 
+// Textes des fiches (contenu) par langue : src/i18n/<langue>/contenu/ecriture.js, choisis par config.langue
+const TEXTES = { fr: textesFr, br: textesBr }
+const textePour = (langue, cle) => (TEXTES[langue] ?? textesFr)[cle] ?? textesFr[cle]
+// Libellé d'un style dans une langue
+export const libelleStyle = (id, langue) => textePour(langue, `style_${id}`)
+
+// label (français) et br : libellés tirés des catalogues, gardés pour les vues ; préférer libelleStyle(id, langue)
 export const STYLES = [
-  { id: 'script-maj',  label: 'Script majuscule',   br: 'Skript, pennlizherennoù',     exemple: 'A', attache: false },
-  { id: 'script-min',  label: 'Script minuscule',   br: 'Skript, lizherennoù bihan',   exemple: 'a', attache: false },
-  { id: 'attache-maj', label: 'Attaché majuscule',  br: 'A-stag, pennlizherennoù',     exemple: 'A', attache: true },
-  { id: 'attache-min', label: 'Attaché minuscule',  br: 'A-stag, lizherennoù bihan',   exemple: 'a', attache: true },
-]
+  { id: 'script-maj',  exemple: 'A', attache: false },
+  { id: 'script-min',  exemple: 'a', attache: false },
+  { id: 'attache-maj', exemple: 'A', attache: true },
+  { id: 'attache-min', exemple: 'a', attache: true },
+].map(s => ({ ...s, label: libelleStyle(s.id, 'fr'), br: libelleStyle(s.id, 'br') }))
 export const CONTENUS = [
   { id: 'lettres', label: '🔤 Lettres et chiffres' },
   { id: 'mots',    label: '📝 Mots' },
@@ -204,10 +213,10 @@ export function genererEcriture(config, polices) {
   const g = geometrie(config)
   const groupes = construireGroupes(g, config, polices)
   const pagesLignes = paginer(groupes, g.lignes.length)
-  const br = config.langue === 'br'
-  const titre = config.titre || (br ? 'Skrivañ — ' : 'Écriture — ') +
-    STYLES.filter(s => config.styles.includes(s.id)).map(s => (br ? s.br : s.label).toLowerCase()).join(br ? ' ; ' : ', ')
-  const entete = br ? 'Anv-bihan' : 'Prénom', date = br ? 'Deiziad' : 'Date'
+  const l = config.langue
+  const titre = config.titre || textePour(l, 'titre') +
+    STYLES.filter(s => config.styles.includes(s.id)).map(s => libelleStyle(s.id, l).toLowerCase()).join(textePour(l, 'separateurStyles'))
+  const entete = textePour(l, 'prenom'), date = textePour(l, 'date')
   const pagesHtml = pagesLignes.map(lignes => {
     let texte = ''
     lignes.forEach((l, n) => {

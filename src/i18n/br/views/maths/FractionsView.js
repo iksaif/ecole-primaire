@@ -49,4 +49,14 @@ export default {
     pPlacer: 'Tresa ur bir evit lakaat {f} war al linenn.',
     pNbQuestions: '{n} goulenn',
     corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
+    type_identifier: '👀 Peseurt darnaouenn ?',
+    type_colorier: '🖍️ Livañ',
+    type_lettres: '🔤 E lizherennoù',
+    type_partDe: '🍪 An hanter eus…',
+    type_unite: "⚖️ Muioc'h pe nebeutoc'h eget 1 ?",
+    type_egales: '🟰 Darnaouennoù kevatal',
+    type_droite: '📏 Lenn war al linenn',
+    type_placer: '📍 Lakaat war al linenn',
+    mode_unitaires: 'Un hanter, un trede… (1/2, 1/3…)',
+    mode_toutes: '2/3, 3/4… ivez',
   }

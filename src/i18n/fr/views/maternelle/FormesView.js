@@ -17,4 +17,8 @@ export default {
     fConsigne: 'Colorie chaque forme de la bonne couleur.',
     fCompte: 'Combien y en a-t-il ? Écris le nombre.',
     rouge: 'rouge', bleu: 'bleu', vert: 'vert', jaune: 'jaune',
+    // Corrections ; {nom} = nom de la forme dans la langue du contenu
+    erreurNom: "❌ C'est un {nom}",
+    erreurCotes: ({ nom, n }) => `❌ Un ${nom} a ${n === 0 ? 'aucun côté droit' : n + ' côté' + (n > 1 ? 's' : '')}`,
+    erreurForme: ({ nom }) => `❌ C'était ${/^[aeiouyh]/i.test(nom) ? "l'" : 'le / la '}${nom}`,
   }

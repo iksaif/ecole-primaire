@@ -49,4 +49,16 @@ export default {
     pPlacer: 'Dessine une flèche pour placer {f} sur la droite.',
     pNbQuestions: '{n} questions',
     corrigeFin: 'Corrigé (page à part)',
+    // types d'exercices (boutons de réglage)
+    type_identifier: '👀 Quelle fraction ?',
+    type_colorier: '🖍️ Colorier',
+    type_lettres: '🔤 En lettres',
+    type_partDe: '🍪 La moitié de…',
+    type_unite: '⚖️ Plus ou moins que 1 ?',
+    type_egales: '🟰 Fractions égales',
+    type_droite: '📏 Lire sur la droite',
+    type_placer: '📍 Placer sur la droite',
+    // fractions proposées
+    mode_unitaires: 'Un demi, un tiers… (1/2, 1/3…)',
+    mode_toutes: 'Aussi 2/3, 3/4…',
   }

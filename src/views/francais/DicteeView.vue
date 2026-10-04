@@ -165,43 +165,12 @@ import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { cssPolices, echapper, POLICE_SCRIPT, POLICE_ATTACHE } from '../../utils/impression'
 
-const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
-// Noms des catégories (définis en français dans data/dicteeMots.js)
-// br: à relire
-const CATEGORIES_BR = {
-  'Mots outils': 'Gerioù-benveg',
-  'Pronoms': 'Raganvioù',
-  'Jours': 'Devezhioù',
-  'Nombres': 'Niveroù',
-  'Lieux': "Lec'hioù",
-  'Transports': 'Treuzdougen',
-  'Animaux': 'Loened',
-  'Fruits': 'Frouezh',
-  'Famille': 'Familh',
-  'Verbes': 'Verboù',
-  'Déterminants': 'Gerioù-mont',
-  'Corps humain': 'Korf mab-den',
-  'Maison': 'Ti',
-  'École': 'Skol',
-  'Verbes courants': 'Verboù boutin',
-  'Adjectifs': 'Anvioù-gwan',
-  'Saisons': 'Koulzadoù',
-  'Aliments': 'Boued',
-  'Mots invariables': 'Gerioù digemm',
-  'Mots en -tion': 'Gerioù e -tion',
-  'Mots en -eur': 'Gerioù e -eur',
-  'Nature et environnement': 'Natur hag endro',
-  'Vocabulaire scientifique': 'Geriaoueg skiantel',
-  'Adverbes': 'Adverboù',
-  'Vocabulaire civique': 'Geriaoueg keodedel',
-  'Vocabulaire géographique': 'Geriaoueg douaroniel',
-  'Mots difficiles courants': 'Gerioù boutin diaes',
-  'Connecteurs logiques': 'Gerioù-liamm',
-  'Vocabulaire littéraire': 'Geriaoueg lennegel',
-  'Mots latins/grecs courants': 'Gerioù latin/gresianek boutin',
-}
-const nomCat = cat => tr({ fr: cat, br: CATEGORIES_BR[cat] ?? cat })
+// Noms des catégories (définies en français dans data/dicteeMots.js) : clé du catalogue d'interface dérivée
+// du nom français, ex. « Corps humain » → cat_corps_humain ; le nom français s'affiche si la clé manque.
+const cleCat = cat => 'cat_' + cat.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
+const nomCat = cat => { const k = cleCat(cat), v = t(k); return v === k ? cat : v }
 
 const config = ref({
   niveau:  charger('dictee_niveau', 'CP'),

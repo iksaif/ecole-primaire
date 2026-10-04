@@ -18,4 +18,9 @@ export default {
     fConsigne: 'Liv pep stumm gant al liv mat.',
     fCompte: 'Pet a zo ? Skriv an niver.',
     rouge: 'ruz', bleu: 'glas', vert: 'gwer', jaune: 'melen',
+    // Corrections ; {nom} = nom de la forme dans la langue du contenu
+    erreurNom: '❌ Ar respont mat a oa {nom}',
+    // br: à relire (« kostez » = côté d'un polygone)
+    erreurCotes: ({ n }) => `❌ ${n === 0 ? 'Kostez eeun ebet' : 'Niver a gostezioù : ' + n}`,
+    erreurForme: '❌ Ar respont mat a oa {nom}',
   }

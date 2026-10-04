@@ -37,4 +37,12 @@ export default {
     pSuite: 'Kloka an heuliad :', // br: à relire
     pNbQuestions: '{n} goulenn',
     corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
+    type_decomposer: '🧱 Dispenn', // br: à relire
+    type_representation: '🟦 Skeudenn', // br: à relire
+    type_lettresChiffres: '✏️ Skrivañ e sifroù',
+    type_chiffresLettres: '🔤 Skrivañ e lizherennoù',
+    type_comparer: '⚖️ Keñveriañ',
+    type_suites: "➡️ Da-heul / heuliadoù",
+    type_droite: '📏 Linenn dereziet', // br: à relire
+    type_ranger: '📶 Renkañ',
   }

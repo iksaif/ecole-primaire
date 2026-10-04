@@ -150,6 +150,8 @@ import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+// Langue du contenu imprimé : celle de l'interface pour les maths
+const langueContenu = computed(() => langue.value)
 
 const config = ref({ op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10, corrige: false,
   ...charger('calcul_pose_config', {}) })
@@ -344,7 +346,7 @@ function htmlFiche() {
     <div style="text-align:center;">${qs.map(q => carte(q, true)).join('')}</div>`
     : ''
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niveau}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }

@@ -15,4 +15,12 @@ export default {
     pReponse: 'Réponse :',
     pNbProblemes: '{n} problèmes',
     corrigeFin: 'Corrigé (page à part)',
+    // types de problèmes (réglages)
+    cat_ajoutRetrait: '➕➖ Ajout / retrait',
+    cat_comparaison: '⚖️ Comparaison',
+    cat_partiesTout: '🧺 Parties et tout',
+    cat_multiplication: '✖️ Multiplication',
+    cat_partage: '🍰 Partage / groupements',
+    cat_foisPlus: '🔁 « Fois plus »',
+    cat_deuxEtapes: '🪜 Plusieurs étapes',
   }

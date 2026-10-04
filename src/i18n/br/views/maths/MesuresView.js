@@ -8,4 +8,11 @@ export default {
     nbSegments: 'Segmentoù da vuzuliañ war ar fichenn', // br: à relire
     rappel100: "Moullit da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmentoù.",
     colQuestion: 'Goulenn',
+    ex_regle: '📏 Muzuliañ gant ar reolenn',
+    ex_unite: '🤔 An unanenn a-zere',
+    ex_conversion: '🔁 Amdroadurioù',
+    ex_comparer: '🟰 Keñveriañ',
+    ex_masse: '⚖️ Pouezioù (balañs)',
+    ex_contenance: "🥛 Endalc'hioù",
+    ex_calendrier: '📅 Deiziadur',
   }

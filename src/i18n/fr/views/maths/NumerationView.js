@@ -37,4 +37,13 @@ export default {
     pSuite: 'Complète la suite :',
     pNbQuestions: '{n} questions',
     corrigeFin: 'Corrigé (page à part)',
+    // types d'exercices (boutons de réglage)
+    type_decomposer: '🧱 Décomposer',
+    type_representation: '🟦 Représentation',
+    type_lettresChiffres: '✏️ Écrire en chiffres',
+    type_chiffresLettres: '🔤 Écrire en lettres',
+    type_comparer: '⚖️ Comparer',
+    type_suites: '➡️ Suivant / suites',
+    type_droite: '📏 Droite graduée',
+    type_ranger: '📶 Ranger',
   }

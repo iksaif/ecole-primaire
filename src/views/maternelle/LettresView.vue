@@ -100,12 +100,11 @@ const VOYELLES   = ['A','E','I','O','U','Y']
 const CONSONNES  = ['B','C','D','F','G','H','J','K','L','M','N','P','Q','R','S','T','V','W','X','Z']
 const TOUTES     = [...VOYELLES, ...CONSONNES]
 
-// Breton : lizherenneg peurunvan (ch et c'h sont des lettres ; pas de c, q, x).
+// Alphabet de la langue du contenu (celle de l'interface) : celui d'une langue régionale s'il existe
+// (breton : lizherenneg peurunvan, ch et c'h sont des lettres ; pas de c, q, x), sinon l'alphabet français.
 // Majuscule d'un digramme : Ch, C'h (première lettre seulement).
 const majuscule = l => l.charAt(0).toUpperCase() + l.slice(1)
-const ALPHABET_BR  = langueRegionale('br').alphabet.map(majuscule)
-const VOYELLES_BR  = ALPHABET_BR.filter(l => VOYELLES.includes(l))
-const CONSONNES_BR = ALPHABET_BR.filter(l => !VOYELLES.includes(l))
+const alphabetDe = l => langueRegionale(l)?.alphabet.map(majuscule) ?? TOUTES
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
@@ -124,10 +123,10 @@ const reponseDonnee = ref('')
 const question = computed(() => questions.value[idx.value])
 
 function getPool() {
-  const br = langue.value === 'br'
-  if (config.value.groupe === 'voyelles') return br ? VOYELLES_BR : VOYELLES
-  if (config.value.groupe === 'consonnes') return br ? CONSONNES_BR : CONSONNES
-  return br ? ALPHABET_BR : TOUTES
+  const alphabet = alphabetDe(langue.value)
+  if (config.value.groupe === 'voyelles') return alphabet.filter(l => VOYELLES.includes(l))
+  if (config.value.groupe === 'consonnes') return alphabet.filter(l => !VOYELLES.includes(l))
+  return alphabet
 }
 
 function fausses(pool, exclure, n) {

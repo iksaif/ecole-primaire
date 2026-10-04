@@ -12,4 +12,10 @@ export default {
     res60: "Mat ! Kendalc'h da zeskiñ 💪",
     res0: "Kalon vat ! Adlenn ar respontoù hag adklask 📚",
     fConsigne: 'Lenn pep goulenn ha gromm ar respont mat.', // br: à relire
+    // Thèmes du quiz
+    'theme_geo-france': "Douaroniezh Bro-C'hall",
+    'theme_geo-monde': 'Kêrioù-penn ar bed',
+    theme_sciences: 'Skiantoù ha natur',
+    theme_histoire: "Istor Bro-C'hall",
+    theme_animaux: 'Bed al loened',
   }

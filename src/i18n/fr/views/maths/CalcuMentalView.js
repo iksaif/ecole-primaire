@@ -11,4 +11,12 @@ export default {
     tempsEcoule: '⏰ Temps écoulé ! La réponse était {r}',
     pOperations: 'Opérations : {ops}',
     pNbQuestions: '{n} questions',
+    // opérations (boutons de réglage et en-tête de la fiche) ; « +, −, ×, ÷, ± 9 / ± 11, × 10 / × 100 » s'affichent tels quels
+    op_complements10: 'Compléments à 10',
+    op_complements100: 'Compléments à 100',
+    op_versDizaine: 'Vers la dizaine (37 + ? = 40)',
+    op_dizaines: '± dizaines (45 + 30)',
+    op_passage: 'Passage de dizaine (47 + 6)',
+    op_doubles: 'Doubles',
+    op_moities: 'Moitiés',
   }

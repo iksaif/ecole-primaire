@@ -16,14 +16,15 @@ export default {
     generateur: "ar c'hrouer fichennoù", pied: 'Fichennoù digoust, hep bruderezh, graet gant tadoù ha mammoù.',
     paysage: 'gweledva', portrait: 'poltred',
     rechercher: 'Klask ur fichenn… (taolennoù, lizherenneg, eur, CE1…)', classe: 'Klas', langueFiches: 'Yezh',
-    apprendre: '📘 Evit deskiñ', apprendreAide: 'Skritelloù ha fichennoù-eñvor da virout dirak an daoulagad.',
-    entrainer: '✏️ Evit en em bleustriñ', entrainerAide: 'Fichennoù da leuniañ, gant ar reizhadenn.',
+    apprendre: '📘 Evit deskiñ', entrainer: '✏️ Evit en em bleustriñ',
+    introDomaines: "Renket int dre dachenn ar programm : skritelloù evit deskiñ, ha goude fichennoù da leuniañ (gant ar reizhadenn) evit en em bleustriñ.", // br: à relire
+    domaine: 'Tachenn :', // br: à relire
+    programmeOfficiel: 'programm ofisiel', // br: à relire
+    horsProgramme: '🌍 Sevenadur hollek',
+    horsProgrammeAide: 'Sevenadur hollek, er-maez eus programmoù ar galleg hag ar matematik', // br: à relire
     aucune: "Fichenn ebet ne glot. Klask ur ger all, pe krou da fichenn gant ar c'hrouer.",
     fiche: n => `Fichenn ${n}`, variantes: n => `Fichennoù disheñvel : ${n}`,
     variantesAide: 'goulennoù all a zo war bep fichenn : moull anezho an eil goude egile.',
-    g_alphabet: '🔤 Al lizherenneg', g_nombres: '🔢 An niveroù e lizherennoù', g_tables: '🧮 Taolennoù jediñ', g_programme: '📚 Skritelloù ar programm', // br: à relire
-    g_ecriture: '✏️ Skrivañ', g_calcul: '🧮 Jediñ', g_maths: '📐 Matematik', g_francais: '📝 Galleg',
-    g_maternelle: '🌱 Skol-vamm', g_autres: '🌍 Sevenadur hollek',
   // en-tête (identique à celui de l'app) et page 404
   nav_maths: 'Matematik', nav_francais: 'Galleg', nav_lecture: 'Lenn', nav_autres: 'Traoù all', nav_imprimer: 'Da voullañ',
   nav_classe: 'Klas', nav_toutes: 'An holl',

@@ -59,7 +59,7 @@ const entrees = computed(() => {
   const activites = ACTIVITES.map(a => ({
     cle: a.to, type: a.matiere === 'imprimer' ? 'imprimer' : 'exercice', icone: a.icon,
     titre: br && a.br ? a.br.titre : a.titre, sous: `${etiquetteNiveaux(a.niveaux)} · ${br && a.br ? a.br.desc : a.desc}`,
-    route: a.to, texte: norm([a.titre, a.br?.titre, a.desc, a.br?.desc, a.domaine, a.niveaux.join(' ')].join(' ')),
+    route: a.to, texte: norm([a.titre, a.br?.titre, a.desc, a.br?.desc, a.rubrique, a.niveaux.join(' ')].join(' ')),
   }))
   const pdfs = fiches.value
     // fiches contenant du breton : seulement si la langue régionale est active

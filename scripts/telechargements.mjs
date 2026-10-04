@@ -5,7 +5,8 @@
 //   - exercices-<id>-<classe>/ une page par exercice et par classe, NB_VARIANTES fiches différentes
 //                              (page d'exercice de l'app en mode impression, voir src/impression/exercices.js),
 //                              en français et (suffixe -brezhoneg) avec les consignes en breton
-//   - index.html               toutes les fiches, recherche et filtres (classe, langue, apprendre / s'entraîner)
+//   - index.html               toutes les fiches, par domaine du programme puis « pour apprendre » (affiches) /
+//                              « pour s'entraîner » (fiches, exercices), avec recherche et filtres (classe, langue, usage)
 // plus sitemap.xml, robots.txt et 404.html à la racine.
 //
 // Les deux sites publient les mêmes fiches. C'est le réglage « Langue régionale » du visiteur (le même que
@@ -29,6 +30,9 @@ import { site, SITES, CONTACT } from '../src/site.js'
 import { DRAPEAUX } from '../src/data/drapeaux.js'
 import textesFr from '../src/i18n/fr/pages-statiques.js'
 import textesBr from '../src/i18n/br/pages-statiques.js'
+import domainesFr from '../src/i18n/fr/domaines.js'
+import domainesBr from '../src/i18n/br/domaines.js'
+import { DOMAINES, nomOfficiel, lienProgramme } from '../src/data/programme.js'
 
 const arg = (nom, defaut) => {
   const i = process.argv.indexOf(nom)
@@ -65,19 +69,37 @@ const duo = (fr, br) => (br == null || fr === br ? echapper(fr)
 const bi = (cle, ...a) => duo(val('fr', cle, a), val('br', cle, a))
 
 // ── Classement des fiches ────────────────────────────────────────────────────
-// usage : 'apprendre' (affiches, mémos) ou 'exercice' (fiches à remplir) ; groupe : rubrique dans l'index
+// Chaque entrée a un `domaine` (id de src/data/programme.js, null hors programme) et un `genre` ('affiche' |
+// 'fiche' | 'exercice'). L'index range par domaine (les maths, puis le français, puis le reste), puis par usage :
+// 'apprendre' (affiches) ou 'exercice' (fiches à remplir et fiches d'exercices).
+const USAGE = { affiche: 'apprendre', fiche: 'exercice', exercice: 'exercice' }
+const GENRES = ['affiche', 'fiche', 'exercice']
+const ORDRE_MATIERES = ['maths', 'francais', 'autres']
+const ORDRE_DOMAINES = [...DOMAINES].sort((a, b) => ORDRE_MATIERES.indexOf(a.matiere) - ORDRE_MATIERES.indexOf(b.matiere)).map(d => d.id)
+const rangDomaine = d => (d ? ORDRE_DOMAINES.indexOf(d) : ORDRE_DOMAINES.length)
 function classer(t) {
-  const affiche = /^(affiches?|table-de-pythagore|tableau-des|cartes)-/.test(t.slug)
-  if (t.categorie === 'alphabet') return { usage: 'apprendre', groupe: 'alphabet' }
-  if (t.categorie === 'nombres') return { usage: 'apprendre', groupe: 'nombres' }
-  if (t.categorie === 'programme') return { usage: 'apprendre', groupe: 'programme' }
-  if (t.categorie === 'calcul') return affiche ? { usage: 'apprendre', groupe: 'tables' } : { usage: 'exercice', groupe: 'calcul' }
-  if (t.categorie === 'ecriture') return { usage: 'exercice', groupe: 'ecriture' }
-  return { usage: 'exercice', groupe: t.groupe ?? 'autres' }
+  if (!USAGE[t.genre] || (t.domaine !== null && !ORDRE_DOMAINES.includes(t.domaine))) throw new Error(`${t.slug} : domaine « ${t.domaine} » ou genre « ${t.genre} » inconnu`)
+  return { usage: USAGE[t.genre] }
 }
-const GROUPES = {
-  apprendre: ['alphabet', 'nombres', 'tables', 'programme'],
-  exercice: ['ecriture', 'calcul', 'maths', 'francais', 'maternelle', 'autres'],
+// par domaine, puis par genre ; l'ordre du catalogue est gardé à l'intérieur (tri stable)
+const trier = liste => [...liste].sort((a, b) => rangDomaine(a.domaine) - rangDomaine(b.domaine) || GENRES.indexOf(a.genre) - GENRES.indexOf(b.genre))
+// nom court du domaine (fr / br) ; hors programme : « Culture générale »
+const nomDomaine = d => (d ? duo(domainesFr[d], domainesBr[d]) : bi('horsProgramme'))
+// liens « programme officiel » d'un domaine pour des classes : un lien par adresse (cycle 1 / cycles 2 et 3),
+// le nom officiel en infobulle, les classes concernées en texte (sans traduction à faire)
+function liensProgramme(d, classes) {
+  if (!d) return ''
+  const parLien = new Map()
+  for (const c of classes.length ? classes : CLASSES) {
+    const url = lienProgramme(d, c)
+    if (!url) continue
+    if (!parLien.has(url)) parLien.set(url, { classes: [], noms: new Set() })
+    parLien.get(url).classes.push(c)
+    parLien.get(url).noms.add(nomOfficiel(d, c))
+  }
+  const etiquette = cs => (cs.length > 1 ? `${cs[0].toUpperCase()} → ${cs.at(-1).toUpperCase()}` : cs[0].toUpperCase())
+  const liens = [...parLien].map(([url, { classes: cs, noms }]) => `<a href="${url}" target="_blank" rel="noopener" title="${echapper([...noms].join(' / '))}">${parLien.size > 1 ? etiquette(cs) : bi('programmeOfficiel')}</a>`)
+  return parLien.size > 1 ? `${bi('programmeOfficiel')} : ${liens.join(' · ')}` : liens.join('')
 }
 const classesDepuisTexte = s => (s || '').toLowerCase().split(/[·→,\s]+/).filter(c => CLASSES.includes(c))
 const brSeule = t => t.langues.length === 1 && t.langues[0] === 'br'
@@ -196,6 +218,11 @@ h3 { font-size: 1.05rem; margin: 1.5rem 0 .6rem; color: #555; }
 .badge { font-style: normal; font-size: .7rem; background: #eee; border-radius: 6px; padding: .05rem .35rem; margin-left: .25rem; }
 .badge.br { background: #111; color: white; }
 .vide { color: #888; font-style: italic; margin: 2rem 0; }
+section.domaine { margin-top: 2.5rem; }
+section.domaine > h2 { margin-top: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; }
+.programme { font-size: .85rem; font-weight: 400; color: #777; }
+.programme a { color: #777; }
+
 [hidden] { display: none !important; }
 footer { text-align: center; font-size: .8rem; color: #888; padding: 2rem 1rem; }
 @media (max-width: 720px) { .fiche { grid-template-columns: 1fr; } .recherche kbd { display: none; } }
@@ -370,7 +397,7 @@ async function genererExercices(navigateur, url, doc) {
         }
         const niveaux = etiquetteClasse(c.classe)
         res.push({
-          slug, categorie: 'exercices', groupe: ex.groupe, usage: 'exercice', variantes: NB_VARIANTES,
+          slug, categorie: 'exercices', domaine: ex.domaine, genre: ex.genre, ...classer({ slug, ...ex }), variantes: NB_VARIANTES,
           langues: [langue], classes: classesDe(c.classe), niveaux, lien: ex.route, paysage, nbPages: 1,
           titreFr: `${ex.titre.fr} — ${niveaux} : fiches d'exercices à imprimer${langue === 'br' ? ' (consignes en breton)' : ''}`,
           titreBr: `${ex.titre.br} — ${niveaux} : fichennoù poelladennoù da voullañ`,
@@ -422,7 +449,7 @@ async function main() {
     }
 
     const exercices = AVEC_EXERCICES ? await genererExercices(navigateur, url, doc) : []
-    ecrirePages([...liste, ...exercices])
+    ecrirePages(trier([...liste, ...exercices]))
     await imagePartage(doc, url, liste)
     ecrireManifeste()
   } finally {
@@ -495,15 +522,16 @@ ${(t.nbApercus ?? 1) > 1 ? `<em class="badge-pages">📄 ${t.nbApercus}</em>` : 
 function pageFiche(t, liste) {
   const cat = CATEGORIES.find(c => c.id === t.categorie)
   // fiches voisines : même nature (apprendre / s'entraîner) et même langue ; d'abord le même exercice
-  // dans d'autres classes, puis la même rubrique
+  // dans d'autres classes, puis le même domaine (même catégorie d'abord)
   const racineSlug = x => x.slug.replace(/-(ms|gs|cp|ce1|ce2|cm1|cm2|gs-cp|ms-gs|cp-cm2)(-brezhoneg)?$/, '')
   const proches = liste.filter(x => x.slug !== t.slug && x.usage === t.usage && avecBreton(x) === avecBreton(t))
+  const memeExercice = x => x.variantes && racineSlug(x) === racineSlug(t)
   const voisines = [
-    ...proches.filter(x => x.variantes && racineSlug(x) === racineSlug(t)),
-    ...proches.filter(x => x.groupe === t.groupe && !(x.variantes && racineSlug(x) === racineSlug(t))),
+    ...proches.filter(memeExercice),
+    ...proches.filter(x => !memeExercice(x) && x.domaine === t.domaine && x.categorie === t.categorie),
+    ...proches.filter(x => !memeExercice(x) && x.domaine === t.domaine && x.categorie !== t.categorie),
   ].slice(0, 8)
-  const sansEmoji = s => s.replace(/^\S+\s/, '')
-  const rubrique = cat ? duo(sansEmoji(cat.titre), sansEmoji(cat.titreBr ?? cat.titre)) : bi(`g_${t.groupe}`)
+  const ancre = t.domaine ?? 'hors-programme'
   const n = t.variantes ?? 0
   const pdf = n ? 'fiche-1.pdf' : `${t.slug}.pdf`
   const apercu = n ? 'apercu-1.jpg' : 'apercu.jpg'
@@ -541,7 +569,7 @@ function pageFiche(t, liste) {
 })()
 </script>` : ''
   const contenu = `
-<p class="fil"><a href="${BASE}telechargements/">${bi('telecharger')}</a> › ${rubrique}</p>
+<p class="fil"><a href="${BASE}telechargements/">${bi('telecharger')}</a> › <a href="${BASE}telechargements/#${ancre}">${nomDomaine(t.domaine)}</a></p>
 <h1>${titreDuo(t)}</h1>
 <p class="intro">${echapper(t.description)}</p>
 <div class="fiche">
@@ -553,6 +581,7 @@ function pageFiche(t, liste) {
     <ul class="infos">
       ${n ? `<li>📚 ${bi('variantes', n)} — ${bi('variantesAide')}</li>` : `<li>${bi('pages', t.nbPages)} · ${echapper(t.format)}</li>`}
       <li>🎒 ${echapper(t.niveaux)}</li>
+      <li>📚 ${t.domaine ? `${bi('domaine')} ${nomDomaine(t.domaine)} — ${liensProgramme(t.domaine, t.classes)}` : bi('horsProgrammeAide')}</li>
       <li>${bi('imprimer100')}</li>
     </ul>
     <p class="intro">${cat ? duo(cat.intro, cat.introBr ?? cat.intro) : ''} ${bi('persoAide')}</p>
@@ -584,6 +613,8 @@ ${voisines.length ? `<h2>${bi('autres')}</h2>
       image: `${urlReference(t)}telechargements/${t.slug}/${apercu}`,
       inLanguage: t.langues, educationalLevel: t.niveaux, learningResourceType: t.usage === 'apprendre' ? 'Affiche' : "Fiche d'exercices",
       encodingFormat: 'application/pdf', isAccessibleForFree: true,
+      ...(t.domaine ? { educationalAlignment: { '@type': 'AlignmentObject', alignmentType: 'educationalSubject',
+        targetName: nomOfficiel(t.domaine, t.classes[0] ?? 'cp') ?? domainesFr[t.domaine], targetUrl: lienProgramme(t.domaine, t.classes[0] ?? 'cp') } } : {}),
       publisher: { '@type': 'Organization', name: SITE.nom, url: SITE_URL },
     },
   }))
@@ -592,19 +623,25 @@ ${voisines.length ? `<h2>${bi('autres')}</h2>
 function pageIndex(liste) {
   const filtre = (nom, lib, choix, cls = '') => `<div class="filtre ${cls}" data-filtre="${nom}">${lib ? `<span class="lib">${lib}</span>` : ''}${choix.map(([v, l], k) =>
     `<button data-v="${v}"${k ? '' : ' class="actif"'}>${l}</button>`).join('')}</div>`
-  const section = usage => {
-    const groupes = GROUPES[usage].filter(g => liste.some(t => t.usage === usage && t.groupe === g))
-    if (!groupes.length) return ''
-    return `<section class="usage" data-usage="${usage}">
-<h2>${bi(usage === 'apprendre' ? 'apprendre' : 'entrainer')}</h2><p class="intro">${bi(usage === 'apprendre' ? 'apprendreAide' : 'entrainerAide')}</p>
-${groupes.map(g => `<div class="groupe"><h3>${bi(`g_${g}`)}</h3>
-<div class="grille">${liste.filter(t => t.usage === usage && t.groupe === g).map(carte).join('')}</div></div>`).join('\n')}
+  // une section par domaine (liste déjà triée par domaine puis genre), puis « pour apprendre » / « pour s'entraîner »
+  const domaines = [...new Set(liste.map(t => t.domaine))]
+  const section = d => {
+    const fiches = liste.filter(t => t.domaine === d)
+    const classes = CLASSES.filter(c => fiches.some(t => t.classes.includes(c)))
+    const groupe = usage => {
+      const cartes = fiches.filter(t => t.usage === usage)
+      return cartes.length ? `<div class="groupe" data-usage="${usage}"><h3>${bi(usage === 'apprendre' ? 'apprendre' : 'entrainer')}</h3>
+<div class="grille">${cartes.map(carte).join('')}</div></div>` : ''
+    }
+    return `<section class="domaine" id="${d ?? 'hors-programme'}" data-domaine="${d ?? ''}">
+<h2>${nomDomaine(d)}${d ? ` <span class="programme">${liensProgramme(d, classes)}</span>` : ''}</h2>
+${groupe('apprendre')}${groupe('exercice')}
 </section>`
   }
   const classesPresentes = CLASSES.filter(c => liste.some(t => t.classes.includes(c)))
   const contenu = `
 <h1>${bi('titreIndex')}</h1>
-<p class="intro">${bi('introIndex')} <span class="si-br">${bi('introBreton')}</span> ${bi('introPerso')} <a href="${BASE}#/imprimer">${bi('generateur')}</a>.
+<p class="intro">${bi('introIndex')} ${bi('introDomaines')} <span class="si-br">${bi('introBreton')}</span> ${bi('introPerso')} <a href="${BASE}#/imprimer">${bi('generateur')}</a>.
 <button class="lien-br si-pas-br" onclick="activerBreton()">${bi('voirBreton')}</button></p>
 <div class="outils">
   <label class="recherche"><input id="q" type="search" autocomplete="off" placeholder="${echapper(tx('rechercher'))}"
@@ -616,8 +653,7 @@ ${groupes.map(g => `<div class="groupe"><h3>${bi(`g_${g}`)}</h3>
     <span class="compteur" id="compteur"></span>
   </div>
 </div>
-${section('apprendre')}
-${section('exercice')}
+${domaines.map(section).join('\n')}
 <p class="vide" id="vide" hidden>${bi('aucune')}</p>
 <script>
 (function () {
@@ -636,7 +672,7 @@ ${section('exercice')}
         && mots.every(function (m) { return c.dataset.texte.indexOf(m) >= 0 })
       c.hidden = !ok; if (ok) n++
     })
-    document.querySelectorAll('.groupe, section.usage').forEach(function (g) { g.hidden = !g.querySelector('.carte:not([hidden])') })
+    document.querySelectorAll('.groupe, section.domaine').forEach(function (g) { g.hidden = !g.querySelector('.carte:not([hidden])') })
     document.getElementById('vide').hidden = n > 0
     var br = d.dataset.ui === 'br'
     document.getElementById('compteur').textContent = br ? 'Fichennoù : ' + n : n + ' fiche' + (n > 1 ? 's' : '')
@@ -704,7 +740,7 @@ ${urls.map(u => `  <url><loc>${SITE_URL}${u}</loc></url>`).join('\n')}
   // liste des fiches pour la recherche dans l'app
   writeFileSync(join(dist, 'telechargements', 'fiches.json'), JSON.stringify(liste.map(t => ({
     slug: t.slug, fr: t.courtFr ?? t.court, br: t.courtBr ?? t.court, titre: titreFr(t), niveaux: t.niveaux,
-    classes: t.classes, usage: t.usage, langues: t.langues, groupe: t.groupe,
+    classes: t.classes, usage: t.usage, langues: t.langues, domaine: t.domaine, genre: t.genre,
   }))))
   console.log(`${liste.length} pages de fiches, sitemap : ${urls.length} URL`)
 }

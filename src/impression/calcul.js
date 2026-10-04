@@ -862,6 +862,6 @@ export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e 
   config: { ...e.config, langue },
 }))).map(e => ({
   ...e, categorie: 'calcul', type: 'calcul', lien: `/imprimer/calcul?mode=${e.config.mode}`,
-  // affiches des tables : domaine du programme et genre (préparation du catalogue unique, plan 09)
-  ...(e.config.mode === 'affiche' ? { domaine: DOMAINES_AFFICHES.tables, genre: 'affiche' } : {}),
+  // domaine du programme et genre (catalogue unique, plan 09) : affiches des tables ou fiches de calcul
+  ...(e.config.mode === 'affiche' ? { domaine: DOMAINES_AFFICHES.tables, genre: 'affiche' } : { domaine: 'nombres-calcul', genre: 'fiche' }),
 }))

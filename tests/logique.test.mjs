@@ -62,11 +62,8 @@ console.log('Activités de maths et programme (activites.js / programme.js)')
 {
   const { ACTIVITES } = await import('../src/data/activites.js')
   const { CYCLE_DE, competencesDu, contraintesDe } = await import('../src/data/programme.js')
-  // domaines affichés dans les pages matières → domaine de programme.js
-  const DOMAINE = { 'Nombres et calcul': 'nombres-calcul', 'Résoudre des problèmes': 'nombres-calcul',
-    'Grandeurs et mesures': 'grandeurs-mesures', 'Espace et géométrie': 'espace-geometrie' }
   for (const a of ACTIVITES.filter(x => x.matiere === 'maths')) {
-    const d = DOMAINE[a.domaine]
+    const d = a.domaine
     const vides = a.niveaux.filter(n => !competencesDu(d, n).length)
     const cycle = a.to.startsWith('/maternelle/') ? [1] : [2, 3]
     const horsCycle = a.niveaux.filter(n => !cycle.includes(CYCLE_DE[n]))
@@ -130,4 +127,31 @@ console.log('Affiches : domaines et niveaux du programme (src/data/programme.js)
     return contraintes(t).filter(c => (c.nombresEnLettresMax ?? c.nombreMax) < max).map(c => `${t.slug} (${c.niveau})`)
   })
   verifier(!nombresHors.length, `affiches des nombres : nombres en lettres permis à chaque niveau${nombresHors.length ? ` (${nombresHors.slice(0, 4).join(', ')})` : ''}`)
+}
+
+console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')
+{
+  const { DOMAINES } = await import('../src/data/programme.js')
+  const { TELECHARGEMENTS_PROGRAMME } = await import('../src/impression/affiches/catalogue.js')
+  const { EXERCICES } = await import('../src/impression/exercices.js')
+  const { ACTIVITES } = await import('../src/data/activites.js')
+  const domaines = new Set(DOMAINES.map(d => d.id))
+  const GENRES = ['affiche', 'fiche', 'exercice']
+  // fiches d'écriture, alphabet, nombres (catalogue.js) et affiches du programme ; les fiches de calcul (calcul.js,
+  // pas importable avec node) sont vérifiées dans tests/statiques.test.mjs, sur fiches.json du build
+  const entrees = [...TELECHARGEMENTS, ...TELECHARGEMENTS_PROGRAMME]
+  const fautives = entrees.filter(t => !domaines.has(t.domaine) || !GENRES.includes(t.genre) || t.genre === 'exercice')
+  verifier(!fautives.length, `${entrees.length} entrées du catalogue : domaine de programme.js, genre « affiche » ou « fiche »${fautives.length ? ` (${fautives.slice(0, 4).map(t => `${t.slug} : ${t.domaine}/${t.genre}`).join(', ')})` : ''}`)
+  verifier(TELECHARGEMENTS.filter(t => t.categorie === 'ecriture').every(t => t.genre === 'fiche' && t.domaine === 'ecriture'), 'fiches d\'écriture : genre « fiche », domaine « ecriture »')
+  // exercices : domaine de l'activité de même route ; hors programme seulement pour la culture générale
+  const exFautifs = EXERCICES.filter(e => {
+    const a = ACTIVITES.find(x => x.to === e.route)
+    if (!a || e.genre !== 'exercice') return true
+    return a.matiere === 'autres' ? e.domaine !== null : !domaines.has(e.domaine)
+  })
+  verifier(!exFautifs.length, `${EXERCICES.length} exercices prégénérés : genre « exercice », domaine connu (sauf culture générale)${exFautifs.length ? ` (${exFautifs.map(e => `${e.id} : ${e.domaine}`).join(', ')})` : ''}`)
+  // activités : toute activité hors culture générale a un domaine ; les cartes « À imprimer » ont un genre
+  const actFautives = ACTIVITES.filter(a => (a.matiere !== 'autres' && !a.resume && !domaines.has(a.domaine))
+    || (a.matiere === 'imprimer' && !['affiche', 'fiche'].includes(a.genre)))
+  verifier(!actFautives.length, `activités : domaine de programme.js et genre des cartes « À imprimer »${actFautives.length ? ` (${actFautives.map(a => a.to).join(', ')})` : ''}`)
 }

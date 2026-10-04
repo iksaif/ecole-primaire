@@ -5,6 +5,11 @@
 import { LANGUES_REGIONALES } from '../data/languesRegionales.js'
 import { DOMAINES_AFFICHES } from './affiches/catalogue.js'
 
+// Chaque entrée a un `domaine` (id de src/data/programme.js) et un `genre` ('affiche' | 'fiche') : le build range
+// les téléchargements par domaine puis par genre (plan 09). Les fiches d'écriture relèvent toutes de l'écriture,
+// même quand les mots copiés sont des nombres ou des jours.
+const ECRITURE = { categorie: 'ecriture', type: 'ecriture', domaine: 'ecriture', genre: 'fiche' }
+
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 const TOUS_STYLES = ['script-maj', 'script-min', 'attache-maj', 'attache-min']
 const NOMS_STYLES = {
@@ -16,7 +21,6 @@ export const CATEGORIES = [
   { id: 'ecriture', titre: "✏️ Fiches d'écriture", titreBr: '✏️ Fichennoù skrivañ', introBr: "War linennoù Seyès, gant ar skouer e du, lizherennoù gris da adtresañ ha linennoù evit skrivañ e-unan.", intro: "Sur lignage Seyès, avec le modèle en noir, des lettres grises à repasser puis des lignes pour écrire seul." },
   { id: 'alphabet', titre: "🔤 Affiches de l'alphabet", titreBr: '🔤 Skritelloù al lizherenneg', introBr: "Al lizherennoù e skript hag a-stag, pennlizherennoù ha lizherennoù bihan, da lakaat war ar voger pe er c'haier.", intro: 'Les lettres en script et en attaché, majuscules et minuscules, à afficher au mur ou à coller dans le cahier.' },
   { id: 'calcul',   titre: '🧮 Fiches de calcul', titreBr: '🧮 Fichennoù jediñ', introBr: 'Taolennoù liesañ ha sammañ, klokaat, doubl hag hanter, jediñ e penn — gant ar reizhadenn.', intro: 'Tables de multiplication et d\'addition, compléments, doubles et moitiés, calcul mental du programme — avec le corrigé.' },
-  { id: 'programme', titre: '📚 Affiches du programme' },
   { id: 'nombres',  titre: '🔢 Les nombres en lettres — français et breton', titreBr: '🔢 An niveroù e lizherennoù — galleg ha brezhoneg', introBr: 'Skritelloù ha fichennoù-eñvor evit deskiñ skrivañ an niveroù e lizherennoù, e galleg hag e brezhoneg.', intro: 'Affiches et fiches mémo pour apprendre à écrire les nombres en lettres, en français et en breton.' },
 ]
 
@@ -24,8 +28,7 @@ const ecritureBase = { contenu: 'lettres', lier: false, interligne: 3, sauter: f
 
 const lettres = ALPHABET.map(l => ({
   slug: `fiche-ecriture-lettre-${l}`,
-  categorie: 'ecriture',
-  type: 'ecriture',
+  ...ECRITURE,
   titre: `Fiche d'écriture : la lettre ${l.toUpperCase()} (script et attaché)`,
   court: `Lettre ${l.toUpperCase()}`,
   description: `Fiche d'écriture gratuite à imprimer pour apprendre à écrire la lettre ${l.toUpperCase()} ${l} en script et en attaché (cursive), majuscule et minuscule, sur lignes Seyès. GS, CP, CE1.`,
@@ -36,8 +39,7 @@ const lettres = ALPHABET.map(l => ({
 
 const alphabets = TOUS_STYLES.map(st => ({
   slug: `fiche-ecriture-alphabet-${st.replace('-maj', '-majuscule').replace('-min', '-minuscule')}`,
-  categorie: 'ecriture',
-  type: 'ecriture',
+  ...ECRITURE,
   titre: `Fiches d'écriture : l'alphabet en ${NOMS_STYLES[st]}`,
   court: `Alphabet ${NOMS_STYLES[st]}`,
   description: `Les 26 lettres de l'alphabet en ${NOMS_STYLES[st]} à repasser puis à recopier, sur lignes Seyès. Fiches d'écriture gratuites à imprimer (PDF).`,
@@ -75,7 +77,7 @@ const mots = [
     niveaux: 'CP · CE1',
     config: { ...ecritureBase, contenu: 'mots', styles: ['attache-min'], repasser: 1, mots: 'un\ndeux\ntrois\nquatre\ncinq\nsix\nsept\nhuit\nneuf\ndix', titre: 'Les nombres de un à dix' },
   },
-].map(e => ({ ...e, categorie: 'ecriture', type: 'ecriture', lien: '/imprimer/ecriture' }))
+].map(e => ({ ...e, ...ECRITURE, lien: '/imprimer/ecriture' }))
 
 const affiches = [
   { slug: 'affiche-alphabet-a4-paysage', court: 'Alphabet A4 paysage', format: 'A4', orientation: 'landscape', titre: "Affiche de l'alphabet A4 (script et attaché)" },
@@ -155,7 +157,7 @@ function fichesRegionales(r) {
   const premieres = r.alphabet.slice(0, 5).join(', ')
   return [
     {
-      slug: `fiche-ecriture-alphabet-${nom}`, court: `Alphabet ${nom}`, type: 'ecriture', categorie: 'ecriture',
+      slug: `fiche-ecriture-alphabet-${nom}`, court: `Alphabet ${nom}`, ...ECRITURE,
       titre: `Fiche d'écriture : l'alphabet ${nom} (${r.titreAlphabet.toLowerCase().replace(/^al /, '')}) en attaché`,
       description: `Les ${r.alphabet.length} lettres de l'alphabet ${nom} (${premieres}…) en attaché majuscule et minuscule, à repasser puis à recopier sur lignes Seyès.`,
       niveaux: 'GS · CP · CE1', lien: '/imprimer/ecriture',
@@ -165,7 +167,7 @@ function fichesRegionales(r) {
       const mots = liste(l.listes)
       const titreListe = r.listes.find(x => x.id === l.listes[0]).titre
       return {
-        slug: `fiche-ecriture-${l.slug}-${nom}`, court: `${l.court} en ${nom}`, type: 'ecriture', categorie: 'ecriture',
+        slug: `fiche-ecriture-${l.slug}-${nom}`, court: `${l.court} en ${nom}`, ...ECRITURE,
         titre: `Fiche d'écriture : ${l.titre} en ${nom}`,
         description: `Écrire ${l.titre} en ${nom} en attaché : ${mots.split('\n').slice(0, 7).join(', ')}… Sur lignes Seyès.`,
         niveaux: l.niveaux, lien: '/imprimer/ecriture',
@@ -183,7 +185,7 @@ function fichesRegionales(r) {
     })),
     // une fiche par lettre (digrammes compris)
     ...r.alphabet.map(l => ({
-      slug: `fiche-ecriture-${f.motLettre}-${l.replace("'", '-')}`, court: `${maj(f.motLettre)} ${maj(l)}`, type: 'ecriture', categorie: 'ecriture',
+      slug: `fiche-ecriture-${f.motLettre}-${l.replace("'", '-')}`, court: `${maj(f.motLettre)} ${maj(l)}`, ...ECRITURE,
       titre: `Fiche d'écriture : la lettre ${maj(l)} de l'alphabet ${nom}`,
       description: `Fiche d'écriture pour apprendre à écrire la lettre ${maj(l)} ${l} de l'alphabet ${nom} (${r.titreAlphabet.toLowerCase().replace(/^al /, '')}) en script et en attaché, majuscule et minuscule, sur lignes Seyès.`,
       niveaux: 'GS · CP · CE1', lien: '/imprimer/ecriture',

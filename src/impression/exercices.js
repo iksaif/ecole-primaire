@@ -1,15 +1,16 @@
 // Fiches d'exercices pré-générées (pages /telechargements/exercices-…) : pour chaque exercice et chaque classe,
 // NB_VARIANTES fiches différentes. Le script de build ouvre la page de l'exercice en mode impression
 // (?mode=imprimer), clique le bouton de niveau (`bouton`, expression régulière sur son texte), puis
-// enregistre l'aperçu en PDF — c'est exactement la fiche que l'app produit. Fichier sans dépendance
-// (lu aussi par node).
+// enregistre l'aperçu en PDF — c'est exactement la fiche que l'app produit. Fichier lu aussi par node : il
+// n'importe que des données pures.
+import { ACTIVITES } from '../data/activites.js'
 
 export const NB_VARIANTES = 4
 
 // bouton : niveau à choisir ; clics : réglages à activer en plus (texte des boutons, expressions régulières)
 const C = (classe, bouton, clics = []) => ({ classe, bouton, clics })
 
-export const EXERCICES = [
+const LISTE = [
   // ── Maths ──
   { id: 'calcul-mental', route: '/maths/calcul-mental', groupe: 'maths', titre: { fr: 'Calcul mental', br: 'Jediñ e penn' },
     classes: [
@@ -62,6 +63,9 @@ export const EXERCICES = [
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
     classes: [C('cp-cm2', null)] },
 ]
+
+// domaine du programme : celui de l'activité de même route (activites.js) ; null hors programme (culture générale)
+export const EXERCICES = LISTE.map(ex => ({ ...ex, genre: 'exercice', domaine: ACTIVITES.find(a => a.to === ex.route)?.domaine ?? null }))
 
 // « ce1 » → ['ce1'] ; « cp-cm2 » → toutes les classes de CP à CM2
 const ORDRE = ['ms', 'gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2']

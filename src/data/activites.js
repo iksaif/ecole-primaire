@@ -20,7 +20,7 @@ export const MATIERES = [
   { id: 'autres',   titre: '🌍 Culture générale',  br: '🌍 Sevenadur hollek' },
 ]
 
-// Domaines du programme (titres de groupes dans les pages matières) — breton à faire relire
+// Rubriques des pages matières (`rubrique` d'une activité, titres de groupes) — breton à faire relire
 export const DOMAINES_BR = {
   'Nombres et calcul': 'Niveroù ha jediñ',
   'Résoudre des problèmes': 'Diskoulmañ kudennoù',
@@ -33,43 +33,60 @@ export const DOMAINES_BR = {
 }
 
 // `descRegionale` : description quand une langue régionale est active (sinon `desc`)
-// `domaine` regroupe les activités par grand domaine du programme dans les pages matières
+// `domaine` : id d'un domaine du programme (src/data/programme.js) ; il range les activités sur la page « À imprimer »
+//   et dans le catalogue des téléchargements. Pas de domaine : hors programme (culture générale).
+// `rubrique` regroupe les exercices dans les pages matières (titres plus fins que les domaines)
 export const ACTIVITES = [
-  // ── À imprimer ──
-  { to: '/imprimer/ecriture', matiere: 'imprimer', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
-  { to: '/imprimer/alphabet', matiere: 'imprimer', genre: 'affiche', icon: '🔤', titre: "Affiche de l'alphabet", desc: 'Les 4 écritures, A4 ou A3', niveaux: de('ms', 'ce1') },
-  { to: '/imprimer/calcul?mode=affiche', matiere: 'imprimer', genre: 'affiche', icon: '🧮', titre: 'Affiches des tables', desc: 'Tables de multiplication et d\'addition à afficher', niveaux: de('cp', 'cm2') },
-  { to: '/imprimer/calcul?mode=fiche', matiere: 'imprimer', genre: 'fiche', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
-  { to: '/imprimer/nombres?mise=affiches', matiere: 'imprimer', genre: 'affiche', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en chiffres et en lettres', descRegionale: 'Unités, dizaines, centaines… en français et en breton', niveaux: de('gs', 'cm2') },
+  // ── À imprimer ── (genre : 'affiche' pour apprendre, 'fiche' pour s'entraîner)
+  { to: '/imprimer/ecriture', matiere: 'imprimer', domaine: 'ecriture', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
+  { to: '/imprimer/alphabet', matiere: 'imprimer', domaine: 'lecture', genre: 'affiche', icon: '🔤', titre: "Affiche de l'alphabet", desc: 'Les 4 écritures, A4 ou A3', niveaux: de('ms', 'ce1') },
+  { to: '/imprimer/calcul?mode=affiche', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', icon: '🧮', titre: 'Affiches des tables', desc: 'Tables de multiplication et d\'addition à afficher', niveaux: de('cp', 'cm2'),
+    br: { titre: 'Skritelloù an taolennoù', desc: 'Taolennoù liesañ ha sammañ da stagañ' } }, // br: à relire
+  { to: '/imprimer/calcul?mode=fiche', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'fiche', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
+  { to: '/imprimer/nombres?mise=affiches', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en chiffres et en lettres', descRegionale: 'Unités, dizaines, centaines… en français et en breton', niveaux: de('gs', 'cm2') },
 
-  { to: '/imprimer/affiches', matiere: 'imprimer', genre: 'affiche', icon: '📚', titre: 'Affiches du programme', desc: 'Droite numérique, numération, horloge, euros, conjugaison, figures et solides', niveaux: de('gs', 'cm2') },
+  // Carte unique des affiches du programme : seulement sur l'accueil (`resume`). La page « À imprimer » montre
+  // à la place une carte par famille, dans son domaine (`detail`, plan 09).
+  { to: '/imprimer/affiches', matiere: 'imprimer', genre: 'affiche', resume: true, icon: '📚', titre: 'Affiches du programme', desc: 'Droite numérique, numération, horloge, euros, conjugaison, figures et solides', niveaux: de('gs', 'cm2') },
+  { to: '/imprimer/affiches?affiche=droite', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', detail: true, icon: '📏', titre: 'Droite numérique', desc: 'De 0 à 20, 100 ou 1 000, avec les nombres en lettres', niveaux: ['cp', 'ce1'],
+    br: { titre: 'Linenn niverel', desc: 'Eus 0 da 20, 100 pe 1 000, gant an niveroù e lizherennoù' } }, // br: à relire
+  { to: '/imprimer/affiches?affiche=numeration', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', detail: true, icon: '🔟', titre: 'Tableau de numération', desc: 'Unités, dizaines, centaines… et décimaux au CM', niveaux: ['ce1', 'cm1', 'cm2'],
+    br: { titre: 'Taolenn niveriñ', desc: 'Unanennoù, degadoù, kantadoù… ha niveroù degedel er CM' } }, // br: à relire
+  { to: '/imprimer/affiches?affiche=horloge', matiere: 'imprimer', domaine: 'grandeurs-mesures', genre: 'affiche', detail: true, icon: '🕐', titre: "L'horloge", desc: 'Heures entières, demies et quarts, minutes', niveaux: de('cp', 'ce2'),
+    br: { titre: 'An horolaj', desc: 'Eurioù klok, hanterioù ha kardoù, munutennoù' } }, // br: à relire
+  { to: '/imprimer/affiches?affiche=monnaie', matiere: 'imprimer', domaine: 'grandeurs-mesures', genre: 'affiche', detail: true, icon: '💶', titre: 'Pièces et billets', desc: "Les euros, puis les centimes", niveaux: de('cp', 'ce2'),
+    br: { titre: 'Pezhioù ha bilhedoù', desc: 'An euroioù, ha goude ar santimoù' } }, // br: à relire
+  { to: '/imprimer/affiches?affiche=formes', matiere: 'imprimer', domaine: 'espace-geometrie', genre: 'affiche', detail: true, icon: '🔷', titre: 'Figures et solides', desc: 'Formes planes, figures du cycle 3, solides', niveaux: de('gs', 'cm2'),
+    br: { titre: 'Stummoù ha solidennoù', desc: 'Stummoù plaen, stummoù ar c\'helc\'hiad 3, solidennoù' } }, // br: à relire
+  { to: '/imprimer/affiches?affiche=conjugaison', matiere: 'imprimer', domaine: 'grammaire', genre: 'affiche', detail: true, icon: '✍️', titre: 'Affiches de conjugaison', desc: 'Être, avoir, 1er et 2e groupes, verbes irréguliers', niveaux: de('cp', 'cm2'),
+    br: { titre: 'Skritelloù displegañ', desc: 'Bezañ, kaout, 1añ ha 2l strollad, verboù direizh' } }, // br: à relire
 
   // ── Maths ──
-  { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ms', 'gs'] },
-  { fiche: true, to: '/maternelle/comparer', matiere: 'maths', domaine: 'Nombres et calcul', icon: '⚖️', titre: 'Comparer les quantités', desc: 'Quel groupe a le plus ?', niveaux: ['ms', 'gs'] },
-  { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: ['ms', 'gs'] },
-  { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maths/calcul-mental', matiere: 'maths', domaine: 'Nombres et calcul', icon: '🧮', titre: 'Calcul mental', desc: 'Additions, soustractions, doubles, moitiés, tables', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions et soustractions en colonnes', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: de('ce1', 'cm2') },
-  { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maths/heure',         matiere: 'maths', domaine: 'Grandeurs et mesures', icon: '🕐', titre: "Lire l'heure", desc: 'Heures, demies, quarts sur une horloge', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Reconnaître le disque, le carré, le triangle et le rectangle', niveaux: ['ms', 'gs'] },
-  { fiche: true, to: '/maths/geometrie',     matiere: 'maths', domaine: 'Espace et géométrie', icon: '📐', titre: 'Géométrie', desc: 'Symétrie, quadrillage, figures et solides', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ms', 'gs'] },
+  { fiche: true, to: '/maternelle/comparer', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '⚖️', titre: 'Comparer les quantités', desc: 'Quel groupe a le plus ?', niveaux: ['ms', 'gs'] },
+  { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: ['ms', 'gs'] },
+  { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/calcul-mental', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🧮', titre: 'Calcul mental', desc: 'Additions, soustractions, doubles, moitiés, tables', niveaux: de('cp', 'cm2') },
+  { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions et soustractions en colonnes', niveaux: de('cp', 'cm2') },
+  { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: de('ce1', 'cm2') },
+  { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/heure',         matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '🕐', titre: "Lire l'heure", desc: 'Heures, demies, quarts sur une horloge', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Reconnaître le disque, le carré, le triangle et le rectangle', niveaux: ['ms', 'gs'] },
+  { fiche: true, to: '/maths/geometrie',     matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '📐', titre: 'Géométrie', desc: 'Symétrie, quadrillage, figures et solides', niveaux: ['ce1', 'ce2'] },
 
   // ── Français ──
-  { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: ['gs', 'cp'] },
-  { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: de('ce1', 'cm2') },
-  { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'lecture', rubrique: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: ['gs', 'cp'] },
+  { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: de('cp', 'cm2') },
+  { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: de('cp', 'cm2') },
+  { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: de('ce1', 'cm2') },
+  { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: de('cp', 'cm2') },
+  { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: ['ce1', 'ce2'] },
 
   // ── Lecture ──
-  { fiche: true, to: '/lecture', matiere: 'lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
+  { fiche: true, to: '/lecture', matiere: 'lecture', domaine: 'lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
 
   // ── Culture générale ──
   { fiche: true, to: '/autres', matiere: 'autres', icon: '🗺️', titre: 'Quiz culture générale', desc: 'Géographie, histoire, sciences, animaux', niveaux: de('cp', 'cm2') },
@@ -107,7 +124,7 @@ const BR = {
 // (les deux cartes de /imprimer/calcul n'ont pas le même sens : seule la carte « fiches » reprend la traduction)
 for (const a of ACTIVITES) {
   const cle = a.to.split('?')[0]
-  if (a.to !== '/imprimer/calcul?mode=affiche' && BR[cle]) a.br = { titre: BR[cle][0], desc: BR[cle][1], descRegionale: BR[cle][2] }
+  if (!a.br && a.to !== '/imprimer/calcul?mode=affiche' && BR[cle]) a.br = { titre: BR[cle][0], desc: BR[cle][1], descRegionale: BR[cle][2] }
 }
 
 // « CE1 → CM2 », « MS / GS »…

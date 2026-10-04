@@ -93,6 +93,7 @@ import messagesFr from '../../i18n/fr/views/maternelle/LettresView.js'
 import messagesBr from '../../i18n/br/views/maternelle/LettresView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 import { cssPolices, echapper, POLICE_SCRIPT } from '../../utils/impression'
 import { langueRegionale } from '../../data/languesRegionales'
 
@@ -173,6 +174,8 @@ function htmlFiche() {
       <div class="col min">${droite.map(l => `<div class="l"><i></i><span>${e(l.toLowerCase())}</span></div>`).join('')}</div>
     </div>`
   }).join('')
+  // corrigé : un bloc par ligne, dans l'ordre de la fiche, chaque majuscule avec sa minuscule
+  const corrige = blocs.map(b => `<div>${b.map(l => `${e(l)} – ${e(l.toLowerCase())}`).join(' &nbsp;·&nbsp; ')}</div>`).join('')
   const titre = t('titre')
   return `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${titre}</title>
@@ -180,7 +183,6 @@ function htmlFiche() {
       ${cssPolices()}
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
       .blocs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 2.5rem; }
       .bloc { display: flex; justify-content: space-between; border: 2px solid #ccc; border-radius: 14px; padding: .6rem 1rem; page-break-inside: avoid; }
@@ -188,11 +190,14 @@ function htmlFiche() {
       .l { display: flex; align-items: center; gap: .7rem; font-family: '${POLICE_SCRIPT}', Arial, sans-serif; font-size: 2rem; font-weight: 700; line-height: 1.25; }
       .l span { min-width: 1.6em; text-align: center; }
       .l i { width: .5rem; height: .5rem; border-radius: 50%; background: #333; display: inline-block; }
+      .corr { font-size: 1.15rem; line-height: 2; }
     </style></head><body>
     <h1>${titre}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langue.value)}
     <p class="consigne">${t('fConsigne')}</p>
     <div class="blocs">${html}</div>
+    <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
+      <div class="corr">${corrige}</div></section>
   </body></html>`
 }
 

@@ -163,6 +163,7 @@ import messagesFr from '../../i18n/fr/views/francais/DicteeView.js'
 import messagesBr from '../../i18n/br/views/francais/DicteeView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 import { cssPolices, echapper, POLICE_SCRIPT, POLICE_ATTACHE } from '../../utils/impression'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
@@ -343,7 +344,7 @@ function htmlFiche() {
   const e = echapper
   const titre = `${t('titre')} — ${config.value.niveau}`
   const entete = `<h1>${e(titre)}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>`
+    ${ligneNomDate('fr')}`
 
   // Page 1 : mots à apprendre, regroupés par catégorie
   const parCat = config.value.cats
@@ -369,9 +370,9 @@ function htmlFiche() {
 
   // Corrigé : ce que l'adulte dicte
   const phraseDe = m => PHRASES_DEFAUT_ALL[m] || `Je vois ${m}.`
-  const corrige = `<section><h1>${t('corrige')} — ${e(titre)}</h1>
+  const corrige = `<section class="corrige"><h2>${t('corrige')} — ${e(titre)}</h2>
     <p class="consigne">${t('fADicter')}</p>
-    <ol class="corrige">${mots.map(m => `<li>${phrases ? e(phraseDe(m)).replace(e(m), `<b>${e(m)}</b>`) : `<b>${e(m)}</b>`}</li>`).join('')}</ol></section>`
+    <ol class="a-dicter">${mots.map(m => `<li>${phrases ? e(phraseDe(m)).replace(e(m), `<b>${e(m)}</b>`) : `<b>${e(m)}</b>`}</li>`).join('')}</ol></section>`
 
   const pages = [ficheConfig.value.liste && pageListe, ficheConfig.value.dictee && pageDictee, ficheConfig.value.dictee && corrige].filter(Boolean)
   return `<!DOCTYPE html><html lang="${langue.value}"><head>
@@ -379,10 +380,9 @@ function htmlFiche() {
     <style>
       ${cssPolices()}
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
-      section + section { page-break-before: always; break-before: page; }
+      section + section:not(.corrige) { page-break-before: always; break-before: page; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       h2 { font-size: .95rem; margin: 1rem 0 .2rem; background: #f0f3f7; padding: .25rem .6rem; border-radius: 6px; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .8rem; }
       .consigne { font-weight: 700; margin: .6rem 0 1rem; }
       table { width: 100%; border-collapse: collapse; table-layout: fixed; }
       th { font-size: .75rem; color: #777; text-align: left; font-weight: 600; }
@@ -395,7 +395,8 @@ function htmlFiche() {
       .lignes-phrases .ligne { height: 3.6rem; }
       .num { font-weight: 700; color: #777; min-width: 1.8rem; }
       .trait { flex: 1; border-bottom: 1.5px solid #999; }
-      .corrige { columns: ${phrases ? 1 : 3}; font-size: 1.05rem; line-height: 1.9; font-family: '${POLICE_SCRIPT}', Arial, sans-serif; }
+      section.corrige h2 { background: none; padding: 0; }
+      .a-dicter { columns: ${phrases ? 1 : 3}; font-size: 1.05rem; line-height: 1.9; font-family: '${POLICE_SCRIPT}', Arial, sans-serif; }
     </style></head><body>
     ${pages.join('\n')}
   </body></html>`

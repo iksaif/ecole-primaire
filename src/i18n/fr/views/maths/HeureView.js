@@ -10,8 +10,6 @@ export default {
     aide: 'Aide',
     afficherMinutes: 'Afficher les minutes autour du cadran',
     nbHorloges: 'Horloges par exercice',
-    corrigeTitre: 'Corrigé',
-    corrigePage2: 'Ajouter le corrigé en page 2',
     quelleHeure: 'Quelle heure est-il ?',
     legH: 'petite aiguille = heures',
     legM: 'grande aiguille = minutes',

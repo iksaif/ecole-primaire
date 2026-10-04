@@ -68,14 +68,6 @@
               @click="config.nbHorloges = n">{{ n }}</button>
           </div>
         </div>
-        <div class="config-section">
-          <div class="config-section-title">{{ t('corrigeTitre') }}</div>
-          <div class="btn-group">
-            <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = !config.corrige">
-              {{ config.corrige ? '✓ ' : '' }}{{ t('corrigePage2') }}
-            </button>
-          </div>
-        </div>
       </template>
     </ConfigExercice>
 
@@ -295,6 +287,7 @@ import contenuFr from '../../i18n/fr/contenu/heure.js'
 import contenuBr from '../../i18n/br/contenu/heure.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Maths : le contenu (énoncés, fiche) suit la langue de l'interface
@@ -667,7 +660,7 @@ function svgHorloge(h, m, { aiguilles = true, aideMinutes = false, fantome = nul
 
 const { lire } = useTTS()
 
-const DEFAUT = { niveau: 'ce1', exercices: NIVEAUX.ce1.exercicesDefaut, precisions: NIVEAUX.ce1.precisionsDefaut, saisie: 'choix', aideMinutes: true, nbQ: 10, nbHorloges: 8, corrige: true }
+const DEFAUT = { niveau: 'ce1', exercices: NIVEAUX.ce1.exercicesDefaut, precisions: NIVEAUX.ce1.precisionsDefaut, saisie: 'choix', aideMinutes: true, nbQ: 10, nbHorloges: 8 }
 const config = ref({ ...DEFAUT, ...charger('heure_config', {}) })
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
 if (![4, 8, 12].includes(config.value.nbHorloges)) config.value.nbHorloges = 8
@@ -964,7 +957,6 @@ function htmlFiche() {
       body { font-family: Arial, sans-serif; max-width: 18cm; margin: 1cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       h2 { font-size: 1.05rem; margin: 1rem 0 .3rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .8rem; }
       .consigne { font-size: .9rem; margin: .2rem 0 .4rem; }
       .grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: .3cm .2cm; }
       .cell { text-align: center; page-break-inside: avoid; position: relative; }
@@ -972,13 +964,12 @@ function htmlFiche() {
       .rep { margin-top: .15cm; font-size: .95rem; font-weight: 700; }
       .rep.cible { font-size: .9rem; min-height: 2.4em; }
       .ligne { margin: .5cm 0; font-size: 1rem; }
-      .page2 { page-break-before: always; font-size: .85rem; color: #444; }
       .deux-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1cm; }
       table.emploi { border-collapse: collapse; margin: .3cm 0; }
       table.emploi td, table.emploi th { border: 1px solid #555; padding: .15cm .4cm; text-align: left; }
     </style></head><body>
     <h1>🕐 ${t('titre')} — ${cfg.niveau.toUpperCase()}</h1>
-    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langueContenu.value)}
     ${avecLire ? `<h2>${t('quelleHeure')}</h2>
     <p class="consigne">${C.t('ficheLireConsigne')}</p>
     <div class="grille">${cellLire}</div>` : ''}
@@ -986,7 +977,7 @@ function htmlFiche() {
     <p class="consigne">${C.t('ficheDessineConsigne')}</p>
     <div class="grille">${cellDessin}</div>` : ''}
     ${extra}
-    ${cfg.corrige !== false ? `<div class="page2"><h2>${C.t('ficheCorrige')}</h2>${corrige.join('')}</div>` : ''}
+    <section class="corrige"><h2>${C.t('ficheCorrige')}</h2>${corrige.join('')}</section>
   </body></html>`
 
   return html

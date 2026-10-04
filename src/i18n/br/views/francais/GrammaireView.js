@@ -3,7 +3,6 @@
 export default {
   bravo: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
     titre: 'Yezhadur',
-    corrigePage2: 'Reizhadenn war ar bajenn 2', // br: à relire
     astuce: 'Gallout a rez dibab meur a boelladenn : mesket e vint.',
     ecouterPhrase: 'Selaou ar frazenn',
     cliqueEtiquettes: 'Klik war an tikedennoù en urzh…', // br: à relire (étiquette = tikedenn)

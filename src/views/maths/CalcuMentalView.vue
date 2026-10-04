@@ -42,7 +42,6 @@
               @click="config.nbFiche = n">{{ n }}</button>
           </div>
         </div>
-        <label class="case-corrige"><input type="checkbox" v-model="config.corrige"> {{ t('corrigePage2') }}</label>
       </template>
 
       <div v-if="mode === 'jouer'" class="config-section">
@@ -115,6 +114,7 @@ import messagesFr from '../../i18n/fr/views/maths/CalcuMentalView.js'
 import messagesBr from '../../i18n/br/views/maths/CalcuMentalView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Langue du contenu imprimé : celle de l'interface pour les maths
@@ -183,7 +183,7 @@ function opDispo(niv, op) {
 
 // Config sauvegardée : on ignore les valeurs inconnues (anciennes versions)
 const NB_FICHE = [10, 20, 30, 40]
-const DEFAUT = { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10, nbFiche: 20, corrige: true }
+const DEFAUT = { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10, nbFiche: 20 }
 const sauvegarde = charger('calcul_mental_config', DEFAUT) || DEFAUT
 const niveauCharge = niveaux.includes(sauvegarde.niveau) ? sauvegarde.niveau : DEFAUT.niveau
 const opsChargees = (Array.isArray(sauvegarde.ops) ? sauvegarde.ops : [])
@@ -193,7 +193,6 @@ const config = ref({
   ops: opsChargees.length ? opsChargees : ['+'],
   nbQ: [5, 10, 20].includes(sauvegarde.nbQ) ? sauvegarde.nbQ : DEFAUT.nbQ,
   nbFiche: NB_FICHE.includes(sauvegarde.nbFiche) ? sauvegarde.nbFiche : DEFAUT.nbFiche,
-  corrige: typeof sauvegarde.corrige === 'boolean' ? sauvegarde.corrige : DEFAUT.corrige,
   temps: [0, 10, 20, 30].includes(sauvegarde.temps) ? sauvegarde.temps : DEFAUT.temps,
 })
 watch(config, v => sauvegarder('calcul_mental_config', v), { deep: true })
@@ -401,21 +400,21 @@ function htmlFiche() {
     <style>
       body { font-family: Arial, sans-serif; max-width: 680px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
       .question { display: flex; align-items: baseline; gap: .75rem; margin: .85rem 0; }
       .num { min-width: 1.8rem; font-weight: 700; color: #777; font-size: 1rem; }
       .calc { min-width: 180px; font-weight: 800; font-size: 1.3rem; font-family: monospace; }
       .ligne { flex: 1; border-bottom: 1.5px solid #aaa; min-width: 80px; }
       .deux-colonnes { columns: 2; column-gap: 2.5rem; }
       .deux-colonnes .question { break-inside: avoid; margin: .7rem 0; }
-      .corrige { break-before: page; }
       .corrige li { margin: .3rem 0; font-family: monospace; font-size: 1.05rem; }
       .corrige ol { columns: 3; }
     </style></head><body>
     <h1>${t('titre')} — ${niv}</h1>
-    <p class="entete">${t('pOperations', { ops })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="infos">${t('pOperations', { ops })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: qs.length })}</p>
+    ${ligneNomDate(langueContenu.value)}
     <div class="${qs.length > 20 ? 'deux-colonnes' : ''}">${rows}</div>
-    ${config.value.corrige ? `<section class="corrige"><h1>${t('corrige')}</h1><ol>${qs.map(q => `<li>${q.texte.replace('?', `<b>${q.reponse}</b>`)}</li>`).join('')}</ol></section>` : ''}
+    <section class="corrige"><h2>${t('corrige')}</h2><ol>${qs.map(q => `<li>${q.texte.replace('?', `<b>${q.reponse}</b>`)}</li>`).join('')}</ol></section>
   </body></html>`
 
   return html

@@ -88,6 +88,7 @@ import objetsFr from '../../i18n/fr/contenu/compter.js'
 import objetsBr from '../../i18n/br/contenu/compter.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 const C = contenu({ fr: objetsFr, br: objetsBr }, () => langue.value)
@@ -136,7 +137,7 @@ function generer() {
   return { nb, emoji: objet.emoji, objet: objet.id, choix, reponse: nb }
 }
 
-// ── Fiche imprimable : collections à compter, nombre à écrire ou à entourer (corrigé page 2)
+// ── Fiche imprimable : collections à compter, nombre à écrire ou à entourer (avec corrigé)
 const ficheConfig = ref(charger('compter_fiche', { reponse: 'ecrire' }))
 watch(ficheConfig, v => sauvegarder('compter_fiche', v), { deep: true })
 
@@ -154,7 +155,6 @@ function htmlFiche() {
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
       .grille { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
       .item { border: 2px solid #bbb; border-radius: 14px; padding: .6rem; display: flex; align-items: center; gap: .6rem; page-break-inside: avoid; position: relative; min-height: 6.2rem; }
@@ -163,15 +163,14 @@ function htmlFiche() {
       .case { width: 3.2rem; height: 3.2rem; border: 2.5px solid #444; border-radius: 8px; flex-shrink: 0; }
       .choix { display: grid; grid-template-columns: 1fr 1fr; gap: .2rem .6rem; font-size: 1.5rem; font-weight: 800; flex-shrink: 0; }
       .choix span { min-width: 1.5rem; text-align: center; }
-      .corrige { page-break-before: always; break-before: page; }
       .corr { columns: 4; font-size: 1.15rem; line-height: 2; }
     </style></head><body>
     <h1>${titre}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langue.value)}
     <p class="consigne">${t(ecrire ? 'fConsigneEcrire' : 'fConsigneEntourer')}</p>
     <div class="grille">${cases}</div>
-    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
-      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. <b>${q.nb}</b></div>`).join('')}</div></div>
+    <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
+      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. <b>${q.nb}</b></div>`).join('')}</div></section>
   </body></html>`
 }
 

@@ -40,14 +40,6 @@
             @click="config.nbQ = n">{{ n }}</button>
         </div>
       </div>
-
-      <div v-if="mode === 'imprimer'" class="config-section">
-        <div class="config-section-title">{{ t('corrigeFin') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
-          <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
-        </div>
-      </div>
     </ConfigExercice>
 
     <!-- Exercice -->
@@ -131,6 +123,7 @@ import contenuFr from '../../i18n/fr/contenu/problemes.js'
 import contenuBr from '../../i18n/br/contenu/problemes.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Maths : le contenu (énoncés, fiche) suit la langue de l'interface
@@ -490,9 +483,11 @@ const unite = (q, n) => regles(q.langue).pluriel(n, q.unite)
 const avecUnite = (q, n) => regles(q.langue).nombre(n, q.unite)
 
 const config = ref({
-  niveau: 'ce1', categories: CATEGORIES.map(c => c.id), plage: 'moyens', nbQ: 5, corrige: false,
+  niveau: 'ce1', categories: CATEGORIES.map(c => c.id), plage: 'moyens', nbQ: 5,
   ...charger('problemes_config', {}),
 })
+// ancien réglage « corrigé » : remplacé par les options communes des fiches
+delete config.value.corrige
 watch(config, v => sauvegarder('problemes_config', v), { deep: true })
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
 
@@ -619,28 +614,26 @@ function htmlFiche() {
       <div class="reponse">${t('pReponse')} <span class="ligne"></span> ${unite(p, p.reponse)}</div>
     </div>`).join('')
 
-  const corrige = config.value.corrige
-    ? `<h1 class="saut">${t('corrige')} — ${t('titre')} — ${niv}</h1>
-    <ol class="corrige">${qs.map(p => `<li><b>${p.calcul}</b> → ${avecUnite(p, p.reponse)}</li>`).join('')}</ol>`
-    : ''
+  const corrige = `<section class="corrige"><h2>${t('corrige')}</h2>
+    <ol class="reponses">${qs.map(p => `<li><b>${p.calcul}</b> → ${avecUnite(p, p.reponse)}</li>`).join('')}</ol></section>`
 
   return `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
       .pb { margin: 0 0 1.4rem; page-break-inside: avoid; }
       .enonce { font-size: 1.15rem; line-height: 1.6; }
       .num { font-weight: 700; color: #777; }
       .calcul { border: 1.5px solid #999; border-radius: 6px; height: 4.5rem; margin: .5rem 0; padding: .3rem .5rem; color: #777; font-size: .9rem; }
       .reponse { font-size: 1.05rem; }
       .ligne { display: inline-block; width: 5rem; border-bottom: 1.5px solid #555; }
-      h1.saut { page-break-before: always; break-before: page; margin-bottom: 1.5rem; }
-      .corrige { font-size: 1.1rem; line-height: 2; }
+      .reponses { font-size: 1.1rem; line-height: 2; }
     </style></head><body>
     <h1>${t('titre')} — ${niv}</h1>
-    <p class="entete">${t('pNbProblemes', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="infos">${t('pNbProblemes', { n: qs.length })}</p>
+    ${ligneNomDate(langueContenu.value)}
     ${blocs}
     ${corrige}
   </body></html>`

@@ -42,4 +42,6 @@ export default {
   ficheA: 'da',
   ficheOnTeRend: 'Distroet e vo dit',
   ficheConvertirTitre: 'Leunia.',
+  // corrigé : après les sommes données pour « Entoure les pièces et les billets »
+  corrigeUneSolution: '(un diskoulm e-touez re all)', // br: à relire
 }

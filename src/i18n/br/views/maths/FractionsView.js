@@ -48,7 +48,6 @@ export default {
     pReponse: 'Respont :',
     pPlacer: 'Tresa ur bir evit lakaat {f} war al linenn.',
     pNbQuestions: '{n} goulenn',
-    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
     type_identifier: '👀 Peseurt darnaouenn ?',
     type_colorier: '🖍️ Livañ',
     type_lettres: '🔤 E lizherennoù',

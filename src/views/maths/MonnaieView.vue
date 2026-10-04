@@ -263,6 +263,7 @@ import contenuFr from '../../i18n/fr/contenu/monnaie.js'
 import contenuBr from '../../i18n/br/contenu/monnaie.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Maths : le contenu (énoncés, fiche) suit la langue de l'interface
@@ -889,7 +890,7 @@ function htmlFiche() {
     vus.add(cible)
     const bons = decomposerAuHasard(cible, valeursEntoure, 6)
     const intrus = tirerItems(valeursEntoure, 2, 3)
-    entoure.push({ cible, items: trierDesc([...bons, ...intrus]) })
+    entoure.push({ cible, bons, items: trierDesc([...bons, ...intrus]) })
   }
   const blocEntoure = entoure.map((e, i) => `
     <div class="bloc">
@@ -906,7 +907,8 @@ function htmlFiche() {
       if (a.length > qu.solution.length) autre = trierDesc(a)
     }
     const optimaleEnA = Math.random() < 0.5
-    return { cible: qu.cible, A: optimaleEnA ? qu.solution : autre ?? qu.solution, B: optimaleEnA ? autre ?? qu.solution : qu.solution }
+    return { cible: qu.cible, A: optimaleEnA ? qu.solution : autre ?? qu.solution, B: optimaleEnA ? autre ?? qu.solution : qu.solution,
+      bonne: !autre ? 'A, B' : optimaleEnA ? 'A' : 'B' }
   }) : []
   const blocMoins = moins.map((m, i) => `
     <div class="bloc">
@@ -937,13 +939,25 @@ function htmlFiche() {
 
   // 4. Conversions (CE2)
   let blocConvertir = ''
+  let conv = []
   if (parties.convertir) {
-    const conv = genererSansRepetition(['convertir'], 8, niv, centimes)
+    conv = genererSansRepetition(['convertir'], 8, niv, centimes)
     blocConvertir = `<div class="grille">`
       + conv.map((qu, i) => `<div class="ligne-rendre"><span class="num">${i + 1}.</span> ${qu.texte
         .replace('? € ? c', '______ € ______ c').replace(/\? € \(.*\)/, '__________ €').replace('? c', '__________ c')}</div>`).join('')
       + '</div>'
   }
+
+  // Corrigé : une ligne par partie, numérotée comme sur la fiche
+  const numeros = l => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
+  const corrige = [
+    parties.compter && [C.t('ficheCompterTitre'), numeros(compter.map(qu => qu.attendu))],
+    parties.entoure && [C.t('ficheEntoureTitre'), `${numeros(entoure.map(e => e.bons.map(formatSomme).join(' + ')))} ${C.t('corrigeUneSolution')}`],
+    parties.moins && [C.t('ficheMoinsTitre'), numeros(moins.map(m => m.bonne))],
+    parties.comparer && [C.t('ficheComparerTitre'), numeros(comparer.map(qu => qu.attendu))],
+    parties.rendre && [C.t('ficheRendreTitre'), numeros(rendre.map(qu => qu.attendu))],
+    parties.convertir && [C.t('ficheConvertirTitre'), numeros(conv.map(qu => qu.attendu))],
+  ].filter(Boolean).map(([titre, rep], i) => `<p><b>${i + 1}. ${titre}</b> ${rep}</p>`).join('')
 
   const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${config.value.niveau.toUpperCase()}</title>
@@ -952,7 +966,7 @@ function htmlFiche() {
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       h2 { font-size: 1.05rem; margin: 1.2rem 0 .4rem; }
       h2 small { font-weight: 400; color: #666; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1rem; }
+      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
       .bloc { border: 1.5px solid #bbb; border-radius: 8px; padding: .5rem .75rem; margin: .5rem 0; page-break-inside: avoid; }
       .num { font-weight: 700; color: #777; display: inline-block; min-width: 1.6rem; }
       .tas { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: .3rem 0; }
@@ -967,7 +981,8 @@ function htmlFiche() {
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     </style></head><body>
     <h1>💶 ${t('titre')} — ${config.value.niveau.toUpperCase()}</h1>
-    <p class="entete">${centimes ? C.t('ficheEurosCentimes') : C.t('ficheEuros')} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="infos">${centimes ? C.t('ficheEurosCentimes') : C.t('ficheEuros')}</p>
+    ${ligneNomDate(langueContenu.value)}
     ${parties.compter ? `${titrePartie(`${C.t('ficheCompterTitre')}${decimale ? ` <small>${C.t('ficheExempleVirgule')}</small>` : ''}`)}
     <div class="grille">${blocCompter}</div>` : ''}
     ${parties.entoure ? `${titrePartie(C.t('ficheEntoureTitre'))}
@@ -979,6 +994,7 @@ function htmlFiche() {
     ${parties.rendre ? `${titrePartie(C.t('ficheRendreTitre'))}
     ${blocRendre}` : ''}
     ${blocConvertir ? `${titrePartie(`${C.t('ficheConvertirTitre')} <small>(1 € = 100 c)</small>`)}${blocConvertir}` : ''}
+    <section class="corrige"><h2>${t('corrige')}</h2>${corrige}</section>
   </body></html>`
 
   return html

@@ -36,7 +36,6 @@ export default {
     pRange: "Renk eus ar bihanañ d'ar brasañ :",
     pSuite: 'Kloka an heuliad :', // br: à relire
     pNbQuestions: '{n} goulenn',
-    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
     type_decomposer: '🧱 Dispenn', // br: à relire
     type_representation: '🟦 Skeudenn', // br: à relire
     type_lettresChiffres: '✏️ Skrivañ e sifroù',

@@ -155,6 +155,7 @@ import messagesFr from '../i18n/fr/views/LectureView.js'
 import messagesBr from '../i18n/br/views/LectureView.js'
 import ConfigExercice from '../components/ConfigExercice.vue'
 import { useModeExercice } from '../composables/useModeExercice'
+import { ligneNomDate } from '../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
@@ -502,6 +503,8 @@ function htmlFiche() {
   let title = ''
   let instructions = ''
   let rowsHtml = ''
+  // corrigé (syllabes, mots) ; rien à corriger pour la lecture à voix haute
+  let corrige = ''
 
   if (config.value.mode === 'lecture_texte') {
     title = t('ficheLectureTitre', { n: niveau })
@@ -524,6 +527,7 @@ function htmlFiche() {
         <span class="count-box">_______ ${t('ficheSyllabesUnite')}</span>
       </div>
     `).join('')
+    corrige = items.map((it, i) => `<li><span class="num">${i + 1}.</span> ${it.mot} : <b>${it.nbSyll}</b> (${it.syllabes.join('-')})</li>`).join('')
   } else {
     title = t('ficheMotsTitre', { n: niveau })
     instructions = t('ficheMotsConsigne')
@@ -535,6 +539,7 @@ function htmlFiche() {
         <span class="write-line">____________________________________</span>
       </div>
     `).join('')
+    corrige = items.map((it, i) => `<li><span class="num">${i + 1}.</span> <b>${it.mot}</b></li>`).join('')
   }
 
   const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
@@ -542,7 +547,7 @@ function htmlFiche() {
     <style>
       body { font-family: Arial, sans-serif; max-width: 680px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 2rem; }
+      .consigne { font-size: .95rem; margin: 0 0 1.5rem; }
       
       /* Style Lecture */
       .lecture-item { display: flex; align-items: flex-start; gap: .75rem; margin: 1.5rem 0; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; background: #fafafa; }
@@ -563,10 +568,17 @@ function htmlFiche() {
       .mots-item .syllabes-list { font-size: 1.25rem; font-weight: 800; font-family: monospace; min-width: 150px; background: #f0f4f8; padding: .25rem .5rem; border-radius: 6px; text-align: center; }
       .mots-item .arrow { color: #888; font-weight: bold; }
       .mots-item .write-line { flex: 1; color: #aaa; }
+
+      /* Corrigé */
+      .liste-corrige { list-style: none; padding: 0; margin: 0; columns: 3; }
+      .liste-corrige li { margin: .2rem 0; break-inside: avoid; }
+      .liste-corrige .num { font-weight: 700; color: #777; }
     </style></head><body>
     <h1>${title}</h1>
-    <p class="entete">${instructions} &nbsp;&nbsp;&nbsp; ${t('nom')} : __________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate('fr')}
+    <p class="consigne">${instructions}</p>
     <div>${rowsHtml}</div>
+    ${corrige ? `<section class="corrige"><h2>${t('corrige')}</h2><ol class="liste-corrige">${corrige}</ol></section>` : ''}
   </body></html>`
 
   return html

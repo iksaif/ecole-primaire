@@ -165,4 +165,6 @@ export default {
   ficheCalendrier: '📅 An deiziadur',
   ficheAlerte: "Moullañ da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmentoù.",
   ficheTemoin: 'Evit an dud : 10 cm resis a rank muzuliañ al linenn derezennet-mañ.',
+  // corrigé : liste = longueurs à tracer
+  corrigeTrace: '{liste} (da wiriañ gant ar reolenn)', // br: à relire
 }

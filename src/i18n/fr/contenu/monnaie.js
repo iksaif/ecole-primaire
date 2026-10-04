@@ -50,4 +50,6 @@ export default {
   ficheA: 'à',
   ficheOnTeRend: 'On te rend',
   ficheConvertirTitre: 'Complète.',
+  // corrigé : après les sommes données pour « Entoure les pièces et les billets »
+  corrigeUneSolution: "(une solution parmi d'autres)",
 }

@@ -47,14 +47,6 @@
           </template>
         </div>
       </div>
-
-      <div v-if="mode === 'imprimer'" class="config-section">
-        <div class="config-section-title">{{ t('corrigeFin') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
-          <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
-        </div>
-      </div>
     </ConfigExercice>
 
     <!-- Exercice -->
@@ -197,6 +189,7 @@ import contenuFr from '../../i18n/fr/contenu/fractions.js'
 import contenuBr from '../../i18n/br/contenu/fractions.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Langue du contenu généré (fractions en lettres, ordinaux) : celle de l'interface pour les maths
@@ -581,9 +574,11 @@ function formeEnSvg(forme, colorees = []) {
 // #endregion generation
 
 const config = ref({
-  niveau: 'ce1', types: TYPES.map(ty => ty.id), mode: 'unitaires', nbQ: 10, nbFiche: 10, corrige: false,
+  niveau: 'ce1', types: TYPES.map(ty => ty.id), mode: 'unitaires', nbQ: 10, nbFiche: 10,
   ...charger('fractions_config', {}),
 })
+// ancien réglage « corrigé » : remplacé par les options communes des fiches
+delete config.value.corrige
 // nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
 const NB_JOUER = [5, 10, 15, 20]
 const NB_FICHE = [5, 10, 15, 20, 30]
@@ -779,17 +774,15 @@ function htmlFiche() {
   const qs = genererSansRepetition(config.value, config.value.nbFiche)
   const niv = config.value.niveau.toUpperCase()
   const rows = qs.map(questionPapier).join('')
-  const corrige = config.value.corrige
-    ? `<h1 class="saut">${t('corrige')} — ${t('titre')} — ${niv}</h1>
-    <ol class="corrige">${qs.map(qu => `<li>${qu.attendu}</li>`).join('')}</ol>`
-    : ''
+  const corrige = `<section class="corrige"><h2>${t('corrige')}</h2>
+    <ol class="reponses">${qs.map(qu => `<li>${qu.attendu}</li>`).join('')}</ol></section>`
 
   return `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niv}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
       .q { display: flex; align-items: center; gap: 1rem; margin: 1rem 0; font-size: 1.15rem; page-break-inside: avoid; flex-wrap: wrap; }
       .num { min-width: 1.8rem; font-weight: 700; color: #777; }
       .frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; font-weight: 800; margin: 0 .2rem; }
@@ -801,12 +794,12 @@ function htmlFiche() {
       small { color: #777; }
       .ligne { display: inline-block; width: 4rem; border-bottom: 1.5px solid #555; height: 1.3rem; }
       .ligne.longue { width: 14rem; }
-      h1.saut { page-break-before: always; break-before: page; margin-bottom: 1.5rem; }
-      .corrige { columns: 2; column-gap: 2rem; font-size: 1.05rem; line-height: 1.9; }
-      .corrige li { break-inside: avoid; font-weight: 700; }
+      .reponses { columns: 2; column-gap: 2rem; font-size: 1.05rem; line-height: 1.9; }
+      .reponses li { break-inside: avoid; font-weight: 700; }
     </style></head><body>
     <h1>${t('titre')} — ${niv}</h1>
-    <p class="entete">${t('pNbQuestions', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="infos">${t('pNbQuestions', { n: qs.length })}</p>
+    ${ligneNomDate(langueContenu.value)}
     ${rows}
     ${corrige}
   </body></html>`

@@ -178,4 +178,6 @@ export default {
   ficheCalendrier: '📅 Le calendrier',
   ficheAlerte: "Imprimer à 100 % (« taille réelle »), sans ajustement à la page, sinon les segments n'auront pas la bonne longueur.",
   ficheTemoin: 'Pour le parent : ce trait gradué doit mesurer exactement 10 cm.',
+  // corrigé : liste = longueurs à tracer
+  corrigeTrace: '{liste} (à vérifier avec la règle)',
 }

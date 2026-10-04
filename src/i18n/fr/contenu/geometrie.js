@@ -98,4 +98,8 @@ export default {
   fichePatrons: 'Patrons du cube',
   fichePatronsConsigne: 'Entoure les dessins qui sont des patrons du cube. Tu peux les découper pour vérifier !',
   ficheAvertissement: 'Imprimer à 100 %, sans ajustement à la page : chaque carreau mesure alors 1 cm.',
+  // corrigé de la fiche (titres des parties : ceux de la fiche) ; liste = numéros des dessins, dans l'ordre de lecture
+  corrigeReproduction: 'la même figure que le modèle, au même endroit (réponse à vérifier sur le quadrillage)',
+  corrigeCercle: 'cercle de rayon 3 cm (6 cm de diamètre) — rayon : {rayon} — diamètre : {diametre}',
+  corrigePatrons: 'dessins {liste} (en lisant de gauche à droite)',
 }

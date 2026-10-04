@@ -12,5 +12,4 @@ export default {
     colCalcul: 'Calcul',
     resultatBas: "Continue à t'entraîner ! 📚",
     pNbExercices: '{n} exercices',
-    corrigePage2: 'Corrigé (2e page)',
   }

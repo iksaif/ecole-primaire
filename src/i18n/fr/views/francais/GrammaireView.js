@@ -20,7 +20,6 @@ export default {
     res80: 'Très bien ! 🌟',
     res60: 'Bien ! Revois les erreurs 💪',
     res0: 'Courage ! Relis la correction et recommence 📚',
-    corrigePage2: 'Corrigé en page 2',
     // Groupes et types d'exercices (réglages)
     groupe_phrase: 'La phrase',
     type_ordre: 'Mots dans l\'ordre',

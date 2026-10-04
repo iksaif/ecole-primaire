@@ -98,4 +98,8 @@ export default {
   fichePatrons: "Patromoù ar c'hub",
   fichePatronsConsigne: "Kelc'hia an tresadennoù a zo patromoù ar c'hub. Gallout a rez o didroc'hañ evit gwiriañ !",
   ficheAvertissement: "Moullañ da 100 %, hep azasaat d'ar bajenn : neuze e vuzul pep karrezenn 1 cm.",
+  // corrigé de la fiche (titres des parties : ceux de la fiche) ; liste = numéros des dessins, dans l'ordre de lecture
+  corrigeReproduction: "an hevelep stumm hag ar patrom, en hevelep lec'h (respont da wiriañ war ar gael)", // br: à relire
+  corrigeCercle: "kelc'h a skin 3 cm (treuzkiz 6 cm) — skin : {rayon} — treuzkiz : {diametre}", // br: à relire
+  corrigePatrons: 'tresadennoù {liste} (o lenn a-gleiz da zehou)', // br: à relire
 }

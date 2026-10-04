@@ -143,6 +143,7 @@ import contenuFr from '../../i18n/fr/contenu/mesures.js'
 import contenuBr from '../../i18n/br/contenu/mesures.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Maths : le contenu (questions, fiche) suit la langue de l'interface ; les questions générées gardent leur texte
@@ -1005,6 +1006,11 @@ function htmlFiche() {
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   const ex = cfg.exercices.filter(e => niv.exercices.includes(e))
   const sections = []
+  // corrigé : une ligne par partie, réponses dans l'ordre de la fiche
+  const corrige = []
+  const ligneCorrige = (titre, rep) => corrige.push(`<p><b>${titre} :</b> ${rep}</p>`)
+  const numeros = l => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
+  const lettres = l => l.map((r, i) => `${'ABCDEFGH'[i]} : ${r}`).join(' — ')
 
   if (ex.includes('regle') && niv.fiche.mm) {
     // CE2 : longueurs en cm et mm (en mm, entre 3 cm et 12 cm), surtout pas des cm entiers
@@ -1012,33 +1018,41 @@ function htmlFiche() {
     for (let L = niv.fiche.segMin * 10; L <= niv.fiche.segMax * 10; L++) if (L % 10 !== 0 || L % 30 === 0) longueurs.push(L)
     const choisis = melanger(longueurs).slice(0, nbSeg)
     const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEFGH'[i]}</span>${segmentReel(L / 10)}<span class="rep">${TROU} cm ${TROU} mm</span></div>`).join('')
-    const traces = melanger(longueurs.filter(L => L <= 100 && !choisis.includes(L))).slice(0, 2)
+    const aTracer = melanger(longueurs.filter(L => L <= 100 && !choisis.includes(L))).slice(0, 2)
+    const traces = aTracer
       .map(L => `<div class="trace">${C.t('ficheTrace')} <strong>${cmmm(L)}</strong> : <span class="point">×</span></div>`).join('')
     sections.push(`<h2>📏 ${C.t('ficheMesureMm')}</h2>${segs}<h2>✏️ ${C.t('ficheTraceTitre')}</h2>${traces}`)
+    ligneCorrige(C.t('ficheMesureMm'), lettres(choisis.map(L => `${Math.floor(L / 10)} cm ${L % 10} mm`)))
+    ligneCorrige(C.t('ficheTraceTitre'), C.t('corrigeTrace', { liste: numeros(aTracer.map(cmmm)) }))
   } else if (ex.includes('regle')) {
     const longueurs = []
     for (let L = niv.fiche.segMin; L <= niv.fiche.segMax; L++) longueurs.push(L)
     const choisis = melanger(longueurs).slice(0, nbSeg)
     const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${'ABCDEFGH'[i]}</span>${segmentReel(L)}<span class="rep">${TROU} cm</span></div>`).join('')
-    const traces = melanger(longueurs.filter(L => L <= 10 && !choisis.includes(L)).concat([5, 8]))
+    const aTracer = melanger(longueurs.filter(L => L <= 10 && !choisis.includes(L)).concat([5, 8]))
       .filter((v, i, a) => a.indexOf(v) === i).slice(0, 2)
+    const traces = aTracer
       .map(L => `<div class="trace">${C.t('ficheTrace')} <strong>${L} cm</strong> : <span class="point">×</span></div>`).join('')
     sections.push(`<h2>📏 ${C.t('ficheMesure')}</h2>${segs}<h2>✏️ ${C.t('ficheTraceTitre')}</h2>${traces}`)
+    ligneCorrige(C.t('ficheMesure'), lettres(choisis.map(L => `${L} cm`)))
+    ligneCorrige(C.t('ficheTraceTitre'), C.t('corrigeTrace', { liste: numeros(aTracer.map(L => `${L} cm`)) }))
   }
 
+  // [type, titre sur la fiche, nombre de questions, titre court dans le corrigé]
   const blocs = [
     ['conversion', C.t('ficheConversion'), 6],
-    ['unite', `🤔 ${C.t('ficheUnite')} : ${niv.unites.slice(0, -1).join(', ')} ${R.value.ou()} ${niv.unites[niv.unites.length - 1]}`, 6],
+    ['unite', `🤔 ${C.t('ficheUnite')} : ${niv.unites.slice(0, -1).join(', ')} ${R.value.ou()} ${niv.unites[niv.unites.length - 1]}`, 6, `🤔 ${C.t('ficheUnite')}`],
     ['comparer', C.t('ficheComparer'), 4],
     ['masse', C.t('ficheMasse'), 2],
     ['contenance', C.t('ficheContenance'), 2],
     ['calendrier', C.t('ficheCalendrier'), 4],
   ]
-  blocs.forEach(([type, titre, nb]) => {
+  blocs.forEach(([type, titre, nb, titreCorrige = titre]) => {
     if (!ex.includes(type)) return
     const qs = genererSerie(cfg, nb, [type])
     const grille = ['masse', 'contenance'].includes(type) ? 'grille2' : 'grille'
     sections.push(`<h2>${titre}</h2><div class="${grille}">${qs.map(questionImprimee).join('')}</div>`)
+    ligneCorrige(titreCorrige, numeros(qs.map(q => q.attendu)))
   })
 
   const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
@@ -1048,7 +1062,6 @@ function htmlFiche() {
       body { font-family: Arial, sans-serif; max-width: 18cm; margin: 0 auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       h2 { font-size: 1.02rem; margin: 1rem 0 .4rem; break-after: avoid; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
       .alerte { border: 2px solid #c0392b; color: #c0392b; font-weight: 700; padding: .35rem .6rem; border-radius: 6px; font-size: .9rem; }
       .temoin { display: flex; align-items: flex-start; gap: .6cm; margin: .5rem 0 .3rem; font-size: .78rem; color: #555; }
       .seg { display: flex; align-items: center; gap: .5cm; margin: .45cm 0; }
@@ -1067,10 +1080,11 @@ function htmlFiche() {
       .choix span { display: inline-block; margin: 0 .3cm; padding: .05cm .2cm; }
     </style></head><body>
     <h1>📏 ${t('titre')} — ${cfg.niveau.toUpperCase()}</h1>
-    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langueContenu.value)}
     <p class="alerte">⚠️ ${C.t('ficheAlerte')}</p>
     ${ex.includes('regle') ? `<div class="temoin">${regleTemoin()}<span>${C.t('ficheTemoin')}</span></div>` : ''}
     ${sections.join('')}
+    <section class="corrige"><h2>${t('corrige')}</h2>${corrige.join('')}</section>
   </body></html>`
 
   return html

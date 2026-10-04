@@ -36,7 +36,6 @@ export default {
     pRange: 'Range du plus petit au plus grand :',
     pSuite: 'Complète la suite :',
     pNbQuestions: '{n} questions',
-    corrigeFin: 'Corrigé (page à part)',
     // types d'exercices (boutons de réglage)
     type_decomposer: '🧱 Décomposer',
     type_representation: '🟦 Représentation',

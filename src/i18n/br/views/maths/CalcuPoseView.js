@@ -12,5 +12,4 @@ export default {
     colCalcul: 'Jedadur',
     resultatBas: "Kendalc'h da embreger ! 📚",
     pNbExercices: '{n} poelladenn',
-    corrigePage2: 'Reizhadenn (2vet pajenn)', // br: à relire
   }

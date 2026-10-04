@@ -10,8 +10,6 @@ export default {
     aide: 'Skoazell',
     afficherMinutes: "Diskouez ar munutoù en-dro d'an horolaj",
     nbHorloges: 'Horolajoù dre boelladenn', // br: à relire
-    corrigeTitre: 'Reizhadenn',
-    corrigePage2: 'Ouzhpennañ ar reizhadenn war ar bajenn 2', // br: à relire
     quelleHeure: 'Pe eur eo ?',
     legH: 'nadoz vihan = eurioù',
     legM: 'nadoz vras = munutoù',

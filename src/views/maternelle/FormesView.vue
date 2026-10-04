@@ -104,6 +104,7 @@ import formesFr from '../../i18n/fr/contenu/formes.js'
 import formesBr from '../../i18n/br/contenu/formes.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Contenu dans la langue de l'interface : noms des formes (le nom français sert d'identifiant)
@@ -226,7 +227,6 @@ function htmlFiche() {
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .8rem 0 .6rem; }
       .legende { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem 2rem; border: 2px solid #ccc; border-radius: 12px; padding: .5rem 1rem; }
       .leg { display: flex; align-items: center; gap: .6rem; font-size: 1.1rem; font-weight: 700; }
@@ -237,18 +237,17 @@ function htmlFiche() {
       .comptes { display: flex; justify-content: space-around; page-break-inside: avoid; }
       .cpt { display: flex; align-items: center; gap: .5rem; }
       .case { width: 2.6rem; height: 2.6rem; border: 2.5px solid #444; border-radius: 8px; display: inline-block; }
-      .corrige { page-break-before: always; break-before: page; }
       .corr { font-size: 1.15rem; line-height: 2; }
     </style></head><body>
     <h1>${titre}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langue.value)}
     <p class="consigne">${t('fConsigne')}</p>
     <div class="legende">${legende}</div>
     <div class="grille">${cases}</div>
     <p class="consigne">${t('fCompte')}</p>
     <div class="comptes">${comptes}</div>
-    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
-      <div class="corr">${COULEURS_FICHE.map(c => `<div>${nomForme(c.nom)} (${t(c.couleur)}) : <b>${tirage.filter(n => n === c.nom).length}</b></div>`).join('')}</div></div>
+    <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
+      <div class="corr">${COULEURS_FICHE.map(c => `<div>${nomForme(c.nom)} (${t(c.couleur)}) : <b>${tirage.filter(n => n === c.nom).length}</b></div>`).join('')}</div></section>
   </body></html>`
 }
 

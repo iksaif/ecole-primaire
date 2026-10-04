@@ -83,7 +83,6 @@ export default {
     f_homonymes: 'Klok gant ar ger mat.',
     f_sensFigure: 'Merk : ster rik (R) pe ster skeudennek (S) ?',
     f_suffixes: 'Skriv ar ger gant al lostger mat : -eur, -ette, -ment, -age pe -ier.',
-    corrigePage2: 'Reizhadenn war ar bajenn 2', // br: à relire
     lettreP: 'R',
     lettreF: 'S',
   }

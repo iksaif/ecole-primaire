@@ -91,6 +91,7 @@ import quizFr from '../i18n/fr/contenu/quiz.js'
 import quizBr from '../i18n/br/contenu/quiz.js'
 import ConfigExercice from '../components/ConfigExercice.vue'
 import { useModeExercice } from '../composables/useModeExercice'
+import { ligneNomDate } from '../composables/useOptionsFiche'
 import { echapper } from '../utils/impression'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
@@ -137,7 +138,7 @@ function demarrer() {
   phase.value = 'jeu'
 }
 
-// ── Fiche imprimable : questions + choix à entourer, corrigé page 2
+// ── Fiche imprimable : questions + choix à entourer, avec corrigé
 function htmlFiche() {
   const e = echapper
   const qs = melanger(questionsDu(config.value.theme))
@@ -153,22 +154,20 @@ function htmlFiche() {
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
       .consigne { font-weight: 700; margin: .4rem 0 1rem; }
       .q { margin-bottom: 1rem; page-break-inside: avoid; }
       .enonce { font-size: 1.1rem; font-weight: 700; margin-bottom: .35rem; }
       .num { color: #777; }
       .choix { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; padding-left: 1.6rem; font-size: 1.05rem; }
       .choix span { padding: .1rem .5rem; }
-      .corrige { page-break-before: always; break-before: page; }
       .corr { margin: .35rem 0; }
       em { color: #666; font-size: .9em; }
     </style></head><body>
     <h1>${e(titre)}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langue.value)}
     <p class="consigne">${t('fConsigne')}</p>
     ${corps}
-    <div class="corrige"><h1>${t('corrige')} — ${e(titre)}</h1>${corrige}</div>
+    <section class="corrige"><h2>${t('corrige')} — ${e(titre)}</h2>${corrige}</section>
   </body></html>`
 }
 

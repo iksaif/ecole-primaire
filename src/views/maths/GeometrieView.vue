@@ -184,6 +184,7 @@ import contenuFr from '../../i18n/fr/contenu/geometrie.js'
 import contenuBr from '../../i18n/br/contenu/geometrie.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Maths : le contenu (questions, fiche) suit la langue de l'interface
@@ -707,8 +708,8 @@ function svgSolide(type, taille = 220) {
   return `<svg viewBox="0 0 200 200" width="${taille}" height="${taille}" xmlns="http://www.w3.org/2000/svg">${c}</svg>`
 }
 
-// Quadrillage pour l'impression : 1 unité = 1 cm réel
-function svgGrilleCm({ cols, rows, pleines = [], axe = null, repere = null, symboles = {}, entetes = false }) {
+// Quadrillage pour l'impression : 1 unité = 1 cm réel (× echelle : grilles réduites du corrigé)
+function svgGrilleCm({ cols, rows, pleines = [], axe = null, repere = null, symboles = {}, entetes = false, echelle = 1 }) {
   const m = 0.5, off = entetes ? 1 : 0
   const W = cols + off + 2 * m, H = rows + off + 2 * m
   const x0 = m + off, y0 = m + off
@@ -730,7 +731,7 @@ function svgGrilleCm({ cols, rows, pleines = [], axe = null, repere = null, symb
     const [c, r] = dek(cle)
     s += `<text x="${x0 + c + 0.5}" y="${y0 + r + 0.72}" font-size="0.65" text-anchor="middle" font-family="Arial">${sym}</text>`
   }
-  return `<svg width="${W}cm" height="${H}cm" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`
+  return `<svg width="${f1(W * echelle)}cm" height="${f1(H * echelle)}cm" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`
 }
 // ==== FIN LOGIQUE ====
 
@@ -991,16 +992,23 @@ function htmlFiche() {
   const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
   const ex = cfg.exercices
   let corps = ''
+  // corrigé : une ligne par partie, réponses dans l'ordre de la fiche
+  const corrige = []
+  const ligneCorrige = (titre, rep) => corrige.push(`<p><b>${titre} :</b> ${rep}</p>`)
+  const numeros = l => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
 
   if (ex.includes('symetrie')) {
     const qs = genererSansRepetition(cfg, 3, 'symetrie')
     corps += `<h2>🦋 ${C.t('ficheSymetrie')}</h2><p class="consigne">${C.t('ficheSymetrieConsigne')}</p>`
     corps += qs.map(x => `<div class="bloc">${svgGrilleCm({ cols: x.cols, rows: x.rows, pleines: x.modele, axe: x.axe })}</div>`).join('')
+    ligneCorrige(C.t('ficheSymetrie'), `<span class="mini">${qs.map(x =>
+      svgGrilleCm({ cols: x.cols, rows: x.rows, pleines: [...x.modele, ...x.attendu], axe: x.axe, echelle: 0.35 })).join('')}</span>`)
   }
   if (ex.includes('reproduction')) {
     const qs = genererSansRepetition(cfg, 2, 'reproduction')
     corps += `<h2>✏️ ${C.t('ficheReproduction')}</h2><p class="consigne">${C.t('ficheReproductionConsigne')}</p>`
     corps += qs.map(x => `<div class="bloc duo">${svgGrilleCm({ cols: x.cols, rows: x.rows, pleines: x.modele, repere: x.repere })}${svgGrilleCm({ cols: x.cols, rows: x.rows, repere: x.repere })}</div>`).join('')
+    ligneCorrige(C.t('ficheReproduction'), C.t('corrigeReproduction'))
   }
   if (ex.includes('reperage')) {
     const { cols, rows } = niv.reperage
@@ -1012,42 +1020,52 @@ function htmlFiche() {
       <div><p class="consigne">${C.t('ficheColorie')} : <b>${aColorier.join(', ')}</b></p>${svgGrilleCm({ cols, rows, entetes: true })}</div>
       <div><p class="consigne">${C.t('ficheNomCase')} :</p>${svgGrilleCm({ cols, rows, entetes: true, symboles })}
       <p class="lignes">${syms.map(s => `${s} : ______`).join(' &nbsp; ')}</p></div></div>`
+    ligneCorrige(C.t('ficheReperage'), cases.slice(4).map((c, i) => `${syms[i]} : ${nomCase(...dek(c))}`).join(' — '))
   }
   if (ex.includes('figures')) {
     const formes = melanger(niv.figures)
     corps += `<h2>🔷 ${C.t('ficheFigures')}</h2><p class="consigne">${C.t('ficheFiguresConsigne')}</p><div class="bloc galerie">`
       + formes.map(f => `<div class="item">${svgFigure({ forme: f, ...construireFigure(f) }, true, 110)}<div class="ligne"></div></div>`).join('')
       + `</div>`
+    ligneCorrige(C.t('ficheFigures'), numeros(formes.map(nomFig)))
   }
   if (ex.includes('solides')) {
     const sol = melanger(niv.solides)
     corps += `<h2>🧊 ${C.t('ficheSolides')}</h2><p class="consigne">${C.t('ficheSolidesConsigne')}</p><div class="bloc galerie">`
       + sol.map(s => `<div class="item">${svgSolide(s, 110)}<div class="ligne"></div></div>`).join('')
       + `</div>`
+    ligneCorrige(C.t('ficheSolides'), numeros(sol.map(nomSol)))
   }
   const dispo = niv.exercices
   if (ex.includes('angles') && dispo.includes('angles')) {
     const qs = genererSansRepetition(cfg, 4, 'angles')
     corps += `<h2>📐 ${C.t('ficheAngles')}</h2><p class="consigne">${C.t('ficheAnglesConsigne')}</p><div class="bloc galerie">`
       + qs.map(x => `<div class="item">${svgFigure(x, false, 130)}<div class="ligne"></div></div>`).join('') + `</div>`
+    ligneCorrige(C.t('ficheAngles'), numeros(qs.map(x => x.droits.length ? x.droits.join(', ') : C.t('aucun'))))
   }
   if (ex.includes('proprietes') && dispo.includes('proprietes')) {
     const vf = melanger(PROPRIETES.filter(p => !aChoix(p))).slice(0, 6)
     corps += `<h2>📋 ${C.t('ficheVraiFauxTitre')}</h2><p class="consigne">${C.t('ficheVraiFauxConsigne')}</p>`
       + vf.map((p, i) => `<p class="lignes">${i + 1}. ${C.t('proprietes')[p.id]} &nbsp; <b>${C.t('ficheVraiFaux')}</b></p>`).join('')
+    const [vrai, faux] = C.t('vraiFaux')
+    ligneCorrige(C.t('ficheVraiFauxTitre'), numeros(vf.map(p => p.vrai ? vrai : faux)))
   }
   if (ex.includes('cercle') && dispo.includes('cercle')) {
     corps += `<h2>⭕ ${C.t('ficheCercle')}</h2><div class="bloc duo">
       <div><p class="consigne">${C.t('ficheCercleTrace')}</p>
         <svg width="7cm" height="7cm" viewBox="0 0 7 7" xmlns="http://www.w3.org/2000/svg"><circle cx="3.5" cy="3.5" r="0.07" fill="#000"/><text x="3.65" y="3.35" font-size="0.4" font-family="Arial">O</text></svg></div>
       <div><p class="consigne">${C.t('ficheCercleRepasse')}</p>${svgCercle({ sous: 'lequel', rot: aleatoire(0, 359), pts: { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' } }, 190)}</div></div>`
+    ligneCorrige(C.t('ficheCercle'), C.t('corrigeCercle', { rayon: '[OA]', diametre: '[BC]' }))
   }
   if (ex.includes('patrons') && dispo.includes('patrons')) {
     const { valides, invalides } = patrons()
-    const choisis = melanger([...melanger(valides).slice(0, 3), ...melanger(invalides).slice(0, 3)])
-      .map(h => normaliserCases(h.map(hasard(SYMETRIES))))
+    const choisis = melanger([...melanger(valides).slice(0, 3).map(h => ({ h, valide: true })),
+      ...melanger(invalides).slice(0, 3).map(h => ({ h, valide: false }))])
+      .map(({ h, valide }) => ({ cases: normaliserCases(h.map(hasard(SYMETRIES))), valide }))
     corps += `<h2>🎲 ${C.t('fichePatrons')}</h2><p class="consigne">${C.t('fichePatronsConsigne')}</p><div class="bloc galerie">`
-      + choisis.map(c => `<div class="item libre">${svgPatron(c, { cote: 1, unite: 'cm' })}</div>`).join('') + `</div>`
+      + choisis.map(c => `<div class="item libre">${svgPatron(c.cases, { cote: 1, unite: 'cm' })}</div>`).join('') + `</div>`
+    const liste = choisis.map((c, i) => c.valide ? i + 1 : 0).filter(Boolean).join(', ')
+    ligneCorrige(C.t('fichePatrons'), C.t('corrigePatrons', { liste }))
   }
 
   const nivTxt = cfg.niveau.toUpperCase()
@@ -1059,7 +1077,6 @@ function htmlFiche() {
       body { font-family: Arial, sans-serif; color: #222; margin: 0; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin: 0 0 .5rem; }
       h2 { font-size: 1.05rem; margin: .6cm 0 .2cm; break-after: avoid; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .3rem; }
       .avertissement { font-size: .8rem; color: #a00; margin-bottom: .4cm; }
       .consigne { font-size: .95rem; margin: .1cm 0 .2cm; }
       .bloc { break-inside: avoid; margin-bottom: .4cm; }
@@ -1070,11 +1087,13 @@ function htmlFiche() {
       .ligne { border-bottom: 1.5px solid #888; margin: .2cm .4cm 0; height: .8cm; }
       .lignes { font-size: 1rem; margin-top: .2cm; }
       svg { display: block; }
+      .mini svg { display: inline-block; vertical-align: middle; margin: .1cm .4cm .1cm 0; }
     </style></head><body>
     <h1>${t('titre')} — ${nivTxt}</h1>
-    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langueContenu.value)}
     <p class="avertissement">⚠️ ${C.t('ficheAvertissement')}</p>
     ${corps}
+    <section class="corrige"><h2>${t('corrige')}</h2>${corrige.join('')}</section>
   </body></html>`
 
   return html

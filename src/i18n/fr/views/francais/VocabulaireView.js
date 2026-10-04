@@ -72,7 +72,6 @@ export default {
     res60: 'Bien ! Revois les erreurs 💪',
     res0: 'Courage ! Relis la correction et recommence 📚',
     // fiche imprimable
-    corrigePage2: 'Corrigé en page 2',
     f_alpha: "Range les mots dans l'ordre alphabétique.",
     f_lettre: 'Écris la lettre qui vient juste avant ou juste après.',
     f_contraires: 'Entoure le contraire du mot en gras.',

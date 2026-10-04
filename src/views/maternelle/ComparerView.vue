@@ -104,6 +104,7 @@ import messagesFr from '../../i18n/fr/views/maternelle/ComparerView.js'
 import messagesBr from '../../i18n/br/views/maternelle/ComparerView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
@@ -150,21 +151,19 @@ function htmlFiche() {
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
       .ligne { display: flex; align-items: center; gap: 1.5rem; margin-bottom: .8rem; page-break-inside: avoid; }
       .num { font-weight: 700; color: #999; min-width: 1.5rem; }
       .groupe { flex: 1; border: 2px dashed #bbb; border-radius: 18px; padding: .6rem; min-height: 4.2rem;
         display: flex; flex-wrap: wrap; gap: .3rem; justify-content: center; align-content: center; font-size: 1.6rem; line-height: 1.1; }
-      .corrige { page-break-before: always; break-before: page; }
       .corr { columns: 3; font-size: 1.1rem; line-height: 2; }
     </style></head><body>
     <h1>${titre}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langue.value)}
     <p class="consigne">${t('fConsigne')}</p>
     ${lignes}
-    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
-      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.reponse === 'gauche' ? `<b>${q.gauche}</b> &gt; ${q.droite}` : `${q.gauche} &lt; <b>${q.droite}</b>`}</div>`).join('')}</div></div>
+    <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
+      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.reponse === 'gauche' ? `<b>${q.gauche}</b> &gt; ${q.droite}` : `${q.gauche} &lt; <b>${q.droite}</b>`}</div>`).join('')}</div></section>
   </body></html>`
 }
 

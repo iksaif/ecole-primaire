@@ -48,14 +48,6 @@
           </template>
         </div>
       </div>
-
-      <div v-if="mode === 'imprimer'" class="config-section">
-        <div class="config-section-title">{{ t('corrigePage2') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
-          <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
-        </div>
-      </div>
     </ConfigExercice>
 
     <!-- Exercice -->
@@ -148,13 +140,16 @@ import messagesFr from '../../i18n/fr/views/maths/CalcuPoseView.js'
 import messagesBr from '../../i18n/br/views/maths/CalcuPoseView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Langue du contenu imprimé : celle de l'interface pour les maths
 const langueContenu = computed(() => langue.value)
 
-const config = ref({ op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10, corrige: false,
+const config = ref({ op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10,
   ...charger('calcul_pose_config', {}) })
+// ancien réglage « corrigé » : remplacé par les options communes des fiches
+delete config.value.corrige
 // nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
 const NB_JOUER = [3, 5, 10, 20]
 const NB_FICHE = [5, 10, 15, 20, 30]
@@ -340,21 +335,19 @@ function htmlFiche() {
     </div>`
   }
   const cards = qs.map(q => carte(q, false)).join('')
-  const corrige = config.value.corrige
-    ? `<div style="page-break-before:always;break-before:page;"></div>
-    <h1>${t('corrige')} — ${t('titre')} — ${niveau}</h1>
-    <div style="text-align:center;">${qs.map(q => carte(q, true)).join('')}</div>`
-    : ''
+  const corrige = `<section class="corrige"><h2>${t('corrige')}</h2>
+    <div style="text-align:center;">${qs.map(q => carte(q, true)).join('')}</div></section>`
 
   const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niveau}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
     </style></head><body>
     <h1>${t('titre')} — ${niveau}</h1>
-    <p class="entete">${opLabel} &nbsp;|&nbsp; ${t('pNbExercices', { n: qs.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="infos">${opLabel} &nbsp;|&nbsp; ${t('pNbExercices', { n: qs.length })}</p>
+    ${ligneNomDate(langueContenu.value)}
     <div style="text-align:center;">${cards}</div>
     ${corrige}
   </body></html>`

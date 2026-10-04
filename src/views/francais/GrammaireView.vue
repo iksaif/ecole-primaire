@@ -37,14 +37,6 @@
         </div>
       </div>
 
-      <div v-if="mode === 'imprimer'" class="config-section">
-        <div class="config-section-title">{{ t('corrigePage2') }}</div>
-        <div class="btn-group">
-          <button v-for="o in [true, false]" :key="String(o)"
-            class="level-btn" :class="{ active: config.corrige === o }"
-            @click="config.corrige = o">{{ o ? t('oui') : t('non') }}</button>
-        </div>
-      </div>
     </ConfigExercice>
 
     <!-- ══ EXERCICE ══ -->
@@ -167,6 +159,7 @@ import messagesFr from '../../i18n/fr/views/francais/GrammaireView.js'
 import messagesBr from '../../i18n/br/views/francais/GrammaireView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { enLecture, lire } = useTTS()
 
@@ -1261,7 +1254,7 @@ function questionFiche(q) {
   return ''
 }
 
-function htmlFiche(niveau, types, nb, avecCorrige = true) {
+function htmlFiche(niveau, types, nb) {
   const qs = genererQuestions(niveau, types, nb)
   const ordre = [...new Set(qs.map(q => q.type))].sort((a, b) => IDS_TYPES.indexOf(a) - IDS_TYPES.indexOf(b))
   const parType = ordre.map(ty => ({ t: ty, qs: qs.filter(q => q.type === ty) }))
@@ -1278,7 +1271,6 @@ function htmlFiche(niveau, types, nb, avecCorrige = true) {
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       h2 { font-size: 1rem; margin: 1.4rem 0 .4rem; background: #f0f3f7; padding: .3rem .6rem; border-radius: 6px; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1rem; }
       .q { display: flex; gap: .6rem; margin: .7rem 0; font-size: 1.15rem; line-height: 2.1; page-break-inside: avoid; }
       .num { min-width: 1.6rem; font-weight: 700; color: #777; }
       .contenu { flex: 1; }
@@ -1290,15 +1282,16 @@ function htmlFiche(niveau, types, nb, avecCorrige = true) {
       .cases { font-size: 1rem; }
       .etiqs { display: flex; flex-wrap: wrap; gap: .4rem; }
       .etiq { border: 1.5px solid #555; border-radius: 6px; padding: 0 .5rem; line-height: 1.8; }
-      .corrige { page-break-before: always; font-size: .95rem; }
+      section.corrige { font-size: .95rem; }
+      section.corrige h2 { background: none; padding: 0; }
       .corr { margin: .3rem 0; }
       u { text-decoration-thickness: 2px; }
       em { color: #555; }
     </style></head><body>
     <h1>${t('titre')} — ${niveau.toUpperCase()}</h1>
-    <p class="entete">${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate('fr')}
     ${corps}
-    ${avecCorrige ? `<div class="corrige"><h1>${t('corrige')}</h1>${corrige}</div>` : ''}
+    <section class="corrige"><h2>${t('corrige')}</h2>${corrige}</section>
   </body></html>`
 }
 
@@ -1315,7 +1308,6 @@ const config = ref({
   niveau: niveauCharge,
   types: typesCharges.length ? typesCharges : ['verbe'],
   nb: [5, 10, 15].includes(brut.nb) ? brut.nb : 10,
-  corrige: brut.corrige !== false,
 })
 watch(config, v => sauvegarder('grammaire_config', v), { deep: true })
 
@@ -1379,7 +1371,7 @@ const { mode, graine, regenerer } = useModeExercice()
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche(config.value.niveau, config.value.types, config.value.nb, config.value.corrige)
+  return htmlFiche(config.value.niveau, config.value.types, config.value.nb)
 })
 
 function dotClass(i) {

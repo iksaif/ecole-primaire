@@ -79,14 +79,6 @@
                     @click="config.nbFiche = n">{{ n === 0 ? t('toutes') : n }}</button>
           </div>
         </div>
-
-        <div class="config-section">
-          <div class="config-section-title">{{ t('corrigePage2') }}</div>
-          <div class="btn-group">
-            <button class="level-btn" :class="{ active: config.corrige }" @click="config.corrige = true">{{ t('oui') }}</button>
-            <button class="level-btn" :class="{ active: !config.corrige }" @click="config.corrige = false">{{ t('non') }}</button>
-          </div>
-        </div>
       </template>
     </ConfigExercice>
 
@@ -196,6 +188,7 @@ import messagesFr from '../../i18n/fr/views/maths/TablesView.js'
 import messagesBr from '../../i18n/br/views/maths/TablesView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Langue du contenu imprimé : celle de l'interface pour les maths
@@ -211,9 +204,10 @@ const config = ref({
   // réglages de la fiche papier
   ordreFiche: 'melange',
   nbFiche: 0, // 0 = tous les calculs des tables choisies
-  corrige: false,
   ...charger('tables_config', {}),
 })
+// ancien réglage « corrigé » : remplacé par les options communes des fiches
+delete config.value.corrige
 watch(config, v => sauvegarder('tables_config', v), { deep: true })
 
 const phase = ref('config')
@@ -341,18 +335,15 @@ function htmlFiche() {
     <span class="ligne">${corrige ? q.r : ''}</span>
   </div>`
   const rows = allQ.map((q, i) => ligne(q, i, false)).join('')
-  const corrige = config.value.corrige
-    ? `<h1 class="saut">${t('corrige')} — ${titre}</h1>
-    <div class="grid">${allQ.map((q, i) => ligne(q, i, true)).join('')}</div>`
-    : ''
+  const corrige = `<section class="corrige"><h2>${t('corrige')}</h2>
+    <div class="grid">${allQ.map((q, i) => ligne(q, i, true)).join('')}</div></section>`
 
   return `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
     <meta charset="UTF-8"><title>${titre}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      h1.saut { page-break-before: always; break-before: page; margin-bottom: 1.5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
       .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; }
       .question { display: flex; align-items: baseline; gap: .6rem; margin: .7rem 0; }
       .num { min-width: 1.6rem; font-weight: 700; color: #777; font-size: .9rem; }
@@ -360,7 +351,8 @@ function htmlFiche() {
       .ligne { flex: 1; border-bottom: 1.5px solid #aaa; font-weight: 800; font-size: 1.2rem; font-family: monospace; color: #1a7f37; }
     </style></head><body>
     <h1>${titre}</h1>
-    <p class="entete">${t('pJusqua', { n: jusqu })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: allQ.length })} &nbsp;&nbsp;&nbsp; ${t('nom')} : ________________________________ &nbsp; ${t('date')} : ______________</p>
+    <p class="infos">${t('pJusqua', { n: jusqu })} &nbsp;|&nbsp; ${t('pNbQuestions', { n: allQ.length })}</p>
+    ${ligneNomDate(langueContenu.value)}
     <div class="grid">${rows}</div>
     ${corrige}
   </body></html>`

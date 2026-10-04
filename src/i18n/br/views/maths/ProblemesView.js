@@ -14,7 +14,6 @@ export default {
     pCalcul: 'Jedadur :',
     pReponse: 'Respont :',
     pNbProblemes: '{n} kudenn',
-    corrigeFin: 'Reizhadenn (war ur bajenn all)', // br: à relire
     cat_ajoutRetrait: '➕➖ Ouzhpennañ / lemel',
     cat_comparaison: '⚖️ Keñveriañ',
     cat_partiesTout: '🧺 Lodennoù hag an holl', // br: à relire

@@ -103,6 +103,7 @@ import messagesFr from '../../i18n/fr/views/francais/OrthographeView.js'
 import messagesBr from '../../i18n/br/views/francais/OrthographeView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 import { echapper } from '../../utils/impression'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
@@ -240,7 +241,7 @@ function demarrer() {
   nextTick(() => inputEl.value?.focus())
 }
 
-// ── Fiche imprimable : phrases à trous (choix à entourer / mot à compléter), corrigé page 2
+// ── Fiche imprimable : phrases à trous (choix à entourer / mot à compléter) et corrigé
 function htmlFiche() {
   const e = echapper
   const qs = melanger([...QUESTIONS[config.value.theme]]).slice(0, config.value.nb)
@@ -274,7 +275,6 @@ function htmlFiche() {
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       h2 { font-size: 1rem; margin: 1.4rem 0 .4rem; background: #f0f3f7; padding: .3rem .6rem; border-radius: 6px; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1rem; }
       .q { display: flex; gap: .6rem; margin: .9rem 0; font-size: 1.2rem; line-height: 2; page-break-inside: avoid; }
       .num { min-width: 1.6rem; font-weight: 700; color: #777; }
       .paire { white-space: nowrap; margin: 0 .2rem; }
@@ -282,14 +282,15 @@ function htmlFiche() {
       .sep { color: #aaa; }
       .trou { display: inline-block; min-width: 3.5em; border-bottom: 1.5px solid #888; height: 1.2em; vertical-align: bottom; }
       .indice { color: #777; font-size: .9em; }
-      .corrige { page-break-before: always; break-before: page; font-size: 1rem; }
+      section.corrige { font-size: 1rem; }
+      section.corrige h2 { background: none; padding: 0; }
       .corr { margin: .35rem 0; }
       .corr .num { display: inline-block; }
     </style></head><body>
     <h1>${e(titre)}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate('fr')}
     ${corps}
-    <div class="corrige"><h1>${t('corrige')} — ${e(titre)}</h1>${corrige}</div>
+    <section class="corrige"><h2>${t('corrige')} — ${e(titre)}</h2>${corrige}</section>
   </body></html>`
 }
 

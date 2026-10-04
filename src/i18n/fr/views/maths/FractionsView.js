@@ -48,7 +48,6 @@ export default {
     pReponse: 'Réponse :',
     pPlacer: 'Dessine une flèche pour placer {f} sur la droite.',
     pNbQuestions: '{n} questions',
-    corrigeFin: 'Corrigé (page à part)',
     // types d'exercices (boutons de réglage)
     type_identifier: '👀 Quelle fraction ?',
     type_colorier: '🖍️ Colorier',

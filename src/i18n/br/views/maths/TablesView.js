@@ -30,5 +30,4 @@ export default {
     dansLOrdre: 'En urzh',
     melange: 'Kemmesket',
     nbCalculs: 'Niver a jedadurioù', // br: à relire
-    corrigePage2: 'Reizhadenn (2vet pajenn)', // br: à relire
   }

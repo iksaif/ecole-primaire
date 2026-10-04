@@ -30,5 +30,4 @@ export default {
     dansLOrdre: "Dans l'ordre",
     melange: 'Mélangé',
     nbCalculs: 'Nombre de calculs',
-    corrigePage2: 'Corrigé (2e page)',
   }

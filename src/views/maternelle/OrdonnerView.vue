@@ -124,6 +124,7 @@ import messagesFr from '../../i18n/fr/views/maternelle/OrdonnerView.js'
 import messagesBr from '../../i18n/br/views/maternelle/OrdonnerView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
@@ -158,7 +159,7 @@ function generer() {
   return { nombres: melanger(choix), bonne, sens }
 }
 
-// ── Fiche imprimable : nombres en désordre à recopier dans l'ordre (corrigé page 2)
+// ── Fiche imprimable : nombres en désordre à recopier dans l'ordre (avec corrigé)
 function htmlFiche() {
   const qs = Array.from({ length: config.value.nbQ }, generer)
   const lignes = qs.map((q, i) => {
@@ -173,7 +174,6 @@ function htmlFiche() {
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: .6rem; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
       .item { margin-bottom: 1rem; page-break-inside: avoid; }
       .sens { font-size: .9rem; color: #555; font-weight: 700; margin-bottom: .3rem; }
@@ -184,15 +184,14 @@ function htmlFiche() {
       .cases { display: flex; align-items: center; gap: .3rem; }
       .case { width: 2.8rem; height: 2.8rem; border: 2.5px solid #444; border-radius: 8px; display: inline-block; }
       .signe { font-size: 1.3rem; color: #888; font-weight: 700; }
-      .corrige { page-break-before: always; break-before: page; }
       .corr { font-size: 1.1rem; line-height: 2; }
     </style></head><body>
     <h1>${titre}</h1>
-    <p class="entete">${t('prenom')} : ________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate(langue.value)}
     <p class="consigne">${t('fConsigne')}</p>
     ${lignes}
-    <div class="corrige"><h1>${t('corrige')} — ${titre}</h1>
-      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.bonne.join(q.sens === 'croissant' ? ' &lt; ' : ' &gt; ')}</div>`).join('')}</div></div>
+    <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
+      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.bonne.join(q.sens === 'croissant' ? ' &lt; ' : ' &gt; ')}</div>`).join('')}</div></section>
   </body></html>`
 }
 

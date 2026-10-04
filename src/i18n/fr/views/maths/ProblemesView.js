@@ -14,7 +14,6 @@ export default {
     pCalcul: 'Calcul :',
     pReponse: 'Réponse :',
     pNbProblemes: '{n} problèmes',
-    corrigeFin: 'Corrigé (page à part)',
     // types de problèmes (réglages)
     cat_ajoutRetrait: '➕➖ Ajout / retrait',
     cat_comparaison: '⚖️ Comparaison',

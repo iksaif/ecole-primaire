@@ -133,6 +133,7 @@ import messagesFr from '../../i18n/fr/views/francais/ConjugaisonView.js'
 import messagesBr from '../../i18n/br/views/francais/ConjugaisonView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
+import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
@@ -301,24 +302,34 @@ function htmlFiche() {
 
   const modeLabel = config.value.mode === 'lacunes' ? t('ficheLacunes') : t('ficheComplet')
 
+  // Corrigé : les formes attendues, terminaison (ou forme) à écrire en gras
+  const corrige = PRONOMS.map((pronom, i) => {
+    const forme = formes[i]
+    const radical = config.value.mode === 'lacunes' ? detecterRadical(verbe.inf, forme, config.value.temps) : ''
+    return `<tr><td style="padding:.1rem 1rem .1rem 0;font-style:italic;color:#555;">${pronom}</td><td>${radical}<b>${forme.slice(radical.length)}</b></td></tr>`
+  }).join('')
+
   const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${verbe.inf}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 500px; margin: 2cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .entete { font-size: .85rem; color: #666; margin-bottom: 1.5rem; }
+      .consigne { font-size: .95rem; margin: 0 0 1rem; }
       .verb-box { background: #f5f7fa; border: 1.5px solid #ddd; border-radius: 8px; padding: 1rem 1.5rem; }
       .verb-title { font-size: 1.4rem; font-weight: 900; margin-bottom: .25rem; }
       .verb-temps { font-size: 1rem; color: #555; margin-bottom: 1rem; }
       table { width: 100%; border-collapse: collapse; }
     </style></head><body>
     <h1>${t('titre')}</h1>
-    <p class="entete">${modeLabel} &nbsp;&nbsp;&nbsp; ${t('nom')} : __________________________ &nbsp; ${t('date')} : ______________</p>
+    ${ligneNomDate('fr')}
+    <p class="consigne">${modeLabel}</p>
     <div class="verb-box">
       <div class="verb-title">${verbe.inf} <small style="font-weight:400;font-size:.75em;color:#777;">(${t('groupe_' + verbe.groupe)})</small></div>
       <div class="verb-temps">${t('temps_' + tempsObj.id)}</div>
       <table>${rows}</table>
     </div>
+    <section class="corrige"><h2>${t('corrige')} — ${verbe.inf}, ${t('temps_' + tempsObj.id).toLowerCase()}</h2>
+      <table style="width:auto">${corrige}</table></section>
   </body></html>`
 
   return html

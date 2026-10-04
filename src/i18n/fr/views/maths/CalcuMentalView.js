@@ -1,7 +1,7 @@
 // Textes de l'interface — CalcuMentalView (français).
 // Clés partagées avec src/i18n/br/views/maths/CalcuMentalView.js (vérifier avec `npm run i18n`).
 export default {
-    nbCalculsFiche: 'Nombre de calculs sur la fiche', corrigePage2: 'Corrigé en page 2',
+    nbCalculsFiche: 'Nombre de calculs sur la fiche',
     titre: 'Calcul mental',
     operations: 'Opérations',
     tempsParQuestion: 'Temps par question',

@@ -20,12 +20,26 @@
 
     <slot :mode="mode" />
 
+    <!-- options communes à toutes les fiches (useOptionsFiche) -->
+    <div v-if="mode === 'imprimer'" class="config-section options-fiche">
+      <div class="config-section-title">{{ t('surLaFiche') }}</div>
+      <div class="btn-group">
+        <button class="level-btn" :class="{ active: options.entete }" @click="options.entete = !options.entete">
+          {{ options.entete ? '✓ ' : '' }}{{ t('entete') }}
+        </button>
+      </div>
+      <div v-if="avecCorrige" class="btn-group">
+        <button v-for="c in CHOIX_CORRIGE" :key="c" class="level-btn" :class="{ active: options.corrige === c }"
+          @click="options.corrige = c">{{ t('corrige_' + c) }}</button>
+      </div>
+    </div>
+
     <div class="signalement"><SignalerErreur :reglages="config" /></div>
 
     <div v-if="mode === 'jouer'" class="actions">
       <button class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')">{{ t('commencer') }}</button>
     </div>
-    <ApercuImpression v-else :html="fiche" :nb-pages="nbPages" :fluide="fluide" :reglages="config">
+    <ApercuImpression v-else :html="ficheFinale" :nb-pages="nbPages" :fluide="fluide" :reglages="reglages">
       <template #actions>
         <button v-if="aleatoire" class="btn btn-ghost" @click="$emit('regenerer')">{{ t('nouvelle') }}</button>
       </template>
@@ -36,11 +50,13 @@
 <script setup>
 import ApercuImpression from './ApercuImpression.vue'
 import SignalerErreur from './SignalerErreur.vue'
+import { computed } from 'vue'
+import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige, CHOIX_CORRIGE } from '../composables/useOptionsFiche'
 import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/components/ConfigExercice.js'
 import messagesBr from '../i18n/br/components/ConfigExercice.js'
 
-defineProps({
+const props = defineProps({
   mode: { type: String, default: 'jouer' },
   // document HTML complet de la fiche (calculé seulement en mode impression)
   fiche: { type: String, default: '' },
@@ -57,6 +73,11 @@ defineProps({
 defineEmits(['update:mode', 'commencer', 'regenerer'])
 
 const { t } = useI18n({ fr: messagesFr, br: messagesBr })
+
+const options = useOptionsFiche()
+const avecCorrige = computed(() => aUnCorrige(props.fiche))
+const ficheFinale = computed(() => appliquerOptionsFiche(props.fiche, options.value))
+const reglages = computed(() => (props.config ? { ...props.config, ...options.value } : options.value))
 </script>
 
 <style scoped>
@@ -72,6 +93,7 @@ const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 .modes button.actif { background: white; color: var(--texte); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
 /* cases à cocher des réglages (ex. corrigé) — :deep car elles viennent du slot */
 :deep(.case-corrige) { display: flex; align-items: center; gap: .5rem; margin: .25rem 0 1rem; font-weight: 600; cursor: pointer; }
+.options-fiche .btn-group + .btn-group { margin-top: .5rem; }
 .signalement { text-align: right; margin: .25rem 0 -.5rem; }
 .actions { text-align: center; margin-top: 1.5rem; }
 .btn-grand { font-size: 1.1rem; padding: .75rem 2rem; }

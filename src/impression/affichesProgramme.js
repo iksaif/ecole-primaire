@@ -28,7 +28,8 @@ export const DEFAUTS = { affiche: 'droite', variante: '100', verbe: 'etre', temp
 
 export function normaliserConfig(config = {}) {
   const c = { ...DEFAUTS, ...config }
-  if (!FAMILLES[c.affiche]) c.affiche = DEFAUTS.affiche
+  // famille inconnue ou cachée (« ce que je sais faire » tant que RESUMES_VISIBLES est faux) : l'affiche par défaut
+  if (!FAMILLES[c.affiche] || !AFFICHES_PROGRAMME.some(a => a.id === c.affiche)) c.affiche = DEFAUTS.affiche
   const def = AFFICHES_PROGRAMME.find(a => a.id === c.affiche)
   if (def.variantes && !def.variantes.some(v => v.id === c.variante)) c.variante = def.variantes[0].id
   if (c.affiche === 'conjugaison' && !VERBES[c.verbe]) c.verbe = 'etre'

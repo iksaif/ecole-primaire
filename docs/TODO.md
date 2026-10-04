@@ -5,6 +5,7 @@
 
 ## Affiches et fiches
 
+- [ ] **« Ce que je sais faire » caché** (`RESUMES_VISIBLES = false` dans `affiches/catalogue.js`) en attendant l'avis d'enseignants ; à remettre après relecture
 - [ ] **Relire les phrases « Ce que je sais faire »** (`src/data/savoirs.js`, ≈ 300 phrases, une par compétence et
       par niveau) avec un·e enseignant·e ; les compétences qui n'ont qu'une phrase à un niveau n'ont pas d'affiche
       (seuil : 2 phrases, `RESUMES` dans `affiches/catalogue.js`)
@@ -26,6 +27,8 @@
       `/imprimer`, `/telechargements/` et les pages de fiches, via `lienProgramme()`)
 
 ## Manques au programme
+
+- [ ] **Couverture du programme** : un rapport par domaine × classe × compétence (exercices, fiches toutes prêtes, affiches) pour voir ce qui est mal couvert ; et, dans chaque exercice, vérifier que les options correspondent au programme (tests `programme-*` en partie)
 
 - [ ] **Maths** : rien au CP pour la numération ≤ 100, l'heure entière, les euros, les problèmes ≤ 30 ; calcul mental
       CP (stratégies) ; calcul posé sans niveau (soustraction CP seulement signalée), multiplication posée CE2,

@@ -2,7 +2,7 @@
 // Clés partagées avec src/i18n/br/views/imprimer/AffichesView.js (vérifier avec `npm run i18n`).
 export default {
     titre: '📚 Affiches du programme',
-    intro: 'Droite numérique, tableau de numération, horloge, euros, conjugaison, figures et solides, et « ce que je sais faire » par domaine et par classe : des affiches construites sur les attendus des programmes officiels.',
+    intro: 'Droite numérique, tableau de numération, horloge, euros, conjugaison, figures et solides : des affiches construites sur les attendus des programmes officiels.',
     affiche: 'Affiche',
     version: 'Version',
     verbe: 'Verbe',

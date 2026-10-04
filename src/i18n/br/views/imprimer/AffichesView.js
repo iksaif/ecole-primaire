@@ -2,7 +2,7 @@
 // (même formes que AlphabetView). Les autres sont une traduction automatique, à relire.
 export default {
     titre: '📚 Skritelloù',
-    intro: "Linenn an niveroù, taolenn an niveradur, horolaj, euroioù, displegañ, stummoù ha solidennoù, hag « ar pezh a ouzon ober » dre dachenn ha dre glas : skritelloù savet diwar ar pezh a c'houlenn ar programmoù ofisiel.", // br: à relire
+    intro: "Linenn an niveroù, taolenn an niveradur, horolaj, euroioù, displegañ, stummoù ha solidennoù : skritelloù savet diwar ar pezh a c'houlenn ar programmoù ofisiel.", // br: à relire
     affiche: 'Skritell', // br: à relire
     version: 'Stumm', // br: à relire
     verbe: 'Verb',

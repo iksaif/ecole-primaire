@@ -1,5 +1,5 @@
 // Catalogue de toutes les activités : sert aux pages d'accueil/matières et au filtre par classe.
-import { RESUMES } from '../impression/affiches/catalogue.js'
+import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
 
 export const CLASSES = [
   { id: 'ms',  label: 'MS' },
@@ -61,7 +61,7 @@ export const ACTIVITES = [
     br: { titre: 'Skritelloù displegañ', desc: 'Bezañ, kaout, 1añ ha 2l strollad, verboù direizh' } }, // br: à relire
 
   // « Ce que je sais faire » : une carte par domaine du programme qui a des affiches résumé
-  ...[...new Set(RESUMES.map(r => r.domaine))].map(domaine => ({
+  ...[...new Set(RESUMES_VISIBLES ? RESUMES.map(r => r.domaine) : [])].map(domaine => ({
     to: `/imprimer/affiches?affiche=resume&domaine=${domaine}`, matiere: 'imprimer', domaine, genre: 'affiche', detail: true, icon: '✅',
     titre: 'Ce que je sais faire', desc: 'Une case à cocher par compétence du programme, classe par classe',
     niveaux: RESUMES.filter(r => r.domaine === domaine).map(r => r.niveau),
@@ -129,6 +129,40 @@ const BR = {
   '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
 }
 // (les deux cartes de /imprimer/calcul n'ont pas le même sens : seule la carte « fiches » reprend la traduction)
+// Compétences de src/data/programme.js travaillées par chaque exercice ou générateur (rapport de couverture :
+// `npm run couverture`) ; seulement aux niveaux de l'activité. Les affiches ont les leurs dans leur catalogue.
+const COMPETENCES_ROUTES = {
+  '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
+  '/imprimer/alphabet': ['nom-lettres'],
+  '/imprimer/nombres': ['nombres-en-lettres', 'numeration-100', 'numeration-1000'],
+  '/maternelle/compter': ['denombrer-6', 'denombrer-10'],
+  '/maternelle/comparer': ['comparer-quantites'],
+  '/maternelle/ordonner': ['bande-numerique'],
+  '/maternelle/formes': ['formes-maternelle'],
+  '/maternelle/lettres': ['nom-lettres'],
+  '/maths/numeration': ['numeration-1000', 'numeration-10000', 'nombres-en-lettres', 'comparer-ranger', 'droite-graduee', 'suites-nombres', 'ajouter-dizaines'],
+  '/maths/calcul-mental': ['tables-addition', 'tables-multiplication', 'doubles-moities', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'multiplier-10-100', 'sens-division'],
+  '/maths/calcul-pose': ['addition-posee', 'soustraction-posee'],
+  '/maths/tables': ['tables-multiplication'],
+  '/maths/fractions': ['fractions-unitaires', 'fractions-inferieures-1', 'fractions-egales', 'fractions-mesure'],
+  '/maths/problemes': ['problemes-additifs', 'problemes-multiplicatifs', 'problemes-etapes'],
+  '/maths/heure': ['heure-entiere', 'heure-demi-quart', 'heure-minutes', 'durees'],
+  '/maths/monnaie': ['monnaie-euros', 'monnaie-centimes'],
+  '/maths/mesures': ['longueurs', 'masses', 'contenances'],
+  '/maths/geometrie': ['figures-planes', 'solides', 'patrons', 'symetrie', 'tracer-figures', 'reperage-deplacements', 'angle-droit'],
+  '/francais/dictee': ['dictee', 'orthographe-lexicale'],
+  '/francais/orthographe': ['orthographe-lexicale', 'accents-lettres', 'accords-gn'],
+  '/francais/grammaire': ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn', 'complements'],
+  '/francais/conjugaison': ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'conjugaison-2e-groupe', 'conjugaison-passe-simple', 'radical-terminaison'],
+  '/francais/vocabulaire': ['ordre-alphabetique', 'synonymes-antonymes', 'familles-mots'],
+  '/lecture': ['decodage', 'comprendre-texte', 'syllabes-orales'],
+}
+const COMPETENCES_CALCUL = { affiche: ['tables-addition', 'tables-multiplication'], fiche: ['tables-addition', 'tables-multiplication', 'complement-dizaine', 'doubles-moities', 'ajouter-dizaines', 'ajouter-9', 'multiplier-10-100', 'sens-division', 'suites-nombres'] }
+for (const a of ACTIVITES) {
+  const [chemin, requete] = a.to.split('?')
+  a.competences = chemin === '/imprimer/calcul' ? COMPETENCES_CALCUL[new URLSearchParams(requete).get('mode')] : COMPETENCES_ROUTES[chemin] ?? []
+}
+
 for (const a of ACTIVITES) {
   const cle = a.to.split('?')[0]
   if (!a.br && a.to !== '/imprimer/calcul?mode=affiche' && BR[cle]) a.br = { titre: BR[cle][0], desc: BR[cle][1], descRegionale: BR[cle][2] }

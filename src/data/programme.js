@@ -22,6 +22,8 @@
 //     les homophones et les homonymes seulement (SOURCES.exemplesCM1…), pas relus en entier.
 //   - Non relus : les livrets d'accompagnement ; « Questionner le monde » (cycle 2), hors de ces BO.
 //
+// Le texte de ces PDF est dans docs/programmes/ (une section « Page N » par page du PDF, comme les `page` ci-dessous).
+//
 // Conventions
 //   - `source` : { texte, page, url, extrait } ; `page` est la page du PDF (pas la page imprimée), `url` y mène
 //     directement (#page=), `extrait` reprend ou résume le passage. Ce qui est une interprétation est marqué

@@ -64,6 +64,8 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { presetDe } from '../../impression/catalogue'
 import ApercuImpression from '../../components/ApercuImpression.vue'
 import ChoixPolice from '../../components/ChoixPolice.vue'
 import { usePolices } from '../../composables/usePolices'
@@ -75,6 +77,9 @@ import messagesBr from '../../i18n/br/views/imprimer/AlphabetView.js'
 import { STYLES, DEFAUTS, genererAlphabet } from '../../impression/alphabet'
 
 const config = ref({ ...DEFAUTS, ...charger('affiche_alphabet_config', {}) })
+// ?preset=<slug> (pages de téléchargement, page « Le programme ») : les réglages exacts de cette affiche
+const route = useRoute()
+watch(() => route.query.preset, s => { const p = presetDe(s); if (p) config.value = { ...DEFAUTS, ...p } }, { immediate: true })
 watch(config, v => sauvegarder('affiche_alphabet_config', v), { deep: true })
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })

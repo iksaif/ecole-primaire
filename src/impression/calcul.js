@@ -854,6 +854,9 @@ function textesFiche(cle, params, langue) {
   return { court: C.t(`${cle}_court`, params), titre: C.t(`${cle}_titre`, params), description: C.t(`${cle}_description`, params) }
 }
 
+// Réglages d'une fiche de calcul toute prête (?preset=<slug> dans le générateur), graine comprise, ou null
+export const presetCalcul = slug => (slug && TELECHARGEMENTS_CALCUL.find(t => t.slug === slug)?.config) || null
+
 // compétence de programme.js de chaque type de calcul des fiches toutes prêtes
 const COMPETENCES_TYPES = { tables: 'tables-multiplication', tablesAdd: 'tables-addition', addition: 'tables-addition', soustraction: 'tables-addition',
   complements: 'complement-dizaine', division: 'sens-division', dixCent: 'multiplier-10-100', doubles: 'doubles-moities', neufOnze: 'ajouter-9', suites: 'suites-nombres' }
@@ -864,7 +867,7 @@ export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e 
   langues: [langue],
   config: { ...e.config, langue },
 }))).map(e => ({
-  ...e, categorie: 'calcul', type: 'calcul', lien: `/imprimer/calcul?mode=${e.config.mode}`,
+  ...e, categorie: 'calcul', type: 'calcul', lien: `/imprimer/calcul?mode=${e.config.mode}&preset=${e.slug}`,
   // domaine du programme et genre (catalogue unique, plan 09) : affiches des tables ou fiches de calcul
   ...(e.config.mode === 'affiche' ? { domaine: DOMAINES_AFFICHES.tables, genre: 'affiche' } : { domaine: 'nombres-calcul', genre: 'fiche' }),
   // compétences de programme.js (rapport de couverture)

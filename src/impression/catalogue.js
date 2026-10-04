@@ -194,18 +194,27 @@ function fichesRegionales(r) {
   ].map(t => ({ ...t, langues: [r.id] }))
 }
 
+// « Personnaliser » et page « Le programme » : le générateur réglé sur cette fiche (?preset=<slug>, voir presetDe)
+export const avecPreset = (lien, slug) => `${lien}${lien.includes('?') ? '&' : '?'}preset=${slug}`
+
 // Langues de chaque fiche : français par défaut ; les fiches bretonnes et bilingues vont sur les deux sites
 const avecLangues = (liste, langues) => liste.map(t => ({ langues, ...t }))
 
 export const TELECHARGEMENTS = [
-  ...avecLangues([...lettres, ...alphabets, ...mots, ...affiches], ['fr']),
-  // nombres : français seul, breton seul, ou bilingue
-  ...nombres.map(t => ({ langues: t.config.langues, ...t })),
-  // contenu en langue régionale (alphabet, jours, mois, nombres, lettres une à une)
-  ...LANGUES_REGIONALES.filter(r => r.fiches).flatMap(fichesRegionales),
-  // affiches de la droite numérique, de la numération, de l'horloge, des euros, de conjugaison, des formes (français)
+  ...[
+    ...avecLangues([...lettres, ...alphabets, ...mots, ...affiches], ['fr']),
+    // nombres : français seul, breton seul, ou bilingue
+    ...nombres.map(t => ({ langues: t.config.langues, ...t })),
+    // contenu en langue régionale (alphabet, jours, mois, nombres, lettres une à une)
+    ...LANGUES_REGIONALES.filter(r => r.fiches).flatMap(fichesRegionales),
+  ].map(t => ({ ...t, lien: avecPreset(t.lien, t.slug) })),
+  // affiches de la droite numérique, de la numération, de l'horloge, des euros, de conjugaison, des formes (français) :
+  // leur lien règle déjà l'affiche (?affiche=…&variante=…)
   ...TELECHARGEMENTS_AFFICHES,
 ]
+
+// Réglages d'une fiche du catalogue (?preset=<slug> dans un générateur), ou null
+export const presetDe = slug => (slug && TELECHARGEMENTS.find(t => t.slug === slug)?.config) || null
 
 // Fiches publiées sur un site selon sa langue (fr : ecoleprimaire.app, br : skoolik.app)
 // langues : liste des langues du site, ex. ['fr', 'br'] pour skoolik.app (écoles bilingues)

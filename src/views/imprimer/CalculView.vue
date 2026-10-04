@@ -151,7 +151,7 @@ import messagesFr from '../../i18n/fr/views/imprimer/CalculView.js'
 import messagesBr from '../../i18n/br/views/imprimer/CalculView.js'
 import {
   TYPES, NIVEAUX, NB_CALCULS, TAILLES, AFFICHES, DISPOSITIONS, PRESETS_NIVEAU,
-  typeParId, normaliserConfig, graineAleatoire, genererCalcul, libelle,
+  typeParId, normaliserConfig, graineAleatoire, genererCalcul, libelle, presetCalcul,
 } from '../../impression/calcul'
 
 // Breton : traduction à faire relire par un brittophone
@@ -166,6 +166,8 @@ watch(config, v => sauvegarder(CLE, v), { deep: true })
 // ?mode=affiche | fiche (liens de la page « À imprimer » et des pages de téléchargement) l'emporte sur le réglage enregistré
 const route = useRoute()
 watch(() => route.query.mode, m => { if (m === 'affiche' || m === 'fiche') config.value.mode = m }, { immediate: true })
+// ?preset=<slug> (pages de téléchargement, page « Le programme ») : la fiche exacte, graine comprise
+watch(() => route.query.preset, s => { const p = presetCalcul(s); if (p) config.value = normaliserConfig(p) }, { immediate: true })
 
 const typesChoisis = computed(() => config.value.types.map(typeParId))
 

@@ -48,7 +48,8 @@ for (const [v, t, i, attendu] of CONJ) {
   verifier(obtenu === attendu, `${v} ${t} → ${attendu}${obtenu !== attendu ? ` (obtenu : ${obtenu})` : ''}`)
 }
 verifier(Object.keys(VERBES).length === 12, 'les 12 verbes du programme (être, avoir, 1er et 2e groupes, 8 irréguliers)')
-verifier(TELECHARGEMENTS.filter(t => t.type === 'nombres').every(t => t.lien === `/imprimer/nombres?mise=${t.config.miseEnPage}`), 'nombres : le lien garde la mise en page (affiches / fiche)')
+verifier(TELECHARGEMENTS.filter(t => t.type === 'nombres').every(t => t.lien === `/imprimer/nombres?mise=${t.config.miseEnPage}&preset=${t.slug}`), 'nombres : le lien garde la mise en page (affiches / fiche) et règle la fiche (preset)')
+verifier(TELECHARGEMENTS.filter(t => t.categorie !== 'affiches').every(t => new URLSearchParams(t.lien.split('?')[1]).get('preset') === t.slug), 'fiches et affiches du catalogue : « Personnaliser » ouvre le générateur réglé sur la fiche (?preset=<slug>)')
 
 console.log('Pluriels (Intl.PluralRules)')
 const { choisirPluriel } = await import('../src/i18n/pluriel.js')

@@ -110,6 +110,8 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { presetDe } from '../../impression/catalogue'
 import ApercuImpression from '../../components/ApercuImpression.vue'
 import ChoixPolice from '../../components/ChoixPolice.vue'
 import OptionsFiche from '../../components/OptionsFiche.vue'
@@ -125,6 +127,9 @@ import {
 } from '../../impression/ecriture'
 
 const config = ref({ ...DEFAUTS, ...charger('ecriture_config', {}) })
+// ?preset=<slug> (pages de téléchargement, page « Le programme ») : les réglages exacts de cette fiche
+const route = useRoute()
+watch(() => route.query.preset, s => { const p = presetDe(s); if (p) config.value = { ...DEFAUTS, ...p } }, { immediate: true })
 watch(config, v => sauvegarder('ecriture_config', v), { deep: true })
 
 const { t, tr, langue } = useI18n({ fr: messagesFr, br: messagesBr })

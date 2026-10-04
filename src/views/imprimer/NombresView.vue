@@ -73,6 +73,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { presetDe } from '../../impression/catalogue'
 import { useRoute } from 'vue-router'
 import ApercuImpression from '../../components/ApercuImpression.vue'
 import ChoixPolice from '../../components/ChoixPolice.vue'
@@ -93,6 +94,14 @@ delete config.value.langue
 // ?mise=affiches | fiche (liens de la page « À imprimer » et des pages de téléchargement)
 const route = useRoute()
 watch(() => route.query.mise, m => { if (m === 'affiches' || m === 'fiche') config.value.miseEnPage = m }, { immediate: true })
+// ?preset=<slug> (pages de téléchargement, page « Le programme ») : les réglages exacts de cette fiche
+watch(() => route.query.preset, s => {
+  const p = presetDe(s)
+  if (!p) return
+  config.value = { ...DEFAUTS, ...p, langues: normaliserLangues({ ...DEFAUTS, ...p }).langues }
+  delete config.value.langue
+  delete config.value.regionale
+}, { immediate: true })
 delete config.value.regionale
 const { code: codeRegional, langue: regionale } = useLangueRegionale()
 const LANGUES = computed(() => languesDisponibles(codeRegional.value))

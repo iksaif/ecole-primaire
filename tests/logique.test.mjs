@@ -109,6 +109,8 @@ console.log('Affiches : domaines et niveaux du programme (src/data/programme.js)
       return !!k && (temps ?? ['present', 'imparfait', 'futur', 'passe-compose']).every(x => k.temps.includes(x))
         && (groupeDe(verbe) ? k.groupes.includes(groupeDe(verbe)) : k.irreguliers.includes(verbe))
     }
+    // « ce que je sais faire » : une phrase par compétence du niveau (vérifié plus bas, sur savoirs.js)
+    if (affiche === 'resume') return t.config.niveau === c.niveau
     if (affiche === 'formes') {
       const lot = LOTS_FORMES[v]
       return lot.liste.every(id => c[lot.type].includes(ID_PROGRAMME[id] ?? id))
@@ -128,6 +130,19 @@ console.log('Affiches : domaines et niveaux du programme (src/data/programme.js)
     return contraintes(t).filter(c => (c.nombresEnLettresMax ?? c.nombreMax) < max).map(c => `${t.slug} (${c.niveau})`)
   })
   verifier(!nombresHors.length, `affiches des nombres : nombres en lettres permis à chaque niveau${nombresHors.length ? ` (${nombresHors.slice(0, 4).join(', ')})` : ''}`)
+}
+
+console.log('Ce que je sais faire (src/data/savoirs.js)')
+{
+  const { COMPETENCES } = await import('../src/data/programme.js')
+  const { SAVOIRS } = await import('../src/data/savoirs.js')
+  const ids = new Set(COMPETENCES.map(k => k.id))
+  const inconnues = Object.keys(SAVOIRS).filter(id => !ids.has(id))
+  verifier(!inconnues.length, `chaque phrase correspond à une compétence de programme.js${inconnues.length ? ` (${inconnues.join(', ')})` : ''}`)
+  const manquantes = COMPETENCES.flatMap(k => k.niveaux.filter(n => !SAVOIRS[k.id]?.[n]).map(n => `${k.id} ${n}`))
+  verifier(!manquantes.length, `une phrase par compétence et par niveau où elle est travaillée${manquantes.length ? ` (manque : ${manquantes.slice(0, 5).join(', ')})` : ''}`)
+  const horsNiveau = COMPETENCES.flatMap(k => Object.keys(SAVOIRS[k.id] ?? {}).filter(n => !k.niveaux.includes(n)).map(n => `${k.id} ${n}`))
+  verifier(!horsNiveau.length, `aucune phrase à un niveau où la compétence n'est pas au programme${horsNiveau.length ? ` (${horsNiveau.slice(0, 5).join(', ')})` : ''}`)
 }
 
 console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')

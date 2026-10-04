@@ -3,13 +3,20 @@
 // Données sans dépendance au navigateur : importées par les dessins, par l'app et par les tests node.
 // Les niveaux suivent src/data/programme.js (tests/logique.test.mjs le vérifie).
 import { VERBES, TEMPS_CM2 } from '../../data/conjugaison.js'
+import { COMPETENCES, DOMAINES, NIVEAUX } from '../../data/programme.js'
+import { savoirsDu } from '../../data/savoirs.js'
 
 // Domaine du programme (id de DOMAINES, src/data/programme.js) de chaque famille d'affiches
 export const DOMAINES_AFFICHES = {
   alphabet: 'lecture', nombres: 'nombres-calcul', tables: 'nombres-calcul',
   droite: 'nombres-calcul', numeration: 'nombres-calcul', horloge: 'grandeurs-mesures', monnaie: 'grandeurs-mesures',
   conjugaison: 'grammaire', formes: 'espace-geometrie',
+  // resume : un domaine par affiche (config.domaine)
 }
+
+// Affiches « Ce que je sais faire » : les couples domaine × niveau qui ont au moins deux phrases (savoirs.js)
+export const RESUMES = DOMAINES.flatMap(d => NIVEAUX.map(niveau => ({ domaine: d.id, niveau, n: savoirsDu(COMPETENCES.filter(k => k.domaine === d.id), niveau).length })))
+  .filter(r => r.n >= 2)
 
 // Temps d'une affiche de conjugaison : les 4 temps du cycle 2 (null), le présent seul (CP), ou ceux du CM2
 export const TEMPS_PRESENT = ['present']
@@ -55,6 +62,7 @@ export const AFFICHES_PROGRAMME = [
   { id: 'monnaie', label: 'Pièces et billets', orientation: 'landscape', variantes: [
     { id: 'euros', label: 'Euros', niveaux: 'CP' }, { id: 'centimes', label: 'Euros et centimes', niveaux: 'CE1 · CE2' } ] },
   { id: 'conjugaison', label: 'Conjugaison', orientation: 'portrait', verbes: true },
+  { id: 'resume', label: 'Ce que je sais faire', orientation: 'portrait', domaines: true },
   { id: 'formes', label: 'Figures et solides', orientation: 'portrait', variantes: [
     { id: 'plan-cycle2', label: 'Formes planes', niveaux: 'GS · CP · CE1' }, { id: 'plan-cm1', label: 'Figures planes', niveaux: 'CM1' },
     { id: 'plan-cycle3', label: 'Figures planes (+ trapèze, polygones)', niveaux: 'CM2' },
@@ -70,11 +78,11 @@ export const niveauxConjugaison = (verbe, temps) => ({ present: 'CP · CE1', cm2
 // ── Affiches toutes prêtes (PDF générés au build) ────────────────────────────
 const cm = n => (n >= 1000 ? n.toLocaleString('fr-FR') : String(n))
 // le lien « Personnaliser » ouvre la page de réglage sur cette affiche (et pas sur une autre)
-const lienAffiche = c => `/imprimer/affiches?affiche=${c.affiche}${c.variante ? `&variante=${c.variante}` : ''}${c.verbe ? `&verbe=${c.verbe}` : ''}${c.temps ? `&temps=${choixTemps(c.temps)}` : ''}`
+const lienAffiche = c => `/imprimer/affiches?affiche=${c.affiche}${c.variante ? `&variante=${c.variante}` : ''}${c.verbe ? `&verbe=${c.verbe}` : ''}${c.temps ? `&temps=${choixTemps(c.temps)}` : ''}${c.domaine ? `&domaine=${c.domaine}&niveau=${c.niveau}` : ''}`
 const entree = (slug, court, titre, description, niveaux, config) => ({
   slug, court, titre, description, niveaux, config,
   categorie: 'affiches', type: 'affiche', lien: lienAffiche(config), langues: ['fr'],
-  domaine: DOMAINES_AFFICHES[config.affiche], genre: 'affiche',
+  domaine: config.domaine ?? DOMAINES_AFFICHES[config.affiche], genre: 'affiche',
 })
 // suffixe du slug, titre court, fin du titre, description, temps (null : les 4 temps du cycle 2)
 const CONJUGAISONS = [
@@ -111,5 +119,13 @@ export const TELECHARGEMENTS_AFFICHES = [
   entree('affiche-figures-planes-cm1', 'Figures planes CM1', 'Affiche des figures planes du CM1', 'Carré, rectangle, losange, triangle rectangle, isocèle, équilatéral et disque, avec leurs propriétés (programme du CM1).', 'CM1', { affiche: 'formes', variante: 'plan-cm1' }),
   entree('affiche-figures-planes-cycle-3', 'Figures planes CM2', 'Affiche des figures planes du cycle 3 (CM2)', 'Triangle rectangle, isocèle, équilatéral, losange, trapèze, pentagone, hexagone… avec leurs propriétés (programme du CM2).', 'CM2', { affiche: 'formes', variante: 'plan-cycle3' }),
   entree('affiche-solides-ce2', 'Solides', 'Affiche des solides : cube, pavé, boule, cylindre, cône, pyramide', 'Les six solides du programme du CE1 et du CE2 avec le nombre et la nature de leurs faces, sommets et arêtes.', 'CE1 · CE2', { affiche: 'formes', variante: 'solides-ce2' }),
+  // « Ce que je sais faire » : un domaine, un niveau
+  ...RESUMES.map(({ domaine, niveau }) => {
+    const d = DOMAINES.find(x => x.id === domaine), N = niveau.toUpperCase(), en = ['ms', 'gs'].includes(niveau) ? 'en' : 'au'
+    return entree(`affiche-ce-que-je-sais-faire-${domaine}-${niveau}`, `${d.court} ${N} : je sais faire`,
+      `${d.court} ${en} ${N} : ce que je sais faire (affiche à cocher)`,
+      `Affiche à cocher : tout ce qu'un élève de ${N} apprend en « ${d.court.toLowerCase()} », d'après le programme officiel, une case par compétence.`,
+      N, { affiche: 'resume', domaine, niveau })
+  }),
   entree('affiche-solides-cm1', 'Solides et prisme', 'Affiche des solides avec le prisme droit', 'Cube, pavé, prisme droit, pyramide, cylindre, cône et boule (programme du CM1).', 'CM1 · CM2', { affiche: 'formes', variante: 'solides-cm1' }),
 ]

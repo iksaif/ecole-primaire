@@ -1,0 +1,438 @@
+// « Ce que je sais faire » : une phrase courte par compétence de src/data/programme.js et par niveau, pour les
+// affiches résumé (un domaine, un niveau). Rédigé d'après les libellés et les contraintes de programme.js, qui font
+// foi (champ numérique, unités, fractions, heure, figures, temps de conjugaison…). Données pures (lues par node).
+// Écrit le 2026-10-04, à relire par un·e enseignant·e (plan 07).
+
+export const SAVOIRS = {
+  // ── Nombres et calcul ──
+  'denombrer-6': { ms: 'Je compte jusqu’à 6 objets et j’écris les chiffres de 1 à 6.' },
+  'denombrer-10': { gs: 'Je compte jusqu’à 10 objets et j’écris les nombres de 1 à 10.' },
+  'comparer-quantites': { ms: 'Je dis où il y en a plus, moins ou autant.', gs: 'Je compare deux quantités : plus, moins ou autant.' },
+  'composer-decomposer': { ms: 'Je sais que trois, c’est deux et encore un.', gs: 'Je décompose les nombres jusqu’à 10 : 7, c’est 5 et 2.' },
+  'bande-numerique': { ms: 'Je range les nombres jusqu’à 6 sur la bande numérique.', gs: 'Je range les nombres jusqu’à 10 sur la bande numérique.' },
+  'problemes-maternelle': { ms: 'Je résous de petits problèmes : ajouter, retirer, partager.', gs: 'Je résous de petits problèmes : réunir, ajouter, retirer, partager.' },
+  'numeration-100': { cp: 'Je lis, j’écris et je décompose les nombres jusqu’à 100 (dizaines et unités).' },
+  'numeration-1000': { ce1: 'Je lis, j’écris et je décompose les nombres jusqu’à 1 000 (centaines, dizaines, unités).' },
+  'numeration-10000': { ce2: 'Je lis, j’écris et je décompose les nombres jusqu’à 10 000.' },
+  'numeration-6-chiffres': { cm1: 'Je lis et j’écris les grands nombres jusqu’à 999 999 (classe des milliers).' },
+  'numeration-9-chiffres': { cm2: 'Je lis et j’écris les grands nombres jusqu’à 999 999 999 (classe des millions).' },
+  'nombres-en-lettres': { cp: 'J’écris les nombres en lettres jusqu’à 50.', ce1: 'J’écris les nombres en lettres jusqu’à 1 000.', ce2: 'J’écris les nombres en lettres jusqu’à 10 000.' },
+  'comparer-ranger': {
+    cp: 'Je compare et je range les nombres jusqu’à 100 avec <, > et =.',
+    ce1: 'Je compare, j’encadre et je range les nombres jusqu’à 1 000.',
+    ce2: 'Je compare, j’encadre et je range les nombres jusqu’à 10 000.',
+    cm1: 'Je compare et je range les grands nombres et les décimaux.',
+    cm2: 'Je compare et je range les grands nombres et les décimaux.',
+  },
+  'droite-graduee': {
+    cp: 'Je place les nombres jusqu’à 100 sur une droite graduée.',
+    ce1: 'Je place les nombres jusqu’à 1 000 sur une droite graduée.',
+    ce2: 'Je place les nombres jusqu’à 10 000 sur une droite graduée.',
+    cm1: 'Je place des nombres entiers, des fractions et des décimaux sur une droite graduée.',
+    cm2: 'Je place des nombres entiers, des fractions et des décimaux sur une droite graduée.',
+  },
+  'ordinaux': { cp: 'Je dis le rang dans une file : premier, deuxième, troisième…', ce1: 'J’utilise les nombres ordinaux : premier, deuxième, dixième…' },
+  'suites-nombres': {
+    ce1: 'Je trouve la règle d’une suite de nombres et je la continue.',
+    ce2: 'Je trouve la règle d’une suite de nombres et je la continue.',
+    cm1: 'Je trouve la règle d’une suite de nombres ou de motifs et je la continue.',
+    cm2: 'Je trouve la règle d’une suite de nombres ou de motifs et je la continue.',
+  },
+  'parite-multiples': {
+    ce1: 'Je reconnais les nombres pairs et impairs.',
+    ce2: 'Je reconnais les nombres pairs et impairs, et les multiples de 2, 5 et 10.',
+    cm1: 'Je reconnais les multiples d’un nombre.',
+    cm2: 'Je reconnais les multiples d’un nombre.',
+  },
+  'criteres-divisibilite': { cm1: 'Je reconnais les multiples de 2, de 5 et de 10.', cm2: 'Je reconnais les multiples de 2, de 5 et de 10.' },
+  'diviseurs': { cm2: 'Je trouve les diviseurs d’un nombre jusqu’à 100.' },
+  'fractions-unitaires': {
+    ce1: 'Je connais la moitié, le demi, le quart ; je lis et je dessine 1/2, 1/3, 1/4…',
+    ce2: 'Je lis, j’écris et je dessine 1/2, 1/3, 1/4, 1/5, 1/10…',
+    cm1: 'Je lis, j’écris et je dessine les fractions unitaires.',
+    cm2: 'Je lis, j’écris et je dessine les fractions unitaires.',
+  },
+  'fractions-inferieures-1': {
+    ce1: 'Je lis et je dessine des fractions comme 2/3 ou 3/4.',
+    ce2: 'Je lis et j’écris des fractions jusqu’à 1 (dénominateur jusqu’à 12).',
+    cm1: 'Je lis et j’écris des fractions (dénominateur jusqu’à 20).',
+    cm2: 'Je lis et j’écris des fractions (dénominateur jusqu’à 60).',
+  },
+  'fractions-comparer': {
+    ce1: 'Je compare deux fractions avec un dessin.',
+    ce2: 'Je compare deux fractions.',
+    cm1: 'Je compare et je range des fractions.',
+    cm2: 'Je compare et je range des fractions.',
+  },
+  'fractions-additionner': {
+    ce1: 'J’ajoute des fractions de même dénominateur avec un dessin (1/4 + 1/4).',
+    ce2: 'J’ajoute et je retire des fractions de même dénominateur.',
+    cm1: 'J’ajoute et je retire des fractions de même dénominateur.',
+    cm2: 'J’ajoute et je retire des fractions.',
+  },
+  'fractions-egales': { ce2: 'Je trouve des fractions égales : 1/2 = 2/4.', cm1: 'Je trouve des fractions égales : 3/4 = 6/8.', cm2: 'Je trouve des fractions égales et je simplifie.' },
+  'fractions-mesure': {
+    ce2: 'Je mesure avec une bande graduée en quarts.',
+    cm1: 'Je mesure avec une bande graduée en quarts ou en dixièmes.',
+    cm2: 'Je mesure avec une bande graduée en dixièmes ou en centièmes.',
+  },
+  'fractions-superieures-1': { cm1: 'Je sais que 7/4 = 1 + 3/4 et je le place sur une droite.', cm2: 'J’écris une fraction plus grande que 1 comme un entier plus une fraction.' },
+  'fraction-quantite': { cm1: 'Je calcule un tiers ou un quart d’une quantité.', cm2: 'Je calcule une fraction d’une quantité : deux tiers de 12 €.' },
+  'decimaux': { cm1: 'Je lis et j’écris les nombres décimaux (dixièmes, centièmes).', cm2: 'Je lis et j’écris les nombres décimaux (jusqu’aux millièmes).' },
+  'tables-addition': {
+    cp: 'Je connais les tables d’addition, dans les deux sens.',
+    ce1: 'Je connais par cœur les tables d’addition.',
+    ce2: 'Je connais par cœur les tables d’addition.',
+  },
+  'tables-multiplication': {
+    ce1: 'J’apprends les tables de multiplication.',
+    ce2: 'Je connais les tables de multiplication.',
+    cm1: 'Je connais par cœur toutes les tables de multiplication, dans les deux sens.',
+    cm2: 'Je connais par cœur toutes les tables de multiplication, dans les deux sens.',
+  },
+  'doubles-moities': {
+    cp: 'Je connais les doubles jusqu’à 10 et les moitiés des nombres pairs jusqu’à 20.',
+    ce1: 'Je connais les doubles et les moitiés : 15, 25, 50, 100…',
+    ce2: 'Je connais les doubles et les moitiés : 75, 150, 500…',
+    cm1: 'Je calcule vite les doubles et les moitiés.',
+    cm2: 'Je calcule vite les doubles, les moitiés, les quarts.',
+  },
+  'complement-dizaine': {
+    cp: 'Je trouve les compléments à 10 : 7 + 3 = 10.',
+    ce1: 'Je trouve le complément à la dizaine et à 100 : 74 + 6 = 80.',
+    ce2: 'Je trouve le complément à la dizaine, à la centaine et à 1 000.',
+    cm1: 'Je trouve vite le complément à la dizaine, à la centaine, à 1 000.',
+    cm2: 'Je trouve vite le complément à l’unité, à la dizaine, à la centaine.',
+  },
+  'ajouter-dizaines': {
+    cp: 'J’ajoute ou je retire 1, 2, 10.',
+    ce1: 'J’ajoute ou je retire des dizaines : 45 + 30.',
+    ce2: 'J’ajoute ou je retire des dizaines et des centaines.',
+    cm1: 'J’ajoute ou je retire des dizaines, des centaines, des milliers.',
+    cm2: 'J’ajoute ou je retire des dizaines, des centaines, des milliers.',
+  },
+  'ajouter-9': {
+    cp: 'J’ajoute 9 en ajoutant 10 puis en retirant 1.',
+    ce1: 'J’ajoute ou je retire 9 et 11 en passant par la dizaine.',
+    ce2: 'J’ajoute ou je retire 9, 19, 29… en passant par la dizaine.',
+    cm1: 'J’ajoute ou je retire 9, 99, 11, 101 en passant par la dizaine ou la centaine.',
+    cm2: 'J’ajoute ou je retire 9, 99, 11, 101 en passant par la dizaine ou la centaine.',
+  },
+  'multiplier-10-100': {
+    ce1: 'Je multiplie par 10.',
+    ce2: 'Je multiplie par 10 et par 100.',
+    cm1: 'Je multiplie par 10, 100, 1 000.',
+    cm2: 'Je multiplie et je divise par 10, 100, 1 000, aussi avec les décimaux.',
+  },
+  'addition-posee': {
+    cp: 'Je pose et je calcule une addition en colonnes.',
+    ce1: 'Je pose une addition avec des retenues.',
+    ce2: 'Je pose une addition de grands nombres.',
+    cm1: 'Je pose une addition de grands nombres.',
+    cm2: 'Je pose une addition de grands nombres.',
+  },
+  'soustraction-posee': {
+    ce1: 'Je pose et je calcule une soustraction en colonnes.',
+    ce2: 'Je pose une soustraction avec des retenues.',
+    cm1: 'Je pose une soustraction de grands nombres.',
+    cm2: 'Je pose une soustraction de grands nombres.',
+  },
+  'multiplication-posee': {
+    ce2: 'Je pose une multiplication par un nombre à un chiffre.',
+    cm1: 'Je pose une multiplication par un nombre à deux chiffres.',
+    cm2: 'Je pose une multiplication de deux grands nombres.',
+  },
+  'division-posee': { cm1: 'Je pose une division par un nombre à un chiffre.', cm2: 'Je pose une division et je trouve le quotient et le reste.' },
+  'operations-decimaux': { cm1: 'J’additionne et je soustrais des nombres décimaux en colonnes.', cm2: 'J’additionne et je soustrais des nombres décimaux en colonnes.' },
+  'sens-multiplication': {
+    cp: 'Je compte des paquets égaux : 3 paquets de 4.',
+    ce1: 'Je sais que 3 × 4, c’est 3 fois 4.',
+    ce2: 'J’utilise la multiplication pour compter plus vite.',
+    cm1: 'Je sais que 3 × 4 = 4 × 3.',
+    cm2: 'Je sais que 3 × 4 = 4 × 3.',
+  },
+  'sens-division': {
+    ce2: 'Je partage en parts égales et je cherche « combien de fois ».',
+    cm1: 'Je sais quand il faut diviser : partager, faire des groupes.',
+    cm2: 'Je sais quand il faut diviser : partager, faire des groupes.',
+  },
+  'egalites-a-trous': { cm1: 'Je trouve le nombre qui manque : 6 × … = 42.', cm2: 'Je trouve le nombre qui manque : 178 − … = 6 × 8.' },
+  'problemes-additifs': {
+    cp: 'Je résous des problèmes d’addition et de soustraction jusqu’à 30.',
+    ce1: 'Je résous des problèmes d’addition et de soustraction.',
+    ce2: 'Je résous des problèmes d’addition et de soustraction avec de grands nombres.',
+    cm1: 'Je résous des problèmes d’addition et de soustraction, aussi avec des décimaux.',
+    cm2: 'Je résous des problèmes d’addition et de soustraction, aussi avec des décimaux.',
+  },
+  'problemes-multiplicatifs': {
+    cp: 'Je résous des problèmes de groupes et de partage avec un dessin.',
+    ce1: 'Je résous des problèmes de multiplication et de partage.',
+    ce2: 'Je résous des problèmes de multiplication et de division.',
+    cm1: 'Je résous des problèmes de multiplication et de division.',
+    cm2: 'Je résous des problèmes de multiplication et de division.',
+  },
+  'problemes-etapes': {
+    cp: 'Je résous un problème en deux étapes.',
+    ce1: 'Je résous un problème en deux étapes.',
+    ce2: 'Je résous un problème en deux ou trois étapes.',
+    cm1: 'Je résous un problème en plusieurs étapes.',
+    cm2: 'Je résous un problème en plusieurs étapes.',
+  },
+
+  // ── Grandeurs et mesures ──
+  'comparer-longueurs-maternelle': { ms: 'Je range des objets du plus court au plus long.', gs: 'Je compare et je range des objets selon leur longueur.' },
+  'comparer-masses-maternelle': { ms: 'Je dis quel objet est le plus lourd.', gs: 'Je compare deux objets : plus lourd, plus léger.' },
+  'longueurs': {
+    cp: 'Je mesure avec la règle en centimètres ; je connais le mètre.',
+    ce1: 'Je mesure avec la règle ; je connais le m, le cm et le km.',
+    ce2: 'Je mesure en mm, cm, dm, m et km.',
+    cm1: 'Je connais les unités de longueur, du mm au km, et je les convertis.',
+    cm2: 'Je connais les unités de longueur, du mm au km, et je les convertis.',
+  },
+  'masses': {
+    cp: 'Je compare des masses avec une balance.',
+    ce1: 'Je pèse et je compare des masses en g et en kg.',
+    ce2: 'Je connais le g, le kg et la tonne.',
+    cm1: 'Je connais les unités de masse, du mg à la tonne.',
+    cm2: 'Je connais les unités de masse, du mg à la tonne, et je les convertis.',
+  },
+  'contenances': { ce2: 'Je mesure des contenances en L, dL et cL.', cm1: 'Je connais les unités de contenance, du mL à l’hL.', cm2: 'Je connais les unités de contenance, du mL à l’hL, et je les convertis.' },
+  'perimetre': { ce2: 'Je calcule le périmètre d’une figure en ajoutant ses côtés.', cm1: 'Je calcule le périmètre d’un polygone.', cm2: 'Je calcule le périmètre d’un carré, d’un rectangle.' },
+  'aires': { cm1: 'Je compare et je mesure des aires en cm².', cm2: 'Je mesure des aires en cm², dm² et m².' },
+  'angles': { cm1: 'Je compare des angles ; je reconnais l’angle droit.', cm2: 'Je compare des angles ; l’angle droit mesure 90°.' },
+  'monnaie-euros': {
+    cp: 'Je compte, je paie et je rends la monnaie en euros, jusqu’à 100 €.',
+    ce1: 'Je compte, je paie et je rends la monnaie en euros.',
+    ce2: 'Je compte, je paie et je rends la monnaie.',
+    cm1: 'Je calcule des prix et je rends la monnaie.',
+    cm2: 'Je calcule des prix et je rends la monnaie.',
+  },
+  'monnaie-centimes': {
+    ce1: 'Je sais que 1 € = 100 centimes et j’écris 3,50 €.',
+    ce2: 'Je compte avec les euros et les centimes : 1 € = 100 c.',
+    cm1: 'Je calcule avec des prix à virgule.',
+    cm2: 'Je calcule avec des prix à virgule.',
+  },
+  'heure-entiere': {
+    cp: 'Je lis les heures entières sur une horloge.',
+    ce1: 'Je lis les heures entières sur une horloge.',
+    ce2: 'Je lis l’heure sur une horloge et sur un écran.',
+    cm1: 'Je lis l’heure sur une horloge et sur un écran.',
+    cm2: 'Je lis l’heure sur une horloge et sur un écran.',
+  },
+  'heure-demi-quart': {
+    ce1: 'Je lis et demie, et quart, moins le quart ; je sais que 14 h, c’est 2 h de l’après-midi.',
+    ce2: 'Je lis et quart, et demie, moins le quart, le matin et l’après-midi.',
+    cm1: 'Je lis l’heure du matin et de l’après-midi.',
+    cm2: 'Je lis l’heure du matin et de l’après-midi.',
+  },
+  'heure-minutes': { ce2: 'Je lis l’heure à la minute près.', cm1: 'Je lis l’heure à la minute près.', cm2: 'Je lis l’heure à la seconde près.' },
+  'durees': {
+    ce1: 'Je calcule une durée en heures.',
+    ce2: 'Je calcule une durée en heures et minutes ; 1 h = 60 min.',
+    cm1: 'Je calcule une durée en heures et minutes.',
+    cm2: 'Je calcule une durée en heures, minutes et secondes.',
+  },
+
+  // ── Espace et géométrie ──
+  'formes-maternelle': { ms: 'Je reconnais le carré, le triangle et le disque.', gs: 'Je nomme le carré, le rectangle, le triangle et le disque.' },
+  'solides-maternelle': { ms: 'Je reconnais le cube, la boule, la pyramide et le cylindre.', gs: 'Je reconnais le cube, le pavé, la boule, le cylindre, le cône et la pyramide.' },
+  'assemblages-maternelle': { ms: 'Je reproduis un assemblage : puzzle, tour de cubes.', gs: 'Je reproduis un assemblage : puzzle, pavage, tour de cubes.' },
+  'figures-planes': {
+    cp: 'Je reconnais et je nomme le carré, le rectangle, le triangle et le disque.',
+    ce1: 'Je reconnais aussi le cercle et le triangle rectangle.',
+    ce2: 'Je décris le carré, le rectangle, le losange, le triangle rectangle et le cercle.',
+    cm1: 'Je reconnais les triangles isocèle, équilatéral, rectangle et les quadrilatères.',
+    cm2: 'Je reconnais aussi le trapèze, le pentagone et l’hexagone.',
+  },
+  'angle-droit': {
+    ce1: 'Je repère un angle droit avec l’équerre.',
+    ce2: 'Je repère et je trace un angle droit avec l’équerre.',
+    cm1: 'Je trace des droites perpendiculaires avec l’équerre.',
+    cm2: 'Je trace des droites perpendiculaires et parallèles.',
+  },
+  'tracer-figures': {
+    cp: 'Je reproduis une figure sur un quadrillage, à la règle.',
+    ce1: 'Je reproduis et je trace des figures sur un quadrillage.',
+    ce2: 'Je trace des figures à la règle et à l’équerre ; je trace un cercle au compas.',
+    cm1: 'Je construis des figures à la règle, à l’équerre et au compas.',
+    cm2: 'Je construis des figures à partir d’un programme de construction.',
+  },
+  'solides': {
+    cp: 'Je reconnais le cube, le pavé, la boule, le cylindre et le cône.',
+    ce1: 'Je décris le cube, le pavé et la pyramide : faces, sommets, arêtes.',
+    ce2: 'Je décris les solides : faces, sommets, arêtes.',
+    cm1: 'Je reconnais aussi le prisme droit.',
+    cm2: 'Je décris les solides et leurs patrons.',
+  },
+  'patrons': { ce2: 'Je reconnais un patron du cube.', cm1: 'Je construis un cube à partir de son patron.', cm2: 'Je construis un cube ou un pavé à partir de son patron.' },
+  'symetrie': {
+    ce2: 'Je trouve un axe de symétrie et je complète une figure sur quadrillage.',
+    cm1: 'Je complète une figure par symétrie sur quadrillage.',
+    cm2: 'Je construis le symétrique d’une figure.',
+  },
+  'reperage-deplacements': {
+    cp: 'Je me repère et je code un déplacement sur un quadrillage.',
+    ce1: 'Je repère une case sur un quadrillage (B3) et je code un déplacement.',
+    ce2: 'Je repère une case ou un point sur un quadrillage et je code un déplacement.',
+    cm1: 'Je me repère sur un plan et je décris un trajet.',
+    cm2: 'Je me repère sur un plan ou une carte et je décris un trajet.',
+  },
+
+  // ── Données, proportionnalité, pensée informatique ──
+  'tableaux-diagrammes': {
+    cp: 'Je lis un tableau simple.',
+    ce1: 'Je lis et je remplis un tableau.',
+    ce2: 'Je lis un tableau et un diagramme en barres.',
+    cm1: 'Je lis et je fais un tableau ou un diagramme en barres.',
+    cm2: 'Je lis et je fais un tableau ou un diagramme.',
+  },
+  'probabilites': { cm1: 'Je dis si un événement est possible, impossible ou certain.', cm2: 'Je dis si un événement est possible, impossible ou certain.' },
+  'proportionnalite': { cm1: 'Je résous un problème de proportionnalité : 3 fois plus de pains, 3 fois plus cher.', cm2: 'Je résous un problème de proportionnalité.' },
+  'programmes-calcul': { cm1: 'Je suis un programme de calcul pas à pas.', cm2: 'Je suis un programme de calcul ou de construction pas à pas.' },
+
+  // ── Maternelle : motifs, temps ──
+  'motifs-maternelle': { ms: 'Je continue un motif : rouge, bleu, rouge, bleu…', gs: 'Je reproduis et je continue un motif.' },
+  'jours-mois': { ms: 'Je connais les jours de la semaine.', gs: 'Je connais les jours, les mois et les saisons.' },
+
+  // ── Français : lecture ──
+  'syllabes-orales': { ms: 'Je frappe les syllabes d’un mot.', gs: 'Je compte et je change les syllabes d’un mot.' },
+  'nom-lettres': {
+    ms: 'Je reconnais les lettres de mon prénom.',
+    gs: 'Je connais le nom des lettres de l’alphabet.',
+    cp: 'Je connais les lettres en capitale, en script et en cursive.',
+  },
+  'son-lettres': { gs: 'Je connais le son de quelques lettres.', cp: 'Je connais le son de toutes les lettres.' },
+  'decodage': { cp: 'Je déchiffre des syllabes, des mots puis des phrases.', ce1: 'Je lis des mots nouveaux et des phrases sans me tromper.' },
+  'fluence': {
+    cp: 'Je lis à voix haute environ 30 mots en une minute.',
+    ce1: 'Je lis à voix haute environ 70 mots en une minute.',
+    ce2: 'Je lis à voix haute environ 90 mots en une minute.',
+    cm1: 'Je lis à voix haute avec fluidité et avec le ton.',
+    cm2: 'Je lis à voix haute avec fluidité et avec le ton.',
+  },
+  'comprendre-texte': {
+    cp: 'Je comprends une phrase et un petit texte que je lis.',
+    ce1: 'Je comprends un texte : qui, où, quand, quoi ?',
+    ce2: 'Je comprends un texte et je retrouve l’ordre des événements.',
+    cm1: 'Je comprends un texte et je justifie ma réponse.',
+    cm2: 'Je comprends un texte long et je justifie ma réponse.',
+  },
+
+  // ── Français : écriture ──
+  'geste-ecriture-maternelle': { ms: 'J’écris mon prénom en capitales.', gs: 'J’écris des lettres et mon prénom en cursive.' },
+  'cursive': {
+    cp: 'J’écris les lettres minuscules en cursive.',
+    ce1: 'J’écris en cursive, aussi les majuscules.',
+    ce2: 'J’écris en cursive, vite et lisiblement.',
+  },
+  'copie': {
+    cp: 'Je copie des mots et une phrase sans erreur.',
+    ce1: 'Je copie un petit texte sans erreur.',
+    ce2: 'Je copie un texte sans erreur et vite.',
+  },
+  'dictee': {
+    cp: 'J’écris des syllabes et des mots sous la dictée.',
+    ce1: 'J’écris des mots et des phrases sous la dictée.',
+    ce2: 'J’écris un petit texte sous la dictée.',
+    cm1: 'J’écris un texte sous la dictée et je le relis.',
+    cm2: 'J’écris un texte sous la dictée et je le relis.',
+  },
+
+  // ── Français : vocabulaire et orthographe ──
+  'ordre-alphabetique': {
+    cp: 'Je connais l’ordre des lettres de l’alphabet.',
+    ce1: 'Je range des mots dans l’ordre alphabétique.',
+    ce2: 'Je cherche un mot dans le dictionnaire.',
+    cm1: 'Je cherche un mot dans le dictionnaire et je choisis le bon sens.',
+    cm2: 'Je cherche un mot dans le dictionnaire et je choisis le bon sens.',
+  },
+  'synonymes-antonymes': {
+    cp: 'Je trouve le contraire d’un mot.',
+    ce1: 'Je trouve des mots de même sens et des contraires.',
+    ce2: 'Je trouve des synonymes et des contraires.',
+    cm1: 'Je choisis le synonyme qui convient dans une phrase.',
+    cm2: 'Je choisis le synonyme qui convient dans une phrase.',
+  },
+  'familles-mots': {
+    cp: 'Je trouve des mots de la même famille.',
+    ce1: 'Je trouve des mots de la même famille.',
+    ce2: 'Je reconnais les préfixes et les suffixes.',
+    cm1: 'Je forme des mots avec des préfixes et des suffixes.',
+    cm2: 'Je forme des mots avec des préfixes et des suffixes.',
+  },
+  'orthographe-lexicale': {
+    cp: 'J’écris sans erreur les mots que j’ai appris.',
+    ce1: 'J’écris sans erreur les mots fréquents et les petits mots invariables.',
+    ce2: 'J’écris sans erreur les mots invariables.',
+    cm1: 'J’écris sans erreur les mots que j’ai appris.',
+    cm2: 'J’écris sans erreur les mots que j’ai appris.',
+  },
+  'accents-lettres': {
+    cp: 'Je lis et j’écris é, è, ê.',
+    ce1: 'Je choisis entre s et ss, c et ç, g et ge.',
+    ce2: 'J’écris m devant m, b, p (jambe, ombre).',
+  },
+
+  // ── Français : grammaire et conjugaison ──
+  'phrase': {
+    cp: 'Une phrase commence par une majuscule et finit par un point.',
+    ce1: 'Je reconnais les phrases qui affirment, qui questionnent, qui s’exclament.',
+    ce2: 'Je mets une phrase à la forme négative : ne… pas.',
+    cm1: 'Je reconnais les types et les formes de phrases.',
+    cm2: 'Je distingue la phrase simple et la phrase complexe.',
+  },
+  'classes-mots': {
+    cp: 'Je reconnais un nom.',
+    ce1: 'Je reconnais le nom, le verbe, le déterminant et l’adjectif.',
+    ce2: 'Je reconnais le nom, le verbe, le déterminant, l’adjectif et le pronom.',
+    cm1: 'Je donne la nature d’un mot ; je trouve le nom principal d’un groupe nominal.',
+    cm2: 'Je donne la nature de tous les mots d’une phrase.',
+  },
+  'sujet-verbe': {
+    cp: 'Je trouve qui fait l’action dans une phrase.',
+    ce1: 'Je trouve le verbe et son sujet.',
+    ce2: 'J’accorde le verbe avec son sujet.',
+    cm1: 'J’accorde le verbe avec son sujet, même éloigné.',
+    cm2: 'J’accorde le verbe avec son sujet, même éloigné ou inversé.',
+  },
+  'accords-gn': {
+    cp: 'J’ajoute s au pluriel et e au féminin.',
+    ce1: 'J’accorde le nom et l’adjectif : un ami, des amis, une amie.',
+    ce2: 'J’accorde dans le groupe nominal, aussi avec -x et -aux.',
+    cm1: 'J’accorde les mots du groupe nominal.',
+    cm2: 'J’accorde les mots du groupe nominal.',
+  },
+  'radical-terminaison': {
+    ce1: 'Je trouve l’infinitif d’un verbe.',
+    ce2: 'Je trouve le radical et la terminaison d’un verbe.',
+    cm1: 'Je trouve le radical, la terminaison et l’infinitif d’un verbe.',
+    cm2: 'Je trouve le radical, la terminaison et l’infinitif d’un verbe.',
+  },
+  'conjugaison-present-etre-avoir': {
+    cp: 'Je conjugue être et avoir au présent.',
+    ce1: 'Je conjugue être et avoir au présent.',
+    ce2: 'Je conjugue être et avoir à tous les temps appris.',
+    cm1: 'Je conjugue être et avoir à tous les temps appris.',
+    cm2: 'Je conjugue être et avoir à tous les temps appris.',
+  },
+  'conjugaison-4-temps': {
+    ce1: 'Je conjugue être, avoir et les verbes en -er au présent, à l’imparfait, au futur et au passé composé.',
+    ce2: 'Je conjugue les verbes en -er au présent, à l’imparfait, au futur et au passé composé.',
+    cm1: 'Je conjugue au présent, à l’imparfait, au futur et au passé composé.',
+    cm2: 'Je conjugue au présent, à l’imparfait, au futur et au passé composé.',
+  },
+  'conjugaison-irreguliers': {
+    ce2: 'Je conjugue faire, aller, dire, venir, pouvoir, voir, vouloir, prendre.',
+    cm1: 'Je conjugue les verbes irréguliers fréquents.',
+    cm2: 'Je conjugue les verbes irréguliers fréquents.',
+  },
+  'conjugaison-2e-groupe': { cm1: 'Je conjugue les verbes comme finir.', cm2: 'Je conjugue les verbes comme finir.' },
+  'conjugaison-passe-simple': { cm2: 'Je conjugue au passé simple et au plus-que-parfait.' },
+  'complements': { cm1: 'Je trouve le complément du verbe et le complément de phrase.', cm2: 'Je trouve les compléments : où ? quand ? comment ?' },
+}
+
+// Phrases d'un domaine pour un niveau, dans l'ordre des compétences de programme.js
+export function savoirsDu(competences, niveau) {
+  return competences.filter(k => SAVOIRS[k.id]?.[niveau]).map(k => ({ id: k.id, texte: SAVOIRS[k.id][niveau] }))
+}

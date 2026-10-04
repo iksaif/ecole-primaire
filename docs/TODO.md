@@ -5,9 +5,9 @@
 
 ## Affiches et fiches
 
-- [ ] **Plan 09, étape 5 — affiches résumé** (`plans/09-domaines-programme.md`) : une affiche « ce qu'il faut savoir »
-      par domaine et par niveau, tirée des compétences de `programme.js` (les fiches par compétence et les bilans
-      sont faits : `fiches` dans `src/impression/exercices.js`)
+- [ ] **Relire les phrases « Ce que je sais faire »** (`src/data/savoirs.js`, ≈ 300 phrases, une par compétence et
+      par niveau) avec un·e enseignant·e ; les compétences qui n'ont qu'une phrase à un niveau n'ont pas d'affiche
+      (seuil : 2 phrases, `RESUMES` dans `affiches/catalogue.js`)
 - [ ] **Affiches en police attachée** : adapter l'horloge (textes qui se chevauchent), pièces et billets (montants qui
       débordent, équivalences coupées) et figures (textes superposés) en mesurant les textes (`largeurTexte`,
       `metriquesPolice`, `hauteurRendue` dans `affiches/cadre.js`, comme la droite, la numération et la

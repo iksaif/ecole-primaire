@@ -1,4 +1,5 @@
 // Catalogue de toutes les activités : sert aux pages d'accueil/matières et au filtre par classe.
+import { RESUMES } from '../impression/affiches/catalogue.js'
 
 export const CLASSES = [
   { id: 'ms',  label: 'MS' },
@@ -58,6 +59,14 @@ export const ACTIVITES = [
     br: { titre: 'Stummoù ha solidennoù', desc: 'Stummoù plaen, stummoù ar c\'helc\'hiad 3, solidennoù' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=conjugaison', matiere: 'imprimer', domaine: 'grammaire', genre: 'affiche', detail: true, icon: '✍️', titre: 'Affiches de conjugaison', desc: 'Être, avoir, 1er et 2e groupes, verbes irréguliers', niveaux: de('cp', 'cm2'),
     br: { titre: 'Skritelloù displegañ', desc: 'Bezañ, kaout, 1añ ha 2l strollad, verboù direizh' } }, // br: à relire
+
+  // « Ce que je sais faire » : une carte par domaine du programme qui a des affiches résumé
+  ...[...new Set(RESUMES.map(r => r.domaine))].map(domaine => ({
+    to: `/imprimer/affiches?affiche=resume&domaine=${domaine}`, matiere: 'imprimer', domaine, genre: 'affiche', detail: true, icon: '✅',
+    titre: 'Ce que je sais faire', desc: 'Une case à cocher par compétence du programme, classe par classe',
+    niveaux: RESUMES.filter(r => r.domaine === domaine).map(r => r.niveau),
+    br: { titre: 'Ar pezh a ouzon ober', desc: 'Ur boest da groaziañ evit pep barregezh eus ar programm, klas dre glas' }, // br: à relire
+  })),
 
   // ── Maths ──
   { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ms', 'gs'] },

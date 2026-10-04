@@ -38,8 +38,9 @@
 
 - [ ] **Couverture complète PS, MS, GS, CP, CE1** : plans écrits (`plans/10-couverture-ps.md` … `-ce1.md`, chacun avec ses décisions à prendre) ; à exécuter niveau par niveau
   - [ ] Ordre : presets → textes des BO → implémenter les plans **classe par classe** (recommandations des plans retenues par défaut, à noter dans chaque plan)
+    - PS : niveau PS (Compter, Comparer, consignes lues) ✓, Formes PS/MS/GS ✓, Motifs ✓, Longueurs ✓ ; reste Graphisme, Catégories, Journée, La valise, Mon prénom, Espace, Syllabes
   - [x] Rapport de couverture trop optimiste : les compétences sont déclarées par exercice (`COMPETENCES_ROUTES`), pas par classe → déclarer par classe (ou dériver des options) ; compter aussi les fiches bilan des exercices
-  - [ ] Défauts trouvés par les plans : `<` et `>` dans les fiches Ordonner et la correction de Comparer (CP) ; Formes sans niveau (rectangle en MS, formes toujours dans la même position) ; Lettres « Reconnaître » compare deux lettres identiques ; fiches d'écriture « GS » avec l'attaché majuscule ; Compter boucle sans fin si le maximum est 3 ; aucune consigne lue à voix haute en maternelle (`useTTS`)
+  - [ ] Défauts trouvés par les plans : `<` et `>` dans les fiches Ordonner (CP) — ~~correction de Comparer~~ ✓ ; ~~Formes sans niveau (rectangle en MS, formes toujours dans la même position)~~ ✓ (PS/MS/GS, mode « même forme ») ; Lettres « Reconnaître » compare deux lettres identiques ; fiches d'écriture « GS » avec l'attaché majuscule ; ~~Compter boucle sans fin si le maximum est 3~~ ✓ ; consigne lue à voix haute : Compter, Comparer, Formes ✓ (`ConsigneParlee`), reste Ordonner et Lettres
   - [ ] Données à corriger (plan CP) : ~~`fiche-ajouter-retirer-10` rangée en « multiplier par 10 »~~ ✓ ; ~~`fiche-suites-de-nombres` « CP · CE1 » monte à 190~~ ✓ (CE1) ; ~~Orthographe « Le soli___ brille »~~ ✓ ; doubles et moitiés du CP hors des valeurs du programme
   - [ ] Lecture : le mode « Lecture de textes » n'a aucune question (compréhension non couverte, CP et CE1)
 

@@ -166,8 +166,13 @@ const LISTE = [
     classes: [C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
   { id: 'lettres', route: '/maternelle/lettres', groupe: 'maternelle', titre: { fr: 'Les lettres', br: 'Al lizherennoù' },
     classes: [C('gs-cp', null)] },
+  { id: 'longueurs', route: '/maternelle/longueurs', groupe: 'maternelle', titre: { fr: 'Plus long, plus court', br: 'Hiroc’h, berroc’h' }, // br: à relire
+    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
+  { id: 'motifs', route: '/maternelle/motifs', groupe: 'maternelle', titre: { fr: 'Les motifs', br: 'Ar patromoù' }, // br: à relire
+    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
+  // ms-gs : slug publié avant les niveaux, garde le niveau par défaut (MS : disque, carré, triangle) ; puis PS et GS
   { id: 'formes', route: '/maternelle/formes', groupe: 'maternelle', titre: { fr: 'Les formes', br: 'Ar stummoù' },
-    classes: [C('ms-gs', null)] },
+    classes: [C('ps', '\\bPS\\b'), C('ms-gs', null), C('gs', '\\bGS\\b')] },
   // ── Culture générale ──
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
     classes: [C('cp-cm2', null)] },

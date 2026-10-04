@@ -4,27 +4,41 @@
 
     <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
       @commencer="demarrer" @regenerer="regenerer">
+      <!-- PS : trier (même forme) ; MS : reconnaître (montre le…) ; GS : nommer, compter les côtés -->
+      <div class="config-section">
+        <div class="config-section-title">{{ t('niveau') }}</div>
+        <div class="btn-group">
+          <button v-for="n in ['ps', 'ms', 'gs']" :key="n" class="level-btn" :class="{ active: config.niveau === n }" @click="config.niveau = n">
+            {{ t('niv_' + n) }}
+          </button>
+        </div>
+      </div>
       <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('exercice') }}</div>
         <div class="mode-cards">
-          <button class="mode-card" :class="{ active: config.mode === 'reconnaitre' }" @click="config.mode = 'reconnaitre'">
+          <button v-if="modesDispo.includes('meme')" class="mode-card" :class="{ active: config.mode === 'meme' }" @click="config.mode = 'meme'">
+            <div class="mode-icon">🧩</div>
+            <div class="mode-title">{{ t('meme') }}</div>
+            <div class="mode-desc">{{ t('memeDesc') }}</div>
+          </button>
+          <button v-if="modesDispo.includes('reconnaitre')" class="mode-card" :class="{ active: config.mode === 'reconnaitre' }" @click="config.mode = 'reconnaitre'">
             <div class="mode-icon">👁️</div>
             <div class="mode-title">{{ t('reconnaitre') }}</div>
             <div class="mode-desc">{{ t('reconnaitreDesc') }}</div>
           </button>
-          <button class="mode-card" :class="{ active: config.mode === 'compter' }" @click="config.mode = 'compter'">
+          <button v-if="modesDispo.includes('compter')" class="mode-card" :class="{ active: config.mode === 'compter' }" @click="config.mode = 'compter'">
             <div class="mode-icon">🔢</div>
             <div class="mode-title">{{ t('compter') }}</div>
             <div class="mode-desc">{{ t('combienCotes') }}</div>
           </button>
-          <button class="mode-card" :class="{ active: config.mode === 'trouver' }" @click="config.mode = 'trouver'">
+          <button v-if="modesDispo.includes('trouver')" class="mode-card" :class="{ active: config.mode === 'trouver' }" @click="config.mode = 'trouver'">
             <div class="mode-icon">🔍</div>
             <div class="mode-title">{{ t('trouver') }}</div>
             <div class="mode-desc">{{ t('trouverDesc') }}</div>
           </button>
         </div>
       </div>
-      <p v-if="mode === 'imprimer'" class="note-fiche">{{ t('noteFiche') }}</p>
+      <p v-if="mode === 'imprimer'" class="note-fiche">{{ t(config.niveau === 'ps' ? 'noteFichePS' : 'noteFiche') }}</p>
     </ConfigExercice>
 
     <template v-if="phase === 'jeu' && question">
@@ -39,9 +53,22 @@
 
       <div class="exercise-box" style="text-align:center;">
 
+        <!-- Même forme (PS) : un modèle, trois formes de tailles, couleurs et orientations différentes -->
+        <template v-if="config.mode === 'meme'">
+          <ConsigneParlee :key="idx" class="question-label" :texte="t('consigneMeme')" />
+          <div class="forme-display modele" v-html="question.svg"></div>
+          <div class="formes-grid meme">
+            <button v-for="(f, i) in question.choixMeme" :key="i"
+              class="forme-btn" :class="reponduClassMeme(i)"
+              :disabled="repondu" @click="validerMeme(i)">
+              <span v-html="f"></span>
+            </button>
+          </div>
+        </template>
+
         <!-- Reconnaître : montre la forme SVG, trouve le nom -->
         <template v-if="config.mode === 'reconnaitre'">
-          <div class="question-label">{{ t('commentSappelle') }}</div>
+          <ConsigneParlee :key="idx" class="question-label" :texte="t('commentSappelle')" />
           <div class="forme-display" v-html="question.svg"></div>
           <div class="choix-grid-formes">
             <button v-for="c in question.choixObj" :key="c.nom"
@@ -55,7 +82,7 @@
 
         <!-- Compter les côtés -->
         <template v-if="config.mode === 'compter'">
-          <div class="question-label">{{ t('combienCotes') }}</div>
+          <ConsigneParlee :key="idx" class="question-label" :texte="t('combienCotes')" />
           <div class="forme-display" v-html="question.svg"></div>
           <div class="choix-grid choix-nb">
             <button v-for="c in question.choixNb" :key="c"
@@ -66,7 +93,7 @@
 
         <!-- Trouver la forme : donne le nom, choisit le bon SVG -->
         <template v-if="config.mode === 'trouver'">
-          <div class="question-label">{{ t('montre') }} <strong>{{ nomForme(question.nom) }}</strong></div>
+          <ConsigneParlee :key="idx" class="question-label" :texte="`${t('montre')} ${nomForme(question.nom)}`" />
           <div class="formes-grid">
             <button v-for="(f, i) in question.choixFormes" :key="i"
               class="forme-btn" :class="reponduClassForme(i)"
@@ -103,6 +130,9 @@ import messagesBr from '../../i18n/br/views/maternelle/FormesView.js'
 import formesFr from '../../i18n/fr/contenu/formes.js'
 import formesBr from '../../i18n/br/contenu/formes.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
+import ConsigneParlee from '../../components/ConsigneParlee.vue'
+import { useClasse } from '../../composables/useClasse'
+import { estMaternelle } from '../../data/classes'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 
@@ -133,8 +163,24 @@ const FORMES = [
   },
 ]
 
-const config = ref(chargerReglages('formes_config', { mode: 'reconnaitre' }))
+// Niveau : celui de la barre du haut s'il est de maternelle. Formes et exercices par niveau (programme.js) :
+// PS trier sans nommer (disque, carré, triangle) ; MS reconnaître ces trois formes ; GS nommer, avec le rectangle
+const config = ref(chargerReglages('formes_config', { mode: 'reconnaitre', niveau: 'ms' }))
+const classe = useClasse()
+if (estMaternelle(classe.value)) config.value.niveau = classe.value
 watch(config, v => sauvegarder('formes_config', v), { deep: true })
+const MODES = { ps: ['meme'], ms: ['meme', 'trouver'], gs: ['reconnaitre', 'trouver', 'compter', 'meme'] }
+const modesDispo = computed(() => MODES[config.value.niveau] ?? MODES.ms)
+watch(modesDispo, m => { if (!m.includes(config.value.mode)) config.value.mode = m[0] }, { immediate: true })
+const formesDuNiveau = () => (config.value.niveau === 'gs' ? FORMES : FORMES.filter(f => f.nom !== 'rectangle'))
+
+// Une forme de taille, de couleur et d'orientation variées (on reconnaît la forme malgré le déplacement, p. 68)
+const TEINTES = ['#4a90e2', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#16a085']
+function variante(f, taille = 70 + Math.floor(Math.random() * 30)) {
+  const angle = f.nom === 'disque' ? 0 : Math.floor(Math.random() * 61) - 30
+  return f.svg.replace(/fill="[^"]*"/, `fill="${TEINTES[Math.floor(Math.random() * TEINTES.length)]}"`)
+    .replace(/width="100" height="100"/, `width="${taille}" height="${taille}" style="transform: rotate(${angle}deg)"`)
+}
 
 const phase = ref('config')
 const questions = ref([])
@@ -149,13 +195,14 @@ const reponseDonnee = ref(null)
 const question = computed(() => questions.value[idx.value])
 
 function autresFormes(exclure, n) {
-  return melanger(FORMES.filter(f => f.nom !== exclure)).slice(0, n)
+  return melanger(formesDuNiveau().filter(f => f.nom !== exclure)).slice(0, n)
 }
 
 function demarrer() {
   // 4 formes au programme : chacune deux fois, jamais deux fois de suite
   let tirage, essais = 0
-  do { tirage = melanger([...FORMES, ...FORMES]) } while (tirage.some((f, i) => f === tirage[i - 1]) && ++essais < 50)
+  const formes = formesDuNiveau()
+  do { tirage = melanger([...formes, ...formes]) } while (tirage.some((f, i) => f === tirage[i - 1]) && ++essais < 50)
   const qs = tirage.map(f => {
     const nbCotes = f.cotes
     const faussesCotes = melanger([0,1,2,3,4,5,6,7,8].filter(n => n !== nbCotes)).slice(0, 3)
@@ -170,8 +217,11 @@ function demarrer() {
       nom: x.nom,
       svgSmall: x.svg.replace(/width="100" height="100"/, 'width="60" height="60"'),
     }))
+    // même forme : la bonne (déplacée, recolorée) parmi deux autres formes du niveau
+    const memes = melanger([{ ok: true, svg: variante(f) }, ...autresFormes(f.nom, 2).map(o => ({ ok: false, svg: variante(o) }))])
     return {
       ...f,
+      choixMeme: memes.map(m => m.svg), idxMeme: memes.findIndex(m => m.ok),
       choix: choixObj.map(x => x.nom),
       choixObj,
       choixNb,
@@ -198,18 +248,47 @@ const contour = (nom, taille, angle = 0) => FORMES.find(f => f.nom === nom).svg
   .replace(/width="100" height="100"/, `width="${taille}" height="${taille}" style="transform: rotate(${angle}deg)"`)
   .replace(/fill="[^"]*" opacity="[^"]*"/, 'fill="none" stroke="#222" stroke-width="3.5" stroke-linejoin="round"')
 
+// PS : « colorie toutes les formes comme celle-ci » (un seul modèle, rien à lire) ; formes de tailles et d'angles variés
+function htmlFichePS() {
+  const noms = formesDuNiveau().map(f => f.nom)
+  const modele = noms[Math.floor(Math.random() * noms.length)]
+  const tirage = melanger([modele, modele, modele, ...Array.from({ length: 9 }, () => noms[Math.floor(Math.random() * noms.length)])])
+  const cases = tirage.map(nom => `<div class="cell">${contour(nom, 70 + Math.floor(Math.random() * 30), nom === 'disque' ? 0 : Math.floor(Math.random() * 61) - 30)}</div>`).join('')
+  const titre = t('titre')
+  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+    <meta charset="UTF-8"><title>${titre}</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
+      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
+      .consigne { font-weight: 700; font-size: 1.1rem; margin: .8rem 0 .6rem; display: flex; align-items: center; gap: 1rem; }
+      .modele { border: 3px solid #333; border-radius: 14px; padding: .4rem; display: inline-flex; }
+      .grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin: 1rem 0; }
+      .cell { height: 130px; display: flex; align-items: center; justify-content: center; }
+      .corr { font-size: 1.15rem; line-height: 2; }
+    </style></head><body>
+    <h1>${titre}</h1>
+    ${ligneNomDate(langue.value)}
+    <p class="consigne"><span class="modele">${contour(modele, 70)}</span> ${t('fConsignePS')}</p>
+    <div class="grille">${cases}</div>
+    <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
+      <div class="corr">${nomForme(modele)} : <b>${tirage.filter(n => n === modele).length}</b></div></section>
+  </body></html>`
+}
+
 function htmlFiche() {
-  // 20 formes : au moins 2 de chaque, le reste au hasard
-  const noms = COULEURS_FICHE.map(c => c.nom)
-  const tirage = melanger([...noms, ...noms, ...Array.from({ length: 12 }, () => noms[Math.floor(Math.random() * noms.length)])])
+  if (config.value.niveau === 'ps') return htmlFichePS()
+  // 20 formes : au moins 2 de chaque, le reste au hasard (MS : sans le rectangle, qui arrive en GS)
+  const couleurs = COULEURS_FICHE.filter(c => formesDuNiveau().some(f => f.nom === c.nom))
+  const noms = couleurs.map(c => c.nom)
+  const tirage = melanger([...noms, ...noms, ...Array.from({ length: 20 - 2 * noms.length }, () => noms[Math.floor(Math.random() * noms.length)])])
   const cases = tirage.map(nom => {
     const taille = 62 + Math.floor(Math.random() * 30)
     const angle = nom === 'disque' ? 0 : Math.floor(Math.random() * 31) - 15
     return `<div class="cell">${contour(nom, taille, angle)}</div>`
   }).join('')
-  const legende = COULEURS_FICHE.map(c => `<div class="leg">${contour(c.nom, 46)}<span class="nom">${nomForme(c.nom)}</span>
+  const legende = couleurs.map(c => `<div class="leg">${contour(c.nom, 46)}<span class="nom">${nomForme(c.nom)}</span>
     <span class="pastille" style="background:${c.hex}"></span><span class="coul">${t(c.couleur)}</span></div>`).join('')
-  const comptes = COULEURS_FICHE.map(c => `<div class="cpt">${contour(c.nom, 40)}<span class="case"></span></div>`).join('')
+  const comptes = couleurs.map(c => `<div class="cpt">${contour(c.nom, 40)}<span class="case"></span></div>`).join('')
   const titre = t('titre')
   return `<!DOCTYPE html><html lang="${langue.value}"><head>
     <meta charset="UTF-8"><title>${titre}</title>
@@ -236,7 +315,7 @@ function htmlFiche() {
     <p class="consigne">${t('fCompte')}</p>
     <div class="comptes">${comptes}</div>
     <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
-      <div class="corr">${COULEURS_FICHE.map(c => `<div>${nomForme(c.nom)} (${t(c.couleur)}) : <b>${tirage.filter(n => n === c.nom).length}</b></div>`).join('')}</div></section>
+      <div class="corr">${couleurs.map(c => `<div>${nomForme(c.nom)} (${t(c.couleur)}) : <b>${tirage.filter(n => n === c.nom).length}</b></div>`).join('')}</div></section>
   </body></html>`
 }
 
@@ -289,6 +368,20 @@ function validerForme(i, f) {
   const ok = i === question.value.idxBonne
   if (!ok) feedbackTxt.value = t('erreurForme', { nom: nomForme(question.value.nom) })
   enregistrer(ok)
+}
+
+function validerMeme(i) {
+  if (repondu.value) return
+  reponseDonnee.value = i
+  const ok = i === question.value.idxMeme
+  if (!ok) feedbackTxt.value = t('erreurMeme')
+  enregistrer(ok)
+}
+function reponduClassMeme(i) {
+  if (!repondu.value) return ''
+  if (i === question.value.idxMeme) return 'bonne'
+  if (i === reponseDonnee.value) return 'mauvaise'
+  return ''
 }
 
 function reponduClass(c) {
@@ -383,6 +476,9 @@ h1 { color: var(--bleu); margin-bottom: 1rem; }
 
 /* Trouver la forme */
 .formes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: .5rem; }
+.formes-grid.meme { grid-template-columns: repeat(3, 1fr); }
+.formes-grid.meme .forme-btn { min-height: 7rem; display: flex; align-items: center; justify-content: center; }
+.forme-display.modele { border: 3px dashed var(--gris-brd); border-radius: 16px; display: inline-flex; padding: .5rem; margin-bottom: 1rem; }
 .forme-btn {
   border: 3px solid var(--gris-brd); border-radius: 12px;
   padding: .5rem; background: white; cursor: pointer; transition: all .15s;

@@ -3,6 +3,12 @@
 export default {
     titre: 'Les formes',
     exercice: 'Exercice',
+    niv_ps: '🐣 PS — trier', niv_ms: '🌱 MS — reconnaître', niv_gs: '🌳 GS — nommer',
+    meme: 'La même forme', memeDesc: 'Trouve la forme pareille au modèle',
+    consigneMeme: 'Touche la forme qui est pareille.',
+    erreurMeme: '❌ Regarde bien la forme du modèle',
+    noteFichePS: 'Fiche : colorie toutes les formes pareilles au modèle.',
+    fConsignePS: 'Colorie toutes les formes comme celle-ci.',
     reconnaitre: 'Reconnaître', reconnaitreDesc: 'Trouve le nom de la forme',
     compter: 'Compter les côtés', combienCotes: 'Combien de côtés a cette forme ?',
     trouver: 'Trouver la forme', trouverDesc: "Montre la forme qu'on te demande",

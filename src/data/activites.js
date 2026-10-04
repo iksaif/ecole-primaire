@@ -74,7 +74,9 @@ export const ACTIVITES = [
   { fiche: true, to: '/maths/heure',         matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '🕐', titre: "Lire l'heure", desc: 'Heures, demies, quarts sur une horloge', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Reconnaître le disque, le carré, le triangle et le rectangle', niveaux: ['ms', 'gs'] },
+  { fiche: true, to: '/maternelle/longueurs', matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Plus long, plus court', desc: 'Comparer et ranger des crayons', niveaux: ['ps', 'ms', 'gs'] },
+  { fiche: true, to: '/maternelle/motifs',   matiere: 'maths', domaine: 'motifs', rubrique: 'Motifs', icon: '🔁', titre: 'Les motifs', desc: 'Continuer un collier qui se répète', niveaux: ['ps', 'ms', 'gs'] },
+  { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Trier, reconnaître puis nommer le disque, le carré, le triangle et le rectangle', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maths/geometrie',     matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '📐', titre: 'Géométrie', desc: 'Symétrie, quadrillage, figures et solides', niveaux: ['ce1', 'ce2'] },
 
   // ── Français ──
@@ -110,7 +112,9 @@ const BR = {
   '/maths/heure':         ['Lenn an eur', 'Eurioù, hanterioù ha kardoù war un horolaj'],
   '/maths/monnaie':       ['Ar moneiz', 'Kontañ ha paeañ gant euroioù'],
   '/maths/mesures':       ['Muzulioù', "Hirderioù, pouezioù, endalc'hioù, deiziadur"],
-  '/maternelle/formes':   ['Ar stummoù', "Anaout ar bladenn, ar c'harrez, an tric'horn hag an hirgarrez"], // br: à relire
+  '/maternelle/longueurs': ['Hiroc’h, berroc’h', 'Keñveriañ ha renkañ kreionoù'], // br: à relire
+  '/maternelle/motifs':   ['Ar patromoù', "Kenderc'hel ur c'holier a en em adlavar"], // br: à relire
+  '/maternelle/formes':   ['Ar stummoù', "Rummañ, anavezout hag envel ar bladenn, ar c'harrez, an tric'horn hag an hirgarrez"], // br: à relire
   '/maths/geometrie':     ['Mentoniezh', 'Kemparzhded, karrezennoù, stummoù ha solidennoù'],
   '/maternelle/lettres':   ['Al lizherennoù', 'Anaout ha liammañ ar pennlizherennoù hag al lizherennoù bihan'],
   '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],
@@ -135,6 +139,8 @@ const COMPETENCES_ROUTES = {
   '/maternelle/comparer': ['comparer-quantites'],
   '/maternelle/ordonner': ['bande-numerique'],
   '/maternelle/formes': ['formes-maternelle'],
+  '/maternelle/motifs': ['motifs-maternelle'],
+  '/maternelle/longueurs': ['comparer-longueurs-maternelle'],
   '/maternelle/lettres': ['nom-lettres'],
   '/maths/numeration': {
     ce1: ['numeration-1000', 'nombres-en-lettres', 'comparer-ranger', 'droite-graduee', 'suites-nombres'],

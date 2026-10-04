@@ -3,6 +3,12 @@
 export default {
     titre: 'Ar stummoù',
     exercice: 'Poelladenn',
+    niv_ps: '🐣 PS — rummañ', niv_ms: '🌱 MS — anavezout', niv_gs: '🌳 GS — envel', // br: à relire
+    meme: 'An hevelep stumm', memeDesc: 'Kav ar stumm heñvel ouzh ar patrom', // br: à relire
+    consigneMeme: "Stok ouzh ar stumm a zo heñvel.", // br: à relire
+    erreurMeme: '❌ Sell mat ouzh stumm ar patrom', // br: à relire
+    noteFichePS: "Fichenn : liv an holl stummoù heñvel ouzh ar patrom.", // br: à relire
+    fConsignePS: 'Liv an holl stummoù evel hemañ.', // br: à relire
     reconnaitre: 'Anaout', reconnaitreDesc: 'Kav anv ar stumm',
     compter: "Kontañ ar c'hostezioù", combienCotes: 'Pet kostez en deus ar stumm-mañ ?', // br: à relire
     trouver: 'Kavout ar stumm', trouverDesc: 'Diskouez ar stumm a vez goulennet',

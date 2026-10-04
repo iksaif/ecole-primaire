@@ -48,7 +48,7 @@ export const nbEchecs = () => echecs
 
 export const ROUTES = ['/', '/maths', '/francais', '/lecture', '/autres', '/imprimer', '/imprimer/ecriture', '/imprimer/alphabet',
   '/imprimer/nombres', '/imprimer/affiches', '/programme', '/imprimer/calcul', '/maternelle', '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner',
-  '/maternelle/lettres', '/maternelle/formes', '/maths/numeration', '/maths/calcul-mental', '/maths/calcul-pose', '/maths/tables',
+  '/maternelle/lettres', '/maternelle/formes', '/maternelle/motifs', '/maternelle/longueurs', '/maths/numeration', '/maths/calcul-mental', '/maths/calcul-pose', '/maths/tables',
   '/maths/fractions', '/maths/problemes', '/maths/heure', '/maths/monnaie', '/maths/mesures', '/maths/geometrie',
   '/francais/dictee', '/francais/orthographe', '/francais/grammaire', '/francais/conjugaison', '/francais/vocabulaire',
   '/about', '/parametres', '/mentions-legales']
@@ -56,4 +56,4 @@ export const ROUTES = ['/', '/maths', '/francais', '/lecture', '/autres', '/impr
 export const EXERCICES = ['/maths/calcul-mental', '/maths/calcul-pose', '/maths/tables', '/maths/numeration', '/maths/problemes',
   '/maths/fractions', '/maths/heure', '/maths/monnaie', '/maths/mesures', '/maths/geometrie', '/francais/grammaire',
   '/francais/vocabulaire', '/francais/conjugaison', '/francais/dictee', '/francais/orthographe', '/lecture', '/autres',
-  '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner', '/maternelle/lettres', '/maternelle/formes']
+  '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner', '/maternelle/lettres', '/maternelle/formes', '/maternelle/motifs', '/maternelle/longueurs']

@@ -171,6 +171,17 @@ console.log('Couverture : une compétence n\'est déclarée qu\'aux classes où 
   verifier(!fautesFiches.length, `fiches toutes prêtes : chaque compétence au programme d'une de leurs classes${fautesFiches.length ? ` (${fautesFiches.slice(0, 4).join(', ')})` : ''}`)
 }
 
+console.log('Motifs (src/utils/motifs.js)')
+{
+  const { question, suite, periode, TYPES_DU_NIVEAU } = await import('../src/utils/motifs.js')
+  verifier(suite('evolutif', 12).join('') === '010011000111' && suite('AAB', 6).join('') === '001001', 'suites : AAB et motif évolutif (A B AA BB AAA BBB)')
+  const tirages = n => Array.from({ length: 200 }, () => question(n, Math.random() < 0.5 ? 'apres' : 'trou'))
+  verifier(tirages('ps').every(q => q.type === 'AB'), 'PS : seulement l\'alternance AB')
+  verifier(tirages('ms').every(q => q.type !== 'evolutif' && periode(q.type) <= 3), 'MS : motifs répétitifs de période 3 au plus, jamais évolutifs')
+  verifier(['ps', 'ms', 'gs'].every(n => tirages(n).every(q => q.attendu === suite(q.type, q.place + 1)[q.place])), 'l\'élément attendu est bien celui qui suit (ou qui manque)')
+  verifier(TYPES_DU_NIVEAU.gs.includes('evolutif'), 'GS : motifs évolutifs')
+}
+
 console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')
 {
   const { DOMAINES } = await import('../src/data/programme.js')

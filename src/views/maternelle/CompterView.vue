@@ -44,7 +44,7 @@
 
       <div class="mat-box">
         <!-- Objets à compter -->
-        <ConsigneParlee class="consigne" :texte="t('combien', { nom: C.t(questions[idx].objet) })" />
+        <ConsigneParlee :key="idx" class="consigne" :texte="t('combien', { nom: C.t(questions[idx].objet) })" />
         <div class="objets-grille">
           <span v-for="i in questions[idx].nb" :key="i" class="objet" :class="animClass">
             {{ questions[idx].emoji }}

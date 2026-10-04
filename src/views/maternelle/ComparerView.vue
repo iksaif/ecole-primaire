@@ -36,7 +36,7 @@
       </div>
 
       <div class="mat-box">
-        <ConsigneParlee class="consigne" :texte="t(ps ? 'consignePS' : 'consigne')" />
+        <ConsigneParlee :key="idx" class="consigne" :texte="t(ps ? 'consignePS' : 'consigne')" />
 
         <div class="groupes">
           <!-- Groupe gauche -->

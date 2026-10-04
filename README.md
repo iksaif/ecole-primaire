@@ -1,6 +1,32 @@
-# École Primaire / Skoolik
+<p align="center">
+  <img src="public/favicon.svg" width="96" alt="">
+</p>
 
-Des exercices et des fiches à imprimer pour la maternelle et l'élémentaire, de la MS au CM2.
+<h1 align="center">École Primaire · Skoolik</h1>
+
+<p align="center">
+  Des exercices et des fiches à imprimer pour l'école, de la MS au CM2, en français et en breton.<br>
+  <a href="https://ecoleprimaire.app"><b>ecoleprimaire.app</b></a> · <a href="https://skoolik.app"><b>skoolik.app</b></a>
+</p>
+
+<p align="center">
+  <a href="https://ecoleprimaire.app"><img src="https://img.shields.io/website?url=https%3A%2F%2Fecoleprimaire.app&label=ecoleprimaire.app&up_message=en%20ligne&down_message=hors%20ligne" alt="ecoleprimaire.app"></a>
+  <a href="https://skoolik.app"><img src="https://img.shields.io/website?url=https%3A%2F%2Fskoolik.app&label=skoolik.app&up_message=en%20ligne&down_message=hors%20ligne" alt="skoolik.app"></a>
+  <img src="https://img.shields.io/badge/langues-fran%C3%A7ais%20%C2%B7%20brezhoneg-0055a4" alt="Langues : français, breton">
+  <img src="https://img.shields.io/badge/classes-MS%20%E2%86%92%20CM2-f39c12" alt="Classes : MS à CM2">
+  <br>
+  <img src="https://img.shields.io/badge/cookies-0-2ea44f" alt="Aucun cookie">
+  <img src="https://img.shields.io/badge/publicit%C3%A9-aucune-2ea44f" alt="Aucune publicité">
+  <img src="https://img.shields.io/badge/compte-pas%20besoin-2ea44f" alt="Pas de compte">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code-AGPL--3.0-blue" alt="Code : AGPL-3.0"></a>
+  <a href="LICENCE-CONTENU.md"><img src="https://img.shields.io/badge/contenu-CC%20BY--SA%204.0-lightgrey" alt="Contenu : CC BY-SA 4.0"></a>
+  <br>
+  <img src="https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white" alt="Vue 3">
+  <img src="https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white" alt="Vite">
+  <a href="https://github.com/iksaif/ecole-primaire/commits/main"><img src="https://img.shields.io/github/last-commit/iksaif/ecole-primaire?label=derni%C3%A8re%20mise%20%C3%A0%20jour" alt="Dernière mise à jour"></a>
+  <a href="https://github.com/iksaif/ecole-primaire/issues"><img src="https://img.shields.io/github/issues/iksaif/ecole-primaire?label=retours" alt="Retours ouverts"></a>
+</p>
+
 On a commencé ça pour nos enfants, pour réviser à la maison, et c'est devenu un petit site :
 
 - **https://ecoleprimaire.app** — en français
@@ -10,6 +36,19 @@ Il y a des exercices à faire à l'écran (calcul mental, tables, heure, monnaie
 et des fiches à imprimer : écriture sur lignes Seyès en script et en attaché, affiches de l'alphabet,
 nombres en lettres en français et en breton, fiches de calcul avec corrigé. Chaque exercice peut aussi
 sortir en fiche papier.
+
+<table>
+  <tr>
+    <td width="33%"><a href="https://ecoleprimaire.app"><img src="docs/captures/accueil.jpg" alt="Page d'accueil"></a></td>
+    <td width="33%"><a href="https://ecoleprimaire.app/#/maths/heure?mode=imprimer"><img src="docs/captures/impression.jpg" alt="Réglages d'une fiche à imprimer"></a></td>
+    <td width="33%"><a href="https://ecoleprimaire.app/telechargements/"><img src="docs/captures/fiches.jpg" alt="Fiches PDF toutes prêtes"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Les exercices, par matière et par classe</sub></td>
+    <td align="center"><sub>Chaque exercice se fait à l'écran ou s'imprime</sub></td>
+    <td align="center"><sub>Plus de 200 fiches PDF toutes prêtes</sub></td>
+  </tr>
+</table>
 
 On n'est pas enseignants. Les exercices suivent les programmes officiels (cycles 1 à 3, programmes 2024
 pour le cycle 2), mais si une règle ou une réponse vous paraît fausse, dites-le nous.
@@ -45,7 +84,7 @@ Ce qui a demandé de la vigilance :
   Meurgorf (dictionnaire de l'Office public de la langue bretonne) et Kervarker.
 - **Le reste de l'interface en breton est une traduction automatique** qui n'a pas encore été relue par un
   brittophone. Le site le signale aux visiteurs. Les passages dont on est le moins sûr sont marqués
-  `// br: à relire` dans le code : `grep -rn "br: à relire" src`.
+  `// br: à relire` dans les catalogues ; `npm run i18n:relecture` en fait un tableau à relire.
 
 ## Contribuer
 
@@ -66,6 +105,8 @@ npm install
 npm run dev               # http://localhost:5173/ecole-primaire/
 npm run dev:skoolik       # la version bretonne
 npm run build:app         # build de l'app seule (dist/)
+npm test                  # tests (Chrome sans interface, ~2 min)
+npm run i18n              # vérifie que les traductions sont complètes
 ```
 
 ### Organisation
@@ -75,8 +116,8 @@ npm run build:app         # build de l'app seule (dist/)
   fournit son formulaire et une fonction `htmlFiche()` qui renvoie le document à imprimer.
 - `src/impression/` — les générateurs de fiches (écriture, alphabet, nombres, calcul), partagés par l'app
   et par la génération des PDF au build.
-- `src/i18n/` — traductions : `useI18n({ fr: {...}, br: {...} })` dans chaque composant, textes communs
-  dans `commun.js`.
+- `src/i18n/` — traductions : un catalogue par composant et par langue (`fr/…`, `br/…`), les règles de
+  chaque langue (`regles.js` : mutations bretonnes, ha/hag, élision, pluriels).
 - `src/data/` — catalogue des activités (niveaux, filtre par classe), langues régionales.
 - `src/utils/nombres.js` — nombres en lettres en français (orthographe rectifiée ou traditionnelle) et en breton.
 
@@ -123,3 +164,15 @@ Toutes les polices utilisées sont livrées avec le site, sous licence libre :
 - Playwrite FR Trad (écriture cursive scolaire), Andika (script, pensée pour l'apprentissage de la lecture)
   et OpenDyslexic, sous licence SIL OFL ;
 - Luciole © Laurent Bourcellier & Jonathan Perez, sous licence CC BY 4.0.
+
+## Licence
+
+- **Le code** est sous [GNU AGPL 3.0](LICENSE) (ou version ultérieure) : vous pouvez le reprendre, le
+  modifier et héberger votre propre version, à condition de publier vos modifications sous la même licence,
+  même si le site n'est utilisé qu'en ligne.
+- **Le contenu** (fiches, PDF, textes, listes de mots, traductions bretonnes) est sous
+  [CC BY-SA 4.0](LICENCE-CONTENU.md) : imprimez, photocopiez, distribuez et adaptez librement, en citant la
+  source.
+
+On a choisi ces licences pour que le site et ses améliorations restent libres et gratuits pour tout le
+monde, en particulier les traductions dans les langues régionales.

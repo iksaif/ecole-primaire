@@ -30,6 +30,9 @@
 
 - [ ] **Couverture complète PS, MS, GS, CP, CE1** : un plan par niveau (`plans/10-couverture-<niveau>.md`) à partir de `npm run couverture` ; la PS n'existe pas encore dans `programme.js` ni dans le site
 
+- [ ] Textes des programmes officiels (BO cycle 1, 2, 3) dans le dépôt, en texte / Markdown (`docs/programmes/`), pour coder et vérifier `programme.js`
+- [ ] Liens vers les générateurs réglés sur la fiche exacte (`?preset=<slug>` pour nombres, alphabet, écriture, calcul) : page `/programme` et bouton « Personnaliser » des pages de téléchargement
+- [x] Lien plus visible *vers* la page `/programme` : accueil (sous le titre) et haut des pages Maths et Français (en plus du pied de page, des domaines de « À imprimer » et de « À propos »)
 - [x] Page `/programme` : les liens mènent aux générateurs (affiches, fiches), pas aux pages de téléchargement
 - [x] Page `/programme` : deux sortes seulement — 🎯 exercice (s'imprime aussi ; avec les générateurs de fiches) et 📄 affiche ; pas les fiches toutes prêtes (elles restent dans `npm run couverture`)
 - [x] Page `/programme`, tableau : au clic sur une case, montrer clairement où on arrive (mise en évidence de la compétence)

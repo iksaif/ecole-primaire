@@ -35,6 +35,39 @@ console.log('Visionneuse de pages')
   await ctx.close()
 }
 
+console.log('Liens : une affiche ne mène jamais à un exercice')
+{
+  const ctx = await contexte(nav)
+  const p = await ctx.newPage()
+  const erreurs = surveiller(p)
+  await p.goto(app('/imprimer')); await p.waitForTimeout(500)
+  const hrefs = i => p.locator('.container > .card-grid').nth(i).locator('a.card').evaluateAll(a => a.map(x => x.getAttribute('href')))
+  const [affiches, fiches] = [await hrefs(0), await hrefs(1)]
+  verifier(affiches.length >= 4 && affiches.every(h => !/mode=fiche|\/ecriture/.test(h)), `rubrique « affiches » : ${affiches.length} liens, aucun vers une fiche`)
+  verifier(fiches.length >= 2 && fiches.every(h => /mode=fiche|\/ecriture/.test(h)), `rubrique « fiches » : ${fiches.length} liens, aucun vers une affiche`)
+  const actifs = async () => (await p.locator('.level-btn.active').allInnerTexts()).join(' | ')
+  // le mode demandé par le lien l'emporte sur le dernier réglage enregistré (même composant, navigation seulement)
+  await p.goto(app('/imprimer/calcul?mode=fiche')); await p.waitForTimeout(500)
+  const modeFiche = await actifs()
+  await p.goto(app('/imprimer/calcul?mode=affiche')); await p.waitForTimeout(500)
+  const modeAffiche = await actifs()
+  verifier(/Fiche d'exercices/.test(modeFiche) && /Affiche des tables/.test(modeAffiche), `calcul : ?mode=fiche → fiche, ?mode=affiche → affiche (${modeAffiche.split(' | ')[0]})`)
+  await p.goto(app('/imprimer/nombres?mise=fiche')); await p.waitForTimeout(400)
+  const nFiche = await actifs()
+  await p.goto(app('/imprimer/nombres?mise=affiches')); await p.waitForTimeout(400)
+  verifier(nFiche !== (await actifs()), 'nombres : ?mise= change la mise en page')
+  await p.goto(app('/imprimer/affiches?affiche=conjugaison&verbe=aller')); await p.waitForTimeout(500)
+  const aff = await actifs()
+  verifier(/Conjugaison/.test(aff) && /aller/.test(aff), `affiches du programme : le lien ouvre la bonne affiche (${aff})`)
+  // pages de téléchargement : « Personnaliser » garde le genre
+  const perso = async slug => { await p.goto(`${URL_SITE}telechargements/${slug}/`); return p.locator('a.btn-perso').first().getAttribute('href') }
+  verifier(/mode=affiche/.test(await perso('affiche-tables-de-multiplication-a4')), 'page d\'une affiche de tables → Personnaliser ouvre le mode affiche')
+  verifier(/mode=fiche/.test(await perso('fiche-table-de-multiplication-7')), 'page d\'une fiche de calcul → Personnaliser ouvre le mode fiche')
+  verifier(/affiche=conjugaison&verbe=aller/.test(await perso('affiche-conjugaison-aller')), 'page d\'une affiche de conjugaison → Personnaliser ouvre ce verbe')
+  verifier(!erreurs.length, 'aucune erreur JavaScript')
+  await ctx.close()
+}
+
 console.log('Vie privée')
 {
   const ctx = await contexte(nav)

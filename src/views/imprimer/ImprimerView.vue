@@ -2,14 +2,20 @@
   <div class="container">
     <h1 class="section-heading">{{ t('titre') }}</h1>
     <p class="intro">{{ t('intro') }}</p>
-    <GrilleActivites matiere="imprimer" />
+    <h2 class="section-heading rubrique">{{ t('affiches') }}</h2>
+    <p class="intro">{{ t('affichesIntro') }}</p>
+    <GrilleActivites matiere="imprimer" genre="affiche" />
+
+    <h2 class="section-heading rubrique">{{ t('fiches') }}</h2>
+    <p class="intro">{{ t('fichesIntroGenerale') }}</p>
+    <GrilleActivites matiere="imprimer" genre="fiche" />
 
     <a :href="telechargements" class="bandeau-pdf">
       📥 <span><strong>{{ t('pdfTitre') }}</strong> — {{ t('pdfTexte') }}</span>
     </a>
 
     <template v-if="avecFiche.length">
-    <h2 class="section-heading" style="margin-top:2.5rem;">{{ t('fichesExercices') }}</h2>
+    <h2 class="section-heading rubrique">{{ t('fichesExercices') }}</h2>
     <p class="intro">{{ t('fichesIntro', { bouton: t('imprimerFiche') }) }}</p>
     <div class="card-grid">
       <RouterLink v-for="a in avecFiche" :key="a.to" :to="{ path: a.to, query: { mode: 'imprimer' } }" class="card" :class="a.matiere">
@@ -41,6 +47,7 @@ const avecFiche = computed(() => ACTIVITES.filter(a => a.fiche && (!classe.value
 
 <style scoped>
 .intro { color: #666; margin: -.5rem 0 1.25rem; }
+.rubrique { margin-top: 2.5rem; }
 .bandeau-pdf {
   display: flex; gap: .75rem; align-items: center; margin-top: 1.5rem; padding: 1rem 1.25rem;
   background: #fff8ef; border: 2px dashed #f5c27a; border-radius: var(--radius); color: var(--texte); text-decoration: none; font-size: 1.05rem;

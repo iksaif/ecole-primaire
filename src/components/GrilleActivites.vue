@@ -25,6 +25,7 @@ import { useClasse } from '../composables/useClasse'
 const props = defineProps({
   matiere: { type: String, required: true },
   parDomaine: { type: Boolean, default: false },
+  genre: { type: String, default: '' },   // 'affiche' ou 'fiche' (page « À imprimer »)
 })
 const classe = useClasse()
 const { code: regionale } = useLangueRegionale()
@@ -36,7 +37,7 @@ function description(a) {
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const groupes = computed(() => {
-  const liste = ACTIVITES.filter(a => a.matiere === props.matiere && (!classe.value || a.niveaux.includes(classe.value)))
+  const liste = ACTIVITES.filter(a => a.matiere === props.matiere && (!props.genre || a.genre === props.genre) && (!classe.value || a.niveaux.includes(classe.value)))
   if (!liste.length) return []
   if (!props.parDomaine) return [{ titre: '', activites: liste }]
   const parDomaine = new Map()

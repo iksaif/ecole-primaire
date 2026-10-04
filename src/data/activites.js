@@ -36,10 +36,13 @@ export const DOMAINES_BR = {
 // `domaine` regroupe les activités par grand domaine du programme dans les pages matières
 export const ACTIVITES = [
   // ── À imprimer ──
-  { to: '/imprimer/ecriture', matiere: 'imprimer', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
-  { to: '/imprimer/alphabet', matiere: 'imprimer', icon: '🔤', titre: "Affiche de l'alphabet", desc: 'Les 4 écritures, A4 ou A3', niveaux: de('ms', 'ce1') },
-  { to: '/imprimer/calcul',   matiere: 'imprimer', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
-  { to: '/imprimer/nombres',  matiere: 'imprimer', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en chiffres et en lettres', descRegionale: 'Unités, dizaines, centaines… en français et en breton', niveaux: de('gs', 'cm2') },
+  { to: '/imprimer/ecriture', matiere: 'imprimer', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
+  { to: '/imprimer/alphabet', matiere: 'imprimer', genre: 'affiche', icon: '🔤', titre: "Affiche de l'alphabet", desc: 'Les 4 écritures, A4 ou A3', niveaux: de('ms', 'ce1') },
+  { to: '/imprimer/calcul?mode=affiche', matiere: 'imprimer', genre: 'affiche', icon: '🧮', titre: 'Affiches des tables', desc: 'Tables de multiplication et d\'addition à afficher', niveaux: de('cp', 'cm2') },
+  { to: '/imprimer/calcul?mode=fiche', matiere: 'imprimer', genre: 'fiche', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
+  { to: '/imprimer/nombres?mise=affiches', matiere: 'imprimer', genre: 'affiche', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en chiffres et en lettres', descRegionale: 'Unités, dizaines, centaines… en français et en breton', niveaux: de('gs', 'cm2') },
+
+  { to: '/imprimer/affiches', matiere: 'imprimer', genre: 'affiche', icon: '📚', titre: 'Affiches du programme', desc: 'Droite numérique, numération, horloge, euros, conjugaison, figures et solides', niveaux: de('gs', 'cm2') },
 
   // ── Maths ──
   { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ms', 'gs'] },
@@ -101,7 +104,11 @@ const BR = {
   '/lecture': ['Lenn ha silabennoù', 'Silabennoù, adsevel gerioù ha testennoù (e galleg)'],
   '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
 }
-for (const a of ACTIVITES) if (BR[a.to]) a.br = { titre: BR[a.to][0], desc: BR[a.to][1], descRegionale: BR[a.to][2] }
+// (les deux cartes de /imprimer/calcul n'ont pas le même sens : seule la carte « fiches » reprend la traduction)
+for (const a of ACTIVITES) {
+  const cle = a.to.split('?')[0]
+  if (a.to !== '/imprimer/calcul?mode=affiche' && BR[cle]) a.br = { titre: BR[cle][0], desc: BR[cle][1], descRegionale: BR[cle][2] }
+}
 
 // « CE1 → CM2 », « MS / GS »…
 export function etiquetteNiveaux(niveaux) {

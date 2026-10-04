@@ -47,7 +47,7 @@ export function verifier(condition, message) {
 export const nbEchecs = () => echecs
 
 export const ROUTES = ['/', '/maths', '/francais', '/lecture', '/autres', '/imprimer', '/imprimer/ecriture', '/imprimer/alphabet',
-  '/imprimer/nombres', '/imprimer/calcul', '/maternelle', '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner',
+  '/imprimer/nombres', '/imprimer/affiches', '/imprimer/calcul', '/maternelle', '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner',
   '/maternelle/lettres', '/maternelle/formes', '/maths/numeration', '/maths/calcul-mental', '/maths/calcul-pose', '/maths/tables',
   '/maths/fractions', '/maths/problemes', '/maths/heure', '/maths/monnaie', '/maths/mesures', '/maths/geometrie',
   '/francais/dictee', '/francais/orthographe', '/francais/grammaire', '/francais/conjugaison', '/francais/vocabulaire',

@@ -70,12 +70,13 @@ function classer(t) {
   const affiche = /^(affiches?|table-de-pythagore|tableau-des|cartes)-/.test(t.slug)
   if (t.categorie === 'alphabet') return { usage: 'apprendre', groupe: 'alphabet' }
   if (t.categorie === 'nombres') return { usage: 'apprendre', groupe: 'nombres' }
+  if (t.categorie === 'programme') return { usage: 'apprendre', groupe: 'programme' }
   if (t.categorie === 'calcul') return affiche ? { usage: 'apprendre', groupe: 'tables' } : { usage: 'exercice', groupe: 'calcul' }
   if (t.categorie === 'ecriture') return { usage: 'exercice', groupe: 'ecriture' }
   return { usage: 'exercice', groupe: t.groupe ?? 'autres' }
 }
 const GROUPES = {
-  apprendre: ['alphabet', 'nombres', 'tables'],
+  apprendre: ['alphabet', 'nombres', 'tables', 'programme'],
   exercice: ['ecriture', 'calcul', 'maths', 'francais', 'maternelle', 'autres'],
 }
 const classesDepuisTexte = s => (s || '').toLowerCase().split(/[·→,\s]+/).filter(c => CLASSES.includes(c))
@@ -360,9 +361,8 @@ async function genererExercices(navigateur, url, doc) {
             const b = page.locator('.cadre-exercice button', { hasText: new RegExp(re) }).first()
             if (await b.count() && !(await b.getAttribute('class') ?? '').includes('active')) await b.click()
           }
-          // corrigé : le cocher s'il existe
-          const corrige = page.locator('.cadre-exercice label', { hasText: /Corrig|Reizhadenn/ }).locator('input[type=checkbox]')
-          if (await corrige.count() && !(await corrige.first().isChecked())) await corrige.first().check()
+          // prénom/date et corrigé : options communes du cadre (useOptionsFiche), par défaut l'en-tête et le
+          // corrigé sur une autre page (localStorage vidé ci-dessus)
           const iframe = page.locator('.cadre-exercice iframe').first()
           await iframe.waitFor({ timeout: 15000 })
           await page.waitForTimeout(300)
@@ -549,7 +549,7 @@ function pageFiche(t, liste) {
   <div class="actions">
     <a class="btn btn-dl" id="dl" href="${pdf}" download>${bi('pdf')}</a>
     <button class="btn btn-perso" type="button" onclick="imprimerPdf()">${bi('imprimer')}</button>
-    <a class="btn btn-perso" href="${BASE}#${t.lien}${n ? '?mode=imprimer' : ''}">${bi('personnaliser')}</a>
+    <a class="btn btn-perso" href="${BASE}#${t.lien}${n ? `${t.lien.includes('?') ? '&' : '?'}mode=imprimer` : ''}">${bi('personnaliser')}</a>
     <ul class="infos">
       ${n ? `<li>📚 ${bi('variantes', n)} — ${bi('variantesAide')}</li>` : `<li>${bi('pages', t.nbPages)} · ${echapper(t.format)}</li>`}
       <li>🎒 ${echapper(t.niveaux)}</li>

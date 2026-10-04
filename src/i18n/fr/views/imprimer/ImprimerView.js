@@ -5,6 +5,10 @@ export default {
     intro: 'Fiches et affiches prêtes à imprimer, avec aperçu. Tout fonctionne sans connexion.',
     pdfTitre: 'Fiches toutes prêtes en PDF',
     pdfTexte: 'lettres une à une, alphabet, jours, mois, nombres en breton… à télécharger directement.',
+    affiches: '🖼️ Affiches à accrocher',
+    affichesIntro: 'À afficher dans la classe ou à coller dans le cahier : on les regarde pour apprendre.',
+    fiches: '📝 Fiches à remplir',
+    fichesIntroGenerale: "Des fiches d'écriture et de calcul sur lesquelles l'élève écrit.",
     fichesExercices: "📄 Fiches d'exercices",
     fichesIntro: 'Ces exercices ont aussi un bouton « {bouton} » (avec de nouvelles questions à chaque fois) :',
   }

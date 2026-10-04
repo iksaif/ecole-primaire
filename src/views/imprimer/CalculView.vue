@@ -134,6 +134,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import ApercuImpression from '../../components/ApercuImpression.vue'
 import ChoixPolice from '../../components/ChoixPolice.vue'
 import { usePolices } from '../../composables/usePolices'
@@ -155,6 +156,9 @@ const config = ref(normaliserConfig(charger(CLE, {}) ?? {}))
 // graine fixée dès l'ouverture : l'impression correspond exactement à l'aperçu
 if (!config.value.seed) config.value.seed = graineAleatoire()
 watch(config, v => sauvegarder(CLE, v), { deep: true })
+// ?mode=affiche | fiche (liens de la page « À imprimer » et des pages de téléchargement) l'emporte sur le réglage enregistré
+const route = useRoute()
+watch(() => route.query.mode, m => { if (m === 'affiche' || m === 'fiche') config.value.mode = m }, { immediate: true })
 
 const typesChoisis = computed(() => config.value.types.map(typeParId))
 

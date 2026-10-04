@@ -881,4 +881,4 @@ export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e 
   slug: e.slug + SUFFIXE_SLUG[langue],
   langues: [langue],
   config: { ...e.config, langue },
-}))).map(e => ({ ...e, categorie: 'calcul', type: 'calcul', lien: '/imprimer/calcul' }))
+}))).map(e => ({ ...e, categorie: 'calcul', type: 'calcul', lien: `/imprimer/calcul?mode=${e.config.mode}` }))

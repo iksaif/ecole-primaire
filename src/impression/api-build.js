@@ -6,11 +6,14 @@ import { genererAlphabet } from './alphabet'
 import { genererNombres } from './nombres'
 import { TELECHARGEMENTS as FICHES, catalogueDuSite } from './catalogue'
 import { genererCalcul, TELECHARGEMENTS_CALCUL } from './calcul'
+import { genererAffichesProgramme, TELECHARGEMENTS_PROGRAMME } from './affichesProgramme'
 
-const GENERATEURS = { ecriture: genererEcriture, alphabet: genererAlphabet, nombres: genererNombres, calcul: genererCalcul }
+const GENERATEURS = { ecriture: genererEcriture, alphabet: genererAlphabet, nombres: genererNombres, calcul: genererCalcul, programme: genererAffichesProgramme }
 // Les fiches de calcul (textes en français) ne sont publiées que sur le site français
 const CALCUL = TELECHARGEMENTS_CALCUL.map(t => ({ langues: ['fr'], ...t }))
-const TELECHARGEMENTS = [...FICHES, ...CALCUL]
+// Les affiches du programme (textes en français) ne sont publiées que sur le site français
+const PROGRAMME = TELECHARGEMENTS_PROGRAMME.map(t => ({ langues: ['fr'], ...t }))
+const TELECHARGEMENTS = [...FICHES, ...CALCUL, ...PROGRAMME]
 const polices = { attache: POLICE_ATTACHE, script: POLICE_SCRIPT }
 
 export async function preparer() {
@@ -26,7 +29,8 @@ export async function utiliserPolice(type, nom, dataUrl) {
 }
 
 export function catalogue(langues = ['fr']) {
-  return [...catalogueDuSite(langues), ...CALCUL.filter(t => t.langues.some(l => langues.includes(l)))]
+  const duSite = liste => liste.filter(t => t.langues.some(l => langues.includes(l)))
+  return [...catalogueDuSite(langues), ...duSite(CALCUL), ...duSite(PROGRAMME)]
 }
 
 export function generer(slug) {

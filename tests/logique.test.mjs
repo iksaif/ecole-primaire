@@ -32,6 +32,24 @@ const slugs = TELECHARGEMENTS.map(t => t.slug)
 verifier(new Set(slugs).size === slugs.length, `${slugs.length} fiches, slugs uniques`)
 verifier(TELECHARGEMENTS.every(t => t.langues?.length), 'chaque fiche a ses langues')
 
+console.log('Affiches du programme')
+const { conjuguer, VERBES } = await import('../src/data/conjugaison.js')
+const CONJ = [
+  ['etre', 'present', 3, 'nous sommes'], ['etre', 'imparfait', 0, "j'étais"], ['etre', 'futur', 5, 'ils / elles seront'], ['etre', 'passe-simple', 2, 'il / elle / on fut'],
+  ['avoir', 'present', 0, "j'ai"], ['avoir', 'passe-compose', 1, 'tu as eu'], ['avoir', 'plus-que-parfait', 0, "j'avais eu"],
+  ['chanter', 'present', 3, 'nous chantons'], ['chanter', 'passe-simple', 5, 'ils / elles chantèrent'], ['finir', 'present', 5, 'ils / elles finissent'], ['finir', 'imparfait', 3, 'nous finissions'],
+  ['aller', 'present', 0, 'je vais'], ['aller', 'futur', 0, "j'irai"], ['aller', 'passe-compose', 3, 'nous sommes allé(e)s'], ['aller', 'plus-que-parfait', 2, 'il / elle / on était allé(e)'],
+  ['faire', 'present', 4, 'vous faites'], ['dire', 'present', 4, 'vous dites'], ['venir', 'futur', 2, 'il / elle / on viendra'], ['venir', 'passe-simple', 5, 'ils / elles vinrent'],
+  ['pouvoir', 'present', 0, 'je peux'], ['pouvoir', 'futur', 0, 'je pourrai'], ['voir', 'futur', 3, 'nous verrons'], ['voir', 'imparfait', 3, 'nous voyions'] ,
+  ['vouloir', 'present', 2, 'il / elle / on veut'], ['vouloir', 'futur', 0, 'je voudrai'], ['prendre', 'present', 5, 'ils / elles prennent'], ['prendre', 'passe-simple', 0, 'je pris'],
+]
+for (const [v, t, i, attendu] of CONJ) {
+  const obtenu = conjuguer(v, t)[i]
+  verifier(obtenu === attendu, `${v} ${t} → ${attendu}${obtenu !== attendu ? ` (obtenu : ${obtenu})` : ''}`)
+}
+verifier(Object.keys(VERBES).length === 12, 'les 12 verbes du programme (être, avoir, 1er et 2e groupes, 8 irréguliers)')
+verifier(TELECHARGEMENTS.filter(t => t.type === 'nombres').every(t => t.lien === `/imprimer/nombres?mise=${t.config.miseEnPage}`), 'nombres : le lien garde la mise en page (affiches / fiche)')
+
 console.log('Pluriels (Intl.PluralRules)')
 const { choisirPluriel } = await import('../src/i18n/pluriel.js')
 const pages = { fr: { one: '{n} page', other: '{n} pages' }, br: { one: 'bajenn', two: 'bajenn', few: 'fajenn', many: 'a bajennoù', other: 'pajenn' } }

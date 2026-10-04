@@ -33,6 +33,7 @@ const routes = [
   { path: '/imprimer/alphabet',   component: () => import('../views/imprimer/AlphabetView.vue') },
   { path: '/imprimer/calcul',     component: () => import('../views/imprimer/CalculView.vue') },
   { path: '/imprimer/nombres',    component: () => import('../views/imprimer/NombresView.vue') },
+  { path: '/imprimer/affiches',   component: () => import('../views/imprimer/AffichesView.vue') },
   { path: '/about',               component: () => import('../views/AboutView.vue') },
   { path: '/nouveautes',          component: () => import('../views/NouveautesView.vue') },
   { path: '/mentions-legales',    component: () => import('../views/MentionsLegalesView.vue') },

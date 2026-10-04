@@ -20,7 +20,7 @@ export default {
     aucune: 'Aucune fiche ne correspond. Essaie un autre mot, ou crée ta fiche avec le générateur.',
     fiche: n => `Fiche ${n}`, variantes: n => `${n} fiches différentes`,
     variantesAide: "chaque fiche a d'autres questions : imprime-les l'une après l'autre.",
-    g_alphabet: "🔤 L'alphabet", g_nombres: '🔢 Les nombres en lettres', g_tables: '🧮 Tables de calcul',
+    g_alphabet: "🔤 L'alphabet", g_nombres: '🔢 Les nombres en lettres', g_tables: '🧮 Tables de calcul', g_programme: '📚 Affiches du programme',
     g_ecriture: '✏️ Écriture', g_calcul: '🧮 Calcul', g_maths: '📐 Maths', g_francais: '📝 Français',
     g_maternelle: '🌱 Maternelle', g_autres: '🌍 Culture générale',
   // en-tête (identique à celui de l'app) et page 404

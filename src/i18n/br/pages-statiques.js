@@ -21,7 +21,7 @@ export default {
     aucune: "Fichenn ebet ne glot. Klask ur ger all, pe krou da fichenn gant ar c'hrouer.",
     fiche: n => `Fichenn ${n}`, variantes: n => `Fichennoù disheñvel : ${n}`,
     variantesAide: 'goulennoù all a zo war bep fichenn : moull anezho an eil goude egile.',
-    g_alphabet: '🔤 Al lizherenneg', g_nombres: '🔢 An niveroù e lizherennoù', g_tables: '🧮 Taolennoù jediñ',
+    g_alphabet: '🔤 Al lizherenneg', g_nombres: '🔢 An niveroù e lizherennoù', g_tables: '🧮 Taolennoù jediñ', g_programme: '📚 Skritelloù ar programm', // br: à relire
     g_ecriture: '✏️ Skrivañ', g_calcul: '🧮 Jediñ', g_maths: '📐 Matematik', g_francais: '📝 Galleg',
     g_maternelle: '🌱 Skol-vamm', g_autres: '🌍 Sevenadur hollek',
   // en-tête (identique à celui de l'app) et page 404

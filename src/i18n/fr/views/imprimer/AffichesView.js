@@ -7,6 +7,7 @@ export default {
     version: 'Version',
     verbe: 'Verbe',
     temps: 'Temps',
+    tempsPresent: 'Présent seul (CP)',
     tempsCycle: 'Présent, imparfait, futur, passé composé',
     tempsCm2: 'Passé simple, plus-que-parfait (CM2)',
     format: 'Format',

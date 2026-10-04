@@ -138,7 +138,11 @@ const LIBELLES_OPS = {
   'Doubles': 'op_doubles',
   'Moitiés': 'op_moities',
 }
-const libelleOp = op => (LIBELLES_OPS[op] ? t(LIBELLES_OPS[op]) : op)
+// (au CE1, « × 10 / × 100 » ne propose que × 10 : × 100 est au programme du CE2)
+const libelleOp = op => {
+  if (op === '× 10 / × 100' && NIVEAUX[config.value.niveau]?.x10 && !NIVEAUX[config.value.niveau].x10.x100) return '× 10'
+  return LIBELLES_OPS[op] ? t(LIBELLES_OPS[op]) : op
+}
 
 function plage(min, max, pas = 1) {
   const t = []
@@ -157,7 +161,7 @@ const NIVEAUX = {
   // CE1 : pas de division (hors programme), tables de 2, 3, 4, 5 et 10
   ce1: { add: [1,20],  sou: [1,20],
          mul: { tables: [2, 3, 4, 5, 10], max: 10 }, div: null,
-         doubles: [...plage(1, 20), 25, 30, 35, 40, 45, 50], c100: 'dizaines', x10: { x10: [1, 99], x100: [1, 9] },
+         doubles: [...plage(1, 20), 25, 30, 35, 40, 45, 50], c100: 'dizaines', x10: { x10: [1, 99], x100: null },  // × 100 : CE2
          strat: 100 },
   // CE2 : tables de 2 à 9, division = « combien de fois » dans les tables
   ce2: { add: [1,99],  sou: [1,99],
@@ -322,7 +326,7 @@ function genererQuestion() {
   }
 
   if (op === '× 10 / × 100') {
-    const fois100 = Math.random() < 0.5
+    const fois100 = !!niv.x10.x100 && Math.random() < 0.5
     const n = aleatoire(...(fois100 ? niv.x10.x100 : niv.x10.x10))
     const m = fois100 ? 100 : 10
     return { texte: `${n} × ${m} = ?`, reponse: n * m }

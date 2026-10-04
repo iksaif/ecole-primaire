@@ -15,5 +15,5 @@ export default {
     ex_comparer: '🟰 Comparer',
     ex_masse: '⚖️ Masses (balance)',
     ex_contenance: '🥛 Contenances',
-    ex_calendrier: '📅 Calendrier',
+    ex_calendrier: '📅 Calendrier (hors programme de maths)',
   }

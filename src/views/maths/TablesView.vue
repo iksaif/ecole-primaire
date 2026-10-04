@@ -12,7 +12,14 @@
         <div class="btn-group" style="flex-wrap:wrap;">
           <button class="level-btn" :class="{ active: toutesSelectionnees }"
                   @click="toggleToutes">{{ t('toutes') }}</button>
-          <button v-for="n in 12" :key="n"
+          <button v-for="n in 10" :key="n"
+                  class="level-btn" :class="{ active: config.tables.includes(n) }"
+                  @click="toggleTable(n)">× {{ n }}</button>
+        </div>
+        <!-- le programme s'arrête à 10 × 10 : les tables de 11 et 12 sont un bonus -->
+        <div class="btn-group bonus" style="flex-wrap:wrap;">
+          <span class="bonus-titre">{{ t('bonus') }} :</span>
+          <button v-for="n in [11, 12]" :key="n"
                   class="level-btn" :class="{ active: config.tables.includes(n) }"
                   @click="toggleTable(n)">× {{ n }}</button>
         </div>
@@ -47,7 +54,7 @@
         <div class="btn-group">
           <button v-for="m in [10, 12]" :key="m"
                   class="level-btn" :class="{ active: config.jusqu === m }"
-                  @click="config.jusqu = m">× {{ m }}</button>
+                  @click="config.jusqu = m">× {{ m }}{{ m > 10 ? ` (${t('bonus')})` : '' }}</button>
         </div>
       </div>
 
@@ -225,8 +232,9 @@ const inputEl = ref(null)
 let timerInterval = null
 
 // ── Config helpers
+// « Toutes » : les tables du programme, de 1 à 10 (11 et 12 en bonus)
 const toutesSelectionnees = computed(() =>
-  config.value.tables.length === 12 && [1,2,3,4,5,6,7,8,9,10,11,12].every(n => config.value.tables.includes(n))
+  [1,2,3,4,5,6,7,8,9,10].every(n => config.value.tables.includes(n))
 )
 
 function toggleTable(n) {
@@ -243,7 +251,7 @@ function toggleToutes() {
   if (toutesSelectionnees.value) {
     config.value.tables = [2, 3, 4, 5, 6, 7, 8, 9]
   } else {
-    config.value.tables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    config.value.tables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   }
 }
 
@@ -501,6 +509,8 @@ onUnmounted(() => clearInterval(timerInterval))
 </script>
 
 <style scoped>
+.bonus { margin-top: .4rem; align-items: center; }
+.bonus-titre { font-size: .85rem; color: #888; }
 .mode-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

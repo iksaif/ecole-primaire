@@ -14,5 +14,5 @@ export default {
     ex_comparer: '🟰 Keñveriañ',
     ex_masse: '⚖️ Pouezioù (balañs)',
     ex_contenance: "🥛 Endalc'hioù",
-    ex_calendrier: '📅 Deiziadur',
+    ex_calendrier: '📅 Deiziadur (er-maez eus ar programm matematik)', // br: à relire
   }

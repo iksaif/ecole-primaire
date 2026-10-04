@@ -50,22 +50,22 @@ export const ACTIVITES = [
   { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: ['ms', 'gs'] },
   { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/calcul-mental', matiere: 'maths', domaine: 'Nombres et calcul', icon: '🧮', titre: 'Calcul mental', desc: 'Additions, soustractions, doubles, moitiés, tables', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions et soustractions en colonnes', niveaux: de('gs', 'cm2') },
+  { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions et soustractions en colonnes', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: de('ce1', 'cm2') },
   { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/heure',         matiere: 'maths', domaine: 'Grandeurs et mesures', icon: '🕐', titre: "Lire l'heure", desc: 'Heures, demies, quarts sur une horloge', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Reconnaître cercle, carré, triangle et plus', niveaux: ['ms', 'gs'] },
+  { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Reconnaître le disque, le carré, le triangle et le rectangle', niveaux: ['ms', 'gs'] },
   { fiche: true, to: '/maths/geometrie',     matiere: 'maths', domaine: 'Espace et géométrie', icon: '📐', titre: 'Géométrie', desc: 'Symétrie, quadrillage, figures et solides', niveaux: ['ce1', 'ce2'] },
 
   // ── Français ──
   { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: ['gs', 'cp'] },
   { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: de('ce1', 'cm2') },
+  { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: de('ce1', 'cm2') },
+  { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: ['ce1', 'ce2'] },
 
   // ── Lecture ──
@@ -93,7 +93,7 @@ const BR = {
   '/maths/heure':         ['Lenn an eur', 'Eurioù, hanterioù ha kardoù war un horolaj'],
   '/maths/monnaie':       ['Ar moneiz', 'Kontañ ha paeañ gant euroioù'],
   '/maths/mesures':       ['Muzulioù', "Hirderioù, pouezioù, endalc'hioù, deiziadur"],
-  '/maternelle/formes':   ['Ar stummoù', "Anaout ar c'helc'h, ar c'harrez, an tric'horn ha muioc'h"],
+  '/maternelle/formes':   ['Ar stummoù', "Anaout ar bladenn, ar c'harrez, an tric'horn hag an hirgarrez"], // br: à relire
   '/maths/geometrie':     ['Mentoniezh', 'Kemparzhded, karrezennoù, stummoù ha solidennoù'],
   '/maternelle/lettres':   ['Al lizherennoù', 'Anaout ha liammañ ar pennlizherennoù hag al lizherennoù bihan'],
   '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],

@@ -6,6 +6,7 @@ export default {
     addition: 'Addition', soustraction: 'Soustraction', melange: 'Mélangé',
     additions: 'Additions', soustractions: 'Soustractions',
     taille: 'Taille des nombres',
+    aideNiveaux: 'Au CP : additions posées seulement. La soustraction posée commence au CE1.',
     chiffre1: '1 chiffre', chiffres: '{n} chiffres',
     retenue: 'Retenue', sansRetenue: 'Sans retenue', avecRetenue: 'Avec retenue',
     nbExercices: "Nombre d'exercices",

@@ -23,6 +23,16 @@ export const VERBES = {
   vouloir:  { inf: 'vouloir',  groupe: '3e groupe',  aux: 'avoir', pp: 'voulu',  pres: ['veux', 'veux', 'veut', 'voulons', 'voulez', 'veulent'], imp: 'voul', fut: 'voudr', ps: ['voulus', 'voulus', 'voulut', 'voulûmes', 'voulûtes', 'voulurent'] },
   prendre:  { inf: 'prendre',  groupe: '3e groupe',  aux: 'avoir', pp: 'pris',   pres: ['prends', 'prends', 'prend', 'prenons', 'prenez', 'prennent'], imp: 'pren', fut: 'prendr', ps: ['pris', 'pris', 'prit', 'prîmes', 'prîtes', 'prirent'] },
 }
+// Autres verbes réguliers, pour varier l'exercice de conjugaison (pas d'affiche : les affiches suivent VERBES)
+export const AUTRES_VERBES = {
+  jouer:    { inf: 'jouer',    groupe: '1er groupe', aux: 'avoir', pp: 'joué',   pres: { r: 'jou', f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] }, imp: 'jou', fut: 'jouer', ps: { r: 'jou', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  parler:   { inf: 'parler',   groupe: '1er groupe', aux: 'avoir', pp: 'parlé',  pres: { r: 'parl', f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] }, imp: 'parl', fut: 'parler', ps: { r: 'parl', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  aimer:    { inf: 'aimer',    groupe: '1er groupe', aux: 'avoir', pp: 'aimé',   pres: { r: 'aim', f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] }, imp: 'aim', fut: 'aimer', ps: { r: 'aim', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  grandir:  { inf: 'grandir',  groupe: '2e groupe',  aux: 'avoir', pp: 'grandi', pres: { r: 'grand', f: ['is', 'is', 'it', 'issons', 'issez', 'issent'] }, imp: 'grandiss', fut: 'grandir', ps: { r: 'grand', f: ['is', 'is', 'it', 'îmes', 'îtes', 'irent'] } },
+  choisir:  { inf: 'choisir',  groupe: '2e groupe',  aux: 'avoir', pp: 'choisi', pres: { r: 'chois', f: ['is', 'is', 'it', 'issons', 'issez', 'issent'] }, imp: 'choisiss', fut: 'choisir', ps: { r: 'chois', f: ['is', 'is', 'it', 'îmes', 'îtes', 'irent'] } },
+}
+export const verbeDe = cle => VERBES[cle] ?? AUTRES_VERBES[cle] ?? null
+
 export const TITRES_TEMPS = { present: 'Présent', imparfait: 'Imparfait', futur: 'Futur', 'passe-compose': 'Passé composé', 'passe-simple': 'Passé simple', 'plus-que-parfait': 'Plus-que-parfait' }
 export const TEMPS_CYCLE = ['present', 'imparfait', 'futur', 'passe-compose']
 export const TEMPS_CM2 = ['passe-simple', 'plus-que-parfait']
@@ -44,7 +54,7 @@ const voyelle = f => /^[aeiouyàâéèêëîïôöûüh]/i.test(f)
 
 // Les six lignes d'un temps : [[classe, texte], …] pour chaque personne, pronom compris (« j' » devant une voyelle)
 export function formesTemps(verbe, temps) {
-  const v = VERBES[verbe]
+  const v = verbeDe(verbe)
   const auxP = v.aux === 'être' ? ETRE_PRES : AVOIR_PRES, auxI = v.aux === 'être' ? ETRE_IMP : AVOIR_IMP
   const compose = (aux, i) => [['aux', aux[i]], ['', ' '], ['pp', v.pp + (v.aux === 'être' ? (i >= 3 ? '(e)s' : '(e)') : '')]]
   return PRONOMS.map((pronom, i) => {

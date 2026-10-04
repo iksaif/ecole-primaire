@@ -92,7 +92,7 @@ export default {
   ficheDureesTitre: 'Les durées',
   ficheDureeApres: 'Il est {debut}. Dans {duree}, il sera : ________________',
   ficheDureeCombien: ({ act, debut, fin }) => `${act.nom} commence à ${debut} et se termine à ${fin}. ${act.pronom === 'elle' ? 'Elle' : 'Il'} dure : ________________`,
-  ficheConversionTitre: 'Heures, minutes, secondes',
+  ficheConversionTitre: 'Heures et minutes',
   ficheEmploiTitre: 'Emploi du temps',
   ficheCorrige: "Corrigé (pour l'adulte)",
   // titres des parties du corrigé

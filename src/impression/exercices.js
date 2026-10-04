@@ -37,9 +37,11 @@ export const EXERCICES = [
     classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$')] },
   // ── Français (contenu en français, consignes traduites) ──
   { id: 'dictee', route: '/francais/dictee', groupe: 'francais', titre: { fr: 'Dictée', br: 'Skrivadeg' },
-    classes: [C('cp', '^CP$'), C('ce1', '^CE1$'), C('ce2', '^CE2$')] },
+    classes: [C('cp', '^CP$'), C('ce1', '^CE1$'), C('ce2', '^CE2$'), C('cm1-cm2', '^CM$')] },
   { id: 'grammaire', route: '/francais/grammaire', groupe: 'francais', titre: { fr: 'Grammaire', br: 'Yezhadur' },
-    classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$')] },
+    classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$'), C('cm1', '^CM1$'), C('cm2', '^CM2$')] },
+  { id: 'conjugaison', route: '/francais/conjugaison', groupe: 'francais', titre: { fr: 'Conjugaison', br: 'Displegañ' },
+    classes: [C('cp', '^CP$'), C('ce1', '^CE1$'), C('ce2', '^CE2$'), C('cm1', '^CM1$'), C('cm2', '^CM2$')] },
   { id: 'vocabulaire', route: '/francais/vocabulaire', groupe: 'francais', titre: { fr: 'Vocabulaire', br: 'Geriaoueg' },
     classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$')] },
   { id: 'orthographe', route: '/francais/orthographe', groupe: 'francais', titre: { fr: 'Orthographe', br: 'Reizhskrivañ' },

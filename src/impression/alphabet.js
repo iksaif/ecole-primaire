@@ -1,5 +1,6 @@
 // Génération de l'affiche de l'alphabet — partagée par l'app et le build des PDF.
-import { metriquesPolice, largeurTexte, dimensionsPage, documentImpression, echapper } from '../utils/impression'
+import { metriquesPolice, largeurTexte, echapper } from '../utils/impression'
+import { cadreAffiche, mesuresAffiche } from './affiches/cadre.js'
 import { langueRegionale } from '../data/languesRegionales'
 import textesFr from '../i18n/fr/contenu/alphabet.js'
 import textesBr from '../i18n/br/contenu/alphabet.js'
@@ -97,24 +98,23 @@ export function genererAlphabet(config, polices) {
   const LETTRES = reg ? reg.alphabet : LETTRES_FR
   if (reg) config = { ...config, mots: reg.mots ?? {}, mot: config.mot && !!reg.mots }
   const titreAffiche = reg?.titreAlphabet ?? textePour(config.langue, 'titreAlphabet')
-  const { w, h } = dimensionsPage(format, orientation)
-  const marge = 8, ecart = format === 'A3' ? 3 : 2
+  // marge fixe ; titre plus haut en A3 (valeurs propres à l'alphabet, gardées telles quelles)
+  const titreH = format === 'A3' ? 16 : 11
+  const { w, h, marge } = mesuresAffiche({ format, orientation, marge: 8, hTitre: titreH, echelle: false })
+  const ecart = format === 'A3' ? 3 : 2
   let pages
   if (disposition === 'carte') {
-    pages = LETTRES.map(l => `<div class="contenu">${carte(l, w - 2 * marge, h - 2 * marge, config, polices)}</div>`)
+    pages = LETTRES.map(l => ({ corps: carte(l, w - 2 * marge, h - 2 * marge, config, polices) }))
   } else {
-    const titreH = format === 'A3' ? 16 : 11
     const cols = orientation === 'landscape' ? 7 : 5
     const rows = Math.ceil(LETTRES.length / cols)
     const cw = (w - 2 * marge - (cols - 1) * ecart) / cols
     const ch = (h - 2 * marge - titreH - (rows - 1) * ecart) / rows
-    pages = [`<div class="contenu"><h1 style="height:${titreH}mm;font-size:${titreH * 0.62}mm">${titreAffiche}</h1>
-<div class="grille" style="grid-template-columns:repeat(${cols}, ${cw}mm);gap:${ecart}mm">${LETTRES.map(l => carte(l, cw, ch, config, polices)).join('')}</div></div>`]
+    pages = [{ titre: titreAffiche, corps: `<div class="grille" style="grid-template-columns:repeat(${cols}, ${cw}mm);gap:${ecart}mm">${LETTRES.map(l => carte(l, cw, ch, config, polices)).join('')}</div>` }]
   }
-  const html = documentImpression({
-    titre: config.titre || "Affiche de l'alphabet", format, orientation, pages,
-    css: `.contenu { position: absolute; inset: ${marge}mm; }
-h1 { text-align: center; font-weight: 700; color: #333; line-height: 1; }
+  return cadreAffiche({
+    titreDocument: config.titre || "Affiche de l'alphabet", format, orientation, marge, hTitre: titreH, pages, polices, centrer: false,
+    css: `h1 { color: #333; }
 .grille { display: grid; justify-content: center; }
 .carte { border: 0.5mm solid #c8ccd4; border-radius: 3mm; display: flex; flex-direction: column;
   justify-content: center; overflow: hidden; background: white; }
@@ -126,5 +126,4 @@ h1 { text-align: center; font-weight: 700; color: #333; line-height: 1; }
   border-top: 0.3mm dashed #d0d4dc; font-family: '${polices.script}'; }
 .emoji { font-size: 1.3em; line-height: 1; }`,
   })
-  return { html, nbPages: pages.length, format, orientation }
 }

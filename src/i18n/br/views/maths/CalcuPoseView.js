@@ -6,6 +6,7 @@ export default {
     addition: 'Sammadenn', soustraction: 'Lamadenn', melange: 'Kemmesket',
     additions: 'Sammadennoù', soustractions: 'Lamadennoù',
     taille: 'Ment an niveroù',
+    aideNiveaux: "Er CP : sammadennoù lakaet hepken. Al lamadennoù lakaet a grog er CE1.", // br: à relire
     chiffre1: '1 sifr', chiffres: '{n} sifr',
     retenue: "Dalc'h", sansRetenue: "Hep dalc'h", avecRetenue: "Gant dalc'h", // br: à relire (« dalc'h » = retenue)
     nbExercices: 'Niver a boelladennoù',

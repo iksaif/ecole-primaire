@@ -2,6 +2,14 @@
 
 ## 4 octobre 2026
 
+- **Les exercices suivent le programme officiel, niveau par niveau** : chaque classe ne propose par défaut que
+  ce qui est au programme (par exemple l'heure à la demi-heure et au quart d'heure au CE1, les minutes au CE2).
+  Ce qui va plus loin est marqué « bonus ».
+- **La conjugaison a des niveaux, du CP au CM2**, avec le passé simple au CM2 ; la grammaire va jusqu'au CM2.
+- **Sur chaque fiche d'exercice** : « Prénom et date » au choix, et le corrigé sans, sur une autre page, ou en
+  bas de la feuille à l'envers, à découper.
+- **De nouvelles affiches** : droite numérique, tableau de numération, horloge, pièces et billets, conjugaison,
+  figures et solides.
 - Nouveau logo.
 - Un bouton « 💬 Signaler une erreur » en bas de chaque page.
 - Cette page « Nouveautés ».

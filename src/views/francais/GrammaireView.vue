@@ -200,40 +200,44 @@ const tc = c => (CHOIX[c] ? t(CHOIX[c]) : c)
 // ── LOGIQUE PURE (début) — données + génération, testable hors Vue
 // ════════════════════════════════════════════════════════════════════
 
-// Chaque type indique les niveaux où il est proposé ; libellés : groupe_<id> et type_<id> du catalogue
+// Chaque type indique les niveaux où il est proposé ; libellés : groupe_<id> et type_<id> du catalogue.
+// Programme : au cycle 2, les compléments ne sont pas distingués entre eux (« l'étude des compléments circonstanciels
+// est réservée au cycle 3 », BO n° 41 p. 91) ; CM1 : nom noyau, complément d'objet / circonstanciel ; CM2 : CC de
+// temps et de lieu, phrase simple / complexe (programme de français du cycle 3, p. 17-19).
+const CM = ['cm1', 'cm2']
 const TYPES = [
   { id: 'phrase', items: [
     { id: 'ordre',       icon: '🧩', niv: ['ce1'] },
     { id: 'phrase',      icon: '🤔', niv: ['ce1'] },
     { id: 'majuscule',   icon: '🔠', niv: ['ce1'] },
     { id: 'ponctuation', icon: '❓', niv: ['ce1'] },
-    { id: 'complexe',    icon: '🔗', niv: ['ce2'] },
-    { id: 'negation',    icon: '🚫', niv: ['ce1', 'ce2'] },
-    { id: 'negReconnaitre', icon: '🔍', niv: ['ce1', 'ce2'] },
+    { id: 'complexe',    icon: '🔗', niv: ['cm2'] },
+    { id: 'negation',    icon: '🚫', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'negReconnaitre', icon: '🔍', niv: ['ce1', 'ce2', ...CM] },
   ]},
   { id: 'nature', items: [
-    { id: 'verbe',   icon: '🏃', niv: ['ce1', 'ce2'] },
-    { id: 'nom',     icon: '🏠', niv: ['ce1', 'ce2'] },
-    { id: 'det',     icon: '👉', niv: ['ce1', 'ce2'] },
-    { id: 'adj',     icon: '🎨', niv: ['ce1', 'ce2'] },
-    { id: 'nature',  icon: '🏷️', niv: ['ce1', 'ce2'] },
-    { id: 'gnNoyau', icon: '🎯', niv: ['ce2'] },
+    { id: 'verbe',   icon: '🏃', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'nom',     icon: '🏠', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'det',     icon: '👉', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'adj',     icon: '🎨', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'nature',  icon: '🏷️', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'gnNoyau', icon: '🎯', niv: CM },
   ]},
   { id: 'fonctions', items: [
-    { id: 'sujet',       icon: '👤', niv: ['ce1', 'ce2'] },
-    { id: 'pronom',      icon: '🔁', niv: ['ce1', 'ce2'] },
-    { id: 'cplt',        icon: '📍', niv: ['ce2'] },
-    { id: 'cpltQ',       icon: '⏰', niv: ['ce2'] },
-    { id: 'cpltNature',  icon: '⚖️', niv: ['ce2'] },
+    { id: 'sujet',       icon: '👤', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'pronom',      icon: '🔁', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'cplt',        icon: '📍', niv: CM },
+    { id: 'cpltQ',       icon: '⏰', niv: ['cm2'] },
+    { id: 'cpltNature',  icon: '⚖️', niv: CM },
   ]},
   { id: 'genreNombre', items: [
     { id: 'genre',    icon: '♀️', niv: ['ce1'] },
     { id: 'nombre',   icon: '🔢', niv: ['ce1'] },
-    { id: 'pluriel',  icon: '➕', niv: ['ce1', 'ce2'] },
-    { id: 'accordGN', icon: '🤝', niv: ['ce1', 'ce2'] },
+    { id: 'pluriel',  icon: '➕', niv: ['ce1', 'ce2', ...CM] },
+    { id: 'accordGN', icon: '🤝', niv: ['ce1', 'ce2', ...CM] },
   ]},
   { id: 'accordSV', items: [
-    { id: 'accordSV', icon: '🔗', niv: ['ce1', 'ce2'] },
+    { id: 'accordSV', icon: '🔗', niv: ['ce1', 'ce2', ...CM] },
   ]},
 ]
 const IDS_TYPES = TYPES.flatMap(g => g.items.map(t => t.id))
@@ -734,7 +738,9 @@ const DONNEES = {
     ],
   },
 }
-const NIVEAUX_DISPO = Object.keys(DONNEES)
+// CM1 et CM2 reprennent les phrases du CE2 (avec les exercices de leur niveau)
+const NIVEAUX_DISPO = ['ce1', 'ce2', ...CM]
+const baseDe = niveau => (CM.includes(niveau) ? 'ce2' : niveau)
 
 // Adjectifs : [masc. sing., fém. sing., masc. plur., fém. plur.]
 const ADJECTIFS = {
@@ -948,14 +954,14 @@ function negationDe(e) {
 // Consignes (catalogue : consigne_<type>, ou consigne_<niveau>_<type> pour les consignes propres à un niveau)
 const CONSIGNES_NIVEAU = { ce2: ['verbe', 'negReconnaitre'] }
 const consigneDe = (type, niveau) => () =>
-  t(CONSIGNES_NIVEAU[niveau]?.includes(type) ? `consigne_${niveau}_${type}` : `consigne_${type}`)
+  t(CONSIGNES_NIVEAU[baseDe(niveau)]?.includes(type) ? `consigne_${baseDe(niveau)}_${type}` : `consigne_${type}`)
 
 // Règles du pluriel (catalogue : regle_<cle>)
 const regleDe = cle => () => t(`regle_${cle}`)
 
 // Construit les « réservoirs » d'éléments pour chaque type d'exercice
 function construireReservoirs(niveau) {
-  const d = DONNEES[niveau] || DONNEES.ce1
+  const d = DONNEES[baseDe(niveau)] || DONNEES.ce1
   const phrases = d.phrases.map(analyserPhrase)
   const gns = (d.groupesNominaux || []).map(analyserPhrase)
   // les groupes nominaux servent aussi à repérer noms, déterminants et adjectifs
@@ -991,7 +997,8 @@ function construireReservoirs(niveau) {
     cpltNature,
     genre:       d.genre || [],
     nombre,
-    pluriel:     d.pluriels || [],
+    // CE1 : pluriel en -s seulement (les pluriels en -x arrivent au CE2, BO n° 41 p. 94)
+    pluriel:     (d.pluriels || []).filter(([, , regle]) => niveau !== 'ce1' || !['eau', 'eu'].includes(regle)),
     accordGN:    (d.accordsGN || []).map(a => ({ a, formes: ADJECTIFS[a[2]] })),
     accordSV:    d.accordsSV || [],
   }
@@ -1206,7 +1213,7 @@ function genererQuestions(niveau, types, nb) {
 // Consignes de la fiche (catalogue : fiche_<type>, ou fiche_<niveau>_<type> pour un niveau)
 const CONSIGNES_FICHE_NIVEAU = { ce2: ['verbe', 'negReconnaitre'] }
 const consigneFiche = (type, niveau) =>
-  t(CONSIGNES_FICHE_NIVEAU[niveau]?.includes(type) ? `fiche_${niveau}_${type}` : `fiche_${type}`)
+  t(CONSIGNES_FICHE_NIVEAU[baseDe(niveau)]?.includes(type) ? `fiche_${baseDe(niveau)}_${type}` : `fiche_${type}`)
 
 const LIGNE = '<span class="ligne"></span>'
 const CASE = '<span class="case"></span>'
@@ -1260,7 +1267,7 @@ function htmlFiche(niveau, types, nb) {
   const parType = ordre.map(ty => ({ t: ty, qs: qs.filter(q => q.type === ty) }))
   let num = 0
   const corps = parType.map(g => `
-    <h2>${consigneFiche(g.t, niveau)}</h2>
+    <h2 data-type="${g.t}">${consigneFiche(g.t, niveau)}</h2>
     ${g.qs.map(q => { num++; return `<div class="q"><span class="num">${num}.</span><div class="contenu">${questionFiche(q)}</div></div>` }).join('')}
   `).join('')
   num = 0

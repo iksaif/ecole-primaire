@@ -112,9 +112,11 @@ const C = contenu({ fr: formesFr, br: formesBr }, () => langue.value)
 const nomForme = nom => C.t(nom.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
 
 // ── Formes géométriques avec SVG inline
+// Programme du cycle 1 : triangle, carré, disque (4 ans), puis rectangle (5 ans) ; la forme pleine est un disque
+// (le cercle est son contour, au CE1). Losange, pentagone, hexagone : cycle 3 ; l'ovale n'est pas une figure.
 const FORMES = [
   {
-    nom: 'cercle', cotes: 0,
+    nom: 'disque', cotes: 0,
     svg: `<svg viewBox="0 0 100 100" width="100" height="100"><circle cx="50" cy="50" r="40" fill="#4a90e2" opacity=".85"/></svg>`,
   },
   {
@@ -128,22 +130,6 @@ const FORMES = [
   {
     nom: 'rectangle', cotes: 4,
     svg: `<svg viewBox="0 0 100 100" width="100" height="100"><rect x="10" y="25" width="80" height="50" fill="#f39c12" opacity=".85"/></svg>`,
-  },
-  {
-    nom: 'losange', cotes: 4,
-    svg: `<svg viewBox="0 0 100 100" width="100" height="100"><polygon points="50,5 95,50 50,95 5,50" fill="#9b59b6" opacity=".85"/></svg>`,
-  },
-  {
-    nom: 'pentagone', cotes: 5,
-    svg: `<svg viewBox="0 0 100 100" width="100" height="100"><polygon points="50,5 97,35 79,90 21,90 3,35" fill="#1abc9c" opacity=".85"/></svg>`,
-  },
-  {
-    nom: 'hexagone', cotes: 6,
-    svg: `<svg viewBox="0 0 100 100" width="100" height="100"><polygon points="50,5 93,27.5 93,72.5 50,95 7,72.5 7,27.5" fill="#e67e22" opacity=".85"/></svg>`,
-  },
-  {
-    nom: 'ovale', cotes: 0,
-    svg: `<svg viewBox="0 0 100 100" width="100" height="100"><ellipse cx="50" cy="50" rx="45" ry="28" fill="#e91e63" opacity=".85"/></svg>`,
   },
 ]
 
@@ -167,7 +153,10 @@ function autresFormes(exclure, n) {
 }
 
 function demarrer() {
-  const qs = melanger([...FORMES]).map(f => {
+  // 4 formes au programme : chacune deux fois, jamais deux fois de suite
+  let tirage, essais = 0
+  do { tirage = melanger([...FORMES, ...FORMES]) } while (tirage.some((f, i) => f === tirage[i - 1]) && ++essais < 50)
+  const qs = tirage.map(f => {
     const nbCotes = f.cotes
     const faussesCotes = melanger([0,1,2,3,4,5,6,7,8].filter(n => n !== nbCotes)).slice(0, 3)
     const choixNb = melanger([nbCotes, ...faussesCotes])
@@ -199,7 +188,7 @@ function demarrer() {
 
 // ── Fiche imprimable : formes à colorier selon une légende, puis à compter (corrigé page 2)
 const COULEURS_FICHE = [
-  { nom: 'cercle', couleur: 'rouge', hex: '#e53935' },
+  { nom: 'disque', couleur: 'rouge', hex: '#e53935' },
   { nom: 'carré', couleur: 'bleu', hex: '#1e88e5' },
   { nom: 'triangle', couleur: 'vert', hex: '#43a047' },
   { nom: 'rectangle', couleur: 'jaune', hex: '#fdd835' },
@@ -215,7 +204,7 @@ function htmlFiche() {
   const tirage = melanger([...noms, ...noms, ...Array.from({ length: 12 }, () => noms[Math.floor(Math.random() * noms.length)])])
   const cases = tirage.map(nom => {
     const taille = 62 + Math.floor(Math.random() * 30)
-    const angle = nom === 'cercle' ? 0 : Math.floor(Math.random() * 31) - 15
+    const angle = nom === 'disque' ? 0 : Math.floor(Math.random() * 31) - 15
     return `<div class="cell">${contour(nom, taille, angle)}</div>`
   }).join('')
   const legende = COULEURS_FICHE.map(c => `<div class="leg">${contour(c.nom, 46)}<span class="nom">${nomForme(c.nom)}</span>

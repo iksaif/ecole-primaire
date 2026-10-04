@@ -57,3 +57,77 @@ verifier(choisirPluriel(pages.fr, { n: 1 }, 'fr') === '{n} page' && choisirPluri
 verifier(choisirPluriel(pages.br, { n: 3 }, 'br') === 'fajenn' && choisirPluriel(pages.br, { n: 5 }, 'br') === 'pajenn' && choisirPluriel(pages.br, { n: 2 }, 'br') === 'bajenn',
   'breton : 2 → « two », 3 → « few », 5 → « other »')
 verifier(choisirPluriel('texte simple', { n: 3 }, 'br') === 'texte simple', 'message sans pluriel inchangé')
+
+console.log('Activités de maths et programme (activites.js / programme.js)')
+{
+  const { ACTIVITES } = await import('../src/data/activites.js')
+  const { CYCLE_DE, competencesDu, contraintesDe } = await import('../src/data/programme.js')
+  // domaines affichés dans les pages matières → domaine de programme.js
+  const DOMAINE = { 'Nombres et calcul': 'nombres-calcul', 'Résoudre des problèmes': 'nombres-calcul',
+    'Grandeurs et mesures': 'grandeurs-mesures', 'Espace et géométrie': 'espace-geometrie' }
+  for (const a of ACTIVITES.filter(x => x.matiere === 'maths')) {
+    const d = DOMAINE[a.domaine]
+    const vides = a.niveaux.filter(n => !competencesDu(d, n).length)
+    const cycle = a.to.startsWith('/maternelle/') ? [1] : [2, 3]
+    const horsCycle = a.niveaux.filter(n => !cycle.includes(CYCLE_DE[n]))
+    verifier(d && !vides.length && !horsCycle.length,
+      `${a.to} (${a.niveaux.join(', ')})${!d ? ` — domaine inconnu « ${a.domaine} »` : ''}${vides.length ? ` — aucune compétence du domaine en ${vides.join(', ')}` : ''}${horsCycle.length ? ` — hors cycle : ${horsCycle.join(', ')}` : ''}`)
+  }
+  const pose = ACTIVITES.find(a => a.to === '/maths/calcul-pose')
+  verifier(pose.niveaux.every(n => contraintesDe(n).operationsPosees?.length), 'calcul posé : seulement les niveaux où des opérations posées sont au programme')
+}
+
+console.log('Affiches : domaines et niveaux du programme (src/data/programme.js)')
+{
+  const { DOMAINES, CONTRAINTES } = await import('../src/data/programme.js')
+  const { DOMAINES_AFFICHES, TELECHARGEMENTS_PROGRAMME, AFFICHES_PROGRAMME, NUMERATION, LOTS_FORMES } = await import('../src/impression/affiches/catalogue.js')
+  const domaines = new Set(DOMAINES.map(d => d.id))
+  // les affiches des tables (calcul.js, pas importable avec node) prennent leur domaine dans DOMAINES_AFFICHES
+  const inconnus = Object.entries(DOMAINES_AFFICHES).filter(([, d]) => !domaines.has(d))
+  verifier(!inconnus.length, `chaque famille d'affiches a un domaine de programme.js${inconnus.length ? ` (inconnus : ${inconnus.map(x => x.join(' → ')).join(', ')})` : ''}`)
+  const affiches = [...TELECHARGEMENTS.filter(t => ['alphabet', 'nombres'].includes(t.categorie)), ...TELECHARGEMENTS_PROGRAMME]
+  const sansDomaine = affiches.filter(t => t.genre !== 'affiche' || !domaines.has(t.domaine))
+  verifier(!sansDomaine.length, `${affiches.length} affiches du catalogue : genre « affiche » et domaine connu${sansDomaine.length ? ` (${sansDomaine.slice(0, 3).map(t => t.slug).join(', ')})` : ''}`)
+  const slugsProgramme = TELECHARGEMENTS_PROGRAMME.map(t => t.slug)
+  verifier(new Set(slugsProgramme).size === slugsProgramme.length, 'affiches du programme : slugs uniques')
+
+  // niveaux « CE1 · CE2 » → contraintes de chaque niveau
+  const contraintes = t => t.niveaux.split(' · ').map(n => CONTRAINTES.find(c => c.niveau === n.toLowerCase()))
+  const PRECISION = ['entiere', 'quart', 'minute', 'seconde']
+  const ID_PROGRAMME = { isocele: 'triangle-isocele', equilateral: 'triangle-equilateral', prisme: 'prisme-droit' }
+  const groupeDe = v => ({ etre: 'etre-avoir', avoir: 'etre-avoir', chanter: '1er-groupe', finir: '2e-groupe' }[v])
+  const variante = (affiche, id) => AFFICHES_PROGRAMME.find(a => a.id === affiche).variantes?.find(v => v.id === id)
+  const respecte = (t, c) => {
+    const { affiche, variante: v, verbe, temps } = t.config
+    if (affiche === 'droite') return +v <= c.nombreMax
+    if (affiche === 'numeration') {
+      const def = NUMERATION[v]
+      return def.decimales <= c.decimalesMax && def.classes.flatMap(k => k.rangs).length <= c.nombreChiffresMax
+    }
+    if (affiche === 'horloge') return PRECISION.indexOf(variante('horloge', v).precision) <= PRECISION.indexOf(c.heure)
+    if (affiche === 'monnaie') return v === 'euros' ? c.monnaie.eurosMax === null || c.monnaie.eurosMax >= 100 : c.monnaie.centimes
+    if (affiche === 'conjugaison') {
+      const k = c.conjugaison
+      return !!k && (temps ?? ['present', 'imparfait', 'futur', 'passe-compose']).every(x => k.temps.includes(x))
+        && (groupeDe(verbe) ? k.groupes.includes(groupeDe(verbe)) : k.irreguliers.includes(verbe))
+    }
+    if (affiche === 'formes') {
+      const lot = LOTS_FORMES[v]
+      return lot.liste.every(id => c[lot.type].includes(ID_PROGRAMME[id] ?? id))
+    }
+    return false
+  }
+  const horsProgramme = TELECHARGEMENTS_PROGRAMME.flatMap(t => contraintes(t).filter(c => !c || !respecte(t, c)).map(c => `${t.slug} (${c?.niveau ?? t.niveaux})`))
+  verifier(!horsProgramme.length, `affiches du programme : contenu permis à chaque niveau indiqué${horsProgramme.length ? ` (${horsProgramme.slice(0, 4).join(', ')})` : ''}`)
+  // la page /imprimer/affiches affiche les mêmes niveaux que le catalogue
+  const ecarts = TELECHARGEMENTS_PROGRAMME.filter(t => t.config.variante && variante(t.config.affiche, t.config.variante).niveaux !== t.niveaux)
+  verifier(!ecarts.length, `niveaux des variantes = niveaux du catalogue${ecarts.length ? ` (${ecarts.map(t => t.slug).join(', ')})` : ''}`)
+
+  // nombres en lettres : le plus grand nombre de l'affiche ne dépasse pas l'écriture en lettres attendue
+  const MAX_SECTION = { unites: 9, onze: 20, dizaines: 100, centaines: 1000, milliers: 9000, cent: 100, ...Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => [`d${d}`, d * 10 + 10])) }
+  const nombresHors = TELECHARGEMENTS.filter(t => t.categorie === 'nombres').flatMap(t => {
+    const max = Math.max(...t.config.sections.map(s => MAX_SECTION[s]))
+    return contraintes(t).filter(c => (c.nombresEnLettresMax ?? c.nombreMax) < max).map(c => `${t.slug} (${c.niveau})`)
+  })
+  verifier(!nombresHors.length, `affiches des nombres : nombres en lettres permis à chaque niveau${nombresHors.length ? ` (${nombresHors.slice(0, 4).join(', ')})` : ''}`)
+}

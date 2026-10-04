@@ -3,17 +3,26 @@
     <h1>✍️ {{ t('titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" :aleatoire="false"
-      @commencer="demarrer" @regenerer="regenerer">
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
+      :desactive="!paires.length" @commencer="demarrer" @regenerer="regenerer">
+
+      <div class="config-section">
+        <div class="config-section-title">{{ t('niveau') }}</div>
+        <div class="btn-group">
+          <button v-for="n in NIVEAUX" :key="n.id"
+            class="level-btn" :class="{ active: config.niveau === n.id }"
+            @click="config.niveau = n.id">{{ n.id.toUpperCase() }}</button>
+        </div>
+      </div>
 
       <div class="config-section">
         <div class="config-section-title">{{ t('verbeAConjuguer') }}</div>
         <div class="verbe-grid">
-          <button v-for="v in VERBES" :key="v.inf"
-            class="verbe-btn" :class="{ active: config.verbe === v.inf }"
-            @click="config.verbe = v.inf">
-            {{ v.inf }}
-            <span class="verbe-groupe">{{ t('groupe_' + v.groupe) }}</span>
+          <button v-for="v in verbesDuNiveau" :key="v"
+            class="verbe-btn" :class="{ active: config.verbes.includes(v) }"
+            @click="basculer('verbes', v)">
+            {{ verbeDe(v).inf }}
+            <span class="verbe-groupe">{{ t('groupe_' + GROUPE_DE[verbeDe(v).groupe]) }}</span>
           </button>
         </div>
       </div>
@@ -21,9 +30,9 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('temps') }}</div>
         <div class="btn-group">
-          <button v-for="tp in TEMPS" :key="tp.id"
-            class="level-btn" :class="{ active: config.temps === tp.id }"
-            @click="config.temps = tp.id">{{ t('temps_' + tp.id) }}</button>
+          <button v-for="tp in tempsDuNiveau" :key="tp"
+            class="level-btn" :class="{ active: config.temps.includes(tp) }"
+            @click="basculer('temps', tp)">{{ nomTemps(tp) }}</button>
         </div>
       </div>
 
@@ -53,8 +62,8 @@
       </div>
 
       <div class="conj-header">
-        <span class="conj-verb">{{ verbeCourant.inf }}</span>
-        <span class="conj-temps">{{ t('temps_' + tempsCourant.id) }}</span>
+        <span class="conj-verb">{{ verbeDe(courant.verbe).inf }}</span>
+        <span class="conj-temps">{{ nomTemps(courant.temps) }}</span>
       </div>
 
       <div class="conj-table">
@@ -64,7 +73,7 @@
 
           <!-- mode lacunes : affiche le radical, l'élève tape la terminaison -->
           <template v-if="config.mode === 'lacunes'">
-            <span class="radical">{{ row.radical }}</span>
+            <span class="radical">{{ row.debut }}</span>
             <input
               :ref="el => { if (el) inputRefs[i] = el }"
               class="conj-input"
@@ -127,7 +136,8 @@
 
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
-import { normaliser, confettis, sauvegarder, chargerReglages } from '../../utils'
+import { normaliser, confettis, sauvegarder, chargerReglages, aleatoire, melanger } from '../../utils'
+import { formesTemps, verbeDe, TEMPS_CYCLE, TEMPS_CM2 } from '../../data/conjugaison.js'
 import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/ConjugaisonView.js'
 import messagesBr from '../../i18n/br/views/francais/ConjugaisonView.js'
@@ -137,83 +147,62 @@ import { ligneNomDate } from '../../composables/useOptionsFiche'
 
 const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 
-// ── Données
-const VERBES = [
-  { inf: 'être',    groupe: 'irrég.', conj: {
-    present:  ['suis','es','est','sommes','êtes','sont'],
-    passe:    ['ai été','as été','a été','avons été','avez été','ont été'],
-    imparfait:['étais','étais','était','étions','étiez','étaient'],
-    futur:    ['serai','seras','sera','serons','serez','seront'],
-  }},
-  { inf: 'avoir',   groupe: 'irrég.', conj: {
-    present:  ['ai','as','a','avons','avez','ont'],
-    passe:    ['ai eu','as eu','a eu','avons eu','avez eu','ont eu'],
-    imparfait:['avais','avais','avait','avions','aviez','avaient'],
-    futur:    ['aurai','auras','aura','aurons','aurez','auront'],
-  }},
-  { inf: 'aller',   groupe: 'irrég.', conj: {
-    present:  ['vais','vas','va','allons','allez','vont'],
-    passe:    ['suis allé','es allé','est allé','sommes allés','êtes allés','sont allés'],
-    imparfait:['allais','allais','allait','allions','alliez','allaient'],
-    futur:    ['irai','iras','ira','irons','irez','iront'],
-  }},
-  { inf: 'faire',   groupe: 'irrég.', conj: {
-    present:  ['fais','fais','fait','faisons','faites','font'],
-    passe:    ['ai fait','as fait','a fait','avons fait','avez fait','ont fait'],
-    imparfait:['faisais','faisais','faisait','faisions','faisiez','faisaient'],
-    futur:    ['ferai','feras','fera','ferons','ferez','feront'],
-  }},
-  { inf: 'chanter', groupe: '1er', conj: {
-    present:  ['chante','chantes','chante','chantons','chantez','chantent'],
-    passe:    ['ai chanté','as chanté','a chanté','avons chanté','avez chanté','ont chanté'],
-    imparfait:['chantais','chantais','chantait','chantions','chantiez','chantaient'],
-    futur:    ['chanterai','chanteras','chantera','chanterons','chanterez','chanteront'],
-  }},
-  { inf: 'manger',  groupe: '1er', conj: {
-    present:  ['mange','manges','mange','mangeons','mangez','mangent'],
-    passe:    ['ai mangé','as mangé','a mangé','avons mangé','avez mangé','ont mangé'],
-    imparfait:['mangeais','mangeais','mangeait','mangions','mangiez','mangeaient'],
-    futur:    ['mangerai','mangeras','mangera','mangerons','mangerez','mangeront'],
-  }},
-  { inf: 'jouer',   groupe: '1er', conj: {
-    present:  ['joue','joues','joue','jouons','jouez','jouent'],
-    passe:    ['ai joué','as joué','a joué','avons joué','avez joué','ont joué'],
-    imparfait:['jouais','jouais','jouait','jouions','jouiez','jouaient'],
-    futur:    ['jouerai','joueras','jouera','jouerons','jouerez','joueront'],
-  }},
-  { inf: 'finir',   groupe: '2ème', conj: {
-    present:  ['finis','finis','finit','finissons','finissez','finissent'],
-    passe:    ['ai fini','as fini','a fini','avons fini','avez fini','ont fini'],
-    imparfait:['finissais','finissais','finissait','finissions','finissiez','finissaient'],
-    futur:    ['finirai','finiras','finira','finirons','finirez','finiront'],
-  }},
-  { inf: 'venir',   groupe: 'irrég.', conj: {
-    present:  ['viens','viens','vient','venons','venez','viennent'],
-    passe:    ['suis venu','es venu','est venu','sommes venus','êtes venus','sont venus'],
-    imparfait:['venais','venais','venait','venions','veniez','venaient'],
-    futur:    ['viendrai','viendras','viendra','viendrons','viendrez','viendront'],
-  }},
-  { inf: 'pouvoir', groupe: 'irrég.', conj: {
-    present:  ['peux','peux','peut','pouvons','pouvez','peuvent'],
-    passe:    ['ai pu','as pu','a pu','avons pu','avez pu','ont pu'],
-    imparfait:['pouvais','pouvais','pouvait','pouvions','pouviez','pouvaient'],
-    futur:    ['pourrai','pourras','pourra','pourrons','pourrez','pourront'],
-  }},
+// ── Niveaux : verbes et temps au programme de chaque classe (CONTRAINTES.conjugaison de src/data/programme.js,
+// vérifié par tests/programme-francais.test.mjs). Tout ce qu'un niveau propose est au programme, et tout est
+// coché par défaut.
+//   CP : être et avoir au présent ; CE1 : + 1er groupe, présent, imparfait, futur, passé composé ;
+//   CE2 : + 8 verbes irréguliers ; CM1 : + 2e groupe ; CM2 : + passé simple et plus-que-parfait.
+const ETRE_AVOIR = ['etre', 'avoir']
+const PREMIER = ['chanter', 'jouer', 'parler', 'aimer']
+const DEUXIEME = ['finir', 'grandir', 'choisir']
+const IRREGULIERS = ['aller', 'faire', 'dire', 'venir', 'pouvoir', 'voir', 'vouloir', 'prendre']
+const NIVEAUX = [
+  { id: 'cp',  verbes: ETRE_AVOIR,                                     temps: ['present'] },
+  { id: 'ce1', verbes: [...ETRE_AVOIR, ...PREMIER],                    temps: TEMPS_CYCLE },
+  { id: 'ce2', verbes: [...ETRE_AVOIR, ...PREMIER, ...IRREGULIERS],    temps: TEMPS_CYCLE },
+  { id: 'cm1', verbes: [...ETRE_AVOIR, ...PREMIER, ...DEUXIEME, ...IRREGULIERS], temps: TEMPS_CYCLE },
+  { id: 'cm2', verbes: [...ETRE_AVOIR, ...PREMIER, ...DEUXIEME, ...IRREGULIERS], temps: [...TEMPS_CYCLE, ...TEMPS_CM2] },
 ]
+const niveauDe = id => NIVEAUX.find(n => n.id === id) ?? NIVEAUX[1]
+// groupe (src/data/conjugaison.js) → clé du catalogue groupe_<…>
+const GROUPE_DE = { auxiliaire: 'aux', '1er groupe': '1', '2e groupe': '2', '3e groupe': '3' }
+const nomTemps = id => t('temps_' + id.replace(/-/g, '_'))
+const NB_TABLEAUX = 4    // tableaux par fiche
 
-const PRONOMS = ['je','tu','il / elle','nous','vous','ils / elles']
-const TEMPS = [
-  { id: 'present',   label: 'Présent' },
-  { id: 'passe',     label: 'Passé composé' },
-  { id: 'imparfait', label: 'Imparfait' },
-  { id: 'futur',     label: 'Futur' },
-]
-
-// ── État
-const config = ref(chargerReglages('conjugaison_config', { verbe: 'être', temps: 'present', mode: 'lacunes' }))
+// ── État (réglages d'une ancienne version : niveau, verbes ou temps hors du niveau → défauts du niveau)
+const DEFAUT = { niveau: 'ce1', verbes: [...niveauDe('ce1').verbes], temps: [...niveauDe('ce1').temps], mode: 'lacunes' }
+const brut = chargerReglages('conjugaison_config', DEFAUT)
+const niv0 = niveauDe(brut.niveau)
+const garder = (liste, dispo) => { const l = liste.filter(x => dispo.includes(x)); return l.length ? l : [...dispo] }
+const config = ref({
+  niveau: niv0.id,
+  verbes: garder(brut.verbes, niv0.verbes),
+  temps: garder(brut.temps, niv0.temps),
+  mode: brut.mode === 'complet' ? 'complet' : 'lacunes',
+})
 watch(config, v => sauvegarder('conjugaison_config', v), { deep: true })
-const phase = ref('config')
+// changer de niveau coche tout ce qui est au programme de ce niveau
+watch(() => config.value.niveau, id => {
+  const n = niveauDe(id)
+  config.value.verbes = [...n.verbes]
+  config.value.temps = [...n.temps]
+})
+const verbesDuNiveau = computed(() => niveauDe(config.value.niveau).verbes)
+const tempsDuNiveau = computed(() => niveauDe(config.value.niveau).temps)
+function basculer(cle, x) {
+  const l = config.value[cle]
+  if (l.includes(x)) { if (l.length > 1) config.value[cle] = l.filter(y => y !== x) }
+  else config.value[cle] = [...l, x]
+}
+// couples (verbe, temps) possibles avec les choix du niveau
+const paires = computed(() => {
+  const n = niveauDe(config.value.niveau)
+  const vs = config.value.verbes.filter(v => n.verbes.includes(v)), ts = config.value.temps.filter(x => n.temps.includes(x))
+  return vs.flatMap(verbe => ts.map(temps => ({ verbe, temps })))
+})
 
+const phase = ref('config')
+const courant = ref({ verbe: 'etre', temps: 'present' })
 const reponses   = ref([])
 const valide     = ref([])
 const inputClass = ref([])
@@ -222,40 +211,24 @@ const bonnes     = ref(0)
 const mauvaises  = ref(0)
 const inputRefs  = ref([])
 
-const verbeCourant = computed(() => VERBES.find(v => v.inf === config.value.verbe) ?? VERBES[0])
-const tempsCourant = computed(() => TEMPS.find(t => t.id === config.value.temps) ?? TEMPS[0])
-
-const conjugaison = computed(() => {
-  const formes = verbeCourant.value.conj[config.value.temps]
-  return PRONOMS.map((pronom, i) => {
-    const forme = formes[i]
-    const radical = config.value.mode === 'lacunes'
-      ? detecterRadical(verbeCourant.value.inf, forme, config.value.temps)
-      : ''
-    const terminaison = forme.slice(radical.length)
-    return { pronom, forme, radical, terminaison }
+// Les six lignes d'un tableau : pronom, forme, début donné (radical ou auxiliaire) et partie à écrire
+// (terminaison ou participe passé ; toute la forme quand la terminaison n'est pas régulière, ex. vous êtes)
+function lignes(verbe, temps) {
+  return formesTemps(verbe, temps).map(([[, pronom], ...segs]) => {
+    const k = segs.map(([c]) => c).findLastIndex(c => c === 'ter' || c === 'pp')
+    const txt = l => l.map(([, x]) => x).join('')
+    return { pronom: pronom.trim(), forme: txt(segs), debut: k > 0 ? txt(segs.slice(0, k)) : '', trou: k > 0 ? txt(segs.slice(k)) : txt(segs) }
   })
-})
-
+}
+const conjugaison = computed(() => lignes(courant.value.verbe, courant.value.temps))
 const totalLignes = computed(() => conjugaison.value.length)
 
-function detecterRadical(inf, forme, temps) {
-  // Passé composé : auxiliaire visible, l'élève tape le participe
-  if (temps === 'passe') {
-    const lastSpace = forme.lastIndexOf(' ')
-    return lastSpace >= 0 ? forme.slice(0, lastSpace + 1) : ''
-  }
-  // Verbes du 1er groupe (-er) : radical = infinitif sans -er
-  if (inf.endsWith('er') && !['être', 'aller'].includes(inf)) {
-    const stem = inf.slice(0, -2)
-    if (forme.startsWith(stem)) return stem
-    // cas manger → mangeons : "mange" affiché
-    if (inf.endsWith('ger') && forme.startsWith(inf.slice(0, -3) + 'ge')) return inf.slice(0, -3) + 'ge'
-  }
-  // Autres verbes : préfixe commun le plus long avec l'infinitif
-  let i = 0
-  while (i < inf.length && i < forme.length && inf[i] === forme[i]) i++
-  return i >= 2 ? forme.slice(0, i) : ''
+// « allé(e)s » : allés, allées (et la forme écrite telle quelle)
+function accepte(saisie, attendu) {
+  const s = normaliser(saisie), a = normaliser(attendu)
+  if (s === a) return true
+  const motif = a.replace(/[.*+?^${}|[\]\\]/g, '\\$&').replace(/\(e\)/g, 'e?')
+  return new RegExp(`^${motif}$`).test(s)
 }
 
 function rowClass(i) {
@@ -269,6 +242,8 @@ function corrClass(i) {
 }
 
 function demarrer() {
+  if (!paires.value.length) return
+  courant.value = paires.value[aleatoire(0, paires.value.length - 1)]
   inputRefs.value = []
   reponses.value   = Array(6).fill('')
   valide.value     = Array(6).fill(false)
@@ -279,60 +254,61 @@ function demarrer() {
   nextTick(() => inputRefs.value[0]?.focus())
 }
 
+// Tableaux de la fiche : des couples au hasard, en variant les verbes autant que possible
+function tableauxFiche() {
+  const tous = melanger([...paires.value]), choisis = [], vus = new Set()
+  for (const p of tous) if (choisis.length < NB_TABLEAUX && !vus.has(p.verbe)) { choisis.push(p); vus.add(p.verbe) }
+  for (const p of tous) if (choisis.length < NB_TABLEAUX && !choisis.includes(p)) choisis.push(p)
+  return choisis
+}
+
 // Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
 function htmlFiche() {
-  const verbe = verbeCourant.value
-  const tempsObj = tempsCourant.value
-  const formes = verbe.conj[config.value.temps]
-
-  const rows = PRONOMS.map((pronom, i) => {
-    const forme = formes[i]
-    const radical = detecterRadical(verbe.inf, forme, config.value.temps)
-    const lacune = config.value.mode === 'lacunes'
-      ? `<span style="display:inline-block;min-width:100px;border-bottom:1.5px solid #888;">&nbsp;</span>`
-      : `<span style="display:inline-block;min-width:160px;border-bottom:1.5px solid #888;">&nbsp;</span>`
-    const gauche = config.value.mode === 'lacunes' && radical
-      ? `<span style="font-weight:700;">${radical}</span>`
-      : ''
-    return `<tr>
-      <td style="padding:.5rem 1rem .5rem 0;font-style:italic;color:#555;font-size:1rem;">${pronom}</td>
-      <td style="padding:.5rem 0;font-size:1.1rem;">${gauche}${lacune}</td>
-    </tr>`
+  const lacunes = config.value.mode === 'lacunes'
+  const tableaux = tableauxFiche()
+  const titreVerbe = p => `${verbeDe(p.verbe).inf} <small>(${t('groupe_' + GROUPE_DE[verbeDe(p.verbe).groupe])})</small>`
+  const boites = tableaux.map(p => {
+    const rows = lignes(p.verbe, p.temps).map(l => `<tr>
+      <td class="pronom">${l.pronom}</td>
+      <td class="forme">${lacunes && l.debut ? `<b>${l.debut}</b>` : ''}<span class="trou ${lacunes ? '' : 'long'}"></span></td>
+    </tr>`).join('')
+    return `<div class="verb-box" data-verbe="${p.verbe}" data-temps="${p.temps}">
+      <div class="verb-title">${titreVerbe(p)}</div>
+      <div class="verb-temps">${nomTemps(p.temps)}</div>
+      <table>${rows}</table>
+    </div>`
   }).join('')
+  // Corrigé : les formes attendues, partie à écrire en gras
+  const corrige = tableaux.map(p => `<div class="corr"><h3>${verbeDe(p.verbe).inf}, ${nomTemps(p.temps).toLowerCase()}</h3><table>${
+    lignes(p.verbe, p.temps).map(l => `<tr><td class="pronom">${l.pronom}</td><td>${lacunes ? l.debut : ''}<b>${lacunes ? l.trou : l.forme}</b></td></tr>`).join('')
+  }</table></div>`).join('')
 
-  const modeLabel = config.value.mode === 'lacunes' ? t('ficheLacunes') : t('ficheComplet')
-
-  // Corrigé : les formes attendues, terminaison (ou forme) à écrire en gras
-  const corrige = PRONOMS.map((pronom, i) => {
-    const forme = formes[i]
-    const radical = config.value.mode === 'lacunes' ? detecterRadical(verbe.inf, forme, config.value.temps) : ''
-    return `<tr><td style="padding:.1rem 1rem .1rem 0;font-style:italic;color:#555;">${pronom}</td><td>${radical}<b>${forme.slice(radical.length)}</b></td></tr>`
-  }).join('')
-
-  const html = `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>${t('titre')} — ${verbe.inf}</title>
+  return `<!DOCTYPE html><html lang="fr"><head>
+    <meta charset="UTF-8"><title>${t('titre')} — ${config.value.niveau.toUpperCase()}</title>
     <style>
-      body { font-family: Arial, sans-serif; max-width: 500px; margin: 2cm auto; color: #222; }
+      body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       .consigne { font-size: .95rem; margin: 0 0 1rem; }
-      .verb-box { background: #f5f7fa; border: 1.5px solid #ddd; border-radius: 8px; padding: 1rem 1.5rem; }
-      .verb-title { font-size: 1.4rem; font-weight: 900; margin-bottom: .25rem; }
-      .verb-temps { font-size: 1rem; color: #555; margin-bottom: 1rem; }
+      .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .verb-box { background: #f5f7fa; border: 1.5px solid #ddd; border-radius: 8px; padding: .8rem 1rem; page-break-inside: avoid; }
+      .verb-title { font-size: 1.25rem; font-weight: 900; }
+      .verb-title small { font-weight: 400; font-size: .7em; color: #777; }
+      .verb-temps { font-size: .95rem; color: #555; margin-bottom: .5rem; }
       table { width: 100%; border-collapse: collapse; }
+      td { padding: .35rem 0; font-size: 1.05rem; }
+      td.pronom { padding-right: .6rem; font-style: italic; color: #555; font-size: .95rem; white-space: nowrap; width: 1%; }
+      .trou { display: inline-block; min-width: 70px; border-bottom: 1.5px solid #888; height: 1.1em; vertical-align: bottom; }
+      .trou.long { min-width: 150px; }
+      section.corrige .corr { display: inline-block; vertical-align: top; width: 48%; margin: 0 1% .6rem 0; }
+      section.corrige h3 { font-size: .95rem; margin: .4rem 0 .2rem; }
+      section.corrige td { padding: .05rem .6rem .05rem 0; font-size: .9rem; }
     </style></head><body>
-    <h1>${t('titre')}</h1>
+    <h1>${t('titre')} — ${config.value.niveau.toUpperCase()}</h1>
     ${ligneNomDate('fr')}
-    <p class="consigne">${modeLabel}</p>
-    <div class="verb-box">
-      <div class="verb-title">${verbe.inf} <small style="font-weight:400;font-size:.75em;color:#777;">(${t('groupe_' + verbe.groupe)})</small></div>
-      <div class="verb-temps">${t('temps_' + tempsObj.id)}</div>
-      <table>${rows}</table>
-    </div>
-    <section class="corrige"><h2>${t('corrige')} — ${verbe.inf}, ${t('temps_' + tempsObj.id).toLowerCase()}</h2>
-      <table style="width:auto">${corrige}</table></section>
+    <p class="consigne">${lacunes ? t('ficheLacunes') : t('ficheComplet')}</p>
+    <div class="grille">${boites}</div>
+    <section class="corrige"><h2>${t('corrige')}</h2>${corrige}</section>
   </body></html>`
-
-  return html
 }
 
 const { mode, graine, regenerer } = useModeExercice()
@@ -345,19 +321,15 @@ const fiche = computed(() => {
 
 function validerLigne(i) {
   if (valide.value[i]) { focusSuivant(i); return }
-  const saisie = normaliser(reponses.value[i]?.trim() ?? '')
-  const attendu = config.value.mode === 'lacunes'
-    ? normaliser(conjugaison.value[i].terminaison)
-    : normaliser(conjugaison.value[i].forme)
-  const ok = saisie === attendu
+  const l = conjugaison.value[i]
+  const attendu = config.value.mode === 'lacunes' ? l.trou : l.forme
+  const ok = accepte(reponses.value[i] ?? '', attendu)
   valide.value[i] = true
   inputClass.value[i] = ok ? 'ok' : 'erreur'
-  rowFeedback.value[i] = ok ? '✅' : `❌ ${conjugaison.value[i].forme}`
+  rowFeedback.value[i] = ok ? '✅' : `❌ ${l.forme}`
   if (ok) bonnes.value++; else mauvaises.value++
   // afficher la bonne réponse dans l'input si erreur
-  if (!ok) reponses.value[i] = config.value.mode === 'lacunes'
-    ? conjugaison.value[i].terminaison
-    : conjugaison.value[i].forme
+  if (!ok) reponses.value[i] = attendu
   focusSuivant(i)
 }
 

@@ -3,6 +3,7 @@
 // Le mode normal reste la génération à la demande dans l'app.
 
 import { LANGUES_REGIONALES } from '../data/languesRegionales.js'
+import { DOMAINES_AFFICHES } from './affiches/catalogue.js'
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 const TOUS_STYLES = ['script-maj', 'script-min', 'attache-maj', 'attache-min']
@@ -84,7 +85,7 @@ const affiches = [
   { slug: 'cartes-alphabet-une-lettre-par-page', court: 'Une lettre par page', format: 'A4', orientation: 'landscape', disposition: 'carte', titre: "Alphabet : une grande lettre par page (frise de la classe)" },
 ].map(a => ({
   slug: a.slug, court: a.court, titre: a.titre,
-  categorie: 'alphabet', type: 'alphabet',
+  categorie: 'alphabet', type: 'alphabet', domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche',
   description: `${a.titre} : les lettres en script et en attaché, majuscules et minuscules, avec un mot illustré pour chaque lettre. Gratuit, à imprimer en PDF.`,
   niveaux: 'MS · GS · CP · CE1',
   config: {
@@ -101,7 +102,8 @@ const dizaines = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
   court: `De ${d * 10} à ${d * 10 + 10}`,
   titre: `Les nombres de ${d * 10} à ${d * 10 + 10} en français et en breton`,
   description: `Affiche bilingue : les nombres de ${d * 10} à ${d * 10 + 10} écrits en chiffres, en lettres en français et en breton (brezhoneg). Pour l'école bilingue ou Diwan.`,
-  niveaux: 'CP · CE1',
+  // écriture en lettres jusqu'à 50 au CP (programme.js, nombresEnLettresMax) : de 50 à 100, dès le CE1
+  niveaux: d < 5 ? 'CP · CE1' : 'CE1 · CE2',
   config: { ...nombresBase, sections: [`d${d}`] },
 }))
 const nombres = [
@@ -109,14 +111,14 @@ const nombres = [
     slug: 'nombres-francais-breton-0-100', court: 'Tableau de 0 à 100',
     titre: 'Les nombres de 0 à 100 en français et en breton',
     description: 'Tableau bilingue des nombres de 0 à 100 en chiffres et en lettres, en français et en breton (brezhoneg). Gratuit à imprimer.',
-    niveaux: 'CP · CE1 · CE2',
+    niveaux: 'CE1 · CE2',
     config: { ...nombresBase, sections: ['cent'] },
   },
   {
     slug: 'affiches-nombres-francais-breton', court: 'Unités, dizaines, centaines',
     titre: 'Affiches des nombres en français et en breton : unités, dizaines, centaines, milliers',
     description: 'Cinq affiches bilingues français / breton : les unités, de 10 à 20, les dizaines, les centaines et les milliers, avec points, barres de dix et plaques de cent.',
-    niveaux: 'CP · CE1 · CE2',
+    niveaux: 'CE2',
     config: { ...nombresBase, sections: ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] },
   },
   ...dizaines,
@@ -124,24 +126,24 @@ const nombres = [
     slug: 'nombres-en-breton-0-100', court: 'Breton de 0 à 100',
     titre: 'Les nombres en breton de 0 à 100',
     description: 'Les nombres de 0 à 100 en breton (brezhoneg) : unan, daou, tri… ugent, tregont, hanter-kant, pevar-ugent, kant. Tableau à imprimer.',
-    niveaux: 'CP · CE1 · CE2',
+    niveaux: 'CE1 · CE2',
     config: { ...nombresBase, langues: ['br'], langue: 'br', sections: ['cent'] },
   },
   {
     slug: 'nombres-en-lettres-0-100', court: 'Français de 0 à 100',
     titre: 'Les nombres en lettres de 0 à 100 (orthographe rectifiée)',
     description: "Tableau des nombres de 0 à 100 écrits en lettres en français, avec l'orthographe rectifiée de 1990 utilisée à l'école (vingt-et-un, quatre-vingts…).",
-    niveaux: 'CP · CE1 · CE2',
+    niveaux: 'CE1 · CE2',
     config: { ...nombresBase, langues: ['fr'], sections: ['cent'] },
   },
   {
     slug: 'nombres-en-lettres-dizaines-centaines', court: 'Dizaines et centaines (français)',
     titre: 'Écrire les nombres en lettres : dizaines, centaines et milliers',
     description: 'Affiches mémo pour écrire les nombres en lettres en français : unités, 10 à 20, dizaines, centaines et milliers, avec représentations.',
-    niveaux: 'CE1 · CE2',
+    niveaux: 'CE2',
     config: { ...nombresBase, langues: ['fr'], sections: ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] },
   },
-].map(e => ({ ...e, categorie: 'nombres', type: 'nombres', lien: `/imprimer/nombres?mise=${e.config.miseEnPage ?? 'affiches'}` }))
+].map(e => ({ ...e, categorie: 'nombres', type: 'nombres', domaine: DOMAINES_AFFICHES.nombres, genre: 'affiche', lien: `/imprimer/nombres?mise=${e.config.miseEnPage ?? 'affiches'}` }))
 
 // Fiches propres à chaque langue régionale (alphabet, listes de mots, une fiche par lettre, affiches),
 // générées à partir de sa définition dans src/data/languesRegionales.js
@@ -173,6 +175,7 @@ function fichesRegionales(r) {
     }),
     ...[['A4', 'landscape'], ['A3', 'landscape']].map(([format, orientation]) => ({
       slug: `affiche-alphabet-${nom}-${format.toLowerCase()}`, court: `Alphabet ${nom} ${format}`, type: 'alphabet', categorie: 'alphabet',
+      domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche',
       titre: `Affiche de l'alphabet ${nom} ${format} (${r.titreAlphabet.toLowerCase()})`,
       description: `Affiche ${format} de l'alphabet ${nom} : ${r.alphabet.length} lettres, en script et en attaché, majuscules et minuscules${exemplesMots ? `, avec un mot illustré (${exemplesMots}…)` : ''}. Pour ${f.ecoles}.`,
       niveaux: 'MS · GS · CP · CE1', lien: '/imprimer/alphabet',

@@ -28,9 +28,9 @@
         <div class="btn-group">
           <button v-for="p in niveau.precisions" :key="p"
             class="level-btn" :class="{ active: config.precisions.includes(p) }"
-            @click="basculer('precisions', p)">{{ t(`prec_${p}`) }}</button>
+            @click="basculer('precisions', p)">{{ t(`prec_${p}`) }}{{ niveau.bonus?.includes(p) ? ` (${t('bonus')})` : '' }}</button>
         </div>
-        <div class="aide-config">{{ t('aideCe1') }}</div>
+        <div v-if="config.niveau === 'ce1'" class="aide-config">{{ t('aideCe1') }}</div>
       </div>
 
       <div class="config-section" v-if="mode === 'jouer' && config.exercices.includes('lire')">
@@ -194,7 +194,7 @@
         <!-- (e) Conversions h / min / s (CE2) -->
         <template v-else-if="q.type === 'conversion'">
           <div class="consigne">{{ t('complete') }}&nbsp;: <strong>{{ q.texte.replace(/ = .*/, ' =') }}</strong></div>
-          <div class="aide-config" style="text-align:center;margin-bottom:.75rem;">{{ t('rappel') }} : 1 h = 60 min · 1 min = 60 s</div>
+          <div class="aide-config" style="text-align:center;margin-bottom:.75rem;">{{ t('rappel') }} : 1 h = 60 min</div>
           <div class="saisie-heure">
             <template v-for="(u, i) in q.unites" :key="u">
               <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
@@ -324,8 +324,11 @@ const NIVEAUX = {
   ce1: {
     exercices: ['lire', 'placer', 'journee', 'duree'],
     exercicesDefaut: ['lire'],
+    // programme du CE1 : heures, demi-heures et quarts d'heure ; les 5 minutes (CE2) restent un bonus, jamais
+    // proposé par défaut
     precisions: ['heure', 'demi', 'quart', 'cinq'],
     precisionsDefaut: ['heure', 'demi', 'quart'],
+    bonus: ['cinq'],
     // durées proposées (en minutes)
     durees: [15, 30, 45, 60, 90, 120, 180],
     dureesCinq: [5, 10, 20],
@@ -342,8 +345,8 @@ const NIVEAUX = {
     dureesCinq: [5, 10, 20, 25, 35, 40, 50, 55, 70, 80, 100, 110, 125, 140, 160],
     dureesMinute: [12, 18, 27, 33, 48, 52, 64, 72, 87, 96],
     dureeMax: 240,
-    // 1 h = 60 min, 1 min = 60 s
-    conversions: ['h-min', 'hmin-min', 'min-hmin', 'min-s', 'minsec-s', 's-min'],
+    // 1 h = 60 min (les secondes sont au programme du CM2 : 'min-s', 'minsec-s', 's-min')
+    conversions: ['h-min', 'hmin-min', 'min-hmin'],
   },
 }
 
@@ -399,7 +402,7 @@ function distracteurs(h, m, pool) {
     { h, m: (60 - m) % 60 },
     { h: h12(h + 1), m: (60 - m) % 60 },       // « moins le quart » ↔ « et quart »
     { h, m: (m + 5) % 60 },
-  ].filter(c => Number.isInteger(c.h) && c.h >= 1 && c.h <= 12 && !egal(c, { h, m }))
+  ].filter(c => Number.isInteger(c.h) && c.h >= 1 && c.h <= 12 && !egal(c, { h, m }) && pool.includes(c.m))  // précision du niveau
   const uniques = []
   for (const c of melanger(cands)) if (!uniques.some(u => egal(u, c))) uniques.push(c)
   let essais = 0
@@ -934,7 +937,7 @@ function htmlFiche() {
   }
   if (cfg.exercices.includes('conversion') && niv.exercices.includes('conversion')) {
     const qs = genererSansRepetition({ ...cfg, exercices: ['conversion'] }, 6)
-    extra += `<h2>${C.t('ficheConversionTitre')}</h2><p class="consigne">${t('rappel')} : 1 h = 60 min · 1 min = 60 s</p>
+    extra += `<h2>${C.t('ficheConversionTitre')}</h2><p class="consigne">${t('rappel')} : 1 h = 60 min</p>
       <div class="deux-col">${qs.map((c, i) => `<div class="ligne">${i + 1}. ${c.texte.replace(/\?/g, '______')}</div>`).join('')}</div>`
     corrige.push(`<p><b>${C.t('corrigeConversions')} :</b> ${qs.map((c, i) => `${i + 1}. ${c.attendu}`).join(' — ')}</p>`)
   }

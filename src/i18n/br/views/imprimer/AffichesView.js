@@ -7,6 +7,7 @@ export default {
     version: 'Stumm', // br: à relire
     verbe: 'Verb',
     temps: 'Amzer',
+    tempsPresent: 'Amzer-vremañ hepken (CP)', // br: à relire
     tempsCycle: 'Amzer-vremañ, amzer-dremenet anstrizh, amzer-da-zont, amzer-dremenet kevrennek', // br: à relire
     tempsCm2: 'Amzer-dremenet strizh, amzer-dremenet pell (CM2)', // br: à relire
     source: "Mammennoù : programmoù ar c'helc'h 1 hag ar c'helc'h 2 (BO n° 41, 31 a viz Here 2024) hag ar c'helc'h 3 (BO n° 16, 17 a viz Ebrel 2025). Testennoù e galleg.", // br: à relire

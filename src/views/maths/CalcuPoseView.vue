@@ -17,11 +17,12 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('taille') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.taille === '1' }" @click="config.taille = '1'">{{ t('chiffre1') }} (GS/CP)</button>
-          <button class="level-btn" :class="{ active: config.taille === '2' }" @click="config.taille = '2'">{{ t('chiffres', { n: 2 }) }} (CP)</button>
-          <button class="level-btn" :class="{ active: config.taille === '3' }" @click="config.taille = '3'">{{ t('chiffres', { n: 3 }) }} (CE)</button>
-          <button class="level-btn" :class="{ active: config.taille === '4' }" @click="config.taille = '4'">{{ t('chiffres', { n: 4 }) }} (CM)</button>
+          <button class="level-btn" :class="{ active: config.taille === '1' }" @click="config.taille = '1'">{{ t('chiffre1') }} ({{ TAILLES['1'] }})</button>
+          <button class="level-btn" :class="{ active: config.taille === '2' }" @click="config.taille = '2'">{{ t('chiffres', { n: 2 }) }} ({{ TAILLES['2'] }})</button>
+          <button class="level-btn" :class="{ active: config.taille === '3' }" @click="config.taille = '3'">{{ t('chiffres', { n: 3 }) }} ({{ TAILLES['3'] }})</button>
+          <button class="level-btn" :class="{ active: config.taille === '4' }" @click="config.taille = '4'">{{ t('chiffres', { n: 4 }) }} ({{ TAILLES['4'] }})</button>
         </div>
+        <div class="aide-config">{{ t('aideNiveaux') }}</div>
       </div>
 
       <div class="config-section" v-if="config.taille !== '1'">
@@ -146,6 +147,9 @@ const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Langue du contenu imprimé : celle de l'interface pour les maths
 const langueContenu = computed(() => langue.value)
 
+// Classes de chaque taille (programme : addition posée au CP, soustraction au CE1, nombres ≤ 1 000 au CE1,
+// ≤ 10 000 au CE2 ; pas d'opération posée en maternelle)
+const TAILLES = { '1': 'CP', '2': 'CP / CE1', '3': 'CE1 / CE2', '4': 'CE2 / CM' }
 const config = ref(chargerReglages('calcul_pose_config', { op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10 }))
 // nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
 const NB_JOUER = [3, 5, 10, 20]
@@ -311,8 +315,7 @@ function demarrer() {
 // Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
 function htmlFiche() {
   const qs = genererSansRepetition(config.value.nbFiche)
-  const tailles = { '1': 'GS / CP', '2': 'CP', '3': 'CE', '4': 'CM' }
-  const niveau = tailles[config.value.taille] || ''
+  const niveau = TAILLES[config.value.taille] || ''
   const opLabel = t(config.value.op === 'add' ? 'additions' : config.value.op === 'sou' ? 'soustractions' : 'melange')
 
   const carte = (q, corrige) => {
@@ -451,6 +454,7 @@ const resultMsg = computed(() => {
 </script>
 
 <style scoped>
+.aide-config { font-size: .8rem; color: #888; margin-top: .4rem; }
 .pose-container {
   display: flex;
   flex-direction: column;

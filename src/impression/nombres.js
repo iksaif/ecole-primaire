@@ -1,7 +1,8 @@
 // Génération des affiches / fiches de nombres en lettres (français, breton) — partagée par l'app et le build des PDF.
 import { enLettresFr } from '../utils/nombres'
 import { langueRegionale } from '../data/languesRegionales'
-import { largeurTexte, dimensionsPage, documentImpression, echapper } from '../utils/impression'
+import { largeurTexte, dimensionsPage, echapper } from '../utils/impression'
+import { cadreAffiche } from './affiches/cadre.js'
 
 // Deux réglages de langue distincts :
 //   config.langues : langues dans lesquelles les nombres sont écrits, ex. ['fr'], ['br'], ['fr', 'br']
@@ -145,8 +146,10 @@ export function genererNombres(config, polices) {
     return meilleur
   }
 
+  // marge fixe ; titre plus haut en A3 (valeurs propres aux nombres, gardées telles quelles)
+  const marge = 10
+  // une page { titre, hTitre, corps } pour le cadre commun des affiches
   function pageHtml(titre, entrees, w, h, avecRepr) {
-    const marge = 10
     const titreH = titre ? (config.format === 'A3' ? 20 : 14) : 0
     const enTeteH = 8
     const wDispo = w - 2 * marge, hDispo = h - 2 * marge - titreH - enTeteH
@@ -167,11 +170,8 @@ export function genererNombres(config, polices) {
     }
     const legende = bilingue
       ? `<span class="fr">■ ${textesBr ? 'galleg' : 'français'}</span> <span class="br">■ ${reg.nomLocal}</span>` : ''
-    return `<div class="contenu" style="inset:${marge}mm">
-  ${titre ? `<h1 style="height:${titreH}mm;font-size:${titreH * 0.6}mm">${echapper(titre)}</h1>` : ''}
-  <div class="legende" style="height:${enTeteH}mm">${legende}</div>
-  <div class="colonnes" style="gap:6mm">${colonnes.map(col => `<div class="col" style="width:${d.colW}mm">${col.map(ligne).join('')}</div>`).join('')}</div>
-  </div>`
+    return { titre, hTitre: titreH, corps: `<div class="legende" style="height:${enTeteH}mm">${legende}</div>
+  <div class="colonnes" style="gap:6mm">${colonnes.map(col => `<div class="col" style="width:${d.colW}mm">${col.map(ligne).join('')}</div>`).join('')}</div>` }
   }
 
 
@@ -189,12 +189,10 @@ export function genererNombres(config, polices) {
       const entrees = choisies.flatMap(s => [{ titre: s.titre }, ...s.nombres.map(n => ({ n, repr: s.repr }))])
       pages = [pageHtml(textesBr ? 'An niveroù' : 'Les nombres', entrees, w, h, choisies.some(avecRepr))]
     }
-    const html = documentImpression({
-      titre: config.titre || (textesBr ? 'An niveroù e lizherennoù' : 'Les nombres en lettres'), format: config.format, orientation: config.orientation, pages,
-      css: `body { font-family: '${police}', Arial, sans-serif; }
-  .contenu { position: absolute; display: flex; flex-direction: column; }
-  h1 { text-align: center; font-weight: 700; line-height: 1; flex: none; }
-  .legende { text-align: center; font-size: 4mm; flex: none; }
+    return cadreAffiche({
+      titreDocument: config.titre || (textesBr ? 'An niveroù e lizherennoù' : 'Les nombres en lettres'), format: config.format, orientation: config.orientation,
+      marge, pages, polices, centrer: false, ratioTitre: 0.6,
+      css: `.legende { text-align: center; font-size: 4mm; flex: none; }
   .colonnes { display: flex; justify-content: center; }
   .ligne { display: flex; align-items: center; gap: 2mm; border-bottom: 0.25mm solid #e1e4ea; }
   .chiffres { font-weight: 700; text-align: right; flex: none; color: #222; }
@@ -206,5 +204,4 @@ export function genererNombres(config, polices) {
   .mots .fr + .br { font-size: .92em; }
   .sous-titre { display: flex; align-items: flex-end; font-weight: 700; color: #e07a1f; border-bottom: 0.4mm solid #e07a1f; }`,
     })
-    return { html, nbPages: pages.length, format: config.format, orientation: config.orientation }
 }

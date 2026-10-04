@@ -202,30 +202,26 @@ const ordinal = n => C.t('ordinal', { n })
 
 // #region generation — fonctions pures (testables hors de Vue)
 
-// Données par niveau. CE2 : ajouter des fractions > 1, la comparaison, la droite graduée…
+// Données par niveau (programme : fractions ≤ 1 au cycle 2, dénominateurs 2, 3, 4, 5, 6, 8, 10 au CE1, ≤ 12 au CE2).
+// Pour un niveau CM1 : fractions > 1 (`unite`, `droiteUnites: [1, 2]`) et fraction d'une quantité (`partDe` 3, 4, 5…).
 const NIVEAUX = {
   ce1: {
     denominateurs: [2, 3, 4, 5, 6, 8, 10],
     types: ['identifier', 'colorier', 'lettres', 'partDe'],
     modeDefaut: 'unitaires',
-    // « la moitié de 8 », « le tiers de 9 », « le quart de 12 » : totaux possibles (nom : catalogue partDe_<d>)
+    // « la moitié de 8 » (calcul mental du cycle 2) : totaux possibles (nom : catalogue partDe_<d>). Le tiers ou
+    // le quart d'une quantité (fraction opérateur) est au programme du CM1.
     partDe: {
       2: { max: 20, extra: [30, 40, 50, 60, 80, 100] },
-      3: { max: 30, extra: [] },
-      4: { max: 40, extra: [100] },
     },
   },
   ce2: {
     denominateurs: [2, 3, 4, 5, 6, 8, 10],
-    types: ['identifier', 'colorier', 'lettres', 'partDe', 'unite', 'egales', 'droite', 'placer'],
+    types: ['identifier', 'colorier', 'lettres', 'partDe', 'egales', 'droite', 'placer'],
     modeDefaut: 'toutes',
-    droiteUnites: [1, 2],          // droite graduée de 0 à 1 ou de 0 à 2 (fractions > 1)
+    droiteUnites: [1],             // droite graduée de 0 à 1 (fractions ≤ 1)
     partDe: {
       2: { max: 40, extra: [50, 60, 80, 100, 200, 500] },
-      3: { max: 30, extra: [36, 45, 60, 90] },
-      4: { max: 40, extra: [60, 80, 100] },
-      5: { max: 50, extra: [100] },
-      10: { max: 100, extra: [] },
     },
   },
 }
@@ -508,13 +504,13 @@ function genDroite(niv) {
   const choix = [f]
   for (const c of candidats) {
     if (choix.length === 4) break
-    if (c.n < 1 || !niv.denominateurs.includes(c.d) || c.n === c.d || egales(c, f) || choix.some(x => cle(x) === cle(c))) continue
+    if (c.n < 1 || c.n > c.d * dr.unites || !niv.denominateurs.includes(c.d) || c.n === c.d || egales(c, f) || choix.some(x => cle(x) === cle(c))) continue
     choix.push(c)
   }
   let essais = 0
   while (choix.length < 4 && essais++ < 200) {
     const dd = Math.random() < 0.6 ? f.d : niv.denominateurs[aleatoire(0, niv.denominateurs.length - 1)]
-    const c = { n: aleatoire(1, 2 * dd - 1), d: dd }
+    const c = { n: aleatoire(1, dr.unites * dd - 1), d: dd }
     if (c.n !== c.d && !egales(c, f) && !choix.some(x => cle(x) === cle(c))) choix.push(c)
   }
   return {

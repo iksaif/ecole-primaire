@@ -4,6 +4,7 @@ export default {
     titre: 'Lenn an eur',
     precision: 'Resisded', // br: à relire
     aideCe1: "Er CE1 : an eurioù rik, an hanter-eurioù hag ar c'hardoù-eur. Ar 5 munut a zo ur bonus.", // br: à relire
+    bonus: 'bonus', // br: à relire
     reponseLire: 'Respont (lenn an eur)',
     propositions4: '4 kinnig',
     jEcris: 'Skrivañ a ran an eur',
@@ -39,7 +40,7 @@ export default {
     ex_placer: 'Lakaat an nadozioù',
     ex_journee: 'Mintin / goude merenn',
     ex_duree: 'Padelezhioù', // br: à relire
-    ex_conversion: 'h, min, s',
+    ex_conversion: 'h ha min', // br: à relire
     ex_emploi: 'Implij-amzer',
     prec_heure: 'Eurioù rik', // br: à relire
     prec_demi: 'Hanter-eurioù',

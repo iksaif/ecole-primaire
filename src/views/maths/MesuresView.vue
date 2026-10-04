@@ -182,6 +182,8 @@ const OBJETS_UNITE_CE1 = [
   { id: 'arrosoir', valeur: 5, unite: 'L' },
   { id: 'aquarium', valeur: 50, unite: 'L' },
 ]
+// CE1 : pas encore de contenances (litre : CE2)
+const OBJETS_UNITE_CE1_SANS_L = OBJETS_UNITE_CE1.filter(o => o.unite !== 'L')
 const OBJETS_CONTENANCE_CE1 = [
   { id: 'bouteille', valeur: 1, unite: 'L' },
   { id: 'seau', valeur: 10, unite: 'L' },
@@ -193,11 +195,12 @@ const OBJETS_CONTENANCE_CE1 = [
 
 const NIVEAUX = {
   ce1: {
-    exercices: ['regle', 'unite', 'conversion', 'comparer', 'masse', 'contenance', 'calendrier'],
+    // programme du CE1 : longueurs (m, cm, km) et masses (g, kg) ; les contenances commencent au CE2
+    exercices: ['regle', 'unite', 'conversion', 'comparer', 'masse', 'calendrier'],
     regle: { max: 20, segMin: 2, segMax: 15, px: 32, mm: false },  // en cm entiers
     fiche: { segMin: 3, segMax: 12, mm: false },                   // segments imprimés (tiennent sur A4)
-    unites: ['cm', 'm', 'km', 'g', 'kg', 'L'],
-    objetsUnite: OBJETS_UNITE_CE1,
+    unites: ['cm', 'm', 'km', 'g', 'kg'],
+    objetsUnite: OBJETS_UNITE_CE1_SANS_L,
     // CE1 : 1 m = 100 cm ; 1 km = 1 000 m et 1 kg = 1 000 g seulement (nombres ≤ 1 000)
     conversions: ['m-cm', 'mcm-cm', 'cm-m', 'km-m', 'm-km', 'kg-g', 'g-kg'],
     kmMax: 1, kgMax: 1,
@@ -206,11 +209,6 @@ const NIVEAUX = {
     boiteKg: [1, 1, 2, 5],                                           // en kg
     masses: ['equilibre', 'equilibre', 'equilibreKg', 'boites', 'seuil'],
     seuils: [100, 200, 500, 1000],                                   // en g
-    contenances: ['broc', 'bouteilles', 'unite'],
-    brocs: [{ max: 5, u: 'L' }, { max: 10, u: 'L' }],
-    bouteilles: { max1: 5, max2: 3 },
-    objetsContenance: OBJETS_CONTENANCE_CE1,
-    unitesContenance: ['L', 'kg', 'm'],
     calendrier: ['demain', 'hier', 'dansN', 'semaine', 'moisApres', 'moisAvant', 'numMois', 'semainesJours', 'moisAnnee'],
     dansN: [2, 5],
   },

@@ -194,12 +194,12 @@ const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
 // ==== LOGIQUE (testée hors Vue) ====
 // Données par niveau : ajouter « ce2: {...} » suffit pour un nouveau niveau.
 const NIVEAUX = {
+  // programme du CE1 : pas de symétrie ni de losange (CE2)
   ce1: {
-    exercices: ['symetrie', 'reproduction', 'reperage', 'figures', 'solides'],
-    symetrie:     { cols: 10, rows: 8, nbCases: [5, 9], toucheAxe: 0.65 },  // axe vertical : 2 moitiés de 5 × 8
+    exercices: ['reproduction', 'reperage', 'figures', 'solides'],
     reproduction: { cols: 6, rows: 6, nbCases: [5, 9] },
     reperage:     { cols: 6, rows: 6 },
-    figures: ['carre', 'rectangle', 'triangle', 'triangle_rectangle', 'cercle', 'losange'],
+    figures: ['carre', 'rectangle', 'triangle', 'triangle_rectangle', 'cercle'],
     solides: ['cube', 'pave', 'pyramide', 'cylindre', 'boule', 'cone'],
     solidesComptage: ['cube', 'pave'],   // faces / sommets demandés pour ces solides
   },
@@ -745,7 +745,12 @@ function nettoyerExercices() {
   if (!config.value.exercices.length) config.value.exercices = [...dispo]
 }
 nettoyerExercices()
-watch(() => config.value.niveau, nettoyerExercices)
+// changement de niveau : « tous les exercices » de l'ancien niveau devient « tous ceux du nouveau »
+watch(() => config.value.niveau, (niveau, ancien) => {
+  const avant = NIVEAUX[ancien]?.exercices ?? []
+  if (avant.length && avant.every(id => config.value.exercices.includes(id))) config.value.exercices = [...NIVEAUX[niveau].exercices]
+  else nettoyerExercices()
+})
 const exercicesDispo = computed(() => EXERCICES.filter(e => (NIVEAUX[config.value.niveau] || NIVEAUX.ce1).exercices.includes(e.id)))
 if (![4, 8, 12].includes(config.value.nbQ)) config.value.nbQ = 8
 watch(config, v => sauvegarder('geometrie_config', v), { deep: true })

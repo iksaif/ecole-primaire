@@ -9,6 +9,9 @@ import libellesFr from '../i18n/fr/contenu/calcul-libelles.js'
 import libellesBr from '../i18n/br/contenu/calcul-libelles.js'
 import fichesFr from '../i18n/fr/contenu/calcul-fiches.js'
 import fichesBr from '../i18n/br/contenu/calcul-fiches.js'
+// affiches des tables (mode « affiche ») : cadre commun des affiches
+import { genererTables } from './affiches/tables.js'
+import { DOMAINES_AFFICHES } from './affiches/catalogue.js'
 
 export const NIVEAUX = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
 
@@ -515,7 +518,6 @@ export function tirerCalculs(config) {
 
 // ── Mise en page ──
 const MARGE = 12
-const COULEURS = ['#e74c3c', '#e67e22', '#d4a00f', '#2ecc71', '#1abc9c', '#3498db', '#9b59b6', '#e84393', '#795548', '#607d8b']
 
 function texteCalcul(x, corrige, largeurCase) {
   let i = 0
@@ -699,92 +701,11 @@ function genererFiche(c, polices) {
   return { html, nbPages: pages.length, format: 'A4', orientation: 'portrait', nbCalculs: N, demandes: tirage.demandes, seed: tirage.seed }
 }
 
-// ── Affiches des tables ──
-function genererAffiche(cfg, polices) {
-  const police = polices.script
-  const mult = cfg.affiche !== 'addition'
-  const op = mult ? '×' : '+'
-  const f = (a, b) => mult ? a * b : a + b
-  const tables = [...cfg.tablesAffiche].sort((a, b) => a - b)
-  const { w, h } = dimensionsPage(cfg.format, cfg.orientation)
-  const T = textes(cfg.langue)
-  const titre = cfg.titre || T.t(mult ? 'afficheMult' : 'afficheAdd')
-  const echelle = cfg.format === 'A3' ? 1.41 : 1
-  const marge = MARGE * echelle
-  const hTitre = 14 * echelle
-  const wD = w - 2 * marge, hD = h - 2 * marge - hTitre
-  const couleur = t => COULEURS[(t - 1) % COULEURS.length]
-
-  // une ligne de table : 7 × 3 = 21 (colonnes alignées)
-  const ligne = (t, k, fs) => `<div class="tl" style="font-size:${fs}mm"><span>${t}</span><span>${op}</span><span>${k}</span><span>=</span><b>${f(t, k)}</b></div>`
-  const wLigne = 1.3 + 1 + 1.3 + 1 + 2.2 + 0.4
-  const bloc = (t, bw, bh) => {
-    const fs = Math.min((bh / 11.6) * 0.72, (bw - 4) / wLigne)
-    return `<div class="bloc" style="width:${bw}mm;height:${bh}mm;border-color:${couleur(t)}">
-      <div class="bt" style="background:${couleur(t)};font-size:${fs * 1.05}mm;height:${bh / 11.6 * 1.4}mm">${echapper(T.t('tableAffiche', { t }))}</div>
-      <div class="bl">${plage(1, 10).map(k => ligne(t, k, fs)).join('')}</div></div>`
-  }
-
-  let pages
-  if (cfg.disposition === 'une') {
-    pages = tables.map(t => `<div class="contenu" style="inset:${marge}mm">${bloc(t, wD, h - 2 * marge)}</div>`)
-  } else if (cfg.disposition === 'grille') {
-    // tableau à double entrée
-    const de = mult ? 1 : 0
-    const nums = plage(de, 10)
-    const n = nums.length + 1
-    const cote = Math.min(wD / n, hD / n)
-    const fs = cote * 0.42
-    const cell = (contenu, cls, style = '') => `<div class="gc ${cls}" style="width:${cote}mm;height:${cote}mm;${style}">${contenu}</div>`
-    let g = cell(op, 'coin')
-    nums.forEach(b => { g += cell(b, 'tete', `background:${couleur(b || 10)}`) })
-    nums.forEach(a => {
-      g += cell(a, 'tete', `background:${couleur(a || 10)}`)
-      nums.forEach(b => { g += cell(f(a, b), a === b ? 'diag' : (a + b) % 2 ? '' : 'pair') })
-    })
-    pages = [`<div class="contenu" style="inset:${marge}mm;justify-content:center"><h1 style="height:${hTitre}mm;font-size:${hTitre * 0.6}mm">${echapper(titre)}</h1>
-      <div class="grillep" style="grid-template-columns:repeat(${n}, ${cote}mm);font-size:${fs}mm">${g}</div></div>`]
-  } else {
-    // toutes les tables sur une page : on choisit la grille qui donne le plus gros texte
-    let best = null
-    const ecart = 4 * echelle
-    for (let cols = 1; cols <= tables.length; cols++) {
-      const rangs = Math.ceil(tables.length / cols)
-      const bw = (wD - (cols - 1) * ecart) / cols, bh = (hD - (rangs - 1) * ecart) / rangs
-      const fs = Math.min((bh / 11.6) * 0.72, (bw - 4) / wLigne)
-      if (!best || fs > best.fs) best = { cols, bw, bh, fs }
-    }
-    pages = [`<div class="contenu" style="inset:${marge}mm"><h1 style="height:${hTitre}mm;font-size:${hTitre * 0.6}mm">${echapper(titre)}</h1>
-      <div class="blocs" style="grid-template-columns:repeat(${best.cols}, ${best.bw}mm);gap:${ecart}mm">${tables.map(t => bloc(t, best.bw, best.bh)).join('')}</div></div>`]
-  }
-
-  const html = documentImpression({
-    titre, format: cfg.format, orientation: cfg.orientation, pages,
-    css: `body { font-family: '${police}', Arial, sans-serif; }
-  .contenu { position: absolute; display: flex; flex-direction: column; align-items: center; }
-  h1 { font-weight: 700; text-align: center; line-height: 1; display: flex; align-items: center; flex: none; }
-  .blocs { display: grid; }
-  .bloc { border: 0.6mm solid; border-radius: 3mm; overflow: hidden; display: flex; flex-direction: column; background: white; }
-  .bt { color: white; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }
-  .bl { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; }
-  .tl { display: grid; grid-template-columns: 1.3em 1em 1.3em 1em 2.2em; text-align: center; line-height: 1.1; }
-  .tl span:first-child { text-align: right; }
-  .tl b { text-align: right; color: #1d4e9e; }
-  .grillep { display: grid; border: 0.5mm solid #444; }
-  .gc { display: flex; align-items: center; justify-content: center; border: 0.15mm solid #b8bec7; }
-  .gc.tete { color: white; font-weight: 700; }
-  .gc.coin { background: #444; color: white; font-weight: 700; }
-  .gc.pair { background: #f3f6fa; }
-  .gc.diag { background: #fff3cd; font-weight: 700; }`,
-  })
-  return { html, nbPages: pages.length, format: cfg.format, orientation: cfg.orientation }
-}
-
 // polices = { script } : famille à utiliser (déjà chargée)
 // config.langue : langue du document ('fr' par défaut, 'br') ; les nombres tirés n'en dépendent pas
 export function genererCalcul(config, polices) {
   const c = normaliserConfig(config)
-  const r = c.mode === 'affiche' ? genererAffiche(c, polices) : genererFiche(c, polices)
+  const r = c.mode === 'affiche' ? genererTables(c, polices) : genererFiche(c, polices)
   // documentImpression écrit lang="fr" : on indique la vraie langue du document
   return { ...r, html: r.html.replace('<html lang="fr">', `<html lang="${c.langue}">`) }
 }
@@ -939,4 +860,8 @@ export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e 
   slug: e.slug + SUFFIXE_SLUG[langue],
   langues: [langue],
   config: { ...e.config, langue },
-}))).map(e => ({ ...e, categorie: 'calcul', type: 'calcul', lien: `/imprimer/calcul?mode=${e.config.mode}` }))
+}))).map(e => ({
+  ...e, categorie: 'calcul', type: 'calcul', lien: `/imprimer/calcul?mode=${e.config.mode}`,
+  // affiches des tables : domaine du programme et genre (préparation du catalogue unique, plan 09)
+  ...(e.config.mode === 'affiche' ? { domaine: DOMAINES_AFFICHES.tables, genre: 'affiche' } : {}),
+}))

@@ -31,8 +31,8 @@
         <div class="config-section">
           <div class="config-section-title">{{ t('temps') }}</div>
           <div class="btn-group">
-            <button class="level-btn" :class="{ active: !config.temps }" @click="config.temps = null">{{ t('tempsCycle') }}</button>
-            <button class="level-btn" :class="{ active: !!config.temps }" @click="config.temps = TEMPS_CM2">{{ t('tempsCm2') }}</button>
+            <button v-for="choix in ['present', 'cycle', 'cm2']" :key="choix" class="level-btn"
+              :class="{ active: choixTemps(config.temps) === choix }" @click="config.temps = TEMPS_DU_CHOIX[choix]">{{ t(TEXTES_TEMPS[choix]) }}</button>
           </div>
         </div>
       </template>
@@ -76,7 +76,9 @@ import { sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/imprimer/AffichesView.js'
 import messagesBr from '../../i18n/br/views/imprimer/AffichesView.js'
-import { AFFICHES_PROGRAMME, VERBES, TEMPS_CM2, DEFAUTS, normaliserConfig, genererAffichesProgramme } from '../../impression/affichesProgramme'
+import { AFFICHES_PROGRAMME, VERBES, TEMPS_DU_CHOIX, choixTemps, DEFAUTS, normaliserConfig, genererAffichesProgramme } from '../../impression/affichesProgramme'
+
+const TEXTES_TEMPS = { present: 'tempsPresent', cycle: 'tempsCycle', cm2: 'tempsCm2' }
 
 const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 
@@ -84,12 +86,12 @@ const CLE = 'affiches_programme_config'
 const config = ref(normaliserConfig(charger(CLE, {}) ?? {}))
 watch(config, v => sauvegarder(CLE, v), { deep: true })
 
-// ?affiche=…&variante=…&verbe=…&temps=cm2 (liens de la page « À imprimer » et des pages de téléchargement)
+// ?affiche=…&variante=…&verbe=…&temps=cm2|present (liens de la page « À imprimer » et des pages de téléchargement)
 const route = useRoute()
 watch(() => route.query, q => {
   if (!q.affiche) return
   config.value = normaliserConfig({
-    ...DEFAUTS, affiche: q.affiche, variante: q.variante, verbe: q.verbe, temps: q.temps === 'cm2' ? TEMPS_CM2 : null,
+    ...DEFAUTS, affiche: q.affiche, variante: q.variante, verbe: q.verbe, temps: ['present', 'cm2'].includes(q.temps) ? TEMPS_DU_CHOIX[q.temps] : null,
     format: config.value.format,
   })
 }, { immediate: true })

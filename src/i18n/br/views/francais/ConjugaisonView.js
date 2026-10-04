@@ -2,15 +2,18 @@
 // « br: à relire » sont à faire vérifier par un brittophone (`npm run i18n:relecture`).
 export default {
     titre: 'Displegadur',
-    verbeAConjuguer: 'Verb da zisplegañ',
-    'groupe_irrég.': 'direizh', // br: à relire
-    groupe_1er: '1añ strollad', // br: à relire
-    'groupe_2ème': '2vet strollad', // br: à relire
+    verbeAConjuguer: 'Verboù da zisplegañ', // br: à relire
+    groupe_aux: 'verb-skoazell', // br: à relire (auxiliaire)
+    groupe_1: '1añ strollad', // br: à relire
+    groupe_2: '2vet strollad', // br: à relire
+    groupe_3: '3vet strollad', // br: à relire
     temps: 'Amzer',
     temps_present: 'Amzer-vremañ',
-    temps_passe: 'Tremenet kevrennek', // br: à relire (passé composé)
     temps_imparfait: 'Amzer-dremenet anstrob', // br: à relire (imparfait)
     temps_futur: 'Dazont',
+    temps_passe_compose: 'Tremenet kevrennek', // br: à relire (passé composé)
+    temps_passe_simple: 'Tremenet strizh', // br: à relire (passé simple)
+    temps_plus_que_parfait: 'Tremenet pell', // br: à relire (plus-que-parfait)
     mode: 'Mod',
     lacunes: 'Toulloù', // br: à relire
     lacunesDesc: 'Leunia an dibennoù',

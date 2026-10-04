@@ -4,6 +4,7 @@ export default {
     titre: 'Tables de multiplication',
     tablesAReviser: 'Tables à réviser',
     toutes: 'Toutes',
+    bonus: 'Pour aller plus loin',
     mode: 'Mode',
     entrainement: 'Entraînement',
     entrainementDesc: 'Vois la table, puis réponds en ordre',

@@ -4,6 +4,7 @@ export default {
     titre: 'Taolennoù liesañ',
     tablesAReviser: 'Taolennoù da adwelet',
     toutes: 'An holl',
+    bonus: "Evit mont pelloc'h", // br: à relire
     mode: 'Mod',
     entrainement: 'Embregerezh',
     entrainementDesc: 'Sell ouzh an daolenn, ha goude respont en urzh', // br: à relire

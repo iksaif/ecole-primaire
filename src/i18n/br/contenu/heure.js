@@ -69,7 +69,7 @@ export default {
   ficheDureesTitre: 'Ar padelezhioù',
   ficheDureeApres: '{debut} eo. A-benn {duree} e vo : ________________',
   ficheDureeCombien: ({ act, debut, fin }) => `${act.nom} a grog da ${debut} hag a echu da ${fin}. Padout a ra : ________________`,
-  ficheConversionTitre: 'Eurioù, munutoù, eilennoù',
+  ficheConversionTitre: 'Eurioù ha munutoù', // br: à relire
   ficheEmploiTitre: 'Implij-amzer',
   ficheCorrige: 'Reizhadenn (evit an dud deuet)',
   corrigeLire: 'Lenn an eur',

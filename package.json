@@ -13,7 +13,9 @@
     "build:vps": "npm run build:ecoleprimaire && npm run build:skoolik",
     "deploy:vps": "scripts/deploy-vps.sh",
     "telechargements": "node scripts/telechargements.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node tests/lancer.mjs",
+    "test:complet": "node tests/lancer.mjs --complet"
   },
   "dependencies": {
     "@fontsource/andika": "^5.3.0",

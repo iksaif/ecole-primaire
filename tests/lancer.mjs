@@ -1,0 +1,38 @@
+// Lance les tests : construit le site (sans les PDF d'exercices, plus rapide), le sert, exécute les tests.
+//   npm test                 logique + routes + exercices + pages statiques
+//   npm run test:complet     + effet de chaque réglage sur les fiches (≈ 5 min)
+//   TEST_URL=https://ecoleprimaire.app/ node tests/lancer.mjs --sans-build   tester la production
+import { execFileSync, spawn } from 'node:child_process'
+import { preview } from 'vite'
+import { join, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
+const complet = process.argv.includes('--complet')
+const sansBuild = process.argv.includes('--sans-build')
+const OUT = 'dist-test'
+const node = (...a) => execFileSync(process.execPath, a, { cwd: racine, stdio: 'inherit' })
+
+let serveur = null
+if (!process.env.TEST_URL) {
+  if (!sansBuild) {
+    console.log('▶ Build de test…')
+    execFileSync('npx', ['vite', 'build', '--mode', 'ecoleprimaire', '--outDir', OUT, '--emptyOutDir', '--logLevel', 'warn'], { cwd: racine, stdio: 'inherit' })
+    node('scripts/telechargements.mjs', '--mode', 'ecoleprimaire', '--outDir', OUT, '--sans-exercices')
+  }
+  serveur = await preview({ root: racine, mode: 'ecoleprimaire', build: { outDir: OUT }, preview: { port: 4190, strictPort: true }, logLevel: 'warn' })
+  process.env.TEST_URL = 'http://localhost:4190/'
+}
+
+const fichiers = ['logique', 'routes', 'cadre', 'statiques', ...(complet ? ['reglages'] : [])]
+let echec = false
+for (const f of fichiers) {
+  console.log(`\n▶ ${f}`)
+  const code = await new Promise(ok => spawn(process.execPath, [`tests/${f}.test.mjs`], { cwd: racine, stdio: ['ignore', 'pipe', 'inherit'], env: process.env })
+    .on('exit', ok)
+    .stdout.on('data', d => { process.stdout.write(d); if (String(d).includes('✗')) echec = true }))
+  if (code) echec = true
+}
+if (serveur) await new Promise(ok => serveur.httpServer.close(ok))
+console.log(echec ? '\n✗ Des tests ont échoué' : '\n✓ Tous les tests passent')
+process.exit(echec ? 1 : 0)

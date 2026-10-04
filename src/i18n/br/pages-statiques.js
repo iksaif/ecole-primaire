@@ -29,7 +29,8 @@ export default {
     fiche: n => `Fichenn ${n}`, variantes: n => `Fichennoù disheñvel : ${n}`,
     variantesAide: 'goulennoù all a zo war bep fichenn : moull anezho an eil goude egile.',
   // en-tête (identique à celui de l'app) et page 404
-  nav_maths: 'Matematik', nav_francais: 'Galleg', nav_lecture: 'Lenn', nav_autres: 'Traoù all', nav_imprimer: 'Da voullañ',
+  nav_maths: 'Matematik', nav_francais: 'Galleg', nav_monde: 'Ar bed', // br: à relire
+  nav_imprimer: 'Da voullañ',
   nav_classe: 'Klas', nav_toutes: 'An holl',
   introuvable: "N'eo ket bet kavet ar bajenn", introuvableAide: "Ar bajenn-mañ n'eus ket anezhi (pe n'eus ket anezhi ken).",
   accueil: "🏠 Distreiñ d'an degemer", page: 'Pajenn',

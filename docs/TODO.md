@@ -28,9 +28,9 @@
 
 ## Manques au programme
 
-- [ ] **Design de l'accueil à retravailler** : l'en-tête empile « Bienvenue », la phrase d'intro, « 🆕 Nouveau… », « 📚 Le programme de la classe… » et « Activités pour le CP — voir toutes les classes » sans hiérarchie claire ; repenser la mise en page (titre, accès au programme, nouveautés, filtre de classe)
+- [x] **Design de l'accueil à retravailler** : l'en-tête empile « Bienvenue », la phrase d'intro, « 🆕 Nouveau… », « 📚 Le programme de la classe… » et « Activités pour le CP — voir toutes les classes » sans hiérarchie claire ; repenser la mise en page (titre, accès au programme, nouveautés, filtre de classe) — fait : « Ma classe » en puces, deux tuiles Programme / Nouveautés
 
-- [ ] **Barre de navigation** : Maths / Français / <langue régionale> (Brezhoneg, seulement si une langue régionale est active) / Le Monde — la Lecture passe dans Français, « Autres » (quiz) devient « Le Monde » ; garder « À imprimer » et le choix de classe
+- [x] **Barre de navigation** : Maths / Français / <langue régionale> (Brezhoneg, seulement si une langue régionale est active) / Le Monde — la Lecture passe dans Français, « Autres » (quiz) devient « Le Monde » ; garder « À imprimer » et le choix de classe — fait : page `/langue-regionale` (affiches et fiches du catalogue dans la langue), « Le monde » = `/autres`
 - [ ] **Le reste du programme dans `programme.js` et la page `/programme`** : ce qui a du sens ici (exercices, fiches, affiches) — cycle 1 « Explorer le monde » (BO n° 19), cycle 2 « Questionner le monde » (vivant, matière, objets ; espace et temps), cycle 3 histoire, géographie, sciences et technologie. Pas l'EPS, ni les arts, ni l'EMC, ni la pédagogie ; pas de langue étrangère pour l'instant (anglais…). Ajouter les textes officiels correspondants dans `docs/programmes/`, puis les domaines et compétences avec leurs sources ; le quiz de culture générale s'y rattachera (aujourd'hui « hors programme »)
 - [x] Page `/programme` : lien direct vers un mode et une classe (`?affichage=tableau`, `?classe=ce1`), l'adresse suit les choix
 - [x] Page `/programme` : une section « pas sur ce site pour l'instant » qui liste explicitement ce qui est hors du champ (EPS, arts, EMC, langues vivantes…) et ce qui viendra (le monde, histoire, géographie, sciences)

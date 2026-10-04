@@ -3,9 +3,10 @@
     <RouterLink to="/" class="nav-logo">{{ SITE.emoji }} {{ SITE.nom }}</RouterLink>
     <ul class="nav-links">
       <li><RouterLink to="/maths"      :class="{ active: route.path.startsWith('/maths') || route.path.startsWith('/maternelle') }">🔢 {{ t('maths') }}</RouterLink></li>
-      <li><RouterLink to="/francais"   :class="{ active: route.path.startsWith('/francais') }">📝 {{ t('francais') }}</RouterLink></li>
-      <li><RouterLink to="/lecture"    :class="{ active: route.path.startsWith('/lecture') }">📖 {{ t('lecture') }}</RouterLink></li>
-      <li><RouterLink to="/autres"     :class="{ active: route.path.startsWith('/autres') }">🌍 {{ t('autres') }}</RouterLink></li>
+      <li><RouterLink to="/francais"   :class="{ active: route.path.startsWith('/francais') || route.path.startsWith('/lecture') }">📝 {{ t('francais') }}</RouterLink></li>
+      <!-- langue régionale : seulement si elle est active (réglage, ou interface dans cette langue) -->
+      <li v-if="regionale"><RouterLink to="/langue-regionale" :class="{ active: route.path === '/langue-regionale' }"><Drapeau :langue="regionale.id" /> {{ majuscule(regionale.nomLocal) }}</RouterLink></li>
+      <li><RouterLink to="/autres"     :class="{ active: route.path.startsWith('/autres') }">🌍 {{ t('monde') }}</RouterLink></li>
       <li><RouterLink to="/imprimer"   :class="{ active: route.path.startsWith('/imprimer') }" class="nav-imprimer">🖨️ {{ t('imprimer') }}</RouterLink></li>
       <li><RouterLink to="/parametres"  :class="{ active: route.path === '/parametres' }" class="nav-settings" :title="t('parametres')">⚙️</RouterLink></li>
     </ul>
@@ -41,9 +42,12 @@ import messagesBr from '../i18n/br/components/AppNav.js'
 import Drapeau from './Drapeau.vue'
 import AvisTraduction from './AvisTraduction.vue'
 import RechercheGlobale from './RechercheGlobale.vue'
+import { useLangueRegionale } from '../composables/useLangueRegionale'
 
 const route = useRoute()
 const classe = useClasse()
+const { langue: regionale } = useLangueRegionale()
+const majuscule = s => s.charAt(0).toUpperCase() + s.slice(1)
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 </script>
 

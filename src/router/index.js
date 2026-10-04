@@ -29,6 +29,7 @@ const routes = [
   { path: '/francais/grammaire', component: () => import('../views/francais/GrammaireView.vue') },
   { path: '/francais/vocabulaire', component: () => import('../views/francais/VocabulaireView.vue') },
   { path: '/lecture',             component: () => import('../views/LectureView.vue') },
+  { path: '/langue-regionale',    component: () => import('../views/LangueRegionaleView.vue') },
   { path: '/autres',              component: () => import('../views/AutresView.vue') },
   { path: '/imprimer',            component: () => import('../views/imprimer/ImprimerView.vue') },
   { path: '/imprimer/ecriture',   component: () => import('../views/imprimer/EcritureView.vue') },

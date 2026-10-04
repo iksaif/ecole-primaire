@@ -10,8 +10,7 @@ export const MATIERES = [
   { id: 'imprimer', titre: '🖨️ Fiches à imprimer', br: '🖨️ Fichennoù da voullañ' },
   { id: 'maths',    titre: '🔢 Mathématiques',     br: '🔢 Matematik' },
   { id: 'francais', titre: '📝 Français',          br: '📝 Galleg' },
-  { id: 'lecture',  titre: '📖 Lecture & Compréhension', br: '📖 Lenn ha kompren' },
-  { id: 'autres',   titre: '🌍 Culture générale',  br: '🌍 Sevenadur hollek' },
+  { id: 'autres',   titre: '🌍 Le monde',          br: '🌍 Ar bed' }, // br: à relire
 ]
 
 // Rubriques des pages matières (`rubrique` d'une activité, titres de groupes) — breton à faire relire
@@ -21,6 +20,7 @@ export const DOMAINES_BR = {
   'Grandeurs et mesures': 'Mentoù ha muzulioù',
   'Espace et géométrie': 'Egor ha mentoniezh',
   'Lettres et sons': 'Lizherennoù ha sonioù',
+  'Lecture': 'Lenn', // br: à relire
   'Orthographe': 'Reizhskrivañ',
   'Grammaire et conjugaison': 'Yezhadur ha displegañ',
   'Vocabulaire': 'Geriaoueg',
@@ -81,14 +81,13 @@ export const ACTIVITES = [
 
   // ── Français ──
   { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'lecture', rubrique: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: ['gs', 'cp'] },
+  { fiche: true, to: '/lecture', matiere: 'francais', domaine: 'lecture', rubrique: 'Lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
   { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: de('ce1', 'cm2') },
   { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: ['ce1', 'ce2'] },
 
-  // ── Lecture ──
-  { fiche: true, to: '/lecture', matiere: 'lecture', domaine: 'lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
 
   // ── Culture générale ──
   { fiche: true, to: '/autres', matiere: 'autres', icon: '🗺️', titre: 'Quiz culture générale', desc: 'Géographie, histoire, sciences, animaux', niveaux: de('cp', 'cm2') },

@@ -2,6 +2,13 @@
 
 ## 4 octobre 2026
 
+- **La petite section (PS) arrive** : compter jusqu'à 3, comparer des quantités très différentes, trier les
+  formes, avec la consigne lue à voix haute.
+- **Nouveaux exercices de maternelle, de la PS à la GS** : « Les motifs » (continuer un collier qui se répète) et
+  « Plus long, plus court » (comparer et ranger des crayons). « Les formes » a trois niveaux : en PS on trie sans
+  nommer, le rectangle arrive en GS.
+- **Nouveau menu** : Maths, Français (la lecture y est rangée), Brezhoneg quand le breton est activé (affiches et
+  fiches d'écriture en breton), et Le monde.
 - **Les exercices suivent le programme officiel, niveau par niveau** : chaque classe ne propose par défaut que
   ce qui est au programme (par exemple l'heure à la demi-heure et au quart d'heure au CE1, les minutes au CE2).
   Ce qui va plus loin est marqué « bonus ».

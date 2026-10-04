@@ -25,7 +25,7 @@ export default {
     fiche: n => `Fiche ${n}`, variantes: n => `${n} fiches différentes`,
     variantesAide: "chaque fiche a d'autres questions : imprime-les l'une après l'autre.",
   // en-tête (identique à celui de l'app) et page 404
-  nav_maths: 'Maths', nav_francais: 'Français', nav_lecture: 'Lecture', nav_autres: 'Autres', nav_imprimer: 'À imprimer',
+  nav_maths: 'Maths', nav_francais: 'Français', nav_monde: 'Le monde', nav_imprimer: 'À imprimer',
   nav_classe: 'Classe', nav_toutes: 'Toutes',
   introuvable: 'Page introuvable', introuvableAide: "Cette page n'existe pas (ou plus).", accueil: "🏠 Retour à l'accueil",
   page: 'Page',

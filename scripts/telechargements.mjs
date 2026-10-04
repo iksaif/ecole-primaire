@@ -168,6 +168,7 @@ header .droite { margin-left: auto; display: flex; gap: .5rem; align-items: cent
 .langue-ui button { border: none; background: none; border-radius: 16px; padding: .3rem .45rem; cursor: pointer; display: inline-flex; line-height: 1; }
 html[data-ui="fr"] .langue-ui [data-ui="fr"], html[data-ui="br"] .langue-ui [data-ui="br"] { background: white; box-shadow: 0 0 0 2px var(--bleu); }
 .drapeau { width: 1.5em; height: 1em; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.15); display: block; }
+.liens .drapeau { display: inline-block; vertical-align: -.15em; }
 @media (max-width: 900px) {
   header.nav { flex-wrap: wrap; padding: .5rem .75rem; }
   header .logo { font-size: 1.15rem; }
@@ -305,8 +306,8 @@ ${SCRIPT_CONTEXTE}
 <nav class="liens">
   <a href="${BASE}#/maths">🔢 ${bi('nav_maths')}</a>
   <a href="${BASE}#/francais">📝 ${bi('nav_francais')}</a>
-  <a href="${BASE}#/lecture">📖 ${bi('nav_lecture')}</a>
-  <a href="${BASE}#/autres">🌍 ${bi('nav_autres')}</a>
+  <a href="${BASE}#/langue-regionale" class="si-br">${DRAPEAU_BR} Brezhoneg</a>
+  <a href="${BASE}#/autres">🌍 ${bi('nav_monde')}</a>
   <a href="${BASE}#/imprimer" class="imprimer actif">🖨️ ${bi('nav_imprimer')}</a>
   <a href="${BASE}#/parametres" class="reglages" title="Paramètres">⚙️</a>
 </nav>

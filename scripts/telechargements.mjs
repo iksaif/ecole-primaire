@@ -35,7 +35,8 @@ import textesFr from '../src/i18n/fr/pages-statiques.js'
 import textesBr from '../src/i18n/br/pages-statiques.js'
 import domainesFr from '../src/i18n/fr/domaines.js'
 import domainesBr from '../src/i18n/br/domaines.js'
-import { DOMAINES, NIVEAUX, nomOfficiel, lienProgramme } from '../src/data/programme.js'
+import { DOMAINES, nomOfficiel, lienProgramme } from '../src/data/programme.js'
+import { NIVEAUX } from '../src/data/classes.js'
 
 const arg = (nom, defaut) => {
   const i = process.argv.indexOf(nom)

@@ -67,6 +67,7 @@
 
 ## Bugs et dette
 
+- [x] Listes de classes partagées : `src/data/classes.js` (NIVEAUX, CLASSES, CYCLE_DE, MATERNELLE, CYCLE_2, CYCLE_3, CE, CM, classesEntre, classesDepuis, enClasse) ; programme.js, activites.js, exercices.js, pages de téléchargement et vues s'en servent (les classes propres à une compétence ou à une option restent des données)
 - [ ] **Analyse du code et plan d'amélioration** : relire l'ensemble du code actuel (vues, générateurs, catalogues, build, tests) et écrire un plan (`plans/11-qualite-code.md`) : duplications (vues d'exercices, listes de classes, cadres de fiches), composants communs à extraire, données à sortir des vues, cohérence des catalogues et des compétences, performances du build, couverture des tests, dette i18n ; avec l'ordre, l'effort et le risque de chaque étape
 
 - [ ] Géométrie : l'avertissement rouge « Imprimer à 100 %… » est aussi sur la fiche imprimée — le passer en orange dans le formulaire et le retirer de la fiche, comme pour Mesures ?

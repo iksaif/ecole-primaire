@@ -5,6 +5,7 @@
 import { VERBES, TEMPS_CM2 } from '../../data/conjugaison.js'
 import { COMPETENCES, DOMAINES, NIVEAUX } from '../../data/programme.js'
 import { savoirsDu } from '../../data/savoirs.js'
+import { enClasse } from '../../data/classes.js'
 
 // Domaine du programme (id de DOMAINES, src/data/programme.js) de chaque famille d'affiches
 export const DOMAINES_AFFICHES = {
@@ -139,9 +140,9 @@ export const TELECHARGEMENTS_AFFICHES = [
   entree('affiche-solides-ce2', 'Solides', 'Affiche des solides : cube, pavé, boule, cylindre, cône, pyramide', 'Les six solides du programme du CE1 et du CE2 avec le nombre et la nature de leurs faces, sommets et arêtes.', 'CE1 · CE2', { affiche: 'formes', variante: 'solides-ce2' }),
   // « Ce que je sais faire » : un domaine, un niveau
   ...(RESUMES_VISIBLES ? RESUMES : []).map(({ domaine, niveau }) => {
-    const d = DOMAINES.find(x => x.id === domaine), N = niveau.toUpperCase(), en = ['ps', 'ms', 'gs'].includes(niveau) ? 'en' : 'au'
+    const d = DOMAINES.find(x => x.id === domaine), N = niveau.toUpperCase()
     return entree(`affiche-ce-que-je-sais-faire-${domaine}-${niveau}`, `${d.court} ${N} : je sais faire`,
-      `${d.court} ${en} ${N} : ce que je sais faire (affiche à cocher)`,
+      `${d.court} ${enClasse(niveau)} : ce que je sais faire (affiche à cocher)`,
       `Affiche à cocher : tout ce qu'un élève de ${N} apprend en « ${d.court.toLowerCase()} », d'après le programme officiel, une case par compétence.`,
       N, { affiche: 'resume', domaine, niveau })
   }),

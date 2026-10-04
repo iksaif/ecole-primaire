@@ -36,8 +36,9 @@
 //     reste travaillée ou réinvestie.
 //   - `officiel`, `source` et `lien` d'un domaine sont indexés par cycle (1, 2, 3) : le nom change d'un cycle à l'autre.
 
-export const NIVEAUX = ['ps', 'ms', 'gs', 'cp', 'ce1', 'ce2', 'cm1', 'cm2']
-export const CYCLE_DE = { ps: 1, ms: 1, gs: 1, cp: 2, ce1: 2, ce2: 2, cm1: 3, cm2: 3 }
+// classes et cycles : src/data/classes.js (réexportés ici pour les modules qui les lisent avec le programme)
+import { NIVEAUX, CYCLE_DE, classesEntre, classesDepuis } from './classes.js'
+export { NIVEAUX, CYCLE_DE }
 
 export const SOURCES = {
   bo41: {
@@ -213,8 +214,8 @@ export const DOMAINES = [
 
 // ── Compétences utiles à nos activités (pas tout le programme) ──
 const c = (id, domaine, libelle, niveaux, source, extra = {}) => ({ id, domaine, libelle, niveaux, source, ...extra })
-const depuis = n => NIVEAUX.slice(NIVEAUX.indexOf(n))     // de n jusqu'au CM2
-const entre = (a, b) => NIVEAUX.slice(NIVEAUX.indexOf(a), NIVEAUX.indexOf(b) + 1)
+const depuis = classesDepuis     // de n jusqu'au CM2
+const entre = classesEntre
 
 export const COMPETENCES = [
   // Nombres et calcul — cycle 1

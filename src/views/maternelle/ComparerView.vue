@@ -111,6 +111,7 @@ import messagesBr from '../../i18n/br/views/maternelle/ComparerView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import ConsigneParlee from '../../components/ConsigneParlee.vue'
 import { useClasse } from '../../composables/useClasse'
+import { estMaternelle } from '../../data/classes'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 
@@ -120,7 +121,7 @@ const EMOJIS = ['🍎','⭐','🐱','🌸','🚗','🦋','🍓','🐸','🐠','�
 
 // niveau : celui de la barre du haut s'il est de maternelle ; PS : 5 questions, on touche le groupe
 const classe = useClasse()
-const config = ref({ niveau: ['ps', 'ms', 'gs'].includes(classe.value) ? classe.value : 'ms', nbQ: classe.value === 'ps' ? 5 : 10 })
+const config = ref({ niveau: estMaternelle(classe.value) ? classe.value : 'ms', nbQ: classe.value === 'ps' ? 5 : 10 })
 const ps = computed(() => config.value.niveau === 'ps')
 function choisirNiveau(n) {
   config.value.niveau = n

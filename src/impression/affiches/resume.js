@@ -5,12 +5,11 @@ import { COMPETENCES, DOMAINES, domaineDe, nomOfficiel } from '../../data/progra
 import { savoirsDu } from '../../data/savoirs.js'
 import { COULEURS, hauteurRendue } from './cadre.js'
 
-const NIVEAU = n => n.toUpperCase()
-// « en MS », « au CP »
-export const enClasse = n => `${['ps', 'ms', 'gs'].includes(n) ? 'en' : 'au'} ${NIVEAU(n)}`
+import { enClasse } from '../../data/classes.js'
+export { enClasse }
 export const phrases = c => savoirsDu(COMPETENCES.filter(k => k.domaine === c.domaine), c.niveau)
 
-export const titre = c => `${domaineDe(c.domaine)?.court ?? ''} — ${NIVEAU(c.niveau)}`
+export const titre = c => `${domaineDe(c.domaine)?.court ?? ''} — ${c.niveau.toUpperCase()}`
 
 // polices = { script } : la taille du texte est réduite jusqu'à ce que la liste tienne (mesurée hors écran)
 export function dessin(cfg, W, H, polices) {

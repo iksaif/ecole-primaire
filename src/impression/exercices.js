@@ -4,7 +4,7 @@
 // enregistre l'aperçu en PDF — c'est exactement la fiche que l'app produit. Fichier lu aussi par node : il
 // n'importe que des données pures.
 import { ACTIVITES } from '../data/activites.js'
-import { NIVEAUX } from '../data/programme.js'
+import { classesEntre, CM } from '../data/classes.js'
 
 export const NB_VARIANTES = 4
 
@@ -19,7 +19,6 @@ const C = (classe, bouton, clics = []) => ({ classe, bouton, clics })
 // { classe: id } quand il dépend de la classe
 export const NB_VARIANTES_COMPETENCE = 2
 const F = (id, titre, competence, seul, o = {}) => ({ id, titre, competence, seul, ...o })
-const CM = ['cm1', 'cm2']
 
 const LISTE = [
   // ── Maths ──
@@ -182,10 +181,8 @@ export const fichesDe = (ex, classe) => (ex.fiches ?? []).filter(f => !f.classes
   .map(f => ({ ...f, competence: typeof f.competence === 'object' ? f.competence[classe] : f.competence }))
 
 // « ce1 » → ['ce1'] ; « cp-cm2 » → toutes les classes de CP à CM2
-const ORDRE = NIVEAUX
 export function classesDe(code) {
   const [a, b] = code.split('-')
-  if (!b) return [a]
-  return ORDRE.slice(ORDRE.indexOf(a), ORDRE.indexOf(b) + 1)
+  return b ? classesEntre(a, b) : [a]
 }
 export const etiquetteClasse = code => code.split('-').map(c => c.toUpperCase()).join(' → ')

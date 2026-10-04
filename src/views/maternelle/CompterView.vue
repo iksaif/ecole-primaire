@@ -94,6 +94,7 @@ import objetsBr from '../../i18n/br/contenu/compter.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import ConsigneParlee from '../../components/ConsigneParlee.vue'
 import { useClasse } from '../../composables/useClasse'
+import { estMaternelle } from '../../data/classes'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 
@@ -116,7 +117,7 @@ const OBJETS = [
 
 // niveau : celui de la barre du haut s'il est de maternelle ; PS : 5 questions (enfants de 3 ans)
 const classe = useClasse()
-const config = ref({ niveau: ['ps', 'ms', 'gs'].includes(classe.value) ? classe.value : 'ms', nbQ: classe.value === 'ps' ? 5 : 10 })
+const config = ref({ niveau: estMaternelle(classe.value) ? classe.value : 'ms', nbQ: classe.value === 'ps' ? 5 : 10 })
 function choisirNiveau(n) {
   config.value.niveau = n
   if (n === 'ps') config.value.nbQ = 5

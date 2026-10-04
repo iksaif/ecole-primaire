@@ -154,6 +154,7 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { aleatoire, melanger, confettis, normaliser, sauvegarder, chargerReglages } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
+import { CYCLE_3 } from '../../data/classes'
 import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/GrammaireView.js'
 import messagesBr from '../../i18n/br/views/francais/GrammaireView.js'
@@ -204,7 +205,7 @@ const tc = c => (CHOIX[c] ? t(CHOIX[c]) : c)
 // Programme : au cycle 2, les compléments ne sont pas distingués entre eux (« l'étude des compléments circonstanciels
 // est réservée au cycle 3 », BO n° 41 p. 91) ; CM1 : nom noyau, complément d'objet / circonstanciel ; CM2 : CC de
 // temps et de lieu, phrase simple / complexe (programme de français du cycle 3, p. 17-19).
-const CM = ['cm1', 'cm2']
+const CM = CYCLE_3
 const TYPES = [
   { id: 'phrase', items: [
     { id: 'ordre',       icon: '🧩', niv: ['ce1'] },

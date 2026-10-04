@@ -1,18 +1,10 @@
 // Catalogue de toutes les activités : sert aux pages d'accueil/matières et au filtre par classe.
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
+import { CLASSES, CE, CM, CYCLE_2, classesEntre } from './classes.js'
 
-export const CLASSES = [
-  { id: 'ps',  label: 'PS' },
-  { id: 'ms',  label: 'MS' },
-  { id: 'gs',  label: 'GS' },
-  { id: 'cp',  label: 'CP' },
-  { id: 'ce1', label: 'CE1' },
-  { id: 'ce2', label: 'CE2' },
-  { id: 'cm1', label: 'CM1' },
-  { id: 'cm2', label: 'CM2' },
-]
-const ordre = CLASSES.map(c => c.id)
-const de = (a, b) => ordre.slice(ordre.indexOf(a), ordre.indexOf(b) + 1)
+// classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
+export { CLASSES }
+const de = classesEntre
 
 export const MATIERES = [
   { id: 'imprimer', titre: '🖨️ Fiches à imprimer', br: '🖨️ Fichennoù da voullañ' },
@@ -134,7 +126,6 @@ const BR = {
 // `npm run couverture`, page /programme), seulement aux niveaux de l'activité. Une liste vaut pour tous ses niveaux ;
 // un objet { classe: [...] } dit ce que l'exercice propose vraiment à chaque classe (options du niveau). Les affiches
 // ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
-const CE = ['ce1', 'ce2']
 const parClasse = (classes, liste) => Object.fromEntries(classes.map(c => [c, liste]))
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
@@ -154,9 +145,9 @@ const COMPETENCES_ROUTES = {
     cp: ['tables-addition', 'complement-dizaine', 'doubles-moities'],
     ce1: ['tables-addition', 'tables-multiplication', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100'],
     ce2: ['tables-addition', 'tables-multiplication', 'sens-division', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100'],
-    ...parClasse(['cm1', 'cm2'], ['tables-multiplication', 'sens-division', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100']),
+    ...parClasse(CM, ['tables-multiplication', 'sens-division', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100']),
   },
-  '/maths/calcul-pose': { cp: ['addition-posee'], ...parClasse(['ce1', 'ce2', 'cm1', 'cm2'], ['addition-posee', 'soustraction-posee']) },
+  '/maths/calcul-pose': { cp: ['addition-posee'], ...parClasse(classesEntre('ce1', 'cm2'), ['addition-posee', 'soustraction-posee']) },
   '/maths/tables': ['tables-multiplication'],
   '/maths/fractions': { ce1: ['fractions-unitaires', 'fractions-inferieures-1'], ce2: ['fractions-unitaires', 'fractions-inferieures-1', 'fractions-egales', 'fractions-mesure'] },
   '/maths/problemes': ['problemes-additifs', 'problemes-multiplicatifs', 'problemes-etapes'],
@@ -169,8 +160,8 @@ const COMPETENCES_ROUTES = {
   },
   '/francais/dictee': ['dictee', 'orthographe-lexicale'],
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
-  '/francais/orthographe': { ...parClasse(['cp', 'ce1', 'ce2'], ['orthographe-lexicale', 'accords-gn']), ...parClasse(['cm1', 'cm2'], ['accords-gn']) },
-  '/francais/grammaire': { ...parClasse(CE, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn']), ...parClasse(['cm1', 'cm2'], ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn', 'complements']) },
+  '/francais/orthographe': { ...parClasse(CYCLE_2, ['orthographe-lexicale', 'accords-gn']), ...parClasse(CM, ['accords-gn']) },
+  '/francais/grammaire': { ...parClasse(CE, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn']), ...parClasse(CM, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn', 'complements']) },
   '/francais/conjugaison': {
     cp: ['conjugaison-present-etre-avoir'],
     ce1: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'radical-terminaison'],

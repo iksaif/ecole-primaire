@@ -100,7 +100,10 @@
         <ChoixPolice />
       </div>
 
-      <ApercuImpression :reglages="config" :html="html" :nb-pages="nbPages" />
+      <!-- options communes à toutes les fiches : ici seulement Prénom et date (pas de corrigé) -->
+      <OptionsFiche :avec-corrige="false" />
+
+      <ApercuImpression :reglages="{ ...config, entete: optionsFiche.entete }" :html="html" :nb-pages="nbPages" />
     </div>
   </div>
 </template>
@@ -109,6 +112,8 @@
 import { ref, computed, watch } from 'vue'
 import ApercuImpression from '../../components/ApercuImpression.vue'
 import ChoixPolice from '../../components/ChoixPolice.vue'
+import OptionsFiche from '../../components/OptionsFiche.vue'
+import { useOptionsFiche } from '../../composables/useOptionsFiche'
 import { usePolices } from '../../composables/usePolices'
 import { sauvegarder, charger } from '../../utils'
 import { useLangueRegionale } from '../../composables/useLangueRegionale'
@@ -177,8 +182,9 @@ function basculer(liste, v, ordonner = false) {
   }
 }
 
+const optionsFiche = useOptionsFiche()
 const resultat = computed(() => polices.pret.value
-  ? genererEcriture({ ...config.value, langue: langue.value }, { attache: polices.attache.value, script: polices.script.value })
+  ? genererEcriture({ ...config.value, entete: optionsFiche.value.entete, langue: langue.value }, { attache: polices.attache.value, script: polices.script.value })
   : { html: '', nbPages: 1 })
 const html = computed(() => resultat.value.html)
 const nbPages = computed(() => resultat.value.nbPages)

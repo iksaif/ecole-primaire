@@ -9,7 +9,7 @@ export default {
     nbCalculs: 'Nombre de calculs', colonnes: 'Colonnes', taille: "Taille d'écriture",
     reponses: 'Réponses', pointilles: 'Pointillés ……', cases: 'Cases ☐', options: 'Options',
     melanger: 'Mélanger les différents calculs (sinon, regroupés par type)',
-    enTete: 'En-tête Prénom / Date / Score', corrigeSepare: 'Corrigé sur une page séparée',
+    score: 'Score (… / {n})',
     titreFiche: 'Titre', automatique: 'automatique', nouvelle: 'Nouvelle fiche',
     alerte: 'Seulement {n} calculs différents possibles avec ces choix (sans répétition).',
     affiche: 'Affiche', disposition: 'Disposition', tables: 'Tables', toutes: 'Toutes',

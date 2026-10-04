@@ -406,8 +406,9 @@ export const DEFAUTS = {
   colonnes: 2,
   taille: 'moyenne',
   reponse: 'pointilles',      // 'pointilles' | 'cases'
-  enTete: true,
-  corrige: false,
+  enTete: true,               // ligne Prénom / Date
+  score: true,                // case « … / 30 » en haut à droite
+  corrige: false,             // 'non' | 'page' (pages de corrigé) | 'dessous' (en bas, à l'envers) ; true = 'page', false = 'non'
   titre: '',
   seed: null,                 // null → graine au hasard
   // affiches
@@ -417,6 +418,10 @@ export const DEFAUTS = {
   format: 'A4',
   orientation: 'portrait',
 }
+
+// Corrigé : true / false (fiches du catalogue, anciennes sauvegardes) ou les choix des options communes des fiches
+const CHOIX_CORRIGE = ['non', 'page', 'dessous']
+const modeCorrige = v => (v === true ? 'page' : CHOIX_CORRIGE.includes(v) ? v : 'non')
 
 // Complète une config partielle (sauvegarde ancienne, fiche du catalogue…)
 export function normaliserConfig(c = {}) {
@@ -439,6 +444,7 @@ export function normaliserConfig(c = {}) {
     colonnes: [2, 3].includes(+c.colonnes) ? +c.colonnes : DEFAUTS.colonnes,
     taille: TAILLES.some(t => t.id === c.taille) ? c.taille : DEFAUTS.taille,
     langue: LANGUES_DOCUMENT.includes(c.langue) ? c.langue : DEFAUTS.langue,
+    corrige: modeCorrige(c.corrige),
     tablesAffiche: Array.isArray(c.tablesAffiche) && c.tablesAffiche.length
       ? c.tablesAffiche.filter(n => n >= 1 && n <= 10) : [...DEFAUTS.tablesAffiche],
   }
@@ -520,6 +526,36 @@ function texteCalcul(x, corrige, largeurCase) {
   }).join('')
 }
 
+// ── Corrigé compact « en bas, à l'envers » (à découper ou à plier) ──
+const CLE_TAILLE = 3.6        // taille du texte (mm)
+const CLE_LIGNE = CLE_TAILLE * 1.5
+const CLE_TITRE = 6, CLE_COUPE = 9
+const CSS_CLE = `
+  .cle { margin-top: auto; flex: none; }
+  .coupe { height: ${CLE_COUPE}mm; position: relative; }
+  .coupe::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 0.4mm dashed #999; }
+  .coupe::after { content: '✂'; position: absolute; left: 0; top: 50%; transform: translateY(-55%); background: white;
+    padding-right: 1mm; color: #777; font-size: 4mm; line-height: 1; }
+  .cle-corps { transform: rotate(180deg); color: #444; }
+  .cle-titre { height: ${CLE_TITRE}mm; font-size: 4mm; font-weight: 700; display: flex; align-items: center; }
+  .cle-grille { display: grid; font-size: ${CLE_TAILLE}mm; line-height: ${CLE_LIGNE}mm; }
+  .cle-grille span { white-space: nowrap; overflow: hidden; }
+  .cle-grille i { font-style: normal; color: #9aa3ad; }`
+
+// calculs numérotés (x.n) → { h (mm), html(titre) }
+function cleCorrige(calculs, largeur, police) {
+  const reponse = x => x.r.map(nb).join(' ; ')
+  const lMax = Math.max(...calculs.map(x => largeurTexte(`${x.n}. ${reponse(x)}`, police, true))) * CLE_TAILLE + 4
+  const parRang = Math.max(1, Math.floor(largeur / lMax))
+  const rangs = Math.ceil(calculs.length / parRang)
+  const h = CLE_COUPE + CLE_TITRE + rangs * CLE_LIGNE + 1
+  const html = titre => `<div class="cle" style="height:${h}mm"><div class="coupe"></div><div class="cle-corps">
+      <div class="cle-titre">${echapper(titre)}</div>
+      <div class="cle-grille" style="grid-template-columns:repeat(${parRang}, ${largeur / parRang}mm)">${
+        calculs.map(x => `<span><i>${x.n}.</i> <b>${echapper(reponse(x))}</b></span>`).join('')}</div></div></div>`
+  return { h, html }
+}
+
 function genererFiche(c, polices) {
   const police = polices.script
   const tirage = tirerCalculs(c)
@@ -562,42 +598,62 @@ function genererFiche(c, polices) {
     for (let k = 0; k < numerotes.length; k += n) lignes.push({ calculs: numerotes.slice(k, k + n), cols: n })
   }
 
-  const hTitre = 13, hEnTete = cfg.enTete ? 11 : 0, hGroupe = 9
-  const hDispo = h - 2 * MARGE - hTitre - hEnTete - 4
+  const avecEnTete = cfg.enTete || cfg.score
+  const hTitre = 13, hEnTete = avecEnTete ? 11 : 0, hGroupe = 9
+  const hPage = h - 2 * MARGE - hTitre - hEnTete - 4
   const nbG = lignes.filter(l => l.titre).length, nbL = Math.max(1, lignes.length - nbG)
   const besoin = R => nbL * R + nbG * hGroupe
-  let R = taille.ligne, paginer = false
-  if (besoin(R) <= hDispo) R = Math.min(R * 1.5, (hDispo - nbG * hGroupe) / nbL)
-  else if (besoin(R * 0.7) <= hDispo) R = (hDispo - nbG * hGroupe) / nbL
-  else { paginer = true; R *= 0.85 }
-  const F = Math.min(taille.ligne, R) * 0.5   // taille des chiffres (mm)
 
-  // découpage en pages
-  const pagesLignes = [[]]
-  let hCourant = 0
-  for (const l of lignes) {
-    const hl = l.titre ? hGroupe : R
-    if (paginer && hCourant + hl > hDispo + 0.01 && pagesLignes.at(-1).length) {
-      pagesLignes.push([]); hCourant = 0
+  // hauteur des lignes et découpage en pages pour une hauteur disponible donnée
+  function mettreEnPage(hDispo) {
+    let R = taille.ligne, paginer = false
+    if (besoin(R) <= hDispo) R = Math.min(R * 1.5, (hDispo - nbG * hGroupe) / nbL)
+    else if (besoin(R * 0.7) <= hDispo) R = (hDispo - nbG * hGroupe) / nbL
+    else { paginer = true; R *= 0.85 }
+    const pagesLignes = [[]]
+    let hCourant = 0
+    for (const l of lignes) {
+      const hl = l.titre ? hGroupe : R
+      if (paginer && hCourant + hl > hDispo + 0.01 && pagesLignes.at(-1).length) {
+        pagesLignes.push([]); hCourant = 0
+      }
+      pagesLignes.at(-1).push(l); hCourant += hl
     }
-    pagesLignes.at(-1).push(l); hCourant += hl
+    // pas de titre de groupe seul en bas de page
+    for (let i = 0; i < pagesLignes.length - 1; i++) {
+      const p = pagesLignes[i]
+      if (p.at(-1)?.titre) pagesLignes[i + 1].unshift(p.pop())
+    }
+    const hDerniere = pagesLignes.at(-1).reduce((s, l) => s + (l.titre ? hGroupe : R), 0)
+    return { R, paginer, pagesLignes, libre: hDispo - hDerniere }
   }
-  // pas de titre de groupe seul en bas de page
-  for (let i = 0; i < pagesLignes.length - 1; i++) {
-    const p = pagesLignes[i]
-    if (p.at(-1)?.titre) pagesLignes[i + 1].unshift(p.pop())
+
+  // corrigé « en bas, à l'envers » : réponses numérotées en grille, sous une ligne de coupe
+  const cle = cfg.corrige === 'dessous' ? cleCorrige(lignes.flatMap(l => l.calculs ?? []), w - 2 * MARGE, police) : null
+  let miseEnPage = mettreEnPage(hPage)
+  let clePage = 'aucune' // 'derniere' (en bas de la dernière page) | 'suivante' (page en plus)
+  if (cle) {
+    // d'abord : tout sur la même page en réduisant les lignes ; sinon en bas de la dernière page s'il reste
+    // de la place ; sinon sur une page en plus
+    const reduite = mettreEnPage(hPage - cle.h)
+    if (!reduite.paginer) { miseEnPage = reduite; clePage = 'derniere' }
+    else clePage = miseEnPage.libre >= cle.h ? 'derniere' : 'suivante'
   }
+  const { R, pagesLignes } = miseEnPage
+  const F = Math.min(taille.ligne, R) * 0.5   // taille des chiffres (mm)
 
   function cellule(x, n, corrige) {
     const f = taillePossible(x, n, F)
     return `<div class="calc"><span class="num" style="font-size:${F * 0.55}mm;width:${largeurNumero * F * 0.55}mm">${x.n}</span>`
       + `<span class="txt" style="font-size:${f}mm">${texteCalcul(x, corrige, largeurCase[x.type])}</span></div>`
   }
-  function page(ls, corrige, k) {
-    const enTete = cfg.enTete && !corrige ? `<div class="entete" style="height:${hEnTete}mm">
+  function page(ls, corrige, k, avecCle = false) {
+    const prenomDate = cfg.enTete ? `
       <span>${T.t('prenom')} : <i class="pointilles" style="width:52mm"></i></span>
-      <span>${T.t('date')} : <i class="pointilles" style="width:32mm"></i></span>
-      <span class="score">${corrige ? '' : `<i class="pointilles" style="width:12mm"></i> / ${N}`}</span></div>` : ''
+      <span>${T.t('date')} : <i class="pointilles" style="width:32mm"></i></span>` : ''
+    const score = cfg.score ? `
+      <span class="score"${cfg.enTete ? '' : ' style="margin-left:auto"'}>${corrige ? '' : `<i class="pointilles" style="width:12mm"></i> / ${N}`}</span>` : ''
+    const enTete = avecEnTete && !corrige ? `<div class="entete" style="height:${hEnTete}mm">${prenomDate}${score}</div>` : ''
     const suite = pagesLignes.length > 1 ? ` <small>(${k + 1}/${pagesLignes.length})</small>` : ''
     return `<div class="contenu" style="inset:${MARGE}mm">
       <h1 style="height:${hTitre}mm">${corrige ? `<span class="rouge">${T.t('corrige')}</span> — ` : ''}${echapper(titre)}${suite}</h1>
@@ -605,11 +661,13 @@ function genererFiche(c, polices) {
       ${ls.map(l => l.titre
         ? `<div class="groupe" style="height:${hGroupe}mm">${echapper(l.titre)}</div>`
         : `<div class="rang" style="height:${R}mm">${l.calculs.map(x => `<div class="cell" style="width:${wColonne(l.cols)}mm">${cellule(x, l.cols, corrige)}</div>`).join('')
-          }${`<div class="cell vide" style="width:${wColonne(l.cols)}mm"></div>`.repeat(l.cols - l.calculs.length)}</div>`).join('')}
+          }${`<div class="cell vide" style="width:${wColonne(l.cols)}mm"></div>`.repeat(l.cols - l.calculs.length)}</div>`).join('')}${
+        avecCle ? cle.html(`${T.t('corrige')} — ${titre}`) : ''}
       </div>`
   }
-  const pages = pagesLignes.map((ls, k) => page(ls, false, k))
-  if (cfg.corrige) pages.push(...pagesLignes.map((ls, k) => page(ls, true, k)))
+  const pages = pagesLignes.map((ls, k) => page(ls, false, k, clePage === 'derniere' && k === pagesLignes.length - 1))
+  if (clePage === 'suivante') pages.push(`<div class="contenu" style="inset:${MARGE}mm">${cle.html(`${T.t('corrige')} — ${titre}`)}</div>`)
+  if (cfg.corrige === 'page') pages.push(...pagesLignes.map((ls, k) => page(ls, true, k)))
 
   const html = documentImpression({
     titre, format: 'A4', orientation: 'portrait', pages,
@@ -636,7 +694,7 @@ function genererFiche(c, polices) {
       : 'border-bottom: 0.55mm dotted #333;'} }
   .case b { font-weight: 700; padding-bottom: .12em; }
   .groupe { display: flex; flex: none; align-items: flex-end; font-weight: 700; font-size: 4.8mm; color: #e07a1f;
-    border-bottom: 0.4mm solid #e07a1f; padding-bottom: .8mm; }`,
+    border-bottom: 0.4mm solid #e07a1f; padding-bottom: .8mm; }${cle ? CSS_CLE : ''}`,
   })
   return { html, nbPages: pages.length, format: 'A4', orientation: 'portrait', nbCalculs: N, demandes: tirage.demandes, seed: tirage.seed }
 }

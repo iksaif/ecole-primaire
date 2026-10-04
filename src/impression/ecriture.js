@@ -217,6 +217,8 @@ export function genererEcriture(config, polices) {
   const titre = config.titre || textePour(l, 'titre') +
     STYLES.filter(s => config.styles.includes(s.id)).map(s => libelleStyle(s.id, l).toLowerCase()).join(textePour(l, 'separateurStyles'))
   const entete = textePour(l, 'prenom'), date = textePour(l, 'date')
+  // config.entete === false : sans la ligne Prénom / Date (le titre reste)
+  const avecNomDate = config.entete !== false
   const pagesHtml = pagesLignes.map(lignes => {
     let texte = ''
     lignes.forEach((l, n) => {
@@ -225,7 +227,7 @@ export function genererEcriture(config, polices) {
         texte += `<text x="${m.x.toFixed(2)}" y="${y}" font-family="'${l.police.famille}'" font-size="${l.police.taille.toFixed(3)}" fill="${m.gris ? '#bdbdbd' : '#1a1a1a'}">${echapper(m.texte)}</text>`
       }
     })
-    return `<div class="entete"><span class="titre">${echapper(titre)}</span><span>${entete} : ____________________ &nbsp; ${date} : ______________</span></div>
+    return `<div class="entete"><span class="titre">${echapper(titre)}</span>${avecNomDate ? `<span>${entete} : ____________________ &nbsp; ${date} : ______________</span>` : ''}</div>
 <svg width="210mm" height="297mm" viewBox="0 0 210 297" class="feuille">${svgSeyes(g, config)}${texte}</svg>`
   })
   const html = documentImpression({

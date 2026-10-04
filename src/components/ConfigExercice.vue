@@ -21,18 +21,7 @@
     <slot :mode="mode" />
 
     <!-- options communes à toutes les fiches (useOptionsFiche) -->
-    <div v-if="mode === 'imprimer'" class="config-section options-fiche">
-      <div class="config-section-title">{{ t('surLaFiche') }}</div>
-      <div class="btn-group">
-        <button class="level-btn" :class="{ active: options.entete }" @click="options.entete = !options.entete">
-          {{ options.entete ? '✓ ' : '' }}{{ t('entete') }}
-        </button>
-      </div>
-      <div v-if="avecCorrige" class="btn-group">
-        <button v-for="c in CHOIX_CORRIGE" :key="c" class="level-btn" :class="{ active: options.corrige === c }"
-          @click="options.corrige = c">{{ t('corrige_' + c) }}</button>
-      </div>
-    </div>
+    <OptionsFiche v-if="mode === 'imprimer'" :avec-corrige="avecCorrige" />
 
     <div class="signalement"><SignalerErreur :reglages="config" /></div>
 
@@ -50,8 +39,9 @@
 <script setup>
 import ApercuImpression from './ApercuImpression.vue'
 import SignalerErreur from './SignalerErreur.vue'
+import OptionsFiche from './OptionsFiche.vue'
 import { computed } from 'vue'
-import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige, CHOIX_CORRIGE } from '../composables/useOptionsFiche'
+import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige } from '../composables/useOptionsFiche'
 import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/components/ConfigExercice.js'
 import messagesBr from '../i18n/br/components/ConfigExercice.js'
@@ -93,7 +83,6 @@ const reglages = computed(() => (props.config ? { ...props.config, ...options.va
 .modes button.actif { background: white; color: var(--texte); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
 /* cases à cocher des réglages (ex. corrigé) — :deep car elles viennent du slot */
 :deep(.case-corrige) { display: flex; align-items: center; gap: .5rem; margin: .25rem 0 1rem; font-weight: 600; cursor: pointer; }
-.options-fiche .btn-group + .btn-group { margin-top: .5rem; }
 .signalement { text-align: right; margin: .25rem 0 -.5rem; }
 .actions { text-align: center; margin-top: 1.5rem; }
 .btn-grand { font-size: 1.1rem; padding: .75rem 2rem; }

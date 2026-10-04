@@ -9,7 +9,7 @@ export default {
     nbCalculs: 'Niver a jedadennoù', colonnes: 'Bannoù', taille: 'Ment ar skritur', // br: à relire (colonnes)
     reponses: 'Respontoù', pointilles: 'Pikedennoù ……', cases: 'Boestoù ☐', options: 'Dibarzhioù',
     melanger: "Meskañ an jedadennoù (a-hend-all e vint strollet dre seurt)", // br: à relire
-    enTete: 'Talbenn Anv-bihan / Deiziad / Skor', corrigeSepare: "Reizhadenn war ur bajenn a-ziforc'h",
+    score: 'Skor (… / {n})', // br: à relire
     titreFiche: 'Titl', automatique: 'emgefreek', nouvelle: 'Fichenn nevez',
     alerte: "{n} jedadenn disheñvel hepken a c'haller kaout gant an dibaboù-se (hep adlavar).", // br: à relire
     affiche: 'Skritell', disposition: "Lec'hiadur", tables: 'Taolennoù', toutes: 'An holl',

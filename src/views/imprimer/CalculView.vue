@@ -75,10 +75,15 @@
         <div class="config-section">
           <div class="config-section-title">{{ t('options') }}</div>
           <label v-if="config.types.length > 1" class="case"><input type="checkbox" v-model="config.melanger"> {{ t('melanger') }}</label>
-          <label class="case"><input type="checkbox" v-model="config.enTete"> {{ t('enTete') }}</label>
-          <label class="case"><input type="checkbox" v-model="config.corrige"> {{ t('corrigeSepare') }}</label>
           <label class="case titre">{{ t('titreFiche') }} <input type="text" v-model="config.titre" :placeholder="t('automatique')" maxlength="80"></label>
         </div>
+
+        <!-- options communes à toutes les fiches (Prénom et date, corrigé) + score -->
+        <OptionsFiche>
+          <button class="level-btn" :class="{ active: config.score }" @click="config.score = !config.score">
+            {{ config.score ? '✓ ' : '' }}{{ t('score', { n: resultat.nbCalculs || config.nb }) }}
+          </button>
+        </OptionsFiche>
 
         <div class="config-section nouvelle">
           <button class="btn btn-warning" @click="nouvelleFiche">🎲 {{ t('nouvelle') }}</button>
@@ -127,7 +132,7 @@
         <ChoixPolice :types="['script']" />
       </div>
 
-      <ApercuImpression :reglages="config" :html="resultat.html" :format="resultat.format" :orientation="resultat.orientation" :nb-pages="resultat.nbPages" />
+      <ApercuImpression :reglages="reglages" :html="resultat.html" :format="resultat.format" :orientation="resultat.orientation" :nb-pages="resultat.nbPages" />
     </div>
   </div>
 </template>
@@ -137,6 +142,8 @@ import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ApercuImpression from '../../components/ApercuImpression.vue'
 import ChoixPolice from '../../components/ChoixPolice.vue'
+import OptionsFiche from '../../components/OptionsFiche.vue'
+import { useOptionsFiche } from '../../composables/useOptionsFiche'
 import { usePolices } from '../../composables/usePolices'
 import { sauvegarder, charger } from '../../utils'
 import { useI18n } from '../../i18n'
@@ -205,9 +212,15 @@ function nouvelleFiche() {
   config.value.seed = graineAleatoire()
 }
 
+// options communes des fiches (partagées avec les exercices) : remplacent l'en-tête et le corrigé de la config
+const optionsFiche = useOptionsFiche()
+const reglagesFiche = computed(() => config.value.mode === 'fiche'
+  ? { enTete: optionsFiche.value.entete, corrige: optionsFiche.value.corrige } : {})
+const reglages = computed(() => ({ ...config.value, ...reglagesFiche.value }))
+
 const polices = usePolices()
 const resultat = computed(() => polices.pret.value
-  ? genererCalcul({ ...config.value, langue: langue.value }, { script: polices.script.value })
+  ? genererCalcul({ ...reglages.value, langue: langue.value }, { script: polices.script.value })
   : { html: '', nbPages: 1, format: 'A4', orientation: 'portrait', nbCalculs: 0, demandes: 0 })
 </script>
 

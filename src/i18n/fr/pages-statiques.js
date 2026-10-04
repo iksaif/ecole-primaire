@@ -1,0 +1,31 @@
+// Textes des pages statiques de téléchargement (scripts/telechargements.mjs) — français.
+export default {
+  signaler: '💬 Signaler une erreur', nouveautes: '🆕 Nouveautés',
+
+    telecharger: 'Fiches à télécharger', creer: 'Créer ma fiche', exercices: 'Exercices en ligne',
+    pdf: '📥 Télécharger le PDF', imprimer: '🖨️ Imprimer', personnaliser: '✏️ Personnaliser cette fiche', pages: n => `📄 ${n} page${n > 1 ? 's' : ''}`,
+    imprimer100: '🖨️ Imprimer en « taille réelle » (100 %), sans « ajuster à la page »', gratuit: '✔️ Gratuit, sans inscription',
+    persoAide: 'Avec « Personnaliser », tu peux changer les réglages et générer autant de fiches que tu veux.',
+    autres: 'Autres fiches', titreIndex: '📥 Fiches à imprimer gratuites',
+    toutes: 'Toutes', francais: 'Français', breton: 'Breton', tout: 'Tout',
+    introIndex: "Fiches d'écriture en script et en attaché sur lignes Seyès, affiches de l'alphabet, fiches de calcul, exercices de maths et de français, nombres en lettres. Toutes les fiches sont gratuites, en PDF, prêtes à imprimer.",
+    introBreton: 'Les fiches existent en français et en breton.',
+    voirBreton: '🏴 Afficher aussi les fiches en breton',
+    introPerso: 'Pour une fiche sur mesure, utilise',
+    generateur: 'le générateur de fiches', pied: 'Fiches gratuites, sans publicité, faites par des parents.',
+    paysage: 'paysage', portrait: 'portrait',
+    rechercher: 'Rechercher une fiche… (tables, alphabet, heure, CE1…)', classe: 'Classe', langueFiches: 'Langue',
+    apprendre: '📘 Pour apprendre', apprendreAide: 'Affiches et fiches mémo à garder sous les yeux.',
+    entrainer: "✏️ Pour s'entraîner", entrainerAide: 'Fiches à remplir, avec le corrigé.',
+    aucune: 'Aucune fiche ne correspond. Essaie un autre mot, ou crée ta fiche avec le générateur.',
+    fiche: n => `Fiche ${n}`, variantes: n => `${n} fiches différentes`,
+    variantesAide: "chaque fiche a d'autres questions : imprime-les l'une après l'autre.",
+    g_alphabet: "🔤 L'alphabet", g_nombres: '🔢 Les nombres en lettres', g_tables: '🧮 Tables de calcul',
+    g_ecriture: '✏️ Écriture', g_calcul: '🧮 Calcul', g_maths: '📐 Maths', g_francais: '📝 Français',
+    g_maternelle: '🌱 Maternelle', g_autres: '🌍 Culture générale',
+  // en-tête (identique à celui de l'app) et page 404
+  nav_maths: 'Maths', nav_francais: 'Français', nav_lecture: 'Lecture', nav_autres: 'Autres', nav_imprimer: 'À imprimer',
+  nav_classe: 'Classe', nav_toutes: 'Toutes',
+  introuvable: 'Page introuvable', introuvableAide: "Cette page n'existe pas (ou plus).", accueil: "🏠 Retour à l'accueil",
+  page: 'Page',
+}

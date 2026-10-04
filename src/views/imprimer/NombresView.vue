@@ -11,7 +11,7 @@
         <div class="config-section-title">{{ t('langues') }}</div>
         <div class="btn-group">
           <button v-for="l in LANGUES" :key="l.id" class="level-btn"
-            :class="{ active: config.langue === l.id }" @click="config.langue = l.id">{{ libelleLangue(l) }}</button>
+            :class="{ active: choixLangues === l.id }" @click="config.langues = [...l.langues]">{{ libelleLangue(l) }}</button>
         </div>
       </div>
 
@@ -57,7 +57,7 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('options') }}</div>
         <label class="case"><input type="checkbox" v-model="config.representation"> {{ t('representation') }}</label>
-        <label class="case" v-if="config.langue !== 'br' || !regionale"><input type="checkbox" v-model="config.rectifiee">
+        <label class="case" v-if="languesEcrites.includes('fr')"><input type="checkbox" v-model="config.rectifiee">
           {{ t('rectifiee') }}</label>
       </div>
 
@@ -82,12 +82,26 @@ import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/imprimer/NombresView.js'
 import messagesBr from '../../i18n/br/views/imprimer/NombresView.js'
 import {
-  languesDisponibles, SECTIONS, SECTIONS_PRINCIPALES, SECTIONS_DIZAINES, DEFAUTS, nombresPersonnalises, genererNombres,
+  languesDisponibles, normaliserLangues, SECTIONS, SECTIONS_PRINCIPALES, SECTIONS_DIZAINES, DEFAUTS, nombresPersonnalises, genererNombres,
 } from '../../impression/nombres'
 
-const config = ref({ ...DEFAUTS, ...charger('nombres_impression_config', {}) })
+// réglages enregistrés : anciens « langue: 'bilingue' | 'fr' | 'br' » convertis en « langues »
+const sauvegarde = charger('nombres_impression_config', {})
+const config = ref({ ...DEFAUTS, ...sauvegarde, langues: normaliserLangues({ ...DEFAUTS, ...sauvegarde }).langues })
+delete config.value.langue
+delete config.value.regionale
 const { code: codeRegional, langue: regionale } = useLangueRegionale()
 const LANGUES = computed(() => languesDisponibles(codeRegional.value))
+// choix actif parmi « bilingue / français seul / langue régionale seule »
+const choixLangues = computed(() => {
+  const avecFr = config.value.langues.includes('fr'), avecReg = config.value.langues.some(l => l !== 'fr')
+  return avecFr && avecReg ? 'bilingue' : avecReg ? 'br' : 'fr'
+})
+// langues réellement écrites : sans langue régionale active, français seul ; sinon celle qui est active
+const languesEcrites = computed(() => {
+  if (!codeRegional.value) return ['fr']
+  return LANGUES.value.find(l => l.id === choixLangues.value)?.langues ?? ['fr', codeRegional.value]
+})
 watch(config, v => sauvegarder('nombres_impression_config', v), { deep: true })
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
@@ -124,7 +138,7 @@ const nombresPerso = computed(() => nombresPersonnalises(config.value))
 
 const polices = usePolices()
 const resultat = computed(() => polices.pret.value
-  ? genererNombres({ ...config.value, regionale: codeRegional.value, langueTextes: langue.value }, { script: polices.script.value })
+  ? genererNombres({ ...config.value, langues: languesEcrites.value, langue: langue.value }, { script: polices.script.value })
   : { html: '', nbPages: 1 })
 const html = computed(() => resultat.value.html)
 const nbPages = computed(() => resultat.value.nbPages)

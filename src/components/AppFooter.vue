@@ -1,5 +1,7 @@
 <template>
   <footer class="pied">
+    <SignalerErreur />
+    <RouterLink to="/nouveautes">{{ t('nouveautes') }}</RouterLink>
     <RouterLink to="/about">{{ t('apropos') }}</RouterLink>
     <RouterLink to="/mentions-legales">{{ t('mentions') }}</RouterLink>
     <a :href="`mailto:${CONTACT}`">✉️ {{ CONTACT }}</a>
@@ -10,6 +12,7 @@
 
 <script setup>
 import { useI18n } from '../i18n'
+import SignalerErreur from './SignalerErreur.vue'
 import messagesFr from '../i18n/fr/components/AppFooter.js'
 import messagesBr from '../i18n/br/components/AppFooter.js'
 import { CONTACT, DEPOT } from '../site'

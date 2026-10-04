@@ -2,11 +2,9 @@
 // et proposées sur des pages statiques /telechargements/<slug>/ (référencement).
 // Le mode normal reste la génération à la demande dans l'app.
 
-import { langueRegionale } from '../data/languesRegionales.js'
+import { LANGUES_REGIONALES } from '../data/languesRegionales.js'
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
-const BR = langueRegionale('br')
-const listeBr = id => BR.listes.find(l => l.id === id).mots.join('\n')
 const TOUS_STYLES = ['script-maj', 'script-min', 'attache-maj', 'attache-min']
 const NOMS_STYLES = {
   'script-maj': 'script majuscule', 'script-min': 'script minuscule',
@@ -95,7 +93,8 @@ const affiches = [
   lien: '/imprimer/alphabet',
 }))
 
-const nombresBase = { langue: 'bilingue', miseEnPage: 'affiches', format: 'A4', orientation: 'portrait', representation: true, rectifiee: true, de: 0, a: 0, pas: 1 }
+// langues : langues des nombres écrits ; langue : langue du document (titres)
+const nombresBase = { langues: ['fr', 'br'], langue: 'fr', miseEnPage: 'affiches', format: 'A4', orientation: 'portrait', representation: true, rectifiee: true, de: 0, a: 0, pas: 1 }
 const dizaines = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
   slug: `nombres-francais-breton-${d * 10}-${d * 10 + 10}`,
   court: `De ${d * 10} à ${d * 10 + 10}`,
@@ -125,74 +124,69 @@ const nombres = [
     titre: 'Les nombres en breton de 0 à 100',
     description: 'Les nombres de 0 à 100 en breton (brezhoneg) : unan, daou, tri… ugent, tregont, hanter-kant, pevar-ugent, kant. Tableau à imprimer.',
     niveaux: 'CP · CE1 · CE2',
-    config: { ...nombresBase, langue: 'br', sections: ['cent'] },
+    config: { ...nombresBase, langues: ['br'], langue: 'br', sections: ['cent'] },
   },
   {
     slug: 'nombres-en-lettres-0-100', court: 'Français de 0 à 100',
     titre: 'Les nombres en lettres de 0 à 100 (orthographe rectifiée)',
     description: "Tableau des nombres de 0 à 100 écrits en lettres en français, avec l'orthographe rectifiée de 1990 utilisée à l'école (vingt-et-un, quatre-vingts…).",
     niveaux: 'CP · CE1 · CE2',
-    config: { ...nombresBase, langue: 'fr', sections: ['cent'] },
+    config: { ...nombresBase, langues: ['fr'], sections: ['cent'] },
   },
   {
     slug: 'nombres-en-lettres-dizaines-centaines', court: 'Dizaines et centaines (français)',
     titre: 'Écrire les nombres en lettres : dizaines, centaines et milliers',
     description: 'Affiches mémo pour écrire les nombres en lettres en français : unités, 10 à 20, dizaines, centaines et milliers, avec représentations.',
     niveaux: 'CE1 · CE2',
-    config: { ...nombresBase, langue: 'fr', sections: ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] },
+    config: { ...nombresBase, langues: ['fr'], sections: ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] },
   },
 ].map(e => ({ ...e, categorie: 'nombres', type: 'nombres', lien: '/imprimer/nombres' }))
 
-const breton = [
-  {
-    slug: 'fiche-ecriture-alphabet-breton', court: 'Alphabet breton', type: 'ecriture', categorie: 'ecriture',
-    titre: "Fiche d'écriture : l'alphabet breton (lizherenneg) en attaché",
-    description: "Les 25 lettres de l'alphabet breton (a, b, ch, c'h, d…) en attaché majuscule et minuscule, à repasser puis à recopier sur lignes Seyès.",
-    niveaux: 'GS · CP · CE1', lien: '/imprimer/ecriture',
-    config: { ...ecritureBase, styles: ['attache-maj', 'attache-min'], lettres: BR.alphabet, repasser: 1, copie: 0, titre: "Al lizherenneg — l'alphabet breton" },
-  },
-  {
-    slug: 'fiche-ecriture-jours-de-la-semaine-breton', court: 'Jours en breton', type: 'ecriture', categorie: 'ecriture',
-    titre: "Fiche d'écriture : les jours de la semaine en breton",
-    description: "Écrire les jours de la semaine en breton en attaché : Lun, Meurzh, Merc'her, Yaou, Gwener, Sadorn, Sul, et Dilun, Dimeurzh… Sur lignes Seyès.",
-    niveaux: 'CP · CE1', lien: '/imprimer/ecriture',
-    config: { ...ecritureBase, contenu: 'mots', styles: ['attache-min'], repasser: 1, copie: 0, mots: listeBr('jours') + '\n' + listeBr('jours-di'), titre: 'Deizioù ar sizhun — les jours en breton' },
-  },
-  {
-    slug: 'fiche-ecriture-mois-breton', court: 'Mois en breton', type: 'ecriture', categorie: 'ecriture',
-    titre: "Fiche d'écriture : les mois de l'année en breton",
-    description: "Écrire les douze mois de l'année en breton en attaché : Genver, C'hwevrer, Meurzh, Ebrel, Mae, Mezheven, Gouere, Eost, Gwengolo, Here, Du, Kerzu.",
-    niveaux: 'CP · CE1 · CE2', lien: '/imprimer/ecriture',
-    config: { ...ecritureBase, contenu: 'mots', styles: ['attache-min'], repasser: 1, copie: 0, mots: listeBr('mois'), titre: 'Mizioù ar bloaz — les mois en breton' },
-  },
-  {
-    slug: 'fiche-ecriture-nombres-breton', court: 'Nombres en breton (1 à 10)', type: 'ecriture', categorie: 'ecriture',
-    titre: "Fiche d'écriture : les nombres de 1 à 10 en breton",
-    description: 'Écrire les nombres en lettres en breton de unan à dek, en attaché, sur lignes Seyès : unan, daou, tri, pevar, pemp…',
-    niveaux: 'CP · CE1', lien: '/imprimer/ecriture',
-    config: { ...ecritureBase, contenu: 'mots', styles: ['attache-min'], repasser: 1, mots: listeBr('nombres-10'), titre: 'Les nombres de 1 à 10 en breton' },
-  },
-  ...[['A4', 'landscape', 'A4'], ['A3', 'landscape', 'A3']].map(([format, orientation, nom]) => ({
-    slug: `affiche-alphabet-breton-${nom.toLowerCase()}`, court: `Alphabet breton ${nom}`, type: 'alphabet', categorie: 'alphabet',
-    titre: `Affiche de l'alphabet breton ${nom} (al lizherenneg)`,
-    description: `Affiche ${nom} de l'alphabet breton : 25 lettres avec ch et c'h, en script et en attaché, majuscules et minuscules, avec un mot illustré (aval, bara, ki…). Pour l'école bilingue ou Diwan.`,
-    niveaux: 'MS · GS · CP · CE1', lien: '/imprimer/alphabet',
-    config: { format, orientation, disposition: 'grille', styles: TOUS_STYLES, mot: true, voyelles: true, lignes: false, alphabet: 'br' },
-  })),
-]
-
-// Une fiche par lettre de l'alphabet breton (ch et c'h compris) — pour skoolik.app
-const slugLettre = l => l.replace("'", '-')
-const lettresBretonnes = BR.alphabet.map(l => {
-  const L = l[0].toUpperCase() + l.slice(1)
-  return {
-    slug: `fiche-ecriture-lizherenn-${slugLettre(l)}`, court: `Lizherenn ${L}`, type: 'ecriture', categorie: 'ecriture',
-    titre: `Fiche d'écriture : la lettre ${L} de l'alphabet breton`,
-    description: `Fiche d'écriture pour apprendre à écrire la lettre ${L} ${l} de l'alphabet breton (lizherenneg) en script et en attaché, majuscule et minuscule, sur lignes Seyès.`,
-    niveaux: 'GS · CP · CE1', lien: '/imprimer/ecriture', langues: ['br'],
-    config: { ...ecritureBase, sauter: true, repasser: 1, styles: TOUS_STYLES, lettres: [l], titre: `Al lizherenn ${L} ${l}` },
-  }
-})
+// Fiches propres à chaque langue régionale (alphabet, listes de mots, une fiche par lettre, affiches),
+// générées à partir de sa définition dans src/data/languesRegionales.js
+function fichesRegionales(r) {
+  const nom = r.nom, f = r.fiches
+  const maj = l => l[0].toUpperCase() + l.slice(1)
+  const liste = ids => ids.flatMap(id => r.listes.find(l => l.id === id).mots).join('\n')
+  const exemplesMots = Object.values(r.mots ?? {}).slice(0, 3).map(m => m[0]).join(', ')
+  const premieres = r.alphabet.slice(0, 5).join(', ')
+  return [
+    {
+      slug: `fiche-ecriture-alphabet-${nom}`, court: `Alphabet ${nom}`, type: 'ecriture', categorie: 'ecriture',
+      titre: `Fiche d'écriture : l'alphabet ${nom} (${r.titreAlphabet.toLowerCase().replace(/^al /, '')}) en attaché`,
+      description: `Les ${r.alphabet.length} lettres de l'alphabet ${nom} (${premieres}…) en attaché majuscule et minuscule, à repasser puis à recopier sur lignes Seyès.`,
+      niveaux: 'GS · CP · CE1', lien: '/imprimer/ecriture',
+      config: { ...ecritureBase, styles: ['attache-maj', 'attache-min'], lettres: r.alphabet, repasser: 1, copie: 0, titre: `${r.titreAlphabet} — l'alphabet ${nom}` },
+    },
+    ...f.listes.map(l => {
+      const mots = liste(l.listes)
+      const titreListe = r.listes.find(x => x.id === l.listes[0]).titre
+      return {
+        slug: `fiche-ecriture-${l.slug}-${nom}`, court: `${l.court} en ${nom}`, type: 'ecriture', categorie: 'ecriture',
+        titre: `Fiche d'écriture : ${l.titre} en ${nom}`,
+        description: `Écrire ${l.titre} en ${nom} en attaché : ${mots.split('\n').slice(0, 7).join(', ')}… Sur lignes Seyès.`,
+        niveaux: l.niveaux, lien: '/imprimer/ecriture',
+        config: { ...ecritureBase, contenu: 'mots', styles: ['attache-min'], repasser: 1, copie: l.copie ?? 0, mots,
+          titre: titreListe.includes(nom) ? titreListe : `${titreListe} — ${l.resume} en ${nom}` },
+      }
+    }),
+    ...[['A4', 'landscape'], ['A3', 'landscape']].map(([format, orientation]) => ({
+      slug: `affiche-alphabet-${nom}-${format.toLowerCase()}`, court: `Alphabet ${nom} ${format}`, type: 'alphabet', categorie: 'alphabet',
+      titre: `Affiche de l'alphabet ${nom} ${format} (${r.titreAlphabet.toLowerCase()})`,
+      description: `Affiche ${format} de l'alphabet ${nom} : ${r.alphabet.length} lettres, en script et en attaché, majuscules et minuscules${exemplesMots ? `, avec un mot illustré (${exemplesMots}…)` : ''}. Pour ${f.ecoles}.`,
+      niveaux: 'MS · GS · CP · CE1', lien: '/imprimer/alphabet',
+      config: { format, orientation, disposition: 'grille', styles: TOUS_STYLES, mot: true, voyelles: true, lignes: false, alphabet: r.id },
+    })),
+    // une fiche par lettre (digrammes compris)
+    ...r.alphabet.map(l => ({
+      slug: `fiche-ecriture-${f.motLettre}-${l.replace("'", '-')}`, court: `${maj(f.motLettre)} ${maj(l)}`, type: 'ecriture', categorie: 'ecriture',
+      titre: `Fiche d'écriture : la lettre ${maj(l)} de l'alphabet ${nom}`,
+      description: `Fiche d'écriture pour apprendre à écrire la lettre ${maj(l)} ${l} de l'alphabet ${nom} (${r.titreAlphabet.toLowerCase().replace(/^al /, '')}) en script et en attaché, majuscule et minuscule, sur lignes Seyès.`,
+      niveaux: 'GS · CP · CE1', lien: '/imprimer/ecriture',
+      config: { ...ecritureBase, sauter: true, repasser: 1, styles: TOUS_STYLES, lettres: [l], titre: `${f.titreLettre} ${maj(l)} ${l}` },
+    })),
+  ].map(t => ({ ...t, langues: [r.id] }))
+}
 
 // Langues de chaque fiche : français par défaut ; les fiches bretonnes et bilingues vont sur les deux sites
 const avecLangues = (liste, langues) => liste.map(t => ({ langues, ...t }))
@@ -200,10 +194,9 @@ const avecLangues = (liste, langues) => liste.map(t => ({ langues, ...t }))
 export const TELECHARGEMENTS = [
   ...avecLangues([...lettres, ...alphabets, ...mots, ...affiches], ['fr']),
   // nombres : français seul, breton seul, ou bilingue
-  ...nombres.map(t => ({ langues: { fr: ['fr'], br: ['br'] }[t.config.langue] ?? ['fr', 'br'], ...t })),
-  // contenu en breton (alphabet, jours, mois, nombres en breton) : fiches bretonnes
-  ...avecLangues(breton, ['br']),
-  ...lettresBretonnes,
+  ...nombres.map(t => ({ langues: t.config.langues, ...t })),
+  // contenu en langue régionale (alphabet, jours, mois, nombres, lettres une à une)
+  ...LANGUES_REGIONALES.filter(r => r.fiches).flatMap(fichesRegionales),
 ]
 
 // Fiches publiées sur un site selon sa langue (fr : ecoleprimaire.app, br : skoolik.app)

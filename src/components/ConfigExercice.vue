@@ -20,6 +20,8 @@
 
     <slot :mode="mode" />
 
+    <div class="signalement"><SignalerErreur :reglages="config" /></div>
+
     <div v-if="mode === 'jouer'" class="actions">
       <button class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')">{{ t('commencer') }}</button>
     </div>
@@ -33,6 +35,7 @@
 
 <script setup>
 import ApercuImpression from './ApercuImpression.vue'
+import SignalerErreur from './SignalerErreur.vue'
 import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/components/ConfigExercice.js'
 import messagesBr from '../i18n/br/components/ConfigExercice.js'
@@ -69,6 +72,7 @@ const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 .modes button.actif { background: white; color: var(--texte); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
 /* cases à cocher des réglages (ex. corrigé) — :deep car elles viennent du slot */
 :deep(.case-corrige) { display: flex; align-items: center; gap: .5rem; margin: .25rem 0 1rem; font-weight: 600; cursor: pointer; }
+.signalement { text-align: right; margin: .25rem 0 -.5rem; }
 .actions { text-align: center; margin-top: 1.5rem; }
 .btn-grand { font-size: 1.1rem; padding: .75rem 2rem; }
 </style>

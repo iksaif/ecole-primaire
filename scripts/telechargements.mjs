@@ -25,7 +25,10 @@ import { join, dirname, extname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { CATEGORIES } from '../src/impression/catalogue.js'
 import { EXERCICES, NB_VARIANTES, classesDe, etiquetteClasse } from '../src/impression/exercices.js'
-import { site, SITES } from '../src/site.js'
+import { site, SITES, CONTACT } from '../src/site.js'
+import { DRAPEAUX } from '../src/data/drapeaux.js'
+import textesFr from '../src/i18n/fr/pages-statiques.js'
+import textesBr from '../src/i18n/br/pages-statiques.js'
 
 const arg = (nom, defaut) => {
   const i = process.argv.indexOf(nom)
@@ -48,54 +51,7 @@ const urlReference = t => (t.langues.includes('br') ? SITES.skoolik.url : SITES.
 // ── Textes des pages (français / breton) ─────────────────────────────────────
 // Les pages contiennent les deux langues ; le sélecteur FR/BR (même clé localStorage que l'app)
 // choisit celle qui s'affiche. Breton : à relire par un brittophone.
-const T = {
-  fr: {
-    telecharger: 'Fiches à télécharger', creer: 'Créer ma fiche', exercices: 'Exercices en ligne',
-    pdf: '📥 Télécharger le PDF', imprimer: '🖨️ Imprimer', personnaliser: '✏️ Personnaliser cette fiche', pages: n => `📄 ${n} page${n > 1 ? 's' : ''}`,
-    imprimer100: '🖨️ Imprimer en « taille réelle » (100 %), sans « ajuster à la page »', gratuit: '✔️ Gratuit, sans inscription',
-    persoAide: 'Avec « Personnaliser », tu peux changer les réglages et générer autant de fiches que tu veux.',
-    autres: 'Autres fiches', titreIndex: '📥 Fiches à imprimer gratuites',
-    toutes: 'Toutes', francais: 'Français', breton: 'Breton', tout: 'Tout',
-    introIndex: "Fiches d'écriture en script et en attaché sur lignes Seyès, affiches de l'alphabet, fiches de calcul, exercices de maths et de français, nombres en lettres. Toutes les fiches sont gratuites, en PDF, prêtes à imprimer.",
-    introBreton: 'Les fiches existent en français et en breton.',
-    voirBreton: '🏴 Afficher aussi les fiches en breton',
-    introPerso: 'Pour une fiche sur mesure, utilise',
-    generateur: 'le générateur de fiches', pied: 'Fiches gratuites, sans publicité, faites par des parents.',
-    paysage: 'paysage', portrait: 'portrait',
-    rechercher: 'Rechercher une fiche… (tables, alphabet, heure, CE1…)', classe: 'Classe', langueFiches: 'Langue',
-    apprendre: '📘 Pour apprendre', apprendreAide: 'Affiches et fiches mémo à garder sous les yeux.',
-    entrainer: "✏️ Pour s'entraîner", entrainerAide: 'Fiches à remplir, avec le corrigé.',
-    aucune: 'Aucune fiche ne correspond. Essaie un autre mot, ou crée ta fiche avec le générateur.',
-    fiche: n => `Fiche ${n}`, variantes: n => `${n} fiches différentes`,
-    variantesAide: "chaque fiche a d'autres questions : imprime-les l'une après l'autre.",
-    g_alphabet: "🔤 L'alphabet", g_nombres: '🔢 Les nombres en lettres', g_tables: '🧮 Tables de calcul',
-    g_ecriture: '✏️ Écriture', g_calcul: '🧮 Calcul', g_maths: '📐 Maths', g_francais: '📝 Français',
-    g_maternelle: '🌱 Maternelle', g_autres: '🌍 Culture générale',
-  },
-  br: {
-    telecharger: 'Fichennoù da bellgargañ', creer: 'Krouiñ ma fichenn', exercices: 'Poelladennoù enlinenn',
-    pdf: '📥 Pellgargañ ar PDF', imprimer: '🖨️ Moullañ', personnaliser: '✏️ Personelaat ar fichenn-mañ', pages: n => `📄 Pajennoù : ${n}`,
-    imprimer100: '🖨️ Moullañ er « vent wir » (100 %), hep « azasaat d\'ar bajenn »', gratuit: '✔️ Digoust, hep enskrivañ',
-    persoAide: "Gant « Personelaat » e c'hallez cheñch an arventennoù ha krouiñ kement a fichennoù ha ma karez.",
-    autres: 'Fichennoù all', titreIndex: '📥 Fichennoù digoust da voullañ',
-    toutes: 'An holl', francais: 'Galleg', breton: 'Brezhoneg', tout: 'Pep tra',
-    introIndex: 'Fichennoù skrivañ e skript hag a-stag war linennoù Seyès, skritelloù al lizherenneg, fichennoù jediñ, poelladennoù matematik ha galleg, niveroù e lizherennoù. Digoust eo an holl fichennoù, e PDF, prest da voullañ.',
-    introBreton: 'E galleg hag e brezhoneg emañ ar fichennoù.',
-    voirBreton: '🏴 Diskouez ar fichennoù e brezhoneg ivez',
-    introPerso: "Evit ur fichenn diouzh da c'hoant, implij",
-    generateur: "ar c'hrouer fichennoù", pied: 'Fichennoù digoust, hep bruderezh, graet gant tadoù ha mammoù.',
-    paysage: 'gweledva', portrait: 'poltred',
-    rechercher: 'Klask ur fichenn… (taolennoù, lizherenneg, eur, CE1…)', classe: 'Klas', langueFiches: 'Yezh',
-    apprendre: '📘 Evit deskiñ', apprendreAide: 'Skritelloù ha fichennoù-eñvor da virout dirak an daoulagad.',
-    entrainer: '✏️ Evit en em bleustriñ', entrainerAide: 'Fichennoù da leuniañ, gant ar reizhadenn.',
-    aucune: "Fichenn ebet ne glot. Klask ur ger all, pe krou da fichenn gant ar c'hrouer.",
-    fiche: n => `Fichenn ${n}`, variantes: n => `Fichennoù disheñvel : ${n}`,
-    variantesAide: 'goulennoù all a zo war bep fichenn : moull anezho an eil goude egile.',
-    g_alphabet: '🔤 Al lizherenneg', g_nombres: '🔢 An niveroù e lizherennoù', g_tables: '🧮 Taolennoù jediñ',
-    g_ecriture: '✏️ Skrivañ', g_calcul: '🧮 Jediñ', g_maths: '📐 Matematik', g_francais: '📝 Galleg',
-    g_maternelle: '🌱 Skol-vamm', g_autres: '🌍 Sevenadur hollek',
-  },
-}
+const T = { fr: textesFr, br: textesBr }
 const val = (l, cle, a) => {
   const v = T[l][cle] ?? T.fr[cle]
   return typeof v === 'function' ? v(...a) : v
@@ -290,13 +246,11 @@ function activerBreton() {
 }
 </script>`
 
-// mêmes drapeaux que l'app (src/components/Drapeau.vue)
-const DRAPEAU_FR = '<svg class="drapeau" viewBox="0 0 3 2"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>'
-const DRAPEAU_BR = `<svg class="drapeau" viewBox="0 0 18 12"><rect width="18" height="12" fill="#fff"/>${[0, 1, 2, 3, 4].map(k =>
-  `<rect y="${(k * 2 * 12 / 9).toFixed(3)}" width="18" height="${(12 / 9).toFixed(3)}" fill="#000"/>`).join('')}<rect width="8" height="${(5 * 12 / 9).toFixed(3)}" fill="#fff"/><g fill="#000">${
-  [[1.3, .9], [3.9, .9], [6.5, .9], [2.6, 3], [5.2, 3], [1.3, 5], [3.9, 5], [6.5, 5]].map(([x, y]) => `<path d="M${x} ${y}l.45 1.3h-.9z"/>`).join('')}</g></svg>`
+// mêmes drapeaux que l'app
+const DRAPEAU_FR = DRAPEAUX.fr.svg
+const DRAPEAU_BR = DRAPEAUX.br.svg
 
-function gabarit({ titre, description, canonique, contenu, image }) {
+function gabarit({ titre, description, canonique, contenu, image, jsonLd }) {
   return `<!DOCTYPE html>
 <html lang="${SITE.langue}" data-ui="${SITE.langue}" data-regionale="${SITE.langueRegionale || 'aucune'}"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -307,17 +261,20 @@ function gabarit({ titre, description, canonique, contenu, image }) {
 <meta property="og:title" content="${echapper(titre)}"><meta property="og:description" content="${echapper(description)}">
 ${image ? `<meta property="og:image" content="${image}">` : ''}
 <link rel="icon" href="${BASE}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${BASE}favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="${BASE}apple-touch-icon.png">
+<meta name="twitter:card" content="summary_large_image">${jsonLd ? `\n<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : ''}
 <style>${CSS}</style>
 ${SCRIPT_CONTEXTE}
 </head><body>
 <header class="nav">
 <a class="logo" href="${BASE}">${SITE.emoji} ${SITE.nom}</a>
 <nav class="liens">
-  <a href="${BASE}#/maths">🔢 ${duo('Maths', 'Matematik')}</a>
-  <a href="${BASE}#/francais">📝 ${duo('Français', 'Galleg')}</a>
-  <a href="${BASE}#/lecture">📖 ${duo('Lecture', 'Lenn')}</a>
-  <a href="${BASE}#/autres">🌍 ${duo('Autres', 'Traoù all')}</a>
-  <a href="${BASE}#/imprimer" class="imprimer actif">🖨️ ${duo('À imprimer', 'Da voullañ')}</a>
+  <a href="${BASE}#/maths">🔢 ${bi('nav_maths')}</a>
+  <a href="${BASE}#/francais">📝 ${bi('nav_francais')}</a>
+  <a href="${BASE}#/lecture">📖 ${bi('nav_lecture')}</a>
+  <a href="${BASE}#/autres">🌍 ${bi('nav_autres')}</a>
+  <a href="${BASE}#/imprimer" class="imprimer actif">🖨️ ${bi('nav_imprimer')}</a>
   <a href="${BASE}#/parametres" class="reglages" title="Paramètres">⚙️</a>
 </nav>
 <div class="droite">
@@ -325,12 +282,18 @@ ${SCRIPT_CONTEXTE}
   <div class="langue-ui" role="group" aria-label="Langue / Yezh">
     <button data-ui="fr" onclick="choisirLangue('fr')" title="Français" aria-label="Français">${DRAPEAU_FR}</button><button data-ui="br" onclick="choisirLangue('br')" title="Brezhoneg" aria-label="Brezhoneg">${DRAPEAU_BR}</button>
   </div>
-  <label class="classe" title="Classe">🎒 <span class="lib">${duo('Classe', 'Klas')}</span>
-    <select id="classe-nav" onchange="choisirClasse(this.value)"><option value="" data-fr="Toutes" data-br="An holl">${SITE.langue === 'br' ? 'An holl' : 'Toutes'}</option>${CLASSES.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('')}</select>
+  <label class="classe" title="Classe">🎒 <span class="lib">${bi('nav_classe')}</span>
+    <select id="classe-nav" onchange="choisirClasse(this.value)"><option value="" data-fr="${T.fr.nav_toutes}" data-br="${T.br.nav_toutes}">${tx('nav_toutes')}</option>${CLASSES.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('')}</select>
   </label>
 </div></header>
 <main>${contenu}</main>
-<footer>${bi('pied')} Polices / Nodrezhoù : Playwrite FR Trad, Andika, OpenDyslexic (OFL), Luciole (CC BY).</footer>
+<footer><a id="signaler" href="mailto:${CONTACT}">${bi('signaler')}</a> · <a href="${BASE}#/nouveautes">${bi('nouveautes')}</a><br>
+${bi('pied')} Polices / Nodrezhoù : Playwrite FR Trad, Andika, OpenDyslexic (OFL), Luciole (CC BY).</footer>
+<script>
+// mail prérempli avec l'adresse de la page (pas de formulaire, rien n'est stocké)
+document.getElementById('signaler').href = 'mailto:${CONTACT}?subject=' + encodeURIComponent('[${SITE.nom}] Erreur — ' + location.pathname)
+  + '&body=' + encodeURIComponent('Bonjour,\n\nJ\'ai trouvé une erreur sur cette fiche :\n\n…\n\n———\nPage : ' + location.href)
+</script>
 </body></html>`
 }
 
@@ -459,10 +422,55 @@ async function main() {
 
     const exercices = AVEC_EXERCICES ? await genererExercices(navigateur, url, doc) : []
     ecrirePages([...liste, ...exercices])
+    await imagePartage(doc, url, liste)
+    ecrireManifeste()
   } finally {
     await navigateur.close()
     await new Promise(ok => serveur.httpServer.close(ok))
   }
+}
+
+// Image d'aperçu lors d'un partage (og:image de l'accueil), 1200 × 630 : nom du site, accroche, vignettes
+async function imagePartage(doc, url, liste) {
+  const br = SITE.langue === 'br'
+  const choix = ['affiche-alphabet-a4-paysage', 'fiche-table-de-multiplication-7', 'fiche-ecriture-lettre-a', br ? 'affiche-alphabet-breton-a4' : 'affiches-nombres-francais-breton']
+    .filter(s => liste.some(t => t.slug === s))
+  const vignettes = choix.map(s => `<img src="${url}telechargements/${s}/apercu.jpg">`).join('')
+  const favicon = readFileSync(join(racine, 'public/favicon.svg'), 'utf8').replace('<svg ', '<svg width="120" height="120" ')
+  await doc.setViewportSize({ width: 1200, height: 630 })
+  await doc.setContent(`<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+body { margin: 0; width: 1200px; height: 630px; font-family: 'Segoe UI', system-ui, sans-serif; color: #2c3e50;
+  background: linear-gradient(135deg, #eef5fe, #fff8ef); display: flex; overflow: hidden; }
+.texte { width: 560px; padding: 70px 0 0 70px; }
+.logo { display: flex; align-items: center; gap: 24px; }
+h1 { font-size: 66px; margin: 0; color: #3a78c9; }
+p { font-size: 33px; line-height: 1.35; margin: 34px 0 0; }
+.url { font-size: 26px; color: #b35c00; font-weight: 700; margin-top: 30px; }
+.vignettes { position: relative; flex: 1; }
+.vignettes img { position: absolute; width: 270px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.18); background: white; }
+.vignettes img:nth-child(1) { left: 40px; top: 60px; transform: rotate(-6deg); }
+.vignettes img:nth-child(2) { left: 330px; top: 30px; transform: rotate(5deg); }
+.vignettes img:nth-child(3) { left: 70px; top: 330px; transform: rotate(4deg); }
+.vignettes img:nth-child(4) { left: 340px; top: 320px; transform: rotate(-4deg); }
+</style></head><body>
+<div class="texte"><div class="logo">${favicon}<h1>${echapper(SITE.nom)}</h1></div>
+<p>${br ? 'Poelladennoù ha fichennoù digoust da voullañ, e galleg hag e brezhoneg.' : 'Exercices et fiches à imprimer gratuites, de la maternelle au CM2.'}</p>
+<div class="url">${SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')}</div></div>
+<div class="vignettes">${vignettes}</div></body></html>`, { waitUntil: 'load' })
+  await doc.screenshot({ path: join(dist, 'og-image.jpg'), type: 'jpeg', quality: 85 })
+}
+
+// Manifeste (icônes pour l'écran d'accueil d'un téléphone)
+function ecrireManifeste() {
+  writeFileSync(join(dist, 'site.webmanifest'), JSON.stringify({
+    name: SITE.nom, short_name: SITE.nom, lang: SITE.langue, start_url: BASE, display: 'standalone',
+    background_color: '#f8f9fa', theme_color: '#4a90e2',
+    icons: [
+      { src: `${BASE}icone-192.png`, sizes: '192x192', type: 'image/png' },
+      { src: `${BASE}icone-512.png`, sizes: '512x512', type: 'image/png' },
+      { src: `${BASE}favicon.svg`, sizes: 'any', type: 'image/svg+xml' },
+    ],
+  }, null, 2))
 }
 
 // ── Pages statiques ──────────────────────────────────────────────────────────
@@ -506,7 +514,7 @@ function pageFiche(t, liste) {
   const pager = images.length > 1 ? `<div class="pager">
   <button type="button" class="fleche" data-pas="-1" aria-label="Précédent">◀</button>
   ${n ? Array.from({ length: n }, (_, k) => `<button type="button" class="num${k ? '' : ' actif'}" data-k="${k}">${bi('fiche', k + 1)}</button>`).join('')
-    : `<span class="position">${duo('Page', 'Pajenn')} <b id="pos">1</b> / ${images.length}</span>`}
+    : `<span class="position">${bi('page')} <b id="pos">1</b> / ${images.length}</span>`}
   <button type="button" class="fleche" data-pas="1" aria-label="Suivant">▶</button>
 </div>
 <script>
@@ -568,6 +576,15 @@ ${voisines.length ? `<h2>${bi('autres')}</h2>
   writeFileSync(join(dist, 'telechargements', t.slug, 'index.html'), gabarit({
     titre: SITE.langue === 'br' ? t.titreBr ?? titreFr(t) : titreFr(t), description: t.description,
     canonique: `${urlReference(t)}telechargements/${t.slug}/`, image: `${urlReference(t)}telechargements/${t.slug}/${apercu}`, contenu,
+    // données structurées : ressource pédagogique gratuite, en PDF
+    jsonLd: {
+      '@context': 'https://schema.org', '@type': 'LearningResource',
+      name: titreFr(t), description: t.description, url: `${urlReference(t)}telechargements/${t.slug}/`,
+      image: `${urlReference(t)}telechargements/${t.slug}/${apercu}`,
+      inLanguage: t.langues, educationalLevel: t.niveaux, learningResourceType: t.usage === 'apprendre' ? 'Affiche' : "Fiche d'exercices",
+      encodingFormat: 'application/pdf', isAccessibleForFree: true,
+      publisher: { '@type': 'Organization', name: SITE.nom, url: SITE_URL },
+    },
   }))
 }
 
@@ -675,11 +692,11 @@ ${urls.map(u => `  <url><loc>${SITE_URL}${u}</loc></url>`).join('\n')}
 </urlset>
 `)
   writeFileSync(join(dist, '404.html'), gabarit({
-    titre: SITE.langue === 'br' ? "N'eo ket bet kavet ar bajenn" : 'Page introuvable',
+    titre: tx('introuvable'),
     description: '', canonique: SITE_URL,
-    contenu: `<h1>🤔 ${duo('Page introuvable', "N'eo ket bet kavet ar bajenn")}</h1>
-<p class="intro" style="margin:1rem 0">${duo("Cette page n'existe pas (ou plus).", "Ar bajenn-mañ n'eus ket anezhi (pe n'eus ket anezhi ken).")}</p>
-<p><a class="btn btn-dl" href="${BASE}">${duo("🏠 Retour à l'accueil", "🏠 Distreiñ d'an degemer")}</a>
+    contenu: `<h1>🤔 ${bi('introuvable')}</h1>
+<p class="intro" style="margin:1rem 0">${bi('introuvableAide')}</p>
+<p><a class="btn btn-dl" href="${BASE}">${bi('accueil')}</a>
 <a class="btn btn-perso" href="${BASE}telechargements/">${bi('telecharger')}</a></p>`,
   }))
   writeFileSync(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap.xml\n`)

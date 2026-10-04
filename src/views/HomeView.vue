@@ -3,6 +3,7 @@
     <div class="hero">
       <h1>{{ t('bienvenue') }}</h1>
       <p>{{ t('accroche') }}</p>
+      <p class="hero-nouveau"><RouterLink to="/nouveautes">{{ t('nouveau') }}</RouterLink></p>
       <p v-if="classe" class="hero-filtre">
         {{ t('activitesPour') }} <strong>{{ labelClasse }}</strong> —
         <button class="lien" @click="classe = ''">{{ t('toutesClasses') }}</button>
@@ -53,6 +54,8 @@ const labelClasse = computed(() => CLASSES.find(c => c.id === classe.value)?.lab
   max-width: 540px;
   margin: 0 auto;
 }
+.hero-nouveau { margin-top: .6rem !important; font-size: .95rem !important; }
+.hero-nouveau a { color: var(--orange); font-weight: 700; text-decoration: none; }
 .hero-filtre { margin-top: .75rem !important; font-size: 1rem !important; }
 .lien { background: none; border: none; color: var(--bleu); font: inherit; text-decoration: underline; cursor: pointer; }
 .matiere-section { margin-bottom: 2.5rem; }

@@ -14,6 +14,17 @@ export const LANGUES_REGIONALES = [
     // Lizherenneg (orthographe peurunvan) : 25 lettres, ch et c'h, ni c, ni q, ni x ; ñ et ù en plus
     alphabet: ['a', 'b', 'ch', "c'h", 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'y', 'z'],
     titreAlphabet: 'Al lizherenneg',
+    // fiches toutes prêtes générées pour cette langue (src/impression/catalogue.js)
+    fiches: {
+      ecoles: "l'école bilingue ou Diwan",
+      motLettre: 'lizherenn',            // slug des fiches « une lettre » : fiche-ecriture-lizherenn-a…
+      titreLettre: 'Al lizherenn',       // titre imprimé : « Al lizherenn A a »
+      listes: [
+        { slug: 'jours-de-la-semaine', listes: ['jours', 'jours-di'], court: 'Jours', titre: 'les jours de la semaine', resume: 'les jours', niveaux: 'CP · CE1' },
+        { slug: 'mois', listes: ['mois'], court: 'Mois', titre: "les mois de l'année", resume: 'les mois', niveaux: 'CP · CE1 · CE2' },
+        { slug: 'nombres', listes: ['nombres-10'], court: 'Nombres (1 à 10)', titre: 'les nombres de 1 à 10', resume: 'les nombres', niveaux: 'CP · CE1', copie: 1 },
+      ],
+    },
     lettresEnPlus: ['ch', "c'h", 'ñ', 'ù'],
     enLettres: enLettresBr,
     // Mot illustré par lettre pour l'affiche de l'alphabet. Vérifiés dans le Wiktionnaire (ercʼh, frouezh,

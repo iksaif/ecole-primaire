@@ -10,6 +10,7 @@ import { ref, watch } from 'vue'
 import { charger, sauvegarder } from '../utils'
 import { SITE } from '../site'
 import { COMMUN } from './commun'
+import { choisirPluriel } from './pluriel.js'
 
 export const LANGUES_INTERFACE = [
   { id: 'fr', label: 'Français', court: 'FR' },
@@ -29,7 +30,8 @@ function interpoler(texte, params) {
 }
 
 export function traduire(messages, cle, params, l = langue.value) {
-  const v = messages?.[l]?.[cle] ?? COMMUN[l]?.[cle] ?? messages?.fr?.[cle] ?? COMMUN.fr[cle] ?? cle
+  let v = messages?.[l]?.[cle] ?? COMMUN[l]?.[cle] ?? messages?.fr?.[cle] ?? COMMUN.fr[cle] ?? cle
+  v = choisirPluriel(v, params, l)
   return interpoler(typeof v === 'function' ? v(params ?? {}) : v, params)
 }
 

@@ -31,3 +31,11 @@ console.log('Catalogue des fiches')
 const slugs = TELECHARGEMENTS.map(t => t.slug)
 verifier(new Set(slugs).size === slugs.length, `${slugs.length} fiches, slugs uniques`)
 verifier(TELECHARGEMENTS.every(t => t.langues?.length), 'chaque fiche a ses langues')
+
+console.log('Pluriels (Intl.PluralRules)')
+const { choisirPluriel } = await import('../src/i18n/pluriel.js')
+const pages = { fr: { one: '{n} page', other: '{n} pages' }, br: { one: 'bajenn', two: 'bajenn', few: 'fajenn', many: 'a bajennoù', other: 'pajenn' } }
+verifier(choisirPluriel(pages.fr, { n: 1 }, 'fr') === '{n} page' && choisirPluriel(pages.fr, { n: 3 }, 'fr') === '{n} pages', 'français : 1 page / 3 pages')
+verifier(choisirPluriel(pages.br, { n: 3 }, 'br') === 'fajenn' && choisirPluriel(pages.br, { n: 5 }, 'br') === 'pajenn' && choisirPluriel(pages.br, { n: 2 }, 'br') === 'bajenn',
+  'breton : 2 → « two », 3 → « few », 5 → « other »')
+verifier(choisirPluriel('texte simple', { n: 3 }, 'br') === 'texte simple', 'message sans pluriel inchangé')

@@ -3,17 +3,27 @@ import { enLettresFr } from '../utils/nombres'
 import { langueRegionale } from '../data/languesRegionales'
 import { largeurTexte, dimensionsPage, documentImpression, echapper } from '../utils/impression'
 
-// langue : 'fr' | 'bilingue' (français + langue régionale) | 'br' (langue régionale seule)
-// La langue régionale est donnée par config.regionale (code de src/data/languesRegionales.js).
+// Deux réglages de langue distincts :
+//   config.langues : langues dans lesquelles les nombres sont écrits, ex. ['fr'], ['br'], ['fr', 'br']
+//                    (codes de src/data/languesRegionales.js pour les langues régionales) ;
+//   config.langue  : langue du document (titres, légende), comme pour les autres fiches.
+// Choix proposés selon la langue régionale active (libellés : catalogue d'interface de NombresView).
 export function languesDisponibles(regionale) {
   const r = langueRegionale(regionale)
-  if (!r) return [{ id: 'fr', label: 'Français' }]
-  const nom = r.nom[0].toUpperCase() + r.nom.slice(1)
+  if (!r) return [{ id: 'fr', langues: ['fr'] }]
   return [
-    { id: 'bilingue', label: `Français + ${nom}` },
-    { id: 'fr', label: 'Français seul' },
-    { id: 'br', label: `${nom} seul` },
+    { id: 'bilingue', langues: ['fr', r.id] },
+    { id: 'fr', langues: ['fr'] },
+    { id: 'br', langues: [r.id] },
   ]
+}
+
+// Anciens réglages (langue: 'bilingue' | 'fr' | 'br', regionale, langueTextes) → nouveaux
+export function normaliserLangues(config) {
+  if (Array.isArray(config.langues) && config.langues.length) return { langues: config.langues, langue: config.langue === 'br' ? 'br' : 'fr' }
+  const r = config.regionale ?? 'br'
+  const langues = { fr: ['fr'], br: [r], bilingue: ['fr', r] }[config.langue] ?? ['fr', r]
+  return { langues, langue: config.langueTextes ?? (config.langue === 'br' ? 'br' : 'fr') }
 }
 export const plage = (de, a, pas = 1) => Array.from({ length: Math.floor((a - de) / pas) + 1 }, (_, k) => de + k * pas)
 export const SECTIONS = [
@@ -34,7 +44,7 @@ export const SECTIONS_PRINCIPALES = SECTIONS.filter(s => !s.dizaine)
 export const SECTIONS_DIZAINES = SECTIONS.filter(s => s.dizaine)
 
 export const DEFAUTS = {
-  langue: 'bilingue', regionale: 'br', sections: ['unites', 'onze', 'dizaines', 'centaines'], de: 20, a: 29, pas: 1,
+  langues: ['fr', 'br'], sections: ['unites', 'onze', 'dizaines', 'centaines'], de: 20, a: 29, pas: 1,
   miseEnPage: 'affiches', format: 'A4', orientation: 'portrait', representation: true, rectifiee: true,
 }
 
@@ -95,17 +105,17 @@ function representationBrute(type, n, h) {
 // polices = { script } : famille à utiliser (déjà chargée)
 export function genererNombres(config, polices) {
   const police = polices.script
-  const reg = langueRegionale(config.regionale ?? 'br')
-  // sans langue régionale : français seul
-  const langue = reg ? config.langue : 'fr'
-  // Langue des textes (titres, légende) : config.langueTextes ('fr' | 'br', langue de l'interface) si donnée,
-  // sinon breton pour « breton seul ». (config.langue désigne ici les langues des nombres, pas celle de l'interface.)
-  const textesBr = (config.langueTextes ?? (config.langue === 'br' ? 'br' : 'fr')) === 'br'
+  const { langues, langue: langueDoc } = normaliserLangues(config)
+  // langue régionale éventuelle (la première trouvée dans les langues demandées)
+  const reg = langues.map(langueRegionale).find(Boolean) ?? null
+  const avecFr = langues.includes('fr') || !reg
+  const bilingue = avecFr && !!reg
+  const textesBr = langueDoc === 'br'
   function ecritures(n) {
     const { rectifiee } = config
     return {
-      fr: langue !== 'br' ? enLettresFr(n, { rectifiee }) : null,
-      br: langue !== 'fr' ? reg.enLettres(n) : null,
+      fr: avecFr ? enLettresFr(n, { rectifiee }) : null,
+      br: reg ? reg.enLettres(n) : null,
     }
   }
 
@@ -121,7 +131,7 @@ export function genererNombres(config, polices) {
       // colonne des chiffres : 2,6 em à 1,5× la taille du texte (cf. .chiffres)
       return Math.max(chiffres, 1.5 * 2.6) + textes + 4
     })
-    const hauteurLigne = langue === 'bilingue' ? 2.6 : 1.6
+    const hauteurLigne = bilingue ? 2.6 : 1.6
     let meilleur = null
     for (let cols = 1; cols <= 4; cols++) {
       const parCol = Math.ceil(entrees.length / cols)
@@ -155,7 +165,7 @@ export function genererNombres(config, polices) {
   ${avecRepr ? `<span class="repr" style="width:${d.reprW}mm">${repr ?? ''}</span>` : ''}
   <span class="mots" style="font-size:${t}mm">${fr ? `<span class="fr">${echapper(fr)}</span>` : ''}${br ? `<span class="br">${echapper(br)}</span>` : ''}</span></div>`
     }
-    const legende = langue === 'bilingue'
+    const legende = bilingue
       ? `<span class="fr">■ ${textesBr ? 'galleg' : 'français'}</span> <span class="br">■ ${reg.nomLocal}</span>` : ''
     return `<div class="contenu" style="inset:${marge}mm">
   ${titre ? `<h1 style="height:${titreH}mm;font-size:${titreH * 0.6}mm">${echapper(titre)}</h1>` : ''}

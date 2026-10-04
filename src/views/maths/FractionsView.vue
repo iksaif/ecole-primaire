@@ -181,7 +181,7 @@
 
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/FractionsView.js'
 import messagesBr from '../../i18n/br/views/maths/FractionsView.js'
@@ -573,12 +573,9 @@ function formeEnSvg(forme, colorees = []) {
 
 // #endregion generation
 
-const config = ref({
+const config = ref(chargerReglages('fractions_config', {
   niveau: 'ce1', types: TYPES.map(ty => ty.id), mode: 'unitaires', nbQ: 10, nbFiche: 10,
-  ...charger('fractions_config', {}),
-})
-// ancien réglage « corrigé » : remplacé par les options communes des fiches
-delete config.value.corrige
+}))
 // nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
 const NB_JOUER = [5, 10, 15, 20]
 const NB_FICHE = [5, 10, 15, 20, 30]

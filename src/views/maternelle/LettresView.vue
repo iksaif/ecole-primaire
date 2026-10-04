@@ -87,7 +87,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { melanger, confettis, sauvegarder, charger } from '../../utils'
+import { melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maternelle/LettresView.js'
 import messagesBr from '../../i18n/br/views/maternelle/LettresView.js'
@@ -109,7 +109,7 @@ const alphabetDe = l => langueRegionale(l)?.alphabet.map(majuscule) ?? TOUTES
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
-const config = ref(charger('lettres_config', { mode: 'reconnaitre', groupe: 'toutes' }))
+const config = ref(chargerReglages('lettres_config', { mode: 'reconnaitre', groupe: 'toutes' }))
 watch(config, v => sauvegarder('lettres_config', v), { deep: true })
 const phase = ref('config')
 const questions = ref([])

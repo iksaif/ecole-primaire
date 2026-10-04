@@ -7,7 +7,7 @@
 // Recherche : messages locaux de la langue → messages communs (commun.js) → français → la clé elle-même.
 // Les traductions bretonnes sont à faire relire par un brittophone (voir README).
 import { ref, watch } from 'vue'
-import { charger, sauvegarder } from '../utils'
+import { chargerValeur, sauvegarder } from '../utils'
 import { SITE } from '../site'
 import { COMMUN } from './commun'
 import { choisirPluriel } from './pluriel.js'
@@ -18,7 +18,7 @@ export const LANGUES_INTERFACE = [
 ]
 
 // Langue de l'interface : celle du site par défaut (breton sur skoolik.app), mémorisée ensuite
-export const langue = ref(charger('langue_interface', SITE.langue))
+export const langue = ref(chargerValeur('langue_interface', SITE.langue))
 watch(langue, v => {
   sauvegarder('langue_interface', v)
   if (typeof document !== 'undefined') document.documentElement.lang = v
@@ -44,11 +44,26 @@ export function contenu(messages, langueDe) {
   return { t: (cle, params) => traduire(messages, cle, params, l()), langue: l }
 }
 
+// Langue imposée le temps d'un rendu (voir enLangue) ; null = langue de l'interface
+let langueImposee = null
+
+// Exécute fn() en rendant tous les t() / tr() de useI18n dans la langue l, y compris les textes
+// différés des questions (fonctions évaluées pendant fn). Sert aux fiches des exercices de français :
+// la fiche est entièrement en français, même avec une interface bretonne.
+//   const fiche = computed(() => enLangue('fr', htmlFiche))
+export function enLangue(l, fn) {
+  const avant = langueImposee
+  langueImposee = l
+  try { return fn() } finally { langueImposee = avant }
+}
+
 export function useI18n(messages = {}) {
+  // langue.value est toujours lue : les computed restent dépendants de la langue de l'interface
+  const courante = () => { const l = langue.value; return langueImposee ?? l }
   return {
     langue,
-    t: (cle, params) => traduire(messages, cle, params),
+    t: (cle, params) => traduire(messages, cle, params, courante()),
     // choisit entre deux valeurs selon la langue : tr({ fr: '…', br: '…' })
-    tr: valeurs => valeurs?.[langue.value] ?? valeurs?.fr,
+    tr: valeurs => valeurs?.[courante()] ?? valeurs?.fr,
   }
 }

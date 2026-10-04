@@ -83,7 +83,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { melanger, confettis, sauvegarder, charger } from '../utils'
+import { melanger, confettis, sauvegarder, chargerReglages } from '../utils'
 import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/views/AutresView.js'
 import messagesBr from '../i18n/br/views/AutresView.js'
@@ -111,7 +111,8 @@ const QUIZ = { fr: quizFr, br: quizBr }
 const questionsDu = theme => QUIZ[langue.value]?.[theme] ?? []
 
 // ── État
-const config = ref(charger('autres_config', { theme: 'animaux', nb: 10 }))
+const config = ref(chargerReglages('autres_config', { theme: 'animaux', nb: 10 }))
+if (!THEMES.some(th => th.id === config.value.theme)) config.value.theme = 'animaux'
 watch(config, v => sauvegarder('autres_config', v), { deep: true })
 const phase = ref('config')
 const questions = ref([])

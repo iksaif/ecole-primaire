@@ -176,7 +176,7 @@
 
 <script setup>
 import { ref, computed, watch, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/GeometrieView.js'
 import messagesBr from '../../i18n/br/views/maths/GeometrieView.js'
@@ -737,7 +737,7 @@ function svgGrilleCm({ cols, rows, pleines = [], axe = null, repere = null, symb
 
 // ── Configuration ──
 const DEFAUT = { niveau: 'ce1', exercices: [...NIVEAUX.ce1.exercices], nbQ: 8, axeHorizontal: false }
-const config = ref({ ...DEFAUT, ...charger('geometrie_config', {}) })
+const config = ref(chargerReglages('geometrie_config', DEFAUT))
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
 function nettoyerExercices() {
   const dispo = NIVEAUX[config.value.niveau].exercices

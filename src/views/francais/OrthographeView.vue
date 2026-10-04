@@ -97,8 +97,8 @@
 
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
-import { melanger, confettis, normaliser, sauvegarder, charger } from '../../utils'
-import { useI18n } from '../../i18n'
+import { melanger, confettis, normaliser, sauvegarder, chargerReglages } from '../../utils'
+import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/OrthographeView.js'
 import messagesBr from '../../i18n/br/views/francais/OrthographeView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
@@ -106,7 +106,7 @@ import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 import { echapper } from '../../utils/impression'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 
 // Explication d'une réponse (interface) : q.explication est une clé du catalogue, ex. exp_a_avoir_il_a
 const explication = q => t(q.explication)
@@ -193,7 +193,8 @@ const QUESTIONS = {
 }
 
 // ── État
-const config = ref(charger('orthographe_config', { theme: 'homophones', nb: 10 }))
+const config = ref(chargerReglages('orthographe_config', { theme: 'homophones', nb: 10 }))
+if (!QUESTIONS[config.value.theme]) config.value.theme = 'homophones'
 watch(config, v => sauvegarder('orthographe_config', v), { deep: true })
 const phase = ref('config')
 const questions = ref([])
@@ -269,7 +270,7 @@ function htmlFiche() {
   num = 0
   const corrige = groupes.map(g => g.qs.map(q => `<div class="corr"><span class="num">${++num}.</span> ${solution(q)}</div>`).join('')).join('')
   const titre = `${t('titre')} — ${t('theme_' + config.value.theme)}`
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>${e(titre)}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
@@ -298,7 +299,8 @@ const { mode, graine, regenerer } = useModeExercice()
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche()
+  // exercice de français : fiche entièrement en français, même avec une interface bretonne
+  return enLangue('fr', htmlFiche)
 })
 
 function dotClass(i) {

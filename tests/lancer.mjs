@@ -1,5 +1,5 @@
 // Lance les tests : construit le site (sans les PDF d'exercices, plus rapide), le sert, exécute les tests.
-//   npm test                 logique + routes + exercices + pages statiques
+//   npm test                 logique + routes + exercices + réglages mémorisés abîmés + pages statiques
 //   npm run test:complet     + effet de chaque réglage sur les fiches (≈ 5 min)
 //   TEST_URL=https://ecoleprimaire.app/ node tests/lancer.mjs --sans-build   tester la production
 import { execFileSync, spawn } from 'node:child_process'
@@ -24,7 +24,7 @@ if (!process.env.TEST_URL) {
   process.env.TEST_URL = 'http://localhost:4190/'
 }
 
-const fichiers = ['logique', 'routes', 'cadre', 'statiques', 'affiches', ...(complet ? ['reglages'] : [])]
+const fichiers = ['logique', 'routes', 'cadre', 'memorises', 'statiques', 'affiches', ...(complet ? ['reglages'] : [])]
 let echec = false
 for (const f of fichiers) {
   console.log(`\n▶ ${f}`)

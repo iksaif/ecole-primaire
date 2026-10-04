@@ -148,16 +148,16 @@
 
 <script setup>
 import { ref, computed, watch, onUnmounted } from 'vue'
-import { melanger, confettis, sauvegarder, charger, aleatoire } from '../utils'
+import { melanger, confettis, sauvegarder, chargerReglages, aleatoire } from '../utils'
 import { useTTS } from '../composables/useTTS'
-import { useI18n } from '../i18n'
+import { useI18n, enLangue } from '../i18n'
 import messagesFr from '../i18n/fr/views/LectureView.js'
 import messagesBr from '../i18n/br/views/LectureView.js'
 import ConfigExercice from '../components/ConfigExercice.vue'
 import { useModeExercice } from '../composables/useModeExercice'
 import { ligneNomDate } from '../composables/useOptionsFiche'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 
 const NIVEAUX = [
   { id: 'cp',  label: 'CP' },
@@ -287,7 +287,7 @@ async function genererTexteMistral(niveau) {
   }
 }
 
-const config = ref(charger('lecture_config', { mode: 'syllabes', niveau: 'cp', nb: 10 }))
+const config = ref(chargerReglages('lecture_config', { mode: 'syllabes', niveau: 'cp', nb: 10 }))
 watch(config, v => sauvegarder('lecture_config', v), { deep: true })
 const phase = ref('config')
 const questions = ref([])
@@ -542,7 +542,7 @@ function htmlFiche() {
     corrige = items.map((it, i) => `<li><span class="num">${i + 1}.</span> <b>${it.mot}</b></li>`).join('')
   }
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  const html = `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>${title}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 680px; margin: 1.5cm auto; color: #222; }
@@ -589,7 +589,8 @@ const { mode, graine, regenerer } = useModeExercice()
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche()
+  // exercice de français : fiche entièrement en français, même avec une interface bretonne
+  return enLangue('fr', htmlFiche)
 })
 
 onUnmounted(() => arreter())

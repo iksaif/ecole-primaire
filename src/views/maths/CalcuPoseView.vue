@@ -134,7 +134,7 @@
 
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
-import { aleatoire, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/CalcuPoseView.js'
 import messagesBr from '../../i18n/br/views/maths/CalcuPoseView.js'
@@ -146,10 +146,7 @@ const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Langue du contenu imprimé : celle de l'interface pour les maths
 const langueContenu = computed(() => langue.value)
 
-const config = ref({ op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10,
-  ...charger('calcul_pose_config', {}) })
-// ancien réglage « corrigé » : remplacé par les options communes des fiches
-delete config.value.corrige
+const config = ref(chargerReglages('calcul_pose_config', { op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10 }))
 // nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
 const NB_JOUER = [3, 5, 10, 20]
 const NB_FICHE = [5, 10, 15, 20, 30]

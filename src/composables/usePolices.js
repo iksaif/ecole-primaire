@@ -1,12 +1,12 @@
 import { ref, computed, watch } from 'vue'
-import { charger, sauvegarder } from '../utils'
+import { chargerReglages, sauvegarder } from '../utils'
 import {
   POLICE_ATTACHE, POLICE_SCRIPT, POLICES_CONNUES, POLICES_INCLUSES,
   policesPerso, chargerPolices, policeInstallee,
 } from '../utils/impression'
 
 // Police choisie pour l'attaché et pour le script, commune à toutes les fiches
-const choix = ref({ attache: POLICE_ATTACHE, script: POLICE_SCRIPT, ...charger('polices', {}) })
+const choix = ref(chargerReglages('polices', { attache: POLICE_ATTACHE, script: POLICE_SCRIPT }))
 watch(choix, v => sauvegarder('polices', v), { deep: true })
 
 const installees = ref({ attache: [], script: [] })

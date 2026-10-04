@@ -255,7 +255,7 @@
 
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/MonnaieView.js'
 import messagesBr from '../../i18n/br/views/maths/MonnaieView.js'
@@ -660,7 +660,7 @@ function svgArgent(v, echelle = 1) {
 // ── FIN LOGIQUE ──
 
 const DEFAUT = { niveau: 'ce1', exercices: ['compter', 'composer'], nbQ: 10, centimes: false, aideTotal: true }
-const stocke = { ...DEFAUT, ...charger('monnaie_config', {}) }
+const stocke = chargerReglages('monnaie_config', DEFAUT)
 if (!NIVEAUX[stocke.niveau]) stocke.niveau = 'ce1'
 stocke.exercices = (Array.isArray(stocke.exercices) ? stocke.exercices : []).filter(e => GENERATEURS[e])
 if (!stocke.exercices.length) stocke.exercices = [...DEFAUT.exercices]

@@ -96,7 +96,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { melanger, confettis, sauvegarder, charger } from '../../utils'
+import { melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maternelle/FormesView.js'
 import messagesBr from '../../i18n/br/views/maternelle/FormesView.js'
@@ -147,7 +147,7 @@ const FORMES = [
   },
 ]
 
-const config = ref(charger('formes_config', { mode: 'reconnaitre' }))
+const config = ref(chargerReglages('formes_config', { mode: 'reconnaitre' }))
 watch(config, v => sauvegarder('formes_config', v), { deep: true })
 
 const phase = ref('config')

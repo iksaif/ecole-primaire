@@ -80,7 +80,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { aleatoire, melanger, confettis, charger, sauvegarder } from '../../utils'
+import { aleatoire, melanger, confettis, chargerReglages, sauvegarder } from '../../utils'
 import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maternelle/CompterView.js'
 import messagesBr from '../../i18n/br/views/maternelle/CompterView.js'
@@ -138,7 +138,7 @@ function generer() {
 }
 
 // ── Fiche imprimable : collections à compter, nombre à écrire ou à entourer (avec corrigé)
-const ficheConfig = ref(charger('compter_fiche', { reponse: 'ecrire' }))
+const ficheConfig = ref(chargerReglages('compter_fiche', { reponse: 'ecrire' }))
 watch(ficheConfig, v => sauvegarder('compter_fiche', v), { deep: true })
 
 function htmlFiche() {

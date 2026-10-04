@@ -152,9 +152,9 @@
 
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
-import { aleatoire, melanger, confettis, normaliser, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, normaliser, sauvegarder, chargerReglages } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
-import { useI18n } from '../../i18n'
+import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/GrammaireView.js'
 import messagesBr from '../../i18n/br/views/francais/GrammaireView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
@@ -165,7 +165,7 @@ const { enLecture, lire } = useTTS()
 
 // Interface traduite (fr / br). Le contenu étudié (phrases, mots, réponses) reste en français.
 // Breton : à faire relire par un brittophone ; termes grammaticaux incertains marqués « br: à relire ».
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 // Texte calculé à l'affichage (suit la langue) ou texte fixe
 const val = x => (typeof x === 'function' ? x() : x)
 
@@ -1265,7 +1265,7 @@ function htmlFiche(niveau, types, nb) {
   `).join('')
   num = 0
   const corrige = parType.map(g => g.qs.map(q => { num++; return `<div class="corr"><span class="num">${num}.</span> ${val(q.solution)}</div>` }).join('')).join('')
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niveau.toUpperCase()}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
@@ -1301,7 +1301,7 @@ function htmlFiche(niveau, types, nb) {
 
 // ── Config persistée (on nettoie une éventuelle ancienne sauvegarde)
 const DEFAUT = { niveau: 'ce1', types: ['verbe'], nb: 10 }
-const brut = charger('grammaire_config', DEFAUT) || DEFAUT
+const brut = chargerReglages('grammaire_config', DEFAUT)
 const niveauCharge = NIVEAUX_DISPO.includes(brut.niveau) ? brut.niveau : 'ce1'
 const typesCharges = (Array.isArray(brut.types) ? brut.types : []).filter(t => typesDuNiveau(niveauCharge).includes(t))
 const config = ref({
@@ -1371,7 +1371,8 @@ const { mode, graine, regenerer } = useModeExercice()
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche(config.value.niveau, config.value.types, config.value.nb)
+  // exercice de français : fiche entièrement en français, même avec une interface bretonne
+  return enLangue('fr', () => htmlFiche(config.value.niveau, config.value.types, config.value.nb))
 })
 
 function dotClass(i) {

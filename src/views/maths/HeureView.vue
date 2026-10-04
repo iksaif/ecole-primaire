@@ -278,7 +278,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n, contenu } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/HeureView.js'
@@ -661,7 +661,7 @@ function svgHorloge(h, m, { aiguilles = true, aideMinutes = false, fantome = nul
 const { lire } = useTTS()
 
 const DEFAUT = { niveau: 'ce1', exercices: NIVEAUX.ce1.exercicesDefaut, precisions: NIVEAUX.ce1.precisionsDefaut, saisie: 'choix', aideMinutes: true, nbQ: 10, nbHorloges: 8 }
-const config = ref({ ...DEFAUT, ...charger('heure_config', {}) })
+const config = ref(chargerReglages('heure_config', DEFAUT))
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
 if (![4, 8, 12].includes(config.value.nbHorloges)) config.value.nbHorloges = 8
 watch(config, v => sauvegarder('heure_config', v), { deep: true })

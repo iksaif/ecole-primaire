@@ -148,7 +148,7 @@
 
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { enLettresFr, enLettresBr, decomposer } from '../../utils/nombres'
 import { useI18n, contenu } from '../../i18n'
 import { regles } from '../../i18n/regles'
@@ -573,12 +573,9 @@ function genererSansRepetition(cfg, nb) {
 
 // #endregion generation
 
-const config = ref({
+const config = ref(chargerReglages('numeration_config', {
   niveau: 'ce1', types: TYPES.map(ty => ty.id), plage: 1000, nbQ: 10, nbFiche: 10,
-  ...charger('numeration_config', {}),
-})
-// ancien réglage « corrigé » : remplacé par les options communes des fiches
-delete config.value.corrige
+}))
 // nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
 const NB_JOUER = [5, 10, 15, 20]
 const NB_FICHE = [5, 10, 15, 20, 30]

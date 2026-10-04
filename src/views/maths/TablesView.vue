@@ -182,7 +182,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/TablesView.js'
 import messagesBr from '../../i18n/br/views/maths/TablesView.js'
@@ -196,7 +196,7 @@ const langueContenu = computed(() => langue.value)
 
 const DUREE_CHRONO = 60 // secondes
 
-const config = ref({
+const config = ref(chargerReglages('tables_config', {
   tables: [2, 3, 4, 5, 6, 7, 8, 9],
   mode: 'aleatoire',
   jusqu: 10,
@@ -204,10 +204,7 @@ const config = ref({
   // réglages de la fiche papier
   ordreFiche: 'melange',
   nbFiche: 0, // 0 = tous les calculs des tables choisies
-  ...charger('tables_config', {}),
-})
-// ancien réglage « corrigé » : remplacé par les options communes des fiches
-delete config.value.corrige
+}))
 watch(config, v => sauvegarder('tables_config', v), { deep: true })
 
 const phase = ref('config')

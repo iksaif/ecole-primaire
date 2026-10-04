@@ -128,9 +128,9 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
-import { useI18n } from '../../i18n'
+import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/VocabulaireView.js'
 import messagesBr from '../../i18n/br/views/francais/VocabulaireView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
@@ -141,7 +141,7 @@ const { enLecture, lire } = useTTS()
 
 // Interface traduite ; le contenu étudié (mots, phrases, définitions, sens) reste en français.
 // br: à relire — termes techniques en breton à faire valider par un brittophone.
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 // Champ de texte calculé à la volée (suit la langue) ou chaîne fixe
 const v = x => (typeof x === 'function' ? x() : x)
 // Libellé affiché pour un choix (seuls « sens propre / figuré » sont des mots d'interface)
@@ -817,7 +817,7 @@ function htmlFiche(niveau, types, nb) {
   `).join('')
   num = 0
   const corrige = parType.map(g => g.qs.map(q => { num++; return `<div class="corr"><span class="num">${num}.</span> ${v(q.solution)}</div>` }).join('')).join('')
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${niveau.toUpperCase()}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
@@ -849,7 +849,7 @@ function htmlFiche(niveau, types, nb) {
 // ════════════════════════════════════════════════════════════════════
 
 const DEFAUT = { niveau: 'ce1', types: ['contraires'], nb: 10 }
-const brut = charger('vocabulaire_config', DEFAUT) || DEFAUT
+const brut = chargerReglages('vocabulaire_config', DEFAUT)
 const niveauCharge = NIVEAUX_DISPO.includes(brut.niveau) ? brut.niveau : 'ce1'
 const typesCharges = (Array.isArray(brut.types) ? brut.types : []).filter(t => typesDuNiveau(niveauCharge).includes(t))
 const config = ref({
@@ -922,7 +922,8 @@ const { mode, graine, regenerer } = useModeExercice()
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche(config.value.niveau, config.value.types, config.value.nb)
+  // exercice de français : fiche entièrement en français, même avec une interface bretonne
+  return enLangue('fr', () => htmlFiche(config.value.niveau, config.value.types, config.value.nb))
 })
 
 function dotClass(i) {

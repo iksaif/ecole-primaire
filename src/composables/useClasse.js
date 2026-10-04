@@ -1,8 +1,8 @@
 import { ref, watch } from 'vue'
-import { charger, sauvegarder } from '../utils'
+import { chargerValeur, sauvegarder } from '../utils'
 
 // Classe choisie dans la barre du haut ('' = toutes), partagée par toutes les pages
-const classe = ref(charger('classe', ''))
+const classe = ref(chargerValeur('classe', ''))
 watch(classe, v => sauvegarder('classe', v))
 
 export function useClasse() {

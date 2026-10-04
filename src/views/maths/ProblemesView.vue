@@ -113,7 +113,7 @@
 
 <script setup>
 import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n, contenu } from '../../i18n'
 import { regles } from '../../i18n/regles'
@@ -482,12 +482,9 @@ function genererSansRepetition(cfg, nb) {
 const unite = (q, n) => regles(q.langue).pluriel(n, q.unite)
 const avecUnite = (q, n) => regles(q.langue).nombre(n, q.unite)
 
-const config = ref({
+const config = ref(chargerReglages('problemes_config', {
   niveau: 'ce1', categories: CATEGORIES.map(c => c.id), plage: 'moyens', nbQ: 5,
-  ...charger('problemes_config', {}),
-})
-// ancien réglage « corrigé » : remplacé par les options communes des fiches
-delete config.value.corrige
+}))
 watch(config, v => sauvegarder('problemes_config', v), { deep: true })
 if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
 

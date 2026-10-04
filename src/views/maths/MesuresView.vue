@@ -134,7 +134,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n, contenu } from '../../i18n'
 import { regles } from '../../i18n/regles'
 import messagesFr from '../../i18n/fr/views/maths/MesuresView.js'
@@ -834,7 +834,7 @@ function genererSerie(cfg, nb, typesForces) {
 
 const niveaux = Object.keys(NIVEAUX)
 const DEFAUT = { niveau: 'ce1', exercices: ['regle', 'unite', 'conversion'], nbQ: 10, decale: false, nbSegments: 6 }
-const charge = { ...DEFAUT, ...charger('mesures_config', {}) }
+const charge = chargerReglages('mesures_config', DEFAUT)
 if (!NIVEAUX[charge.niveau]) charge.niveau = 'ce1'
 if (![4, 6, 8].includes(charge.nbSegments)) charge.nbSegments = 6
 if (!Array.isArray(charge.exercices) || !charge.exercices.length) charge.exercices = [...DEFAUT.exercices]

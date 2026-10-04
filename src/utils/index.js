@@ -22,6 +22,34 @@ export function charger(cle, defaut = null) {
   } catch { return defaut }
 }
 
+// Même nature de valeur : tableau, objet, nombre, texte, booléen (null accepte tout)
+export function memeType(valeur, modele) {
+  if (modele === null) return true
+  if (Array.isArray(modele)) return Array.isArray(valeur)
+  if (typeof modele === 'object') return valeur !== null && typeof valeur === 'object' && !Array.isArray(valeur)
+  return typeof valeur === typeof modele && !Number.isNaN(valeur)
+}
+
+// Réglages mémorisés d'une vue, fusionnés avec les valeurs par défaut : une sauvegarde ancienne,
+// incomplète ou abîmée ne doit jamais bloquer la page. Les clés inconnues sont ignorées, une valeur
+// d'un autre type que celle du défaut est remplacée par le défaut, une sauvegarde qui n'est pas un
+// objet est ignorée. Les tableaux du défaut sont copiés (le défaut n'est jamais modifié).
+export function chargerReglages(cle, defaut) {
+  const lu = charger(cle, null)
+  const ok = lu !== null && typeof lu === 'object' && !Array.isArray(lu)
+  const reglages = {}
+  for (const [k, d] of Object.entries(defaut)) {
+    reglages[k] = ok && Object.hasOwn(lu, k) && memeType(lu[k], d) ? lu[k] : (Array.isArray(d) ? [...d] : d)
+  }
+  return reglages
+}
+
+// Valeur mémorisée simple (texte, nombre, liste…) : le défaut si elle manque ou n'a pas le bon type
+export function chargerValeur(cle, defaut) {
+  const lu = charger(cle, defaut)
+  return memeType(lu, defaut) ? lu : defaut
+}
+
 export function confettis(nb = 30) {
   const couleurs = ['#4a90e2', '#5cb85c', '#f39c12', '#e74c3c', '#9b59b6', '#f1c40f']
   for (let i = 0; i < nb; i++) {

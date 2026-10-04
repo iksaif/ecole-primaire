@@ -155,10 +155,10 @@
 
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { melanger, charger, sauvegarder, normaliser, confettis } from '../../utils'
+import { melanger, chargerReglages, chargerValeur, sauvegarder, normaliser, confettis } from '../../utils'
 import { CATEGORIES, PHRASES_DEFAUT, MOTS_AMBIGUS, NIVEAUX, PHRASES_DEFAUT_ALL } from '../../data/dicteeMots'
 import { useTTS } from '../../composables/useTTS'
-import { useI18n } from '../../i18n'
+import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/DicteeView.js'
 import messagesBr from '../../i18n/br/views/francais/DicteeView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
@@ -166,7 +166,7 @@ import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 import { cssPolices, echapper, POLICE_SCRIPT, POLICE_ATTACHE } from '../../utils/impression'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 
 // Noms des catégories (définies en français dans data/dicteeMots.js) : clé du catalogue d'interface dérivée
 // du nom français, ex. « Corps humain » → cat_corps_humain ; le nom français s'affiche si la clé manque.
@@ -174,11 +174,11 @@ const cleCat = cat => 'cat_' + cat.toLowerCase().normalize('NFD').replace(/[\u03
 const nomCat = cat => { const k = cleCat(cat), v = t(k); return v === k ? cat : v }
 
 const config = ref({
-  niveau:  charger('dictee_niveau', 'CP'),
-  cats:    charger('dictee_cats', Object.keys(CATEGORIES)),
-  mode:    charger('dictee_mode', 'mots'),
-  nb:      charger('dictee_nb', 10),
-  vitesse: charger('dictee_vitesse', 0.75),
+  niveau:  chargerValeur('dictee_niveau', 'CP'),
+  cats:    chargerValeur('dictee_cats', Object.keys(CATEGORIES)),
+  mode:    chargerValeur('dictee_mode', 'mots'),
+  nb:      chargerValeur('dictee_nb', 10),
+  vitesse: chargerValeur('dictee_vitesse', 0.75),
 })
 
 watch(config, v => {
@@ -300,7 +300,7 @@ async function demarrer() {
 
   // Rotation inter-sessions : repousser les mots vus récemment en fin de pool
   const cle = `dictee_vus_${config.value.mode}`
-  const vusRecemment = new Set(charger(cle, []))
+  const vusRecemment = new Set(chargerValeur(cle, []))
   const frais  = melanger(pool.filter(m => !vusRecemment.has(m)))
   const anciens = melanger(pool.filter(m =>  vusRecemment.has(m)))
   pool = [...frais, ...anciens]
@@ -329,7 +329,7 @@ async function demarrer() {
 }
 
 // ── Fiche imprimable : liste des mots à apprendre + page de dictée (corrigé à la fin)
-const ficheConfig = ref(charger('dictee_fiche', { liste: true, dictee: true }))
+const ficheConfig = ref(chargerReglages('dictee_fiche', { liste: true, dictee: true }))
 watch(ficheConfig, v => sauvegarder('dictee_fiche', v), { deep: true })
 function basculerPage(p) {
   const autre = p === 'liste' ? 'dictee' : 'liste'
@@ -375,7 +375,7 @@ function htmlFiche() {
     <ol class="a-dicter">${mots.map(m => `<li>${phrases ? e(phraseDe(m)).replace(e(m), `<b>${e(m)}</b>`) : `<b>${e(m)}</b>`}</li>`).join('')}</ol></section>`
 
   const pages = [ficheConfig.value.liste && pageListe, ficheConfig.value.dictee && pageDictee, ficheConfig.value.dictee && corrige].filter(Boolean)
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
+  return `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>${e(titre)}</title>
     <style>
       ${cssPolices()}
@@ -406,7 +406,8 @@ const { mode, graine, regenerer } = useModeExercice()
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche()
+  // exercice de français : fiche entièrement en français, même avec une interface bretonne
+  return enLangue('fr', htmlFiche)
 })
 
 function afficherMot() {

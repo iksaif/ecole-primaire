@@ -108,7 +108,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, charger } from '../../utils'
+import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/CalcuMentalView.js'
 import messagesBr from '../../i18n/br/views/maths/CalcuMentalView.js'
@@ -184,7 +184,7 @@ function opDispo(niv, op) {
 // Config sauvegardée : on ignore les valeurs inconnues (anciennes versions)
 const NB_FICHE = [10, 20, 30, 40]
 const DEFAUT = { niveau: 'ce2', ops: ['+', '−'], nbQ: 10, temps: 10, nbFiche: 20 }
-const sauvegarde = charger('calcul_mental_config', DEFAUT) || DEFAUT
+const sauvegarde = chargerReglages('calcul_mental_config', DEFAUT)
 const niveauCharge = niveaux.includes(sauvegarde.niveau) ? sauvegarde.niveau : DEFAUT.niveau
 const opsChargees = (Array.isArray(sauvegarde.ops) ? sauvegarde.ops : [])
   .filter(op => opDispo(NIVEAUX[niveauCharge], op))

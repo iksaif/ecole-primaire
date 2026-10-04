@@ -127,15 +127,15 @@
 
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
-import { normaliser, confettis, sauvegarder, charger } from '../../utils'
-import { useI18n } from '../../i18n'
+import { normaliser, confettis, sauvegarder, chargerReglages } from '../../utils'
+import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/ConjugaisonView.js'
 import messagesBr from '../../i18n/br/views/francais/ConjugaisonView.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { ligneNomDate } from '../../composables/useOptionsFiche'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t } = useI18n({ fr: messagesFr, br: messagesBr })
 
 // ── Données
 const VERBES = [
@@ -210,7 +210,7 @@ const TEMPS = [
 ]
 
 // ── État
-const config = ref(charger('conjugaison_config', { verbe: 'être', temps: 'present', mode: 'lacunes' }))
+const config = ref(chargerReglages('conjugaison_config', { verbe: 'être', temps: 'present', mode: 'lacunes' }))
 watch(config, v => sauvegarder('conjugaison_config', v), { deep: true })
 const phase = ref('config')
 
@@ -309,7 +309,7 @@ function htmlFiche() {
     return `<tr><td style="padding:.1rem 1rem .1rem 0;font-style:italic;color:#555;">${pronom}</td><td>${radical}<b>${forme.slice(radical.length)}</b></td></tr>`
   }).join('')
 
-  const html = `<!DOCTYPE html><html lang="${langue.value}"><head>
+  const html = `<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8"><title>${t('titre')} — ${verbe.inf}</title>
     <style>
       body { font-family: Arial, sans-serif; max-width: 500px; margin: 2cm auto; color: #222; }
@@ -339,7 +339,8 @@ const { mode, graine, regenerer } = useModeExercice()
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche()
+  // exercice de français : fiche entièrement en français, même avec une interface bretonne
+  return enLangue('fr', htmlFiche)
 })
 
 function validerLigne(i) {

@@ -1,4 +1,5 @@
-// Affiches du programme : variantes, contenu (données pures) et affiches toutes prêtes (PDF générés au build).
+// Affiches du programme : variantes, contenu (données pures) et affiches toutes prêtes (PDF générés au build),
+// reprises dans le catalogue unique (src/impression/catalogue.js).
 // Données sans dépendance au navigateur : importées par les dessins, par l'app et par les tests node.
 // Les niveaux suivent src/data/programme.js (tests/logique.test.mjs le vérifie).
 import { VERBES, TEMPS_CM2 } from '../../data/conjugaison.js'
@@ -72,7 +73,7 @@ const cm = n => (n >= 1000 ? n.toLocaleString('fr-FR') : String(n))
 const lienAffiche = c => `/imprimer/affiches?affiche=${c.affiche}${c.variante ? `&variante=${c.variante}` : ''}${c.verbe ? `&verbe=${c.verbe}` : ''}${c.temps ? `&temps=${choixTemps(c.temps)}` : ''}`
 const entree = (slug, court, titre, description, niveaux, config) => ({
   slug, court, titre, description, niveaux, config,
-  categorie: 'programme', type: 'programme', lien: lienAffiche(config), langues: ['fr'],
+  categorie: 'affiches', type: 'affiche', lien: lienAffiche(config), langues: ['fr'],
   domaine: DOMAINES_AFFICHES[config.affiche], genre: 'affiche',
 })
 // suffixe du slug, titre court, fin du titre, description, temps (null : les 4 temps du cycle 2)
@@ -88,7 +89,7 @@ const conjugaison = (id, [suffixe, court, fin, description, temps]) => entree(`a
   `Conjugaison du verbe ${VERBES[id].inf} : ${fin}`, description(VERBES[id]), niveauxConjugaison(id, temps),
   { affiche: 'conjugaison', verbe: id, ...(temps ? { temps } : {}) })
 
-export const TELECHARGEMENTS_PROGRAMME = [
+export const TELECHARGEMENTS_AFFICHES = [
   ...[['20', 'de-0-a-20', 'CP'], ['100', 'de-0-a-100', 'CP'], ['1000', 'de-0-a-1000', 'CE1']].map(([v, s, niv]) => entree(
     `affiche-droite-numerique-${s}`, `Droite numérique 0–${cm(+v)}`, `Droite numérique de 0 à ${cm(+v)} à imprimer`,
     `Affiche de la droite numérique graduée de 0 à ${cm(+v)}, avec le nom de chaque nombre en lettres. Pour repérer, comparer et ranger les nombres (programme de cycle 2).`,
@@ -102,7 +103,7 @@ export const TELECHARGEMENTS_PROGRAMME = [
   entree('affiche-horloge-heures-minutes', 'Horloge : minutes', "Affiche de l'horloge : heures, minutes, quart et demie", "L'horloge avec les minutes, « et quart », « et demie » et « moins le quart », et l'affichage numérique 24 h (programme du CE2).", 'CE2', { affiche: 'horloge', variante: 'minutes' }),
   entree('affiche-monnaie-euros', 'Euros', "Affiche des pièces et des billets de l'euro", "Les pièces de 1 € et 2 € et les billets de 5 à 100 €, avec les échanges usuels (10 pièces de 1 € = 1 billet de 10 €).", 'CP', { affiche: 'monnaie', variante: 'euros' }),
   entree('affiche-monnaie-centimes', 'Euros et centimes', 'Affiche des pièces et billets avec les centimes', "Toutes les pièces (de 1 centime à 2 €) et les billets, avec la relation 1 € = 100 centimes (programme du CE1).", 'CE1 · CE2', { affiche: 'monnaie', variante: 'centimes' }),
-  // être et avoir au présent seul : le CP n'apprend que ce temps
+  // chaque verbe : les 4 temps du cycle 2, puis passé simple et plus-que-parfait (CM2)
   ...Object.keys(VERBES).flatMap(v => [conjugaison(v, CONJUGAISONS[0]), conjugaison(v, CONJUGAISONS[1])]),
   // être et avoir au présent seul : le CP n'apprend que ce temps
   ...['etre', 'avoir'].map(v => conjugaison(v, CONJUGAISONS[2])),

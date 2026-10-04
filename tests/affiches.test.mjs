@@ -43,7 +43,7 @@ let bons = 0, total = 0
 for (const t of liste) {
   const r = await app.evaluate(slug => window.__ecolePrimaire.generer(slug), t.slug)
   total++; if (await verifierDocument(t.slug, r.html)) bons++
-  if (t.type !== 'programme') continue
+  if (t.type !== 'affiche') continue
   for (const reglages of [{ orientation: r.orientation === 'landscape' ? 'portrait' : 'landscape' }, { format: 'A3' }]) {
     const r2 = await app.evaluate(([slug, x]) => window.__ecolePrimaire.genererAvec(slug, x), [t.slug, reglages])
     total++; if (await verifierDocument(`${t.slug} (${Object.values(reglages)[0]})`, r2.html)) bons++

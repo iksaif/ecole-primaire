@@ -3,7 +3,7 @@
 // Le mode normal reste la génération à la demande dans l'app.
 
 import { LANGUES_REGIONALES } from '../data/languesRegionales.js'
-import { DOMAINES_AFFICHES } from './affiches/catalogue.js'
+import { DOMAINES_AFFICHES, TELECHARGEMENTS_AFFICHES } from './affiches/catalogue.js'
 
 // Chaque entrée a un `domaine` (id de src/data/programme.js) et un `genre` ('affiche' | 'fiche') : le build range
 // les téléchargements par domaine puis par genre (plan 09). Les fiches d'écriture relèvent toutes de l'écriture,
@@ -203,6 +203,8 @@ export const TELECHARGEMENTS = [
   ...nombres.map(t => ({ langues: t.config.langues, ...t })),
   // contenu en langue régionale (alphabet, jours, mois, nombres, lettres une à une)
   ...LANGUES_REGIONALES.filter(r => r.fiches).flatMap(fichesRegionales),
+  // affiches de la droite numérique, de la numération, de l'horloge, des euros, de conjugaison, des formes (français)
+  ...TELECHARGEMENTS_AFFICHES,
 ]
 
 // Fiches publiées sur un site selon sa langue (fr : ecoleprimaire.app, br : skoolik.app)

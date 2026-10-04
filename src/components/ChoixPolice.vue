@@ -1,44 +1,51 @@
 <template>
   <div class="choix-police">
-    <div v-for="t in types" :key="t" class="ligne">
-      <label class="lib">{{ tt(t === 'attache' ? 'attache' : 'script') }}</label>
-      <select v-model="choix[t]" class="select">
-        <option v-for="p in disponibles[t]" :key="p.id" :value="p.id">{{ libellePolice(p) }}</option>
+    <div v-for="t in lignes" :key="t" class="ligne">
+      <label class="lib">{{ tt(lignes.length === 1 ? 'police' : t === 'attache' ? 'attache' : 'script') }}</label>
+      <select :value="valeur(t)" class="select" @change="choix[t] = $event.target.value">
+        <option v-for="p in liste(t)" :key="p.id" :value="p.id">{{ libellePolice(p) }}</option>
       </select>
-      <span class="exemple" :style="{ fontFamily: `'${choix[t]}'` }">{{ tt(t === 'attache' ? 'exempleAttache' : 'exempleScript') }}</span>
+      <span class="exemple" :style="{ fontFamily: `'${valeur(t)}'` }">{{ tt(t === 'attache' ? 'exempleAttache' : 'exempleScript') }}</span>
       <button v-if="estPerso(t)" class="btn-suppr" :title="tt('retirer')" @click="supprimer(t)">🗑</button>
     </div>
 
-    <details class="aide">
+    <details v-if="!belleAllure" class="aide">
       <summary>{{ tt('aideTitre') }}</summary>
       <p v-html="tt('aideTexte')"></p>
       <ul>
         <li v-for="l in LIENS_POLICES" :key="l.nom"><a :href="l.url" target="_blank" rel="noopener">{{ l.nom }}</a> — {{ langue === 'br' ? NOTES_BR[l.nom] ?? l.note : l.note }}</li>
       </ul>
       <div class="ajout">
-        <label class="btn btn-ghost">{{ tt('ajouterAttache') }}
+        <label v-if="types.includes('attache')" class="btn btn-ghost">{{ tt('ajouterAttache') }}
           <input type="file" accept=".ttf,.otf,.woff,.woff2" hidden @change="ajouter($event, 'attache')">
         </label>
-        <label class="btn btn-ghost">{{ tt('ajouterScript') }}
+        <label v-if="types.includes('script')" class="btn btn-ghost">{{ tt('ajouterScript') }}
           <input type="file" accept=".ttf,.otf,.woff,.woff2" hidden @change="ajouter($event, 'script')">
         </label>
       </div>
-      <p class="note">{{ tt('astuce') }}</p>
+      <p v-if="types.includes('attache')" class="note">{{ tt('astuce') }}</p>
       <p v-if="erreur" class="erreur">{{ erreur }}</p>
     </details>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { usePolices } from '../composables/usePolices'
 import { LIENS_POLICES, ajouterPolicePerso, supprimerPolicePerso, policesPerso } from '../utils/impression'
 import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/components/ChoixPolice.js'
 import messagesBr from '../i18n/br/components/ChoixPolice.js'
 
-defineProps({ types: { type: Array, default: () => ['attache', 'script'] } })
-const { choix, disponibles } = usePolices()
+// types : polices utilisées par le document. Le script seul → un seul choix, « Police » (`unique` dans usePolices),
+// parmi les polices script, et aussi les attachées si `attachee` (mise en page prévue pour elles)
+const props = defineProps({ types: { type: Array, default: () => ['attache', 'script'] }, attachee: Boolean })
+const lignes = computed(() => (props.types.length === 1 && props.types[0] === 'script' ? ['unique'] : props.types))
+const { choix, disponibles, policeUnique } = usePolices()
+const liste = t => (t === 'unique' && !props.attachee ? disponibles.value.script : disponibles.value[t])
+const valeur = t => (t === 'unique' ? policeUnique(props.attachee) : choix.value[t])
+// Belle Allure déjà là (installée ou ajoutée) : l'aide pour l'obtenir est inutile
+const belleAllure = computed(() => disponibles.value.attache.some(p => /belle[ _-]?allure/i.test(p.id)))
 const erreur = ref('')
 
 // tt : la variable « t » du template désigne déjà le type de police
@@ -65,7 +72,7 @@ function libellePolice(p) {
   return POLICES_BR[p.id] ?? p.label.replace(/ \(installée\)$/, ' (staliet)').replace(/ \(ajoutée\)$/, ' (ouzhpennet)')
 }
 
-const estPerso = t => policesPerso.value.some(p => p.id === choix.value[t])
+const estPerso = t => policesPerso.value.some(p => p.id === valeur(t))
 
 async function ajouter(e, type) {
   const f = e.target.files?.[0]
@@ -73,7 +80,7 @@ async function ajouter(e, type) {
   if (!f) return
   erreur.value = ''
   try {
-    choix.value[type] = await ajouterPolicePerso(f, type)
+    choix.value[type === 'script' && lignes.value[0] === 'unique' ? 'unique' : type] = await ajouterPolicePerso(f, type)
   } catch (err) {
     const message = err.message || String(err)
     erreur.value = langue.value === 'br' ? ERREURS_BR[message] ?? message : message
@@ -81,7 +88,7 @@ async function ajouter(e, type) {
 }
 
 function supprimer(t) {
-  supprimerPolicePerso(choix.value[t])
+  supprimerPolicePerso(valeur(t))
 }
 </script>
 

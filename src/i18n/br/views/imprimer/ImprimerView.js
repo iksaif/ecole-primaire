@@ -12,4 +12,6 @@ export default {
     ficheExercice: 'Fichenn poelladennoù, gant goulennoù nevez bep tro', // br: à relire
     horsProgramme: '🌍 Sevenadur hollek',
     vide: "N'eus fichenn ebet c'hoazh evit ar c'hlas-mañ amañ.", // br: à relire
+    sommaire: 'Mont d\'un dachenn', // br: à relire
+    tout: 'Pep tra', classe: 'Klas', toutes: 'An holl',
   }

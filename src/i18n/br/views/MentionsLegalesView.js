@@ -11,7 +11,9 @@ export default {
     donnees4: "Evel pep servijer web, an herberc'hier a vir kazetennoù teknikel (chomlec'h IP, pajenn goulennet) e-pad ur mare bevennet, evit surentez ar servij.",
     donnees5: "Evit gouzout peseurt pajennoù ha fichennoù a zo talvoudus, al lec'hienn a gas d'hor servijer ur sinal dizanv : pajenn gweladennet, fichenn moullet hag he arventennoù, yezh. N'eo liammet ouzh toupin, anaouder pe chomlec'h IP ebet, ha ne vez ket kaset ma c'houlenn ho merdeer chom hep bezañ heuliet (« Do Not Track »).", // br: à relire
     contenus: 'Danvez',
-    contenusTexte: "Digoust eo ar poelladennoù hag ar fichennoù evit un implij personel pe er c'hlas. Ar c'hod mammenn a zo war GitHub (github.com/iksaif/ecole-primaire).",
+    contenusLicence: 'Dindan an aotre-implijout', // br: à relire
+    contenusLicenceSuite: " emañ ar fichennoù, ar skritelloù hag an testennoù : gallout a rit o moullañ, o luc'heilañ, o skignañ hag o azasaat en un doare frank, en ur venegiñ ar vammenn.", // br: à relire
+    codeSource: "Ar c'hod mammenn a zo war", codeLicence: ', dindan an aotre-implijout', // br: à relire
     polices: 'Nodrezhoù :',
     responsabilite: 'Atebegezh',
     responsabiliteTexte: "Graet eo bet al lec'hienn gant tadoù ha mammoù, ha n'eo ket gant kelennerien. Fazioù a c'hall chom : kemennit anezho d'ar chomlec'h a-us.",

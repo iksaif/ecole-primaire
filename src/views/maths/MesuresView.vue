@@ -1060,7 +1060,6 @@ function htmlFiche() {
       body { font-family: Arial, sans-serif; max-width: 18cm; margin: 0 auto; color: #222; }
       h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
       h2 { font-size: 1.02rem; margin: 1rem 0 .4rem; break-after: avoid; }
-      .alerte { border: 2px solid #c0392b; color: #c0392b; font-weight: 700; padding: .35rem .6rem; border-radius: 6px; font-size: .9rem; }
       .temoin { display: flex; align-items: flex-start; gap: .6cm; margin: .5rem 0 .3rem; font-size: .78rem; color: #555; }
       .seg { display: flex; align-items: center; gap: .5cm; margin: .45cm 0; }
       .lettre { font-weight: 800; width: .6cm; }
@@ -1079,7 +1078,6 @@ function htmlFiche() {
     </style></head><body>
     <h1>📏 ${t('titre')} — ${cfg.niveau.toUpperCase()}</h1>
     ${ligneNomDate(langueContenu.value)}
-    <p class="alerte">⚠️ ${C.t('ficheAlerte')}</p>
     ${ex.includes('regle') ? `<div class="temoin">${regleTemoin()}<span>${C.t('ficheTemoin')}</span></div>` : ''}
     ${sections.join('')}
     <section class="corrige"><h2>${t('corrige')}</h2>${corrige.join('')}</section>
@@ -1098,7 +1096,7 @@ const fiche = computed(() => {
 </script>
 
 <style scoped>
-.rappel-100 { border: 2px solid #c0392b; color: #c0392b; font-weight: 700; padding: .4rem .7rem; border-radius: 8px; font-size: .9rem; margin: .5rem 0 0; }
+.rappel-100 { border: 2px solid var(--orange); background: #fff6e8; color: #9a5a00; font-weight: 700; padding: .4rem .7rem; border-radius: 8px; font-size: .9rem; margin: .5rem 0 1rem; }
 .consigne {
   font-size: 1.3rem;
   font-weight: 700;

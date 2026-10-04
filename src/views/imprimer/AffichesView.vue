@@ -56,7 +56,7 @@
 
       <div class="config-section">
         <div class="config-section-title">{{ t('polices') }}</div>
-        <ChoixPolice />
+        <ChoixPolice :types="['script']" :attachee="attacheePermise" />
       </div>
 
       <p class="source">{{ t('source') }}</p>
@@ -104,8 +104,10 @@ function choisir(id) {
 }
 
 const polices = usePolices()
+// une police attachée seulement pour les affiches dont la mise en page tient avec elle (les autres : docs/TODO.md)
+const attacheePermise = computed(() => ['conjugaison', 'droite', 'numeration'].includes(config.value.affiche))
 const resultat = computed(() => polices.pret.value
-  ? genererAffichesProgramme(config.value, { attache: polices.attache.value, script: polices.script.value })
+  ? genererAffichesProgramme(config.value, { script: polices.policeUnique(attacheePermise.value) })
   : { html: '', nbPages: 1 })
 const html = computed(() => resultat.value.html)
 const nbPages = computed(() => resultat.value.nbPages)

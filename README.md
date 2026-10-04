@@ -114,24 +114,29 @@ npm run i18n              # vérifie que les traductions sont complètes
 - `src/views/` — une vue par exercice. Toutes utilisent le cadre commun `ConfigExercice` : onglets « Faire
   l'exercice » / « Imprimer une fiche » (mode dans l'URL, `?mode=imprimer`), aperçu en direct. Une vue
   fournit son formulaire et une fonction `htmlFiche()` qui renvoie le document à imprimer.
-- `src/impression/` — les générateurs de fiches (écriture, alphabet, nombres, calcul), partagés par l'app
-  et par la génération des PDF au build.
+- `src/impression/` — les générateurs de fiches (écriture, alphabet, nombres, calcul) et d'affiches
+  (`affiches/` : un cadre commun et un module par famille), partagés par l'app et par la génération des PDF
+  au build. `catalogue.js` liste les fiches et affiches toutes prêtes, chacune avec son domaine du programme.
 - `src/i18n/` — traductions : un catalogue par composant et par langue (`fr/…`, `br/…`), les règles de
   chaque langue (`regles.js` : mutations bretonnes, ha/hag, élision, pluriels).
-- `src/data/` — catalogue des activités (niveaux, filtre par classe), langues régionales.
+- `src/data/` — catalogue des activités (niveaux, filtre par classe, domaine), langues régionales, et
+  `programme.js` : les programmes officiels (domaines, compétences, contraintes de chaque classe, avec leurs
+  sources). C'est lui qui fait foi pour les niveaux, et il range les fiches par domaine.
 - `src/utils/nombres.js` — nombres en lettres en français (orthographe rectifiée ou traditionnelle) et en breton.
 
 ### Fiches PDF toutes prêtes
 
 `npm run build:ecoleprimaire` et `npm run build:skoolik` construisent le site puis lancent
 `scripts/telechargements.mjs`. Ce script ouvre le site dans Chrome sans interface (playwright-core) et
-génère, pour chaque fiche de `src/impression/catalogue.js` (et des fiches de calcul) :
+génère, pour chaque fiche de `src/impression/catalogue.js` (et des fiches de calcul, et 4 fiches par exercice
+et par classe) :
 
 - un PDF ;
 - une vignette ;
 - une page statique `telechargements/<fiche>/`, que les moteurs de recherche peuvent indexer.
 
-Il génère aussi l'index des fiches, le `sitemap.xml`, le `robots.txt` et la page 404. Chrome est cherché
+Il génère aussi l'index des fiches (rangé par domaine du programme, puis « pour apprendre » /
+« pour s'entraîner »), le `sitemap.xml`, le `robots.txt` et la page 404. Chrome est cherché
 aux emplacements habituels, ou via `CHROME_PATH`.
 
 Pour générer les PDF avec une police qu'on n'a pas le droit de redistribuer (Belle Allure, Écolier…),
@@ -164,6 +169,11 @@ Toutes les polices utilisées sont livrées avec le site, sous licence libre :
 - Playwrite FR Trad (écriture cursive scolaire), Andika (script, pensée pour l'apprentissage de la lecture)
   et OpenDyslexic, sous licence SIL OFL ;
 - Luciole © Laurent Bourcellier & Jonathan Perez, sous licence CC BY 4.0.
+
+Pour l'écriture attachée, on conseille [Belle Allure](https://www.jeanboyault.fr/belle-allure/) de Jean Boyault,
+la cursive la plus utilisée en classe (ou [Écolier](https://www.dafont.com/fr/jean-marie-douteau.d75)). Leur licence
+ne permet pas de les livrer avec le site : installez-les vous-même sur l'ordinateur (elles apparaissent alors dans le
+choix de la police des fiches), ou ajoutez le fichier depuis ce choix ; il reste mémorisé dans le navigateur.
 
 ## Licence
 

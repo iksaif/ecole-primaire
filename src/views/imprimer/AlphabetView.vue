@@ -54,7 +54,7 @@
 
       <div class="config-section">
         <div class="config-section-title">{{ t('polices') }}</div>
-        <ChoixPolice />
+        <ChoixPolice :types="typesPolices" />
       </div>
 
       <ApercuImpression :reglages="config" :html="html" :format="config.format" :orientation="config.orientation" :nb-pages="nbPages" />
@@ -87,9 +87,11 @@ function basculer(id) {
 }
 
 const polices = usePolices()
+// le titre et le mot illustré sont en script ; l'attaché seulement si une écriture attachée est choisie
+const typesPolices = computed(() => (config.value.styles.some(s => s.startsWith('attache')) ? ['attache', 'script'] : ['script']))
 const { langue: regionale } = useLangueRegionale()
 const resultat = computed(() => polices.pret.value
-  ? genererAlphabet({ ...config.value, langue: langue.value, alphabet: regionale.value?.id === config.value.alphabet ? config.value.alphabet : 'fr' }, { attache: polices.attache.value, script: polices.script.value })
+  ? genererAlphabet({ ...config.value, langue: langue.value, alphabet: regionale.value?.id === config.value.alphabet ? config.value.alphabet : 'fr' }, polices.policesDe(typesPolices.value))
   : { html: '', nbPages: 1 })
 const html = computed(() => resultat.value.html)
 const nbPages = computed(() => resultat.value.nbPages)

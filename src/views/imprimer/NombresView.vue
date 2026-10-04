@@ -142,7 +142,7 @@ const nombresPerso = computed(() => nombresPersonnalises(config.value))
 
 const polices = usePolices()
 const resultat = computed(() => polices.pret.value
-  ? genererNombres({ ...config.value, langues: languesEcrites.value, langue: langue.value }, { script: polices.script.value })
+  ? genererNombres({ ...config.value, langues: languesEcrites.value, langue: langue.value }, { script: polices.policeUnique() })
   : { html: '', nbPages: 1 })
 const html = computed(() => resultat.value.html)
 const nbPages = computed(() => resultat.value.nbPages)

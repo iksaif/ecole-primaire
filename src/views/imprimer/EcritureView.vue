@@ -9,7 +9,7 @@
         <div class="btn-group">
           <button v-for="s in STYLES" :key="s.id" class="level-btn style-btn"
             :class="{ active: config.styles.includes(s.id) }" @click="basculer(config.styles, s.id)">
-            <span :style="{ fontFamily: `'${s.attache ? polices.attache.value : polices.script.value}'` }" class="style-exemple">{{ s.exemple }}</span>
+            <span :style="{ fontFamily: `'${polices.policesDe(typesPolices)[s.attache ? 'attache' : 'script']}'` }" class="style-exemple">{{ s.exemple }}</span>
             {{ langue === 'br' ? s.br : s.label }}
           </button>
         </div>
@@ -97,7 +97,7 @@
 
       <div class="config-section">
         <div class="config-section-title">{{ t('polices') }}</div>
-        <ChoixPolice />
+        <ChoixPolice :types="typesPolices" />
       </div>
 
       <!-- options communes à toutes les fiches : ici seulement Prénom et date (pas de corrigé) -->
@@ -163,6 +163,8 @@ const LISTES_BR = {
 const libelleListe = l => (langue.value === 'br' ? `🇫🇷 ${LISTES_BR[l.id] ?? l.label} e galleg` : l.label)
 
 const polices = usePolices()
+// seulement les polices des écritures choisies (script, attaché ou les deux)
+const typesPolices = computed(() => ['attache', 'script'].filter(type => config.value.styles.some(s => s.startsWith(type))))
 const { langue: regionale } = useLangueRegionale()
 
 // ch, c'h, ñ seulement si une langue régionale qui les utilise est activée
@@ -184,7 +186,7 @@ function basculer(liste, v, ordonner = false) {
 
 const optionsFiche = useOptionsFiche()
 const resultat = computed(() => polices.pret.value
-  ? genererEcriture({ ...config.value, entete: optionsFiche.value.entete, langue: langue.value }, { attache: polices.attache.value, script: polices.script.value })
+  ? genererEcriture({ ...config.value, entete: optionsFiche.value.entete, langue: langue.value }, polices.policesDe(typesPolices.value))
   : { html: '', nbPages: 1 })
 const html = computed(() => resultat.value.html)
 const nbPages = computed(() => resultat.value.nbPages)

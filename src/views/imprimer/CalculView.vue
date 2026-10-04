@@ -220,7 +220,7 @@ const reglages = computed(() => ({ ...config.value, ...reglagesFiche.value }))
 
 const polices = usePolices()
 const resultat = computed(() => polices.pret.value
-  ? genererCalcul({ ...reglages.value, langue: langue.value }, { script: polices.script.value })
+  ? genererCalcul({ ...reglages.value, langue: langue.value }, { script: polices.policeUnique() })
   : { html: '', nbPages: 1, format: 'A4', orientation: 'portrait', nbCalculs: 0, demandes: 0 })
 </script>
 

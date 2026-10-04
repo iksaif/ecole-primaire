@@ -77,16 +77,17 @@ console.log('Activités de maths et programme (activites.js / programme.js)')
 console.log('Affiches : domaines et niveaux du programme (src/data/programme.js)')
 {
   const { DOMAINES, CONTRAINTES } = await import('../src/data/programme.js')
-  const { DOMAINES_AFFICHES, TELECHARGEMENTS_PROGRAMME, AFFICHES_PROGRAMME, NUMERATION, LOTS_FORMES } = await import('../src/impression/affiches/catalogue.js')
+  const { DOMAINES_AFFICHES, AFFICHES_PROGRAMME, NUMERATION, LOTS_FORMES } = await import('../src/impression/affiches/catalogue.js')
+  const pretes = TELECHARGEMENTS.filter(t => t.type === 'affiche')
   const domaines = new Set(DOMAINES.map(d => d.id))
   // les affiches des tables (calcul.js, pas importable avec node) prennent leur domaine dans DOMAINES_AFFICHES
   const inconnus = Object.entries(DOMAINES_AFFICHES).filter(([, d]) => !domaines.has(d))
   verifier(!inconnus.length, `chaque famille d'affiches a un domaine de programme.js${inconnus.length ? ` (inconnus : ${inconnus.map(x => x.join(' → ')).join(', ')})` : ''}`)
-  const affiches = [...TELECHARGEMENTS.filter(t => ['alphabet', 'nombres'].includes(t.categorie)), ...TELECHARGEMENTS_PROGRAMME]
+  const affiches = TELECHARGEMENTS.filter(t => ['alphabet', 'nombres', 'affiches'].includes(t.categorie))
   const sansDomaine = affiches.filter(t => t.genre !== 'affiche' || !domaines.has(t.domaine))
   verifier(!sansDomaine.length, `${affiches.length} affiches du catalogue : genre « affiche » et domaine connu${sansDomaine.length ? ` (${sansDomaine.slice(0, 3).map(t => t.slug).join(', ')})` : ''}`)
-  const slugsProgramme = TELECHARGEMENTS_PROGRAMME.map(t => t.slug)
-  verifier(new Set(slugsProgramme).size === slugsProgramme.length, 'affiches du programme : slugs uniques')
+  const slugs = TELECHARGEMENTS.map(t => t.slug)
+  verifier(new Set(slugs).size === slugs.length, 'catalogue : slugs uniques')
 
   // niveaux « CE1 · CE2 » → contraintes de chaque niveau
   const contraintes = t => t.niveaux.split(' · ').map(n => CONTRAINTES.find(c => c.niveau === n.toLowerCase()))
@@ -114,10 +115,10 @@ console.log('Affiches : domaines et niveaux du programme (src/data/programme.js)
     }
     return false
   }
-  const horsProgramme = TELECHARGEMENTS_PROGRAMME.flatMap(t => contraintes(t).filter(c => !c || !respecte(t, c)).map(c => `${t.slug} (${c?.niveau ?? t.niveaux})`))
+  const horsProgramme = pretes.flatMap(t => contraintes(t).filter(c => !c || !respecte(t, c)).map(c => `${t.slug} (${c?.niveau ?? t.niveaux})`))
   verifier(!horsProgramme.length, `affiches du programme : contenu permis à chaque niveau indiqué${horsProgramme.length ? ` (${horsProgramme.slice(0, 4).join(', ')})` : ''}`)
   // la page /imprimer/affiches affiche les mêmes niveaux que le catalogue
-  const ecarts = TELECHARGEMENTS_PROGRAMME.filter(t => t.config.variante && variante(t.config.affiche, t.config.variante).niveaux !== t.niveaux)
+  const ecarts = pretes.filter(t => t.config.variante && variante(t.config.affiche, t.config.variante).niveaux !== t.niveaux)
   verifier(!ecarts.length, `niveaux des variantes = niveaux du catalogue${ecarts.length ? ` (${ecarts.map(t => t.slug).join(', ')})` : ''}`)
 
   // nombres en lettres : le plus grand nombre de l'affiche ne dépasse pas l'écriture en lettres attendue
@@ -132,14 +133,13 @@ console.log('Affiches : domaines et niveaux du programme (src/data/programme.js)
 console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')
 {
   const { DOMAINES } = await import('../src/data/programme.js')
-  const { TELECHARGEMENTS_PROGRAMME } = await import('../src/impression/affiches/catalogue.js')
   const { EXERCICES } = await import('../src/impression/exercices.js')
   const { ACTIVITES } = await import('../src/data/activites.js')
   const domaines = new Set(DOMAINES.map(d => d.id))
   const GENRES = ['affiche', 'fiche', 'exercice']
-  // fiches d'écriture, alphabet, nombres (catalogue.js) et affiches du programme ; les fiches de calcul (calcul.js,
+  // fiches d'écriture, alphabet, nombres et affiches du programme (catalogue.js) ; les fiches de calcul (calcul.js,
   // pas importable avec node) sont vérifiées dans tests/statiques.test.mjs, sur fiches.json du build
-  const entrees = [...TELECHARGEMENTS, ...TELECHARGEMENTS_PROGRAMME]
+  const entrees = TELECHARGEMENTS
   const fautives = entrees.filter(t => !domaines.has(t.domaine) || !GENRES.includes(t.genre) || t.genre === 'exercice')
   verifier(!fautives.length, `${entrees.length} entrées du catalogue : domaine de programme.js, genre « affiche » ou « fiche »${fautives.length ? ` (${fautives.slice(0, 4).map(t => `${t.slug} : ${t.domaine}/${t.genre}`).join(', ')})` : ''}`)
   verifier(TELECHARGEMENTS.filter(t => t.categorie === 'ecriture').every(t => t.genre === 'fiche' && t.domaine === 'ecriture'), 'fiches d\'écriture : genre « fiche », domaine « ecriture »')
@@ -151,7 +151,7 @@ console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')
   })
   verifier(!exFautifs.length, `${EXERCICES.length} exercices prégénérés : genre « exercice », domaine connu (sauf culture générale)${exFautifs.length ? ` (${exFautifs.map(e => `${e.id} : ${e.domaine}`).join(', ')})` : ''}`)
   // activités : toute activité hors culture générale a un domaine ; les cartes « À imprimer » ont un genre
-  const actFautives = ACTIVITES.filter(a => (a.matiere !== 'autres' && !a.resume && !domaines.has(a.domaine))
+  const actFautives = ACTIVITES.filter(a => (a.matiere !== 'autres' && !domaines.has(a.domaine))
     || (a.matiere === 'imprimer' && !['affiche', 'fiche'].includes(a.genre)))
   verifier(!actFautives.length, `activités : domaine de programme.js et genre des cartes « À imprimer »${actFautives.length ? ` (${actFautives.map(a => a.to).join(', ')})` : ''}`)
 }

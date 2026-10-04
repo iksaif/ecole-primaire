@@ -45,9 +45,7 @@ export const ACTIVITES = [
   { to: '/imprimer/calcul?mode=fiche', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'fiche', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
   { to: '/imprimer/nombres?mise=affiches', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en chiffres et en lettres', descRegionale: 'Unités, dizaines, centaines… en français et en breton', niveaux: de('gs', 'cm2') },
 
-  // Carte unique des affiches du programme : seulement sur l'accueil (`resume`). La page « À imprimer » montre
-  // à la place une carte par famille, dans son domaine (`detail`, plan 09).
-  { to: '/imprimer/affiches', matiere: 'imprimer', genre: 'affiche', resume: true, icon: '📚', titre: 'Affiches du programme', desc: 'Droite numérique, numération, horloge, euros, conjugaison, figures et solides', niveaux: de('gs', 'cm2') },
+  // Affiches du programme : une carte par famille, dans son domaine, seulement sur la page « À imprimer » (`detail`)
   { to: '/imprimer/affiches?affiche=droite', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', detail: true, icon: '📏', titre: 'Droite numérique', desc: 'De 0 à 20, 100 ou 1 000, avec les nombres en lettres', niveaux: ['cp', 'ce1'],
     br: { titre: 'Linenn niverel', desc: 'Eus 0 da 20, 100 pe 1 000, gant an niveroù e lizherennoù' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=numeration', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', detail: true, icon: '🔟', titre: 'Tableau de numération', desc: 'Unités, dizaines, centaines… et décimaux au CM', niveaux: ['ce1', 'cm1', 'cm2'],

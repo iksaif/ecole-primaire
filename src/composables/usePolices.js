@@ -5,8 +5,9 @@ import {
   policesPerso, chargerPolices, policeInstallee,
 } from '../utils/impression'
 
-// Police choisie pour l'attaché et pour le script, commune à toutes les fiches
-const choix = ref(chargerReglages('polices', { attache: POLICE_ATTACHE, script: POLICE_SCRIPT }))
+// Police choisie pour l'attaché et pour le script, commune à toutes les fiches ; `unique` : celle des documents qui
+// n'ont qu'une police (affiches du programme, nombres…), script par défaut mais une attachée est permise
+const choix = ref(chargerReglages('polices', { attache: POLICE_ATTACHE, script: POLICE_SCRIPT, unique: POLICE_SCRIPT }))
 watch(choix, v => sauvegarder('polices', v), { deep: true })
 
 const installees = ref({ attache: [], script: [] })
@@ -29,20 +30,33 @@ const disponibles = computed(() => {
     ...installees.value[type].map(id => ({ id, label: `${id} (installée)` })),
     ...policesPerso.value.filter(p => p.type === type).map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true })),
   ]
-  return { attache: liste('attache'), script: liste('script') }
+  return { attache: liste('attache'), script: liste('script'), unique: [...liste('script'), ...liste('attache')] }
 })
 
 // Si la police mémorisée n'est plus disponible (autre ordinateur…), on revient à celle incluse
 watch([disponibles, pret], () => {
   if (!pret.value) return
-  for (const type of ['attache', 'script']) {
+  for (const type of ['attache', 'script', 'unique']) {
     if (!disponibles.value[type].some(p => p.id === choix.value[type])) {
-      choix.value[type] = POLICES_INCLUSES[type][0].id
+      choix.value[type] = disponibles.value[type][0].id
     }
   }
 })
 
+// Police d'un document à une seule police : `unique`, sauf une police attachée quand le document ne la permet pas
+// (sa mise en page n'est faite que pour le script)
+const policeUnique = (attachee = false) =>
+  (attachee || disponibles.value.script.some(p => p.id === choix.value.unique) ? choix.value.unique : POLICE_SCRIPT)
+// Polices d'un document qui utilise `types` (['attache', 'script'], ['script']…) : avec le script seul, c'est `unique`
+const policesDe = types => ({
+  attache: choix.value.attache,
+  script: types.length === 1 && types[0] === 'script' ? policeUnique() : choix.value.script,
+})
+
 export function usePolices() {
   detecter()
-  return { choix, disponibles, pret, attache: computed(() => choix.value.attache), script: computed(() => choix.value.script) }
+  return {
+    choix, disponibles, pret, policesDe, policeUnique,
+    attache: computed(() => choix.value.attache), script: computed(() => choix.value.script),
+  }
 }

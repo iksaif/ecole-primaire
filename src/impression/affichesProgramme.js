@@ -13,7 +13,7 @@ import * as monnaie from './affiches/monnaie.js'
 import * as conjugaison from './affiches/conjugaison.js'
 import * as formes from './affiches/formes.js'
 export { VERBES, TEMPS_CM2, conjuguer } from '../data/conjugaison.js'
-export { AFFICHES_PROGRAMME, TELECHARGEMENTS_PROGRAMME, TEMPS_PRESENT, TEMPS_DU_CHOIX, choixTemps } from './affiches/catalogue.js'
+export { AFFICHES_PROGRAMME, TEMPS_PRESENT, TEMPS_DU_CHOIX, choixTemps } from './affiches/catalogue.js'
 
 const FAMILLES = { droite, numeration, horloge, monnaie, conjugaison, formes }
 const ORIENTATION = Object.fromEntries(AFFICHES_PROGRAMME.map(a => [a.id, a.orientation]))
@@ -43,6 +43,6 @@ export function genererAffichesProgramme(config, polices) {
   const m = mesuresAffiche({ format: c.format, orientation: c.orientation, marge: 10, hTitre: 16 })
   return cadreAffiche({
     ...m, format: c.format, orientation: c.orientation, polices,
-    titre: c.titre || famille.titre(c), corps: famille.dessin(c, m.W, m.H), css: CSS + famille.css,
+    titre: c.titre || famille.titre(c), corps: famille.dessin(c, m.W, m.H, polices), css: CSS + famille.css,
   })
 }

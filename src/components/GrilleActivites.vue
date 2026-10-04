@@ -56,7 +56,7 @@ const groupes = computed(() => {
   return [...parRubrique].map(([titre, activites]) => {
     const domaines = new Set(activites.map(a => a.domaine).filter(d => d && !dejaVus.has(d)))
     domaines.forEach(d => dejaVus.add(d))
-    const affiches = ACTIVITES.filter(a => a.matiere === 'imprimer' && a.genre === 'affiche' && !a.resume && domaines.has(a.domaine) && visible(a))
+    const affiches = ACTIVITES.filter(a => a.matiere === 'imprimer' && a.genre === 'affiche' && domaines.has(a.domaine) && visible(a))
     return { titre: langue.value === 'br' ? DOMAINES_BR[titre] ?? titre : titre, activites, affiches }
   })
 })

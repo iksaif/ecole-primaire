@@ -38,6 +38,22 @@ export function cadreAffiche({ titre, titreDocument = titre, format, orientation
   return { html, nbPages: liste.length, format, orientation }
 }
 
+// Hauteur (mm) d'un contenu d'affiche rendu dans sa police, hors écran : quand une estimation ne suffit pas (polices
+// attachées, OpenDyslexic…). Shadow DOM : les styles de la page n'interviennent pas, seulement la remise à zéro du
+// document imprimé (documentImpression) et `css`. Hors navigateur : null.
+export function hauteurRendue(html, css, largeur, police) {
+  if (typeof document === 'undefined' || !document.body?.attachShadow) return null
+  const hote = document.createElement('div')
+  hote.style.cssText = 'position:absolute;left:-100000px;top:0;visibility:hidden'
+  const racine = hote.attachShadow({ mode: 'open' })
+  racine.innerHTML = `<style>* { box-sizing: border-box; margin: 0; padding: 0; }
+    .boite { width: ${largeur}mm; font: 16px/normal '${police}', Arial, sans-serif; color: #222; } ${css}</style><div class="boite">${html}</div>`
+  document.body.appendChild(hote)
+  const h = racine.querySelector('.boite').getBoundingClientRect().height * 25.4 / 96
+  hote.remove()
+  return h
+}
+
 // ── Petits outils de dessin partagés ─────────────────────────────────────────
 export const COULEURS = ['#1d4e9e', '#d9480f', '#2b8a3e', '#862e9c', '#c2255c', '#0b7285']
 // 1 000 avec l'espace des milliers

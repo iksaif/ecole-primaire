@@ -1,7 +1,7 @@
 // Textes de l'interface — ChoixPolice (français).
 // Clés partagées avec src/i18n/br/components/ChoixPolice.js (vérifier avec `npm run i18n`).
 export default {
-    attache: 'Attaché', script: 'Script',
+    attache: 'Attaché', script: 'Script', police: 'Police',
     exempleAttache: 'belle école', exempleScript: 'a b g école',
     retirer: 'Retirer cette police',
     aideTitre: '➕ Utiliser Belle Allure, Écolier ou une autre police…',

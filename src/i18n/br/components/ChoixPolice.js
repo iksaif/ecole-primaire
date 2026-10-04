@@ -1,7 +1,7 @@
 // Textes de l'interface — ChoixPolice (breton). Traduction automatique : les passages marqués
 // « br: à relire » sont à faire vérifier par un brittophone (`npm run i18n:relecture`).
 export default {
-    attache: 'A-stag', script: 'Skript',
+    attache: 'A-stag', script: 'Skript', police: 'Nodrezh', // br: à relire (police)
     exempleAttache: 'skol vrav', exempleScript: 'a b g skol',
     // br: à relire — « nodrezh » pour police de caractères
     retirer: 'Lemel an nodrezh-mañ',

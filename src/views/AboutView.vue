@@ -32,6 +32,11 @@
       <ul class="about-list">
         <li>An holl respontoù hag ar skorioù a chom war an drobarzhell.</li>
         <li>Ar c'hod mammenn a zo war <a href="https://github.com/iksaif/ecole-primaire" target="_blank" rel="noopener">GitHub</a>.</li>
+        <!-- br: à relire (Belle Allure) -->
+        <li>Evit ar skritur a-stag e kuzulier <a href="https://www.jeanboyault.fr/belle-allure/" target="_blank" rel="noopener">Belle Allure</a>
+          gant Jean Boyault (pe <a href="https://www.dafont.com/fr/jean-marie-douteau.d75" target="_blank" rel="noopener">Écolier</a>).
+          N'hall ket bezañ kinniget gant al lec'hienn abalamour d'an aotre-implijout : ret eo he staliañ war an urzhiataer,
+          pe ouzhpennañ ar restr e dibab an nodrezh. Neuze e vo er roll.</li>
       </ul>
       <h2 class="about-h2">🤝 Kemer perzh</h2>
       <p class="about-para">
@@ -96,6 +101,10 @@
           (écriture cursive française) et <a href="https://software.sil.org/andika/" target="_blank" rel="noopener">Andika</a> (script, conçue pour l'apprentissage de la lecture),
           <a href="https://opendyslexic.org/" target="_blank" rel="noopener">OpenDyslexic</a> (licence OFL) et
           <a href="https://www.luciole-vision.com/" target="_blank" rel="noopener">Luciole</a> © Laurent Bourcellier &amp; Jonathan Perez (licence CC BY 4.0).</li>
+        <li>Pour l'écriture attachée, on conseille <a href="https://www.jeanboyault.fr/belle-allure/" target="_blank" rel="noopener">Belle Allure</a>
+          de Jean Boyault, la cursive la plus utilisée en classe (ou <a href="https://www.dafont.com/fr/jean-marie-douteau.d75" target="_blank" rel="noopener">Écolier</a>).
+          Leur licence ne permet pas de les livrer avec le site : il faut les installer soi-même sur l'ordinateur, ou ajouter le fichier
+          dans le choix de la police d'une fiche. Elles apparaissent alors dans la liste.</li>
       </ul>
 
       <h2 class="about-h2">🛠️ Comment ça marche ?</h2>

@@ -12,4 +12,5 @@ export default {
     ficheExercice: "Fiche d'exercices, avec de nouvelles questions à chaque fois",
     horsProgramme: '🌍 Culture générale',
     vide: "Pas encore de fiche pour cette classe ici.",
+    sommaire: 'Aller à un domaine', tout: 'Tout', classe: 'Classe', toutes: 'Toutes',
   }

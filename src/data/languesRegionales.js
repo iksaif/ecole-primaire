@@ -28,14 +28,15 @@ export const LANGUES_REGIONALES = [
     lettresEnPlus: ['ch', "c'h", 'ñ', 'ù'],
     enLettres: enLettresBr,
     // Mot illustré par lettre pour l'affiche de l'alphabet. Vérifiés dans le Wiktionnaire (ercʼh, frouezh,
-    // jirafenn, ognon, cʼhwil, warcʼhoazh, chokolad, rod, neizh, iliz) ou mots de base ; pas de mot pour Z
-    // (aucun mot courant vérifié : « zebr » est une forme du verbe debriñ).
+    // jirafenn, ognon, cʼhwil, warcʼhoazh, chokolad, rod, neizh, iliz) ou mots de base. Z : « zebr » (zèbre, m.,
+    // pl. zebred), vérifié le 2026-10-04 dans le Wiktionnaire breton (br.wiktionary.org/wiki/zebr), le Favereau
+    // (via geriafurch.bzh) et les traductions de « zèbre » du Wiktionnaire ; homographe de « zebr », forme mutée de debr.
     mots: {
       a: ['aval', '🍎'], b: ['bara', '🍞'], ch: ['chokolad', '🍫'], "c'h": ["c'hwil", '🪲'], d: ['dour', '💧'],
       e: ["erc'h", '❄️'], f: ['frouezh', '🍓'], g: ['gavr', '🐐'], h: ['heol', '☀️'], i: ['iliz', '⛪'],
       j: ['jirafenn', '🦒'], k: ['ki', '🐕'], l: ['loar', '🌙'], m: ['mor', '🌊'], n: ['neizh', '🪺'],
       o: ['ognon', '🧅'], p: ['pesk', '🐟'], r: ['rod', '🛞'], s: ['skol', '🏫'], t: ['ti', '🏠'],
-      u: ['unan', '1️⃣'], v: ['vi', '🥚'], w: ["warc'hoazh", '📅'], y: ['yar', '🐔'],
+      u: ['unan', '1️⃣'], v: ['vi', '🥚'], w: ["warc'hoazh", '📅'], y: ['yar', '🐔'], z: ['zebr', '🦓'],
     },
     // Les noms de jours et de mois prennent une majuscule en breton
     // label : libellé du bouton dans l'interface en français, labelBr : dans l'interface en breton

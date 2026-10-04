@@ -10,6 +10,17 @@
   bas de la feuille à l'envers, à découper.
 - **De nouvelles affiches** : droite numérique, tableau de numération, horloge, pièces et billets, conjugaison,
   figures et solides.
+- **Tout est rangé par domaine du programme** (nombres et calcul, grandeurs et mesures, géométrie, lecture,
+  écriture, grammaire…) : sur la page « À imprimer » et dans les fiches toutes prêtes, d'abord les affiches pour
+  apprendre, puis les fiches pour s'entraîner, avec un lien vers le programme officiel.
+- **L'orthographe a des niveaux, du CP au CM2** ; la dictée des verbes courants (il fait, il va…) passe au CE2.
+- **« À imprimer »** : un sommaire de tous les domaines dès l'arrivée, qui reste en haut quand on descend, et des
+  filtres « pour apprendre / pour s'entraîner » et par classe.
+- **Polices** : un seul choix de police quand l'affiche n'en utilise qu'une ; pour la conjugaison, la droite
+  numérique et le tableau de numération, on peut aussi prendre une police attachée (Belle Allure, Écolier…).
+- **Pièces et billets** : la pièce de 2 € n'est plus coupée, et les tailles respectent les vraies proportions.
+- **Affiches de conjugaison au passé simple** : la dernière ligne (« ils / elles… ») n'est plus coupée.
+- **Alphabet breton** : le Z a son mot, « zebr » (le zèbre).
 - Nouveau logo.
 - Un bouton « 💬 Signaler une erreur » en bas de chaque page.
 - Cette page « Nouveautés ».

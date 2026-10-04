@@ -28,10 +28,15 @@
 
 ## Manques au programme
 
-- [ ] **Couverture complète PS, MS, GS, CP, CE1** : un plan par niveau (`plans/10-couverture-<niveau>.md`) à partir de `npm run couverture` ; la PS n'existe pas encore dans `programme.js` ni dans le site
+- [ ] **Couverture complète PS, MS, GS, CP, CE1** : plans écrits (`plans/10-couverture-ps.md` … `-ce1.md`, chacun avec ses décisions à prendre) ; à exécuter niveau par niveau
+  - [ ] Ordre : presets → textes des BO → implémenter les plans **classe par classe** (recommandations des plans retenues par défaut, à noter dans chaque plan)
+  - [ ] Rapport de couverture trop optimiste : les compétences sont déclarées par exercice (`COMPETENCES_ROUTES`), pas par classe → déclarer par classe (ou dériver des options) ; compter aussi les fiches bilan des exercices
+  - [ ] Défauts trouvés par les plans : `<` et `>` dans les fiches Ordonner et la correction de Comparer (CP) ; Formes sans niveau (rectangle en MS, formes toujours dans la même position) ; Lettres « Reconnaître » compare deux lettres identiques ; fiches d'écriture « GS » avec l'attaché majuscule ; Compter boucle sans fin si le maximum est 3 ; aucune consigne lue à voix haute en maternelle (`useTTS`)
+  - [ ] Données à corriger (plan CP) : `fiche-ajouter-retirer-10` rangée en « multiplier par 10 » ; `fiche-suites-de-nombres` « CP · CE1 » monte à 190 ; Orthographe « Le soli___ brille » est faux ; doubles et moitiés du CP hors des valeurs du programme
+  - [ ] Lecture : le mode « Lecture de textes » n'a aucune question (compréhension non couverte, CP et CE1)
 
-- [ ] Textes des programmes officiels (BO cycle 1, 2, 3) dans le dépôt, en texte / Markdown (`docs/programmes/`), pour coder et vérifier `programme.js`
-- [ ] Liens vers les générateurs réglés sur la fiche exacte (`?preset=<slug>` pour nombres, alphabet, écriture, calcul) : page `/programme` et bouton « Personnaliser » des pages de téléchargement
+- [x] Textes des programmes officiels (BO cycle 1, 2, 3) dans le dépôt, en texte / Markdown (`docs/programmes/`), pour coder et vérifier `programme.js`
+- [x] Liens vers les générateurs réglés sur la fiche exacte (`?preset=<slug>` pour nombres, alphabet, écriture, calcul) : page `/programme` et bouton « Personnaliser » des pages de téléchargement
 - [x] Lien plus visible *vers* la page `/programme` : accueil (sous le titre) et haut des pages Maths et Français (en plus du pied de page, des domaines de « À imprimer » et de « À propos »)
 - [x] Page `/programme` : les liens mènent aux générateurs (affiches, fiches), pas aux pages de téléchargement
 - [x] Page `/programme` : deux sortes seulement — 🎯 exercice (s'imprime aussi ; avec les générateurs de fiches) et 📄 affiche ; pas les fiches toutes prêtes (elles restent dans `npm run couverture`)

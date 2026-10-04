@@ -28,7 +28,15 @@
 
 ## Manques au programme
 
-- [ ] **Couverture du programme** : un rapport par domaine × classe × compétence (exercices, fiches toutes prêtes, affiches) pour voir ce qui est mal couvert ; et, dans chaque exercice, vérifier que les options correspondent au programme (tests `programme-*` en partie)
+- [ ] **Couverture complète PS, MS, GS, CP, CE1** : un plan par niveau (`plans/10-couverture-<niveau>.md`) à partir de `npm run couverture` ; la PS n'existe pas encore dans `programme.js` ni dans le site
+
+- [x] Page `/programme` : les liens mènent aux générateurs (affiches, fiches), pas aux pages de téléchargement
+- [x] Page `/programme` : deux sortes seulement — 🎯 exercice (s'imprime aussi ; avec les générateurs de fiches) et 📄 affiche ; pas les fiches toutes prêtes (elles restent dans `npm run couverture`)
+- [x] Page `/programme`, tableau : au clic sur une case, montrer clairement où on arrive (mise en évidence de la compétence)
+- [x] Page `/programme` : mode d'affichage « tableau » (comme `couverture.html`), en plus de la liste ; page en français seulement pour l'instant (pas de traduction bretonne)
+- [x] **Intégrer la couverture au site** : page `/programme` « Le programme, classe par classe » (classe de la barre du haut, compétences sans ressource en grisé), liens depuis « À imprimer », le pied de page et « À propos »
+
+- [x] **Couverture du programme** : `npm run couverture` → `couverture.html` (par domaine : compétence × classe, 🎯 exercice / 📄 fiche / 📘 affiche ; par exercice : options ✓/⚠ et compétences sans option) ; test : chaque option d'exercice correspond à une compétence au programme de sa classe. Les cases rouges du rapport alimentent les « Manques » ci-dessous
 
 - [ ] **Maths** : rien au CP pour la numération ≤ 100, l'heure entière, les euros, les problèmes ≤ 30 ; calcul mental
       CP (stratégies) ; calcul posé sans niveau (soustraction CP seulement signalée), multiplication posée CE2,

@@ -854,6 +854,9 @@ function textesFiche(cle, params, langue) {
   return { court: C.t(`${cle}_court`, params), titre: C.t(`${cle}_titre`, params), description: C.t(`${cle}_description`, params) }
 }
 
+// compétence de programme.js de chaque type de calcul des fiches toutes prêtes
+const COMPETENCES_TYPES = { tables: 'tables-multiplication', tablesAdd: 'tables-addition', addition: 'tables-addition', soustraction: 'tables-addition',
+  complements: 'complement-dizaine', division: 'sens-division', dixCent: 'multiplier-10-100', doubles: 'doubles-moities', neufOnze: 'ajouter-9', suites: 'suites-nombres' }
 export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e }) => LANGUES_DOCUMENT.map(langue => ({
   ...e,
   ...textesFiche(cleTextes ?? e.slug, params, langue),
@@ -864,4 +867,7 @@ export const TELECHARGEMENTS_CALCUL = FICHES.flatMap(({ cleTextes, params, ...e 
   ...e, categorie: 'calcul', type: 'calcul', lien: `/imprimer/calcul?mode=${e.config.mode}`,
   // domaine du programme et genre (catalogue unique, plan 09) : affiches des tables ou fiches de calcul
   ...(e.config.mode === 'affiche' ? { domaine: DOMAINES_AFFICHES.tables, genre: 'affiche' } : { domaine: 'nombres-calcul', genre: 'fiche' }),
+  // compétences de programme.js (rapport de couverture)
+  competences: e.config.mode === 'affiche' ? [e.config.affiche === 'addition' ? 'tables-addition' : 'tables-multiplication']
+    : [...new Set(e.config.types.map(t => COMPETENCES_TYPES[t]).filter(Boolean))],
 }))

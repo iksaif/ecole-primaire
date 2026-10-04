@@ -8,7 +8,7 @@ import { DOMAINES_AFFICHES, TELECHARGEMENTS_AFFICHES } from './affiches/catalogu
 // Chaque entrée a un `domaine` (id de src/data/programme.js) et un `genre` ('affiche' | 'fiche') : le build range
 // les téléchargements par domaine puis par genre (plan 09). Les fiches d'écriture relèvent toutes de l'écriture,
 // même quand les mots copiés sont des nombres ou des jours.
-const ECRITURE = { categorie: 'ecriture', type: 'ecriture', domaine: 'ecriture', genre: 'fiche' }
+const ECRITURE = { categorie: 'ecriture', type: 'ecriture', domaine: 'ecriture', genre: 'fiche', competences: ['cursive', 'copie', 'geste-ecriture-maternelle'] }
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 const TOUS_STYLES = ['script-maj', 'script-min', 'attache-maj', 'attache-min']
@@ -87,7 +87,7 @@ const affiches = [
   { slug: 'cartes-alphabet-une-lettre-par-page', court: 'Une lettre par page', format: 'A4', orientation: 'landscape', disposition: 'carte', titre: "Alphabet : une grande lettre par page (frise de la classe)" },
 ].map(a => ({
   slug: a.slug, court: a.court, titre: a.titre,
-  categorie: 'alphabet', type: 'alphabet', domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche',
+  categorie: 'alphabet', type: 'alphabet', domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche', competences: ['nom-lettres'],
   description: `${a.titre} : les lettres en script et en attaché, majuscules et minuscules, avec un mot illustré pour chaque lettre. Gratuit, à imprimer en PDF.`,
   niveaux: 'MS · GS · CP · CE1',
   config: {
@@ -145,7 +145,7 @@ const nombres = [
     niveaux: 'CE2',
     config: { ...nombresBase, langues: ['fr'], sections: ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] },
   },
-].map(e => ({ ...e, categorie: 'nombres', type: 'nombres', domaine: DOMAINES_AFFICHES.nombres, genre: 'affiche', lien: `/imprimer/nombres?mise=${e.config.miseEnPage ?? 'affiches'}` }))
+].map(e => ({ ...e, categorie: 'nombres', type: 'nombres', domaine: DOMAINES_AFFICHES.nombres, genre: 'affiche', competences: ['nombres-en-lettres'], lien: `/imprimer/nombres?mise=${e.config.miseEnPage ?? 'affiches'}` }))
 
 // Fiches propres à chaque langue régionale (alphabet, listes de mots, une fiche par lettre, affiches),
 // générées à partir de sa définition dans src/data/languesRegionales.js
@@ -177,7 +177,7 @@ function fichesRegionales(r) {
     }),
     ...[['A4', 'landscape'], ['A3', 'landscape']].map(([format, orientation]) => ({
       slug: `affiche-alphabet-${nom}-${format.toLowerCase()}`, court: `Alphabet ${nom} ${format}`, type: 'alphabet', categorie: 'alphabet',
-      domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche',
+      domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche', competences: ['nom-lettres'],
       titre: `Affiche de l'alphabet ${nom} ${format} (${r.titreAlphabet.toLowerCase()})`,
       description: `Affiche ${format} de l'alphabet ${nom} : ${r.alphabet.length} lettres, en script et en attaché, majuscules et minuscules${exemplesMots ? `, avec un mot illustré (${exemplesMots}…)` : ''}. Pour ${f.ecoles}.`,
       niveaux: 'MS · GS · CP · CE1', lien: '/imprimer/alphabet',

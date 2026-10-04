@@ -82,10 +82,23 @@ export const niveauxConjugaison = (verbe, temps) => ({ present: 'CP · CE1', cm2
 const cm = n => (n >= 1000 ? n.toLocaleString('fr-FR') : String(n))
 // le lien « Personnaliser » ouvre la page de réglage sur cette affiche (et pas sur une autre)
 const lienAffiche = c => `/imprimer/affiches?affiche=${c.affiche}${c.variante ? `&variante=${c.variante}` : ''}${c.verbe ? `&verbe=${c.verbe}` : ''}${c.temps ? `&temps=${choixTemps(c.temps)}` : ''}${c.domaine ? `&domaine=${c.domaine}&niveau=${c.niveau}` : ''}`
+// compétences de programme.js d'une affiche du programme (rapport de couverture : `npm run couverture`)
+const COMPETENCES_GROUPE = { auxiliaire: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps'], '1er groupe': ['conjugaison-4-temps'], '3e groupe': ['conjugaison-irreguliers'], '2e groupe': ['conjugaison-2e-groupe'] }
+export function competencesAffiche(c) {
+  switch (c.affiche) {
+    case 'droite': return ['droite-graduee', 'nombres-en-lettres']
+    case 'numeration': return { ce1: ['numeration-1000'], cm1: ['numeration-6-chiffres', 'decimaux'], cm2: ['numeration-9-chiffres', 'decimaux'] }[c.variante] ?? []
+    case 'horloge': return { heures: ['heure-entiere'], quarts: ['heure-demi-quart'], minutes: ['heure-minutes'] }[c.variante] ?? []
+    case 'monnaie': return { euros: ['monnaie-euros'], centimes: ['monnaie-centimes'] }[c.variante] ?? []
+    case 'conjugaison': return { present: ['conjugaison-present-etre-avoir'], cm2: ['conjugaison-passe-simple'] }[choixTemps(c.temps)] ?? COMPETENCES_GROUPE[VERBES[c.verbe]?.groupe] ?? []
+    case 'formes': return c.variante?.startsWith('solides') ? ['solides', 'solides-maternelle'] : ['figures-planes', 'formes-maternelle']
+    default: return []
+  }
+}
 const entree = (slug, court, titre, description, niveaux, config) => ({
   slug, court, titre, description, niveaux, config,
   categorie: 'affiches', type: 'affiche', lien: lienAffiche(config), langues: ['fr'],
-  domaine: config.domaine ?? DOMAINES_AFFICHES[config.affiche], genre: 'affiche',
+  domaine: config.domaine ?? DOMAINES_AFFICHES[config.affiche], genre: 'affiche', competences: competencesAffiche(config),
 })
 // suffixe du slug, titre court, fin du titre, description, temps (null : les 4 temps du cycle 2)
 const CONJUGAISONS = [

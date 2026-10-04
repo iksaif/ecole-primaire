@@ -35,6 +35,7 @@ const routes = [
   { path: '/imprimer/nombres',    component: () => import('../views/imprimer/NombresView.vue') },
   { path: '/imprimer/affiches',   component: () => import('../views/imprimer/AffichesView.vue') },
   { path: '/about',               component: () => import('../views/AboutView.vue') },
+  { path: '/programme',           component: () => import('../views/ProgrammeView.vue') },
   { path: '/nouveautes',          component: () => import('../views/NouveautesView.vue') },
   { path: '/mentions-legales',    component: () => import('../views/MentionsLegalesView.vue') },
   { path: '/parametres',          component: () => import('../views/ParentSettingsView.vue') },

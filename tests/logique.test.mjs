@@ -145,6 +145,17 @@ console.log('Ce que je sais faire (src/data/savoirs.js)')
   verifier(!horsNiveau.length, `aucune phrase à un niveau où la compétence n'est pas au programme${horsNiveau.length ? ` (${horsNiveau.slice(0, 5).join(', ')})` : ''}`)
 }
 
+console.log('Fiches par compétence : compétence au programme de chaque classe (exercices.js)')
+{
+  const { COMPETENCES } = await import('../src/data/programme.js')
+  const { EXERCICES, classesDe, fichesDe } = await import('../src/impression/exercices.js')
+  const hors = EXERCICES.flatMap(ex => ex.classes.flatMap(c => fichesDe(ex, c.classe).flatMap(f => {
+    const k = COMPETENCES.find(x => x.id === f.competence)
+    return classesDe(c.classe).filter(n => !k?.niveaux.includes(n)).map(n => `${ex.id} ${n} ${f.id} (${f.competence})`)
+  })))
+  verifier(!hors.length, `chaque option d'exercice correspond à une compétence au programme de la classe${hors.length ? ` (${hors.slice(0, 4).join(', ')})` : ''}`)
+}
+
 console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')
 {
   const { DOMAINES } = await import('../src/data/programme.js')

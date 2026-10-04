@@ -34,6 +34,7 @@
       <h2 class="section-heading rubrique">
         <span :title="s.officiel">{{ s.nom }}</span>
         <a v-if="s.lien" :href="s.lien" class="programme" target="_blank" rel="noopener" :title="s.officiel">{{ t('programmeOfficiel') }} ↗</a>
+        <RouterLink v-if="s.lien" :to="{ path: '/programme', query: { domaine: s.id } }" class="competences">{{ t('competences') }}</RouterLink>
       </h2>
       <template v-if="s.apprendre.length">
         <h3 class="usage">{{ t('apprendre') }}</h3>
@@ -172,7 +173,7 @@ onUnmounted(() => window.removeEventListener('scroll', suivre))
 }
 
 .rubrique { margin-top: 1.5rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; }
-.programme { font-size: .85rem; font-weight: 400; color: #888; }
+.programme, .competences { font-size: .85rem; font-weight: 400; color: #888; }
 .usage { font-size: 1rem; font-weight: 800; color: #777; margin: 1.25rem 0 .75rem; }
 .vide { color: #888; font-style: italic; }
 .bandeau-pdf {

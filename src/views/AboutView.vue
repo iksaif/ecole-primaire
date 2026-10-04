@@ -123,6 +123,8 @@
         <a href="https://www.education.gouv.fr/les-programmes-de-l-ecole-primaire-et-du-college-9916" target="_blank" rel="noopener">
           Bulletin officiel de l'Éducation nationale
         </a>.
+        La page <RouterLink to="/programme">« Le programme, classe par classe »</RouterLink> montre, pour chaque
+        compétence, les exercices, fiches et affiches qui la travaillent.
       </p>
       <ul class="about-list prog-list">
         <li>

@@ -2,6 +2,7 @@
   <footer class="pied">
     <SignalerErreur />
     <RouterLink to="/nouveautes">{{ t('nouveautes') }}</RouterLink>
+    <RouterLink to="/programme">{{ t('programme') }}</RouterLink>
     <RouterLink to="/about">{{ t('apropos') }}</RouterLink>
     <RouterLink to="/mentions-legales">{{ t('mentions') }}</RouterLink>
     <a :href="`mailto:${CONTACT}`">✉️ {{ CONTACT }}</a>

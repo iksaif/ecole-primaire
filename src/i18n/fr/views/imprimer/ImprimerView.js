@@ -6,7 +6,7 @@ export default {
     introDomaines: "Elles sont rangées par domaine du programme : des affiches pour apprendre, puis des fiches pour s'entraîner. Les exercices en ligne ont aussi un bouton « {bouton} ».",
     pdfTitre: 'Fiches toutes prêtes en PDF',
     pdfTexte: 'lettres une à une, alphabet, jours, mois, nombres en breton… à télécharger directement.',
-    programmeOfficiel: 'programme officiel',
+    programmeOfficiel: 'programme officiel', competences: 'les compétences de la classe',
     apprendre: '📘 Pour apprendre',
     entrainer: "✏️ Pour s'entraîner",
     ficheExercice: "Fiche d'exercices, avec de nouvelles questions à chaque fois",

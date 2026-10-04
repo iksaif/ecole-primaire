@@ -107,6 +107,8 @@ npm run dev:skoolik       # la version bretonne
 npm run build:app         # build de l'app seule (dist/)
 npm test                  # tests (Chrome sans interface, ~2 min)
 npm run i18n              # vérifie que les traductions sont complètes
+npm run couverture        # couverture du programme (couverture.html) : domaine × classe × compétence
+                          # (la même chose côté site : page /programme, src/impression/couverture.js)
 ```
 
 ### Organisation

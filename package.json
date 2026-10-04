@@ -18,7 +18,8 @@
     "test": "node tests/lancer.mjs",
     "test:complet": "node tests/lancer.mjs --complet",
     "i18n": "node scripts/i18n.mjs",
-    "i18n:relecture": "node scripts/i18n.mjs --relecture"
+    "i18n:relecture": "node scripts/i18n.mjs --relecture",
+    "couverture": "node --no-warnings scripts/couverture.mjs"
   },
   "dependencies": {
     "@fontsource/andika": "^5.3.0",

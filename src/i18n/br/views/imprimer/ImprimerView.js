@@ -7,6 +7,7 @@ export default {
     pdfTitre: 'Fichennoù prest e PDF',
     pdfTexte: 'lizherennoù unan hag unan, lizherenneg, deizioù, mizioù, niveroù e brezhoneg… da bellgargañ war-eeun.',
     programmeOfficiel: 'programm ofisiel', // br: à relire
+    competences: "barregezhioù ar c'hlas", // br: à relire
     apprendre: '📘 Evit deskiñ',
     entrainer: '✏️ Evit en em bleustriñ',
     ficheExercice: 'Fichenn poelladennoù, gant goulennoù nevez bep tro', // br: à relire

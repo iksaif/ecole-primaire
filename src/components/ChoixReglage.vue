@@ -8,13 +8,15 @@
     sans options déclarées, ex. le nombre de questions). Choix multiple si la valeur est une liste (au moins une
     valeur reste cochée, l'ordre suit celui des options), choix unique sinon. Une valeur `bonus` ou `horsProgramme`
     du niveau porte la marque « (bonus) » / « (hors programme) », la raison en infobulle.
+    Libellé enrichi d'une valeur : <template #valeur="{ valeur, texte }">…</template>. Pour les tests : la section porte
+    data-reglage="<cle>", chaque bouton data-valeur="<valeur>".
   -->
-  <div class="config-section">
+  <div class="config-section" :data-reglage="cle">
     <div class="config-section-title">{{ titre }}</div>
     <div class="btn-group">
-      <button v-for="v in liste" :key="String(v)" class="level-btn" :class="{ active: actif(v) }"
+      <button v-for="v in liste" :key="String(v)" class="level-btn" :class="{ active: actif(v) }" :data-valeur="String(v)"
         :title="raisonHorsProgramme(definition, niveau, cle, v) ?? undefined"
-        @click="choisir(v)">{{ texte(v) }}<span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)) }})</span></button>
+        @click="choisir(v)"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)) }})</span></button>
     </div>
     <slot />
   </div>

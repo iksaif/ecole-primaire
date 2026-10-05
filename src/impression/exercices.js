@@ -7,6 +7,7 @@ import { ACTIVITES } from '../data/activites.js'
 import { classesEntre, CM } from '../data/classes.js'
 import HEURE from '../exercices/heure/definition.js'
 import MONNAIE from '../exercices/monnaie/definition.js'
+import CONJUGAISON from '../exercices/conjugaison/definition.js'
 
 export const NB_VARIANTES = 4
 
@@ -133,15 +134,17 @@ const LISTE = [
       F('complements', 'les compléments', 'complements', ['complément de phrase', 'Où \\? Quand', 'Complément du verbe'], { classes: CM }),
     ] },
   { id: 'conjugaison', route: '/francais/conjugaison', groupe: 'francais', titre: { fr: 'Conjugaison', br: 'Displegañ' },
-    classes: [C('cp', '^CP$'), C('ce1', '^CE1$'), C('ce2', '^CE2$'), C('cm1', '^CM1$'), C('cm2', '^CM2$')],
-    // par temps, avec les verbes du niveau (décision de l'utilisateur) ; au CP, le présent seul : le bilan suffit
+    // classes et fiches : celles de la définition (src/exercices/conjugaison/definition.js) ; par temps, avec les
+    // verbes du niveau (décision de l'utilisateur) ; au CP, le présent seul : le bilan suffit
+    classes: Object.keys(CONJUGAISON.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
     choix: ['^Présent$', '^Imparfait$', '^Futur$', '^Passé composé$', '^Passé simple$', '^Plus-que-parfait$'],
-    fiches: [
-      ...[['present', 'le présent', '^Présent$'], ['imparfait', "l'imparfait", '^Imparfait$'], ['futur', 'le futur', '^Futur$'], ['passe-compose', 'le passé composé', '^Passé composé$']]
-        .map(([id, titre, re]) => F(id, titre, 'conjugaison-4-temps', [re], { classes: ['ce1', 'ce2', ...CM] })),
-      F('passe-simple', 'le passé simple', 'conjugaison-passe-simple', ['^Passé simple$'], { classes: ['cm2'] }),
-      F('plus-que-parfait', 'le plus-que-parfait', 'conjugaison-passe-simple', ['^Plus-que-parfait$'], { classes: ['cm2'] }),
-    ] },
+    fiches: [['present', 'le présent', '^Présent$'], ['imparfait', "l'imparfait", '^Imparfait$'], ['futur', 'le futur', '^Futur$'],
+      ['passe-compose', 'le passé composé', '^Passé composé$'], ['passe-simple', 'le passé simple', '^Passé simple$'],
+      ['plus-que-parfait', 'le plus-que-parfait', '^Plus-que-parfait$']]
+      .map(([id, titre, re]) => {
+        const fiches = CONJUGAISON.fiches.filter(f => f.id === id)
+        return F(id, titre, fiches[0].competence, [re], { classes: fiches.map(f => f.niveau) })
+      }) },
   { id: 'vocabulaire', route: '/francais/vocabulaire', groupe: 'francais', titre: { fr: 'Vocabulaire', br: 'Geriaoueg' },
     classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$')],
     choix: ['Ranger des mots', 'Lettre avant', 'Mots-repères', 'Définitions', 'Le sens dans la phrase', 'Contraires', 'Mots de même sens', 'se disent pareil',

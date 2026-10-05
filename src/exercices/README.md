@@ -1,7 +1,8 @@
 # Exercices au format « définition » (plan 10)
 
-Un exercice se déclare une fois ; ses niveaux, fiches et tests en découlent. Modèles : `heure/` (pilote) et
-`monnaie/` (phase 2a, réglage à choix unique, `bonneReponse`).
+Un exercice se déclare une fois ; ses niveaux, fiches et tests en découlent. Modèles : `heure/` (pilote),
+`monnaie/` (phase 2a, réglage à choix unique, `bonneReponse`) et `conjugaison/` (phase 2b : contenu toujours `fr`,
+réponses tapées au clavier comparées par `src/utils/reponses.js`, une partie = les lignes d'un tableau, `ecartsFiche`).
 
 ```
 src/exercices/<id>/

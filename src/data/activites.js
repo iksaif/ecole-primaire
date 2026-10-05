@@ -4,6 +4,7 @@ import { CLASSES, CE, CM, CYCLE_2, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
 import HEURE from '../exercices/heure/definition.js'
 import MONNAIE from '../exercices/monnaie/definition.js'
+import CONJUGAISON from '../exercices/conjugaison/definition.js'
 
 // classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
 export { CLASSES }
@@ -88,7 +89,7 @@ export const ACTIVITES = [
   { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: de('cp', 'cm2') },
   { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: de('ce1', 'cm2') },
-  { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: de('cp', 'cm2') },
+  { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: Object.keys(CONJUGAISON.niveaux) },
   { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: ['ce1', 'ce2'] },
 
 
@@ -170,13 +171,7 @@ const COMPETENCES_ROUTES = {
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
   '/francais/orthographe': { ...parClasse(CYCLE_2, ['orthographe-lexicale', 'accords-gn']), ...parClasse(CM, ['accords-gn']) },
   '/francais/grammaire': { ...parClasse(CE, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn']), ...parClasse(CM, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn', 'complements']) },
-  '/francais/conjugaison': {
-    cp: ['conjugaison-present-etre-avoir'],
-    ce1: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'radical-terminaison'],
-    ce2: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'radical-terminaison'],
-    cm1: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'conjugaison-2e-groupe', 'radical-terminaison'],
-    cm2: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps', 'conjugaison-irreguliers', 'conjugaison-2e-groupe', 'conjugaison-passe-simple', 'radical-terminaison'],
-  },
+  '/francais/conjugaison': Object.fromEntries(Object.entries(CONJUGAISON.niveaux).map(([n, v]) => [n, v.competences])),
   '/francais/vocabulaire': ['ordre-alphabetique', 'synonymes-antonymes', 'familles-mots'],
   // compréhension : le mode « Lecture de textes » n'a pas encore de questions
   '/lecture': ['decodage'],

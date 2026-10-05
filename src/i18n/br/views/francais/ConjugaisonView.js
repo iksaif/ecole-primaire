@@ -19,12 +19,8 @@ export default {
     lacunesDesc: 'Leunia an dibennoù',
     complet: 'Klok',
     completDesc: 'Skriv ar stumm a-bezh',
+    presque: 'Tost ! Diwall ouzh an akcentoù', // br: à relire (« attention aux accents » : terme à vérifier)
     correction: 'Reizhadenn',
-    changer: '⚙️ Cheñch',
     ficheLacunes: 'Leunia an dibennoù',
     ficheComplet: 'Skriv ar stummoù klok',
-    res100: 'Dispar, hep fazi ebet ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res50: "Mat ! Kendalc'h da embreger 💪",
-    res0: 'Kalon vat ! Adlenn an daolenn-displegañ ha adkrog 📚',
   }

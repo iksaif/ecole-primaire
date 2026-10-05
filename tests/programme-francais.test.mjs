@@ -3,7 +3,7 @@
 // puis la fiche (srcdoc de l'aperçu) est analysée, pour plusieurs graines.
 import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE } from './outils.mjs'
 import { contraintesDe, competenceDe, HORS_PROGRAMME } from '../src/data/programme.js'
-import { VERBES, AUTRES_VERBES, TITRES_TEMPS } from '../src/data/conjugaison.js'
+import { VERBES, AUTRES_VERBES } from '../src/data/conjugaison.js'
 
 const GRAINES = [1, 2, 3]
 const fiche = (route, graine) => `${URL_SITE}?graine=${graine}#${route}?mode=imprimer`
@@ -38,8 +38,6 @@ const verbeAuProgramme = (cle, c) => {
   if (!v) return false
   return v.groupe === '3e groupe' ? c.irreguliers.includes(cle) : c.groupes.includes(GROUPE[v.groupe])
 }
-const TEMPS_DE_LIBELLE = Object.fromEntries(Object.entries(TITRES_TEMPS).map(([id, l]) => [l, id]))
-const CLE_DE_INF = Object.fromEntries(Object.entries(TOUS_VERBES).map(([k, v]) => [v.inf, k]))
 
 console.log('Conjugaison')
 {
@@ -53,8 +51,9 @@ console.log('Conjugaison')
       erreurs.length = 0
       const html = await ouvrir(page, '/francais/conjugaison', g, niveau)
       // options proposées par le formulaire : rien hors programme, et tout le programme
-      const verbes = (await page.locator('.cadre-exercice .verbe-btn').allInnerTexts()).map(x => CLE_DE_INF[x.trim().split(/\s/)[0]])
-      const temps = (await page.locator('.cadre-exercice .btn-group .level-btn').allInnerTexts()).map(x => TEMPS_DE_LIBELLE[x.trim()]).filter(Boolean)
+      // boutons de ChoixReglage : data-valeur = id du verbe ou du temps
+      const valeurs = reglage => page.locator(`.cadre-exercice [data-reglage="${reglage}"] [data-valeur]`).evaluateAll(l => l.map(b => b.dataset.valeur))
+      const verbes = await valeurs('verbes'), temps = await valeurs('temps')
       if (g === GRAINES[0]) {
         const horsVerbes = verbes.filter(v => !verbeAuProgramme(v, c))
         if (horsVerbes.length) ko.push(`verbes proposés hors programme : ${horsVerbes}`)

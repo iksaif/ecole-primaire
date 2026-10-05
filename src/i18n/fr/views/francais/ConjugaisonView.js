@@ -19,12 +19,8 @@ export default {
     lacunesDesc: 'Remplis les terminaisons',
     complet: 'Complet',
     completDesc: 'Écris la forme entière',
+    presque: 'Presque ! Attention aux accents',
     correction: 'Correction',
-    changer: '⚙️ Changer',
     ficheLacunes: 'Complète les terminaisons',
     ficheComplet: 'Écris les formes complètes',
-    res100: 'Parfait, sans faute ! 🏆',
-    res80: 'Très bien ! 🌟',
-    res50: "Bien ! Continue à t'entraîner 💪",
-    res0: 'Courage ! Relis la table de conjugaison et recommence 📚',
   }

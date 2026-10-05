@@ -11,6 +11,10 @@ import monnaieDefinition from './monnaie/definition.js'
 import * as monnaieGenerateur from './monnaie/generateur.js'
 import * as monnaieFiche from './monnaie/fiche.js'
 import { TEXTES as monnaieTextes } from './monnaie/textes.js'
+import conjugaisonDefinition from './conjugaison/definition.js'
+import * as conjugaisonGenerateur from './conjugaison/generateur.js'
+import * as conjugaisonFiche from './conjugaison/fiche.js'
+import { TEXTES as conjugaisonTextes } from './conjugaison/textes.js'
 
 /**
  * Réglages d'un exercice : valeurs simples ou listes de valeurs choisies (ids).
@@ -69,6 +73,7 @@ import { TEXTES as monnaieTextes } from './monnaie/textes.js'
 export const REGISTRE = [
   { definition: heureDefinition, generateur: heureGenerateur, fiche: heureFiche, textes: heureTextes },
   { definition: monnaieDefinition, generateur: monnaieGenerateur, fiche: monnaieFiche, textes: monnaieTextes },
+  { definition: conjugaisonDefinition, generateur: conjugaisonGenerateur, fiche: conjugaisonFiche, textes: conjugaisonTextes },
 ]
 
 /** @param {string} id */

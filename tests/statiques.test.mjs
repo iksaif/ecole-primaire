@@ -1,5 +1,5 @@
 // Pages de téléchargement : filtres, recherche, langue régionale, visionneuse ; vie privée (cookies, tiers)
-import { lancerNavigateur, contexte, surveiller, verifier, URL_SITE, app } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE, app } from './outils.mjs'
 
 const nav = await lancerNavigateur()
 const visibles = p => p.locator('.carte:not([hidden])').count()
@@ -119,3 +119,6 @@ console.log('Vie privée')
   await ctx.close()
 }
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

@@ -105,11 +105,16 @@ npm install
 npm run dev               # http://localhost:5173/ecole-primaire/
 npm run dev:skoolik       # la version bretonne
 npm run build:app         # build de l'app seule (dist/)
-npm test                  # tests (Chrome sans interface, ~2 min)
+npm test                  # tests (Chrome sans interface, ~3 min)
+npm run lint              # ESLint, règles de correction seulement (pas de règle de style)
+npm run qualite           # compteurs qui ne doivent pas régresser (scripts/qualite-seuils.json)
 npm run i18n              # vérifie que les traductions sont complètes
 npm run couverture        # couverture du programme (couverture.html) : domaine × classe × compétence
                           # (la même chose côté site : page /programme, src/impression/couverture.js)
 ```
+
+Node 22 ou plus récent, et Google Chrome pour les tests. La CI (`.github/workflows/tests.yml`) lance `lint`,
+`qualite` et `npm test` sur chaque push et pull request vers `main`.
 
 ### Organisation
 

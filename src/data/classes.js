@@ -13,7 +13,6 @@ export const classesDuCycle = cycle => NIVEAUX.filter(n => CYCLE_DE[n] === cycle
 export const MATERNELLE = classesDuCycle(1)        // ps, ms, gs
 export const CYCLE_2 = classesDuCycle(2)           // cp, ce1, ce2
 export const CYCLE_3 = classesDuCycle(3)           // cm1, cm2 (le cycle 3 continue en 6e, hors du site)
-export const ELEMENTAIRE = [...CYCLE_2, ...CYCLE_3]
 export const CE = classesEntre('ce1', 'ce2')
 export const CM = CYCLE_3
 

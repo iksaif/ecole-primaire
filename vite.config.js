@@ -10,7 +10,7 @@ function telechargementsEnDev(base) {
   return {
     name: 'telechargements-en-dev',
     configureServer(server) {
-      server.middlewares.use(`${base}telechargements`, (req, res, next) => {
+      server.middlewares.use(`${base}telechargements`, (req, res) => {
         let f = join(process.cwd(), 'dist/telechargements', decodeURIComponent(req.url.split('?')[0]))
         if (existsSync(f) && statSync(f).isDirectory()) f = join(f, 'index.html')
         if (!existsSync(f)) {

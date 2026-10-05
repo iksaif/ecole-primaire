@@ -24,7 +24,7 @@
 import { preview, loadEnv } from 'vite'
 import { chromium } from 'playwright-core'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join, dirname, extname } from 'node:path'
+import { join, dirname, extname, resolve } from 'node:path'
 import { availableParallelism } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { CATEGORIES } from '../src/impression/catalogue.js'
@@ -37,6 +37,7 @@ import domainesFr from '../src/i18n/fr/domaines.js'
 import domainesBr from '../src/i18n/br/domaines.js'
 import { DOMAINES, nomOfficiel, lienProgramme } from '../src/data/programme.js'
 import { NIVEAUX } from '../src/data/classes.js'
+import { echapper } from '../src/utils/html.js'
 
 const arg = (nom, defaut) => {
   const i = process.argv.indexOf(nom)
@@ -47,7 +48,7 @@ const MODE = arg('--mode', 'production')
 const OUT_DIR = arg('--outDir', 'dist')
 const AVEC_EXERCICES = !process.argv.includes('--sans-exercices')
 const SEUL_EXERCICE = arg('--exercice', null)
-const dist = join(racine, OUT_DIR)
+const dist = resolve(racine, OUT_DIR)   // --outDir relatif à la racine, ou absolu
 const env = loadEnv(MODE, racine)
 const BASE = env.VITE_BASE || '/ecole-primaire/'
 const SITE_URL = (env.VITE_SITE_URL || 'https://iksaif.github.io/ecole-primaire/').replace(/\/?$/, '/')
@@ -65,7 +66,6 @@ const val = (l, cle, a) => {
   const v = T[l][cle] ?? T.fr[cle]
   return typeof v === 'function' ? v(...a) : v
 }
-const echapper = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 // Texte dans la langue principale du site (titres de page, attributs)
 const tx = (cle, ...a) => val(SITE.langue, cle, a)
 // Les deux versions d'un texte ; le sélecteur de langue n'en montre qu'une
@@ -517,7 +517,7 @@ async function main() {
   if (!existsSync(join(dist, 'index.html'))) throw new Error(`${OUT_DIR}/ absent : lancer \`vite build\` avant`)
 
   const serveur = await preview({
-    root: racine, mode: MODE, build: { outDir: OUT_DIR },
+    root: racine, mode: MODE, build: { outDir: dist },
     preview: { port: 4179, strictPort: false, open: false }, logLevel: 'warn',
   })
   const url = serveur.resolvedUrls.local[0]

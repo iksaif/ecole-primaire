@@ -409,7 +409,7 @@ function valider() {
   if (!val) return
   const q = questions.value[idx.value]
   if (+val === q.reponse) enregistrerBon(q)
-  else enregistrerMauvais(q, +val)
+  else enregistrerMauvais(q)
 }
 
 function passer() {
@@ -434,7 +434,7 @@ function enregistrerBon(q) {
   }
 }
 
-function enregistrerMauvais(q, val) {
+function enregistrerMauvais(q) {
   q._resultat = false
   inputClass.value = 'erreur'
   feedback.value = `❌ ${q.a} × ${q.b} = ${q.reponse}`

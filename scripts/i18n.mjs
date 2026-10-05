@@ -5,6 +5,7 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join, relative, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { echapper } from '../src/utils/html.js'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dossier = join(racine, 'src/i18n')
@@ -12,7 +13,6 @@ const LANGUES = ['fr', 'br']
 const relecture = process.argv.includes('--relecture')
 
 const lister = d => readdirSync(d).flatMap(n => (statSync(join(d, n)).isDirectory() ? lister(join(d, n)) : n.endsWith('.js') ? [join(d, n)] : []))
-const echapper = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 const texte = v => (typeof v === 'function' ? `ƒ ${v.toString().replace(/\s+/g, ' ')}` : Array.isArray(v) ? v.join(' · ') : typeof v === 'object' ? JSON.stringify(v) : String(v))
 
 // clés marquées « br: à relire » : commentaire sur la ligne de la clé, ou sur la ligne précédente

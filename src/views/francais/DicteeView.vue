@@ -156,7 +156,7 @@
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { melanger, chargerReglages, chargerValeur, sauvegarder, normaliser, confettis } from '../../utils'
-import { CATEGORIES, PHRASES_DEFAUT, MOTS_AMBIGUS, NIVEAUX, PHRASES_DEFAUT_ALL } from '../../data/dicteeMots'
+import { CATEGORIES, NIVEAUX, PHRASES_DEFAUT_ALL } from '../../data/dicteeMots'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n, enLangue } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/francais/DicteeView.js'

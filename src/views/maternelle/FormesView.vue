@@ -60,7 +60,7 @@
           <div class="formes-grid meme">
             <button v-for="(f, i) in question.choixMeme" :key="i"
               class="forme-btn" :class="reponduClassMeme(i)"
-              :disabled="repondu" @click="validerMeme(i)">
+              :disabled="repondu" :aria-label="t('choixForme', { n: i + 1 })" @click="validerMeme(i)">
               <span v-html="f"></span>
             </button>
           </div>
@@ -97,7 +97,7 @@
           <div class="formes-grid">
             <button v-for="(f, i) in question.choixFormes" :key="i"
               class="forme-btn" :class="reponduClassForme(i)"
-              :disabled="repondu" @click="validerForme(i, f)">
+              :disabled="repondu" :aria-label="t('choixForme', { n: i + 1 })" @click="validerForme(i)">
               <span v-html="f.svg"></span>
             </button>
           </div>
@@ -362,7 +362,7 @@ function validerNb(c) {
   enregistrer(ok)
 }
 
-function validerForme(i, f) {
+function validerForme(i) {
   if (repondu.value) return
   reponseDonnee.value = i
   const ok = i === question.value.idxBonne

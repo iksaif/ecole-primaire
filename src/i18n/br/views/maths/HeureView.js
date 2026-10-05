@@ -18,6 +18,11 @@ export default {
     glisser: 'Rikla an nadozioù gant da viz, pe implij ar boutonoù.', // br: à relire
     petiteAiguille: 'Nadoz vihan (eurioù)',
     grandeAiguille: 'Nadoz vras (munutoù)',
+    reculerHeure: 'Lakaat an nadoz vihan un eur war-gil', // br: à relire
+    avancerHeure: 'Lakaat an nadoz vihan un eur war-raok', // br: à relire
+    reculerMinutes: 'Lakaat an nadoz vras {n} munut war-gil', // br: à relire
+    avancerMinutes: 'Lakaat an nadoz vras {n} munut war-raok', // br: à relire
+    choixHorloge: 'Horolaj {n}', // br: à relire
     ecrisNumerique: '(skriv anezhi evel war un horolaj niverel)',
     ilEst1: '',
     ilEst2: ' eo.',

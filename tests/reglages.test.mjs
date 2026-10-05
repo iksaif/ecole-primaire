@@ -1,5 +1,5 @@
 // Mode impression : chaque réglage visible doit changer la fiche (hasard reproductible). Lent : npm run test:complet
-import { lancerNavigateur, contexte, verifier, URL_SITE, EXERCICES } from './outils.mjs'
+import { lancerNavigateur, contexte, verifier, nbEchecs, URL_SITE, EXERCICES } from './outils.mjs'
 
 const SEL = '.cadre-exercice button:not([role=tab]), .cadre-exercice input[type=checkbox]'
 const nav = await lancerNavigateur()
@@ -37,3 +37,6 @@ for (const r of EXERCICES) {
   verifier(n > 0 && !sansEffet.length, `${r} (${n} réglages)${sansEffet.length ? ' — sans effet : ' + sansEffet.join(' · ') : ''}`)
 }
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

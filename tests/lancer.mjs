@@ -25,14 +25,15 @@ if (!process.env.TEST_URL) {
 }
 
 const fichiers = ['logique', 'routes', 'cadre', 'memorises', 'statiques', 'affiches', 'programme-francais', 'programme-maths', ...(complet ? ['reglages'] : [])]
-let echec = false
+// chaque fichier finit par process.exit(nbEchecs() ? 1 : 0) : on ne lit que son code de sortie (exception, échec
+// d'une vérification ou signal comptent comme un échec)
+const echoues = []
 for (const f of fichiers) {
   console.log(`\n▶ ${f}`)
-  const code = await new Promise(ok => spawn(process.execPath, [`tests/${f}.test.mjs`], { cwd: racine, stdio: ['ignore', 'pipe', 'inherit'], env: process.env })
-    .on('exit', ok)
-    .stdout.on('data', d => { process.stdout.write(d); if (String(d).includes('✗')) echec = true }))
-  if (code) echec = true
+  const code = await new Promise(ok => spawn(process.execPath, [`tests/${f}.test.mjs`], { cwd: racine, stdio: ['ignore', 'inherit', 'inherit'], env: process.env })
+    .on('exit', (c, signal) => ok(signal ? 1 : c)))
+  if (code !== 0) echoues.push(f)
 }
 if (serveur) await new Promise(ok => serveur.httpServer.close(ok))
-console.log(echec ? '\n✗ Des tests ont échoué' : '\n✓ Tous les tests passent')
-process.exit(echec ? 1 : 0)
+console.log(echoues.length ? `\n✗ Des tests ont échoué : ${echoues.join(', ')}` : '\n✓ Tous les tests passent')
+process.exit(echoues.length ? 1 : 0)

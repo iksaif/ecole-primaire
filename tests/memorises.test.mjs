@@ -3,7 +3,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { lancerNavigateur, contexte, surveiller, verifier, app, ROUTES, EXERCICES } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, ROUTES, EXERCICES } from './outils.mjs'
 
 // Clés de réglages présentes dans les sources : 'xxx_config', 'xxx_fiche' (stockées sous ep_xxx_…), et les polices
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')
@@ -50,3 +50,6 @@ for (const valeur of CORROMPUES) {
   await ctx.close()
 }
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

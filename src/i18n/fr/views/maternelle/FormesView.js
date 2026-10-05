@@ -27,4 +27,6 @@ export default {
     erreurNom: "❌ C'est un {nom}",
     erreurCotes: ({ nom, n }) => `❌ Un ${nom} ${n === 0 ? "n'a aucun côté droit" : 'a ' + n + ' côté' + (n > 1 ? 's' : '')}`,
     erreurForme: '❌ C\'était le {nom}',
+    // nom accessible des formes à choisir (sans trahir la réponse)
+    choixForme: 'Forme {n}',
   }

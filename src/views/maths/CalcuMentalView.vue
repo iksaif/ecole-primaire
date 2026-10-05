@@ -108,7 +108,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
+import { aleatoire, confettis, sauvegarder, chargerReglages } from '../../utils'
 import { useI18n } from '../../i18n'
 import messagesFr from '../../i18n/fr/views/maths/CalcuMentalView.js'
 import messagesBr from '../../i18n/br/views/maths/CalcuMentalView.js'

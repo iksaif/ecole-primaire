@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { echapper } from './html.js'
 
 // Outils communs aux documents imprimables (fiches, affiches).
 // Les polices sont embarquées dans le build : tout fonctionne hors ligne.
@@ -171,9 +172,7 @@ export function policeInstallee(police) {
   })
 }
 
-export function echapper(s) {
-  return String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]))
-}
+export { echapper }
 
 // Document complet : chaque page est un <section class="page"> de taille fixe.
 // À l'écran les pages apparaissent comme des feuilles ; à l'impression, une par feuille.

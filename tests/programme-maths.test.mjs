@@ -1,7 +1,7 @@
 // Fiches de maths contre le programme (src/data/programme.js, CONTRAINTES) : pour chaque exercice et chaque niveau,
 // plusieurs graines, on lit le texte de la fiche et on vérifie qu'il reste dans le champ du niveau (nombres, heure,
 // fractions, unités, figures). Réglages par défaut du niveau, plus les options « au programme » (jamais les bonus).
-import { lancerNavigateur, contexte, surveiller, verifier, app } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app } from './outils.mjs'
 import { contraintesDe } from '../src/data/programme.js'
 
 const GRAINES = [1, 2, 3, 4, 5]
@@ -13,7 +13,7 @@ function texteFiche(html, { svg = false } = {}) {
   d.querySelectorAll('style, script').forEach(e => e.remove())
   if (!svg) d.querySelectorAll('svg').forEach(e => e.remove())
   d.querySelectorAll('tr').forEach(tr => {
-    const cases = [...tr.children].map(td => td.textContent.replace(/ /g, '').trim())
+    const cases = [...tr.children].map(td => td.textContent.replace(/\u00a0/g, '').trim())
     if (cases.length > 1 && cases.every(c => /^[\d+−×]?$/.test(c))) tr.textContent = cases.join('')
   })
   const w = d.createTreeWalker(d.body, NodeFilter.SHOW_TEXT)
@@ -176,3 +176,6 @@ for (const [route, bouton, niveau, verifs, options = []] of CAS) {
     `${route} ${bouton ? bouton.replace(/[\^$]/g, '') : ''}${options.length ? ` [${options.join(', ')}]` : ''} → ${niveau.toUpperCase()}${detail ? ' — ' + detail : ''}${erreurs.length ? ' — ' + erreurs[0] : ''}`)
 }
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

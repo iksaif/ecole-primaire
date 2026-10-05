@@ -1,0 +1,13 @@
+{
+  "max": {
+    "brEnDur": 101,
+    "importsBr": 52,
+    "niveauxEnTexte": 55,
+    "vuesLongues": 10,
+    "mathRandomVues": 88,
+    "attentesFixes": 26
+  },
+  "min": {
+    "couverture": 53.2
+  }
+}

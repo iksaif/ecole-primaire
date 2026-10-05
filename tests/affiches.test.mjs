@@ -1,7 +1,7 @@
 // Fiches et affiches toutes prêtes : rien ne sort de la feuille, et aucun bloc ne cache son contenu
 // (texte coupé dans une boîte à overflow caché). Les affiches du programme sont aussi testées dans l'autre
 // orientation et en A3, puisqu'on peut les choisir dans l'app.
-import { lancerNavigateur, contexte, surveiller, verifier, URL_SITE } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE } from './outils.mjs'
 
 const nav = await lancerNavigateur()
 const ctx = await contexte(nav)
@@ -52,3 +52,6 @@ for (const t of liste) {
 verifier(bons === total, `${bons} / ${total} documents sans débordement`)
 verifier(!erreurs.length, 'aucune erreur JavaScript')
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

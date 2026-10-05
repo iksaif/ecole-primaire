@@ -1,5 +1,5 @@
 // Toutes les routes, en français et en breton : pas d'erreur JS, pas de libellé d'interface français en breton
-import { lancerNavigateur, contexte, surveiller, verifier, app, ROUTES } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, ROUTES } from './outils.mjs'
 
 // mots d'interface français qui ne doivent plus apparaître dans l'interface bretonne
 const MOTS_FR = /\b(Commencer|Valider|Passer|Suivant|Quitter|Rejouer|Paramètres|Imprimer|Niveau|Nombre de|Question \d|Bravo|Bonne réponse|Ta réponse|Exercices?|Choisis|Clique|Combien|Écris|Bienvenue|Aperçu|Calculs?)\b/g
@@ -29,3 +29,6 @@ for (const langue of ['fr', 'br']) {
   await ctx.close()
 }
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

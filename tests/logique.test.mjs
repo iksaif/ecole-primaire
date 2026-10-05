@@ -1,7 +1,7 @@
 // Tests de logique pure (node) : nombres en lettres, catalogue des fiches
 import { enLettresFr, enLettresBr } from '../src/utils/nombres.js'
 import { TELECHARGEMENTS } from '../src/impression/catalogue.js'
-import { verifier } from './outils.mjs'
+import { verifier, nbEchecs } from './outils.mjs'
 
 console.log('Nombres en lettres')
 const FR = { 0: 'zéro', 21: 'vingt-et-un', 71: 'soixante-et-onze', 80: 'quatre-vingts', 81: 'quatre-vingt-un', 91: 'quatre-vingt-onze',
@@ -207,3 +207,6 @@ console.log('Catalogue unique : domaine et genre de chaque entrée (plan 09)')
     || (a.matiere === 'imprimer' && !['affiche', 'fiche'].includes(a.genre)))
   verifier(!actFautives.length, `activités : domaine de programme.js et genre des cartes « À imprimer »${actFautives.length ? ` (${actFautives.map(a => a.to).join(', ')})` : ''}`)
 }
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

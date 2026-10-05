@@ -1,5 +1,5 @@
 // Pages d'exercice : mode impression (aperçu, « Nouvelle fiche ») puis mode jeu (Commencer), en fr et en br
-import { lancerNavigateur, contexte, surveiller, verifier, app, EXERCICES } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, EXERCICES } from './outils.mjs'
 
 const nav = await lancerNavigateur()
 for (const langue of ['fr', 'br']) {
@@ -30,3 +30,6 @@ for (const langue of ['fr', 'br']) {
   await ctx.close()
 }
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

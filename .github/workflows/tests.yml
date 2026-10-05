@@ -1,0 +1,45 @@
+name: Tests
+
+# Lint, compteurs de qualité et tests (build de test + Chrome sans interface) sur chaque push et pull request
+# vers main. Mêmes commandes qu'en local : npm run lint, npm run qualite, npm test (voir AGENTS.md).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Compteurs de qualité
+        run: npm run qualite
+
+      # Google Chrome est préinstallé sur ubuntu-latest (/usr/bin/google-chrome, cherché par tests/outils.mjs)
+      - name: Chrome
+        run: google-chrome --version
+
+      - name: Tests
+        run: npm test

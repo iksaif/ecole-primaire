@@ -29,4 +29,5 @@ export default {
     // br: à relire (« kostez » = côté d'un polygone)
     erreurCotes: ({ n }) => `❌ ${n === 0 ? 'Kostez eeun ebet' : 'Niver a gostezioù : ' + n}`,
     erreurForme: '❌ Ar respont mat a oa {nom}',
+    choixForme: 'Stumm {n}', // br: à relire
   }

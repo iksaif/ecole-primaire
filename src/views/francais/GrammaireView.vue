@@ -835,7 +835,6 @@ function indicesOu(tokens, pred) {
 
 const PRONOM_TONIQUE = { Je: 'moi', Tu: 'toi', Il: 'lui', Elle: 'elle', Nous: 'nous', Vous: 'vous', Ils: 'eux', Elles: 'elles' }
 
-const nbVerbes = p => p.tokens.filter(t => t.n === 'verbe').length
 const aSujet = p => p.tokens.some(t => t.sujet)
 const sujetInverse = p => aSujet(p) && p.tokens.findIndex(t => t.sujet) > p.tokens.findIndex(t => t.n === 'verbe')
 

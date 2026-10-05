@@ -7,6 +7,7 @@ import { createServer } from 'vite'
 import { writeFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { echapper } from '../src/utils/html.js'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 // calcul.js importe des modules sans extension : on passe par Vite (rendu côté serveur, sans navigateur)
@@ -22,7 +23,6 @@ await vite.close()
 const SORTES = { exercice: '🎯', fiche: '📄', affiche: '📘' }
 const couverture = (k, n) => ressourcesDe(k.id, n)
 
-const echapper = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 const lignesTerminal = []
 const sections = DOMAINES.map(d => {
   const comps = COMPETENCES.filter(k => k.domaine === d.id)

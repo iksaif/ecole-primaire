@@ -259,7 +259,7 @@ async function genererTexteMistral(niveau) {
   const apiKey = localStorage.getItem('ep_mistral_key') || ''
   if (!apiKey) return obtenirTexteDefaut(niveau)
 
-  let prompt = ''
+  let prompt
   if (niveau === 'cp') {
     prompt = "Génère une phrase simple, mignonne et positive en français, facile à lire pour un enfant de CP (6 ans) en apprentissage de la lecture. Maximum 8 mots. Réponds UNIQUEMENT avec la phrase, sans guillemets ni explication."
   } else if (niveau === 'ce1') {
@@ -435,7 +435,7 @@ function enregistrer(ok) {
 }
 
 function lireMot(mot) {
-  const motNettoye = mot.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?«»"]/g, "")
+  const motNettoye = mot.replace(/[.,/#!$%^&*;:{}=\-_`~()?«»"]/g, "")
   if (motNettoye) lire(motNettoye)
 }
 
@@ -485,7 +485,7 @@ function textesPourFiche(niveau, nb) {
 
 // Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
 function htmlFiche() {
-  let items = []
+  let items
   const nb = config.value.nb
   const niveau = config.value.niveau.toUpperCase()
 
@@ -500,9 +500,7 @@ function htmlFiche() {
     })
   }
 
-  let title = ''
-  let instructions = ''
-  let rowsHtml = ''
+  let title, instructions, rowsHtml
   // corrigé (syllabes, mots) ; rien à corriger pour la lecture à voix haute
   let corrige = ''
 

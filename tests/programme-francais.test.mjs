@@ -1,7 +1,7 @@
 // Programme officiel, français : les fiches générées à chaque niveau restent dans le programme de la classe
 // (CONTRAINTES et COMPETENCES de src/data/programme.js). Chaque niveau est choisi, toutes ses options sont cochées,
 // puis la fiche (srcdoc de l'aperçu) est analysée, pour plusieurs graines.
-import { lancerNavigateur, contexte, surveiller, verifier, URL_SITE } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE } from './outils.mjs'
 import { contraintesDe, competenceDe, HORS_PROGRAMME } from '../src/data/programme.js'
 import { VERBES, AUTRES_VERBES, TITRES_TEMPS } from '../src/data/conjugaison.js'
 
@@ -264,3 +264,6 @@ console.log('Vocabulaire')
 }
 
 await nav.close()
+
+// code de sortie lu par tests/lancer.mjs
+process.exit(nbEchecs() ? 1 : 0)

@@ -195,7 +195,6 @@ const TYPES = ['decomposer', 'representation', 'lettresChiffres', 'chiffresLettr
 // Titres des cases (pluriel, clés de l'interface) ; « 3 centaines » : nom au singulier du catalogue de
 // contenu (cdu_<champ>), accordé par regles().nombre (en breton le nom reste au singulier après un nombre)
 const LIBELLES_CDU = { milliers: 'lib_milliers', centaines: 'lib_centaines', dizaines: 'lib_dizaines', unites: 'lib_unites' }
-const VALEURS_CDU = { milliers: 1000, centaines: 100, dizaines: 10, unites: 1 }
 
 const libCdu = (v, champ) => R.value.nombre(v, C.t(`cdu_${champ}`))
 

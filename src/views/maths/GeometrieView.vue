@@ -677,7 +677,7 @@ const TRAIT = 'stroke="#2c3e50" stroke-width="2.5" stroke-linejoin="round"'
 const CACHE = 'stroke="#2c3e50" stroke-width="2" stroke-dasharray="6 5" fill="none"'
 
 function svgSolide(type, taille = 220) {
-  let c = ''
+  let c
   if (type === 'cube' || type === 'pave') {
     const [x, y, w, h, dx, dy] = type === 'cube' ? [45, 75, 80, 80, 38, -32] : [30, 95, 110, 55, 42, -30]
     const A = [x, y], B = [x + w, y], C = [x + w, y + h], D = [x, y + h]

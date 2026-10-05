@@ -129,7 +129,6 @@ const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 // Maths : le contenu (énoncés, fiche) suit la langue de l'interface
 const langueContenu = computed(() => langue.value)
 const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
-const R = computed(() => regles(langueContenu.value))
 
 // #region generation — fonctions pures (testables hors de Vue)
 
@@ -265,7 +264,7 @@ const MODELES = [
     const [a, b] = tirerSomme(max)
     return pb('ecoles', 'ecolesQ', { a, b }, a + b, U().eleve, `${a} + ${b} = ${a + b}`)
   } },
-  { cat: 'comparaison', cap: 1000, min: 1000, gen(niv, max) {
+  { cat: 'comparaison', cap: 1000, min: 1000, gen() {
     const r = aleatoire(40, 300), b = aleatoire(20, 400), a = r + b
     return pb('velo', 'veloQ', { a, b }, r, U().euro, `${a} − ${b} = ${r}`)
   } },
@@ -392,7 +391,7 @@ const MODELES = [
   } },
 
   // ─── Multiplication par 10, 100 (CE2) ─────────────────────────────────────
-  { cat: 'multiplication', cap: 1000, min: 1000, niveaux: ['ce2'], gen(niv, max) {
+  { cat: 'multiplication', cap: 1000, min: 1000, niveaux: ['ce2'], gen() {
     const n = aleatoire(2, 9), k = Math.random() < 0.5 ? 10 : 100
     return pb('feuilles', 'feuillesQ', { n, k }, n * k, U().feuille, `${n} × ${k} = ${n * k}`)
   } },
@@ -406,7 +405,7 @@ const MODELES = [
     const [a, k] = tirerProduit({ tables: [2, 3, 4, 5] }, max)
     return pb('manteau', 'manteauQ', { a, k }, a * k, U().euro, `${a} × ${k} = ${a * k}`)
   } },
-  { cat: 'foisPlus', cap: 1000, gen(niv, max) {
+  { cat: 'foisPlus', cap: 1000, gen() {
     const p = prenom(), a = aleatoire(7, 10), k = choisir([3, 4])
     const parent = choisir(C.t('parents'))
     return pb('age', 'ageQ', { p, a, k, parent }, a * k, U().an, `${a} × ${k} = ${a * k}`)

@@ -18,6 +18,12 @@ export default {
     glisser: 'Fais glisser les aiguilles avec le doigt, ou utilise les boutons.',
     petiteAiguille: 'Petite aiguille (heures)',
     grandeAiguille: 'Grande aiguille (minutes)',
+    // noms accessibles des boutons de réglage et des horloges à choisir (lecteurs d'écran)
+    reculerHeure: "Reculer la petite aiguille d'une heure",
+    avancerHeure: "Avancer la petite aiguille d'une heure",
+    reculerMinutes: 'Reculer la grande aiguille de {n} min',
+    avancerMinutes: 'Avancer la grande aiguille de {n} min',
+    choixHorloge: 'Horloge {n}',
     ecrisNumerique: '(écris-la comme sur une horloge numérique)',
     ilEst1: 'Il est ',
     ilEst2: '.',

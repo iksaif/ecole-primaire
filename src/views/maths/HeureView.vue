@@ -121,17 +121,17 @@
             <div class="reglage">
               <span class="leg-h">{{ t('petiteAiguille') }}</span>
               <div class="btn-group">
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterHeures(-1)">−</button>
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterHeures(1)">+</button>
+                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerHeure')" @click="ajouterHeures(-1)">−</button>
+                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerHeure')" @click="ajouterHeures(1)">+</button>
               </div>
             </div>
             <div class="reglage">
               <span class="leg-m">{{ t('grandeAiguille') }}</span>
               <div class="btn-group">
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterMinutes(-5)">−5</button>
-                <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterMinutes(-1)">−1</button>
-                <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterMinutes(1)">+1</button>
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" @click="ajouterMinutes(5)">+5</button>
+                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerMinutes', { n: 5 })" @click="ajouterMinutes(-5)">−5</button>
+                <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerMinutes', { n: 1 })" @click="ajouterMinutes(-1)">−1</button>
+                <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerMinutes', { n: 1 })" @click="ajouterMinutes(1)">+1</button>
+                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerMinutes', { n: 5 })" @click="ajouterMinutes(5)">+5</button>
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@
           <div class="consigne">{{ t('ilEst1') }}<strong>{{ q.ecrit24 }}</strong>{{ t('ilEst2') }} {{ t('quelleHorloge') }}</div>
           <div class="choix-horloges">
             <button v-for="(o, i) in q.options" :key="i" class="choix-horloge"
-              :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">
+              :class="classeChoix(i)" :disabled="repondu" :aria-label="t('choixHorloge', { n: i + 1 })" @click="validerChoix(i)">
               <span v-html="svgHorloge(o.h, o.m, { aideMinutes: false })"></span>
             </button>
           </div>

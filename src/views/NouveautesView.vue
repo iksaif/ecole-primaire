@@ -15,10 +15,10 @@ import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/views/NouveautesView.js'
 import messagesBr from '../i18n/br/views/NouveautesView.js'
 import { CONTACT } from '../site'
+import { echapper } from '../utils/html'
 
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
 
-const echapper = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 const enLigne = s => echapper(s)
   .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
   .replace(/« (.+?) »/g, '« <em>$1</em> »')

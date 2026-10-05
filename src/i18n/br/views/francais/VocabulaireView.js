@@ -13,7 +13,6 @@ export default {
     type_contraires: 'Gerioù enep',
     type_synonymes: 'Heñvelsterioù', // br: à relire
     type_homonymes: 'Gerioù distaget memes mod', // br: à relire (mots qui se disent pareil)
-    plusLoin: "evit mont pelloc'h", // br: à relire
     type_sensFigure: 'Ster rik / ster skeudennek', // br: à relire
     type_familles: 'Familhoù gerioù (ger estren)', // br: à relire (« intrus » = ger estren)
     type_prefixes: 'Rakgerioù re-, dé-, in-', // br: à relire (préfixe = rakger)
@@ -21,13 +20,11 @@ export default {
     type_categorie: 'Ger-tikedenn', // br: à relire (mot étiquette)
     type_intrus: 'Ger estren en ur rummad',
     astuce: "Gallout a rez dibab meur a boelladenn : meskañ a vint.",
-    ecouterTitre: 'Selaou',
-    cliqueOrdre: 'Klik war ar gerioù dre urzh al lizherenneg…',
-    effacer: '↺ Diverkañ',
-    suivant: "Da-heul →",
+    ecouterPhrase: 'Selaou',
+    cliqueEtiquettes: 'Klik war ar gerioù dre urzh al lizherenneg…',
+    effacerOrdre: '↺ Diverkañ',
+    suivantFleche: "Da-heul →",
     correction: 'Reizhadenn',
-    thQuestion: 'Goulenn',
-    changer: '⚙️ Cheñch',
     c_alpha: 'Renk ar gerioù dre urzh al lizherenneg.',
     c_lettre: "Peseurt lizherenn a zeu just a-raok pe just war-lerc'h ?",
     c_contraires: 'Kav ar ger enep.',
@@ -66,10 +63,6 @@ export default {
     sensFigure: 'ster skeudennek', // br: à relire
     fbOrdre: '❌ An urzh mat eo : {r}',
     fbChoix: '❌ Ar respont mat eo « {r} »',
-    bravoListe: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
-    res80: 'Mat-tre ! 🌟',
-    res60: 'Mat ! Adwel ar fazioù 💪',
-    res0: "Kalon vat ! Adlenn ar reizhadenn hag adkrog 📚",
     f_alpha: 'Renk ar gerioù dre urzh al lizherenneg.',
     f_lettre: "Skriv al lizherenn a zeu just a-raok pe just war-lerc'h.",
     f_contraires: "Kelc'hia ar ger enep d'ar ger e tev.", // br: à relire (entourer = kelc'hiañ)

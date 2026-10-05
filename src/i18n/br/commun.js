@@ -32,6 +32,12 @@ export default {
     resultat40: "Kalon vat, kendalc'h da embreger ! 🤓",
     resultat0: "Na ziskoulz ket, kendalc'h da embreger ! 📚",
     scoreSur: '{bonnes} respont mat diwar {total}', // br: à relire
+    // fin de la maternelle (ResultatsEtoiles)
+    etoiles5: 'Dispar ! Brav eo ! 🏆',
+    etoiles4: 'Mat-tre ! 🌟',
+    etoiles3: "Mat ! Kendalc'h ! 💪",
+    etoiles0: "Embreger a raimp c'hoazh ! 📚",
+    etoilesSur: '{n} steredenn war 5', // br: à relire
     prenom: 'Anv-bihan',
     nom: 'Anv',
     date: 'Deiziad',

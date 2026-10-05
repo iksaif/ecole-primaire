@@ -3,12 +3,12 @@
     "brEnDur": 99,
     "importsBr": 52,
     "niveauxEnTexte": 55,
-    "vuesLongues": 8,
-    "mathRandomVues": 79,
-    "attentesFixes": 26
+    "vuesLongues": 1,
+    "mathRandomVues": 2,
+    "attentesFixes": 23
   },
   "min": {
-    "couverture": 53.2,
-    "exercicesMigres": 3
+    "couverture": 54.3,
+    "exercicesMigres": 22
   }
 }

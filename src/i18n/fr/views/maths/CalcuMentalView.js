@@ -5,7 +5,6 @@ export default {
     titre: 'Calcul mental',
     operations: 'Opérations',
     tempsParQuestion: 'Temps par question',
-    reponseHist: '❌ (réponse : {r})',
     doubleDe: 'Double de {n} = ?',
     moitieDe: 'Moitié de {n} = ?',
     tempsEcoule: '⏰ Temps écoulé ! La réponse était {r}',

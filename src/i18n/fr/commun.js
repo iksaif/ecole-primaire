@@ -33,6 +33,12 @@ export default {
     resultat0: "N'abandonne pas, pratique encore ! 📚",
     // écran de fin commun (ResultatsJeu) : score lu par les lecteurs d'écran
     scoreSur: '{bonnes} bonnes réponses sur {total}',
+    // fin de la maternelle (ResultatsEtoiles)
+    etoiles5: 'Parfait ! Bravo ! 🏆',
+    etoiles4: 'Très bien ! 🌟',
+    etoiles3: 'Bien ! Continue ! 💪',
+    etoiles0: "On va s'entraîner encore ! 📚",
+    etoilesSur: '{n} étoiles sur 5',
     prenom: 'Prénom',
     nom: 'Nom',
     date: 'Date',

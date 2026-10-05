@@ -61,7 +61,7 @@ if (arg('--reglages')) {
     }
   }
 } else if (module) {
-  const cle = arg('--cle', `${id}_config`)
+  const cle = arg('--cle', `${id.replaceAll('-', '_')}_config`)
   cas = casDe(module.definition, { niveaux, graines, langues }).map(c => ({ ...c, stockage: { [cle]: c.reglages }, clics: [] }))
 } else {
   console.error(`${route} n'est pas dans le registre des exercices : donner les cas avec --reglages fichier.json`)

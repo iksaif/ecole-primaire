@@ -3,268 +3,107 @@
     <h1 class="section-heading">⚖️ {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
-      @commencer="demarrer" @regenerer="regenerer">
-      <div class="config-section">
-        <div class="config-section-title">{{ t('niveau') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.niveau === 'ps' }" @click="choisirNiveau('ps')">
-            🐣 {{ t('beaucoupPlus', { niv: 'PS' }) }}
-          </button>
-          <button class="level-btn" :class="{ active: config.niveau === 'ms' }" @click="choisirNiveau('ms')">
-            🌱 {{ t('jusqua', { niv: 'MS', n: 5 }) }}
-          </button>
-          <button class="level-btn" :class="{ active: config.niveau === 'gs' }" @click="choisirNiveau('gs')">
-            🌳 {{ t('jusqua', { niv: 'GS', n: 10 }) }}
-          </button>
-        </div>
-      </div>
-      <div class="config-section">
-        <div class="config-section-title">{{ t('nbQuestions') }}</div>
-        <div class="btn-group">
-          <button v-for="n in [5, 10]" :key="n"
-            class="level-btn" :class="{ active: config.nbQ === n }" @click="config.nbQ = n">{{ n }}</button>
-        </div>
-      </div>
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+      @commencer="jeu.demarrer" @regenerer="nouvelle">
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')"
+        :libelle="n => `${ICONES[n]} ${n === 'ps' ? t('beaucoupPlus', { niv: 'PS' }) : t('jusqua', { niv: n.toUpperCase(), n: NOMBRE_MAX[n] })}`" />
+      <ChoixReglage :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
     </ConfigExercice>
 
     <!-- Exercice -->
-    <template v-if="phase === 'jeu'">
-      <div class="score-bar">
-        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
-        <span>⭐ {{ bonnes }} &nbsp; 💔 {{ mauvaises }}</span>
-      </div>
+    <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(ps ? 'consignePS' : 'consigne')" />
 
-      <div class="mat-box">
-        <ConsigneParlee :key="idx" class="consigne" :texte="t(ps ? 'consignePS' : 'consigne')" />
-
-        <div class="groupes">
-          <!-- Groupe gauche -->
-          <div class="groupe" :class="{ touchable: ps && !repondu, gagnant: repondu && questions[idx].reponse === 'gauche', perdant: repondu && questions[idx].reponse !== 'gauche' && questions[idx].reponse !== 'egal' }"
-            @click="ps && repondre('gauche')">
-            <div class="groupe-label">A</div>
+      <div class="groupes">
+        <div v-for="(cote, k) in COTES" :key="cote" class="groupe-et-vs">
+          <div v-if="k === 1" class="vs">?</div>
+          <div class="groupe" :class="{ touchable: ps && !repondu, gagnant: repondu && q.reponse === cote,
+            perdant: repondu && q.reponse !== cote && q.reponse !== 'egal' }" @click="ps && repondre(cote)">
+            <div class="groupe-label">{{ k === 0 ? 'A' : 'B' }}</div>
             <div class="groupe-objets">
-              <span v-for="i in questions[idx].gauche" :key="i" class="objet">
-                {{ questions[idx].emoji }}
-              </span>
+              <span v-for="i in q[cote]" :key="i" class="objet">{{ q.emoji }}</span>
             </div>
             <!-- le nombre seulement après la réponse : on compare sans compter d'abord -->
-            <div class="groupe-nb" :class="{ cache: !repondu }">{{ questions[idx].gauche }}</div>
-          </div>
-
-          <div class="vs">?</div>
-
-          <!-- Groupe droit -->
-          <div class="groupe" :class="{ touchable: ps && !repondu, gagnant: repondu && questions[idx].reponse === 'droite', perdant: repondu && questions[idx].reponse !== 'droite' && questions[idx].reponse !== 'egal' }"
-            @click="ps && repondre('droite')">
-            <div class="groupe-label">B</div>
-            <div class="groupe-objets">
-              <span v-for="i in questions[idx].droite" :key="i" class="objet">
-                {{ questions[idx].emoji }}
-              </span>
-            </div>
-            <div class="groupe-nb" :class="{ cache: !repondu }">{{ questions[idx].droite }}</div>
+            <div class="groupe-nb" :class="{ cache: !repondu }">{{ q[cote] }}</div>
           </div>
         </div>
-
-        <!-- Boutons réponse -->
-        <div v-if="!ps" class="reponses">
-          <button class="rep-btn rep-a" :class="etatBtn('gauche')"
-                  :disabled="repondu" @click="repondre('gauche')">
-            👈 {{ t('aPlus', { g: 'A' }) }}
-          </button>
-          <button class="rep-btn rep-egal" :class="etatBtn('egal')"
-                  :disabled="repondu" @click="repondre('egal')">
-            = {{ t('pareil') }}
-          </button>
-          <button class="rep-btn rep-b" :class="etatBtn('droite')"
-                  :disabled="repondu" @click="repondre('droite')">
-            {{ t('aPlus', { g: 'B' }) }} 👉
-          </button>
-        </div>
-
-        <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
       </div>
-    </template>
 
-    <!-- Résultats -->
-    <div v-if="phase === 'resultats'" class="mat-box" style="text-align:center;">
-      <div class="mat-score">{{ bonnes }} / {{ questions.length }}</div>
-      <div class="mat-msg">{{ resultMsg }}</div>
-      <div class="etoiles">
-        <span v-for="i in 5" :key="i">{{ i <= etoilesScore ? '⭐' : '☆' }}</span>
+      <!-- Boutons réponse (PS : on touche le groupe) -->
+      <div v-if="!ps" class="reponses">
+        <button class="rep-btn rep-a" :class="{ bonne: repondu && q.reponse === 'gauche' }" :disabled="repondu" @click="repondre('gauche')">
+          👈 {{ t('aPlus', { g: 'A' }) }}
+        </button>
+        <button class="rep-btn rep-egal" :class="{ bonne: repondu && q.reponse === 'egal' }" :disabled="repondu" @click="repondre('egal')">
+          = {{ t('pareil') }}
+        </button>
+        <button class="rep-btn rep-b" :class="{ bonne: repondu && q.reponse === 'droite' }" :disabled="repondu" @click="repondre('droite')">
+          {{ t('aPlus', { g: 'B' }) }} 👉
+        </button>
       </div>
-      <div class="btn-group" style="justify-content:center;margin-top:1.5rem;">
-        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
-      </div>
-    </div>
+
+      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+    </QuestionJeu>
+
+    <!-- Résultats : la maternelle garde les étoiles -->
+    <ResultatsEtoiles v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length"
+      @rejouer="jeu.recommencer" @reglages="jeu.quitter" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { aleatoire, confettis } from '../../utils'
-import { useI18n } from '../../i18n'
-import messagesFr from '../../i18n/fr/views/maternelle/ComparerView.js'
-import messagesBr from '../../i18n/br/views/maternelle/ComparerView.js'
+// Comparer les quantités : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
+// src/exercices/comparer/ (definition.js, generateur.js, fiche.js).
+import { computed } from 'vue'
+import { useI18n, contenu } from '../../i18n'
 import ConfigExercice from '../../components/ConfigExercice.vue'
+import ChoixReglage from '../../components/ChoixReglage.vue'
+import QuestionJeu from '../../components/QuestionJeu.vue'
 import ConsigneParlee from '../../components/ConsigneParlee.vue'
-import { useClasse } from '../../composables/useClasse'
-import { estMaternelle } from '../../data/classes'
-import { useModeExercice } from '../../composables/useModeExercice'
-import { ligneNomDate } from '../../composables/useOptionsFiche'
+import ResultatsEtoiles from '../../components/ResultatsEtoiles.vue'
+import { useReglages } from '../../composables/useReglages'
+import { useFicheExercice } from '../../composables/useFicheExercice'
+import { useJeu } from '../../composables/useJeu'
+import DEFINITION from '../../exercices/comparer/definition'
+import { INTERFACE, TEXTES } from '../../exercices/comparer/textes'
+import { questions as genererQuestions, questionsFiche, verifier, NOMBRE_MAX } from '../../exercices/comparer/generateur'
+import { fiche as ficheComparer } from '../../exercices/comparer/fiche'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
-
-const EMOJIS = ['🍎','⭐','🐱','🌸','🚗','🦋','🍓','🐸','🐠','🌙','🍪','🎈']
-
-// niveau : celui de la barre du haut s'il est de maternelle ; PS : 5 questions, on touche le groupe
-const classe = useClasse()
-const config = ref({ niveau: estMaternelle(classe.value) ? classe.value : 'ms', nbQ: classe.value === 'ps' ? 5 : 10 })
+const { t } = useI18n(INTERFACE)
+// niveau : celui de la barre du haut s'il est de maternelle ; PS : on touche le groupe qui a le plus
+const { config, langueContenu } = useReglages(DEFINITION, 'comparer_config', { suivreClasse: true })
+const T = contenu(TEXTES, () => langueContenu.value).t
+const ICONES = { ps: '🐣', ms: '🌱', gs: '🌳' }
+const COTES = ['gauche', 'droite']
 const ps = computed(() => config.value.niveau === 'ps')
-function choisirNiveau(n) {
-  config.value.niveau = n
-  if (n === 'ps') config.value.nbQ = 5
-}
-const phase = ref('config')
-const questions = ref([])
-const idx = ref(0)
-const bonnes = ref(0)
-const mauvaises = ref(0)
-const repondu = ref(false)
-const feedback = ref('')
-const feedbackClass = ref('')
 
-function maxNb() { return config.value.niveau === 'ms' ? 5 : 10 }
-
-// PS : comparer « à vue » deux collections dont l'une a au moins deux fois plus d'objets, jusqu'à 10, sans égalité
-// (programme.js, contraintes PS : comparaisonGlobale)
-function genererPS() {
-  const petit = aleatoire(1, 4)
-  const grand = aleatoire(Math.max(2 * petit, petit + 2), 10)
-  const plusAGauche = Math.random() < 0.5
-  const emoji = EMOJIS[aleatoire(0, EMOJIS.length - 1)]
-  return { gauche: plusAGauche ? grand : petit, droite: plusAGauche ? petit : grand, emoji, reponse: plusAGauche ? 'gauche' : 'droite' }
-}
-
-function generer() {
-  if (ps.value) return genererPS()
-  const max = maxNb()
-  const gauche = aleatoire(1, max)
-  const forceEgal = Math.random() < 0.2 // 20% de chance d'être égal
-  const droite = forceEgal ? gauche : aleatoire(1, max)
-  const emoji = EMOJIS[aleatoire(0, EMOJIS.length - 1)]
-  let reponse
-  if (gauche > droite) reponse = 'gauche'
-  else if (droite > gauche) reponse = 'droite'
-  else reponse = 'egal'
-  return { gauche, droite, emoji, reponse }
-}
-
-// ── Fiche imprimable : deux groupes par ligne, entourer celui qui a le plus (pas d'égalité sur papier)
-function htmlFiche() {
-  const qs = Array.from({ length: config.value.nbQ }, () => {
-    let q
-    do { q = generer() } while (q.reponse === 'egal')
-    return q
-  })
-  const groupe = (n, emoji) => `<div class="groupe">${`<span>${emoji}</span>`.repeat(n)}</div>`
-  const lignes = qs.map((q, i) => `<div class="ligne"><span class="num">${i + 1}.</span>
-    ${groupe(q.gauche, q.emoji)}${groupe(q.droite, q.emoji)}</div>`).join('')
-  const titre = t('titre')
-  return `<!DOCTYPE html><html lang="${langue.value}"><head>
-    <meta charset="UTF-8"><title>${titre}</title>
-    <style>
-      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.2cm auto; color: #222; }
-      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
-      .ligne { display: flex; align-items: center; gap: 1.5rem; margin-bottom: .8rem; page-break-inside: avoid; }
-      .num { font-weight: 700; color: #999; min-width: 1.5rem; }
-      .groupe { flex: 1; border: 2px dashed #bbb; border-radius: 18px; padding: .6rem; min-height: 4.2rem;
-        display: flex; flex-wrap: wrap; gap: .3rem; justify-content: center; align-content: center; font-size: 1.6rem; line-height: 1.1; }
-      .corr { columns: 3; font-size: 1.1rem; line-height: 2; }
-    </style></head><body>
-    <h1>${titre}</h1>
-    ${ligneNomDate(langue.value)}
-    <p class="consigne">${t('fConsigne')}</p>
-    ${lignes}
-    <section class="corrige"><h2>${t('corrige')} — ${titre}</h2>
-      <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.reponse === 'gauche' ? `<b>${q.gauche}</b> · ${q.droite}` : `${q.gauche} · <b>${q.droite}</b>`}</div>`).join('')}</div></section>
-  </body></html>`
-}
-
-const { mode, graine, regenerer } = useModeExercice()
-const fiche = computed(() => {
-  if (mode.value !== 'imprimer') return ''
-  graine.value
-  return htmlFiche()
+// ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──
+const jeu = useJeu({
+  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+  verifier,
+  messageErreur: q => `❌ ${q.reponse === 'egal' ? t('memeNombre')
+    : q.reponse === 'gauche' ? `${t('aPlus', { g: 'A' })} : ${q.gauche} > ${q.droite}` : `${t('aPlus', { g: 'B' })} : ${q.droite} > ${q.gauche}`}`,
+  apresErreur: 'continuer',
+  delai: 1200,
 })
+const { phase, questions, q, bonnes, retour, repondu, etat } = jeu
+const repondre = choix => jeu.repondre({ choix })
 
-function demarrer() {
-  questions.value = Array.from({ length: config.value.nbQ }, generer)
-  idx.value = 0; bonnes.value = 0; mauvaises.value = 0
-  phase.value = 'jeu'
-  resetQ()
-}
-
-function resetQ() {
-  repondu.value = false; feedback.value = ''; feedbackClass.value = ''
-}
-
-function etatBtn(val) {
-  if (!repondu.value) return ''
-  const q = questions.value[idx.value]
-  if (val === q.reponse) return 'bonne'
-  return ''
-}
-
-function repondre(val) {
-  if (repondu.value) return
-  repondu.value = true
-  const q = questions.value[idx.value]
-  const ok = val === q.reponse
-  if (ok) {
-    const b = t('bravo'); feedback.value = b[aleatoire(0, b.length - 1)]
-    feedbackClass.value = 'ok'; bonnes.value++
-  } else {
-    const msg = q.reponse === 'egal' ? t('memeNombre')
-              : q.reponse === 'gauche' ? `${t('aPlus', { g: 'A' })} : ${q.gauche} > ${q.droite}`
-              : `${t('aPlus', { g: 'B' })} : ${q.droite} > ${q.gauche}`
-    feedback.value = `❌ ${msg}`
-    feedbackClass.value = 'erreur'; mauvaises.value++
-  }
-  setTimeout(() => { idx.value++; if (idx.value >= questions.value.length) phase.value = 'resultats'; else resetQ() }, 1200)
-}
-
-const etoilesScore = computed(() => {
-  const p = bonnes.value / questions.value.length
-  return p === 1 ? 5 : p >= .8 ? 4 : p >= .6 ? 3 : p >= .4 ? 2 : 1
-})
-const resultMsg = computed(() => {
-  const e = etoilesScore.value
-  if (e === 5) { confettis(50); return t('resultat5') }
-  if (e >= 4)  { confettis(25); return t('resultat4') }
-  if (e >= 3)  return t('resultat3')
-  return t('resultat0')
+// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+const { mode, fiche, nouvelle } = useFicheExercice({
+  tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+  mettreEnPage: (questions, police) => ficheComparer({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
 <style scoped>
-.mat-box {
-  background: white; border-radius: var(--radius); box-shadow: var(--shadow);
-  padding: 2rem 1.5rem; max-width: 700px; margin: 0 auto; text-align: center;
-}
 .consigne { font-size: 1.4rem; font-weight: 800; margin-bottom: 1.5rem; }
 
-.groupes {
-  display: flex; align-items: center; justify-content: center;
-  gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
-}
+.groupes { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.groupe-et-vs { display: contents; }
 
 .groupe {
-  background: var(--gris-bg); border-radius: 16px;
-  padding: 1rem; min-width: 140px; flex: 1; max-width: 220px;
+  background: var(--gris-bg); border-radius: 16px; padding: 1rem; min-width: 140px; flex: 1; max-width: 220px;
   border: 4px solid var(--gris-brd); transition: border-color .2s, background .2s;
 }
 .groupe.gagnant { border-color: var(--vert); background: #f0faf0; }
@@ -278,14 +117,11 @@ const resultMsg = computed(() => {
 .groupe.touchable { cursor: pointer; border-color: var(--bleu); }
 .groupe.touchable:hover { background: #eaf2fd; transform: scale(1.02); }
 
-.vs { font-size: 2.5rem; font-weight: 900; color: #ccc; flex-shrink: 0; }
+.vs { font-size: 2.5rem; font-weight: 900; color: #ccc; flex-shrink: 0; order: 0; }
 
-.reponses {
-  display: grid; grid-template-columns: 1fr auto 1fr; gap: .75rem; margin-bottom: 1rem;
-}
+.reponses { display: grid; grid-template-columns: 1fr auto 1fr; gap: .75rem; margin-bottom: 1rem; }
 .rep-btn {
-  font-size: 1.1rem; font-weight: 800; padding: .75rem .5rem;
-  border-radius: 12px; border: 3px solid var(--gris-brd);
+  font-size: 1.1rem; font-weight: 800; padding: .75rem .5rem; border-radius: 12px; border: 3px solid var(--gris-brd);
   background: white; cursor: pointer; transition: all .15s;
 }
 .rep-btn:hover:not(:disabled) { transform: scale(1.04); }
@@ -294,8 +130,4 @@ const resultMsg = computed(() => {
 .rep-b    { border-color: var(--violet); color: var(--violet); }
 .rep-egal { border-color: var(--orange); color: var(--orange); }
 .rep-btn.bonne { background: var(--vert); border-color: var(--vert); color: white; }
-
-.mat-score { font-size: 4rem; font-weight: 900; }
-.mat-msg   { font-size: 1.3rem; color: #555; margin: .5rem 0; }
-.etoiles   { font-size: 2.5rem; letter-spacing: .2rem; margin: .5rem 0; }
 </style>

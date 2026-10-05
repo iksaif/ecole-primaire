@@ -32,7 +32,7 @@ export function ligneNomDate(langue) {
  * @param {string} o.langue langue du contenu (attribut lang)
  * @param {string} o.corps HTML du corps, après le h1 : ligneNomDate, exercices, section.corrige
  * @param {string} [o.css] CSS propre à la fiche (après le CSS de base, qu'il peut préciser)
- * @param {string} [o.h1] HTML du titre affiché (ex. avec un emoji) ; par défaut le titre
+ * @param {string | null} [o.h1] HTML du titre affiché (ex. avec un emoji) ; par défaut le titre ; null : aucun (le corps a les siens, une fiche en plusieurs pages)
  * @param {string} [o.police] familles CSS du texte (POLICE_SCOLAIRE par défaut : Andika, puis Arial)
  * @param {string} [o.cssPolices] @font-face à embarquer (usePoliceFiche() côté navigateur)
  * @param {string} [o.largeur] largeur maximale du corps
@@ -47,7 +47,7 @@ export function documentFiche({ titre, langue, corps, css = '', h1, police = POL
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
 ${css}
     </style></head><body>
-    <h1>${h1 ?? echapper(titre)}</h1>
+    ${h1 === null ? '' : `<h1>${h1 ?? echapper(titre)}</h1>`}
     ${corps}
   </body></html>`
 }

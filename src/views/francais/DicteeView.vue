@@ -3,64 +3,27 @@
     <h1 class="section-heading">🖊️ {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
-      :desactive="config.cats.length === 0 || loading" @commencer="demarrer" @regenerer="regenerer">
-      <div class="config-section">
-        <div class="config-section-title">{{ t('niveau') }}</div>
-        <div class="btn-group">
-          <button v-for="niv in ['CP','CE1','CE2','CM']" :key="niv"
-            class="level-btn" :class="{ active: config.niveau === niv }"
-            @click="config.niveau = niv">{{ niv }}</button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('categories', { n: config.niveau }) }}</div>
-        <div class="btn-group" style="flex-wrap:wrap;">
-          <button v-for="cat in Object.keys(categoriesActuelles)" :key="cat"
-            class="cat-btn" :class="{ active: config.cats.includes(cat) }"
-            @click="toggleCat(cat)">
-            {{ nomCat(cat) }} ({{ categoriesActuelles[cat].length }})
-          </button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('mode') }}</div>
-        <div class="mode-cards">
-          <button class="mode-card" :class="{ active: config.mode === 'mots' }" @click="config.mode = 'mots'">
-            <div class="mode-icon">🔤</div>
-            <div class="mode-title">{{ t('motsSeuls') }}</div>
-            <div class="mode-desc">{{ t('motsSeulsDesc') }}</div>
-          </button>
-          <button class="mode-card" :class="{ active: config.mode === 'phrases' }" @click="config.mode = 'phrases'">
-            <div class="mode-icon">💬</div>
-            <div class="mode-title">{{ t('phrases') }}</div>
-            <div class="mode-desc">{{ t('phrasesDesc') }}</div>
-          </button>
-        </div>
-      </div>
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+      :desactive="chargement" @commencer="commencer" @regenerer="nouvelle">
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="cats" v-model="config.cats"
+        :titre="t('categories', { n: etiquetteNiveau })" :libelle="cat => `${nomCat(t, cat)} (${corpus.categories[cat].length})`" />
+      <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('mode')"
+        :libelle="m => t(m === 'mots' ? 'motsSeuls' : 'phrases')" :icone="m => (m === 'mots' ? '🔤' : '💬')"
+        :description="m => t(m === 'mots' ? 'motsSeulsDesc' : 'phrasesDesc')" />
 
       <div class="config-section" v-if="mode === 'jouer' && config.mode === 'phrases'">
         <div class="config-section-title">
           {{ t('cleApi') }}
-          <span style="font-weight:400;color:#aaa;font-size:.85em"> {{ t('cleApiOpt') }}</span>
+          <span class="cle-opt"> {{ t('cleApiOpt') }}</span>
         </div>
         <div class="api-row">
-          <span v-if="apiKeySaved" class="api-ok">{{ t('cleOk') }}</span>
-          <span v-else class="api-ok" style="color:#aaa;">{{ t('cleAucune') }}</span>
-          <RouterLink to="/parametres" class="btn btn-ghost" style="font-size:.85rem;">{{ t('parametresParents') }}</RouterLink>
+          <span class="api-ok" :class="{ aucune: !cleMistral }">{{ cleMistral ? t('cleOk') : t('cleAucune') }}</span>
+          <RouterLink to="/parametres" class="btn btn-ghost">{{ t('parametresParents') }}</RouterLink>
         </div>
       </div>
 
-      <div class="config-section">
-        <div class="config-section-title">{{ t('nbMots') }}</div>
-        <div class="btn-group">
-          <button v-for="n in [5,10,15,0]" :key="n"
-            class="level-btn" :class="{ active: config.nb === n }"
-            @click="config.nb = n">{{ n === 0 ? t('tous') : n }}</button>
-        </div>
-      </div>
+      <ChoixReglage :definition="DEFINITION" cle="nb" v-model="config.nb" :titre="t('nbMots')" :libelle="n => (n === 0 ? t('tous') : n)" />
 
       <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('vitesse') }}</div>
@@ -75,193 +38,106 @@
       <div v-if="mode === 'imprimer'" class="config-section">
         <div class="config-section-title">{{ t('pagesFiche') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: ficheConfig.liste }" @click="basculerPage('liste')">📋 {{ t('pageListe') }}</button>
-          <button class="level-btn" :class="{ active: ficheConfig.dictee }" @click="basculerPage('dictee')">✏️ {{ t('pageDictee') }}</button>
+          <button class="level-btn" :class="{ active: config.liste }" @click="basculerPage('liste')">📋 {{ t('pageListe') }}</button>
+          <button class="level-btn" :class="{ active: config.dictee }" @click="basculerPage('dictee')">✏️ {{ t('pageDictee') }}</button>
         </div>
       </div>
+      <div v-if="chargement" class="loading-badge"><span class="spinner"></span> {{ t('generation') }}</div>
     </ConfigExercice>
 
-    <!-- Dictée -->
-    <template v-if="phase === 'jeu'">
-      <div class="score-bar">
-        <button class="btn-quitter" @click="arreter(); phase = 'config'" :title="t('quitterDictee')">{{ t('quitter') }}</button>
-        <span>{{ t('motN', { n: idx + 1, total: liste.length }) }}</span>
-        <span v-if="loading" class="loading-badge"><span class="spinner"></span> {{ t('generation') }}</span>
-        <span>✅ {{ nbBonnes }} &nbsp; ❌ {{ nbMauvaises }}</span>
-      </div>
-
-      <div class="exercise-box">
-        <div class="prog-dots">
-          <div v-for="(_, i) in liste" :key="i"
-               class="prog-dot" :class="dotClass(i)"></div>
-        </div>
-
-        <!-- Contexte phrase -->
-        <div v-if="config.mode === 'phrases' && currentPhrase" class="phrase-ctx-container">
-          <button v-if="!afficherIndice" class="btn btn-ghost btn-sm" style="margin-bottom: 1.25rem;" @click="afficherIndice = true">
-            {{ t('afficherIndice') }}
-          </button>
-          <div v-else class="phrase-ctx">
-            <span v-html="phraseAvecBlanc"></span>
-            <button class="btn-masquer-indice" @click="afficherIndice = false" :title="t('masquerIndice')">🙈</button>
-          </div>
-        </div>
-
-        <button class="btn-ecouter" :class="{ playing: enLecture }" @click="ecouterMot()">
-          <span>{{ enLecture ? '⏹' : '🔊' }}</span>
-          <span>{{ enLecture ? t('arreter') : (config.mode === 'phrases' ? t('ecouterPhrase') : t('ecouterMot')) }}</span>
-        </button>
-
-        <div class="hint-text">{{ t('consigne') }}</div>
-
-        <input ref="inputEl" class="dictee-input" :class="inputClass"
-               type="text" v-model="reponse" placeholder="…"
-               autocomplete="off" autocorrect="off" autocapitalize="none"
-               spellcheck="false" @keydown.enter="validerMot">
-
-        <div class="feedback" :class="feedbackClass">{{ feedbackTxt }}</div>
-
-        <div class="btn-group" style="justify-content:center;margin-top:.75rem;">
-          <button class="btn btn-ghost" @click="ecouterMot()">{{ t('reecouter') }}</button>
-          <button class="btn btn-primary" @click="validerMot">{{ t('valider') }}</button>
-          <button class="btn btn-ghost" @click="passerMot">{{ t('passer') }}</button>
+    <!-- Dictée : un mot (ou une phrase) à écouter, puis à écrire -->
+    <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
+      <!-- Contexte phrase -->
+      <div v-if="q.mode === 'phrases' && q.phrase" class="phrase-ctx-container">
+        <button v-if="!afficherIndice" class="btn btn-ghost btn-sm indice" @click="afficherIndice = true">{{ t('afficherIndice') }}</button>
+        <div v-else class="phrase-ctx">
+          <span v-html="phraseAvecBlanc"></span>
+          <button class="btn-masquer-indice" @click="afficherIndice = false" :title="t('masquerIndice')" :aria-label="t('masquerIndice')">🙈</button>
         </div>
       </div>
-    </template>
+
+      <button class="btn-ecouter" :class="{ playing: enLecture }" @click="ecouter">
+        <span>{{ enLecture ? '⏹' : '🔊' }}</span>
+        <span>{{ enLecture ? t('arreter') : (q.mode === 'phrases' ? t('ecouterPhrase') : t('ecouterMot')) }}</span>
+      </button>
+
+      <div class="hint-text">{{ t('consigne') }}</div>
+
+      <SaisieReponse v-model="reponse" class="dictee-input" :etat="etat" :disabled="repondu" focus placeholder="…" @entree="valider" />
+
+      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+
+      <div class="btn-group actions">
+        <button class="btn btn-ghost" @click="ecouter">{{ t('reecouter') }}</button>
+        <button class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('valider') }}</button>
+        <button class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('passer') }}</button>
+      </div>
+    </QuestionJeu>
 
     <!-- Résultats -->
-    <div v-if="phase === 'resultats'" class="exercise-box" style="text-align:center;">
-      <div class="result-score">{{ nbBonnes }} / {{ liste.length }}</div>
-      <div class="result-msg">{{ resultMsg }}</div>
-
-      <table class="correction-table">
-        <thead><tr><th>{{ t('attendu') }}</th><th>{{ t('taReponse') }}</th><th></th></tr></thead>
-        <tbody>
-          <tr v-for="(r, i) in resultats" :key="i" :class="r.ok ? 'ok' : 'erreur'">
-            <td class="mot-attendu">{{ r.attendu }}</td>
-            <td>{{ r.ok ? '—' : (r.passe ? t('passe') : r.donne) }}</td>
-            <td>{{ r.ok ? '✅' : '❌' }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
-      </div>
-    </div>
+    <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
+      @rejouer="commencer" @reglages="jeu.quitter">
+      <TableauCorrection :historique="historique">
+        <template #question="{ entree }">{{ historique.indexOf(entree) + 1 }}</template>
+      </TableauCorrection>
+    </ResultatsJeu>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { melanger, chargerReglages, chargerValeur, sauvegarder, normaliser, confettis } from '../../utils'
-import { CATEGORIES, NIVEAUX, PHRASES_DEFAUT_ALL } from '../../data/dicteeMots'
+// Dictée : la vue ne fait que les réglages, la voix et le rendu. Niveaux, générateur et fiche : src/exercices/dictee/
+// (definition.js, generateur.js, fiche.js) ; mots : src/data/dicteeMots.js. Exercice de français : la fiche est toujours
+// en français, l'interface suit la langue choisie.
+import { ref, computed, watch, nextTick, onUnmounted } from 'vue'
+import { estVide } from '../../utils/reponses'
+import { chargerValeur, sauvegarder } from '../../utils'
+import { creerRng, graineAleatoire } from '../../utils/hasard'
 import { useTTS } from '../../composables/useTTS'
-import { useI18n, enLangue } from '../../i18n'
-import messagesFr from '../../i18n/fr/views/francais/DicteeView.js'
-import messagesBr from '../../i18n/br/views/francais/DicteeView.js'
+import { useI18n, contenu } from '../../i18n'
 import ConfigExercice from '../../components/ConfigExercice.vue'
-import { useModeExercice } from '../../composables/useModeExercice'
-import { ligneNomDate } from '../../composables/useOptionsFiche'
-import { cssPolices, echapper, POLICE_SCRIPT, POLICE_ATTACHE } from '../../utils/impression'
+import ChoixReglage from '../../components/ChoixReglage.vue'
+import QuestionJeu from '../../components/QuestionJeu.vue'
+import ResultatsJeu from '../../components/ResultatsJeu.vue'
+import SaisieReponse from '../../components/SaisieReponse.vue'
+import TableauCorrection from '../../components/TableauCorrection.vue'
+import { useReglages } from '../../composables/useReglages'
+import { useFicheExercice } from '../../composables/useFicheExercice'
+import { useJeu } from '../../composables/useJeu'
+import DEFINITION, { corpusDe } from '../../exercices/dictee/definition'
+import { INTERFACE, TEXTES } from '../../exercices/dictee/textes'
+import { questions as genererQuestions, questionsFiche, verifier, phraseDe } from '../../exercices/dictee/generateur'
+import { fiche as ficheDictee, nomCat } from '../../exercices/dictee/fiche'
 
-const { t } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t } = useI18n(INTERFACE)
+// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; contenu
+// (fiche) : toujours en français
+const { config, langueContenu } = useReglages(DEFINITION, 'dictee_config')
+const T = contenu(TEXTES, () => langueContenu.value).t
 
-// Noms des catégories (définies en français dans data/dicteeMots.js) : clé du catalogue d'interface dérivée
-// du nom français, ex. « Corps humain » → cat_corps_humain ; le nom français s'affiche si la clé manque.
-const cleCat = cat => 'cat_' + cat.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
-const nomCat = cat => { const k = cleCat(cat), v = t(k); return v === k ? cat : v }
+const corpus = computed(() => corpusDe(config.value.niveau))
+// CM1 et CM2 partagent un corpus : « CM »
+const etiquetteNiveau = computed(() => (config.value.niveau.startsWith('cm') ? 'CM' : config.value.niveau.toUpperCase()))
+const cleMistral = ref(!!localStorage.getItem('ep_mistral_key'))
 
-const config = ref({
-  niveau:  chargerValeur('dictee_niveau', 'CP'),
-  cats:    chargerValeur('dictee_cats', Object.keys(CATEGORIES)),
-  mode:    chargerValeur('dictee_mode', 'mots'),
-  nb:      chargerValeur('dictee_nb', 10),
-  vitesse: chargerValeur('dictee_vitesse', 0.75),
-})
-
-watch(config, v => {
-  sauvegarder('dictee_niveau', v.niveau)
-  sauvegarder('dictee_mode', v.mode)
-  sauvegarder('dictee_nb', v.nb)
-  sauvegarder('dictee_vitesse', v.vitesse)
-  sauvegarder('dictee_cats', v.cats)
-}, { deep: true })
-
-const apiKeySaved = ref(!!localStorage.getItem('ep_mistral_key'))
-
-const phase = ref('config')
-const liste = ref([])
-const idx   = ref(0)
-const resultats = ref([])
+// ── Voix ──
+const { enLecture, lire, arreter } = useTTS()
 const reponse = ref('')
 const afficherIndice = ref(false)
-const feedback = ref(null)  // { ok, i } ou { ok: false, r } — texte calculé selon la langue
-const feedbackTxt = computed(() => {
-  const f = feedback.value
-  if (!f) return ''
-  return f.ok ? t('feedbackOk')[f.i] : t('feedbackErr', { r: f.r })
-})
-const feedbackClass = ref('')
-const inputClass = ref('')
-const loading = ref(false)
-const inputEl = ref(null)
-
-const { enLecture, lire, arreter } = useTTS()
-
-const niveauData = computed(() => NIVEAUX[config.value.niveau] ?? NIVEAUX.CP)
-const categoriesActuelles = computed(() => niveauData.value.categories)
-const ambigsActuels = computed(() => niveauData.value.ambigus)
-
-watch(() => config.value.niveau, () => {
-  config.value.cats = Object.keys(categoriesActuelles.value)
-})
-
-// ── Getters
-const nbBonnes   = computed(() => resultats.value.filter(r => r.ok).length)
-const nbMauvaises = computed(() => resultats.value.filter(r => !r.ok).length)
-const currentMot    = computed(() => liste.value[idx.value]?.mot ?? '')
-const currentPhrase = computed(() => liste.value[idx.value]?.phrase ?? '')
-
+function ecouter() {
+  if (enLecture.value) { arreter(); return }
+  const qu = q.value
+  if (qu) lire(qu.phrase ?? qu.mot, { vitesse: config.value.vitesse })
+}
 const phraseAvecBlanc = computed(() => {
-  const phrase = currentPhrase.value
-  const mot = currentMot.value
+  const { phrase, mot } = q.value ?? {}
   if (!phrase || !mot) return phrase
-  const re = new RegExp(mot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
-  return phrase.replace(re, `<span class="blank">___</span>`)
+  return phrase.replace(new RegExp(mot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '<span class="blank">___</span>')
 })
 
-const resultMsg = computed(() => {
-  const pct = nbBonnes.value / liste.value.length * 100
-  if (pct === 100) { confettis(50); return t('res100') }
-  if (pct >= 80)   { confettis(25); return t('res80') }
-  if (pct >= 60)   return t('res60')
-  return t('res0')
-})
-
-// ── Config
-function toggleCat(cat) {
-  const cats = config.value.cats
-  if (cats.includes(cat)) {
-    if (cats.length === 1) return
-    config.value.cats = cats.filter(c => c !== cat)
-  } else {
-    config.value.cats = [...cats, cat]
-  }
-}
-
-function dotClass(i) {
-  if (i === idx.value && phase.value === 'jeu') return 'current'
-  const r = resultats.value[i]
-  if (!r) return ''
-  return r.ok ? 'ok' : 'erreur'
-}
-
-// ── Mistral
+// ── Phrases générées (clé Mistral des parents, facultative) : à défaut, celles de src/data/dicteeMots.js ──
 async function genererPhrase(mot) {
   const apiKey = localStorage.getItem('ep_mistral_key') || ''
-  if (!apiKey) return PHRASES_DEFAUT_ALL[mot] || `Je vois ${mot}.`
+  if (!apiKey) return phraseDe(mot)
   try {
     const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
@@ -276,237 +152,91 @@ async function genererPhrase(mot) {
     })
     if (!res.ok) throw new Error()
     const data = await res.json()
-    return data.choices?.[0]?.message?.content?.trim() || PHRASES_DEFAUT_ALL[mot] || `Je vois ${mot}.`
+    return data.choices?.[0]?.message?.content?.trim() || phraseDe(mot)
   } catch {
-    return PHRASES_DEFAUT_ALL[mot] || `Je vois ${mot}.`
+    return phraseDe(mot)
   }
 }
 
-// Mots des catégories choisies (sans doublon ; sans les homophones/ambigus en mode « mots seuls »)
-function motsChoisis() {
-  let pool = []
-  config.value.cats.forEach(cat => { if (categoriesActuelles.value[cat]) pool.push(...categoriesActuelles.value[cat]) })
-  pool = [...new Set(pool)]
-  if (config.value.mode === 'mots') pool = pool.filter(m => !ambigsActuels.value.has(m))
-  return pool
-}
+// ── Jeu : un mot, ou une phrase, à la fois ; bonne réponse : mot suivant après 0,9 s ; erreur : la réponse est lue puis
+// on continue après 2,4 s ; « Passer » enchaîne aussitôt ──
+let preparees = []
+const chargement = ref(false)
+const jeu = useJeu({
+  generer: () => preparees,
+  verifier,
+  messageErreur: (qu, rep) => (rep ? t('feedbackErr', { r: qu.attendu }) : ''),
+  messageNuance: qu => `⚠️ ${t('accents', { r: qu.attendu })}`,
+  surQuestion: () => { reponse.value = ''; afficherIndice.value = false; nextTick(ecouter) },
+  delai: 900,
+  apresErreur: 'continuer',
+  delaiErreur: 2400,
+})
+const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 
-// ── Démarrage
-async function demarrer() {
-  if (loading.value) return  // empêche double-clic pendant la génération
+async function commencer() {
+  if (chargement.value) return  // empêche le double clic pendant la génération
   arreter()
-
-  let pool = motsChoisis()
-
-  // Rotation inter-sessions : repousser les mots vus récemment en fin de pool
+  // mots récemment vus : repoussés en fin de liste, d'une séance à l'autre
   const cle = `dictee_vus_${config.value.mode}`
-  const vusRecemment = new Set(chargerValeur(cle, []))
-  const frais  = melanger(pool.filter(m => !vusRecemment.has(m)))
-  const anciens = melanger(pool.filter(m =>  vusRecemment.has(m)))
-  pool = [...frais, ...anciens]
-
-  if (config.value.nb > 0) pool = pool.slice(0, config.value.nb)
-
-  // Mémoriser les mots utilisés pour la prochaine session
-  sauvegarder(cle, pool)
-
-  phase.value = 'jeu'
-  idx.value = 0; resultats.value = []
-
+  const qs = genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()), vus: chargerValeur(cle, []) })
+  sauvegarder(cle, qs.map(x => x.mot))
   if (config.value.mode === 'phrases') {
-    loading.value = true
-    liste.value = []
-    for (const mot of pool) {
-      const phrase = await genererPhrase(mot)
-      liste.value = [...liste.value, { mot, phrase }]
-    }
-    loading.value = false
-  } else {
-    liste.value = pool.map(mot => ({ mot, phrase: null }))
+    chargement.value = true
+    const phrases = await Promise.all(qs.map(x => genererPhrase(x.mot)))
+    qs.forEach((x, i) => { x.phrase = x.attendu = phrases[i] })
+    chargement.value = false
   }
-
-  nextTick(() => { afficherMot(); ecouterMot() })
+  preparees = qs
+  jeu.demarrer()
 }
 
-// ── Fiche imprimable : liste des mots à apprendre + page de dictée (corrigé à la fin)
-const ficheConfig = ref(chargerReglages('dictee_fiche', { liste: true, dictee: true }))
-watch(ficheConfig, v => sauvegarder('dictee_fiche', v), { deep: true })
+function valider() {
+  if (repondu.value || estVide(reponse.value)) return
+  arreter()
+  jeu.repondre({ texte: reponse.value }, { donne: reponse.value.trim() })
+}
+function passer() {
+  if (repondu.value) return
+  arreter()
+  jeu.passer({ donne: t('passe') })
+  jeu.suivante()
+}
+
+// après une erreur, la bonne réponse est lue
+let relecture = null
+watch(retour, r => {
+  clearTimeout(relecture)
+  if (r && !r.ok && r.message) relecture = setTimeout(() => lire(q.value.attendu, { vitesse: config.value.vitesse }), 600)
+})
+watch(phase, p => { if (p !== 'jeu') { arreter(); clearTimeout(relecture) } })
+onUnmounted(() => { arreter(); clearTimeout(relecture) })
+
+// ── Fiche imprimable : au moins une des deux pages ──
 function basculerPage(p) {
   const autre = p === 'liste' ? 'dictee' : 'liste'
-  if (ficheConfig.value[p] && !ficheConfig.value[autre]) return // au moins une page
-  ficheConfig.value[p] = !ficheConfig.value[p]
+  if (config.value[p] && !config.value[autre]) return
+  config.value[p] = !config.value[p]
 }
-
-function htmlFiche() {
-  let mots = melanger(motsChoisis())
-  if (config.value.nb > 0) mots = mots.slice(0, config.value.nb)
-  const phrases = config.value.mode === 'phrases'
-  const e = echapper
-  const titre = `${t('titre')} — ${config.value.niveau}`
-  const entete = `<h1>${e(titre)}</h1>
-    ${ligneNomDate('fr')}`
-
-  // Page 1 : mots à apprendre, regroupés par catégorie
-  const parCat = config.value.cats
-    .map(cat => ({ cat, mots: (categoriesActuelles.value[cat] ?? []).filter(m => mots.includes(m)) }))
-    .filter(g => g.mots.length)
-  const vus = new Set()
-  const liste = parCat.map(g => {
-    const ms = g.mots.filter(m => !vus.has(m) && vus.add(m))
-    if (!ms.length) return ''
-    return `<h2>${e(nomCat(g.cat))}</h2>
-      <table><tbody>${ms.map(m => `<tr><td class="script">${e(m)}</td><td class="attache">${e(m)}</td><td class="recopie"></td></tr>`).join('')}</tbody></table>`
-  }).join('')
-  const pageListe = `<section>${entete}
-    <p class="consigne">${t('fConsigneListe')}</p>
-    <table class="cols"><thead><tr><th>${t('fScript')}</th><th>${t('fAttache')}</th><th>${t('fRecopie')}</th></tr></thead></table>
-    ${liste}</section>`
-
-  // Page 2 : lignes numérotées, l'adulte dicte
-  const lignes = mots.map((_, i) => `<div class="ligne"><span class="num">${i + 1}.</span><span class="trait"></span></div>`).join('')
-  const pageDictee = `<section>${entete}
-    <p class="consigne">${t(phrases ? 'fConsignePhrases' : 'fConsigneMots')}</p>
-    <div class="${phrases ? 'lignes-phrases' : 'lignes-mots'}">${lignes}</div></section>`
-
-  // Corrigé : ce que l'adulte dicte
-  const phraseDe = m => PHRASES_DEFAUT_ALL[m] || `Je vois ${m}.`
-  const corrige = `<section class="corrige"><h2>${t('corrige')} — ${e(titre)}</h2>
-    <p class="consigne">${t('fADicter')}</p>
-    <ol class="a-dicter">${mots.map(m => `<li>${phrases ? e(phraseDe(m)).replace(e(m), `<b>${e(m)}</b>`) : `<b>${e(m)}</b>`}</li>`).join('')}</ol></section>`
-
-  const pages = [ficheConfig.value.liste && pageListe, ficheConfig.value.dictee && pageDictee, ficheConfig.value.dictee && corrige].filter(Boolean)
-  return `<!DOCTYPE html><html lang="fr"><head>
-    <meta charset="UTF-8"><title>${e(titre)}</title>
-    <style>
-      ${cssPolices()}
-      body { font-family: Arial, sans-serif; max-width: 700px; margin: 1.5cm auto; color: #222; }
-      section + section:not(.corrige) { page-break-before: always; break-before: page; }
-      h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      h2 { font-size: .95rem; margin: 1rem 0 .2rem; background: #f0f3f7; padding: .25rem .6rem; border-radius: 6px; }
-      .consigne { font-weight: 700; margin: .6rem 0 1rem; }
-      table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-      th { font-size: .75rem; color: #777; text-align: left; font-weight: 600; }
-      td { padding: .35rem .3rem; vertical-align: bottom; page-break-inside: avoid; }
-      .script { font-family: '${POLICE_SCRIPT}', Arial, sans-serif; font-size: 1.35rem; }
-      .attache { font-family: '${POLICE_ATTACHE}', cursive; font-size: 1.15rem; }
-      .recopie { border-bottom: 1.5px solid #999; }
-      .lignes-mots { columns: 2; column-gap: 2.5rem; }
-      .ligne { display: flex; align-items: flex-end; gap: .5rem; height: 2.6rem; break-inside: avoid; }
-      .lignes-phrases .ligne { height: 3.6rem; }
-      .num { font-weight: 700; color: #777; min-width: 1.8rem; }
-      .trait { flex: 1; border-bottom: 1.5px solid #999; }
-      section.corrige h2 { background: none; padding: 0; }
-      .a-dicter { columns: ${phrases ? 1 : 3}; font-size: 1.05rem; line-height: 1.9; font-family: '${POLICE_SCRIPT}', Arial, sans-serif; }
-    </style></head><body>
-    ${pages.join('\n')}
-  </body></html>`
-}
-
-const { mode, graine, regenerer } = useModeExercice()
-const fiche = computed(() => {
-  if (mode.value !== 'imprimer') return ''
-  graine.value
-  // exercice de français : fiche entièrement en français, même avec une interface bretonne
-  return enLangue('fr', htmlFiche)
+const { mode, fiche, nouvelle } = useFicheExercice({
+  tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng }),
+  mettreEnPage: (x, police) => ficheDictee({ questions: x, T, langue: langueContenu.value, ...police }),
 })
-
-function afficherMot() {
-  reponse.value = ''; feedback.value = null; feedbackClass.value = ''; inputClass.value = ''
-  afficherIndice.value = false
-  nextTick(() => inputEl.value?.focus())
-}
-
-function ecouterMot() {
-  if (enLecture.value) { arreter(); return }
-  const { mot, phrase } = liste.value[idx.value] ?? {}
-  const texte = (config.value.mode === 'phrases' && phrase) ? phrase : mot
-  if (texte) lire(texte, { vitesse: config.value.vitesse })
-}
-
-// ── Validation
-function validerMot() {
-  const { mot, phrase } = liste.value[idx.value]
-  const val = reponse.value.trim()
-  if (!val) return
-  arreter()
-
-  const attendu = (config.value.mode === 'phrases' && phrase) ? phrase : mot
-  const ok = normaliser(val) === normaliser(attendu)
-
-  resultats.value = [...resultats.value, { mot, attendu, donne: val, ok }]
-  inputClass.value = ok ? 'ok' : 'erreur'
-
-  if (ok) {
-    feedback.value = { ok: true, i: Math.floor(Math.random()*3) }
-    feedbackClass.value = 'ok'
-    setTimeout(suivant, 900)
-  } else {
-    feedback.value = { ok: false, r: attendu }
-    feedbackClass.value = 'erreur'
-    setTimeout(() => lire(attendu, { vitesse: config.value.vitesse }), 600)
-    setTimeout(suivant, 2400)
-  }
-}
-
-function passerMot() {
-  const { mot, phrase } = liste.value[idx.value]
-  const attendu = (config.value.mode === 'phrases' && phrase) ? phrase : mot
-  resultats.value = [...resultats.value, { mot, attendu, donne: '(passé)', passe: true, ok: false }]
-  arreter()
-  suivant()
-}
-
-function suivant() {
-  idx.value++
-  if (idx.value >= liste.value.length) { phase.value = 'resultats' }
-  else nextTick(() => { afficherMot(); ecouterMot() })
-}
-
-onUnmounted(() => arreter())
 </script>
 
 <style scoped>
-.cat-btn {
-  padding: .35rem .85rem;
-  border-radius: 20px;
-  border: 2px solid var(--gris-brd);
-  background: white;
-  font-weight: 600;
-  font-size: .85rem;
-  cursor: pointer;
-  transition: all .15s;
-}
-.cat-btn:hover  { border-color: var(--bleu); color: var(--bleu); }
-.cat-btn.active { background: var(--bleu); border-color: var(--bleu); color: white; }
-
-.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-@media (max-width: 480px) { .mode-cards { grid-template-columns: 1fr; } }
-
-.mode-card {
-  border: 3px solid var(--gris-brd); border-radius: var(--radius);
-  padding: 1rem; cursor: pointer; transition: all .15s; text-align: center;
-  background: white; font-family: inherit; width: 100%;
-}
-.mode-card:hover  { border-color: var(--bleu); }
-.mode-card:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; }
-.mode-card.active { border-color: var(--bleu); background: #eef5ff; }
-.mode-icon { font-size: 2rem; }
-.mode-title { font-weight: 800; font-size: 1rem; margin: .3rem 0 .2rem; }
-.mode-desc  { font-size: .8rem; color: #666; }
-
+.container { max-width: 640px; margin: 0 auto; padding: 1rem; }
+.cle-opt { font-weight: 400; color: #aaa; font-size: .85em; }
 .api-row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-.api-input {
-  flex: 1; min-width: 200px; border: 2px solid var(--gris-brd);
-  border-radius: 8px; padding: .4rem .75rem; font-size: .9rem;
-  outline: none; font-family: monospace;
-}
-.api-input:focus { border-color: var(--bleu); }
 .api-ok { font-size: .8rem; font-weight: 700; color: var(--vert); }
+.api-ok.aucune { color: #aaa; }
+.api-row .btn { font-size: .85rem; }
 
 .slider-row { display: flex; align-items: center; gap: .75rem; }
 .slider-row input[type=range] { flex: 1; }
 .slider-val { font-weight: 700; min-width: 2.5rem; text-align: right; }
 
+.indice { margin-bottom: 1.25rem; }
 .phrase-ctx {
   position: relative;
   background: var(--gris-bg); border-radius: 8px;
@@ -543,9 +273,11 @@ onUnmounted(() => arreter())
   display: block; width: 100%; font-size: 1.6rem; font-weight: 700;
   text-align: center; border: 3px solid var(--gris-brd);
   border-radius: var(--radius); padding: .6rem; outline: none;
-  transition: border-color .15s; margin-bottom: .75rem;
+  transition: border-color .15s; margin-bottom: .75rem; box-sizing: border-box;
 }
 .dictee-input:focus  { border-color: var(--bleu); }
 .dictee-input.ok     { border-color: var(--vert); background: #f0faf0; }
+.dictee-input.presque { border-color: var(--orange); background: #fff8ec; }
 .dictee-input.erreur { border-color: var(--rouge); background: #fef0f0; }
+.actions { justify-content: center; margin-top: .75rem; }
 </style>

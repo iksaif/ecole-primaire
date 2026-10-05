@@ -12,6 +12,8 @@ const que = p => R.que(p.nom)   // « que Léo », « qu'Emma »
 const nb = R.nombre             // « 1 bille », « 3 billes »
 
 export default {
+  // langue du contenu (accords des unités : regles(langue))
+  langue: 'fr',
   prenoms: [
     { nom: 'Léo', g: 'm' }, { nom: 'Emma', g: 'f' }, { nom: 'Inès', g: 'f' }, { nom: 'Noah', g: 'm' },
     { nom: 'Jade', g: 'f' }, { nom: 'Adam', g: 'm' }, { nom: 'Lina', g: 'f' }, { nom: 'Hugo', g: 'm' },

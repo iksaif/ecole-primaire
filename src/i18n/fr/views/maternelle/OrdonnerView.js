@@ -10,9 +10,6 @@ export default {
     rangeDecroissant: 'Range du plus grand au plus petit',
     petitGrandMin: 'du plus petit au plus grand',
     grandPetitMin: 'du plus grand au plus petit',
-    effacerTxt: 'Effacer',
     ordreCorrect: "L'ordre correct : {ordre}",
-    resultat5: 'Parfait ! Bravo ! 🏆', resultat4: 'Très bien ! 🌟', resultat3: 'Bien ! Continue ! 💪',
-    resultat0: "On va s'entraîner encore ! 📚",
     fConsigne: 'Écris les nombres dans les cases, dans le bon ordre.',
   }

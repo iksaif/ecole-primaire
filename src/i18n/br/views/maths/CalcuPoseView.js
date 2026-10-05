@@ -4,13 +4,14 @@ export default {
     titre: 'Jedadur lakaet', // br: à relire (« calcul posé »)
     operation: 'Oberiadur',
     addition: 'Sammadenn', soustraction: 'Lamadenn', melange: 'Kemmesket',
-    additions: 'Sammadennoù', soustractions: 'Lamadennoù',
+    additions: 'Sammadennoù', soustractions: 'Lamadennoù', multiplications: 'Liesadennoù', // br: à relire
+    multiplication: 'Liesadenn', // br: à relire
     taille: 'Ment an niveroù',
     aideNiveaux: "Er CP : sammadennoù lakaet hepken. Al lamadennoù lakaet a grog er CE1.", // br: à relire
     chiffre1: '1 sifr', chiffres: '{n} sifr',
     retenue: "Dalc'h", sansRetenue: "Hep dalc'h", avecRetenue: "Gant dalc'h", // br: à relire (« dalc'h » = retenue)
     nbExercices: 'Niver a boelladennoù',
-    colCalcul: 'Jedadur',
+    chiffreN: 'Sifr {n}', // br: à relire
     resultatBas: "Kendalc'h da embreger ! 📚",
     pNbExercices: '{n} poelladenn',
   }

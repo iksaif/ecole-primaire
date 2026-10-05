@@ -10,9 +10,6 @@ export default {
     rangeDecroissant: "Renk eus ar brasañ d'ar bihanañ",
     petitGrandMin: "eus ar bihanañ d'ar brasañ",
     grandPetitMin: "eus ar brasañ d'ar bihanañ",
-    effacerTxt: 'Diverkañ',
     ordreCorrect: 'An urzh reizh : {ordre}',
-    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
-    resultat0: "Embreger a raimp c'hoazh ! 📚",
     fConsigne: 'Skriv an niveroù er c\'haoued, en urzh mat.', // br: à relire
   }

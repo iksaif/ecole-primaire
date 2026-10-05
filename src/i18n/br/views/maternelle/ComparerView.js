@@ -9,7 +9,5 @@ export default {
     aPlus: "Muioc'h gant {g}",
     pareil: 'Kement ha kement', // br: à relire
     memeNombre: 'An daou strollad o deus ar memes niver !',
-    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
-    resultat0: "Embreger a raimp c'hoazh ! 📚",
     fConsigne: "War pep linenn, gromm ar strollad en deus muioc'h.", // br: à relire
   }

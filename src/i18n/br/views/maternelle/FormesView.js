@@ -14,11 +14,6 @@ export default {
     trouver: 'Kavout ar stumm', trouverDesc: 'Diskouez ar stumm a vez goulennet',
     commentSappelle: 'Petra eo anv ar stumm-mañ ?',
     montre: 'Diskouez :',
-    changer: '⚙️ Cheñch',
-    res100: 'Dispar ! Anaout a rez an holl stummoù ! 🏆',
-    res75: 'Mat-tre ! 🌟',
-    res50: "Mat ! Sell ouzh ar stummoù en-dro dit 💪",
-    res0: 'Kalon vat ! Sell ouzh ar stummoù er c\'hlas 📐',
     // br: à relire
     noteFiche: 'Fichenn : liv pep stumm gant e liv, ha kont anezho.',
     fConsigne: 'Liv pep stumm gant al liv mat.',

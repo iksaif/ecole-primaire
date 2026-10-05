@@ -3,19 +3,15 @@
 export default {
     titre: 'Reizhskrivañ',
     theme: 'Tem',
-    plusLoin: "Evit mont pelloc'h (er-maez ar programm)", // br: à relire
     theme_homophones: 'Heñvelsonioù', // br: à relire (homophones)
     theme_accords: 'Kenglotadurioù', // br: à relire (accords)
     theme_lettres: 'Lizherennoù a vank',
-    ecrisLeMot: 'Skriv ar ger…',
+    ecrisReponse: 'Skriv ar ger…',
+    validerCourt: 'Gwiriañ',
+    suivantFleche: 'Da-heul →',
+    accents: 'Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
     aRetravailler: "Da labourat c'hoazh :",
-    changer: '⚙️ Cheñch',
-    feedbackOk: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
     feedbackErr: '❌ Ar respont mat eo « {r} »{exp}.',
-    res100: 'Dispar, hep fazi ebet ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res60: 'Mat ! Adwel ar fazioù 💪',
-    res0: 'Kalon vat ! Adlenn ar reolennoù ha adkrog 📚',
     fEntoure: "Gromm ar ger a zere.", // br: à relire (entourer = grommañ ?)
     fComplete: 'Klok ar ger.',
     // Explications des réponses (le mot français étudié entre guillemets)

@@ -5,9 +5,11 @@
       <ChoixReponses :options="q.options" :bonne="q.bonne" :repondu="repondu" @choisir="i => jeu.repondre({ choix: i }, …)" />
     Contenu d'une proposition : `option.label` par défaut, ou le slot (dessin…) :
       <ChoixReponses images … :libelle="i => t('choixHorloge', { n: i + 1 })"><template #default="{ option }">…</template></ChoixReponses>
-    images : cases carrées (dessins, figures), libellé accessible donné par `libelle(i)`.
+    images : cases carrées (dessins, figures), libellé accessible donné par `libelle(i)` ; colonne : une proposition par ligne.
+    grand : maternelle, une seule rangée de gros boutons (nombres, dessins, un par proposition) :
+      <ChoixReponses grand :options … ><template #default="{ option }">…</template></ChoixReponses>
   -->
-  <div :class="images ? 'choix-images' : 'choix-grille'">
+  <div :class="images ? 'choix-images' : ['choix-grille', { grand, colonne }]" :style="grand ? { gridTemplateColumns: `repeat(${options.length}, 1fr)` } : undefined">
     <button v-for="(o, i) in options" :key="i" :class="[images ? 'choix-image' : 'choix-btn', classe(i)]" :disabled="repondu"
       :aria-label="libelle ? libelle(i) : undefined" @click="choisir(i)">
       <slot :option="o" :index="i">{{ o.label }}</slot>
@@ -25,7 +27,10 @@ const props = defineProps({
   // la question a reçu sa réponse (jeu.repondu)
   repondu: { type: Boolean, default: false },
   images: { type: Boolean, default: false },
+  grand: { type: Boolean, default: false },
   libelle: { type: Function, default: null },
+  // propositions longues (phrases) : une par ligne, sur toute la largeur
+  colonne: { type: Boolean, default: false },
 })
 const emit = defineEmits(['choisir'])
 // proposition choisie par l'élève, oubliée à chaque nouvelle question
@@ -47,6 +52,7 @@ function choisir(i) {
   gap: .75rem;
   margin-top: .5rem;
 }
+.choix-grille.colonne { grid-template-columns: 1fr; max-width: 520px; margin-left: auto; margin-right: auto; }
 .choix-btn {
   min-height: 56px;
   padding: .6rem .75rem;
@@ -59,6 +65,9 @@ function choisir(i) {
   cursor: pointer;
   transition: border-color .15s, background .15s;
 }
+.choix-grille.grand { gap: .75rem; margin-bottom: 1rem; }
+.choix-grille.grand .choix-btn { font-size: 2.4rem; min-height: 6rem; border-width: 4px; border-radius: 16px; line-height: 1; padding: .5rem; }
+.choix-grille.grand .choix-btn:hover:not(:disabled) { transform: scale(1.06); }
 .choix-images {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

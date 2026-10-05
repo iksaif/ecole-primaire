@@ -10,12 +10,8 @@ export default {
     quelleMinuscule: 'Pehini eo al lizherenn vihan ?',
     quelleMajuscule: 'Pehini eo ar bennlizherenn ?',
     cetait: 'Ar respont mat : {r}',
-    changer: '⚙️ Cheñch',
-    res100: 'Dispar ! Anaout a rez an holl lizherennoù ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res60: "Mat ! Kendalc'h da embreger 💪",
-    res0: 'Kalon vat ! Kan al lizherenneg hag adkrog 🎵',
     // br: à relire
+    suivantFleche: 'Da-heul →',
     noteFiche: 'Fichenn : lak pep pennlizherenn gant he lizherenn vihan.',
     fConsigne: 'Lak ul linenn etre pep pennlizherenn hag he lizherenn vihan.',
   }

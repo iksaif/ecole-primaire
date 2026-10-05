@@ -3,453 +3,142 @@
     <h1 class="section-heading">📐 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
-      @commencer="demarrer" @regenerer="regenerer">
-      <div class="config-section">
-        <div class="config-section-title">{{ t('operation') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.op === 'add' }" @click="config.op = 'add'">+ {{ t('addition') }}</button>
-          <button class="level-btn" :class="{ active: config.op === 'sou' }" @click="config.op = 'sou'">− {{ t('soustraction') }}</button>
-          <button class="level-btn" :class="{ active: config.op === 'mix' }" @click="config.op = 'mix'">{{ t('melange') }}</button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('taille') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.taille === '1' }" @click="config.taille = '1'">{{ t('chiffre1') }} ({{ TAILLES['1'] }})</button>
-          <button class="level-btn" :class="{ active: config.taille === '2' }" @click="config.taille = '2'">{{ t('chiffres', { n: 2 }) }} ({{ TAILLES['2'] }})</button>
-          <button class="level-btn" :class="{ active: config.taille === '3' }" @click="config.taille = '3'">{{ t('chiffres', { n: 3 }) }} ({{ TAILLES['3'] }})</button>
-          <button class="level-btn" :class="{ active: config.taille === '4' }" @click="config.taille = '4'">{{ t('chiffres', { n: 4 }) }} ({{ TAILLES['4'] }})</button>
-        </div>
-        <div class="aide-config">{{ t('aideNiveaux') }}</div>
-      </div>
-
-      <div class="config-section" v-if="config.taille !== '1'">
-        <div class="config-section-title">{{ t('retenue') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.retenue === 'non' }" @click="config.retenue = 'non'">{{ t('sansRetenue') }}</button>
-          <button class="level-btn" :class="{ active: config.retenue === 'oui' }" @click="config.retenue = 'oui'">{{ t('avecRetenue') }}</button>
-          <button class="level-btn" :class="{ active: config.retenue === 'mix' }" @click="config.retenue = 'mix'">{{ t('melange') }}</button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('nbExercices') }}</div>
-        <div class="btn-group">
-          <template v-if="mode === 'jouer'">
-            <button v-for="n in NB_JOUER" :key="n"
-              class="level-btn" :class="{ active: config.nbQ === n }"
-              @click="config.nbQ = n">{{ n }}</button>
-          </template>
-          <template v-else>
-            <button v-for="n in NB_FICHE" :key="n"
-              class="level-btn" :class="{ active: config.nbFiche === n }"
-              @click="config.nbFiche = n">{{ n }}</button>
-          </template>
-        </div>
-      </div>
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+      @commencer="jeu.demarrer" @regenerer="nouvelle">
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="op" v-model="config.op" :titre="t('operation')"
+        :libelle="o => (o === 'mix' ? '' : SIGNES[o] + ' ') + t(o === 'add' ? 'addition' : o === 'sou' ? 'soustraction' : o === 'mul' ? 'multiplication' : 'melange')">
+        <div v-if="config.niveau === 'cp'" class="aide-config">{{ t('aideNiveaux') }}</div>
+      </ChoixReglage>
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="taille" v-model="config.taille" :titre="t('taille')"
+        :libelle="n => (n === '1' ? t('chiffre1') : t('chiffres', { n }))" />
+      <ChoixReglage v-if="config.taille !== '1'" :definition="DEFINITION" :niveau="config.niveau" cle="retenue" v-model="config.retenue"
+        :titre="t('retenue')" :libelle="r => t(r === 'non' ? 'sansRetenue' : r === 'oui' ? 'avecRetenue' : 'melange')" />
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbExercices')" />
+      <ChoixReglage v-else :definition="DEFINITION" cle="nbFiche" v-model="config.nbFiche" :titre="t('nbExercices')" />
     </ConfigExercice>
 
     <!-- Exercice -->
-    <template v-if="phase === 'jeu'">
-      <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
-        <span>{{ t('exercice', { n: idx + 1, total: questions.length }) }}</span>
-        <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
-      </div>
-
-      <div class="exercise-box">
-        <!-- Colonne de calcul posé -->
-        <div class="pose-container">
-          <div class="pose-op-label">{{ questions[idx].opLabel }}</div>
-          <div class="pose-grid">
-            <!-- Ligne A -->
-            <div class="pose-row">
-              <span class="pose-sign"></span>
-              <span v-for="(d, i) in questions[idx].chiffresA" :key="'a'+i" class="pose-cell pose-number">{{ d }}</span>
-            </div>
-            <!-- Ligne B -->
-            <div class="pose-row">
-              <span class="pose-sign">{{ questions[idx].opLabel }}</span>
-              <span v-for="(d, i) in questions[idx].chiffresB" :key="'b'+i" class="pose-cell pose-number">{{ d }}</span>
-            </div>
-            <!-- Séparateur -->
-            <div class="pose-separator" :style="{ 'grid-column': `1 / span ${questions[idx].cols + 1}` }"></div>
-            <!-- Inputs réponse -->
-            <div class="pose-row">
-              <span class="pose-sign"></span>
-              <input
-                v-for="(_, ci) in questions[idx].chiffresR"
-                :key="'r'+ci"
-                :ref="el => setInputRef(el, ci)"
-                v-model="repInputs[ci]"
-                class="pose-input"
-                :class="{ ok: etats[ci] === 'ok', erreur: etats[ci] === 'erreur' }"
-                type="text" inputmode="numeric" maxlength="1"
-                @input="onInput($event, ci)"
-                @keydown="onKeydown($event, ci)"
-              >
-            </div>
+    <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
+      <!-- Colonne de calcul posé -->
+      <div class="pose-container">
+        <div class="pose-grid">
+          <div class="pose-row">
+            <span class="pose-sign"></span>
+            <span v-for="(d, i) in q.chiffresA" :key="'a' + i" class="pose-cell pose-number">{{ d }}</span>
           </div>
-
-          <!-- Retenues (visualisation optionnelle) -->
-          <div v-if="showReports" class="reports-row">
-            <span v-for="(r, i) in reports" :key="i" class="report-cell">{{ r || '' }}</span>
+          <div class="pose-row">
+            <span class="pose-sign">{{ q.opLabel }}</span>
+            <span v-for="(d, i) in q.chiffresB" :key="'b' + i" class="pose-cell pose-number">{{ d }}</span>
+          </div>
+          <div class="pose-separator" :style="{ 'grid-column': `1 / span ${q.cols + 1}` }"></div>
+          <!-- une case par chiffre du résultat -->
+          <div class="pose-row">
+            <span class="pose-sign"></span>
+            <input v-for="(_, ci) in q.chiffresR" :key="'r' + ci" :ref="el => (cases[ci] = el)" v-model="chiffres[ci]"
+              class="pose-input" :class="etats[ci]" type="text" inputmode="numeric" maxlength="1" autocomplete="off"
+              autocorrect="off" spellcheck="false" :disabled="repondu" :aria-label="t('chiffreN', { n: ci + 1 })"
+              @input="surSaisie($event, ci)" @keydown="surTouche($event, ci)">
           </div>
         </div>
-
-        <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
-
-        <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
-          <button class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
-        </div>
       </div>
-    </template>
+
+      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+
+      <div class="btn-group" style="justify-content:center;margin-top:1rem;">
+        <button class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('passer') }}</button>
+        <button class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('valider') }}</button>
+      </div>
+    </QuestionJeu>
 
     <!-- Résultats -->
-    <div v-if="phase === 'resultats'" class="exercise-box" style="text-align:center;">
-      <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
-      <div class="result-msg">{{ resultMsg }}</div>
-
-      <table class="correction-table">
-        <thead><tr><th>{{ t('colCalcul') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
-        <tbody>
-          <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
-            <td>{{ h.a }} {{ h.opLabel }} {{ h.b }}</td>
-            <td>{{ h.donne }}</td>
-            <td class="mot-attendu">{{ h.attendu }}</td>
-            <td>{{ h.ok ? '✅' : '❌' }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
-        <button class="btn btn-ghost"   @click="phase = 'config'">{{ t('parametres') }}</button>
-      </div>
-    </div>
+    <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
+      @rejouer="jeu.recommencer" @reglages="jeu.quitter">
+      <TableauCorrection :historique="historique">
+        <template #question="{ entree }">{{ entree.question.a }} {{ entree.question.opLabel }} {{ entree.question.b }}</template>
+      </TableauCorrection>
+    </ResultatsJeu>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
-import { aleatoire, confettis, sauvegarder, chargerReglages } from '../../utils'
-import { useI18n } from '../../i18n'
-import messagesFr from '../../i18n/fr/views/maths/CalcuPoseView.js'
-import messagesBr from '../../i18n/br/views/maths/CalcuPoseView.js'
+// Calcul posé : la vue ne fait que les réglages et la grille de saisie (une case par chiffre). Niveaux, générateur et
+// fiche : src/exercices/calcul-pose/ (definition.js, generateur.js, fiche.js).
+import { ref, computed, nextTick } from 'vue'
+import { useI18n, contenu } from '../../i18n'
 import ConfigExercice from '../../components/ConfigExercice.vue'
-import { useModeExercice } from '../../composables/useModeExercice'
-import { ligneNomDate } from '../../composables/useOptionsFiche'
+import ChoixReglage from '../../components/ChoixReglage.vue'
+import QuestionJeu from '../../components/QuestionJeu.vue'
+import ResultatsJeu from '../../components/ResultatsJeu.vue'
+import TableauCorrection from '../../components/TableauCorrection.vue'
+import { useReglages } from '../../composables/useReglages'
+import { useFicheExercice } from '../../composables/useFicheExercice'
+import { useJeu } from '../../composables/useJeu'
+import DEFINITION from '../../exercices/calcul-pose/definition'
+import { INTERFACE, TEXTES } from '../../exercices/calcul-pose/textes'
+import { questions as genererQuestions, questionsFiche, verifier, chiffresDonnes, SIGNES } from '../../exercices/calcul-pose/generateur'
+import { fiche as ficheCalculPose } from '../../exercices/calcul-pose/fiche'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
-// Langue du contenu imprimé : celle de l'interface pour les maths
-const langueContenu = computed(() => langue.value)
+const { t } = useI18n(INTERFACE)
+// Maths : le contenu (fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION, 'calcul_pose_config')
+const T = contenu(TEXTES, () => langueContenu.value).t
 
-// Classes de chaque taille (programme : addition posée au CP, soustraction au CE1, nombres ≤ 1 000 au CE1,
-// ≤ 10 000 au CE2 ; pas d'opération posée en maternelle)
-const TAILLES = { '1': 'CP', '2': 'CP / CE1', '3': 'CE1 / CE2', '4': 'CE2 / CM' }
-const config = ref(chargerReglages('calcul_pose_config', { op: 'add', taille: '2', retenue: 'non', nbQ: 5, nbFiche: 10 }))
-// nombre de questions à l'écran et sur la fiche : réglages séparés, validés au chargement
-const NB_JOUER = [3, 5, 10, 20]
-const NB_FICHE = [5, 10, 15, 20, 30]
-if (!NB_JOUER.includes(config.value.nbQ)) config.value.nbQ = 5
-if (!NB_FICHE.includes(config.value.nbFiche)) config.value.nbFiche = 10
-watch(config, v => sauvegarder('calcul_pose_config', v), { deep: true })
-const phase = ref('config')
-const questions = ref([])
-const idx = ref(0)
-const bonnes = ref(0)
-const mauvaises = ref(0)
-const historique = ref([])
-const repInputs = ref([])
-const etats = ref([])
-const feedback = ref('')
-const feedbackClass = ref('')
-const showReports = ref(false)
-const reports = ref([])
-const inputRefs = ref([])
+// ── Jeu : un calcul à la fois ; erreur : la correction reste affichée un instant, puis on enchaîne ──
+const chiffres = ref([])   // chiffres saisis, une case par colonne du résultat
+const cases = []           // les <input>, pour passer d'une case à l'autre au clavier
+const jeu = useJeu({
+  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+  verifier,
+  messageErreur: (q, rep) => (rep ? '❌ ' + t('laBonneReponse', { r: q.reponse }) : ''),
+  delai: 900,
+  apresErreur: 'continuer',
+  delaiErreur: 1400,
+  surQuestion: q => {
+    chiffres.value = Array(q?.cols ?? 0).fill('')
+    cases.length = 0
+    nextTick(() => cases[0]?.focus())
+  },
+})
+const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 
-// Verrou : empêche une double validation (Entrée répétée) de compter deux fois
-let verrou = false
-let timeoutSuivant = null
-
-function nettoyer() {
-  clearTimeout(timeoutSuivant)
-  timeoutSuivant = null
-  verrou = false
-}
-
-function quitter() {
-  nettoyer()
-  phase.value = 'config'
-}
-
-onUnmounted(nettoyer)
-
-function setInputRef(el, ci) {
-  if (el) inputRefs.value[ci] = el
-}
-
-function maxVal() {
-  return Math.pow(10, +config.value.taille) - 1
-}
-
-function generer() {
-  const op = config.value.op === 'mix'
-    ? (Math.random() > 0.5 ? 'add' : 'sou')
-    : config.value.op
-
-  // ── 1 chiffre : cas simple, pas de retenue
-  if (config.value.taille === '1') {
-    let a, b
-    if (op === 'add') {
-      a = aleatoire(1, 9); b = aleatoire(1, 9 - a)
-    } else {
-      a = aleatoire(2, 9); b = aleatoire(1, a)
-    }
-    const res = op === 'add' ? a + b : a - b
-    const cols = String(res).length  // peut être 1 ou 2 (ex: 5+8=13)
-    return {
-      a, b, op, opLabel: op === 'add' ? '+' : '−', reponse: res, cols,
-      chiffresA: padChiffres(a, cols), chiffresB: padChiffres(b, cols),
-      chiffresR: padChiffres(res, cols),
-    }
-  }
-
-  const max = maxVal()
-  const avecRetenue = config.value.retenue === 'oui'
-                    || (config.value.retenue === 'mix' && Math.random() > 0.5)
-
-  const lo = Math.floor(max / 10)
-  let a, b
-  if (op === 'add') {
-    if (avecRetenue) {
-      // Génère deux nombres dont l'addition nécessite une retenue sur au moins un rang
-      do {
-        // a ≤ max − lo pour que b ∈ [lo, max − a] soit non vide (sinon résultat à cols+1 chiffres)
-        a = aleatoire(lo, max - lo)
-        b = aleatoire(lo, max - a)
-      } while (!aRetenue(a, b, 'add'))
-    } else {
-      do {
-        // a ≤ max − lo pour que b ∈ [lo, max − a] soit non vide (sinon résultat à cols+1 chiffres)
-        a = aleatoire(lo, max - lo)
-        b = aleatoire(lo, max - a)
-      } while (aRetenue(a, b, 'add'))
-    }
-  } else {
-    // Soustraction : a >= b >= 0, résultat positif
-    if (avecRetenue) {
-      do {
-        a = aleatoire(Math.floor(max / 2), max)
-        b = aleatoire(1, a)
-      } while (!aRetenue(a, b, 'sou'))
-    } else {
-      do {
-        a = aleatoire(Math.floor(max / 2), max)
-        b = aleatoire(1, a)
-      } while (aRetenue(a, b, 'sou'))
-    }
-  }
-
-  const res = op === 'add' ? a + b : a - b
-  const cols = +config.value.taille
-  return {
-    a, b, op,
-    opLabel: op === 'add' ? '+' : '−',
-    reponse: res,
-    cols,
-    chiffresA: padChiffres(a, cols),
-    chiffresB: padChiffres(b, cols),
-    chiffresR: padChiffres(res, cols),
-  }
-}
-
-function aRetenue(a, b, op) {
-  const sA = String(a).split('').map(Number).reverse()
-  const sB = String(b).split('').map(Number).reverse()
-  const len = Math.max(sA.length, sB.length)
-  let carry = 0
-  for (let i = 0; i < len; i++) {
-    const da = sA[i] || 0, db = sB[i] || 0
-    if (op === 'add') {
-      const s = da + db + carry
-      carry = Math.floor(s / 10)
-      if (carry) return true
-    } else {
-      let d = da - db - carry
-      carry = d < 0 ? 1 : 0
-      if (carry) return true
-    }
-  }
-  return false
-}
-
-function padChiffres(n, len) {
-  return String(n).padStart(len, ' ').split('')
-}
-
-function genererSansRepetition(nb) {
-  const vus = new Set()
-  const result = []
-  let essais = 0
-  while (result.length < nb && essais < nb * 50) {
-    essais++
-    const q = generer()
-    const cle = `${q.a}${q.opLabel}${q.b}`
-    if (!vus.has(cle)) { vus.add(cle); result.push(q) }
-  }
-  return result
-}
-
-function demarrer() {
-  nettoyer()
-  questions.value = genererSansRepetition(config.value.nbQ)
-  idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
-  phase.value = 'jeu'
-  nextTick(initInputs)
-}
-
-// Document HTML de la fiche (aperçu + impression gérés par ConfigExercice)
-function htmlFiche() {
-  const qs = genererSansRepetition(config.value.nbFiche)
-  const niveau = TAILLES[config.value.taille] || ''
-  const opLabel = t(config.value.op === 'add' ? 'additions' : config.value.op === 'sou' ? 'soustractions' : 'melange')
-
-  const carte = (q, corrige) => {
-    const cols = q.cols
-    const cell = (ch) => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;">${ch.trim() || '&nbsp;'}</td>`
-    const rowA = q.chiffresA.map(cell).join('')
-    const rowB = q.chiffresB.map(cell).join('')
-    const rowR = q.chiffresR.map(ch => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;color:#1a7f37;border-bottom:2px solid #333;">${corrige ? (ch.trim() || '&nbsp;') : '&nbsp;'}</td>`).join('')
-    const signCell = `<td style="width:1.8rem;text-align:center;font-size:1.5rem;font-weight:900;color:#1a5fb4;vertical-align:middle;">`
-    return `<div style="display:inline-block;margin:1rem 1.5rem;vertical-align:top;">
-      <table style="border-collapse:collapse;">
-        <tr>${signCell}&nbsp;</td>${rowA}</tr>
-        <tr>${signCell}${q.opLabel}</td>${rowB}</tr>
-        <tr><td colspan="${cols + 1}" style="padding:0;"><hr style="border:none;border-top:2.5px solid #222;margin:4px 0;"/></td></tr>
-        <tr>${signCell}&nbsp;</td>${rowR}</tr>
-      </table>
-    </div>`
-  }
-  const cards = qs.map(q => carte(q, false)).join('')
-  const corrige = `<section class="corrige"><h2>${t('corrige')}</h2>
-    <div style="text-align:center;">${qs.map(q => carte(q, true)).join('')}</div></section>`
-
-  const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
-    <meta charset="UTF-8"><title>${t('titre')} — ${niveau}</title>
-    <style>
-      body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.5cm auto; color: #222; }
-      h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
-    </style></head><body>
-    <h1>${t('titre')} — ${niveau}</h1>
-    <p class="infos">${opLabel} &nbsp;|&nbsp; ${t('pNbExercices', { n: qs.length })}</p>
-    ${ligneNomDate(langueContenu.value)}
-    <div style="text-align:center;">${cards}</div>
-    ${corrige}
-  </body></html>`
-
-  return html
-}
-
-const { mode, graine, regenerer } = useModeExercice()
-// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
-const fiche = computed(() => {
-  if (mode.value !== 'imprimer') return ''
-  graine.value
-  return htmlFiche()
+// couleur de chaque case après la réponse : le chiffre est-il le bon ?
+const etats = computed(() => {
+  if (!repondu.value || !q.value) return []
+  const attendus = q.value.attendu.padStart(q.value.cols, '0').split('')
+  const donnes = chiffresDonnes({ chiffres: chiffres.value }).padStart(q.value.cols, '0').split('')
+  return attendus.map((c, i) => (donnes[i] === c ? 'ok' : 'erreur'))
 })
 
-function initInputs() {
-  const cols = questions.value[idx.value]?.cols || 0
-  repInputs.value = Array(cols).fill('')
-  etats.value = Array(cols).fill('')
-  feedback.value = ''; feedbackClass.value = ''
-  inputRefs.value = []
-  nextTick(() => {
-    inputRefs.value[0]?.focus()
-  })
-}
-
-function onInput(e, ci) {
+function surSaisie(e, ci) {
   const v = e.target.value.replace(/\D/g, '')
-  repInputs.value[ci] = v.slice(-1)
-  if (v) {
-    // Avancer vers la droite
-    const next = ci + 1
-    if (next < repInputs.value.length) nextTick(() => inputRefs.value[next]?.focus())
-  }
+  chiffres.value[ci] = v.slice(-1)
+  if (v && ci + 1 < chiffres.value.length) nextTick(() => cases[ci + 1]?.focus())
 }
-
-function onKeydown(e, ci) {
-  if (e.key === 'Backspace' && !repInputs.value[ci]) {
-    const prev = ci - 1
-    if (prev >= 0) nextTick(() => inputRefs.value[prev]?.focus())
-  }
+function surTouche(e, ci) {
+  if (e.key === 'Backspace' && !chiffres.value[ci] && ci > 0) nextTick(() => cases[ci - 1]?.focus())
   if (e.key === 'Enter') valider()
-  if (e.key === 'ArrowLeft' && ci > 0)
-    nextTick(() => inputRefs.value[ci - 1]?.focus())
-  if (e.key === 'ArrowRight' && ci < repInputs.value.length - 1)
-    nextTick(() => inputRefs.value[ci + 1]?.focus())
+  if (e.key === 'ArrowLeft' && ci > 0) nextTick(() => cases[ci - 1]?.focus())
+  if (e.key === 'ArrowRight' && ci < chiffres.value.length - 1) nextTick(() => cases[ci + 1]?.focus())
 }
 
 function valider() {
-  const q = questions.value[idx.value]
-  const attendu = String(q.reponse)
-  const donne   = repInputs.value.join('').replace(/\s/g, '')
-  if (!donne || verrou || phase.value !== 'jeu') return
-  verrou = true
-
-  const ok = donne === attendu
-  // Colorier chiffre par chiffre
-  const attChiffres = String(q.reponse).padStart(q.cols, '0').split('')
-  const donnChiffres = donne.padStart(q.cols, '0').split('')
-  etats.value = attChiffres.map((c, i) => donnChiffres[i] === c ? 'ok' : 'erreur')
-
-  if (ok) {
-    const bravos = t('bravo')
-    feedback.value = bravos[aleatoire(0, bravos.length - 1)]
-    feedbackClass.value = 'ok'
-    bonnes.value++
-  } else {
-    feedback.value = '❌ ' + t('laBonneReponse', { r: q.reponse })
-    feedbackClass.value = 'erreur'
-    mauvaises.value++
-  }
-
-  historique.value.push({ a: q.a, b: q.b, opLabel: q.opLabel, attendu, donne, ok })
-  timeoutSuivant = setTimeout(suivant, ok ? 900 : 1400)
+  const rep = { chiffres: [...chiffres.value] }
+  const donne = chiffresDonnes(rep)
+  if (repondu.value || !donne) return
+  jeu.repondre(rep, { donne })
 }
-
+// passer : la question compte comme une erreur, et on enchaîne aussitôt
 function passer() {
-  if (verrou || phase.value !== 'jeu') return
-  verrou = true
-  const q = questions.value[idx.value]
-  historique.value.push({ a: q.a, b: q.b, opLabel: q.opLabel,
-                          attendu: String(q.reponse), donne: t('passe'), ok: false })
-  mauvaises.value++
-  suivant()
+  if (repondu.value) return
+  jeu.passer({ donne: t('passe') })
+  jeu.suivante()
 }
 
-function suivant() {
-  clearTimeout(timeoutSuivant)
-  timeoutSuivant = null
-  if (phase.value !== 'jeu') return
-  verrou = false
-  idx.value++
-  if (idx.value >= questions.value.length) phase.value = 'resultats'
-  else nextTick(initInputs)
-}
-
-const resultMsg = computed(() => {
-  const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return t('resultat100') }
-  if (pct >= 80)   { confettis(25); return t('resultat80') }
-  if (pct >= 60)   return t('resultat60')
-  return t('resultatBas')
+// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+const { mode, fiche, nouvelle } = useFicheExercice({
+  tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+  mettreEnPage: (questions, police) => ficheCalculPose({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
@@ -461,8 +150,6 @@ const resultMsg = computed(() => {
   align-items: center;
   margin: 1.5rem 0;
 }
-
-.pose-op-label { display: none; }
 
 .pose-grid {
   display: inline-grid;
@@ -518,13 +205,4 @@ const resultMsg = computed(() => {
 .pose-input.ok      { border-color: var(--vert); background: #f0faf0; }
 .pose-input.erreur  { border-color: var(--rouge); background: #fef0f0; }
 
-.reports-row {
-  display: flex;
-  gap: 0;
-  font-size: .8rem;
-  color: #e74c3c;
-  font-weight: 800;
-  margin-top: .25rem;
-}
-.report-cell { width: 2.4rem; text-align: center; }
 </style>

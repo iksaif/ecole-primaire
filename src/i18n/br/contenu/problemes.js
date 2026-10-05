@@ -11,6 +11,8 @@ const gant = p => (p.g === 'f' ? 'ganti' : 'gantañ')      // avec lui/elle
 const nb = R.nombre
 
 export default {
+  // langue du contenu (accords des unités : regles(langue))
+  langue: 'br',
   // prénoms bretons (aucun ne commence par une consonne mutable après « da »)
   prenoms: [
     { nom: 'Yann', g: 'm' }, { nom: 'Nolwenn', g: 'f' }, { nom: 'Erwan', g: 'm' }, { nom: 'Aziliz', g: 'f' },

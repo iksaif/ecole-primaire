@@ -35,6 +35,12 @@ src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <Choi
 - `options` communes (hors niveaux) : valeurs proposées pour un réglage commun à choix (`nbQ: [5, 10, 15]`,
   `nbHorloges`, `saisie`) ; `<ChoixReglage>` les lit, une valeur mémorisée hors liste reprend le défaut, et les tests
   essaient chaque valeur (instantanés compris).
+- Ajouts de la phase 2d, lot A (français ; tous rétrocompatibles) : `useJeu({ delai: null })` (on attend « Suivant », pour lire
+  l'explication) ; `<ChoixReglage :groupes="[{ titre, valeurs }]">` (boutons sous des sous-titres) ; `<ChoixReponses colonne>` ;
+  `documentFiche({ h1: null })` (fiche en plusieurs pages qui ont chacune leur titre) ; `src/views/francais/QuestionFrancais.vue`
+  et `EtiquettesOrdre.vue` (question de grammaire / vocabulaire : consigne, phrase, choix, mots à cliquer, étiquettes à ranger,
+  saisie, retour avec explication ; textes des questions = fonctions de `T`, appelées avec `t` en jeu et `T` (français) sur la fiche).
+  Un corpus de français (jamais traduit) va dans `src/data/<exercice>.js`, comme `data/conjugaison.js`.
 - `nb` (nombre de questions) est facultatif : un exercice dont la partie est fixée par ses données (6 lignes d'un
   tableau) l'ignore.
 - `verifier(q, rep)` rend un booléen, ou `{ ok, nuance }` quand une réponse peut être « presque juste » (nuance
@@ -94,8 +100,8 @@ src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <Choi
    de programme ce que `tests/exercices.test.mjs` couvre désormais (garder un test de rendu minimal, comme
    Conjugaison dans `programme-francais`). `npm run qualite` : `exercicesMigres` monte, `-- --enregistrer`.
 
-Communs mais pas encore extraits (le premier exercice qui en a besoin les crée dans le socle, voir plan 10,
-« Phase 2c — résultat ») : ordonner par clics, droite graduée, minuteur, fin « étoiles » de la maternelle.
+Dans le socle depuis la phase 2d : `<OrdonnerClics>` (ranger par clics), `<ResultatsEtoiles>` (fin de la maternelle), `useMinuteur`,
+`<ChoixReponses grand>` et `useReglages(…, { suivreClasse: true })` (maternelle). Pas encore extraite : la droite graduée (lot B).
 
 ## Vérifier qu'une migration ne change rien
 

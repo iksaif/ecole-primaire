@@ -1,7 +1,6 @@
 // Textes de l'interface — GrammaireView (breton). Traduction automatique : les passages marqués
 // « br: à relire » sont à faire vérifier par un brittophone (`npm run i18n:relecture`).
 export default {
-  bravo: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Just eo ! 👏', 'Mat-tre ! 🌟'],
     titre: 'Yezhadur',
     astuce: 'Gallout a rez dibab meur a boelladenn : mesket e vint.',
     ecouterPhrase: 'Selaou ar frazenn',
@@ -11,15 +10,10 @@ export default {
     validerCourt: 'Gwiriañ',
     suivantFleche: 'Da-heul →',
     correction: 'Reizhadenn',
-    colQuestion: 'Goulenn',
-    changer: '⚙️ Cheñch',
     bonnePhrase: 'Ar frazenn vat eo : « {r} »',
     bonneReponseEst: 'Ar respont mat eo « {r} »',
+    accents: 'Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
     pasToutAFait: 'N\'eo ket mat penn-da-benn…',
-    res100: 'Dispar, hep fazi ebet ! 🏆',
-    res80: 'Mat-tre ! 🌟',
-    res60: 'Mat ! Adwel ar fazioù 💪',
-    res0: 'Kalon vat ! Adlenn ar reizhadenn hag adkrog 📚',
     // Groupes et types d'exercices (réglages)
     groupe_phrase: 'Ar frazenn',
     type_ordre: 'Gerioù en urzh',

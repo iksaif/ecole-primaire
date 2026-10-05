@@ -6,7 +6,8 @@
 //     messageErreur: (q, rep) => texte,       // retour affiché après une erreur (facultatif ; rep null si passée)
 //     messageNuance: (q, nuance) => texte,    // retour quand le verdict porte une nuance (facultatif)
 //     surQuestion: q => …,                    // à chaque nouvelle question (vider les champs…)
-//     delai: 1600,                            // ms avant la question suivante, après une bonne réponse
+//     delai: 1600,                            // ms avant la question suivante, après une bonne réponse ; null : jamais
+//                                             // seule, on attend jeu.suivante (« Suivant » : l'élève lit l'explication)
 //     apresErreur: 'attendre',                // 'attendre' (bouton « Suivant » → jeu.suivante) | 'continuer' (seule)
 //     delaiErreur: delai,                     // ms avant la suite après une erreur, si apresErreur = 'continuer'
 //     serie: false,                           // true : toutes les questions sur un écran (lignes d'un tableau) ;
@@ -82,8 +83,8 @@ export function useJeu({
     historique.value.push({ question: q.value, rep, ok, nuance, ...infos })
     const suivanteDansEcran = cleEcran && questions.value[index.value + 1] && cleEcran(questions.value[index.value + 1]) === cleEcran(q.value)
     if (suivanteDansEcran) suivante()
-    else if (ok) minuteur = setTimeout(suivante, delai)
-    else if (apresErreur === 'continuer') minuteur = setTimeout(suivante, delaiErreur)
+    else if (ok) { if (delai !== null) minuteur = setTimeout(suivante, delai) }
+    else if (apresErreur === 'continuer' && delaiErreur !== null) minuteur = setTimeout(suivante, delaiErreur)
     return ok
   }
 

@@ -16,8 +16,6 @@ export default {
     nbMots: 'Niver a c\'herioù',
     tous: 'An holl',
     vitesse: 'Tizh ar vouezh',
-    quitterDictee: 'Kuitaat ar skrivadeg',
-    motN: 'Ger {n} / {total}',
     generation: 'O krouiñ…',
     afficherIndice: '👁️ Diskouez ar frazenn gant toulloù (tun)', // br: à relire (indice)
     masquerIndice: 'Kuzhat an tun',
@@ -26,13 +24,8 @@ export default {
     ecouterMot: 'Selaou ar ger',
     consigne: "Selaou mat, ha skriv ar pezh a glevez :",
     reecouter: '🔁 Adselaou',
-    attendu: 'Gortozet',
-    feedbackOk: ['Brav eo ! 🎉', 'Dispar ! ⭐', 'Mat-tre ! 👏'],
+    accents: 'Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
     feedbackErr: '❌ Ar respont mat a oa : « {r} »',
-    res100: 'Dispar, fazi ebet ! 🏆',
-    res80: "Mat-tre ! Kendalc'h evel-se 🌟",
-    res60: "Mat, met labour a zo c'hoazh ! 💪",
-    res0: 'Kalon vat, adlenn ar gerioù hag esae en-dro ! 📚',
     // fiche imprimable — br: à relire
     pagesFiche: 'Pajennoù ar fichenn',
     pageListe: 'Gerioù da zeskiñ',

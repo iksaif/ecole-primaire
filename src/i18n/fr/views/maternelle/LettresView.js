@@ -10,11 +10,7 @@ export default {
     quelleMinuscule: 'Quelle est la minuscule ?',
     quelleMajuscule: 'Quelle est la majuscule ?',
     cetait: "C'était : {r}",
-    changer: '⚙️ Changer',
-    res100: 'Parfait ! Tu connais toutes les lettres ! 🏆',
-    res80: 'Très bien ! 🌟',
-    res60: "Bien ! Continue à t'entraîner 💪",
-    res0: "Courage ! Chante l'alphabet et recommence 🎵",
+    suivantFleche: 'Suivant →',
     noteFiche: 'Fiche : relie chaque majuscule à sa minuscule.',
     fConsigne: 'Relie chaque majuscule à sa minuscule.',
   }

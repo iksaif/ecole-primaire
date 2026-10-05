@@ -15,6 +15,82 @@ import conjugaisonDefinition from './conjugaison/definition.js'
 import * as conjugaisonGenerateur from './conjugaison/generateur.js'
 import * as conjugaisonFiche from './conjugaison/fiche.js'
 import { TEXTES as conjugaisonTextes } from './conjugaison/textes.js'
+import ordonnerDefinition from './ordonner/definition.js'
+import * as ordonnerGenerateur from './ordonner/generateur.js'
+import * as ordonnerFiche from './ordonner/fiche.js'
+import { TEXTES as ordonnerTextes } from './ordonner/textes.js'
+import calculMentalDefinition from './calcul-mental/definition.js'
+import * as calculMentalGenerateur from './calcul-mental/generateur.js'
+import * as calculMentalFiche from './calcul-mental/fiche.js'
+import { TEXTES as calculMentalTextes } from './calcul-mental/textes.js'
+import problemesDefinition from './problemes/definition.js'
+import * as problemesGenerateur from './problemes/generateur.js'
+import * as problemesFiche from './problemes/fiche.js'
+import { TEXTES as problemesTextes } from './problemes/textes.js'
+import calculPoseDefinition from './calcul-pose/definition.js'
+import * as calculPoseGenerateur from './calcul-pose/generateur.js'
+import * as calculPoseFiche from './calcul-pose/fiche.js'
+import { TEXTES as calculPoseTextes } from './calcul-pose/textes.js'
+import compterDefinition from './compter/definition.js'
+import * as compterGenerateur from './compter/generateur.js'
+import * as compterFiche from './compter/fiche.js'
+import { TEXTES as compterTextes } from './compter/textes.js'
+import comparerDefinition from './comparer/definition.js'
+import * as comparerGenerateur from './comparer/generateur.js'
+import * as comparerFiche from './comparer/fiche.js'
+import { TEXTES as comparerTextes } from './comparer/textes.js'
+import motifsDefinition from './motifs/definition.js'
+import * as motifsGenerateur from './motifs/generateur.js'
+import * as motifsFiche from './motifs/fiche.js'
+import { TEXTES as motifsTextes } from './motifs/textes.js'
+import longueursDefinition from './longueurs/definition.js'
+import * as longueursGenerateur from './longueurs/generateur.js'
+import * as longueursFiche from './longueurs/fiche.js'
+import { TEXTES as longueursTextes } from './longueurs/textes.js'
+import formesDefinition from './formes/definition.js'
+import * as formesGenerateur from './formes/generateur.js'
+import * as formesFiche from './formes/fiche.js'
+import { TEXTES as formesTextes } from './formes/textes.js'
+import tablesDefinition from './tables/definition.js'
+import * as tablesGenerateur from './tables/generateur.js'
+import * as tablesFiche from './tables/fiche.js'
+import { TEXTES as tablesTextes } from './tables/textes.js'
+import mesuresDefinition from './mesures/definition.js'
+import * as mesuresGenerateur from './mesures/generateur.js'
+import * as mesuresFiche from './mesures/fiche.js'
+import { TEXTES as mesuresTextes } from './mesures/textes.js'
+import geometrieDefinition from './geometrie/definition.js'
+import * as geometrieGenerateur from './geometrie/generateur.js'
+import * as geometrieFiche from './geometrie/fiche.js'
+import { TEXTES as geometrieTextes } from './geometrie/textes.js'
+import numerationDefinition from './numeration/definition.js'
+import * as numerationGenerateur from './numeration/generateur.js'
+import * as numerationFiche from './numeration/fiche.js'
+import { TEXTES as numerationTextes } from './numeration/textes.js'
+import grammaireDefinition from './grammaire/definition.js'
+import * as grammaireGenerateur from './grammaire/generateur.js'
+import * as grammaireFiche from './grammaire/fiche.js'
+import { TEXTES as grammaireTextes } from './grammaire/textes.js'
+import fractionsDefinition from './fractions/definition.js'
+import * as fractionsGenerateur from './fractions/generateur.js'
+import * as fractionsFiche from './fractions/fiche.js'
+import { TEXTES as fractionsTextes } from './fractions/textes.js'
+import vocabulaireDefinition from './vocabulaire/definition.js'
+import * as vocabulaireGenerateur from './vocabulaire/generateur.js'
+import * as vocabulaireFiche from './vocabulaire/fiche.js'
+import { TEXTES as vocabulaireTextes } from './vocabulaire/textes.js'
+import orthographeDefinition from './orthographe/definition.js'
+import * as orthographeGenerateur from './orthographe/generateur.js'
+import * as orthographeFiche from './orthographe/fiche.js'
+import { TEXTES as orthographeTextes } from './orthographe/textes.js'
+import dicteeDefinition from './dictee/definition.js'
+import * as dicteeGenerateur from './dictee/generateur.js'
+import * as dicteeFiche from './dictee/fiche.js'
+import { TEXTES as dicteeTextes } from './dictee/textes.js'
+import lettresDefinition from './lettres/definition.js'
+import * as lettresGenerateur from './lettres/generateur.js'
+import * as lettresFiche from './lettres/fiche.js'
+import { TEXTES as lettresTextes } from './lettres/textes.js'
 
 /**
  * Réglages d'un exercice : valeurs simples ou listes de valeurs choisies (ids).
@@ -81,6 +157,25 @@ export const REGISTRE = [
   { definition: heureDefinition, generateur: heureGenerateur, fiche: heureFiche, textes: heureTextes },
   { definition: monnaieDefinition, generateur: monnaieGenerateur, fiche: monnaieFiche, textes: monnaieTextes },
   { definition: conjugaisonDefinition, generateur: conjugaisonGenerateur, fiche: conjugaisonFiche, textes: conjugaisonTextes },
+  { definition: ordonnerDefinition, generateur: ordonnerGenerateur, fiche: ordonnerFiche, textes: ordonnerTextes },
+  { definition: calculMentalDefinition, generateur: calculMentalGenerateur, fiche: calculMentalFiche, textes: calculMentalTextes },
+  { definition: problemesDefinition, generateur: problemesGenerateur, fiche: problemesFiche, textes: problemesTextes },
+  { definition: calculPoseDefinition, generateur: calculPoseGenerateur, fiche: calculPoseFiche, textes: calculPoseTextes },
+  { definition: compterDefinition, generateur: compterGenerateur, fiche: compterFiche, textes: compterTextes },
+  { definition: comparerDefinition, generateur: comparerGenerateur, fiche: comparerFiche, textes: comparerTextes },
+  { definition: motifsDefinition, generateur: motifsGenerateur, fiche: motifsFiche, textes: motifsTextes },
+  { definition: longueursDefinition, generateur: longueursGenerateur, fiche: longueursFiche, textes: longueursTextes },
+  { definition: formesDefinition, generateur: formesGenerateur, fiche: formesFiche, textes: formesTextes },
+  { definition: tablesDefinition, generateur: tablesGenerateur, fiche: tablesFiche, textes: tablesTextes },
+  { definition: mesuresDefinition, generateur: mesuresGenerateur, fiche: mesuresFiche, textes: mesuresTextes },
+  { definition: geometrieDefinition, generateur: geometrieGenerateur, fiche: geometrieFiche, textes: geometrieTextes },
+  { definition: numerationDefinition, generateur: numerationGenerateur, fiche: numerationFiche, textes: numerationTextes },
+  { definition: grammaireDefinition, generateur: grammaireGenerateur, fiche: grammaireFiche, textes: grammaireTextes },
+  { definition: fractionsDefinition, generateur: fractionsGenerateur, fiche: fractionsFiche, textes: fractionsTextes },
+  { definition: vocabulaireDefinition, generateur: vocabulaireGenerateur, fiche: vocabulaireFiche, textes: vocabulaireTextes },
+  { definition: orthographeDefinition, generateur: orthographeGenerateur, fiche: orthographeFiche, textes: orthographeTextes },
+  { definition: dicteeDefinition, generateur: dicteeGenerateur, fiche: dicteeFiche, textes: dicteeTextes },
+  { definition: lettresDefinition, generateur: lettresGenerateur, fiche: lettresFiche, textes: lettresTextes },
 ]
 
 /** @param {string} id */

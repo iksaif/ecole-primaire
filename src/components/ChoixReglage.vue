@@ -10,6 +10,8 @@
     du niveau porte la marque « (bonus) » / « (hors programme) », la raison en infobulle.
     Libellé enrichi d'une valeur : <template #valeur="{ valeur, texte }">…</template>. Pour les tests : la section porte
     data-reglage="<cle>", chaque bouton data-valeur="<valeur>".
+    Valeurs en groupes sous des sous-titres (Grammaire : « La phrase », « Nature des mots »…) :
+      <ChoixReglage … :groupes="[{ titre: 'La phrase', valeurs: ['ordre', 'phrase'] }, …]" />
     Variante « cartes » (un choix qui change la nature de l'exercice : mode lacunes / complet, entraînement / chrono…) :
       <ChoixReglage cartes … :icone="m => m === 'lacunes' ? '✏️' : '📝'" :description="m => t(m + 'Desc')" />
   -->
@@ -23,11 +25,14 @@
         <div v-if="description" class="carte-desc">{{ description(v) }}</div>
       </button>
     </div>
-    <div v-else class="btn-group">
-      <button v-for="v in liste" :key="String(v)" class="level-btn" :class="{ active: actif(v) }" :data-valeur="String(v)"
-        :title="raisonHorsProgramme(definition, niveau, cle, v) ?? undefined"
-        @click="choisir(v)"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)) }})</span></button>
-    </div>
+    <template v-else v-for="(section, k) in sections" :key="k">
+      <div v-if="section.titre" class="config-section-title sous-titre-reglage">{{ section.titre }}</div>
+      <div class="btn-group">
+        <button v-for="v in section.valeurs" :key="String(v)" class="level-btn" :class="{ active: actif(v) }" :data-valeur="String(v)"
+          :title="raisonHorsProgramme(definition, niveau, cle, v) ?? undefined"
+          @click="choisir(v)"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)) }})</span></button>
+      </div>
+    </template>
     <slot />
   </div>
 </template>
@@ -50,6 +55,8 @@ const props = defineProps({
   libelle: { type: Function, default: null },
   // valeurs proposées, quand le réglage n'a d'options ni dans le niveau ni dans `definition.options`
   valeurs: { type: Array, default: null },
+  // valeurs regroupées sous des sous-titres : [{ titre, valeurs }] (les valeurs absentes des options du niveau sont ignorées)
+  groupes: { type: Array, default: null },
   // variante en cartes (icône, titre, description) plutôt qu'en rangée de boutons
   cartes: { type: Boolean, default: false },
   icone: { type: Function, default: null },
@@ -59,6 +66,10 @@ const emit = defineEmits(['update:modelValue'])
 const { t } = useI18n()
 
 const liste = computed(() => props.valeurs ?? valeursDe(props.definition, props.niveau, props.cle))
+// rangées de boutons : une seule, ou une par groupe (props.groupes)
+const sections = computed(() => (props.groupes
+  ? props.groupes.map(g => ({ titre: g.titre, valeurs: g.valeurs.filter(v => liste.value.includes(v)) })).filter(g => g.valeurs.length)
+  : [{ titre: '', valeurs: liste.value }]))
 const multiple = computed(() => Array.isArray(props.modelValue))
 const texte = v => (props.libelle ? props.libelle(v) : props.cle === 'niveau' ? String(v).toUpperCase() : String(v))
 // « bonus » ou « hors programme » (clé du catalogue commun), sinon null
@@ -77,6 +88,7 @@ function choisir(v) {
 
 <style scoped>
 /* cartes : autant de colonnes que de valeurs (une seule sur petit écran au-delà de deux) */
+.sous-titre-reglage { margin: .6rem 0 .4rem; text-transform: none; font-weight: 600; color: #888; }
 .cartes-reglage { display: grid; grid-template-columns: repeat(var(--nb-cartes), 1fr); gap: .75rem; }
 @media (max-width: 560px) { .cartes-reglage.nombreuses { grid-template-columns: 1fr; } }
 .carte-reglage {

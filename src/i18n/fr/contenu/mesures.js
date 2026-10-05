@@ -8,6 +8,9 @@ const R = regles('fr')
 const nb = R.nombre
 
 export default {
+  // « et » / « ha », « hag » devant une voyelle ; « ou » / « pe » : mot suivant dans {mot}
+  et: ({ mot }) => R.et(String(mot)),
+  ou: () => R.ou(),
   // « Une pomme pèse 150 … » : la phrase se lit « texte valeur unité »
   phrases: {
     crayon: 'Un crayon mesure',

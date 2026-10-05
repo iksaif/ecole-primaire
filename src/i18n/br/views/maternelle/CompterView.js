@@ -6,8 +6,6 @@ export default {
     // « pet » + anv unan : Pet aval a zo ?
     combien: 'Pet {nom} a zo ?',
     ilYAvait: '{n} {emoji} a oa',
-    resultat5: 'Dispar ! Brav eo ! 🏆', resultat4: 'Mat-tre ! 🌟', resultat3: "Mat ! Kendalc'h ! 💪",
-    resultat0: "Gallout a reer ober gwelloc'h c'hoazh ! 📚",
     // br: à relire
     reponseFiche: 'War ar fichenn, ar bugel…',
     ecrire: 'a skriv an niver', entourer: 'a gromm an niver mat',

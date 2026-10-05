@@ -1,7 +1,14 @@
 // Contenu généré — mesures (breton). Traduction automatique : les passages marqués « br: à relire »
 // sont à faire vérifier par un brittophone (`npm run i18n:relecture`). Paramètres : voir src/i18n/fr/contenu/mesures.js.
 
+import { regles } from '../../regles.js'
+
+const R = regles('br')
+
 export default {
+  // « et » / « ha », « hag » devant une voyelle ; « ou » / « pe » : mot suivant dans {mot}
+  et: ({ mot }) => R.et(String(mot)),
+  ou: () => R.ou(),
   // br: à relire
   phrases: {
     crayon: "Ur c'hreion a vuzul",

@@ -5,7 +5,6 @@ export default {
     titre: 'Jediñ e penn',
     operations: 'Oberiadurioù',
     tempsParQuestion: 'Amzer evit pep goulenn',
-    reponseHist: '❌ (respont : {r})',
     doubleDe: 'An doubl eus {n} = ?',
     moitieDe: 'An hanter eus {n} = ?',
     tempsEcoule: '⏰ Echu eo an amzer ! Ar respont a oa {r}',

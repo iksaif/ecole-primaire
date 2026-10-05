@@ -1,10 +1,24 @@
 // Catalogue de toutes les activités : sert aux pages d'accueil/matières et au filtre par classe.
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
-import { CLASSES, CE, CM, CYCLE_2, classesEntre } from './classes.js'
+import { CLASSES, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
 import HEURE from '../exercices/heure/definition.js'
 import MONNAIE from '../exercices/monnaie/definition.js'
+import MESURES from '../exercices/mesures/definition.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
+import NUMERATION from '../exercices/numeration/definition.js'
+import FRACTIONS from '../exercices/fractions/definition.js'
+import GEOMETRIE from '../exercices/geometrie/definition.js'
+import ORDONNER from '../exercices/ordonner/definition.js'
+import TABLES from '../exercices/tables/definition.js'
+import CALCUL_MENTAL from '../exercices/calcul-mental/definition.js'
+import PROBLEMES from '../exercices/problemes/definition.js'
+import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
+import GRAMMAIRE from '../exercices/grammaire/definition.js'
+import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
+import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
+import DICTEE from '../exercices/dictee/definition.js'
+import LETTRES from '../exercices/lettres/definition.js'
 
 // classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
 export { CLASSES }
@@ -68,29 +82,29 @@ export const ACTIVITES = [
   // ── Maths ──
   { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maternelle/comparer', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '⚖️', titre: 'Comparer les quantités', desc: 'Quel groupe a le plus ?', niveaux: ['ps', 'ms', 'gs'] },
-  { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: ['ms', 'gs'] },
-  { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maths/calcul-mental', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🧮', titre: 'Calcul mental', desc: 'Additions, soustractions, doubles, moitiés, tables', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions et soustractions en colonnes', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: de('ce1', 'cm2') },
-  { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: ['ce1', 'ce2'] },
-  { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: Object.keys(ORDONNER.niveaux) },
+  { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: Object.keys(NUMERATION.niveaux) },
+  { fiche: true, to: '/maths/calcul-mental', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🧮', titre: 'Calcul mental', desc: 'Additions, soustractions, doubles, moitiés, tables', niveaux: Object.keys(CALCUL_MENTAL.niveaux) },
+  { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions, soustractions et multiplications en colonnes', niveaux: Object.keys(CALCUL_POSE.niveaux) },
+  { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: Object.keys(TABLES.niveaux) },
+  { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: Object.keys(FRACTIONS.niveaux) },
+  { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: Object.keys(PROBLEMES.niveaux) },
   { fiche: true, to: '/maths/heure',         matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '🕐', titre: "Lire l'heure", desc: 'Heures, demies, quarts sur une horloge', niveaux: Object.keys(HEURE.niveaux) },
   { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: Object.keys(MONNAIE.niveaux) },
-  { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: Object.keys(MESURES.niveaux) },
   { fiche: true, to: '/maternelle/longueurs', matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Plus long, plus court', desc: 'Comparer et ranger des crayons', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maternelle/motifs',   matiere: 'maths', domaine: 'motifs', rubrique: 'Motifs', icon: '🔁', titre: 'Les motifs', desc: 'Continuer un collier qui se répète', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Trier, reconnaître puis nommer le disque, le carré, le triangle et le rectangle', niveaux: ['ps', 'ms', 'gs'] },
-  { fiche: true, to: '/maths/geometrie',     matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '📐', titre: 'Géométrie', desc: 'Symétrie, quadrillage, figures et solides', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/geometrie',     matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '📐', titre: 'Géométrie', desc: 'Symétrie, quadrillage, figures et solides', niveaux: Object.keys(GEOMETRIE.niveaux) },
 
   // ── Français ──
-  { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'lecture', rubrique: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: ['gs', 'cp'] },
+  { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'lecture', rubrique: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: Object.keys(LETTRES.niveaux) },
   { fiche: true, to: '/lecture', matiere: 'francais', domaine: 'lecture', rubrique: 'Lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
-  { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: de('cp', 'cm2') },
-  { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: de('ce1', 'cm2') },
+  { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: Object.keys(DICTEE.niveaux) },
+  { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: Object.keys(ORTHOGRAPHE.niveaux) },
+  { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: Object.keys(GRAMMAIRE.niveaux) },
   { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: Object.keys(CONJUGAISON.niveaux) },
-  { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: Object.keys(VOCABULAIRE.niveaux) },
 
 
   // ── Culture générale ──
@@ -108,7 +122,7 @@ const BR = {
   '/maternelle/ordonner': ['Renkañ an niveroù', "Eus ar bihanañ d'ar brasañ"],
   '/maths/numeration':    ['An niveroù', 'Betek 1 000 (CE1) ha 10 000 (CE2) : dispartiañ, keñveriañ, renkañ'],
   '/maths/calcul-mental': ['Jediñ e penn', 'Sammadennoù, lamadennoù, doubl, hanter, taolennoù'],
-  '/maths/calcul-pose':   ['Jedadurioù lakaet', 'Sammadennoù ha lamadennoù e bannoù'],
+  '/maths/calcul-pose':   ['Jedadurioù lakaet', 'Sammadennoù, lamadennoù ha liesadennoù e bannoù'], // br: à relire
   '/maths/tables':        ['Taolennoù liesañ', 'En em bleustr war an holl daolennoù'],
   '/maths/fractions':     ['An darnaouennoù', "An hanter, an trederenn, ar c'hard…"],
   '/maths/problemes':     ['Kudennoù', 'Lenn, kompren ha jediñ'],
@@ -133,46 +147,34 @@ const BR = {
 // `npm run couverture`, page /programme), seulement aux niveaux de l'activité. Une liste vaut pour tous ses niveaux ;
 // un objet { classe: [...] } dit ce que l'exercice propose vraiment à chaque classe (options du niveau). Les affiches
 // ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
-const parClasse = (classes, liste) => Object.fromEntries(classes.map(c => [c, liste]))
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
   '/imprimer/alphabet': ['nom-lettres'],
   '/imprimer/nombres': ['nombres-en-lettres', 'numeration-100', 'numeration-1000'],
   '/maternelle/compter': { ps: ['denombrer-3'], ms: ['denombrer-6'], gs: ['denombrer-10'] },
   '/maternelle/comparer': ['comparer-quantites'],
-  '/maternelle/ordonner': ['bande-numerique'],
+  '/maternelle/ordonner': Object.fromEntries(Object.entries(ORDONNER.niveaux).map(([n, v]) => [n, v.competences])),
   '/maternelle/formes': ['formes-maternelle'],
   '/maternelle/motifs': ['motifs-maternelle'],
   '/maternelle/longueurs': ['comparer-longueurs-maternelle'],
-  '/maternelle/lettres': ['nom-lettres'],
-  '/maths/numeration': {
-    ce1: ['numeration-1000', 'nombres-en-lettres', 'comparer-ranger', 'droite-graduee', 'suites-nombres'],
-    ce2: ['numeration-10000', 'nombres-en-lettres', 'comparer-ranger', 'droite-graduee', 'suites-nombres'],
-  },
+  '/maternelle/lettres': Object.fromEntries(Object.entries(LETTRES.niveaux).map(([n, v]) => [n, v.competences])),
+  '/maths/numeration': Object.fromEntries(Object.entries(NUMERATION.niveaux).map(([n, v]) => [n, v.competences])),
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
-  '/maths/calcul-mental': {
-    cp: ['tables-addition', 'complement-dizaine', 'doubles-moities'],
-    ce1: ['tables-addition', 'tables-multiplication', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100'],
-    ce2: ['tables-addition', 'tables-multiplication', 'sens-division', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100'],
-    ...parClasse(CM, ['tables-multiplication', 'sens-division', 'complement-dizaine', 'ajouter-dizaines', 'ajouter-9', 'doubles-moities', 'multiplier-10-100']),
-  },
-  '/maths/calcul-pose': { cp: ['addition-posee'], ...parClasse(classesEntre('ce1', 'cm2'), ['addition-posee', 'soustraction-posee']) },
-  '/maths/tables': ['tables-multiplication'],
-  '/maths/fractions': { ce1: ['fractions-unitaires', 'fractions-inferieures-1'], ce2: ['fractions-unitaires', 'fractions-inferieures-1', 'fractions-egales', 'fractions-mesure'] },
-  '/maths/problemes': ['problemes-additifs', 'problemes-multiplicatifs', 'problemes-etapes'],
+  '/maths/calcul-mental': Object.fromEntries(Object.entries(CALCUL_MENTAL.niveaux).map(([n, v]) => [n, v.competences])),
+  '/maths/calcul-pose': Object.fromEntries(Object.entries(CALCUL_POSE.niveaux).map(([n, v]) => [n, v.competences])),
+  '/maths/tables': Object.fromEntries(Object.entries(TABLES.niveaux).map(([n, v]) => [n, v.competences])),
+  '/maths/fractions': Object.fromEntries(Object.entries(FRACTIONS.niveaux).map(([n, v]) => [n, v.competences])),
+  '/maths/problemes': Object.fromEntries(Object.entries(PROBLEMES.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/heure': Object.fromEntries(Object.entries(HEURE.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/monnaie': Object.fromEntries(Object.entries(MONNAIE.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/mesures': { ce1: ['longueurs', 'masses'], ce2: ['longueurs', 'masses', 'contenances'] },
-  '/maths/geometrie': {
-    ce1: ['figures-planes', 'solides', 'tracer-figures', 'reperage-deplacements'],
-    ce2: ['figures-planes', 'solides', 'tracer-figures', 'reperage-deplacements', 'symetrie', 'angle-droit', 'patrons'],
-  },
-  '/francais/dictee': ['dictee', 'orthographe-lexicale'],
+  '/maths/mesures': Object.fromEntries(Object.entries(MESURES.niveaux).map(([n, v]) => [n, v.competences])),
+  '/maths/geometrie': Object.fromEntries(Object.entries(GEOMETRIE.niveaux).map(([n, v]) => [n, v.competences])),
+  '/francais/dictee': Object.fromEntries(Object.entries(DICTEE.niveaux).map(([n, v]) => [n, v.competences])),
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
-  '/francais/orthographe': { ...parClasse(CYCLE_2, ['orthographe-lexicale', 'accords-gn']), ...parClasse(CM, ['accords-gn']) },
-  '/francais/grammaire': { ...parClasse(CE, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn']), ...parClasse(CM, ['phrase', 'classes-mots', 'sujet-verbe', 'accords-gn', 'complements']) },
+  '/francais/orthographe': Object.fromEntries(Object.entries(ORTHOGRAPHE.niveaux).map(([n, v]) => [n, v.competences])),
+  '/francais/grammaire': Object.fromEntries(Object.entries(GRAMMAIRE.niveaux).map(([n, v]) => [n, v.competences])),
   '/francais/conjugaison': Object.fromEntries(Object.entries(CONJUGAISON.niveaux).map(([n, v]) => [n, v.competences])),
-  '/francais/vocabulaire': ['ordre-alphabetique', 'synonymes-antonymes', 'familles-mots'],
+  '/francais/vocabulaire': Object.fromEntries(Object.entries(VOCABULAIRE.niveaux).map(([n, v]) => [n, v.competences])),
   // compréhension : le mode « Lecture de textes » n'a pas encore de questions
   '/lecture': ['decodage'],
 }

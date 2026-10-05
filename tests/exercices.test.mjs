@@ -48,7 +48,8 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
       const k = competenceDe(id)
       if (!k) pbs.push(`${n} : compétence ${id} inconnue de programme.js`)
       else if (!k.niveaux.includes(n) && !declarees.includes(id)) pbs.push(`${n} : ${id} n'est pas au programme (ni déclarée horsProgramme)`)
-      else if (k && k.domaine !== d.domaine) pbs.push(`${n} : ${id} est du domaine ${k.domaine}`)
+      // même matière suffit : Orthographe (vocabulaire) travaille aussi les accords (grammaire)
+      else if (k && DOMAINES.find(x => x.id === k.domaine)?.matiere !== DOMAINES.find(x => x.id === d.domaine)?.matiere) pbs.push(`${n} : ${id} est du domaine ${k.domaine}`)
     }
     for (const h of niv.horsProgramme ?? []) {
       if (!h.raison) pbs.push(`${n} : horsProgramme ${h.option} sans raison`)

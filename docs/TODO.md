@@ -5,6 +5,7 @@
 
 ## Demandes du 2026-10-05
 
+- [ ] (plan 10, phase 2d en cours : 3 agents) **Migrer les 19 exercices restants** vers `src/exercices/` — lot A français, lot B maths avec dessins, lot C calcul et maternelle ; ensuite regarder **Lecture et Quiz** (hors compteur)
 - [ ] **Réorganiser la navigation** : ce n'est pas clair aujourd'hui (ex. « Français » n'affiche que des exercices, les affiches et fiches sont ailleurs dans « À imprimer »). Piste : une page par matière/domaine qui regroupe exercices, affiches et fiches (cf. plan 09 : sections par domaine), et repenser la place de « À imprimer » ; à proposer avant de coder
 - [ ] **Migrer aussi les affiches vers le même modèle** que les exercices (plan 10) : une définition par affiche (niveaux, compétences de `programme.js`, variantes), un générateur pur, des instantanés en node, et le catalogue dérivé de ces définitions (`src/impression/affiches/`, `alphabet.js`, `nombres.js`, tables de `calcul.js`) ; idem pour les générateurs de « À imprimer » (écriture, calcul, nombres)
 - [ ] **Page programme** : utiliser les mêmes icônes que la page `/imprimer` pour « 📘 Pour apprendre » et « ✏️ Pour s'entraîner »

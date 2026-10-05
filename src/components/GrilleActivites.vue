@@ -10,6 +10,7 @@
         <span class="card-title">{{ langue === 'br' && a.br ? a.br.titre : a.titre }}</span>
         <span class="card-desc">{{ description(a) }}</span>
         <span class="card-tag">{{ etiquetteNiveaux(a.niveaux) }}</span>
+        <component :is="PastilleMigration" v-if="PastilleMigration && a.fiche" :route="a.to" />
       </RouterLink>
     </div>
   </template>
@@ -17,7 +18,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { ACTIVITES, DOMAINES_BR, etiquetteNiveaux } from '../data/activites'
 import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/components/GrilleActivites.js'
@@ -31,6 +32,8 @@ const props = defineProps({
   genre: { type: String, default: '' },   // 'affiche' ou 'fiche' (page « À imprimer »)
 })
 const classe = useClasse()
+// mode dev seulement (absent du build) : pastille « migré / à migrer » vers src/exercices/ (plan 10)
+const PastilleMigration = import.meta.env.DEV ? defineAsyncComponent(() => import('./PastilleMigration.vue')) : null
 const { code: regionale } = useLangueRegionale()
 // description dans la langue de l'interface, variante « langue régionale » si elle est active
 function description(a) {
@@ -63,6 +66,7 @@ const groupes = computed(() => {
 </script>
 
 <style scoped>
+.card { position: relative; }
 .domaine { font-size: 1rem; font-weight: 800; color: #777; margin: 1.5rem 0 .75rem; text-transform: uppercase; letter-spacing: .04em; }
 .domaine:first-child { margin-top: 0; }
 .affiches-domaine { font-size: .85rem; color: #888; margin: -.4rem 0 .75rem; }

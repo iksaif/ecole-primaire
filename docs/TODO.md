@@ -5,6 +5,10 @@
 
 ## Demandes du 2026-10-05
 
+- [ ] **Réorganiser la navigation** : ce n'est pas clair aujourd'hui (ex. « Français » n'affiche que des exercices, les affiches et fiches sont ailleurs dans « À imprimer »). Piste : une page par matière/domaine qui regroupe exercices, affiches et fiches (cf. plan 09 : sections par domaine), et repenser la place de « À imprimer » ; à proposer avant de coder
+- [ ] **Migrer aussi les affiches vers le même modèle** que les exercices (plan 10) : une définition par affiche (niveaux, compétences de `programme.js`, variantes), un générateur pur, des instantanés en node, et le catalogue dérivé de ces définitions (`src/impression/affiches/`, `alphabet.js`, `nombres.js`, tables de `calcul.js`) ; idem pour les générateurs de « À imprimer » (écriture, calcul, nombres)
+- [ ] **Page programme** : utiliser les mêmes icônes que la page `/imprimer` pour « 📘 Pour apprendre » et « ✏️ Pour s'entraîner »
+- [ ] **Planche de billets et pièces à découper** (à partir de l'affiche « Pièces et billets », `?affiche=monnaie`) : tailles réelles, traits de coupe, plusieurs exemplaires par valeur, pour jouer à la marchande ; réutiliser `piece`/`billet` de `src/exercices/monnaie/argent.js`
 - [x] **Un seul dessin des pièces et des billets** pour l'exercice Monnaie (jeu et fiche) et l'affiche « Pièces et
       billets » : `src/exercices/monnaie/argent.js` (`piece`, `billet`, `svgArgent`), tailles réelles, couleurs des
       vrais billets, 1 € et 2 € bimétal dans le bon sens (l'affiche les avait inversés)

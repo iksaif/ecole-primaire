@@ -1,15 +1,16 @@
 // Conjugaison — générateur (pur : aucun import de Vue, aucun Math.random ; lisible par node).
 //   questions({ niveau, reglages, rng })         une partie : les six lignes d'un tableau (un verbe, un temps)
 //   questionsFiche({ niveau, reglages, rng })    les tableaux de la fiche imprimable (fiche.js les met en page)
-//   verifier(q, rep) / jugement(q, rep)          la saisie { texte } est-elle juste ? ('juste' | 'accents' | 'faux')
+//   verifier(q, rep)                             la saisie { texte } est-elle juste ? → { ok, nuance } (nuance 'accents')
 //   bonneReponse(q)                              une réponse juste (tests)
 //   ecartsAuProgramme(x, contraintes)            verbes et temps hors du programme du niveau (tests)
 //   ecartsFiche(html, contraintes)               idem, lus dans le HTML de la fiche (data-verbe, data-temps)
+//   manquesAuProgramme(reglages, contraintes)    temps, groupes et irréguliers du programme que le niveau ne propose pas
 // rng : src/utils/hasard.js. Formes : src/data/conjugaison.js (partagé avec les affiches de conjugaison).
 // L'ordre des tirages est celui de l'ancienne vue : même flux de hasard, mêmes fiches.
 import DEFINITION from './definition.js'
 import { formesTemps, verbeDe } from '../../data/conjugaison.js'
-import { comparerReponse } from '../../utils/reponses.js'
+import { verdictSaisie } from '../../utils/reponses.js'
 
 export const NB_TABLEAUX = 4    // tableaux par fiche
 // groupe (src/data/conjugaison.js) → clé du catalogue groupe_<…>
@@ -54,10 +55,9 @@ export function questions({ niveau, reglages, rng }) {
   }))
 }
 
-/** Verdict d'une saisie : 'juste', 'accents' (juste aux accents près) ou 'faux'. rep : { texte } */
-export const jugement = (q, rep) => comparerReponse(rep?.texte, formesAcceptees(q.attendu))
-// Accents oubliés : la réponse compte (le clavier d'un enfant n'en a pas toujours), la vue montre la bonne graphie
-export const verifier = (q, rep) => jugement(q, rep) !== 'faux'
+// Verdict d'une saisie { texte } : { ok, nuance }. Accents oubliés : comptés faux, avec la nuance 'accents' (la vue
+// avertit et montre la bonne graphie ; décision du 2026-10-05)
+export const verifier = (q, rep) => verdictSaisie(rep?.texte, formesAcceptees(q.attendu))
 export const bonneReponse = q => ({ texte: q.attendu })
 
 // Tableaux de la fiche : des couples au hasard, en variant les verbes autant que possible
@@ -86,6 +86,18 @@ function ecartsCouples(couples, contraintes) {
   return [...new Set(ecarts)]
 }
 export const ecartsAuProgramme = (x, contraintes) => ecartsCouples(Array.isArray(x) ? x : x.tableaux, contraintes)
+// Ce que le programme du niveau demande et que les réglages ne proposent pas (tests : avec toutAuProgramme)
+export function manquesAuProgramme(reglages, contraintes) {
+  const c = contraintes.conjugaison
+  if (!c) return []
+  const verbes = (reglages.verbes ?? []).map(verbeDe).filter(Boolean)
+  const groupes = new Set(verbes.map(v => GROUPE_PROGRAMME[v.groupe]))
+  return [
+    ...c.temps.filter(x => !reglages.temps?.includes(x)).map(x => `temps ${x} absent`),
+    ...c.groupes.filter(g => !groupes.has(g)).map(g => `groupe ${g} absent`),
+    ...c.irreguliers.filter(v => !reglages.verbes?.includes(v)).map(v => `irrégulier ${v} absent`),
+  ]
+}
 export function ecartsFiche(html, contraintes) {
   const couples = [...html.matchAll(/data-verbe="([^"]+)" data-temps="([^"]+)"/g)].map(([, verbe, temps]) => ({ verbe, temps }))
   return couples.length ? ecartsCouples(couples, contraintes) : ['aucun tableau']

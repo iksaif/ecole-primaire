@@ -41,7 +41,6 @@ export default {
     complete: 'Complète',
     rappel: 'Rappel',
     lisEmploi: "Lis l'emploi du temps.",
-    colQuestion: 'Question',
     // exercices et précisions (réglages)
     ex_lire: "Lire l'heure",
     ex_placer: 'Placer les aiguilles',

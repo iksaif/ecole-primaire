@@ -16,8 +16,7 @@
           </button>
         </div>
       </ChoixReglage>
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ"
-        :titre="t('nbQuestions')" :valeurs="[5, 10, 15]" />
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
 
       <div class="apercu">
         <span v-for="v in pieces" :key="v" class="argent" v-html="argent(v, 0.7)"></span>
@@ -36,21 +35,18 @@
         </div>
         <template v-if="q.avecCentimes && decimal">
           <div class="saisie-somme">
-            <input ref="inputEl" v-model="saisieT" class="exercise-input saisie-large"
-                   :class="inputClass" type="text" inputmode="decimal" :placeholder="t('exemple')"
-                   :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <SaisieReponse v-model="saisieT" type="decimal" class="exercise-input saisie-large" :etat="etat"
+              :placeholder="t('exemple')" :disabled="repondu" focus @entree="entree" />
           </div>
           <div class="astuce" style="text-align:center;">{{ t('tuPeuxEcrire') }}</div>
         </template>
         <div v-else class="saisie-somme">
-          <input ref="inputEl" v-model="saisieE" class="exercise-input saisie-petite"
-                 :class="inputClass" type="number" inputmode="numeric" min="0" placeholder="?"
-                 :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+          <SaisieReponse v-model="saisieE" type="nombre" class="exercise-input saisie-petite" :etat="etat" min="0" placeholder="?"
+            :disabled="repondu" focus @entree="entree" />
           <span class="unite">€</span>
           <template v-if="q.avecCentimes">
-            <input v-model="saisieC" class="exercise-input saisie-petite"
-                   :class="inputClass" type="number" inputmode="numeric" min="0" max="99" placeholder="?"
-                   :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <SaisieReponse v-model="saisieC" type="nombre" class="exercise-input saisie-petite" :etat="etat" min="0" max="99"
+              placeholder="?" :disabled="repondu" @entree="entree" />
             <span class="unite">c</span>
           </template>
         </div>
@@ -77,7 +73,7 @@
           <div class="consigne petite">{{ t('combienRendre') }}</div>
         </template>
 
-        <div class="plateau" :class="inputClass">
+        <div class="plateau" :class="etat">
           <span v-if="!selection.length" class="plateau-vide">{{ t('plateauVide') }}</span>
           <button v-for="(v, i) in selection" :key="i" class="btn-argent dans-plateau"
                   :disabled="repondu" :title="t('enlever') + ' : ' + nomArgent(v)"
@@ -108,17 +104,17 @@
         <div class="consigne conversion">{{ q.texte.replace(/ = \?.*$/, ' =') }}</div>
         <div class="saisie-somme">
           <template v-if="q.sous === 'c2ec'">
-            <input ref="inputEl" v-model="saisieE" class="exercise-input saisie-petite" :class="inputClass"
-                   type="number" inputmode="numeric" min="0" placeholder="?" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <SaisieReponse v-model="saisieE" type="nombre" class="exercise-input saisie-petite" :etat="etat" min="0" placeholder="?"
+              :disabled="repondu" focus @entree="entree" />
             <span class="unite">€</span>
-            <input v-model="saisieC" class="exercise-input saisie-petite" :class="inputClass"
-                   type="number" inputmode="numeric" min="0" max="99" placeholder="?" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <SaisieReponse v-model="saisieC" type="nombre" class="exercise-input saisie-petite" :etat="etat" min="0" max="99"
+              placeholder="?" :disabled="repondu" @entree="entree" />
             <span class="unite">c</span>
           </template>
           <template v-else>
-            <input ref="inputEl" v-model="saisieT" class="exercise-input saisie-large" :class="inputClass"
-                   type="text" :inputmode="q.sous === 'ec2dec' ? 'decimal' : 'numeric'" :placeholder="q.sous === 'ec2dec' ? '?,??' : '?'"
-                   :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <SaisieReponse v-model="saisieT" type="decimal" class="exercise-input saisie-large" :etat="etat"
+              :inputmode="q.sous === 'ec2dec' ? 'decimal' : 'numeric'" :placeholder="q.sous === 'ec2dec' ? '?,??' : '?'"
+              :disabled="repondu" focus @entree="entree" />
             <span class="unite">{{ q.sous === 'ec2dec' ? '€' : 'c' }}</span>
           </template>
         </div>
@@ -186,17 +182,7 @@
     <!-- Résultats -->
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
-      <table class="correction-table">
-        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
-        <tbody>
-          <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
-            <td>{{ h.question.texte }}</td>
-            <td>{{ h.donne }}</td>
-            <td class="mot-attendu">{{ h.question.attendu }}</td>
-            <td>{{ h.ok ? '✅' : '❌' }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <TableauCorrection :historique="historique" />
     </ResultatsJeu>
   </div>
 </template>
@@ -204,19 +190,17 @@
 <script setup>
 // La monnaie : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/monnaie/ (definition.js, generateur.js, fiche.js, argent.js). Sommes en centimes.
-import { ref, computed, nextTick, watch } from 'vue'
-import { sauvegarder, chargerReglages } from '../../utils'
-import { creerRng, graineAleatoire } from '../../utils/hasard'
+import { ref, computed } from 'vue'
 import { useI18n, contenu } from '../../i18n'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import ChoixReglage from '../../components/ChoixReglage.vue'
 import QuestionJeu from '../../components/QuestionJeu.vue'
 import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import { useModeExercice } from '../../composables/useModeExercice'
-import { useGraine } from '../../composables/useGraine'
-import { usePoliceFiche } from '../../composables/usePolices'
+import SaisieReponse from '../../components/SaisieReponse.vue'
+import TableauCorrection from '../../components/TableauCorrection.vue'
+import { useReglages } from '../../composables/useReglages'
+import { useFicheExercice } from '../../composables/useFicheExercice'
 import { useJeu } from '../../composables/useJeu'
-import { reglagesDuNiveau } from '../../exercices/outils'
 import DEFINITION from '../../exercices/monnaie/definition'
 import { INTERFACE, TEXTES } from '../../exercices/monnaie/textes'
 import { questions as genererQuestions, questionsFiche, verifier, sommeDonnee, donnees, palette, fmt, formatSomme, totalDe, trierDesc }
@@ -224,21 +208,11 @@ import { questions as genererQuestions, questionsFiche, verifier, sommeDonnee, d
 import { fiche as ficheMonnaie } from '../../exercices/monnaie/fiche'
 import { svgArgent } from '../../exercices/monnaie/argent'
 
-const { t, langue } = useI18n(INTERFACE)
-// Maths : le contenu (énoncés, fiche) suit la langue de l'interface
-const langueContenu = computed(() => (DEFINITION.contenu === 'fr' ? 'fr' : langue.value))
+const { t } = useI18n(INTERFACE)
+// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; maths :
+// le contenu (énoncés, fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION, 'monnaie_config')
 const T = contenu(TEXTES, () => langueContenu.value).t
-
-// ── Réglages : défauts et options du niveau dans la définition ──
-const config = ref(reglagesDuNiveau(DEFINITION, chargerReglages('monnaie_config', reglagesDuNiveau(DEFINITION))))
-if (![5, 10, 15].includes(config.value.nbQ)) config.value.nbQ = 10
-watch(config, v => sauvegarder('monnaie_config', v), { deep: true })
-// Changement de niveau : on garde les exercices et l'option « centimes » qui existent dans le nouveau niveau
-watch(() => config.value.niveau, () => {
-  const r = reglagesDuNiveau(DEFINITION, config.value)
-  config.value.exercices = r.exercices
-  config.value.centimes = r.centimes
-})
 
 const decimal = computed(() => donnees(config.value.niveau).saisieDecimale)
 const pieces = computed(() => palette(config.value.niveau, config.value.centimes))
@@ -253,7 +227,6 @@ const saisieC = ref('')
 const saisieT = ref('')
 const selection = ref([])
 const avis = ref('')          // somme illisible : message, sans compter de réponse
-const inputEl = ref(null)
 
 // message après une erreur, selon le type de question (rep : la réponse donnée ; null si passée)
 function messageErreur(q, rep) {
@@ -266,22 +239,18 @@ function messageErreur(q, rep) {
 }
 
 const jeu = useJeu({
-  // le jeu a sa propre graine (tirée à chaque partie) : la graine de la page sert aux fiches
-  generer: () => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()), T, nb: config.value.nbQ }),
+  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
   messageErreur,
   delai: 900,
-  surQuestion: () => {
-    saisieE.value = ''; saisieC.value = ''; saisieT.value = ''; selection.value = []; avis.value = ''
-    nextTick(() => inputEl.value?.focus?.())
-  },
+  // champs vidés ; le focus : SaisieReponse (attribut focus)
+  surQuestion: () => { saisieE.value = ''; saisieC.value = ''; saisieT.value = ''; selection.value = []; avis.value = '' },
 })
-const { phase, questions, q, bonnes, historique, retour, repondu, cleFin } = jeu
+const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 
 const dernierOk = computed(() => !!retour.value?.ok)
 const feedback = computed(() => retour.value?.message ?? avis.value)
-const inputClass = computed(() => (retour.value ? (retour.value.ok ? 'ok' : 'erreur') : ''))
-const feedbackClass = computed(() => inputClass.value || (avis.value ? 'erreur' : ''))
+const feedbackClass = computed(() => etat.value || (avis.value ? 'erreur' : ''))
 
 function ajouter(v) { if (!repondu.value && selection.value.length < 30) selection.value.push(v) }
 function enlever(i) { if (!repondu.value) selection.value.splice(i, 1) }
@@ -329,20 +298,10 @@ function passer() {
 }
 
 // ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
-const { mode } = useModeExercice()
-const { graine, nouvelle, rngFiche } = useGraine()
-// police choisie dans « Sur la fiche » (Andika par défaut)
-const policeFiche = usePoliceFiche()
-// tirage recalculé quand les réglages changent ou qu'on demande une nouvelle fiche (nouvelle graine) ; la mise en
-// page à part : changer de police ne retire pas de questions (le flux de la graine n'avance pas)
-const tirage = computed(() => {
-  if (mode.value !== 'imprimer') return null
-  graine.value
-  return questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng: rngFiche(), T })
+const { mode, fiche, nouvelle } = useFicheExercice({
+  tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+  mettreEnPage: (questions, police) => ficheMonnaie({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
-const fiche = computed(() => (tirage.value
-  ? ficheMonnaie({ questions: tirage.value, reglages: config.value, T, langue: langueContenu.value, ...policeFiche.value })
-  : ''))
 </script>
 
 <style scoped>

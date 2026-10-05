@@ -11,8 +11,9 @@ export default {
   domaine: 'grandeurs-mesures',
   contenu: 'interface',
   niveauDefaut: 'ce1',
-  // réglages communs à tous les niveaux
+  // réglages communs à tous les niveaux, et les valeurs proposées pour ceux qui ont un choix
   reglages: { saisie: 'choix', aideMinutes: true, nbQ: 10, nbHorloges: 8 },
+  options: { saisie: ['choix', 'clavier'], nbQ: [5, 10, 15], nbHorloges: [4, 8, 12] },
   niveaux: {
     cp: {
       competences: ['heure-entiere'],

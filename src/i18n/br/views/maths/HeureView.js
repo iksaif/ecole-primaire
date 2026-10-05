@@ -40,7 +40,6 @@ export default {
     complete: 'Leunia',
     rappel: "Dalc'h soñj",
     lisEmploi: "Lenn an implij-amzer.",
-    colQuestion: 'Goulenn',
     ex_lire: 'Lenn an eur',
     ex_placer: 'Lakaat an nadozioù',
     ex_journee: 'Mintin / goude merenn',

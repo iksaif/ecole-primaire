@@ -3,7 +3,8 @@
 // puis la fiche (srcdoc de l'aperçu) est analysée, pour plusieurs graines.
 import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE } from './outils.mjs'
 import { contraintesDe, competenceDe, HORS_PROGRAMME } from '../src/data/programme.js'
-import { VERBES, AUTRES_VERBES } from '../src/data/conjugaison.js'
+import CONJUGAISON from '../src/exercices/conjugaison/definition.js'
+import { valeursDe } from '../src/exercices/outils.js'
 
 const GRAINES = [1, 2, 3]
 const fiche = (route, graine) => `${URL_SITE}?graine=${graine}#${route}?mode=imprimer`
@@ -30,50 +31,26 @@ async function ouvrir(page, route, graine, niveau, options) {
 const debutCorrige = html => html.search(/class="corrige[ "]/)
 const attributs = (html, nom) => [...html.matchAll(new RegExp(`data-${nom}="([^"]+)"`, 'g'))].map(m => m[1])
 
-// ── Conjugaison : verbes (groupes et irréguliers) et temps du niveau
-const TOUS_VERBES = { ...VERBES, ...AUTRES_VERBES }
-const GROUPE = { auxiliaire: 'etre-avoir', '1er groupe': '1er-groupe', '2e groupe': '2e-groupe' }
-const verbeAuProgramme = (cle, c) => {
-  const v = TOUS_VERBES[cle]
-  if (!v) return false
-  return v.groupe === '3e groupe' ? c.irreguliers.includes(cle) : c.groupes.includes(GROUPE[v.groupe])
-}
-
-console.log('Conjugaison')
+// ── Conjugaison : le programme est vérifié en node (tests/exercices.test.mjs : ecartsAuProgramme, ecartsFiche,
+// manquesAuProgramme). Ici, seulement le rendu : la vue propose les verbes et temps de la définition, et l'aperçu
+// montre une fiche, sans erreur JS.
+console.log('Conjugaison (rendu)')
 {
   const ctx = await contexte(nav, { graine: 1 })
   const page = await ctx.newPage()
   const erreurs = surveiller(page)
-  for (const niveau of ['cp', 'ce1', 'ce2', 'cm1', 'cm2']) {
-    const c = contraintesDe(niveau).conjugaison
+  for (const niveau of ['cp', 'cm2']) {
+    erreurs.length = 0
     const ko = []
-    for (const g of GRAINES) {
-      erreurs.length = 0
-      const html = await ouvrir(page, '/francais/conjugaison', g, niveau)
-      // options proposées par le formulaire : rien hors programme, et tout le programme
-      // boutons de ChoixReglage : data-valeur = id du verbe ou du temps
-      const valeurs = reglage => page.locator(`.cadre-exercice [data-reglage="${reglage}"] [data-valeur]`).evaluateAll(l => l.map(b => b.dataset.valeur))
-      const verbes = await valeurs('verbes'), temps = await valeurs('temps')
-      if (g === GRAINES[0]) {
-        const horsVerbes = verbes.filter(v => !verbeAuProgramme(v, c))
-        if (horsVerbes.length) ko.push(`verbes proposés hors programme : ${horsVerbes}`)
-        const horsTemps = temps.filter(x => !c.temps.includes(x))
-        if (horsTemps.length) ko.push(`temps proposés hors programme : ${horsTemps}`)
-        const manquants = c.temps.filter(x => !temps.includes(x))
-        if (manquants.length) ko.push(`temps du programme absents : ${manquants}`)
-        const groupes = new Set(verbes.map(v => TOUS_VERBES[v]?.groupe === '3e groupe' ? 'irreguliers' : GROUPE[TOUS_VERBES[v]?.groupe]))
-        const gManquants = [...c.groupes, ...(c.irreguliers.length ? ['irreguliers'] : [])].filter(x => !groupes.has(x))
-        if (gManquants.length) ko.push(`groupes du programme absents : ${gManquants}`)
-      }
-      // fiche : chaque tableau est au programme (tout est coché par défaut au changement de niveau)
-      const vs = attributs(html ?? '', 'verbe'), ts = attributs(html ?? '', 'temps')
-      if (!vs.length) ko.push(`graine ${g} : aucun tableau`)
-      const hv = vs.filter(v => !verbeAuProgramme(v, c)), ht = ts.filter(x => !c.temps.includes(x))
-      if (hv.length || ht.length) ko.push(`graine ${g} : fiche hors programme (${[...hv, ...ht]})`)
-      if (!c.temps.includes('passe-simple') && /Passé simple/.test(html)) ko.push(`graine ${g} : passé simple`)
-      if (erreurs.length) ko.push(erreurs[0])
+    const html = await ouvrir(page, '/francais/conjugaison', 1, niveau)
+    const valeurs = reglage => page.locator(`.cadre-exercice [data-reglage="${reglage}"] [data-valeur]`).evaluateAll(l => l.map(b => b.dataset.valeur))
+    for (const reglage of ['verbes', 'temps', 'mode']) {
+      const attendues = valeursDe(CONJUGAISON, niveau, reglage).join(), vues = (await valeurs(reglage)).join()
+      if (vues !== attendues) ko.push(`${reglage} : ${vues} ≠ ${attendues}`)
     }
-    verifier(!ko.length, `${niveau.toUpperCase()} : ${c.temps.length} temps, verbes ${[...c.groupes, ...(c.irreguliers.length ? ['8 irréguliers'] : [])].join(', ')}${ko.length ? ' — ' + ko.join(' ; ') : ''}`)
+    if (!attributs(html ?? '', 'verbe').length) ko.push('aucun tableau dans la fiche')
+    if (erreurs.length) ko.push(erreurs[0])
+    verifier(!ko.length, `${niveau.toUpperCase()} : réglages de la définition, fiche affichée${ko.length ? ' — ' + ko.join(' ; ') : ''}`)
   }
   await ctx.close()
 }

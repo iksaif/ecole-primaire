@@ -13,15 +13,16 @@
   <div class="exercise-box">
     <div class="prog-dots">
       <span v-for="(_, i) in questions" :key="i" class="prog-dot"
-        :class="{ current: i === index, ok: historique[i]?.ok, erreur: historique[i] && !historique[i].ok }"></span>
+        :class="[etatDe(historique[i]), { current: i === index }]"></span>
     </div>
     <slot />
   </div>
 </template>
 
 <script setup>
-// textes : catalogue commun (quitter, quitterTitre, question)
+// textes : catalogue commun (quitter, quitterTitre, question) ; points : ok, presque (nuance, orange), erreur
 import { useI18n } from '../i18n'
+import { etatDe } from '../composables/useJeu'
 
 const props = defineProps({
   // l'objet rendu par useJeu()

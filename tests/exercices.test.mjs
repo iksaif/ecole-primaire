@@ -7,7 +7,7 @@ import { readdirSync, statSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { REGISTRE } from '../src/exercices/index.js'
-import { reglagesDuNiveau, toutAuProgramme, estBonus, raisonHorsProgramme } from '../src/exercices/outils.js'
+import { toutAuProgramme, estBonus, raisonHorsProgramme, jeuxDeReglages, langueContenuDe, lireVerdict } from '../src/exercices/outils.js'
 // noyau i18n (traduire : pluriels, interpolation, catalogue commun) : imports avec extension, lisible par node
 import { contenu } from '../src/i18n/index.js'
 import { creerRng } from '../src/utils/hasard.js'
@@ -66,6 +66,11 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
       for (const v of niv.bonus?.[cle] ?? []) if (!offertes.includes(v)) pbs.push(`${n} : bonus ${cle}=${v} hors des options`)
     }
   }
+  // options communes (nbQ…) : le défaut commun fait partie des valeurs proposées
+  for (const [cle, offertes] of Object.entries(d.options ?? {})) {
+    if (!(cle in (d.reglages ?? {}))) pbs.push(`option commune ${cle} sans défaut dans reglages`)
+    else if (!offertes.includes(d.reglages[cle])) pbs.push(`défaut commun ${cle}=${d.reglages[cle]} hors des options`)
+  }
   for (const fi of d.fiches) {
     const niv = d.niveaux[fi.niveau]
     if (!niv) { pbs.push(`fiche ${fi.id} : niveau ${fi.niveau} absent`); continue }
@@ -82,27 +87,22 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
   // ── Questions et fiches, par niveau ──
   for (const n of Object.keys(d.niveaux)) {
     const k = contraintesDe(n)
-    const cas = { 'réglages par défaut': reglagesDuNiveau(d, { niveau: n }), 'toutes les options au programme': toutAuProgramme(d, n) }
-    // réglages à choix unique : chaque autre valeur au programme, avec toutes les options au programme
-    const niv = d.niveaux[n]
-    for (const [cle, offertes] of Object.entries(niv.options ?? {})) {
-      if (Array.isArray(niv.reglages[cle])) continue
-      for (const v of offertes) {
-        if (v !== niv.reglages[cle] && !estBonus(d, n, cle, v) && !raisonHorsProgramme(d, n, cle, v)) cas[`${cle}=${v}, toutes les options`] = { ...toutAuProgramme(d, n), [cle]: v }
-      }
-    }
-    for (const fi of d.fiches.filter(x => x.niveau === n)) cas[`fiche ${fi.id}`] = reglagesDuNiveau(d, { niveau: n, ...fi.reglages })
-    for (const [nom, reglages] of Object.entries(cas)) {
+    // tout le programme du niveau est proposé (si le générateur sait le dire)
+    if (g.manquesAuProgramme) controler(g.manquesAuProgramme(toutAuProgramme(d, n), k), `${n.toUpperCase()} : tout le programme du niveau est proposé`)
+    // défauts, tout au programme, chaque autre valeur d'un choix unique (au programme), chaque fiche : outils.js
+    for (const [nom, reglages] of Object.entries(jeuxDeReglages(d, n))) {
       const ecarts = [], fiches = []
       for (const l of LANGUES) {
-        const T = contenu(textes, d.contenu === 'fr' ? 'fr' : l).t
-        const langue = d.contenu === 'fr' ? 'fr' : l
+        const langue = langueContenuDe(d, l)
+        const T = contenu(textes, langue).t
         for (const graine of GRAINES) {
           const qs = g.questions({ niveau: n, reglages, rng: creerRng(graine), T, nb: 10 })
           if (!qs.length) ecarts.push(`graine ${graine} : aucune question`)
           ecarts.push(...g.ecartsAuProgramme(qs, k).map(e => `graine ${graine} : ${e}`))
-          for (const q of qs) if (q.options && !g.verifier(q, { choix: q.bonne })) ecarts.push(`graine ${graine} : la bonne proposition est refusée (${q.cle})`)
-          if (g.bonneReponse) for (const q of qs) if (!g.verifier(q, g.bonneReponse(q))) ecarts.push(`graine ${graine} : la bonne réponse est refusée (${q.cle})`)
+          // verifier rend un booléen ou { ok, nuance } (lireVerdict)
+          const juste = (q, rep) => lireVerdict(g.verifier(q, rep)).ok
+          for (const q of qs) if (q.options && !juste(q, { choix: q.bonne })) ecarts.push(`graine ${graine} : la bonne proposition est refusée (${q.cle})`)
+          if (g.bonneReponse) for (const q of qs) if (!juste(q, g.bonneReponse(q))) ecarts.push(`graine ${graine} : la bonne réponse est refusée (${q.cle})`)
           const tirage = g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T })
           ecarts.push(...g.ecartsAuProgramme(tirage, k).map(e => `fiche, graine ${graine} : ${e}`))
           const html = f.fiche({ questions: tirage, reglages, T, langue })

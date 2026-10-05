@@ -15,8 +15,7 @@
       </ChoixReglage>
 
       <ChoixReglage v-if="mode === 'jouer' && config.exercices.includes('lire')" :definition="DEFINITION" cle="saisie"
-        v-model="config.saisie" :titre="t('reponseLire')" :valeurs="['choix', 'clavier']"
-        :libelle="s => t(s === 'choix' ? 'propositions4' : 'jEcris')" />
+        v-model="config.saisie" :titre="t('reponseLire')" :libelle="s => t(s === 'choix' ? 'propositions4' : 'jEcris')" />
 
       <div class="config-section">
         <div class="config-section-title">{{ t('aide') }}</div>
@@ -27,10 +26,8 @@
         </div>
       </div>
 
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ"
-        :titre="t('nbQuestions')" :valeurs="[5, 10, 15]" />
-      <ChoixReglage v-else :definition="DEFINITION" cle="nbHorloges" v-model="config.nbHorloges"
-        :titre="t('nbHorloges')" :valeurs="[4, 8, 12]" />
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
+      <ChoixReglage v-else :definition="DEFINITION" cle="nbHorloges" v-model="config.nbHorloges" :titre="t('nbHorloges')" />
     </ConfigExercice>
 
     <!-- Exercice -->
@@ -42,10 +39,7 @@
         <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
         <div class="legende-aiguilles"><span class="leg-h">{{ t('legH') }}</span> · <span class="leg-m">{{ t('legM') }}</span></div>
 
-        <div v-if="q.mode === 'choix'" class="choix-grille">
-          <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
-            :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
-        </div>
+        <ChoixReponses v-if="q.mode === 'choix'" :options="q.options" :bonne="q.bonne" :repondu="repondu" @choisir="validerChoix" />
       </template>
 
       <!-- (b) Placer les aiguilles -->
@@ -88,12 +82,10 @@
 
       <template v-else-if="q.type === 'journee' && q.sous === 'choisir'">
         <div class="consigne">{{ t('ilEst1') }}<strong>{{ q.ecrit24 }}</strong>{{ t('ilEst2') }} {{ t('quelleHorloge') }}</div>
-        <div class="choix-horloges">
-          <button v-for="(o, i) in q.options" :key="i" class="choix-horloge"
-            :class="classeChoix(i)" :disabled="repondu" :aria-label="t('choixHorloge', { n: i + 1 })" @click="validerChoix(i)">
-            <span v-html="horlogeSvg(o.h, o.m, null, false)"></span>
-          </button>
-        </div>
+        <ChoixReponses images :options="q.options" :bonne="q.bonne" :repondu="repondu" :libelle="i => t('choixHorloge', { n: i + 1 })"
+          @choisir="validerChoix">
+          <template #default="{ option }"><span v-html="horlogeSvg(option.h, option.m, null, false)"></span></template>
+        </ChoixReponses>
       </template>
 
       <!-- (d) Durées -->
@@ -124,8 +116,8 @@
         <div class="aide-config" style="text-align:center;margin-bottom:.75rem;">{{ t('rappel') }} : 1 h = 60 min</div>
         <div class="saisie-heure">
           <template v-for="(u, i) in q.unites" :key="u">
-            <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" placeholder="?" v-model="champs[i]" :disabled="repondu" @keydown.enter="valider">
+            <SaisieReponse v-model="champs[i]" type="nombre" class="exercise-input champ" :etat="etat" min="0" placeholder="?"
+              :disabled="repondu" :focus="i === 0" @entree="valider" />
             <span class="unite">{{ u }}</span>
           </template>
         </div>
@@ -143,26 +135,23 @@
           </tbody>
         </table>
         <div class="consigne">{{ q.question }}</div>
-        <div v-if="q.options" class="choix-grille">
-          <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
-            :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
-        </div>
+        <ChoixReponses v-if="q.options" :options="q.options" :bonne="q.bonne" :repondu="repondu" @choisir="validerChoix" />
       </template>
 
       <!-- saisie « ? h ? min » (lire au clavier, matin / après-midi, durées, emploi du temps) -->
       <div v-if="saisieHM" class="saisie-heure">
-        <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-          min="0" :max="sur24 ? 23 : null" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
+        <SaisieReponse v-model="repH" type="nombre" class="exercise-input champ" :etat="etat" min="0" :max="sur24 ? 23 : null"
+          placeholder="?" :disabled="repondu" focus @entree="valider" />
         <span class="unite">h</span>
         <!-- heures entières seulement (CP) : pas de case pour les minutes -->
         <template v-if="!q.sansMinutes">
-          <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-            min="0" :max="sur24 ? 59 : null" placeholder="00" v-model="repM" :disabled="repondu" @keydown.enter="valider">
+          <SaisieReponse v-model="repM" type="nombre" class="exercise-input champ" :etat="etat" min="0" :max="sur24 ? 59 : null"
+            placeholder="00" :disabled="repondu" @entree="valider" />
           <span class="unite">min</span>
         </template>
       </div>
 
-      <div class="feedback" :class="feedbackClass">
+      <div class="feedback" :class="etat">
         {{ feedback }}
         <div v-if="feedbackOral" class="oral">
           « {{ feedbackOral }} »
@@ -182,20 +171,12 @@
     <!-- Résultats -->
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
-      <table class="correction-table">
-        <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
-        <tbody>
-          <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
-            <td>
-              <span v-if="horlogeDe(h.question)" class="mini-horloge" v-html="horlogeSvg(h.question.h, h.question.m, null, false)"></span>
-              {{ h.question.texte }}
-            </td>
-            <td>{{ h.donne }}</td>
-            <td class="mot-attendu">{{ h.question.attendu }}</td>
-            <td>{{ h.ok ? '✅' : '❌' }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <TableauCorrection :historique="historique">
+        <template #question="{ entree: h }">
+          <span v-if="horlogeDe(h.question)" class="mini-horloge" v-html="horlogeSvg(h.question.h, h.question.m, null, false)"></span>
+          {{ h.question.texte }}
+        </template>
+      </TableauCorrection>
     </ResultatsJeu>
   </div>
 </template>
@@ -203,55 +184,38 @@
 <script setup>
 // Lire l'heure : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/heure/ (definition.js, generateur.js, fiche.js).
-import { ref, computed, nextTick, watch } from 'vue'
-import { sauvegarder, chargerReglages } from '../../utils'
-import { creerRng, graineAleatoire } from '../../utils/hasard'
+import { ref, computed } from 'vue'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n, contenu } from '../../i18n'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import ResultatsJeu from '../../components/ResultatsJeu.vue'
 import ChoixReglage from '../../components/ChoixReglage.vue'
 import QuestionJeu from '../../components/QuestionJeu.vue'
-import { useModeExercice } from '../../composables/useModeExercice'
-import { useGraine } from '../../composables/useGraine'
-import { usePoliceFiche } from '../../composables/usePolices'
+import ChoixReponses from '../../components/ChoixReponses.vue'
+import SaisieReponse from '../../components/SaisieReponse.vue'
+import TableauCorrection from '../../components/TableauCorrection.vue'
+import { useReglages } from '../../composables/useReglages'
+import { useFicheExercice } from '../../composables/useFicheExercice'
 import { useJeu } from '../../composables/useJeu'
-import { reglagesDuNiveau } from '../../exercices/outils'
 import DEFINITION from '../../exercices/heure/definition'
 import { INTERFACE, TEXTES } from '../../exercices/heure/textes'
 import { questions as genererQuestions, questionsFiche, verifier, choisis, ecrit, deux, hm } from '../../exercices/heure/generateur'
 import { fiche as ficheHeure } from '../../exercices/heure/fiche'
 import { svgHorloge } from '../../exercices/heure/horloge'
 
-const { t, langue } = useI18n(INTERFACE)
-// Maths : le contenu (énoncés, fiche) suit la langue de l'interface
-const langueContenu = computed(() => (DEFINITION.contenu === 'fr' ? 'fr' : langue.value))
+const { t } = useI18n(INTERFACE)
+// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; maths :
+// le contenu (énoncés, fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION, 'heure_config')
 const T = contenu(TEXTES, () => langueContenu.value).t
 // la lecture à voix haute n'a qu'une voix française
 const voixFr = computed(() => langueContenu.value === 'fr')
 const { lire } = useTTS()
 
-// ── Réglages : défauts et options du niveau dans la définition ──
-const DEFAUT = reglagesDuNiveau(DEFINITION)
-const config = ref(reglagesDuNiveau(DEFINITION, chargerReglages('heure_config', DEFAUT)))
-if (![4, 8, 12].includes(config.value.nbHorloges)) config.value.nbHorloges = 8
-watch(config, v => sauvegarder('heure_config', v), { deep: true })
-
-// Changement de niveau : on garde les exercices qui existent dans le nouveau niveau (sinon ses défauts), et on
-// reprend ses précisions par défaut.
-watch(() => config.value.niveau, () => {
-  const niv = DEFINITION.niveaux[config.value.niveau]
-  const ex = config.value.exercices.filter(e => niv.options.exercices.includes(e))
-  config.value.exercices = ex.length ? ex : [...niv.reglages.exercices]
-  config.value.precisions = [...niv.reglages.precisions]
-})
-
 // ── Jeu ──
 const repH = ref('')
 const repM = ref('')
 const champs = ref(['', ''])
-const choixDonne = ref(null)
-const inputEl = ref(null)
 const cadranEl = ref(null)
 const aiguilles = ref({ h: 0, m: 0 })
 
@@ -267,22 +231,19 @@ function messageErreur(q) {
 }
 
 const jeu = useJeu({
-  // le jeu a sa propre graine (tirée à chaque partie) : la graine de la page sert aux fiches
-  generer: () => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()), T, nb: config.value.nbQ }),
+  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
   messageErreur,
+  // champs vidés ; le focus : SaisieReponse (attribut focus)
   surQuestion: q => {
-    repH.value = ''; repM.value = ''; champs.value = ['', '']; choixDonne.value = null
+    repH.value = ''; repM.value = ''; champs.value = ['', '']
     if (q?.type === 'placer') aiguilles.value = { ...q.depart }
-    nextTick(() => (inputEl.value || document.querySelector('.exercise-box input:not([disabled])'))?.focus?.())
   },
 })
-const { phase, questions, q, bonnes, historique, retour, repondu, cleFin } = jeu
+const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 
 const dernierOk = computed(() => !!retour.value?.ok)
 const feedback = computed(() => retour.value?.message ?? '')
-const feedbackClass = computed(() => (retour.value ? (retour.value.ok ? 'ok' : 'erreur') : ''))
-const inputClass = feedbackClass
 const feedbackOral = computed(() => {
   if (!repondu.value) return ''
   if (q.value.type === 'journee') return T('oralJournee', { h: q.value.h24, m: q.value.m, oral: q.value.oral })
@@ -300,16 +261,8 @@ function horlogeSvg(h, m, fantome = null, aideMinutes = config.value.aideMinutes
   return svgHorloge(h, m, { aideMinutes, fantome, libelle: T('horloge') })
 }
 
-function classeChoix(i) {
-  if (!repondu.value) return ''
-  if (i === q.value.bonne) return 'ok'
-  if (i === choixDonne.value) return 'erreur'
-  return 'grise'
-}
-
 function validerChoix(i) {
   if (repondu.value) return
-  choixDonne.value = i
   const o = q.value.options[i]
   jeu.repondre({ choix: i }, { donne: o.label ?? ecrit(o.h, o.m) })
 }
@@ -387,20 +340,10 @@ function glisser(e) {
 function finGlisser() { aiguilleTenue = null }
 
 // ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
-const { mode } = useModeExercice()
-const { graine, nouvelle, rngFiche } = useGraine()
-// police choisie dans « Sur la fiche » (Andika par défaut)
-const policeFiche = usePoliceFiche()
-// tirage recalculé quand les réglages changent ou qu'on demande une nouvelle fiche (nouvelle graine) ; la mise en
-// page à part : changer de police ne retire pas de questions (le flux de la graine n'avance pas)
-const tirage = computed(() => {
-  if (mode.value !== 'imprimer') return null
-  graine.value
-  return questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng: rngFiche(), T })
+const { mode, fiche, nouvelle } = useFicheExercice({
+  tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+  mettreEnPage: (questions, police) => ficheHeure({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
-const fiche = computed(() => (tirage.value
-  ? ficheHeure({ questions: tirage.value, reglages: config.value, T, langue: langueContenu.value, ...policeFiche.value })
-  : ''))
 </script>
 
 <style scoped>
@@ -429,47 +372,6 @@ const fiche = computed(() => (tirage.value
 .legende-aiguilles { text-align: center; font-size: .85rem; color: #888; margin: .4rem 0 1rem; }
 .leg-h { color: #c0392b; font-weight: 700; }
 .leg-m { color: #1a5fb4; font-weight: 700; }
-
-.choix-grille {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: .75rem;
-  margin-top: .5rem;
-}
-.choix-btn {
-  min-height: 56px;
-  padding: .6rem .75rem;
-  font-size: 1.15rem;
-  font-weight: 800;
-  border: 3px solid var(--gris-brd);
-  border-radius: var(--radius);
-  background: white;
-  color: var(--texte);
-  cursor: pointer;
-  transition: border-color .15s, background .15s;
-}
-.choix-btn:hover:not(:disabled) { border-color: var(--bleu); }
-.choix-btn.ok, .choix-horloge.ok         { border-color: var(--vert); background: #f0faf0; }
-.choix-btn.erreur, .choix-horloge.erreur { border-color: var(--rouge); background: #fef0f0; }
-.choix-btn.grise, .choix-horloge.grise   { opacity: .5; }
-
-.choix-horloges {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .75rem;
-  max-width: 420px;
-  margin: 0 auto;
-}
-.choix-horloge {
-  border: 3px solid var(--gris-brd);
-  border-radius: var(--radius);
-  background: white;
-  padding: .4rem;
-  cursor: pointer;
-  aspect-ratio: 1;
-}
-.choix-horloge span { display: block; width: 100%; height: 100%; }
-.choix-horloge:hover:not(:disabled) { border-color: var(--bleu); }
 
 .saisie-heure {
   display: flex;
@@ -504,7 +406,6 @@ const fiche = computed(() => (tirage.value
 .mini-horloge :deep(svg) { display: block; }
 
 @media (max-width: 520px) {
-  .choix-btn { font-size: 1rem; }
   .consigne { font-size: 1.1rem; }
 }
 </style>

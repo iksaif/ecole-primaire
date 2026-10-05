@@ -37,7 +37,6 @@ export default {
     uneBonne: 'Ur respont mat :',
     astuceRendre: 'Kontañ a reer eus {prix} betek {paye} : mankout a ra {cible}.',
     astuceMoins: 'Tun : kemer da gentañ ar bilhed pe ar pezh moneiz brasañ posubl.',
-    colQuestion: 'Goulenn',
     pasTout: "N'eo ket mat c'hoazh… Sell ouzh ar reizhadenn.",
     ecrisSomme: 'Skriv ar sammad evel « 3,50 € » pe « 3 € 50 c ».',
     auLieuDe: "Graet ec'h eus {t} e-lec'h {c}.",

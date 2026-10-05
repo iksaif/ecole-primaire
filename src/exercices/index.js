@@ -53,6 +53,8 @@ import { TEXTES as conjugaisonTextes } from './conjugaison/textes.js'
  * @property {'fr' | 'interface'} contenu langue du contenu : 'fr' pour le français, sinon celle de l'interface
  * @property {string} niveauDefaut
  * @property {Reglages} [reglages] réglages communs à tous les niveaux (défauts)
+ * @property {Record<string, any[]>} [options] valeurs proposées pour un réglage commun à choix (ex. `nbQ: [5, 10, 15]`) :
+ *   une valeur mémorisée hors de la liste reprend le défaut ; les options d'un niveau l'emportent
  * @property {Record<string, NiveauExercice>} niveaux par classe (ids de src/data/classes.js)
  * @property {FicheExercice[]} fiches
  */
@@ -60,11 +62,16 @@ import { TEXTES as conjugaisonTextes } from './conjugaison/textes.js'
 /**
  * @typedef {object} ModuleExercice
  * @property {DefinitionExercice} definition
- * @property {{ questions: Function, questionsFiche: Function, verifier: Function, ecartsAuProgramme: Function, bonneReponse?: Function, ecartsFiche?: Function }} generateur
- *   questions({ niveau, reglages, rng, T, nb }) ; questionsFiche({ niveau, reglages, rng, T }) ;
- *   verifier(q, rep) ; ecartsAuProgramme(questions, contraintesDe(niveau)) → [] si tout est au programme ;
+ * @property {{ questions: Function, questionsFiche: Function, verifier: Function, ecartsAuProgramme: Function, bonneReponse?: Function, ecartsFiche?: Function, manquesAuProgramme?: Function }} generateur
+ *   questions({ niveau, reglages, rng, T, nb? }) : nb (facultatif) = nombre de questions voulu, quand l'exercice le laisse
+ *   choisir (réglage nbQ) ; un exercice dont la partie est fixée par ses données (les 6 lignes d'un tableau) l'ignore ;
+ *   questionsFiche({ niveau, reglages, rng, T }) ;
+ *   verifier(q, rep) → booléen, ou { ok, nuance } (nuance : remarque sur une réponse presque juste, ex. 'accents' ;
+ *   lireVerdict dans outils.js) ; ecartsAuProgramme(questions, contraintesDe(niveau)) → [] si tout est au programme ;
  *   bonneReponse(q) (facultatif) : une réponse juste, que verifier doit accepter (tests) ;
- *   ecartsFiche(html, contraintesDe(niveau)) (facultatif) : ce que le HTML de la fiche montre hors programme (tests)
+ *   ecartsFiche(html, contraintesDe(niveau)) (facultatif) : ce que le HTML de la fiche montre hors programme (tests) ;
+ *   manquesAuProgramme(reglages, contraintesDe(niveau)) (facultatif) : ce que le programme du niveau demande et que
+ *   « tout au programme » ne propose pas (tests)
  * @property {{ fiche: Function }} fiche fiche({ questions, reglages, T, langue }) → document HTML
  * @property {Record<string, object>} textes catalogues de l'exercice par langue (interface et contenu), lus par T
  */

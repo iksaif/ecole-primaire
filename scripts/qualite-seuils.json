@@ -8,6 +8,7 @@
     "attentesFixes": 26
   },
   "min": {
-    "couverture": 53.2
+    "couverture": 53.2,
+    "exercicesMigres": 3
   }
 }

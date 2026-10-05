@@ -17,6 +17,7 @@ export default {
     question: 'Question {n} / {total}',
     exercice: 'Exercice {n} / {total}',
     calcul: 'Calcul',
+    colQuestion: 'Question',
     taReponse: 'Ta réponse',
     bonneReponse: 'Bonne réponse',
     laBonneReponse: 'La bonne réponse était {r}',

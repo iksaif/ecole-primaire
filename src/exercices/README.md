@@ -7,19 +7,21 @@ réponses tapées au clavier comparées par `src/utils/reponses.js`, une partie 
 ```
 src/exercices/<id>/
   definition.js   la déclaration (ci-dessous), données pures
-  generateur.js   pur : questions({ niveau, reglages, rng, T, nb }), questionsFiche(…), verifier(q, rep),
-                  ecartsAuProgramme(questions, contraintesDe(niveau))
-                  bonneReponse(q) et ecartsFiche(html, contraintes) : facultatifs, vérifiés par les tests s'ils existent
+  generateur.js   pur : questions({ niveau, reglages, rng, T, nb? }), questionsFiche(…), verifier(q, rep) → booléen
+                  ou { ok, nuance }, ecartsAuProgramme(questions, contraintesDe(niveau))
+                  bonneReponse(q), ecartsFiche(html, contraintes), manquesAuProgramme(reglages, contraintes) :
+                  facultatifs, vérifiés par les tests s'ils existent
   fiche.js        pur : fiche({ questions, reglages, T, langue, police, cssPolices }) → documentFiche(…)
                   (src/impression/document.js ; police : usePoliceFiche() dans l'app, Andika par défaut)
   textes.js       catalogues par langue (interface + contenu), lus avec T(cle, params)
 src/exercices/index.js   registre (imports statiques : app, node et tests) ; outils.js : reglagesDuNiveau…
-src/views/…/<Vue>.vue    mince : <ConfigExercice police> + <ChoixReglage>, useJeu + <QuestionJeu> + <ResultatsJeu>,
-                         rendu d'une question
+src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <ChoixReglage>, useJeu + <QuestionJeu> +
+                         <ResultatsJeu> (+ <TableauCorrection>), useFicheExercice ; rendu d'une question avec
+                         <ChoixReponses> (QCM) et <SaisieReponse> (champ)
 ```
 
 ```js
-{ id, route, domaine, contenu: 'fr' | 'interface', niveauDefaut, reglages /* communs */,
+{ id, route, domaine, contenu: 'fr' | 'interface', niveauDefaut, reglages /* communs */, options? /* communes */,
   niveaux: { <classe>: { competences: [ids de programme.js], reglages /* défauts */, options?, bonus?,
                          horsProgramme?: [{ option, raison }] } },
   fiches: [{ id, competence, niveau, reglages }] }   // fiches prégénérées par compétence
@@ -30,6 +32,14 @@ src/views/…/<Vue>.vue    mince : <ConfigExercice police> + <ChoixReglage>, use
   sinon (`centimes: [false, true]`) ; `bonus` : celles hors programme (jamais par défaut, affichées « (bonus) ») ;
   `horsProgramme: [{ reglage, option, raison }]` : tout autre écart (affiché « (hors programme) », raison en infobulle),
   ou `{ option: <compétence>, raison }`. Rien d'autre ne peut sortir du programme.
+- `options` communes (hors niveaux) : valeurs proposées pour un réglage commun à choix (`nbQ: [5, 10, 15]`,
+  `nbHorloges`, `saisie`) ; `<ChoixReglage>` les lit, une valeur mémorisée hors liste reprend le défaut, et les tests
+  essaient chaque valeur (instantanés compris).
+- `nb` (nombre de questions) est facultatif : un exercice dont la partie est fixée par ses données (6 lignes d'un
+  tableau) l'ignore.
+- `verifier(q, rep)` rend un booléen, ou `{ ok, nuance }` quand une réponse peut être « presque juste » (nuance
+  `'accents'` : `verdictSaisie` de `src/utils/reponses.js`, accents oubliés comptés **faux** par défaut, avec un
+  avertissement) ; `useJeu` range la nuance dans `retour` et l'historique, et l'état devient `'presque'` (orange).
 - Hasard : `rng` de `src/utils/hasard.js`, jamais `Math.random`. Même graine, mêmes questions, même fiche.
 - La vue affiche les niveaux de `definition.niveaux` : on ne déclare pas de niveau ailleurs.
 - `tests/exercices.test.mjs` (node, sans Chrome) vérifie chaque exercice du registre, chaque niveau, 5 graines.
@@ -60,22 +70,40 @@ src/views/…/<Vue>.vue    mince : <ConfigExercice police> + <ChoixReglage>, use
 7. **Registre** : 4 lignes dans `index.js`. **`activites.js`** (`niveaux` et compétences par classe depuis la
    définition) et **`impression/exercices.js`** (`classes` depuis `definition.niveaux`, `classes` des fiches depuis
    `definition.fiches`).
-8. **Vue mince** : `reglagesDuNiveau(DEFINITION, chargerReglages(cle, reglagesDuNiveau(DEFINITION)))` ; watch du niveau
-   qui réapplique `reglagesDuNiveau` ; `<ChoixReglage>` pour le niveau et chaque réglage à choix ; `useJeu` (jeu avec
-   sa graine `creerRng(graineAleatoire())`, `messageErreur`, `delai`) ; `<QuestionJeu :jeu>` ; `<ResultatsJeu>` ;
-   `useGraine` + `usePoliceFiche` : un `computed` **tirage** (`questionsFiche(…, rngFiche())`) séparé du `computed`
-   **fiche** (mise en page, police), et `<ConfigExercice police>`. Plus de `Math.random`, d'import `i18n/br/`, de `'br'`.
+8. **Vue mince** (modèles : `HeureView`, `MonnaieView`, `ConjugaisonView`), dans cet ordre :
+   - réglages : `const { config, langueContenu } = useReglages(DEFINITION, '<id>_config')` (mémorisation, options du
+     niveau et communes, **politique commune au changement de niveau** : choix multiples → défauts du nouveau niveau,
+     choix unique gardé s'il est au programme ; pas de `watch` du niveau dans la vue), puis
+     `const T = contenu(TEXTES, () => langueContenu.value).t` ; la clé de mémorisation ne change pas ;
+   - `<ChoixReglage>` pour le niveau et chaque réglage à choix (`cartes` + `icone` / `description` pour un choix de mode),
+     sans `:valeurs` si les valeurs sont dans la définition (`options` du niveau ou communes) ;
+   - jeu : `useJeu({ generer: rng => questions({ …, rng }), verifier, messageErreur, delai })` (la graine du jeu est
+     tirée par `useJeu`) ; `apresErreur: 'continuer'` pour enchaîner sans bouton (maternelle) ; `serie: true` (ou
+     `q => clé`) pour plusieurs questions sur un écran (lignes d'un tableau, Conjugaison) ; classes d'état :
+     `jeu.etat` / `etatDe(entrée)` ;
+   - rendu : `<QuestionJeu :jeu>` ; `<ChoixReponses :options :bonne :repondu @choisir>` (QCM, `images` pour des
+     dessins) ; `<SaisieReponse v-model type="nombre|decimal|texte" :etat :disabled focus @entree>` (pas de `ref` ni de
+     `nextTick` pour le focus) ; `<ResultatsJeu>` + `<TableauCorrection :historique>` (slot `#question` pour un dessin) ;
+   - fiche : `const { mode, fiche, nouvelle } = useFicheExercice({ tirer: rng => questionsFiche(…), mettreEnPage:
+     (questions, police) => fiche({ …, ...police }) })` et `<ConfigExercice police>` ;
+   - plus de `Math.random`, d'import `i18n/br/`, de `'br'`, de `chargerReglages` / `sauvegarder` / `useGraine` direct.
 9. **Après** : recapturer, comparer le `<body>` (identique attendu ; la police est dans le `<head>`), justifier et
    regarder en image chaque écart. `npm run lint`, `npm run i18n`, `node tests/exercices.test.mjs`, `npm run qualite`
    (puis `-- --enregistrer`), `npm test` (seul), et un passage dans le navigateur : fr/br, jeu et impression, chaque
-   niveau, sans erreur JS. Ajouter un cas au test `programme-maths` pour un niveau ajouté.
+   niveau, sans erreur JS. Ajouter un cas au test `programme-maths` pour un niveau ajouté. Retirer du test Chrome
+   de programme ce que `tests/exercices.test.mjs` couvre désormais (garder un test de rendu minimal, comme
+   Conjugaison dans `programme-francais`). `npm run qualite` : `exercicesMigres` monte, `-- --enregistrer`.
+
+Communs mais pas encore extraits (le premier exercice qui en a besoin les crée dans le socle, voir plan 10,
+« Phase 2c — résultat ») : ordonner par clics, droite graduée, minuteur, fin « étoiles » de la maternelle.
 
 ## Vérifier qu'une migration ne change rien
 
 Les fiches d'un exercice migré sont des fonctions pures : `tests/instantanes.test.mjs` (node, ~1 s, sans Chrome)
 garde l'empreinte de chacune dans `tests/instantanes/<id>.json`, une ligne par cas
 (`"heure/ce1/graine1/fr/defauts": "<sha1>"` : niveau, graines 1 à 3, langues de contenu, réglages `defauts`, `tout`
-au programme et `fiche-<id>` de `definition.fiches`). Empreinte du HTML normalisé : espaces regroupés, `@font-face`
+au programme, `<cle>=<valeur>` pour chaque autre valeur d'un réglage à choix unique — bonus compris — et `fiche-<id>` de
+`definition.fiches` : `jeuxDeReglages` de `outils.js`, partagé avec `tests/exercices.test.mjs`). Empreinte du HTML normalisé : espaces regroupés, `@font-face`
 retirés (leurs `url(...)` dépendent du build ; le nom de la police reste dans le `font-family`).
 
 1. **Avant** (vue pas encore migrée) : capturer ses fiches dans Chrome, au même format et avec les mêmes clés :

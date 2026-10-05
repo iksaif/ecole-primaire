@@ -7,7 +7,9 @@
 //   comparerReponse("j'etais", "j'étais")      → 'accents'  seuls les accents (ou œ / æ) diffèrent : « presque juste »
 //   comparerReponse('allées', ['allés', 'allées'])  → 'juste'   plusieurs formes acceptées
 //
-// Ce qu'on fait d'une réponse « accents » (comptée juste avec une remarque, ou fausse) est un choix de l'exercice.
+// Verdict prêt pour `verifier` (useJeu) : verdictSaisie(saisie, attendus) → { ok, nuance }. Par défaut, des accents
+// oubliés comptent **faux**, avec la nuance 'accents' (la vue montre « Attention aux accents » et la bonne graphie) ;
+// { accents: 'accepter' } les compte justes, avec la même nuance.
 
 /** @typedef {'juste' | 'accents' | 'faux'} Verdict */
 
@@ -49,4 +51,18 @@ export function comparerReponse(saisie, attendus) {
   if (formes.includes(s)) return 'juste'
   const sa = sansAccents(s)
   return formes.some(f => sansAccents(f) === sa) ? 'accents' : 'faux'
+}
+
+/**
+ * Verdict d'une saisie pour `verifier` : { ok, nuance }. nuance 'accents' : juste aux accents près ; comptée fausse
+ * par défaut (décision du 2026-10-05), juste avec { accents: 'accepter' }.
+ * @param {unknown} saisie
+ * @param {string | string[]} attendus
+ * @param {{ accents?: 'refuser' | 'accepter' }} [choix]
+ * @returns {{ ok: boolean, nuance: 'accents' | null }}
+ */
+export function verdictSaisie(saisie, attendus, { accents = 'refuser' } = {}) {
+  const v = comparerReponse(saisie, attendus)
+  if (v === 'accents') return { ok: accents === 'accepter', nuance: 'accents' }
+  return { ok: v === 'juste', nuance: null }
 }

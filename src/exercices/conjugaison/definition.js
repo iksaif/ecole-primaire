@@ -5,6 +5,9 @@
 //   CE2 : + les 8 verbes irréguliers : faire, aller, dire, venir, pouvoir, voir, vouloir, prendre (p. 94) ;
 //   CM1 : + 2e groupe (c3francais p. 18) ; CM2 : + passé simple et plus-que-parfait (p. 19).
 // Tout ce qu'un niveau propose est au programme, et tout est coché par défaut. Verbes et temps : src/data/conjugaison.js.
+// Mode : « lacunes » (radical donné, l'élève écrit la terminaison) par défaut, sauf au CP : radical et terminaison sont
+// une compétence du CE1 ; le CP écrit la forme entière (« complet »), « lacunes » y reste proposé en bonus
+// (décision du 2026-10-05).
 // Contenu toujours en français (exercice de français), même avec l'interface en breton.
 
 const ETRE_AVOIR = ['etre', 'avoir']
@@ -15,10 +18,10 @@ const TEMPS_CYCLE = ['present', 'imparfait', 'futur', 'passe-compose']
 const MODES = ['lacunes', 'complet']
 
 // niveau où tout est coché : options = défauts
-const niveau = (competences, verbes, temps) => ({
+const niveau = (competences, verbes, temps, mode = 'lacunes') => ({
   competences,
   options: { verbes, temps, mode: MODES },
-  reglages: { verbes: [...verbes], temps: [...temps], mode: 'lacunes' },
+  reglages: { verbes: [...verbes], temps: [...temps], mode },
 })
 // compétences : dans l'ordre du catalogue (src/data/activites.js les lit ici) ; radical-terminaison : le mode « lacunes »
 const C = [
@@ -34,7 +37,7 @@ export default {
   contenu: 'fr',
   niveauDefaut: 'ce1',
   niveaux: {
-    cp: niveau(jusqua(1), ETRE_AVOIR, ['present']),
+    cp: { ...niveau(jusqua(1), ETRE_AVOIR, ['present'], 'complet'), bonus: { mode: ['lacunes'] } },
     ce1: niveau(jusqua(2, 'radical-terminaison'), [...ETRE_AVOIR, ...PREMIER], TEMPS_CYCLE),
     ce2: niveau(jusqua(3, 'radical-terminaison'), [...ETRE_AVOIR, ...PREMIER, ...IRREGULIERS], TEMPS_CYCLE),
     cm1: niveau(jusqua(4, 'radical-terminaison'), [...ETRE_AVOIR, ...PREMIER, ...DEUXIEME, ...IRREGULIERS], TEMPS_CYCLE),

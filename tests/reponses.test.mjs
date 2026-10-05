@@ -1,6 +1,6 @@
 // Réponses écrites (src/utils/reponses.js) : test unitaire node, sans Chrome.
 //   node tests/reponses.test.mjs
-import { comparerReponse, normaliserSaisie, sansAccents, estVide } from '../src/utils/reponses.js'
+import { comparerReponse, normaliserSaisie, sansAccents, estVide, verdictSaisie } from '../src/utils/reponses.js'
 import { verifier, nbEchecs } from './outils.mjs'
 
 console.log('Normalisation')
@@ -27,7 +27,7 @@ const CAS = [
   ['J’étais', "j'étais", 'juste'], ["j' étais", "j'étais", 'juste'],
   ['etais', 'étais', 'accents'], ['ETAIS', 'étais', 'accents'], ['fumes', 'fûmes', 'accents'], ['fûmés', 'fûmes', 'accents'],
   ['coeur', 'cœur', 'accents'], ['ca', 'ça', 'accents'],
-  ['chante', 'chanté', 'accents'],     // à l'exercice de décider (conjugaison : comptée juste, avec la remarque)
+  ['chante', 'chanté', 'accents'],     // verdictSaisie : faux par défaut, avec la nuance « accents »
   ['jetais', "j'étais", 'faux'], ['étai', 'étais', 'faux'], ['étaient', 'étais', 'faux'], ['', 'étais', 'faux'], ['   ', 'étais', 'faux'],
   ['allées', ['allé(e)s', 'allés', 'allées'], 'juste'], ['alles', ['allé(e)s', 'allés', 'allées'], 'accents'],
   ['allé(e)s', ['allé(e)s', 'allés', 'allées'], 'juste'], ['allée', ['allé(e)s', 'allés', 'allées'], 'faux'],
@@ -36,6 +36,20 @@ const CAS = [
 for (const [saisie, attendus, verdict] of CAS) {
   const obtenu = comparerReponse(saisie, attendus)
   verifier(obtenu === verdict, `« ${saisie} » / ${JSON.stringify(attendus)} → ${verdict}${obtenu !== verdict ? ` (obtenu : ${obtenu})` : ''}`)
+}
+
+console.log('verdictSaisie (pour verifier)')
+const egal = (a, b) => JSON.stringify(a) === JSON.stringify(b)
+const VERDICTS = [
+  [['étais', 'étais'], { ok: true, nuance: null }],
+  [['etais', 'étais'], { ok: false, nuance: 'accents' }],                      // accents oubliés : faux par défaut
+  [['etais', 'étais', { accents: 'accepter' }], { ok: true, nuance: 'accents' }],
+  [['étai', 'étais', { accents: 'accepter' }], { ok: false, nuance: null }],
+  [['', 'étais'], { ok: false, nuance: null }],
+]
+for (const [args, attendu] of VERDICTS) {
+  const obtenu = verdictSaisie(...args)
+  verifier(egal(obtenu, attendu), `verdictSaisie(${args.map(a => JSON.stringify(a)).join(', ')}) → ${JSON.stringify(attendu)}${egal(obtenu, attendu) ? '' : ` (obtenu : ${JSON.stringify(obtenu)})`}`)
 }
 
 // code de sortie lu par tests/lancer.mjs

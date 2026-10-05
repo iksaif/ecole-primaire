@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto'
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { reglagesDuNiveau, toutAuProgramme } from '../src/exercices/outils.js'
+import { jeuxDeReglages, langueContenuDe } from '../src/exercices/outils.js'
 
 export const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 export const DOSSIER_INSTANTANES = join(racine, 'tests/instantanes')
@@ -25,15 +25,12 @@ export const empreinte = html => createHash('sha1').update(normaliser(html)).dig
 export const cleCas = ({ exercice, niveau, graine, langue, nom }) => `${exercice}/${niveau}/graine${graine}/${langue}/${nom}`
 
 // Langues de contenu d'un exercice : fr seulement si le contenu est toujours en français, sinon fr et br
-export const languesDe = definition => (definition.contenu === 'fr' ? ['fr'] : ['fr', 'br'])
+export const languesDe = definition => [...new Set(['fr', 'br'].map(l => langueContenuDe(definition, l)))]
 
-// Jeux de réglages d'un niveau : défauts, « tout au programme », chaque fiche par compétence de la définition.
-// Tous passent par reglagesDuNiveau, comme les réglages mémorisés que lit la vue.
-export function reglagesDe(definition, niveau) {
-  const jeux = { defauts: reglagesDuNiveau(definition, { niveau }), tout: reglagesDuNiveau(definition, toutAuProgramme(definition, niveau)) }
-  for (const f of definition.fiches.filter(x => x.niveau === niveau)) jeux[`fiche-${f.id}`] = reglagesDuNiveau(definition, { niveau, ...f.reglages })
-  return jeux
-}
+// Jeux de réglages d'un niveau (src/exercices/outils.js, jeuxDeReglages) : défauts, « tout au programme », chaque autre
+// valeur d'un réglage à choix unique (y compris bonus et hors programme : la fiche ne doit pas changer non plus),
+// chaque fiche par compétence de la définition. Tous passent par reglagesDuNiveau, comme les réglages mémorisés.
+export const reglagesDe = (definition, niveau) => jeuxDeReglages(definition, niveau, { horsProgramme: true })
 
 // Tous les cas d'un exercice du registre (filtrables par niveaux, graines, langues)
 export function casDe(definition, { niveaux = Object.keys(definition.niveaux), graines = GRAINES, langues = languesDe(definition) } = {}) {

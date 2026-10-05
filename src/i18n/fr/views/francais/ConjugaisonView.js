@@ -19,7 +19,7 @@ export default {
     lacunesDesc: 'Remplis les terminaisons',
     complet: 'Complet',
     completDesc: 'Écris la forme entière',
-    presque: 'Presque ! Attention aux accents',
+    accents: 'Attention aux accents : {forme}',
     correction: 'Correction',
     ficheLacunes: 'Complète les terminaisons',
     ficheComplet: 'Écris les formes complètes',

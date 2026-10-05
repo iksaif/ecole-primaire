@@ -143,6 +143,8 @@ body {
 .exercise-input:focus  { border-color: var(--bleu); }
 .exercise-input.ok     { border-color: var(--vert); background: #f0faf0; }
 .exercise-input.erreur { border-color: var(--rouge); background: #fef0f0; }
+/* presque : réponse à une nuance près (accents…), voir useJeu */
+.exercise-input.presque { border-color: var(--orange); background: #fff8ec; }
 
 /* ── Feedback ── */
 .feedback {
@@ -154,6 +156,7 @@ body {
 }
 .feedback.ok     { color: var(--vert); }
 .feedback.erreur { color: var(--rouge); }
+.feedback.presque { color: #b86e00; }
 
 /* ── Quit button (inside score-bar) ── */
 .btn-quitter {
@@ -197,6 +200,7 @@ body {
 .prog-dot.current { background: var(--bleu); transform: scale(1.3); }
 .prog-dot.ok      { background: var(--vert); }
 .prog-dot.erreur  { background: var(--rouge); }
+.prog-dot.presque { background: var(--orange); }
 
 /* ── Progress bar ── */
 .progress-track {
@@ -260,6 +264,7 @@ body {
 .correction-table td { padding: .5rem .75rem; border-bottom: 1px solid var(--gris-brd); }
 .correction-table tr.ok     td { background: #f0faf0; }
 .correction-table tr.erreur td { background: #fef0f0; }
+.correction-table tr.presque td { background: #fff8ec; }
 
 /* ── Spinner ── */
 @keyframes spin { to { transform: rotate(360deg); } }

@@ -12,17 +12,8 @@
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="temps" v-model="config.temps" :titre="t('temps')"
         :libelle="nomTemps" />
 
-      <div class="config-section" data-reglage="mode">
-        <div class="config-section-title">{{ t('mode') }}</div>
-        <div class="mode-cards">
-          <button v-for="m in valeursDe(DEFINITION, config.niveau, 'mode')" :key="m" class="mode-card" :data-valeur="m"
-            :class="{ active: config.mode === m }" @click="config.mode = m">
-            <div class="mode-icon">{{ m === 'lacunes' ? '✏️' : '📝' }}</div>
-            <div class="mode-title">{{ t(m) }}</div>
-            <div class="mode-desc">{{ t(m + 'Desc') }}</div>
-          </button>
-        </div>
-      </div>
+      <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('mode')"
+        :libelle="m => t(m)" :icone="m => (m === 'lacunes' ? '✏️' : '📝')" :description="m => t(m + 'Desc')" />
     </ConfigExercice>
 
     <!-- Exercice : un tableau, une question par ligne, dans l'ordre -->
@@ -37,10 +28,9 @@
           <span class="pronom">{{ l.pronom }}</span>
           <!-- lacunes : le radical (ou l'auxiliaire) est donné, l'élève écrit la fin -->
           <span v-if="l.lacunes && l.debut" class="radical">{{ l.debut }}</span>
-          <input :ref="el => { champs[i] = el }" v-model="saisies[i]" class="conj-input"
-            :class="[{ 'conj-input-full': !l.lacunes }, etat(i)]" :disabled="i !== index || repondu"
-            :placeholder="i < index ? '' : l.lacunes ? '…' : l.pronom + ' …'"
-            autocomplete="off" autocapitalize="off" spellcheck="false" @keydown.enter="validerLigne" />
+          <SaisieReponse v-model="saisies[i]" class="conj-input" :class="{ 'conj-input-full': !l.lacunes }" :etat="etat(i)"
+            :disabled="i !== index || repondu" :focus="i === index" :placeholder="i < index ? '' : l.lacunes ? '…' : l.pronom + ' …'"
+            @entree="validerLigne" />
           <span class="row-feedback">{{ retourLigne(i) }}</span>
         </div>
       </div>
@@ -69,78 +59,60 @@
 // Conjugaison : la vue ne fait que les réglages et le rendu d'un tableau. Niveaux, générateur et fiche :
 // src/exercices/conjugaison/ (definition.js, generateur.js, fiche.js) ; formes : src/data/conjugaison.js.
 // Exercice de français : la fiche est toujours en français, l'interface suit la langue choisie.
-import { ref, computed, nextTick, watch } from 'vue'
-import { sauvegarder, chargerReglages } from '../../utils'
-import { creerRng, graineAleatoire } from '../../utils/hasard'
+import { ref, computed, watch } from 'vue'
 import { estVide } from '../../utils/reponses'
 import { useI18n, contenu } from '../../i18n'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import ChoixReglage from '../../components/ChoixReglage.vue'
 import QuestionJeu from '../../components/QuestionJeu.vue'
 import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import { useModeExercice } from '../../composables/useModeExercice'
-import { useGraine } from '../../composables/useGraine'
-import { usePoliceFiche } from '../../composables/usePolices'
-import { useJeu } from '../../composables/useJeu'
-import { reglagesDuNiveau, valeursDe } from '../../exercices/outils'
+import SaisieReponse from '../../components/SaisieReponse.vue'
+import { useReglages } from '../../composables/useReglages'
+import { useFicheExercice } from '../../composables/useFicheExercice'
+import { useJeu, etatDe } from '../../composables/useJeu'
 import DEFINITION from '../../exercices/conjugaison/definition'
 import { INTERFACE, TEXTES } from '../../exercices/conjugaison/textes'
-import { questions as genererQuestions, questionsFiche, verifier, jugement, paires, cleGroupe, cleTemps }
+import { questions as genererQuestions, questionsFiche, verifier, paires, cleGroupe, cleTemps }
   from '../../exercices/conjugaison/generateur'
 import { fiche as ficheConjugaison } from '../../exercices/conjugaison/fiche'
 import { verbeDe } from '../../data/conjugaison.js'
 
 const { t } = useI18n(INTERFACE)
-// contenu (fiche) : toujours en français
-const langueContenu = DEFINITION.contenu === 'fr' ? 'fr' : null
-const T = contenu(TEXTES, () => langueContenu).t
+// Réglages mémorisés ; changer de niveau coche tout ce qui est au programme de ce niveau (ses défauts), le mode reste
+// s'il est au programme (politique commune : src/composables/useReglages.js). Contenu (fiche) : toujours en français.
+const { config, langueContenu } = useReglages(DEFINITION, 'conjugaison_config')
+const T = contenu(TEXTES, () => langueContenu.value).t
 const nomTemps = temps => t(cleTemps(temps))
-
-// ── Réglages : défauts et options du niveau dans la définition ──
-const config = ref(reglagesDuNiveau(DEFINITION, chargerReglages('conjugaison_config', reglagesDuNiveau(DEFINITION))))
-watch(config, v => sauvegarder('conjugaison_config', v), { deep: true })
-// changer de niveau coche tout ce qui est au programme de ce niveau (le mode reste)
-watch(() => config.value.niveau, niveau => {
-  const r = reglagesDuNiveau(DEFINITION, { niveau, mode: config.value.mode })
-  config.value.verbes = r.verbes
-  config.value.temps = r.temps
-})
 const nbPaires = computed(() => paires(config.value.niveau, config.value).length)
 
-// ── Jeu : les six lignes d'un tableau sont les questions de la partie ──
+// ── Jeu : les six lignes d'un tableau sont les questions de la partie, sur un seul écran (mode série) ──
 const saisies = ref([])
-const champs = []
 const jeu = useJeu({
-  // le jeu a sa propre graine (tirée à chaque partie) : la graine de la page sert aux fiches
-  generer: () => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()) }),
+  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng }),
   verifier,
   delai: 700,
-  surQuestion: () => nextTick(() => champs[index.value]?.focus()),
+  // une réponse passe aussitôt à la ligne suivante ; la dernière : résultats après 700 ms, ou bouton après une erreur
+  serie: true,
 })
 const { phase, questions, q, index, bonnes, historique, retour, repondu, cleFin } = jeu
-watch(questions, qs => { saisies.value = qs.map(() => ''); champs.length = 0 })
+watch(questions, qs => { saisies.value = qs.map(() => '') })
 
-// état d'une ligne déjà validée : ok, presque (accents), erreur
-function etat(i) {
-  const h = historique.value[i]
-  return !h ? '' : !h.ok ? 'erreur' : h.verdict === 'accents' ? 'presque' : 'ok'
-}
+// état d'une ligne déjà validée : ok, presque (accents oubliés : comptée fausse, en orange), erreur
+const etat = i => etatDe(historique.value[i])
 function retourLigne(i) {
   const h = historique.value[i]
   if (!h) return ''
-  return !h.ok ? `❌ ${h.question.forme}` : h.verdict === 'accents' ? `✅ ${t('presque')}` : '✅'
+  return h.ok ? '✅' : h.nuance === 'accents' ? `⚠️ ${t('accents', { forme: h.question.forme })}` : `❌ ${h.question.forme}`
 }
 
-// Ligne courante : une bonne réponse passe aussitôt à la suivante ; la dernière laisse le temps de lire (useJeu)
+// Ligne courante (useJeu passe ensuite à la suivante) ; vide : seulement avec « Valider » (comptée fausse)
 function repondreLigne(vide = false) {
   const qu = q.value, i = index.value
   const rep = { texte: saisies.value[i] ?? '' }
   if (!vide && estVide(rep.texte)) return false
-  const verdict = jugement(qu, rep)
-  jeu.repondre(rep, { donne: rep.texte, verdict })
-  // accents oubliés ou erreur : la bonne graphie reste dans le champ
-  if (verdict !== 'juste') saisies.value[i] = qu.attendu
-  if (i < questions.value.length - 1) jeu.suivante()
+  const ok = jeu.repondre(rep, { donne: rep.texte })
+  // erreur ou accents oubliés : la bonne graphie reste dans le champ
+  if (!ok) saisies.value[i] = qu.attendu
   return true
 }
 function validerLigne() { if (!repondu.value) repondreLigne() }
@@ -150,42 +122,17 @@ function validerTout() {
 }
 
 // ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
-const { mode } = useModeExercice()
-const { graine, nouvelle, rngFiche } = useGraine()
-// police choisie dans « Sur la fiche » (Andika par défaut)
-const policeFiche = usePoliceFiche()
-// tirage recalculé quand les réglages changent ou qu'on demande une nouvelle fiche ; la mise en page à part
-const tirage = computed(() => {
-  if (mode.value !== 'imprimer') return null
-  graine.value
-  return questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng: rngFiche() })
+const { mode, fiche, nouvelle } = useFicheExercice({
+  tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng }),
+  mettreEnPage: (questions, police) => ficheConjugaison({ questions, T, langue: langueContenu.value, ...police }),
 })
-const fiche = computed(() => (tirage.value
-  ? ficheConjugaison({ questions: tirage.value, T, langue: 'fr', ...policeFiche.value })
-  : ''))
 </script>
 
 <style scoped>
 .container { max-width: 640px; margin: 0 auto; padding: 1rem; }
 h1 { color: var(--bleu); margin-bottom: 1rem; }
-.config-section { margin-bottom: 1.25rem; }
-.config-section-title { font-weight: 700; margin-bottom: .6rem; font-size: .9rem; text-transform: uppercase; letter-spacing: .04em; color: #555; }
 .verbe-groupe { font-size: .7rem; color: #888; font-weight: 400; }
 .level-btn.active .verbe-groupe { color: rgba(255, 255, 255, .85); }
-
-/* Mode */
-.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-.mode-card {
-  border: 3px solid var(--gris-brd); border-radius: var(--radius);
-  padding: 1rem; cursor: pointer; transition: all .15s; text-align: center;
-  background: white; font-family: inherit; width: 100%;
-}
-.mode-card:hover  { border-color: var(--bleu); }
-.mode-card:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; }
-.mode-card.active { border-color: var(--bleu); background: #eef5ff; }
-.mode-icon  { font-size: 1.75rem; }
-.mode-title { font-weight: 800; font-size: .95rem; margin: .3rem 0 .15rem; }
-.mode-desc  { font-size: .78rem; color: #666; }
 
 /* Exercice */
 .conj-header { display: flex; align-items: baseline; gap: .75rem; justify-content: center; margin-bottom: 1.25rem; }

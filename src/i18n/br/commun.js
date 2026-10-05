@@ -17,6 +17,7 @@ export default {
     question: 'Goulenn {n} / {total}',
     exercice: 'Poelladenn {n} / {total}',
     calcul: 'Jediñ',
+    colQuestion: 'Goulenn',
     taReponse: 'Da respont',
     bonneReponse: 'Ar respont mat',
     laBonneReponse: 'Ar respont mat a oa {r}',

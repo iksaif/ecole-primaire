@@ -37,7 +37,6 @@ export default {
     uneBonne: 'Une bonne réponse :',
     astuceRendre: "On compte de {prix} jusqu'à {paye} : il manque {cible}.",
     astuceMoins: "Astuce : prends d'abord le plus grand billet ou la plus grande pièce possible.",
-    colQuestion: 'Question',
     pasTout: 'Pas tout à fait… Regarde la correction.',
     ecrisSomme: 'Écris la somme comme « 3,50 € » ou « 3 € 50 c ».',
     auLieuDe: 'Tu as fait {t} au lieu de {c}.',

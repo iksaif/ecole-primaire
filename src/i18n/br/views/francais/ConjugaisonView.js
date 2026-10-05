@@ -19,7 +19,7 @@ export default {
     lacunesDesc: 'Leunia an dibennoù',
     complet: 'Klok',
     completDesc: 'Skriv ar stumm a-bezh',
-    presque: 'Tost ! Diwall ouzh an akcentoù', // br: à relire (« attention aux accents » : terme à vérifier)
+    accents: 'Diwall ouzh an akcentoù : {forme}', // br: à relire (« attention aux accents » : terme à vérifier)
     correction: 'Reizhadenn',
     ficheLacunes: 'Leunia an dibennoù',
     ficheComplet: 'Skriv ar stummoù klok',

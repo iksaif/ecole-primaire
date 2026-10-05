@@ -14,6 +14,7 @@ export default {
   niveauDefaut: 'ce1',
   // réglages communs à tous les niveaux
   reglages: { nbQ: 10, aideTotal: true },
+  options: { nbQ: [5, 10, 15] },
   niveaux: {
     cp: {
       competences: ['monnaie-euros'],

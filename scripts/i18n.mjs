@@ -12,7 +12,7 @@ const dossier = join(racine, 'src/i18n')
 const LANGUES = ['fr', 'br']
 const relecture = process.argv.includes('--relecture')
 
-const lister = d => readdirSync(d).flatMap(n => (statSync(join(d, n)).isDirectory() ? lister(join(d, n)) : n.endsWith('.js') ? [join(d, n)] : []))
+const lister = d => readdirSync(d).flatMap(n => (statSync(join(d, n)).isDirectory() ? lister(join(d, n)) : /\.(js|ts)$/.test(n) ? [join(d, n)] : []))
 const texte = v => (typeof v === 'function' ? `ƒ ${v.toString().replace(/\s+/g, ' ')}` : Array.isArray(v) ? v.join(' · ') : typeof v === 'object' ? JSON.stringify(v) : String(v))
 
 // clés marquées « br: à relire » : commentaire sur la ligne de la clé, ou sur la ligne précédente
@@ -53,7 +53,7 @@ for (const m of modules) {
   total += Object.keys(cat.fr).length
   nbRelire += fichierEntier ? Object.keys(cat.br).length : marquees.size
   if (relecture) {
-    lignesHtml.push(`<tr class="module"><th colspan="4">${echapper(m.replace(/\.js$/, ''))}</th></tr>`)
+    lignesHtml.push(`<tr class="module"><th colspan="4">${echapper(m.replace(/\.(js|ts)$/, ''))}</th></tr>`)
     for (const k of Object.keys(cat.fr)) {
       const relire = fichierEntier || marquees.has(k)
       lignesHtml.push(`<tr${relire ? ' class="relire"' : ''}><td><code>${echapper(k)}</code></td><td>${echapper(texte(cat.fr[k]))}</td>

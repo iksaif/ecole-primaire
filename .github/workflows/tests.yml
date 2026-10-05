@@ -1,7 +1,7 @@
 name: Tests
 
-# Lint, compteurs de qualité et tests (build de test + Chrome sans interface) sur chaque push et pull request
-# vers main. Mêmes commandes qu'en local : npm run lint, npm run qualite, npm test (voir AGENTS.md).
+# Lint, types, compteurs de qualité et tests (build de test + Chrome sans interface) sur chaque push et pull request
+# vers main. Mêmes commandes qu'en local : npm run lint, npm run types, npm run qualite, npm test (voir AGENTS.md).
 
 on:
   push:
@@ -26,13 +26,16 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 22.18   # >= 22.18 : node retire seul les types des .ts (pas de compilation)
           cache: npm
 
       - run: npm ci
 
       - name: Lint
         run: npm run lint
+
+      - name: Types
+        run: npm run types
 
       - name: Compteurs de qualité
         run: npm run qualite

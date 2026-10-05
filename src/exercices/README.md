@@ -126,3 +126,15 @@ retirés (leurs `url(...)` dépendent du build ; le nom de la police reste dans 
 
 `capturer-fiches` sur une route du registre reprend d'office les cas du test et dit combien sont identiques à
 l'instantané : c'est aussi le moyen de vérifier que la vue affiche bien la fiche calculée en node.
+
+## TypeScript
+
+Les exercices existants sont en JavaScript (JSDoc dans `index.js`) et le restent jusqu'à leur migration. Un exercice neuf
+s'écrit en `.ts` contre `src/noyau/` : `types.ts` (`DefinitionExercice<R>`, `Generateur<Q, Rep, R>`, `ModuleExercice`,
+`Verdict`, `Config<R>`…), `reglages.ts` (fonctions pures : `reglagesDuNiveau`, `jeuxDeReglages`…), `useJeu`,
+`useReglages`, `useFicheExercice` et les composants `CadreExercice`, `ChoixReglage`, `ChoixReponses`, `SaisieReponse`,
+`QuestionJeu`, `ResultatsJeu`, `TableauCorrection`. Les identifiants (compétences, domaines, classes) sont typés d'après
+`src/data/programme.ts` : une compétence inconnue ne compile pas. Imports avec l'extension `.ts`, `import type` pour les
+types, pas d'`enum` (voir AGENTS.md). Le registre `index.js` lit les définitions des deux mondes (même structure) ;
+`npm run types` vérifie le tout.
+

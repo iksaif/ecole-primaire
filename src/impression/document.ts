@@ -1,4 +1,3 @@
-// @ts-check
 // Gabarit HTML commun des fiches d'exercice (plan 10) : doctype, langue, titre, police, CSS de base, place de la
 // ligne « Prénom / Date » et du corrigé. Module pur, lisible par node (le build des fiches l'appellera directement).
 //
@@ -16,30 +15,37 @@ import { echapper } from '../utils/html.js'
 export const POLICE_FICHE = 'Arial, sans-serif'
 export const POLICE_SCOLAIRE = "'Andika', Arial, sans-serif"
 
-/**
- * Ligne « Prénom : ____  Date : ____ » en haut de la fiche (retirée par le cadre si l'option est décochée).
- * @param {string} langue
- */
-export function ligneNomDate(langue) {
-  const tr = (/** @type {string} */ cle) => COMMUN[langue]?.[cle] ?? COMMUN.fr[cle]
+/** Ligne « Prénom : ____  Date : ____ » en haut de la fiche (retirée par le cadre si l'option est décochée). */
+export function ligneNomDate(langue: string): string {
+  const catalogues: Record<string, Record<string, unknown> | undefined> = COMMUN
+  const tr = (cle: string) => catalogues[langue]?.[cle] ?? catalogues.fr?.[cle]
   return `<p class="entete">${tr('prenom')} : ________________________ &nbsp; ${tr('date')} : ______________</p>`
 }
 
-/**
- * Document HTML complet d'une fiche d'exercice.
- * @param {object} o
- * @param {string} o.titre titre de la fiche (balise <title>, et h1 si `h1` est absent) ; texte brut
- * @param {string} o.langue langue du contenu (attribut lang)
- * @param {string} o.corps HTML du corps, après le h1 : ligneNomDate, exercices, section.corrige
- * @param {string} [o.css] CSS propre à la fiche (après le CSS de base, qu'il peut préciser)
- * @param {string | null} [o.h1] HTML du titre affiché (ex. avec un emoji) ; par défaut le titre ; null : aucun (le corps a les siens, une fiche en plusieurs pages)
- * @param {string} [o.police] familles CSS du texte (POLICE_SCOLAIRE par défaut : Andika, puis Arial)
- * @param {string} [o.cssPolices] @font-face à embarquer (usePoliceFiche() côté navigateur)
- * @param {string} [o.largeur] largeur maximale du corps
- * @param {string} [o.marge] marge verticale de la page
- * @returns {string}
- */
-export function documentFiche({ titre, langue, corps, css = '', h1, police = POLICE_SCOLAIRE, cssPolices = '', largeur = '720px', marge = '1.5cm' }) {
+/** Options de `documentFiche`. */
+export interface OptionsDocumentFiche {
+  /** titre de la fiche (balise <title>, et h1 si `h1` est absent) ; texte brut */
+  titre: string
+  /** langue du contenu (attribut lang) */
+  langue: string
+  /** HTML du corps, après le h1 : ligneNomDate, exercices, section.corrige */
+  corps: string
+  /** CSS propre à la fiche (après le CSS de base, qu'il peut préciser) */
+  css?: string
+  /** HTML du titre affiché (ex. avec un emoji) ; par défaut le titre ; null : aucun (le corps a les siens, une fiche en plusieurs pages) */
+  h1?: string | null
+  /** familles CSS du texte (POLICE_SCOLAIRE par défaut : Andika, puis Arial) */
+  police?: string
+  /** @font-face à embarquer (usePoliceFiche() côté navigateur) */
+  cssPolices?: string
+  /** largeur maximale du corps */
+  largeur?: string
+  /** marge verticale de la page */
+  marge?: string
+}
+
+/** Document HTML complet d'une fiche d'exercice. */
+export function documentFiche({ titre, langue, corps, css = '', h1, police = POLICE_SCOLAIRE, cssPolices = '', largeur = '720px', marge = '1.5cm' }: OptionsDocumentFiche): string {
   return `<!DOCTYPE html><html lang="${langue}"><head>
     <meta charset="UTF-8"><title>${echapper(titre)}</title>
     <style>${cssPolices ? `\n${cssPolices}` : ''}

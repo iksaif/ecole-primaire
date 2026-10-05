@@ -8,19 +8,27 @@
 //   brEnDur          littéraux 'br' / "br" dans src/ et scripts/, hors src/i18n/ et src/data/languesRegionales.js
 //                    (tables { fr, br }, `langue === 'br'`, boucles de langues du build…) : objectif 0 (phase 3)
 //   importsBr        fichiers de src/ et scripts/ hors src/i18n/ qui importent un module de i18n/br/
+//                    (seuil 53, relevé de 52 le 2026-10-05 : src/noyau/textes.ts, l'adaptateur du nouveau socle, est le
+//                    seul fichier du noyau qui lit les catalogues ; il remplace les imports des vues quand elles migrent)
 //   niveauxEnTexte   chaînes qui ne sont qu'une liste de classes (« CE1 · CE2 », « CP → CM2 », '^CP → CM2$'),
-//                    hors src/i18n/ : les niveaux doivent être des tableaux (src/data/classes.js), pas du texte relu
+//                    hors src/i18n/ : les niveaux doivent être des tableaux (src/data/classes.ts), pas du texte relu
 //   vuesLongues      vues de src/views/ de plus de 600 lignes : objectif 0 (fin de phase 2)
 //   mathRandomVues   appels à Math.random dans src/views/ : le hasard doit avoir une graine (utils/hasard.js)
 //   attentesFixes    waitForTimeout dans tests/ : attendre un état plutôt qu'une durée
+//   importeursAncienSocle  fichiers de src/, scripts/ et tests/, hors src/noyau/, qui importent l'ancien socle (src/composables/*,
+//                    les anciens composants ConfigExercice…, exercices/outils.js, les raccourcis legacy data/programme.js,
+//                    data/classes.js, utils/hasard.js, utils/reponses.js, impression/document.js) : ne doit que baisser,
+//                    jusqu'à 0 (suppression de l'ancien socle avec le dernier exercice migré vers src/noyau/, plan 10)
+//   erreursDeType    erreurs de `npm run types` (vue-tsc strict ; seuls les .ts, .vue et .d.ts comptent, pas les .js) : toujours 0
 // Compteurs (min) :
-//   couverture       % des couples compétence × classe de src/data/programme.js qui ont au moins une ressource
+//   couverture       % des couples compétence × classe de src/data/programme.ts qui ont au moins une ressource
 //                    (exercice, fiche ou affiche ; src/impression/couverture.js, comme `npm run couverture`)
 //   exercicesMigres  exercices interactifs du catalogue (activites.js, `fiche: true`, sous /maths, /francais,
 //                    /maternelle) passés au modèle src/exercices/ (dans le registre) : avancement de la phase 2
 import { createServer } from 'vite'
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { join, dirname, relative } from 'node:path'
+import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -30,7 +38,7 @@ const enregistrer = process.argv.includes('--enregistrer')
 // fichiers .js/.mjs/.vue sous un dossier, chemins relatifs à la racine (« src/views/… »)
 const fichiers = dossier => readdirSync(join(racine, dossier)).flatMap(f => {
   const p = join(dossier, f)
-  return statSync(join(racine, p)).isDirectory() ? fichiers(p) : /\.(js|mjs|vue)$/.test(f) ? [p] : []
+  return statSync(join(racine, p)).isDirectory() ? fichiers(p) : /\.(js|mjs|ts|vue)$/.test(f) ? [p] : []
 })
 const lire = f => readFileSync(join(racine, f), 'utf8')
 const compter = (texte, re) => (texte.match(re) || []).length
@@ -49,7 +57,7 @@ const charger = async module => {
 }
 
 async function couverture() {
-  const { COMPETENCES } = await charger('/src/data/programme.js')
+  const { COMPETENCES } = await charger('/src/data/programme.ts')
   const { ressourcesDe } = await charger('/src/impression/couverture.js')
   let cases = 0, couvertes = 0
   for (const k of COMPETENCES) for (const n of k.niveaux) {
@@ -69,12 +77,30 @@ async function exercicesMigres() {
   return { valeur: exercices.length - restants.length, detail: `${exercices.length - restants.length} / ${exercices.length} exercices au format définition` }
 }
 
+// erreurs de type dans le TypeScript (scripts/types.mjs : vue-tsc strict, sans les .js) ; le détail : `npm run types`
+function erreursDeType() {
+  const r = spawnSync(process.execPath, ['scripts/types.mjs'], { cwd: racine, encoding: 'utf8' })
+  const n = Number(r.stdout.match(/✗ (\d+) erreur/)?.[1] ?? (r.status ? 1 : 0))
+  return { valeur: n, detail: n ? 'voir npm run types' : '' }
+}
+
+// importeurs de l'ancien socle (voir l'en-tête) : un import statique, dynamique ou `charger('/src/…')`
+const ANCIEN_SOCLE = new RegExp(
+  ['composables/[A-Za-z]+(?:\\.js)?', 'components/(?:ConfigExercice|OptionsFiche|ChoixReglage|ChoixReponses|SaisieReponse|QuestionJeu|ResultatsJeu|ResultatsEtoiles|TableauCorrection|OrdonnerClics|ChoixPolice)\\.vue',
+    'exercices/outils(?:\\.js)?', 'data/(?:classes|programme)\\.js', 'utils/(?:hasard|reponses)\\.js', 'impression/document\\.js']
+    .map(m => `['"\`][^'"\`]*${m}['"\`]`).join('|'))
+const importeursAncienSocle = () => [...code, ...fichiers('tests')]
+  .filter(f => !f.startsWith('src/noyau/') && !f.startsWith('src/exercices/exemple/'))
+  .filter(f => ANCIEN_SOCLE.test(lire(f))).length
+
 const COMPTEURS = {
   brEnDur: () => code.filter(horsLangues).reduce((n, f) => n + compter(lire(f), /['"]br['"]/g), 0),
   importsBr: () => code.filter(horsLangues).filter(f => /from\s+['"][^'"]*i18n\/br\//.test(lire(f))).length,
   niveauxEnTexte: () => code.filter(horsLangues).reduce((n, f) => n + compter(lire(f), LISTE_CLASSES), 0),
   vuesLongues: () => fichiers('src/views').filter(f => f.endsWith('.vue') && lire(f).split('\n').length > 600).length,
   mathRandomVues: () => fichiers('src/views').reduce((n, f) => n + compter(lire(f), /Math\.random\b/g), 0),
+  importeursAncienSocle,
+  erreursDeType,
   attentesFixes: () => fichiers('tests').reduce((n, f) => n + compter(lire(f), /waitForTimeout\b/g), 0),
   couverture,
   exercicesMigres,

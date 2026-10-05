@@ -1,4 +1,3 @@
-<!-- @deprecated — remplacé par src/noyau/QuestionJeu.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Cadre commun d'une question d'exercice (avec useJeu) : barre de score (Quitter, « Question n / total », ✅ ❌),
@@ -20,15 +19,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts" generic="Q, Rep">
 // textes : catalogue commun (quitter, quitterTitre, question) ; points : ok, presque (nuance, orange), erreur
 import { useI18n } from '../i18n'
-import { etatDe } from '../composables/useJeu'
+import { etatDe } from './useJeu.ts'
+import type { Jeu } from './useJeu.ts'
 
-const props = defineProps({
+const props = defineProps<{
   // l'objet rendu par useJeu()
-  jeu: { type: Object, required: true },
-})
+  jeu: Jeu<Q, Rep>
+}>()
+defineSlots<{ default?(): unknown }>()
 const { t } = useI18n()
 const { questions, index, bonnes, mauvaises, historique } = props.jeu
 </script>

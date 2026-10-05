@@ -1,3 +1,4 @@
+<!-- @deprecated — remplacé par src/noyau/OptionsFiche.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Options communes à toutes les fiches d'exercice (useOptionsFiche, dernier choix mémorisé) :

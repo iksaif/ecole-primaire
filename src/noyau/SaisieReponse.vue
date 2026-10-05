@@ -1,4 +1,3 @@
-<!-- @deprecated — remplacé par src/noyau/SaisieReponse.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Champ de réponse commun des exercices (plan 10) : clavier adapté sur mobile, pas d'autocomplétion ni de correcteur,
@@ -15,20 +14,22 @@
     @keydown.enter="$emit('entree')">
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 
-const props = defineProps({
-  type: { type: String, default: 'texte' },
-  etat: { type: String, default: '' },
-  disabled: { type: Boolean, default: false },
-  focus: { type: Boolean, default: false },
-})
-defineEmits(['entree'])
+const props = withDefaults(defineProps<{
+  // 'texte' | 'nombre' (clavier numérique) | 'decimal'
+  type?: 'texte' | 'nombre' | 'decimal'
+  // '' | 'ok' | 'presque' | 'erreur' (jeu.etat)
+  etat?: string
+  disabled?: boolean
+  focus?: boolean
+}>(), { type: 'texte', etat: '', disabled: false, focus: false })
+defineEmits<{ entree: [] }>()
 // type="number" : Vue rend un nombre (ou '' si vide), comme un v-model posé directement sur l'input
-const valeur = defineModel({ type: [String, Number], default: '' })
-const champ = ref(null)
-const inputmode = computed(() => ({ nombre: 'numeric', decimal: 'decimal' })[props.type])
+const valeur = defineModel<string | number>({ default: '' })
+const champ = ref<HTMLInputElement | null>(null)
+const inputmode = computed(() => ({ nombre: 'numeric', decimal: 'decimal' } as Record<string, 'numeric' | 'decimal'>)[props.type])
 
 const donnerFocus = () => nextTick(() => champ.value?.focus?.())
 onMounted(() => { if (props.focus && !props.disabled) donnerFocus() })

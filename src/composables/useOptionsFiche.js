@@ -1,3 +1,4 @@
+// @deprecated — remplacé par src/noyau/optionsFiche.ts, à supprimer avec le dernier exercice migré (plan 10)
 import { ref, watch } from 'vue'
 import { charger, sauvegarder } from '../utils'
 // une seule implémentation de la ligne « Prénom / Date » : le gabarit commun des fiches (pur, lisible par node)

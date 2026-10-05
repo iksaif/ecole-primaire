@@ -1,3 +1,4 @@
+// @deprecated — remplacé par src/noyau/useFicheExercice.ts, à supprimer avec le dernier exercice migré (plan 10)
 // Fiche imprimable d'un exercice au format « définition » (plan 10) : mode jouer / imprimer, graine, police, tirage.
 //
 //   const { mode, fiche, nouvelle } = useFicheExercice({

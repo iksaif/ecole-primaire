@@ -36,9 +36,132 @@
 //     reste travaillée ou réinvestie.
 //   - `officiel`, `source` et `lien` d'un domaine sont indexés par cycle (1, 2, 3) : le nom change d'un cycle à l'autre.
 
-// classes et cycles : src/data/classes.js (réexportés ici pour les modules qui les lisent avec le programme)
-import { NIVEAUX, CYCLE_DE, classesEntre, classesDepuis } from './classes.js'
+// classes et cycles : src/data/classes.ts (réexportés ici pour les modules qui les lisent avec le programme)
+import { NIVEAUX, CYCLE_DE, classesEntre, classesDepuis } from './classes.ts'
+import type { Classe, Cycle } from './classes.ts'
 export { NIVEAUX, CYCLE_DE }
+export type { Classe as Niveau, Cycle }
+
+export type DomaineId = (typeof DOMAINES)[number]['id']
+export type CompetenceId = (typeof COMPETENCES)[number]['id']
+
+// ── Types ──
+// Les identifiants (DomaineId, CompetenceId) sont dérivés des données : une compétence qui cite un domaine inconnu,
+// ou un test qui cite une compétence inexistante, ne compile pas. Les données gardent leur forme d'origine.
+
+/** Clé de SOURCES : le texte officiel cité. */
+export type SourceId = keyof typeof SOURCES
+
+/** Où le programme dit ce qu'on en retient : page du PDF (pas la page imprimée), lien direct, extrait. */
+export interface Source {
+  texte: SourceId
+  page: number
+  url: string
+  extrait: string
+}
+
+/** Une valeur par cycle (les domaines n'existent pas tous à chaque cycle). */
+export type ParCycle<T> = Partial<Record<Cycle, T>>
+
+export interface Domaine {
+  id: string
+  court: string
+  matiere: 'maths' | 'francais' | 'autres'
+  cycles: readonly Cycle[]
+  /** nom officiel du domaine, par cycle */
+  officiel: ParCycle<string>
+  source: ParCycle<Source>
+  lien: ParCycle<string>
+}
+
+export interface Competence {
+  id: string
+  domaine: DomaineId
+  libelle: string
+  /** l'année d'introduction d'abord, puis les années suivantes où elle reste travaillée */
+  niveaux: readonly Classe[]
+  source: Source
+  /** ce qui est une interprétation du texte, et pourquoi */
+  interpretation?: string
+}
+
+export interface HorsProgramme {
+  id: string
+  domaine: DomaineId
+  niveaux: readonly Classe[]
+  libelle: string
+  /** où l'on a cherché */
+  recherche: string
+  sources: readonly Source[]
+  interpretation: string
+}
+
+/** Fractions au programme d'un niveau (clés : voir le commentaire de CONTRAINTES). */
+export interface ContrainteFractions {
+  denominateurs?: readonly number[]
+  denominateurMax?: number
+  decimales?: readonly number[]
+  superieuresA1: boolean
+  operateur: boolean | 'unitaires'
+}
+
+/**
+ * Ce que le programme fixe pour un niveau (valeurs simples, vérifiables par un test). Toutes les clés sauf `niveau`
+ * sont facultatives : une clé absente n'est pas bornée à ce niveau. Une faute de frappe dans CONTRAINTES ne compile pas.
+ */
+export interface Contraintes {
+  niveau: Classe
+  nombreMax?: number
+  nombreChiffresMax?: number
+  comptineMax?: number
+  ecritureChiffresMax?: number
+  nombresEnLettresMax?: number
+  calculMentalMax?: number
+  problemesMax?: number
+  facteurMax?: number
+  doubles?: readonly number[]
+  moities?: readonly number[]
+  operationsPosees?: readonly string[]
+  fractions?: ContrainteFractions | null
+  decimalesMax?: number
+  monnaie?: { eurosMax: number | null, centimes: boolean, virgule: boolean }
+  heure?: 'entiere' | 'quart' | 'minute' | 'seconde'
+  heureMax12?: boolean
+  unitesLongueur?: readonly string[]
+  unitesMasse?: readonly string[]
+  unitesContenance?: readonly string[]
+  unitesAire?: readonly string[]
+  tableauConversion?: boolean
+  tableauUnites?: boolean
+  tableauProportionnalite?: boolean
+  calculatrice?: false | 'occasionnelle'
+  divisibilite?: readonly number[]
+  figures?: readonly string[]
+  solides?: readonly string[]
+  solidesDecrits?: readonly string[]
+  patrons?: readonly string[]
+  symetrie?: false | 'completer' | 'construire'
+  conjugaison?: { temps: readonly string[], groupes: readonly string[], irreguliers: readonly string[] }
+  classesMots?: readonly string[]
+  pluriels?: readonly string[]
+  feminins?: readonly string[]
+  cursive?: 'initiation' | 'minuscules' | 'majuscules' | 'automatise' | null
+  lettres?: 'prenom-capitales' | 'prenom' | 'alphabet'
+  comparaisonGlobale?: { rapportMin: number, max: number }
+  formesTriees?: readonly string[]
+  assemblageMax?: number
+  motifs?: 'alternance'
+  masse?: boolean
+  zero?: boolean
+  graphisme?: readonly string[]
+  temps?: 'journee'
+  lectureMotsParMinute?: number
+  /** la source de chaque contrainte, par clé */
+  sources: Partial<Record<keyof Contraintes, Source>>
+  /** ce qui est une interprétation */
+  interpretation?: string
+  note?: string
+}
 
 export const SOURCES = {
   bo41: {
@@ -98,7 +221,7 @@ export const SOURCES = {
 
 // Pages destinées aux parents (education.gouv.fr) et ressources pour les enseignants (Éduscol).
 // Choix : il n'existe pas de page « parent » par domaine ; on renvoie à la page « Programmes et horaires » du cycle.
-const PARENTS = {
+const PARENTS: Record<Cycle, string> = {
   1: 'https://www.education.gouv.fr/cid33/programmes-et-horaires-a-l-ecole-maternelle.html',
   2: 'https://www.education.gouv.fr/programmes-et-horaires-l-ecole-elementaire-9011',
   3: 'https://www.education.gouv.fr/programmes-et-horaires-l-ecole-elementaire-9011',
@@ -113,8 +236,8 @@ export const RESSOURCES = {
   francais3: 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3',
 }
 
-const src = (texte, page, extrait) => ({ texte, page, url: `${SOURCES[texte].url}#page=${page}`, extrait })
-const parCycle = (cycles, f) => Object.fromEntries(cycles.map(c => [c, f(c)]))
+const src = (texte: SourceId, page: number, extrait: string): Source => ({ texte, page, url: `${SOURCES[texte].url}#page=${page}`, extrait })
+const parCycle = <T>(cycles: readonly Cycle[], f: (cycle: Cycle) => T): ParCycle<T> => Object.fromEntries(cycles.map(c => [c, f(c)]))
 
 // ── Domaines ──
 // Cycle 1 : les noms sont ceux des « thématiques » du domaine « L'acquisition des premiers outils mathématiques »
@@ -210,10 +333,12 @@ export const DOMAINES = [
     source: { 3: src('c3francais', 6, 'Culture littéraire et artistique') },
     lien: { 3: PARENTS[3] },
   },
-]
+] as const satisfies readonly Domaine[]
 
 // ── Compétences utiles à nos activités (pas tout le programme) ──
-const c = (id, domaine, libelle, niveaux, source, extra = {}) => ({ id, domaine, libelle, niveaux, source, ...extra })
+const c = <const I extends string, const D extends DomaineId>(
+  id: I, domaine: D, libelle: string, niveaux: readonly Classe[], source: Source, extra: { interpretation?: string } = {},
+) => ({ id, domaine, libelle, niveaux, source, ...extra })
 const depuis = classesDepuis     // de n jusqu'au CM2
 const entre = classesEntre
 
@@ -445,7 +570,7 @@ export const COMPETENCES = [
     src('c3francais', 19, 'CM2 : passé simple, plus-que-parfait d’être, avoir, 1er et 2e groupes et des 8 irréguliers')),
   c('complements', 'grammaire', 'Compléments du verbe (COD, COI) et compléments circonstanciels', ['cm1', 'cm2'],
     src('c3francais', 17, 'CM1 : COD/COI dans des phrases prototypiques, groupes circonstanciels sans les distinguer ; CM2 p. 19 : CC de temps, lieu, cause ; attribut du sujet')),
-]
+] as const satisfies readonly Competence[]
 
 // ── Pour aller plus loin : notions que nos exercices proposent, mais qui ne sont dans aucun texte relu pour ces
 // niveaux. Elles ne sont jamais choisies par défaut et sont signalées comme telles dans les formulaires.
@@ -471,7 +596,7 @@ export const HORS_PROGRAMME = [
     ],
     interpretation: 'gardé au CE2 « pour aller plus loin », sous le libellé « Mots qui se disent pareil » (le mot « homonyme » est du cycle 3)',
   },
-]
+] as const satisfies readonly HorsProgramme[]
 
 // ── Contraintes par niveau (valeurs simples, vérifiables par un test) ──
 // Les listes sont cumulatives : la valeur d'un niveau contient déjà celle des niveaux précédents.
@@ -485,7 +610,7 @@ const SOLIDES_CE1 = [...SOLIDES_CP, 'pyramide']
 const SOLIDES_CM1 = [...SOLIDES_CE1, 'prisme-droit']
 const TEMPS_CYCLE = ['present', 'imparfait', 'futur', 'passe-compose']       // ids de src/data/conjugaison.js
 const IRREGULIERS = ['faire', 'aller', 'dire', 'venir', 'pouvoir', 'voir', 'vouloir', 'prendre']
-const plage = (a, b, pas = 1) => Array.from({ length: Math.floor((b - a) / pas) + 1 }, (_, i) => a + i * pas)
+const plage = (a: number, b: number, pas = 1) => Array.from({ length: Math.floor((b - a) / pas) + 1 }, (_, i) => a + i * pas)
 
 // Clés :
 //   nombreMax            plus grand entier du champ numérique de l'année
@@ -520,7 +645,7 @@ const plage = (a, b, pas = 1) => Array.from({ length: Math.floor((b - a) / pas) 
 //   motifs               PS : 'alternance' (AB) ; masse / zero : false avant 4 ans
 //   graphisme            PS : formes de base à tracer ; temps : 'journee' (la semaine arrive à 4 ans)
 //   lectureMotsParMinute fluence attendue en fin d'année
-export const CONTRAINTES = [
+export const CONTRAINTES: readonly Contraintes[] = [
   {
     niveau: 'ps', nombreMax: 3, comptineMax: 6, ecritureChiffresMax: 3,
     comparaisonGlobale: { rapportMin: 2, max: 10 },
@@ -732,18 +857,23 @@ export const CONTRAINTES = [
 ]
 
 // ── Utilitaires ──
-export const domaineDe = id => DOMAINES.find(d => d.id === id) ?? null
-export const competenceDe = id => COMPETENCES.find(k => k.id === id) ?? null
-export const competencesDu = (domaine, niveau) =>
-  COMPETENCES.filter(k => k.domaine === domaine && (!niveau || k.niveaux.includes(niveau)))
-export const contraintesDe = niveau => CONTRAINTES.find(k => k.niveau === niveau) ?? null
+// Les listes typées « larges » (Domaine, Competence) : les fonctions acceptent un id quelconque (venu d'un lien, d'un
+// réglage mémorisé…) et rendent null s'il est inconnu ; les identifiants précis (DomaineId, CompetenceId) servent aux
+// données écrites en dur.
+const DOMAINES_LISTE: readonly Domaine[] = DOMAINES
+const COMPETENCES_LISTE: readonly Competence[] = COMPETENCES
+export const domaineDe = (id: string): Domaine | null => DOMAINES_LISTE.find(d => d.id === id) ?? null
+export const competenceDe = (id: string): Competence | null => COMPETENCES_LISTE.find(k => k.id === id) ?? null
+export const competencesDu = (domaine: string, niveau?: Classe | null): Competence[] =>
+  COMPETENCES_LISTE.filter(k => k.domaine === domaine && (!niveau || k.niveaux.includes(niveau)))
+export const contraintesDe = (niveau: Classe | string): Contraintes | null => CONTRAINTES.find(k => k.niveau === niveau) ?? null
 // Nom officiel d'un domaine pour un niveau (« Nombres, calcul et résolution de problèmes » au CP)
-export function nomOfficiel(id, niveau) {
+export function nomOfficiel(id: string, niveau: Classe): string | null {
   const d = domaineDe(id)
   return d?.officiel[CYCLE_DE[niveau]] ?? null
 }
 // Lien « programme » à afficher pour un domaine et un niveau
-export function lienProgramme(id, niveau) {
+export function lienProgramme(id: string, niveau: Classe): string | null {
   const d = domaineDe(id)
   return d?.lien[CYCLE_DE[niveau]] ?? null
 }

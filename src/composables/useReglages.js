@@ -1,3 +1,4 @@
+// @deprecated — remplacé par src/noyau/useReglages.ts, à supprimer avec le dernier exercice migré (plan 10)
 // Réglages d'un exercice au format « définition » (plan 10) : lus, mémorisés, et ajustés au changement de niveau.
 //
 //   const { config, langueContenu } = useReglages(DEFINITION, 'heure_config')

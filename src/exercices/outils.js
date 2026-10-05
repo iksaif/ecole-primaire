@@ -1,3 +1,4 @@
+// @deprecated — remplacé par src/noyau/reglages.ts, à supprimer avec le dernier exercice migré (plan 10)
 // @ts-check
 // Outils communs aux exercices au format « définition » (src/exercices/README.md). Purs, lisibles par node.
 

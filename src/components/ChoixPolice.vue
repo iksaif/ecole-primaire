@@ -1,3 +1,4 @@
+<!-- @deprecated — remplacé par src/noyau/ChoixPolice.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <div class="choix-police">
     <div v-for="t in lignes" :key="t" class="ligne">

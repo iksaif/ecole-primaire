@@ -1,4 +1,3 @@
-<!-- @deprecated — remplacé par src/noyau/ResultatsJeu.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Écran de fin commun des exercices : score, message, détail facultatif (slot), Rejouer et retour aux réglages.
@@ -17,17 +16,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // textes : catalogue commun (resultat100…, rejouer, parametres, scoreSur), partagé avec les vues pas encore migrées
 import { useI18n } from '../i18n'
+import type { CleFin } from './useJeu.ts'
 
-defineProps({
-  bonnes: { type: Number, required: true },
-  total: { type: Number, required: true },
+withDefaults(defineProps<{
+  bonnes: number
+  total: number
   // clé du message de fin (resultat100, resultat80…), donnée par useJeu
-  cleFin: { type: String, default: '' },
-})
-defineEmits(['rejouer', 'reglages'])
+  cleFin?: CleFin | ''
+}>(), { cleFin: '' })
+defineEmits<{ rejouer: [], reglages: [] }>()
+defineSlots<{ default?(): unknown }>()
 
 const { t } = useI18n()
 </script>

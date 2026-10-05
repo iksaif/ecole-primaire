@@ -1,3 +1,4 @@
+// @deprecated — remplacé par src/noyau/useFicheExercice.ts (useModeExercice), à supprimer avec le dernier exercice migré (plan 10)
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 

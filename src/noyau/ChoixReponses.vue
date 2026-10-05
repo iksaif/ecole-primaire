@@ -1,4 +1,3 @@
-<!-- @deprecated — remplacé par src/noyau/ChoixReponses.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Question à choix (QCM) commune : une grille de propositions ; après la réponse, la bonne en vert, celle choisie
@@ -18,28 +17,30 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts" generic="O extends { label?: unknown }">
 import { ref, watch } from 'vue'
 
-const props = defineProps({
-  options: { type: Array, required: true },
+// O : une proposition ; `label` est son texte par défaut (le slot permet un dessin)
+const props = withDefaults(defineProps<{
+  options: readonly O[]
   // indice de la bonne proposition
-  bonne: { type: Number, default: -1 },
+  bonne?: number
   // la question a reçu sa réponse (jeu.repondu)
-  repondu: { type: Boolean, default: false },
-  images: { type: Boolean, default: false },
-  grand: { type: Boolean, default: false },
-  libelle: { type: Function, default: null },
+  repondu?: boolean
+  images?: boolean
+  grand?: boolean
+  libelle?: ((i: number) => string) | null
   // propositions longues (phrases) : une par ligne, sur toute la largeur
-  colonne: { type: Boolean, default: false },
-})
-const emit = defineEmits(['choisir'])
+  colonne?: boolean
+}>(), { bonne: -1, repondu: false, images: false, grand: false, libelle: null, colonne: false })
+const emit = defineEmits<{ choisir: [i: number] }>()
+defineSlots<{ default?(props: { option: O, index: number }): unknown }>()
 // proposition choisie par l'élève, oubliée à chaque nouvelle question
-const choisie = ref(null)
+const choisie = ref<number | null>(null)
 watch(() => props.options, () => { choisie.value = null })
 
-const classe = i => (!props.repondu ? '' : i === props.bonne ? 'ok' : i === choisie.value ? 'erreur' : 'grise')
-function choisir(i) {
+const classe = (i: number) => (!props.repondu ? '' : i === props.bonne ? 'ok' : i === choisie.value ? 'erreur' : 'grise')
+function choisir(i: number) {
   if (props.repondu) return
   choisie.value = i
   emit('choisir', i)

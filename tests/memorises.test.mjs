@@ -7,7 +7,7 @@ import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, ROUTES
 
 // Clés de réglages présentes dans les sources : 'xxx_config', 'xxx_fiche' (stockées sous ep_xxx_…), et les polices
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')
-const sources = d => readdirSync(d).flatMap(f => statSync(join(d, f)).isDirectory() ? sources(join(d, f)) : /\.(js|vue)$/.test(f) ? [join(d, f)] : [])
+const sources = d => readdirSync(d).flatMap(f => statSync(join(d, f)).isDirectory() ? sources(join(d, f)) : /\.(js|ts|vue)$/.test(f) ? [join(d, f)] : [])
 const CLES = [...new Set(sources(src).flatMap(f => [...readFileSync(f, 'utf8').matchAll(/['"]([a-z_]+_(?:config|fiche))['"]/g)].map(m => m[1]))), 'polices']
 
 const CORROMPUES = ['{}', '{"niveau":42}', '"x"', '[]']

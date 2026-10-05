@@ -1,0 +1,23 @@
+{
+  // Types : seuls les .ts et les <script lang="ts"> sont vérifiés (strict). Les .js restent non vérifiés (checkJs: false)
+  // mais leurs JSDoc sont lus quand un .ts les importe. `npm run types` = vue-tsc --noEmit.
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2023", "dom", "dom.iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "strict": true,
+    "allowJs": true,
+    "checkJs": false,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    // interdit enum, namespace, propriétés de paramètres… : node retire les types seul (pas de compilation)
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["vite/client", "node"]
+  },
+  "include": ["src", "tests", "scripts", "vite.config.js"]
+}

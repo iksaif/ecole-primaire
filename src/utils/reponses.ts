@@ -1,4 +1,3 @@
-// @ts-check
 // Réponses écrites au clavier (exercices de français, plan 10) : comparer ce que l'élève a tapé à la réponse attendue.
 // Module pur, sans dépendance : lisible par node (tests/reponses.test.mjs).
 //
@@ -11,7 +10,10 @@
 // oubliés comptent **faux**, avec la nuance 'accents' (la vue montre « Attention aux accents » et la bonne graphie) ;
 // { accents: 'accepter' } les compte justes, avec la même nuance.
 
-/** @typedef {'juste' | 'accents' | 'faux'} Verdict */
+export type Verdict = 'juste' | 'accents' | 'faux'
+/** Ce que renvoie `verifier` pour une saisie : juste ou non, avec la nuance 'accents' si seuls les accents diffèrent. */
+export interface VerdictSaisie { ok: boolean, nuance: 'accents' | null }
+export type Accents = 'refuser' | 'accepter'
 
 // apostrophes typographiques (’ ‘ ʼ ′ ´ `) → apostrophe droite ; tirets (‐ ‑ ‒ – —) → trait d'union
 const APOSTROPHES = /[‘’ʼ′´`]/g
@@ -20,9 +22,8 @@ const TIRETS = /[‐‑‒–—]/g
 /**
  * Forme comparable d'une saisie : Unicode composé (NFC), minuscules, apostrophes et tirets unifiés, espaces (y compris
  * insécables) regroupés, sans espace autour d'une apostrophe ni aux extrémités. Les accents sont gardés.
- * @param {unknown} texte
  */
-export function normaliserSaisie(texte) {
+export function normaliserSaisie(texte: unknown): string {
   return String(texte ?? '').normalize('NFC').toLocaleLowerCase('fr')
     .replace(APOSTROPHES, "'").replace(TIRETS, '-')
     .replace(/\s+/g, ' ').replace(/ ?' ?/g, "'").trim()
@@ -30,21 +31,17 @@ export function normaliserSaisie(texte) {
 
 /**
  * Même texte sans accents ni cédille, ligatures œ / æ écrites oe / ae (à appliquer après normaliserSaisie).
- * @param {string} texte
  */
-export const sansAccents = texte => texte.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/œ/g, 'oe').replace(/æ/g, 'ae')
+export const sansAccents = (texte: string): string => texte.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/œ/g, 'oe').replace(/æ/g, 'ae')
 
-/** Saisie vide (ou seulement des espaces) ? @param {unknown} texte */
-export const estVide = texte => normaliserSaisie(texte) === ''
+/** Saisie vide (ou seulement des espaces) ? */
+export const estVide = (texte: unknown): boolean => normaliserSaisie(texte) === ''
 
 /**
  * Verdict d'une saisie face à une ou plusieurs formes attendues : 'juste' (à la casse, aux espaces et aux apostrophes
  * près), 'accents' (juste si l'on ignore les accents), sinon 'faux'. Une saisie vide est toujours 'faux'.
- * @param {unknown} saisie
- * @param {string | string[]} attendus
- * @returns {Verdict}
  */
-export function comparerReponse(saisie, attendus) {
+export function comparerReponse(saisie: unknown, attendus: string | readonly string[]): Verdict {
   const s = normaliserSaisie(saisie)
   if (!s) return 'faux'
   const formes = (Array.isArray(attendus) ? attendus : [attendus]).map(normaliserSaisie)
@@ -56,12 +53,8 @@ export function comparerReponse(saisie, attendus) {
 /**
  * Verdict d'une saisie pour `verifier` : { ok, nuance }. nuance 'accents' : juste aux accents près ; comptée fausse
  * par défaut (décision du 2026-10-05), juste avec { accents: 'accepter' }.
- * @param {unknown} saisie
- * @param {string | string[]} attendus
- * @param {{ accents?: 'refuser' | 'accepter' }} [choix]
- * @returns {{ ok: boolean, nuance: 'accents' | null }}
  */
-export function verdictSaisie(saisie, attendus, { accents = 'refuser' } = {}) {
+export function verdictSaisie(saisie: unknown, attendus: string | readonly string[], { accents = 'refuser' }: { accents?: Accents } = {}): VerdictSaisie {
   const v = comparerReponse(saisie, attendus)
   if (v === 'accents') return { ok: accents === 'accepter', nuance: 'accents' }
   return { ok: v === 'juste', nuance: null }

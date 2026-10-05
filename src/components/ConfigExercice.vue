@@ -1,3 +1,4 @@
+<!-- @deprecated — remplacé par src/noyau/CadreExercice.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Cadre commun des pages d'exercice :

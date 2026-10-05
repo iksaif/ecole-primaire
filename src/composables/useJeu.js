@@ -1,3 +1,4 @@
+// @deprecated — remplacé par src/noyau/useJeu.ts, à supprimer avec le dernier exercice migré (plan 10)
 // Boucle de jeu commune des exercices (plan 10) : questions, question courante, score, retour, fin.
 //
 //   const jeu = useJeu({

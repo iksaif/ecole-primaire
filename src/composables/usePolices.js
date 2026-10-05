@@ -1,3 +1,4 @@
+// @deprecated — remplacé par src/noyau/polices.ts, à supprimer avec le dernier exercice migré (plan 10)
 import { ref, computed, watch } from 'vue'
 import { chargerReglages, sauvegarder } from '../utils'
 import {

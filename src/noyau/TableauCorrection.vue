@@ -1,4 +1,3 @@
-<!-- @deprecated — remplacé par src/noyau/TableauCorrection.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Tableau de correction commun de l'écran de fin (dans <ResultatsJeu>) : une ligne par entrée de l'historique de
@@ -20,14 +19,20 @@
   </table>
 </template>
 
-<script setup>
+<script setup lang="ts" generic="Q extends { texte?: unknown, attendu?: unknown }">
 // textes : catalogue commun (colQuestion, taReponse, bonneReponse)
 import { useI18n } from '../i18n'
-import { etatDe } from '../composables/useJeu'
+import { etatDe } from './useJeu.ts'
+import type { EntreeHistorique } from './useJeu.ts'
 
-defineProps({
+// Q : une question ; par défaut, `question.texte` et `question.attendu` sont affichés (ou les slots)
+defineProps<{
   // jeu.historique : [{ question, ok, nuance, donne, … }]
-  historique: { type: Array, required: true },
-})
+  historique: readonly EntreeHistorique<Q, unknown>[]
+}>()
+defineSlots<{
+  question?(props: { entree: EntreeHistorique<Q, unknown> }): unknown
+  attendu?(props: { entree: EntreeHistorique<Q, unknown> }): unknown
+}>()
 const { t } = useI18n()
 </script>

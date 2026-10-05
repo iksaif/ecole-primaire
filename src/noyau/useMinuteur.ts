@@ -10,10 +10,11 @@ import { ref, onUnmounted } from 'vue'
 
 export function useMinuteur() {
   const restant = ref(0)
-  let horloge = null
-  const arreter = () => { clearInterval(horloge); horloge = null }
+  let horloge: ReturnType<typeof setInterval> | null = null
+  const arreter = () => { if (horloge !== null) clearInterval(horloge); horloge = null }
 
-  function demarrer(duree, { pas = 1, surFin = null } = {}) {
+  /** duree : secondes ; pas : secondes entre deux mises à jour ; surFin : appelé à 0 */
+  function demarrer(duree: number, { pas = 1, surFin = null }: { pas?: number, surFin?: (() => void) | null } = {}) {
     arreter()
     restant.value = duree
     horloge = setInterval(() => {

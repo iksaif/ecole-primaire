@@ -1,4 +1,3 @@
-<!-- @deprecated — remplacé par src/noyau/ResultatsEtoiles.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
     Écran de fin de la maternelle : score, message encourageant et cinq étoiles (au lieu du message du primaire,
@@ -20,16 +19,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // textes : catalogue commun (rejouer, parametres, scoreSur, etoiles5…etoilesSur)
 import { computed } from 'vue'
 import { useI18n } from '../i18n'
 
-const props = defineProps({
-  bonnes: { type: Number, required: true },
-  total: { type: Number, required: true },
-})
-defineEmits(['rejouer', 'reglages'])
+const props = defineProps<{
+  bonnes: number
+  total: number
+}>()
+defineEmits<{ rejouer: [], reglages: [] }>()
 const { t } = useI18n()
 
 const part = computed(() => (props.total ? props.bonnes / props.total : 0))

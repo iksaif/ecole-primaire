@@ -1,11 +1,13 @@
 {
   "max": {
     "brEnDur": 99,
-    "importsBr": 52,
+    "importsBr": 53,
     "niveauxEnTexte": 55,
     "vuesLongues": 1,
     "mathRandomVues": 2,
-    "attentesFixes": 23
+    "attentesFixes": 23,
+    "erreursDeType": 0,
+    "importeursAncienSocle": 95
   },
   "min": {
     "couverture": 54.3,

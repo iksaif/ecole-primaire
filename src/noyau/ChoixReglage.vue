@@ -1,7 +1,6 @@
-<!-- @deprecated — remplacé par src/noyau/ChoixReglage.vue, à supprimer avec le dernier exercice migré (plan 10) -->
 <template>
   <!--
-    Un réglage à choix d'un exercice au format « définition » (src/exercices/) : une rangée de boutons level-btn.
+    Un réglage à choix d'un exercice du noyau (DefinitionExercice, types.ts) : une rangée de boutons level-btn.
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
         :titre="t('exercices')" :libelle="e => t(`ex_${e}`)"> aide facultative (slot) </ChoixReglage>
@@ -22,7 +21,7 @@
       <button v-for="v in liste" :key="String(v)" class="carte-reglage" :class="{ active: actif(v) }" :data-valeur="String(v)"
         :title="raisonHorsProgramme(definition, niveau, cle, v) ?? undefined" @click="choisir(v)">
         <div v-if="icone" class="carte-icone">{{ icone(v) }}</div>
-        <div class="carte-titre"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)) }})</span></div>
+        <div class="carte-titre"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></div>
         <div v-if="description" class="carte-desc">{{ description(v) }}</div>
       </button>
     </div>
@@ -31,39 +30,46 @@
       <div class="btn-group">
         <button v-for="v in section.valeurs" :key="String(v)" class="level-btn" :class="{ active: actif(v) }" :data-valeur="String(v)"
           :title="raisonHorsProgramme(definition, niveau, cle, v) ?? undefined"
-          @click="choisir(v)"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)) }})</span></button>
+          @click="choisir(v)"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></button>
       </div>
     </template>
     <slot />
   </div>
 </template>
 
-<script setup>
-// textes : catalogue commun (bonus, horsProgramme) ; marques lues dans la définition (src/exercices/outils.js)
+<script setup lang="ts">
+// textes : catalogue commun (bonus, horsProgramme) ; marques lues dans la définition (src/noyau/reglages.ts)
 import { computed } from 'vue'
 import { useI18n } from '../i18n'
-import { estBonus, raisonHorsProgramme, valeursDe } from '../exercices/outils'
+import { estBonus, raisonHorsProgramme, valeursDe } from './reglages.ts'
+import type { DefinitionExercice, Reglages, ValeurOption, ValeurReglage } from './types.ts'
 
-const props = defineProps({
-  definition: { type: Object, required: true },
+const props = withDefaults(defineProps<{
+  definition: DefinitionExercice<Reglages>
   // clé du réglage dans la config (« niveau », « exercices »…)
-  cle: { type: String, required: true },
+  cle: string
   // niveau courant (inutile pour cle="niveau")
-  niveau: { type: String, default: '' },
-  modelValue: { type: [String, Number, Boolean, Array], required: true },
-  titre: { type: String, default: '' },
+  niveau?: string
+  modelValue: ValeurReglage
+  titre?: string
   // libellé d'une valeur (par défaut : classe en majuscules, sinon la valeur)
-  libelle: { type: Function, default: null },
+  libelle?: ((v: ValeurOption) => string) | null
   // valeurs proposées, quand le réglage n'a d'options ni dans le niveau ni dans `definition.options`
-  valeurs: { type: Array, default: null },
+  valeurs?: readonly ValeurOption[] | null
   // valeurs regroupées sous des sous-titres : [{ titre, valeurs }] (les valeurs absentes des options du niveau sont ignorées)
-  groupes: { type: Array, default: null },
+  groupes?: { titre: string, valeurs: readonly ValeurOption[] }[] | null
   // variante en cartes (icône, titre, description) plutôt qu'en rangée de boutons
-  cartes: { type: Boolean, default: false },
-  icone: { type: Function, default: null },
-  description: { type: Function, default: null },
-})
-const emit = defineEmits(['update:modelValue'])
+  cartes?: boolean
+  icone?: ((v: ValeurOption) => string) | null
+  description?: ((v: ValeurOption) => string) | null
+}>(), { niveau: '', titre: '', libelle: null, valeurs: null, groupes: null, cartes: false, icone: null, description: null })
+const emit = defineEmits<{ 'update:modelValue': [valeur: ValeurReglage] }>()
+defineSlots<{
+  // contenu d'une valeur (par défaut son texte)
+  valeur?(props: { valeur: ValeurOption, texte: string }): unknown
+  // aide sous les boutons
+  default?(): unknown
+}>()
 const { t } = useI18n()
 
 const liste = computed(() => props.valeurs ?? valeursDe(props.definition, props.niveau, props.cle))
@@ -71,19 +77,19 @@ const liste = computed(() => props.valeurs ?? valeursDe(props.definition, props.
 const sections = computed(() => (props.groupes
   ? props.groupes.map(g => ({ titre: g.titre, valeurs: g.valeurs.filter(v => liste.value.includes(v)) })).filter(g => g.valeurs.length)
   : [{ titre: '', valeurs: liste.value }]))
-const multiple = computed(() => Array.isArray(props.modelValue))
-const texte = v => (props.libelle ? props.libelle(v) : props.cle === 'niveau' ? String(v).toUpperCase() : String(v))
+const choisies = computed(() => (Array.isArray(props.modelValue) ? props.modelValue : null))
+const texte = (v: ValeurOption) => (props.libelle ? props.libelle(v) : props.cle === 'niveau' ? String(v).toUpperCase() : String(v))
 // « bonus » ou « hors programme » (clé du catalogue commun), sinon null
-const marque = v => (estBonus(props.definition, props.niveau, props.cle, v) ? 'bonus'
+const marque = (v: ValeurOption) => (estBonus(props.definition, props.niveau, props.cle, v) ? 'bonus'
   : raisonHorsProgramme(props.definition, props.niveau, props.cle, v) ? 'horsProgramme' : null)
-const actif = v => (multiple.value ? props.modelValue.includes(v) : props.modelValue === v)
+const actif = (v: ValeurOption) => (choisies.value ? choisies.value.includes(v as string) : props.modelValue === v)
 
-function choisir(v) {
-  if (!multiple.value) return emit('update:modelValue', v)
-  const choisies = props.modelValue
-  if (choisies.includes(v)) {
-    if (choisies.length > 1) emit('update:modelValue', choisies.filter(x => x !== v))
-  } else emit('update:modelValue', liste.value.filter(x => x === v || choisies.includes(x)))
+function choisir(v: ValeurOption) {
+  const courantes = choisies.value
+  if (!courantes) return emit('update:modelValue', v)
+  if (courantes.includes(v as string)) {
+    if (courantes.length > 1) emit('update:modelValue', courantes.filter(x => x !== v))
+  } else emit('update:modelValue', liste.value.filter(x => x === v || courantes.includes(x as string)) as string[])
 }
 </script>
 

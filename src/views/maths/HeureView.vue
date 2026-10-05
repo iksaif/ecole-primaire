@@ -3,44 +3,20 @@
     <h1 class="section-heading">🕐 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <div class="config-section">
-        <div class="config-section-title">{{ t('niveau') }}</div>
-        <div class="btn-group">
-          <button v-for="niv in Object.keys(DEFINITION.niveaux)" :key="niv"
-            class="level-btn" :class="{ active: config.niveau === niv }"
-            @click="config.niveau = niv">{{ niv.toUpperCase() }}</button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('exercices') }}</div>
-        <div class="btn-group">
-          <button v-for="ex in options.exercices" :key="ex"
-            class="level-btn" :class="{ active: config.exercices.includes(ex) }"
-            @click="basculer('exercices', ex)">{{ t(`ex_${ex}`) }}</button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('precision') }}</div>
-        <div class="btn-group">
-          <button v-for="p in options.precisions" :key="p"
-            class="level-btn" :class="{ active: config.precisions.includes(p) }"
-            @click="basculer('precisions', p)">{{ t(`prec_${p}`) }}{{ estBonus(DEFINITION, config.niveau, 'precisions', p) ? ` (${t('bonus')})` : '' }}</button>
-        </div>
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
+        :titre="t('exercices')" :libelle="ex => t(`ex_${ex}`)" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="precisions" v-model="config.precisions"
+        :titre="t('precision')" :libelle="p => t(`prec_${p}`)">
         <div v-if="config.niveau === 'cp'" class="aide-config">{{ t('aideCp') }}</div>
         <div v-if="config.niveau === 'ce1'" class="aide-config">{{ t('aideCe1') }}</div>
-      </div>
+      </ChoixReglage>
 
-      <div class="config-section" v-if="mode === 'jouer' && config.exercices.includes('lire')">
-        <div class="config-section-title">{{ t('reponseLire') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.saisie === 'choix' }" @click="config.saisie = 'choix'">{{ t('propositions4') }}</button>
-          <button class="level-btn" :class="{ active: config.saisie === 'clavier' }" @click="config.saisie = 'clavier'">{{ t('jEcris') }}</button>
-        </div>
-      </div>
+      <ChoixReglage v-if="mode === 'jouer' && config.exercices.includes('lire')" :definition="DEFINITION" cle="saisie"
+        v-model="config.saisie" :titre="t('reponseLire')" :valeurs="['choix', 'clavier']"
+        :libelle="s => t(s === 'choix' ? 'propositions4' : 'jEcris')" />
 
       <div class="config-section">
         <div class="config-section-title">{{ t('aide') }}</div>
@@ -51,181 +27,157 @@
         </div>
       </div>
 
-      <div v-if="mode === 'jouer'" class="config-section">
-        <div class="config-section-title">{{ t('nbQuestions') }}</div>
-        <div class="btn-group">
-          <button v-for="n in [5, 10, 15]" :key="n"
-            class="level-btn" :class="{ active: config.nbQ === n }"
-            @click="config.nbQ = n">{{ n }}</button>
-        </div>
-      </div>
-
-      <template v-if="mode === 'imprimer'">
-        <div class="config-section">
-          <div class="config-section-title">{{ t('nbHorloges') }}</div>
-          <div class="btn-group">
-            <button v-for="n in [4, 8, 12]" :key="n"
-              class="level-btn" :class="{ active: config.nbHorloges === n }"
-              @click="config.nbHorloges = n">{{ n }}</button>
-          </div>
-        </div>
-      </template>
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ"
+        :titre="t('nbQuestions')" :valeurs="[5, 10, 15]" />
+      <ChoixReglage v-else :definition="DEFINITION" cle="nbHorloges" v-model="config.nbHorloges"
+        :titre="t('nbHorloges')" :valeurs="[4, 8, 12]" />
     </ConfigExercice>
 
     <!-- Exercice -->
-    <template v-if="phase === 'jeu' && q">
-      <div class="score-bar">
-        <button class="btn-quitter" @click="jeu.quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
-        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
-        <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
-      </div>
+    <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
 
-      <div class="exercise-box">
-        <div class="prog-dots">
-          <span v-for="(_, i) in questions" :key="i" class="prog-dot"
-            :class="{ current: i === idx, ok: historique[i]?.ok, erreur: historique[i] && !historique[i].ok }"></span>
+      <!-- (a) Lire l'heure -->
+      <template v-if="q.type === 'lire'">
+        <div class="consigne">{{ t('quelleHeure') }}</div>
+        <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
+        <div class="legende-aiguilles"><span class="leg-h">{{ t('legH') }}</span> · <span class="leg-m">{{ t('legM') }}</span></div>
+
+        <div v-if="q.mode === 'choix'" class="choix-grille">
+          <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
+            :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
         </div>
+      </template>
 
-        <!-- (a) Lire l'heure -->
-        <template v-if="q.type === 'lire'">
-          <div class="consigne">{{ t('quelleHeure') }}</div>
-          <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
-          <div class="legende-aiguilles"><span class="leg-h">{{ t('legH') }}</span> · <span class="leg-m">{{ t('legM') }}</span></div>
-
-          <div v-if="q.mode === 'choix'" class="choix-grille">
-            <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
-              :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
-          </div>
-        </template>
-
-        <!-- (b) Placer les aiguilles -->
-        <template v-else-if="q.type === 'placer'">
-          <div class="consigne">
-            {{ t('placeAiguilles') }}
-            <strong v-if="q.consigneOrale">« {{ q.oral }} »</strong>
-            <strong v-else>{{ q.ecrit }}</strong>
-            <button v-if="voixFr" class="btn-ecouter" :title="t('ecouter')" @click="lire(q.oral)">🔊</button>
-          </div>
-          <div ref="cadranEl" class="horloge deplacable"
-            @pointerdown="debutGlisser" @pointermove="glisser" @pointerup="finGlisser" @pointercancel="finGlisser"
-            v-html="horlogeSvg(aiguilles.h, aiguilles.m, repondu && !dernierOk ? { h: q.h, m: q.m } : null)"></div>
-          <div class="legende-aiguilles">{{ t('glisser') }}</div>
-          <div class="reglages">
-            <div class="reglage">
-              <span class="leg-h">{{ t('petiteAiguille') }}</span>
-              <div class="btn-group">
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerHeure')" @click="ajouterHeures(-1)">−</button>
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerHeure')" @click="ajouterHeures(1)">+</button>
-              </div>
-            </div>
-            <div class="reglage">
-              <span class="leg-m">{{ t('grandeAiguille') }}</span>
-              <div class="btn-group">
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerMinutes', { n: 5 })" @click="ajouterMinutes(-5)">−5</button>
-                <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerMinutes', { n: 1 })" @click="ajouterMinutes(-1)">−1</button>
-                <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerMinutes', { n: 1 })" @click="ajouterMinutes(1)">+1</button>
-                <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerMinutes', { n: 5 })" @click="ajouterMinutes(5)">+5</button>
-              </div>
+      <!-- (b) Placer les aiguilles -->
+      <template v-else-if="q.type === 'placer'">
+        <div class="consigne">
+          {{ t('placeAiguilles') }}
+          <strong v-if="q.consigneOrale">« {{ q.oral }} »</strong>
+          <strong v-else>{{ q.ecrit }}</strong>
+          <button v-if="voixFr" class="btn-ecouter" :title="t('ecouter')" @click="lire(q.oral)">🔊</button>
+        </div>
+        <div ref="cadranEl" class="horloge deplacable"
+          @pointerdown="debutGlisser" @pointermove="glisser" @pointerup="finGlisser" @pointercancel="finGlisser"
+          v-html="horlogeSvg(aiguilles.h, aiguilles.m, repondu && !dernierOk ? { h: q.h, m: q.m } : null)"></div>
+        <div class="legende-aiguilles">{{ t('glisser') }}</div>
+        <div class="reglages">
+          <div class="reglage">
+            <span class="leg-h">{{ t('petiteAiguille') }}</span>
+            <div class="btn-group">
+              <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerHeure')" @click="ajouterHeures(-1)">−</button>
+              <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerHeure')" @click="ajouterHeures(1)">+</button>
             </div>
           </div>
-        </template>
-
-        <!-- (c) Matin / après-midi -->
-        <template v-else-if="q.type === 'journee' && q.sous === 'lire24'">
-          <div class="consigne">{{ q.phrase }}<br>{{ t('quelleHeure') }} <small>{{ t('ecrisNumerique') }}</small></div>
-          <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
-        </template>
-
-        <template v-else-if="q.type === 'journee' && q.sous === 'choisir'">
-          <div class="consigne">{{ t('ilEst1') }}<strong>{{ q.ecrit24 }}</strong>{{ t('ilEst2') }} {{ t('quelleHorloge') }}</div>
-          <div class="choix-horloges">
-            <button v-for="(o, i) in q.options" :key="i" class="choix-horloge"
-              :class="classeChoix(i)" :disabled="repondu" :aria-label="t('choixHorloge', { n: i + 1 })" @click="validerChoix(i)">
-              <span v-html="horlogeSvg(o.h, o.m, null, false)"></span>
-            </button>
+          <div class="reglage">
+            <span class="leg-m">{{ t('grandeAiguille') }}</span>
+            <div class="btn-group">
+              <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerMinutes', { n: 5 })" @click="ajouterMinutes(-5)">−5</button>
+              <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('reculerMinutes', { n: 1 })" @click="ajouterMinutes(-1)">−1</button>
+              <button v-if="pasMinutes === 1" class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerMinutes', { n: 1 })" @click="ajouterMinutes(1)">+1</button>
+              <button class="btn btn-ghost btn-rond" :disabled="repondu" :aria-label="t('avancerMinutes', { n: 5 })" @click="ajouterMinutes(5)">+5</button>
+            </div>
           </div>
-        </template>
+        </div>
+      </template>
 
-        <!-- (d) Durées -->
-        <template v-else-if="q.type === 'duree'">
-          <div class="consigne" v-if="q.sous === 'apres'">
-            {{ t('ilEst1') }}<strong>{{ q.ecritDebut }}</strong>{{ t('ilEst2') }}<br>
-            {{ t('dans1') }}<strong>{{ q.ecritDuree }}</strong>{{ t('dans2') }}
-          </div>
-          <div class="consigne" v-else>
-            {{ q.act.nom }} {{ t('commenceA') }} <strong>{{ q.ecritDebut }}</strong> {{ t('termineA') }} <strong>{{ q.ecritFin }}</strong>.<br>
-            {{ t('combienDure', { pronom: q.act.pronom }) }}
-          </div>
-          <div class="horloges-duree">
-            <figure>
-              <div class="horloge petite" v-html="horlogeSvg(q.h, q.m)"></div>
-              <figcaption>{{ q.sous === 'apres' ? t('maintenant') : t('debut') }}</figcaption>
-            </figure>
-            <figure v-if="q.sous === 'combien' || (repondu && !dernierOk)">
-              <div class="horloge petite" v-html="horlogeSvg(q.h2, q.m2)"></div>
-              <figcaption>{{ q.sous === 'apres' ? t('plusTard') : t('fin') }}</figcaption>
-            </figure>
-          </div>
-        </template>
+      <!-- (c) Matin / après-midi -->
+      <template v-else-if="q.type === 'journee' && q.sous === 'lire24'">
+        <div class="consigne">{{ q.phrase }}<br>{{ t('quelleHeure') }} <small>{{ t('ecrisNumerique') }}</small></div>
+        <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
+      </template>
 
-        <!-- (e) Conversions h / min / s (CE2) -->
-        <template v-else-if="q.type === 'conversion'">
-          <div class="consigne">{{ t('complete') }}&nbsp;: <strong>{{ q.texte.replace(/ = .*/, ' =') }}</strong></div>
-          <div class="aide-config" style="text-align:center;margin-bottom:.75rem;">{{ t('rappel') }} : 1 h = 60 min</div>
-          <div class="saisie-heure">
-            <template v-for="(u, i) in q.unites" :key="u">
-              <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-                min="0" placeholder="?" v-model="champs[i]" :disabled="repondu" @keydown.enter="valider">
-              <span class="unite">{{ u }}</span>
-            </template>
-          </div>
-        </template>
+      <template v-else-if="q.type === 'journee' && q.sous === 'choisir'">
+        <div class="consigne">{{ t('ilEst1') }}<strong>{{ q.ecrit24 }}</strong>{{ t('ilEst2') }} {{ t('quelleHorloge') }}</div>
+        <div class="choix-horloges">
+          <button v-for="(o, i) in q.options" :key="i" class="choix-horloge"
+            :class="classeChoix(i)" :disabled="repondu" :aria-label="t('choixHorloge', { n: i + 1 })" @click="validerChoix(i)">
+            <span v-html="horlogeSvg(o.h, o.m, null, false)"></span>
+          </button>
+        </div>
+      </template>
 
-        <!-- (f) Emploi du temps (CE2) -->
-        <template v-else-if="q.type === 'emploi'">
-          <div class="consigne">{{ t('lisEmploi') }}</div>
-          <table class="correction-table emploi">
-            <thead><tr><th>{{ t('debut') }}</th><th>{{ t('fin') }}</th><th>{{ t('activite') }}</th></tr></thead>
-            <tbody>
-              <tr v-for="l in q.emploi" :key="l.debut" :class="{ recre: l.recre }">
-                <td>{{ hm(l.debut) }}</td><td>{{ hm(l.fin) }}</td><td>{{ l.nom }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="consigne">{{ q.question }}</div>
-          <div v-if="q.options" class="choix-grille">
-            <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
-              :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
-          </div>
-        </template>
+      <!-- (d) Durées -->
+      <template v-else-if="q.type === 'duree'">
+        <div class="consigne" v-if="q.sous === 'apres'">
+          {{ t('ilEst1') }}<strong>{{ q.ecritDebut }}</strong>{{ t('ilEst2') }}<br>
+          {{ t('dans1') }}<strong>{{ q.ecritDuree }}</strong>{{ t('dans2') }}
+        </div>
+        <div class="consigne" v-else>
+          {{ q.act.nom }} {{ t('commenceA') }} <strong>{{ q.ecritDebut }}</strong> {{ t('termineA') }} <strong>{{ q.ecritFin }}</strong>.<br>
+          {{ t('combienDure', { pronom: q.act.pronom }) }}
+        </div>
+        <div class="horloges-duree">
+          <figure>
+            <div class="horloge petite" v-html="horlogeSvg(q.h, q.m)"></div>
+            <figcaption>{{ q.sous === 'apres' ? t('maintenant') : t('debut') }}</figcaption>
+          </figure>
+          <figure v-if="q.sous === 'combien' || (repondu && !dernierOk)">
+            <div class="horloge petite" v-html="horlogeSvg(q.h2, q.m2)"></div>
+            <figcaption>{{ q.sous === 'apres' ? t('plusTard') : t('fin') }}</figcaption>
+          </figure>
+        </div>
+      </template>
 
-        <!-- saisie « ? h ? min » (lire au clavier, matin / après-midi, durées, emploi du temps) -->
-        <div v-if="saisieHM" class="saisie-heure">
-          <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-            min="0" :max="sur24 ? 23 : null" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
-          <span class="unite">h</span>
+      <!-- (e) Conversions h / min / s (CE2) -->
+      <template v-else-if="q.type === 'conversion'">
+        <div class="consigne">{{ t('complete') }}&nbsp;: <strong>{{ q.texte.replace(/ = .*/, ' =') }}</strong></div>
+        <div class="aide-config" style="text-align:center;margin-bottom:.75rem;">{{ t('rappel') }} : 1 h = 60 min</div>
+        <div class="saisie-heure">
+          <template v-for="(u, i) in q.unites" :key="u">
+            <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
+              min="0" placeholder="?" v-model="champs[i]" :disabled="repondu" @keydown.enter="valider">
+            <span class="unite">{{ u }}</span>
+          </template>
+        </div>
+      </template>
+
+      <!-- (f) Emploi du temps (CE2) -->
+      <template v-else-if="q.type === 'emploi'">
+        <div class="consigne">{{ t('lisEmploi') }}</div>
+        <table class="correction-table emploi">
+          <thead><tr><th>{{ t('debut') }}</th><th>{{ t('fin') }}</th><th>{{ t('activite') }}</th></tr></thead>
+          <tbody>
+            <tr v-for="l in q.emploi" :key="l.debut" :class="{ recre: l.recre }">
+              <td>{{ hm(l.debut) }}</td><td>{{ hm(l.fin) }}</td><td>{{ l.nom }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="consigne">{{ q.question }}</div>
+        <div v-if="q.options" class="choix-grille">
+          <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
+            :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
+        </div>
+      </template>
+
+      <!-- saisie « ? h ? min » (lire au clavier, matin / après-midi, durées, emploi du temps) -->
+      <div v-if="saisieHM" class="saisie-heure">
+        <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
+          min="0" :max="sur24 ? 23 : null" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
+        <span class="unite">h</span>
+        <!-- heures entières seulement (CP) : pas de case pour les minutes -->
+        <template v-if="!q.sansMinutes">
           <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
             min="0" :max="sur24 ? 59 : null" placeholder="00" v-model="repM" :disabled="repondu" @keydown.enter="valider">
           <span class="unite">min</span>
-        </div>
+        </template>
+      </div>
 
-        <div class="feedback" :class="feedbackClass">
-          {{ feedback }}
-          <div v-if="feedbackOral" class="oral">
-            « {{ feedbackOral }} »
-            <button v-if="voixFr" class="btn-ecouter" :title="t('ecouter')" @click="lire(feedbackOral)">🔊</button>
-          </div>
-        </div>
-
-        <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <template v-if="!repondu">
-            <button class="btn btn-ghost" @click="jeu.passer({ donne: t('passe') })">{{ t('passer') }}</button>
-            <button v-if="!estChoix" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
-          </template>
-          <button v-else-if="!dernierOk" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+      <div class="feedback" :class="feedbackClass">
+        {{ feedback }}
+        <div v-if="feedbackOral" class="oral">
+          « {{ feedbackOral }} »
+          <button v-if="voixFr" class="btn-ecouter" :title="t('ecouter')" @click="lire(feedbackOral)">🔊</button>
         </div>
       </div>
-    </template>
+
+      <div class="btn-group" style="justify-content:center;margin-top:1rem;">
+        <template v-if="!repondu">
+          <button class="btn btn-ghost" @click="jeu.passer({ donne: t('passe') })">{{ t('passer') }}</button>
+          <button v-if="!estChoix" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
+        </template>
+        <button v-else-if="!dernierOk" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+      </div>
+    </QuestionJeu>
 
     <!-- Résultats -->
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
@@ -258,10 +210,13 @@ import { useTTS } from '../../composables/useTTS'
 import { useI18n, contenu } from '../../i18n'
 import ConfigExercice from '../../components/ConfigExercice.vue'
 import ResultatsJeu from '../../components/ResultatsJeu.vue'
+import ChoixReglage from '../../components/ChoixReglage.vue'
+import QuestionJeu from '../../components/QuestionJeu.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
 import { useGraine } from '../../composables/useGraine'
+import { usePoliceFiche } from '../../composables/usePolices'
 import { useJeu } from '../../composables/useJeu'
-import { reglagesDuNiveau, estBonus } from '../../exercices/outils'
+import { reglagesDuNiveau } from '../../exercices/outils'
 import DEFINITION from '../../exercices/heure/definition'
 import { INTERFACE, TEXTES } from '../../exercices/heure/textes'
 import { questions as genererQuestions, questionsFiche, verifier, choisis, ecrit, deux, hm } from '../../exercices/heure/generateur'
@@ -281,7 +236,6 @@ const DEFAUT = reglagesDuNiveau(DEFINITION)
 const config = ref(reglagesDuNiveau(DEFINITION, chargerReglages('heure_config', DEFAUT)))
 if (![4, 8, 12].includes(config.value.nbHorloges)) config.value.nbHorloges = 8
 watch(config, v => sauvegarder('heure_config', v), { deep: true })
-const options = computed(() => DEFINITION.niveaux[config.value.niveau].options)
 
 // Changement de niveau : on garde les exercices qui existent dans le nouveau niveau (sinon ses défauts), et on
 // reprend ses précisions par défaut.
@@ -291,16 +245,6 @@ watch(() => config.value.niveau, () => {
   config.value.exercices = ex.length ? ex : [...niv.reglages.exercices]
   config.value.precisions = [...niv.reglages.precisions]
 })
-
-function basculer(champ, val) {
-  const liste = config.value[champ]
-  if (liste.includes(val)) {
-    if (liste.length === 1) return
-    config.value[champ] = liste.filter(x => x !== val)
-  } else {
-    config.value[champ] = [...liste, val]
-  }
-}
 
 // ── Jeu ──
 const repH = ref('')
@@ -333,7 +277,7 @@ const jeu = useJeu({
     nextTick(() => (inputEl.value || document.querySelector('.exercise-box input:not([disabled])'))?.focus?.())
   },
 })
-const { phase, questions, index: idx, q, bonnes, mauvaises, historique, retour, repondu, cleFin } = jeu
+const { phase, questions, q, bonnes, historique, retour, repondu, cleFin } = jeu
 
 const dernierOk = computed(() => !!retour.value?.ok)
 const feedback = computed(() => retour.value?.message ?? '')
@@ -388,7 +332,7 @@ function valider() {
   const enDuree = (question.type === 'duree' && question.sous === 'combien') || (question.type === 'emploi' && question.sous === 'duree')
   const donne = enDuree
     ? `${repH.value || 0} h ${repM.value || 0} min`
-    : `${repH.value || 0} h ${deux(+repM.value || 0)}`
+    : question.sansMinutes ? `${repH.value || 0} h` : `${repH.value || 0} h ${deux(+repM.value || 0)}`
   jeu.repondre({ h: repH.value, m: repM.value }, { donne })
 }
 
@@ -445,14 +389,18 @@ function finGlisser() { aiguilleTenue = null }
 // ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
 const { mode } = useModeExercice()
 const { graine, nouvelle, rngFiche } = useGraine()
-// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche (nouvelle graine)
-const fiche = computed(() => {
-  if (mode.value !== 'imprimer') return ''
+// police choisie dans « Sur la fiche » (Andika par défaut)
+const policeFiche = usePoliceFiche()
+// tirage recalculé quand les réglages changent ou qu'on demande une nouvelle fiche (nouvelle graine) ; la mise en
+// page à part : changer de police ne retire pas de questions (le flux de la graine n'avance pas)
+const tirage = computed(() => {
+  if (mode.value !== 'imprimer') return null
   graine.value
-  const reglages = config.value
-  const tirage = questionsFiche({ niveau: reglages.niveau, reglages, rng: rngFiche(), T })
-  return ficheHeure({ questions: tirage, reglages, T, langue: langueContenu.value })
+  return questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng: rngFiche(), T })
 })
+const fiche = computed(() => (tirage.value
+  ? ficheHeure({ questions: tirage.value, reglages: config.value, T, langue: langueContenu.value, ...policeFiche.value })
+  : ''))
 </script>
 
 <style scoped>

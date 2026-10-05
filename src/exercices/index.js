@@ -7,6 +7,10 @@ import heureDefinition from './heure/definition.js'
 import * as heureGenerateur from './heure/generateur.js'
 import * as heureFiche from './heure/fiche.js'
 import { TEXTES as heureTextes } from './heure/textes.js'
+import monnaieDefinition from './monnaie/definition.js'
+import * as monnaieGenerateur from './monnaie/generateur.js'
+import * as monnaieFiche from './monnaie/fiche.js'
+import { TEXTES as monnaieTextes } from './monnaie/textes.js'
 
 /**
  * Réglages d'un exercice : valeurs simples ou listes de valeurs choisies (ids).
@@ -19,9 +23,11 @@ import { TEXTES as heureTextes } from './heure/textes.js'
  * @typedef {object} NiveauExercice
  * @property {string[]} competences ids de src/data/programme.js (COMPETENCES), au programme du niveau
  * @property {Reglages} reglages réglages par défaut du niveau
- * @property {Record<string, string[]>} [options] valeurs proposées pour chaque réglage à choix multiple
- * @property {Record<string, string[]>} [bonus] valeurs proposées hors programme (sous-ensemble de `options`)
- * @property {{ option: string, raison: string }[]} [horsProgramme] écarts assumés au programme, avec leur raison
+ * @property {Record<string, any[]>} [options] valeurs proposées pour chaque réglage à choix : choix multiple si le
+ *   défaut (`reglages[cle]`) est une liste, choix unique sinon (ex. `centimes: [false, true]`)
+ * @property {Record<string, any[]>} [bonus] valeurs proposées hors programme (sous-ensemble de `options`), jamais par défaut
+ * @property {{ reglage?: string, option: any, raison: string }[]} [horsProgramme] écarts assumés au programme, avec leur
+ *   raison : une valeur de réglage (`reglage` + `option`, affichée « hors programme ») ou une compétence (`option` seul)
  */
 
 /**
@@ -50,9 +56,11 @@ import { TEXTES as heureTextes } from './heure/textes.js'
 /**
  * @typedef {object} ModuleExercice
  * @property {DefinitionExercice} definition
- * @property {{ questions: Function, questionsFiche: Function, verifier: Function, ecartsAuProgramme: Function }} generateur
+ * @property {{ questions: Function, questionsFiche: Function, verifier: Function, ecartsAuProgramme: Function, bonneReponse?: Function, ecartsFiche?: Function }} generateur
  *   questions({ niveau, reglages, rng, T, nb }) ; questionsFiche({ niveau, reglages, rng, T }) ;
- *   verifier(q, rep) ; ecartsAuProgramme(questions, contraintesDe(niveau)) → [] si tout est au programme
+ *   verifier(q, rep) ; ecartsAuProgramme(questions, contraintesDe(niveau)) → [] si tout est au programme ;
+ *   bonneReponse(q) (facultatif) : une réponse juste, que verifier doit accepter (tests) ;
+ *   ecartsFiche(html, contraintesDe(niveau)) (facultatif) : ce que le HTML de la fiche montre hors programme (tests)
  * @property {{ fiche: Function }} fiche fiche({ questions, reglages, T, langue }) → document HTML
  * @property {Record<string, object>} textes catalogues de l'exercice par langue (interface et contenu), lus par T
  */
@@ -60,6 +68,7 @@ import { TEXTES as heureTextes } from './heure/textes.js'
 /** @type {ModuleExercice[]} */
 export const REGISTRE = [
   { definition: heureDefinition, generateur: heureGenerateur, fiche: heureFiche, textes: heureTextes },
+  { definition: monnaieDefinition, generateur: monnaieGenerateur, fiche: monnaieFiche, textes: monnaieTextes },
 ]
 
 /** @param {string} id */

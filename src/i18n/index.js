@@ -1,4 +1,5 @@
-// Traductions de l'interface (français, breton). Sans dépendance.
+// Traductions de l'interface (français, breton). Sans dépendance autre que vue ; imports avec extension : lisible par
+// node sans Vite (tests, scripts).
 //
 // Usage dans un composant :
 //   const { t, langue } = useI18n({ fr: { titre: 'Les fractions' }, br: { titre: 'An darnaouennoù' } })
@@ -7,9 +8,9 @@
 // Recherche : messages locaux de la langue → messages communs (commun.js) → français → la clé elle-même.
 // Les traductions bretonnes sont à faire relire par un brittophone (voir README).
 import { ref, watch } from 'vue'
-import { chargerValeur, sauvegarder } from '../utils'
-import { SITE } from '../site'
-import { COMMUN } from './commun'
+import { chargerValeur, sauvegarder } from '../utils/index.js'
+import { SITE } from '../site.js'
+import { COMMUN } from './commun.js'
 import { choisirPluriel } from './pluriel.js'
 
 export const LANGUES_INTERFACE = [

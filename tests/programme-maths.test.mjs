@@ -112,6 +112,7 @@ const CAS = [
   ['/maths/heure', '^CP$', 'cp', [heure], ['tout:Exercices', 'tout:Précision']],
   ['/maths/heure', '^CE1$', 'ce1', [heure], ['tout:Exercices', 'tout:Précision']],
   ['/maths/heure', '^CE2$', 'ce2', [heure], ['tout:Exercices', 'tout:Précision']],
+  ['/maths/monnaie', '^CP$', 'cp', [champ(), sans(/\d\s?c\b|centime|\d,\d/, 'centimes (CP)')], ['tout:Exercices']],
   ['/maths/monnaie', '^CE1$', 'ce1', [champ()], ['tout:Exercices']],
   ['/maths/monnaie', '^CE2$', 'ce2', [champ()], ['tout:Exercices']],
   ['/maths/mesures', '^CE1$', 'ce1', [contenances, champ()], ['tout:Exercices']],

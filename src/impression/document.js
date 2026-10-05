@@ -10,9 +10,9 @@
 import { COMMUN } from '../i18n/commun.js'
 import { echapper } from '../utils/html.js'
 
-// Police des fiches. Arial pour l'instant : c'est ce qu'utilisent toutes les fiches d'exercice publiées. La police
-// scolaire du site (Andika, a et g simples, embarquée en woff2) est une option : l'adopter changerait toutes les
-// fiches d'un coup, c'est une décision à part (plan 10).
+// Police des fiches : celle choisie dans « Sur la fiche » (ChoixPolice, usePoliceFiche), Andika par défaut (police
+// scolaire du site, a et g simples, embarquée en woff2). L'appelant fournit les @font-face (`cssPolices`, côté
+// navigateur) ; sans eux (node), Arial prend le relais. POLICE_FICHE : l'ancienne police des fiches, pour comparer.
 export const POLICE_FICHE = 'Arial, sans-serif'
 export const POLICE_SCOLAIRE = "'Andika', Arial, sans-serif"
 
@@ -33,13 +33,13 @@ export function ligneNomDate(langue) {
  * @param {string} o.corps HTML du corps, après le h1 : ligneNomDate, exercices, section.corrige
  * @param {string} [o.css] CSS propre à la fiche (après le CSS de base, qu'il peut préciser)
  * @param {string} [o.h1] HTML du titre affiché (ex. avec un emoji) ; par défaut le titre
- * @param {string} [o.police] familles CSS du texte (POLICE_FICHE par défaut, POLICE_SCOLAIRE pour Andika)
- * @param {string} [o.cssPolices] @font-face à embarquer (cssPolices() de utils/impression, côté navigateur)
+ * @param {string} [o.police] familles CSS du texte (POLICE_SCOLAIRE par défaut : Andika, puis Arial)
+ * @param {string} [o.cssPolices] @font-face à embarquer (usePoliceFiche() côté navigateur)
  * @param {string} [o.largeur] largeur maximale du corps
  * @param {string} [o.marge] marge verticale de la page
  * @returns {string}
  */
-export function documentFiche({ titre, langue, corps, css = '', h1, police = POLICE_FICHE, cssPolices = '', largeur = '720px', marge = '1.5cm' }) {
+export function documentFiche({ titre, langue, corps, css = '', h1, police = POLICE_SCOLAIRE, cssPolices = '', largeur = '720px', marge = '1.5cm' }) {
   return `<!DOCTYPE html><html lang="${langue}"><head>
     <meta charset="UTF-8"><title>${echapper(titre)}</title>
     <style>${cssPolices ? `\n${cssPolices}` : ''}

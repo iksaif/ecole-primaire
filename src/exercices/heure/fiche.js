@@ -1,5 +1,6 @@
 // Lire l'heure — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche().
-//   fiche({ questions, reglages, T, langue }) → document HTML complet (documentFiche, ligneNomDate, section.corrige)
+//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
+//   section.corrige) ; police et cssPolices : usePoliceFiche() dans l'app (Andika par défaut)
 import { documentFiche, ligneNomDate } from '../../impression/document.js'
 import { svgHorloge } from './horloge.js'
 import { ecrit, ecritDuree, hm } from './generateur.js'
@@ -17,11 +18,11 @@ const CSS = `
       table.emploi { border-collapse: collapse; margin: .3cm 0; }
       table.emploi td, table.emploi th { border: 1px solid #555; padding: .15cm .4cm; text-align: left; }`
 
-export function fiche({ questions: x, reglages, T, langue }) {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices }) {
   const opt = { aideMinutes: reglages.aideMinutes, taille: '3.8cm', impression: true, libelle: T('horloge') }
   const cellLire = x.aLire.map((t, i) => `<div class="cell">
       <div class="num">${i + 1}.</div>${svgHorloge(t.h, t.m, opt)}
-      <div class="rep">______ h ______</div></div>`).join('')
+      <div class="rep">${x.sansMinutes ? '______ h' : '______ h ______'}</div></div>`).join('')
   const cellDessin = x.aDessiner.map((t, i) => `<div class="cell">
       <div class="num">${i + 1}.</div>${svgHorloge(0, 0, { ...opt, aiguilles: false })}
       <div class="rep cible">${t.oral ?? ecrit(t.h, t.m)}</div></div>`).join('')
@@ -32,7 +33,7 @@ export function fiche({ questions: x, reglages, T, langue }) {
     : []
   if (x.journee) {
     extra += `<h2>${T('ficheJourneeTitre')}</h2><p class="consigne">${T('ficheJourneeConsigne')}</p>
-      ${x.journee.map((l, i) => `<div class="ligne">${i + 1}. ${ecrit(l.h, l.m)} ${T('moments')[l.moment].suffixe} &nbsp;→&nbsp; ________ h ________</div>`).join('')}`
+      ${x.journee.map((l, i) => `<div class="ligne">${i + 1}. ${ecrit(l.h, l.m)} ${T('moments')[l.moment].suffixe} &nbsp;→&nbsp; ${x.sansMinutes ? '________ h' : '________ h ________'}</div>`).join('')}`
     corrige.push(`<p><b>${T('corrigeJournee')} :</b> ${x.journee.map((l, i) => `${i + 1}. ${ecrit(l.h24, l.m)}`).join(' — ')}</p>`)
   }
   if (x.durees) {
@@ -60,7 +61,7 @@ export function fiche({ questions: x, reglages, T, langue }) {
 
   const titre = `${T('titre')} — ${x.niveau.toUpperCase()}`
   return documentFiche({
-    titre, langue, h1: `🕐 ${titre}`, css: CSS, largeur: '18cm', marge: '1cm',
+    titre, langue, police, cssPolices, h1: `🕐 ${titre}`, css: CSS, largeur: '18cm', marge: '1cm',
     corps: `${ligneNomDate(langue)}
     ${x.avecLire ? `<h2>${T('quelleHeure')}</h2>
     <p class="consigne">${T('ficheLireConsigne')}</p>

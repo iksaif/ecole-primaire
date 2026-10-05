@@ -3,6 +3,7 @@
 //   questionsFiche({ niveau, reglages, rng, T })  tout ce que tire la fiche imprimable (fiche.js la met en page)
 //   verifier(q, rep)                              la réponse est-elle juste ?
 //   ecartsAuProgramme(questions, contraintes)     ce qui sort du programme du niveau (tests)
+//   ecartsFiche(html, contraintes)                ce que la fiche montre hors du programme du niveau (tests)
 // rng : src/utils/hasard.js ; T(cle, params) : textes de l'exercice dans la langue du contenu (textes.js).
 // L'ordre des tirages est celui de l'ancienne vue : même flux de hasard, mêmes fiches.
 import DEFINITION from './definition.js'
@@ -82,6 +83,8 @@ const poolDe = (niveau, reglages) => {
   const p = choisis(niveau, reglages, 'precisions')
   return minutesDisponibles(p.length ? p : ['heure'])
 }
+// heures entières seulement (CP, ou précision « heures pile » seule) : pas de case pour les minutes
+const sansMinutes = pool => pool.length === 1 && pool[0] === 0
 
 function dureesDisponibles(niv, precisions) {
   const fin = precisions.includes('cinq') || precisions.includes('minute')
@@ -160,7 +163,7 @@ function genererQuestion({ niveau, reglages, rng, T }) {
 
   if (type === 'lire') {
     const h = rng.entier(1, 12), m = rng.choisir(pool)
-    const q = { type, cle: `lire-${h}-${m}`, h, m, mode: reglages.saisie === 'clavier' ? 'clavier' : 'choix',
+    const q = { type, cle: `lire-${h}-${m}`, h, m, mode: reglages.saisie === 'clavier' ? 'clavier' : 'choix', sansMinutes: sansMinutes(pool),
       texte: T('lireQ'), attendu: `${ecrit(h, m)} (${oral12(T, h, m)})`, oral: oral12(T, h, m) }
     if (q.mode === 'choix') {
       const enLettres = rng.vrai(0.4)
@@ -186,7 +189,7 @@ function genererQuestion({ niveau, reglages, rng, T }) {
     const h24 = h + moment.decalage
     const oral = oralMoment(T, h, m, moment)
     const sous = rng.vrai(0.5) ? 'lire24' : 'choisir'
-    const q = { type, sous, cle: `journee-${sous}-${h24}-${m}`, h, m, h24, ecrit24: ecrit(h24, m),
+    const q = { type, sous, cle: `journee-${sous}-${h24}-${m}`, h, m, h24, ecrit24: ecrit(h24, m), sansMinutes: sansMinutes(pool),
       phrase: T('moments')[moment.nom].phrase, oral,
       attendu: `${ecrit(h24, m)} (${oral})` }
     if (sous === 'lire24') {
@@ -325,7 +328,7 @@ export function questionsFiche({ niveau, reglages, rng, T }) {
   const autres = ['journee', 'duree', 'conversion', 'emploi'].some(e => exercices.includes(e))
   let avecLire = exercices.includes('lire'), avecPlacer = exercices.includes('placer')
   if (!avecLire && !avecPlacer && !autres) avecLire = avecPlacer = true
-  const res = { niveau, avecLire, avecPlacer, aLire: tirer(nbH, vus), aDessiner: tirer(nbH, vus) }
+  const res = { niveau, avecLire, avecPlacer, sansMinutes: sansMinutes(pool), aLire: tirer(nbH, vus), aDessiner: tirer(nbH, vus) }
   res.aDessiner = res.aDessiner.map((t, i) => ({ ...t, oral: i % 2 ? oral12(T, t.h, t.m) : null }))
 
   if (exercices.includes('journee')) {
@@ -384,4 +387,9 @@ export function ecartsAuProgramme(x, contraintes) {
   }
   for (const d of durees) if (d % pas) ecarts.push(`durée ${ecritDuree(d)} : précision « ${contraintes.heure} »`)
   return [...new Set(ecarts)]
+}
+
+// La fiche ne demande pas les minutes quand le niveau ne lit que les heures entières (CP : « __ h », pas « __ h __ »)
+export function ecartsFiche(html, contraintes) {
+  return contraintes.heure === 'entiere' && /h\s*_{2,}/.test(html) ? ['case des minutes alors que le niveau ne lit que les heures entières'] : []
 }

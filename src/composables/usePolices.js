@@ -2,7 +2,7 @@ import { ref, computed, watch } from 'vue'
 import { chargerReglages, sauvegarder } from '../utils'
 import {
   POLICE_ATTACHE, POLICE_SCRIPT, POLICES_CONNUES, POLICES_INCLUSES,
-  policesPerso, chargerPolices, policeInstallee,
+  policesPerso, chargerPolices, policeInstallee, cssPolices,
 } from '../utils/impression'
 
 // Police choisie pour l'attaché et pour le script, commune à toutes les fiches ; `unique` : celle des documents qui
@@ -59,4 +59,19 @@ export function usePolices() {
     choix, disponibles, pret, policesDe, policeUnique,
     attache: computed(() => choix.value.attache), script: computed(() => choix.value.script),
   }
+}
+
+// Police des fiches d'exercice (documentFiche) : celle choisie dans « Sur la fiche » (ChoixPolice, choix `unique`
+// partagé avec les autres fiches à une police), Andika par défaut, et les @font-face à embarquer dans la fiche.
+//   const policeFiche = usePoliceFiche()   →   fiche({ …, ...policeFiche.value })
+export function usePoliceFiche() {
+  const { policeUnique } = usePolices()
+  return computed(() => {
+    const id = policeUnique()
+    const perso = policesPerso.value.find(p => p.id === id)
+    return {
+      police: `'${id}', Arial, sans-serif`,
+      cssPolices: cssPolices() + (perso ? `\n@font-face { font-family: '${perso.id}'; src: url(${perso.dataUrl}); }` : ''),
+    }
+  })
 }

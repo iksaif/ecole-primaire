@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue'
 import { charger, sauvegarder } from '../utils'
-import { COMMUN } from '../i18n/commun'
-import { traduire } from '../i18n'
+// une seule implémentation de la ligne « Prénom / Date » : le gabarit commun des fiches (pur, lisible par node)
+export { ligneNomDate } from '../impression/document.js'
 
 // Options communes à toutes les fiches d'exercice : affichées dans le formulaire de chaque exercice
 // (cadre ConfigExercice, mode impression), le dernier choix est mémorisé :
@@ -22,11 +22,6 @@ watch(optionsFiche, v => sauvegarder('options_fiche', v), { deep: true })
 
 export function useOptionsFiche() {
   return optionsFiche
-}
-
-export function ligneNomDate(langue) {
-  const tr = cle => traduire(COMMUN, cle, {}, langue)
-  return `<p class="entete">${tr('prenom')} : ________________________ &nbsp; ${tr('date')} : ______________</p>`
 }
 
 export const aUnCorrige = html => /class="corrige"/.test(html)

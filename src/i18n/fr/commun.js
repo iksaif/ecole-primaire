@@ -39,4 +39,7 @@ export default {
     oui: 'Oui',
     non: 'Non',
     sansLimite: 'Sans limite',
+    // réglages hors programme (ChoixReglage) : marque après le libellé
+    bonus: 'bonus',
+    horsProgramme: 'hors programme',
   }

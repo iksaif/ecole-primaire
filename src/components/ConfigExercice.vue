@@ -21,7 +21,7 @@
     <slot :mode="mode" />
 
     <!-- options communes à toutes les fiches (useOptionsFiche) -->
-    <OptionsFiche v-if="mode === 'imprimer'" :avec-corrige="avecCorrige" />
+    <OptionsFiche v-if="mode === 'imprimer'" :avec-corrige="avecCorrige" :avec-police="police" />
 
     <div class="signalement"><SignalerErreur :reglages="config" /></div>
 
@@ -59,6 +59,8 @@ const props = defineProps({
   desactive: { type: Boolean, default: false },
   // réglages de l'exercice (pour les statistiques d'impression)
   config: { type: Object, default: null },
+  // la fiche suit la police choisie dans « Sur la fiche » (fiche documentFiche avec usePoliceFiche)
+  police: { type: Boolean, default: false },
 })
 defineEmits(['update:mode', 'commencer', 'regenerer'])
 

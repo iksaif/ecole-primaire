@@ -5,7 +5,6 @@ export default {
     precision: 'Resisded', // br: à relire
     aideCp: 'Er CP : an eurioù rik hepken, eus 1 eur da 12 eur.', // br: à relire
     aideCe1: "Er CE1 : an eurioù rik, an hanter-eurioù hag ar c'hardoù-eur. Ar 5 munut a zo ur bonus.", // br: à relire
-    bonus: 'bonus', // br: à relire
     reponseLire: 'Respont (lenn an eur)',
     propositions4: '4 kinnig',
     jEcris: 'Skrivañ a ran an eur',

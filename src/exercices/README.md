@@ -1,16 +1,20 @@
 # Exercices au format « définition » (plan 10)
 
-Un exercice se déclare une fois ; ses niveaux, fiches et tests en découlent. Modèle : `heure/`.
+Un exercice se déclare une fois ; ses niveaux, fiches et tests en découlent. Modèles : `heure/` (pilote) et
+`monnaie/` (phase 2a, réglage à choix unique, `bonneReponse`).
 
 ```
 src/exercices/<id>/
   definition.js   la déclaration (ci-dessous), données pures
   generateur.js   pur : questions({ niveau, reglages, rng, T, nb }), questionsFiche(…), verifier(q, rep),
                   ecartsAuProgramme(questions, contraintesDe(niveau))
-  fiche.js        pur : fiche({ questions, reglages, T, langue }) → documentFiche(…) (src/impression/document.js)
+                  bonneReponse(q) et ecartsFiche(html, contraintes) : facultatifs, vérifiés par les tests s'ils existent
+  fiche.js        pur : fiche({ questions, reglages, T, langue, police, cssPolices }) → documentFiche(…)
+                  (src/impression/document.js ; police : usePoliceFiche() dans l'app, Andika par défaut)
   textes.js       catalogues par langue (interface + contenu), lus avec T(cle, params)
 src/exercices/index.js   registre (imports statiques : app, node et tests) ; outils.js : reglagesDuNiveau…
-src/views/…/<Vue>.vue    mince : réglages + ConfigExercice, useJeu + <ResultatsJeu>, rendu d'une question
+src/views/…/<Vue>.vue    mince : <ConfigExercice police> + <ChoixReglage>, useJeu + <QuestionJeu> + <ResultatsJeu>,
+                         rendu d'une question
 ```
 
 ```js
@@ -21,9 +25,69 @@ src/views/…/<Vue>.vue    mince : réglages + ConfigExercice, useJeu + <Resulta
 ```
 
 - `competences` : ids de `src/data/programme.js`, **au programme du niveau** ; `reglages` : défauts, dans le programme.
-- `options` : valeurs proposées par réglage à choix multiple ; `bonus` : celles hors programme (jamais par défaut,
-  affichées « bonus ») ; `horsProgramme` : tout autre écart, avec sa raison. Rien d'autre ne peut sortir du programme.
+- `options` : valeurs proposées par réglage à choix : multiple si le défaut est une liste (`exercices: [...]`), unique
+  sinon (`centimes: [false, true]`) ; `bonus` : celles hors programme (jamais par défaut, affichées « (bonus) ») ;
+  `horsProgramme: [{ reglage, option, raison }]` : tout autre écart (affiché « (hors programme) », raison en infobulle),
+  ou `{ option: <compétence>, raison }`. Rien d'autre ne peut sortir du programme.
 - Hasard : `rng` de `src/utils/hasard.js`, jamais `Math.random`. Même graine, mêmes questions, même fiche.
 - La vue affiche les niveaux de `definition.niveaux` : on ne déclare pas de niveau ailleurs.
 - `tests/exercices.test.mjs` (node, sans Chrome) vérifie chaque exercice du registre, chaque niveau, 5 graines.
 - Ajouter un exercice : un dossier ici, une ligne dans `index.js` (le test échoue sinon).
+
+## Migrer un exercice (checklist)
+
+1. **Avant de toucher la vue** : capturer le `srcdoc` des fiches (script jetable dans le dépôt, supprimé ensuite ;
+   playwright-core, Chrome, serveur de dev). Pour chaque niveau × 3 graines × 5 à 7 combinaisons de réglages × fr/br :
+   `about:blank` puis `?graine=N#/route?mode=imprimer` (sinon même URL = pas de rechargement), `Math.random` remplacé
+   par mulberry32(N) comme `scripts/telechargements.mjs`, localStorage vidé, clic du niveau puis des réglages
+   (positions relevées en fr, rejouées en br). Vérifier que les captures diffèrent entre elles.
+2. **Programme** : lire `src/data/programme.js` (COMPETENCES, CONTRAINTES) pour chaque classe. Un niveau au programme
+   absent est un écart : l'ajouter si c'est raisonnable, sinon l'écrire dans le plan. Une option hors programme :
+   `bonus` ou `horsProgramme` avec raison, jamais par défaut.
+3. **`definition.js`** : niveaux → `competences`, `options`, `reglages` (défauts), `bonus`/`horsProgramme` ; réglages
+   communs ; `fiches` = celles de `src/impression/exercices.js` (mêmes `id`, slugs inchangés).
+4. **`generateur.js`** pur : recopier la logique de la vue en remplaçant `aleatoire` → `rng.entier`, `pioche` →
+   `rng.choisir`, `melanger` → `rng.melanger`, `Math.random() < p` → `rng.vrai(p)`, **dans le même ordre de tirage**
+   (y compris les tirages faits pour une partie non affichée). `questionsFiche` renvoie des données, pas du HTML ;
+   `ecartsAuProgramme` lit `contraintesDe(niveau)` ; `bonneReponse(q)` si `verifier` n'est pas un simple choix.
+   Les options du niveau viennent de la définition (pas de copie). Attention aux caractères invisibles
+   (espace insécable : écrire `'\u00a0'`).
+5. **`fiche.js`** pur : même corps HTML, via `documentFiche({ titre, langue, police, cssPolices, h1, css, largeur, marge })`
+   et `ligneNomDate`. Le CSS de base (body, h1) vient de `documentFiche`.
+6. **`textes.js`** : `INTERFACE` et `TEXTES` (interface + contenu, aucune clé commune) ; les catalogues restent dans
+   `src/i18n/<langue>/…`. Les textes communs (bonus, quitter, corrigé…) sont dans `commun.js`.
+7. **Registre** : 4 lignes dans `index.js`. **`activites.js`** (`niveaux` et compétences par classe depuis la
+   définition) et **`impression/exercices.js`** (`classes` depuis `definition.niveaux`, `classes` des fiches depuis
+   `definition.fiches`).
+8. **Vue mince** : `reglagesDuNiveau(DEFINITION, chargerReglages(cle, reglagesDuNiveau(DEFINITION)))` ; watch du niveau
+   qui réapplique `reglagesDuNiveau` ; `<ChoixReglage>` pour le niveau et chaque réglage à choix ; `useJeu` (jeu avec
+   sa graine `creerRng(graineAleatoire())`, `messageErreur`, `delai`) ; `<QuestionJeu :jeu>` ; `<ResultatsJeu>` ;
+   `useGraine` + `usePoliceFiche` : un `computed` **tirage** (`questionsFiche(…, rngFiche())`) séparé du `computed`
+   **fiche** (mise en page, police), et `<ConfigExercice police>`. Plus de `Math.random`, d'import `i18n/br/`, de `'br'`.
+9. **Après** : recapturer, comparer le `<body>` (identique attendu ; la police est dans le `<head>`), justifier et
+   regarder en image chaque écart. `npm run lint`, `npm run i18n`, `node tests/exercices.test.mjs`, `npm run qualite`
+   (puis `-- --enregistrer`), `npm test` (seul), et un passage dans le navigateur : fr/br, jeu et impression, chaque
+   niveau, sans erreur JS. Ajouter un cas au test `programme-maths` pour un niveau ajouté.
+
+## Vérifier qu'une migration ne change rien
+
+Les fiches d'un exercice migré sont des fonctions pures : `tests/instantanes.test.mjs` (node, ~1 s, sans Chrome)
+garde l'empreinte de chacune dans `tests/instantanes/<id>.json`, une ligne par cas
+(`"heure/ce1/graine1/fr/defauts": "<sha1>"` : niveau, graines 1 à 3, langues de contenu, réglages `defauts`, `tout`
+au programme et `fiche-<id>` de `definition.fiches`). Empreinte du HTML normalisé : espaces regroupés, `@font-face`
+retirés (leurs `url(...)` dépendent du build ; le nom de la police reste dans le `font-family`).
+
+1. **Avant** (vue pas encore migrée) : capturer ses fiches dans Chrome, au même format et avec les mêmes clés :
+   `node scripts/capturer-fiches.mjs /maths/<id> --reglages cas.json --sortie tests/instantanes/<id>.json`
+   (serveur de dev lancé ; `--niveaux CE1,CE2 --graines 1,2,3 --langues fr,br` ; format de `cas.json` et options en tête
+   du script). Donner les réglages comme réglages mémorisés de la vue (`"reglages"`) plutôt que par des clics : la
+   fiche est alors le premier tirage de la graine, comme en node. Les HTML vont dans `/tmp/instantanes/`.
+2. **Migrer**, puis ajouter l'exercice au registre.
+3. `npm run instantanes` doit passer **sans `--maj`** : la capture d'avant sert de référence. Pour un exercice déjà
+   migré, `npm run instantanes -- --maj <id>` avant de commencer suffit.
+4. Écart voulu (ou à comprendre) : `npm run instantanes -- --diff <cas>` (le HTML recalculé et le diff avec celui
+   d'avant, dans `/tmp/instantanes/`), regarder, puis `npm run instantanes -- --maj [préfixe]` et justifier l'écart
+   dans le message de commit. Un préfixe (`heure/ce1`) limite la vérification ou la mise à jour à ces cas.
+
+`capturer-fiches` sur une route du registre reprend d'office les cas du test et dit combien sont identiques à
+l'instantané : c'est aussi le moyen de vérifier que la vue affiche bien la fiche calculée en node.

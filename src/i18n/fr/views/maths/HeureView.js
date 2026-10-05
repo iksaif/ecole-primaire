@@ -5,7 +5,6 @@ export default {
     precision: 'Précision',
     aideCp: "Au CP : les heures pile seulement, de 1 h à 12 h.",
     aideCe1: "Au CE1 : heures pile, demi-heures et quarts d'heure. Les 5 minutes sont un bonus.",
-    bonus: 'bonus',
     reponseLire: "Réponse (lire l'heure)",
     propositions4: '4 propositions',
     jEcris: "J'écris l'heure",

@@ -38,4 +38,7 @@ export default {
     oui: 'Ya',
     non: 'Nann',
     sansLimite: 'Hep bevenn',
+    // réglages hors programme (ChoixReglage) : marque après le libellé
+    bonus: 'bonus', // br: à relire
+    horsProgramme: 'er-maez ar programm', // br: à relire
   }

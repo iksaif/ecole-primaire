@@ -3,12 +3,13 @@
 // sont au programme du niveau, les questions et la fiche respectent contraintesDe(niveau), la fiche est un document
 // complet avec .entete et section.corrige, et la même graine redonne la même fiche.
 //   node tests/exercices.test.mjs
-import { createServer } from 'vite'
 import { readdirSync, statSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { REGISTRE } from '../src/exercices/index.js'
-import { reglagesDuNiveau, toutAuProgramme } from '../src/exercices/outils.js'
+import { reglagesDuNiveau, toutAuProgramme, estBonus, raisonHorsProgramme } from '../src/exercices/outils.js'
+// noyau i18n (traduire : pluriels, interpolation, catalogue commun) : imports avec extension, lisible par node
+import { contenu } from '../src/i18n/index.js'
 import { creerRng } from '../src/utils/hasard.js'
 import { COMPETENCES, DOMAINES, NIVEAUX, contraintesDe, competenceDe } from '../src/data/programme.js'
 import { ACTIVITES } from '../src/data/activites.js'
@@ -17,11 +18,6 @@ import { verifier, nbEchecs } from './outils.mjs'
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 const GRAINES = [1, 2, 3, 4, 5]
 const LANGUES = ['fr', 'br']
-
-// le noyau i18n (traduire : pluriels, interpolation, catalogue commun) importe des modules sans extension : Vite
-const vite = await createServer({ root: racine, server: { middlewareMode: true }, appType: 'custom', logLevel: 'error' })
-const { contenu } = await vite.ssrLoadModule('/src/i18n/index.js')
-await vite.close()
 
 // une vérification par sujet : la liste des problèmes (les 3 premiers) en cas d'échec
 function controler(problemes, message) {
@@ -54,14 +50,20 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
       else if (!k.niveaux.includes(n) && !declarees.includes(id)) pbs.push(`${n} : ${id} n'est pas au programme (ni déclarée horsProgramme)`)
       else if (k && k.domaine !== d.domaine) pbs.push(`${n} : ${id} est du domaine ${k.domaine}`)
     }
-    for (const h of niv.horsProgramme ?? []) if (!h.raison) pbs.push(`${n} : horsProgramme ${h.option} sans raison`)
+    for (const h of niv.horsProgramme ?? []) {
+      if (!h.raison) pbs.push(`${n} : horsProgramme ${h.option} sans raison`)
+      if (h.reglage && !niv.options?.[h.reglage]?.includes(h.option)) pbs.push(`${n} : horsProgramme ${h.reglage}=${h.option} hors des options`)
+    }
     for (const [cle, offertes] of Object.entries(niv.options ?? {})) {
-      const defaut = niv.reglages?.[cle] ?? []
+      if (!(cle in (niv.reglages ?? {}))) { pbs.push(`${n} : option ${cle} sans défaut dans reglages`); continue }
+      // choix multiple (liste) ou unique (valeur)
+      const defaut = Array.isArray(niv.reglages[cle]) ? niv.reglages[cle] : [niv.reglages[cle]]
       for (const v of defaut) if (!offertes.includes(v)) pbs.push(`${n} : défaut ${cle}=${v} hors des options`)
-      for (const v of niv.bonus?.[cle] ?? []) {
-        if (!offertes.includes(v)) pbs.push(`${n} : bonus ${cle}=${v} hors des options`)
-        if (defaut.includes(v)) pbs.push(`${n} : bonus ${cle}=${v} coché par défaut`)
+      for (const v of offertes) {
+        const hors = estBonus(d, n, cle, v) ? 'bonus' : raisonHorsProgramme(d, n, cle, v) ? 'horsProgramme' : null
+        if (hors && defaut.includes(v)) pbs.push(`${n} : ${hors} ${cle}=${v} coché par défaut`)
       }
+      for (const v of niv.bonus?.[cle] ?? []) if (!offertes.includes(v)) pbs.push(`${n} : bonus ${cle}=${v} hors des options`)
     }
   }
   for (const fi of d.fiches) {
@@ -81,6 +83,14 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
   for (const n of Object.keys(d.niveaux)) {
     const k = contraintesDe(n)
     const cas = { 'réglages par défaut': reglagesDuNiveau(d, { niveau: n }), 'toutes les options au programme': toutAuProgramme(d, n) }
+    // réglages à choix unique : chaque autre valeur au programme, avec toutes les options au programme
+    const niv = d.niveaux[n]
+    for (const [cle, offertes] of Object.entries(niv.options ?? {})) {
+      if (Array.isArray(niv.reglages[cle])) continue
+      for (const v of offertes) {
+        if (v !== niv.reglages[cle] && !estBonus(d, n, cle, v) && !raisonHorsProgramme(d, n, cle, v)) cas[`${cle}=${v}, toutes les options`] = { ...toutAuProgramme(d, n), [cle]: v }
+      }
+    }
     for (const fi of d.fiches.filter(x => x.niveau === n)) cas[`fiche ${fi.id}`] = reglagesDuNiveau(d, { niveau: n, ...fi.reglages })
     for (const [nom, reglages] of Object.entries(cas)) {
       const ecarts = [], fiches = []
@@ -92,6 +102,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
           if (!qs.length) ecarts.push(`graine ${graine} : aucune question`)
           ecarts.push(...g.ecartsAuProgramme(qs, k).map(e => `graine ${graine} : ${e}`))
           for (const q of qs) if (q.options && !g.verifier(q, { choix: q.bonne })) ecarts.push(`graine ${graine} : la bonne proposition est refusée (${q.cle})`)
+          if (g.bonneReponse) for (const q of qs) if (!g.verifier(q, g.bonneReponse(q))) ecarts.push(`graine ${graine} : la bonne réponse est refusée (${q.cle})`)
           const tirage = g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T })
           ecarts.push(...g.ecartsAuProgramme(tirage, k).map(e => `fiche, graine ${graine} : ${e}`))
           const html = f.fiche({ questions: tirage, reglages, T, langue })
@@ -101,6 +112,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
           if (!/<section class="corrige">[\s\S]*<\/section>/.test(html)) fiches.push(`${l} ${graine} : pas de section.corrige`)
           if (/undefined|NaN|\[object Object\]/.test(html)) fiches.push(`${l} ${graine} : ${html.match(/undefined|NaN|\[object Object\]/)[0]} dans la fiche`)
           if (html !== encore) fiches.push(`${l} ${graine} : même graine, fiche différente`)
+          if (g.ecartsFiche) fiches.push(...g.ecartsFiche(html, k).map(e => `${l} ${graine} : ${e}`))
         }
       }
       controler(ecarts, `${n.toUpperCase()}, ${nom} : questions et fiche au programme`)

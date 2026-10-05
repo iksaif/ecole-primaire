@@ -3,6 +3,7 @@ import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
 import { CLASSES, CE, CM, CYCLE_2, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
 import HEURE from '../exercices/heure/definition.js'
+import MONNAIE from '../exercices/monnaie/definition.js'
 
 // classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
 export { CLASSES }
@@ -74,7 +75,7 @@ export const ACTIVITES = [
   { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maths/heure',         matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '🕐', titre: "Lire l'heure", desc: 'Heures, demies, quarts sur une horloge', niveaux: Object.keys(HEURE.niveaux) },
-  { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: ['ce1', 'ce2'] },
+  { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: Object.keys(MONNAIE.niveaux) },
   { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: ['ce1', 'ce2'] },
   { fiche: true, to: '/maternelle/longueurs', matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Plus long, plus court', desc: 'Comparer et ranger des crayons', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maternelle/motifs',   matiere: 'maths', domaine: 'motifs', rubrique: 'Motifs', icon: '🔁', titre: 'Les motifs', desc: 'Continuer un collier qui se répète', niveaux: ['ps', 'ms', 'gs'] },
@@ -159,7 +160,7 @@ const COMPETENCES_ROUTES = {
   '/maths/fractions': { ce1: ['fractions-unitaires', 'fractions-inferieures-1'], ce2: ['fractions-unitaires', 'fractions-inferieures-1', 'fractions-egales', 'fractions-mesure'] },
   '/maths/problemes': ['problemes-additifs', 'problemes-multiplicatifs', 'problemes-etapes'],
   '/maths/heure': Object.fromEntries(Object.entries(HEURE.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/monnaie': parClasse(CE, ['monnaie-euros', 'monnaie-centimes']),
+  '/maths/monnaie': Object.fromEntries(Object.entries(MONNAIE.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/mesures': { ce1: ['longueurs', 'masses'], ce2: ['longueurs', 'masses', 'contenances'] },
   '/maths/geometrie': {
     ce1: ['figures-planes', 'solides', 'tracer-figures', 'reperage-deplacements'],

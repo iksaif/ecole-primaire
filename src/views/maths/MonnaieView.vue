@@ -3,1010 +3,346 @@
     <h1 class="section-heading">💶 {{ t('titre') }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
-      @commencer="demarrer" @regenerer="regenerer">
-      <div class="config-section">
-        <div class="config-section-title">{{ t('niveau') }}</div>
-        <div class="btn-group">
-          <button v-for="niv in Object.keys(NIVEAUX)" :key="niv"
-            class="level-btn" :class="{ active: config.niveau === niv }"
-            @click="config.niveau = niv">{{ niv.toUpperCase() }}</button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('exercices') }}</div>
-        <div class="btn-group">
-          <button v-for="ty in typesNiveau" :key="ty.id"
-            class="level-btn" :class="{ active: config.exercices.includes(ty.id) }"
-            @click="toggleExercice(ty.id)">{{ t(`type_${ty.id}`) }}</button>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="config-section-title">{{ t('options') }}</div>
-        <div class="btn-group">
-          <button class="level-btn" :class="{ active: !config.centimes }" @click="config.centimes = false">{{ t('eurosEntiers') }}</button>
-          <button class="level-btn" :class="{ active: config.centimes }" @click="config.centimes = true">{{ t('avecCentimes') }}</button>
-        </div>
+    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+      @commencer="jeu.demarrer" @regenerer="nouvelle">
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
+        :titre="t('exercices')" :libelle="e => t(`type_${e}`)" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="centimes" v-model="config.centimes"
+        :titre="t('options')" :libelle="c => t(c ? 'avecCentimes' : 'eurosEntiers')">
         <div v-if="mode === 'jouer'" class="btn-group" style="margin-top:.5rem;">
           <button class="level-btn" :class="{ active: config.aideTotal }" @click="config.aideTotal = !config.aideTotal">
             {{ config.aideTotal ? '✔' : '✖' }} {{ t('afficherTotal') }}
           </button>
         </div>
-      </div>
-
-      <div v-if="mode === 'jouer'" class="config-section">
-        <div class="config-section-title">{{ t('nbQuestions') }}</div>
-        <div class="btn-group">
-          <button v-for="n in [5, 10, 15]" :key="n"
-            class="level-btn" :class="{ active: config.nbQ === n }"
-            @click="config.nbQ = n">{{ n }}</button>
-        </div>
-      </div>
+      </ChoixReglage>
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ"
+        :titre="t('nbQuestions')" :valeurs="[5, 10, 15]" />
 
       <div class="apercu">
-        <span v-for="v in paletteApercu" :key="v" class="argent" v-html="svgArgent(v, 0.7)"></span>
+        <span v-for="v in pieces" :key="v" class="argent" v-html="argent(v, 0.7)"></span>
       </div>
 
       <div v-if="mode === 'imprimer'" class="aide-config">{{ t('aideFiche') }}</div>
     </ConfigExercice>
 
     <!-- Exercice -->
-    <template v-if="phase === 'jeu' && q">
-      <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
-        <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
-        <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
-      </div>
-
-      <div class="exercise-box">
-        <div class="prog-dots">
-          <span v-for="(e, i) in questions" :key="i" class="prog-dot"
-                :class="[etatsDots[i], { current: i === idx }]"></span>
+    <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
+      <!-- Compter -->
+      <template v-if="q.type === 'compter'">
+        <div class="consigne">{{ t('combienArgent') }}</div>
+        <div class="tas">
+          <span v-for="(v, i) in q.items" :key="i" class="argent" v-html="argent(v)"></span>
         </div>
-
-        <!-- Compter -->
-        <template v-if="q.type === 'compter'">
-          <div class="consigne">{{ t('combienArgent') }}</div>
-          <div class="tas">
-            <span v-for="(v, i) in q.items" :key="i" class="argent" v-html="svgArgent(v)"></span>
-          </div>
-          <div v-if="q.avecCentimes && niveau.saisieDecimale" class="saisie-somme">
+        <template v-if="q.avecCentimes && decimal">
+          <div class="saisie-somme">
             <input ref="inputEl" v-model="saisieT" class="exercise-input saisie-large"
                    :class="inputClass" type="text" inputmode="decimal" :placeholder="t('exemple')"
                    :disabled="repondu" autocomplete="off" @keydown.enter="entree">
           </div>
-          <div v-if="q.avecCentimes && niveau.saisieDecimale" class="astuce" style="text-align:center;">
-            {{ t('tuPeuxEcrire') }}
-          </div>
-          <div v-else class="saisie-somme">
-            <input ref="inputEl" v-model="saisieE" class="exercise-input saisie-petite"
-                   :class="inputClass" type="number" inputmode="numeric" min="0" placeholder="?"
+          <div class="astuce" style="text-align:center;">{{ t('tuPeuxEcrire') }}</div>
+        </template>
+        <div v-else class="saisie-somme">
+          <input ref="inputEl" v-model="saisieE" class="exercise-input saisie-petite"
+                 :class="inputClass" type="number" inputmode="numeric" min="0" placeholder="?"
+                 :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+          <span class="unite">€</span>
+          <template v-if="q.avecCentimes">
+            <input v-model="saisieC" class="exercise-input saisie-petite"
+                   :class="inputClass" type="number" inputmode="numeric" min="0" max="99" placeholder="?"
                    :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <span class="unite">c</span>
+          </template>
+        </div>
+      </template>
+
+      <!-- Composer / le moins possible / rendre -->
+      <template v-if="['composer', 'moins', 'rendre'].includes(q.type)">
+        <div v-if="q.type === 'composer'" class="consigne">
+          {{ t('composer1') }} <strong class="somme">{{ f(q.cible) }}</strong>
+        </div>
+        <div v-else-if="q.type === 'moins'" class="consigne">
+          {{ t('moins1') }} <strong class="somme">{{ f(q.cible) }}</strong>
+          {{ t('moins2') }} <strong>{{ t('moins3') }}</strong> {{ t('moins4') }}
+        </div>
+        <template v-else>
+          <div class="consigne">
+            <span class="objet">{{ q.objet.e }}</span>
+            {{ t('tuAchetes') }} {{ q.objet.nom }} {{ T('coute', q.objet) }} <strong class="somme">{{ f(q.prix) }}</strong>.
+          </div>
+          <div class="consigne petite">
+            {{ t('tuDonnes') }}
+            <span class="argent" v-html="argent(q.paye, 0.8)"></span>
+          </div>
+          <div class="consigne petite">{{ t('combienRendre') }}</div>
+        </template>
+
+        <div class="plateau" :class="inputClass">
+          <span v-if="!selection.length" class="plateau-vide">{{ t('plateauVide') }}</span>
+          <button v-for="(v, i) in selection" :key="i" class="btn-argent dans-plateau"
+                  :disabled="repondu" :title="t('enlever') + ' : ' + nomArgent(v)"
+                  @click="enlever(i)">
+            <span class="argent" v-html="argent(v, 0.8)"></span>
+          </button>
+        </div>
+        <div class="plateau-actions">
+          <span v-if="config.aideTotal" class="total-aide">{{ t('total') }} : <strong>{{ f(totalDe(selection)) }}</strong></span>
+          <span v-else></span>
+          <span class="btn-group">
+            <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection.pop()">{{ t('annuler') }}</button>
+            <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection = []">{{ t('toutEnlever') }}</button>
+          </span>
+        </div>
+
+        <div class="palette">
+          <button v-for="v in pieces" :key="v" class="btn-argent" :disabled="repondu"
+                  :title="t('ajouter') + ' : ' + nomArgent(v)" @click="ajouter(v)">
+            <span class="argent" v-html="argent(v)"></span>
+          </button>
+        </div>
+      </template>
+
+      <!-- Convertir (CE2) -->
+      <template v-if="q.type === 'convertir'">
+        <div class="consigne">{{ t('rappel') }} : <strong>1 € = 100 c</strong></div>
+        <div class="consigne conversion">{{ q.texte.replace(/ = \?.*$/, ' =') }}</div>
+        <div class="saisie-somme">
+          <template v-if="q.sous === 'c2ec'">
+            <input ref="inputEl" v-model="saisieE" class="exercise-input saisie-petite" :class="inputClass"
+                   type="number" inputmode="numeric" min="0" placeholder="?" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
             <span class="unite">€</span>
-            <template v-if="q.avecCentimes">
-              <input v-model="saisieC" class="exercise-input saisie-petite"
-                     :class="inputClass" type="number" inputmode="numeric" min="0" max="99" placeholder="?"
-                     :disabled="repondu" autocomplete="off" @keydown.enter="entree">
-              <span class="unite">c</span>
-            </template>
-          </div>
-        </template>
-
-        <!-- Composer / le moins possible / rendre -->
-        <template v-if="['composer', 'moins', 'rendre'].includes(q.type)">
-          <div v-if="q.type === 'composer'" class="consigne">
-            {{ t('composer1') }} <strong class="somme">{{ f(q.cible) }}</strong>
-          </div>
-          <div v-else-if="q.type === 'moins'" class="consigne">
-            {{ t('moins1') }} <strong class="somme">{{ f(q.cible) }}</strong>
-            {{ t('moins2') }} <strong>{{ t('moins3') }}</strong> {{ t('moins4') }}
-          </div>
-          <template v-else>
-            <div class="consigne">
-              <span class="objet">{{ q.objet.e }}</span>
-              {{ t('tuAchetes') }} {{ q.objet.nom }} {{ coute(q.objet) }} <strong class="somme">{{ f(q.prix) }}</strong>.
-            </div>
-            <div class="consigne petite">
-              {{ t('tuDonnes') }}
-              <span class="argent" v-html="svgArgent(q.paye, 0.8)"></span>
-            </div>
-            <div class="consigne petite">{{ t('combienRendre') }}</div>
-          </template>
-
-          <div class="plateau" :class="inputClass">
-            <span v-if="!selection.length" class="plateau-vide">{{ t('plateauVide') }}</span>
-            <button v-for="(v, i) in selection" :key="i" class="btn-argent dans-plateau"
-                    :disabled="repondu" :title="t('enlever') + ' : ' + nomArgent(v)"
-                    @click="enlever(i)">
-              <span class="argent" v-html="svgArgent(v, 0.8)"></span>
-            </button>
-          </div>
-          <div class="plateau-actions">
-            <span v-if="config.aideTotal" class="total-aide">{{ t('total') }} : <strong>{{ f(totalDe(selection)) }}</strong></span>
-            <span v-else></span>
-            <span class="btn-group">
-              <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="annuler">{{ t('annuler') }}</button>
-              <button class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection = []">{{ t('toutEnlever') }}</button>
-            </span>
-          </div>
-
-          <div class="palette">
-            <button v-for="v in palette" :key="v" class="btn-argent" :disabled="repondu"
-                    :title="t('ajouter') + ' : ' + nomArgent(v)" @click="ajouter(v)">
-              <span class="argent" v-html="svgArgent(v)"></span>
-            </button>
-          </div>
-        </template>
-
-        <!-- Convertir (CE2) -->
-        <template v-if="q.type === 'convertir'">
-          <div class="consigne">{{ t('rappel') }} : <strong>1 € = 100 c</strong></div>
-          <div class="consigne conversion">{{ q.texte.replace(/ = \?.*$/, ' =') }}</div>
-          <div class="saisie-somme">
-            <template v-if="q.sous === 'c2ec'">
-              <input ref="inputEl" v-model="saisieE" class="exercise-input saisie-petite" :class="inputClass"
-                     type="number" inputmode="numeric" min="0" placeholder="?" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
-              <span class="unite">€</span>
-              <input v-model="saisieC" class="exercise-input saisie-petite" :class="inputClass"
-                     type="number" inputmode="numeric" min="0" max="99" placeholder="?" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
-              <span class="unite">c</span>
-            </template>
-            <template v-else-if="q.sous === 'ec2dec'">
-              <input ref="inputEl" v-model="saisieT" class="exercise-input saisie-large" :class="inputClass"
-                     type="text" inputmode="decimal" placeholder="?,??" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
-              <span class="unite">€</span>
-            </template>
-            <template v-else>
-              <input ref="inputEl" v-model="saisieT" class="exercise-input saisie-large" :class="inputClass"
-                     type="text" inputmode="numeric" placeholder="?" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
-              <span class="unite">c</span>
-            </template>
-          </div>
-        </template>
-
-        <!-- Comparer -->
-        <template v-if="q.type === 'comparer'">
-          <div class="consigne">{{ t('quiPlus') }}</div>
-          <div class="porte-monnaies">
-            <div v-for="cote in ['A', 'B']" :key="cote" class="porte-monnaie"
-                 :class="{ gagnant: repondu && (q.bonne === cote || q.bonne === 'egal') }">
-              <div class="porte-nom">👛 {{ cote === 'A' ? q.nomA : q.nomB }}</div>
-              <div class="tas">
-                <span v-for="(v, i) in (cote === 'A' ? q.itemsA : q.itemsB)" :key="i"
-                      class="argent" v-html="svgArgent(v, 0.75)"></span>
-              </div>
-              <div v-if="repondu" class="porte-total">{{ f(cote === 'A' ? q.totalA : q.totalB) }}</div>
-            </div>
-          </div>
-          <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-            <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('A')">{{ q.nomA }}</button>
-            <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('B')">{{ q.nomB }}</button>
-            <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('egal')">{{ t('autantDeux') }}</button>
-          </div>
-        </template>
-
-        <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
-
-        <!-- Correction visuelle -->
-        <div v-if="repondu && !dernierOk" class="correction">
-          <template v-if="q.type === 'compter'">
-            {{ t('ilYa1') }}<strong>{{ q.attendu }}</strong>{{ t('ilYa2') }}
-            <div class="astuce">{{ t('astuceCompter') }}<span v-if="config.niveau !== 'ce1'"> {{ t('noublie') }} : 100 c = 1 €.</span></div>
-          </template>
-          <template v-else-if="q.type === 'convertir'">
-            {{ q.texte.replace(/ = \?.*$/, '') }} = <strong>{{ q.attendu }}</strong>
-            <div class="astuce">{{ t('astuceConvertir') }}</div>
-          </template>
-          <template v-else-if="q.type === 'comparer'">
-            {{ q.nomA }}{{ t('aSomme') }} <strong>{{ f(q.totalA) }}</strong>,
-            {{ q.nomB }}{{ t('aSomme') }} <strong>{{ f(q.totalB) }}</strong>.
-            <div class="astuce">{{ t('astuceComparer') }}</div>
+            <input v-model="saisieC" class="exercise-input saisie-petite" :class="inputClass"
+                   type="number" inputmode="numeric" min="0" max="99" placeholder="?" :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <span class="unite">c</span>
           </template>
           <template v-else>
-            <div>{{ q.type === 'moins' ? t('avecMoins') : t('uneBonne') }}</div>
+            <input ref="inputEl" v-model="saisieT" class="exercise-input saisie-large" :class="inputClass"
+                   type="text" :inputmode="q.sous === 'ec2dec' ? 'decimal' : 'numeric'" :placeholder="q.sous === 'ec2dec' ? '?,??' : '?'"
+                   :disabled="repondu" autocomplete="off" @keydown.enter="entree">
+            <span class="unite">{{ q.sous === 'ec2dec' ? '€' : 'c' }}</span>
+          </template>
+        </div>
+      </template>
+
+      <!-- Comparer -->
+      <template v-if="q.type === 'comparer'">
+        <div class="consigne">{{ t('quiPlus') }}</div>
+        <div class="porte-monnaies">
+          <div v-for="cote in ['A', 'B']" :key="cote" class="porte-monnaie"
+               :class="{ gagnant: repondu && (q.bonne === cote || q.bonne === 'egal') }">
+            <div class="porte-nom">👛 {{ cote === 'A' ? q.nomA : q.nomB }}</div>
             <div class="tas">
-              <span v-for="(v, i) in q.solution" :key="i" class="argent" v-html="svgArgent(v, 0.75)"></span>
+              <span v-for="(v, i) in (cote === 'A' ? q.itemsA : q.itemsB)" :key="i"
+                    class="argent" v-html="argent(v, 0.75)"></span>
             </div>
-            <div v-if="q.type === 'rendre'" class="astuce">
-              {{ t('astuceRendre', { prix: f(q.prix), paye: f(q.paye), cible: f(q.cible) }) }}
-            </div>
-            <div v-else-if="q.type === 'moins'" class="astuce">
-              {{ t('astuceMoins') }}
-            </div>
-          </template>
+            <div v-if="repondu" class="porte-total">{{ f(cote === 'A' ? q.totalA : q.totalB) }}</div>
+          </div>
         </div>
-
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <template v-if="!repondu">
-            <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
-            <button v-if="q.type !== 'comparer'" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
-          </template>
-          <button v-else-if="!dernierOk" class="btn btn-primary" @click="suivant">{{ t('suivant') }}</button>
+          <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('A')">{{ q.nomA }}</button>
+          <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('B')">{{ q.nomB }}</button>
+          <button class="btn btn-ghost choix" :disabled="repondu" @click="choisirComparer('egal')">{{ t('autantDeux') }}</button>
         </div>
+      </template>
+
+      <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
+
+      <!-- Correction visuelle -->
+      <div v-if="repondu && !dernierOk" class="correction">
+        <template v-if="q.type === 'compter'">
+          {{ t('ilYa1') }}<strong>{{ q.attendu }}</strong>{{ t('ilYa2') }}
+          <div class="astuce">{{ t('astuceCompter') }}<span v-if="config.niveau === 'ce2'"> {{ t('noublie') }} : 100 c = 1 €.</span></div>
+        </template>
+        <template v-else-if="q.type === 'convertir'">
+          {{ q.texte.replace(/ = \?.*$/, '') }} = <strong>{{ q.attendu }}</strong>
+          <div class="astuce">{{ t('astuceConvertir') }}</div>
+        </template>
+        <template v-else-if="q.type === 'comparer'">
+          {{ q.nomA }}{{ t('aSomme') }} <strong>{{ f(q.totalA) }}</strong>,
+          {{ q.nomB }}{{ t('aSomme') }} <strong>{{ f(q.totalB) }}</strong>.
+          <div class="astuce">{{ t('astuceComparer') }}</div>
+        </template>
+        <template v-else>
+          <div>{{ q.type === 'moins' ? t('avecMoins') : t('uneBonne') }}</div>
+          <div class="tas">
+            <span v-for="(v, i) in q.solution" :key="i" class="argent" v-html="argent(v, 0.75)"></span>
+          </div>
+          <div v-if="q.type === 'rendre'" class="astuce">
+            {{ t('astuceRendre', { prix: f(q.prix), paye: f(q.paye), cible: f(q.cible) }) }}
+          </div>
+          <div v-else-if="q.type === 'moins'" class="astuce">{{ t('astuceMoins') }}</div>
+        </template>
       </div>
-    </template>
+
+      <div class="btn-group" style="justify-content:center;margin-top:1rem;">
+        <template v-if="!repondu">
+          <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+          <button v-if="q.type !== 'comparer'" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
+        </template>
+        <button v-else-if="!dernierOk" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+      </div>
+    </QuestionJeu>
 
     <!-- Résultats -->
-    <div v-if="phase === 'resultats'" class="exercise-box" style="text-align:center;">
-      <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
-      <div class="result-msg">{{ resultMsg }}</div>
-
+    <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
+      @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <table class="correction-table">
         <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
-            <td>{{ h.texte }}</td>
+            <td>{{ h.question.texte }}</td>
             <td>{{ h.donne }}</td>
-            <td class="mot-attendu">{{ h.attendu }}</td>
+            <td class="mot-attendu">{{ h.question.attendu }}</td>
             <td>{{ h.ok ? '✅' : '❌' }}</td>
           </tr>
         </tbody>
       </table>
-
-      <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('parametres') }}</button>
-      </div>
-    </div>
+    </ResultatsJeu>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, watch, onUnmounted } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
+// La monnaie : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
+// src/exercices/monnaie/ (definition.js, generateur.js, fiche.js, argent.js). Sommes en centimes.
+import { ref, computed, nextTick, watch } from 'vue'
+import { sauvegarder, chargerReglages } from '../../utils'
+import { creerRng, graineAleatoire } from '../../utils/hasard'
 import { useI18n, contenu } from '../../i18n'
-import messagesFr from '../../i18n/fr/views/maths/MonnaieView.js'
-import messagesBr from '../../i18n/br/views/maths/MonnaieView.js'
-import contenuFr from '../../i18n/fr/contenu/monnaie.js'
-import contenuBr from '../../i18n/br/contenu/monnaie.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
+import ChoixReglage from '../../components/ChoixReglage.vue'
+import QuestionJeu from '../../components/QuestionJeu.vue'
+import ResultatsJeu from '../../components/ResultatsJeu.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
-import { ligneNomDate } from '../../composables/useOptionsFiche'
+import { useGraine } from '../../composables/useGraine'
+import { usePoliceFiche } from '../../composables/usePolices'
+import { useJeu } from '../../composables/useJeu'
+import { reglagesDuNiveau } from '../../exercices/outils'
+import DEFINITION from '../../exercices/monnaie/definition'
+import { INTERFACE, TEXTES } from '../../exercices/monnaie/textes'
+import { questions as genererQuestions, questionsFiche, verifier, sommeDonnee, donnees, palette, fmt, formatSomme, totalDe, trierDesc }
+  from '../../exercices/monnaie/generateur'
+import { fiche as ficheMonnaie } from '../../exercices/monnaie/fiche'
+import { svgArgent } from '../../exercices/monnaie/argent'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t, langue } = useI18n(INTERFACE)
 // Maths : le contenu (énoncés, fiche) suit la langue de l'interface
-const langueContenu = computed(() => langue.value)
-const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
+const langueContenu = computed(() => (DEFINITION.contenu === 'fr' ? 'fr' : langue.value))
+const T = contenu(TEXTES, () => langueContenu.value).t
 
-// ── LOGIQUE ── (toutes les sommes sont en CENTIMES entiers)
-
-// Diamètres réels en mm (pour des tailles relatives réalistes)
-const PIECES = {
-  1:   { d: 16.25, metal: 'cuivre', label: '1',  unite: 'c' },
-  2:   { d: 18.75, metal: 'cuivre', label: '2',  unite: 'c' },
-  5:   { d: 21.25, metal: 'cuivre', label: '5',  unite: 'c' },
-  10:  { d: 19.75, metal: 'or',     label: '10', unite: 'c' },
-  20:  { d: 22.25, metal: 'or',     label: '20', unite: 'c' },
-  50:  { d: 24.25, metal: 'or',     label: '50', unite: 'c' },
-  100: { d: 23.25, metal: 'bi1',    label: '1',  unite: '€' },
-  200: { d: 25.75, metal: 'bi2',    label: '2',  unite: '€' },
-}
-// Dimensions réelles en mm, couleurs approximatives
-const BILLETS = {
-  500:  { w: 120, h: 62, fond: '#b8c2b0', fonce: '#5f6e58' },
-  1000: { w: 127, h: 67, fond: '#f0a090', fonce: '#a8402f' },
-  2000: { w: 133, h: 72, fond: '#9dbde8', fonce: '#2c5b9a' },
-  5000: { w: 140, h: 77, fond: '#f6b46e', fonce: '#a9601a' },
-  10000: { w: 147, h: 77, fond: '#9ccf9a', fonce: '#2f7a3b' },
-}
-const METAUX = {
-  cuivre: { fond: '#cd7f4f', bord: '#8f5130' },
-  or:     { fond: '#e6c65c', bord: '#a8862a' },
-  argent: { fond: '#dcdfe2', bord: '#8e959c' },
-}
-const VALEURS = [10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1]
-
-// libellés : clés `type_<id>` du catalogue d'interface
-const TYPES = ['compter', 'composer', 'moins', 'rendre', 'comparer', 'convertir'].map(id => ({ id }))
-
-// Données par niveau. notation : 'ec' (« 3 € 50 c ») ou 'les2' (« 3,50 € (3 € 50 c) »).
-const NIVEAUX = {
-  ce1: {
-    types: ['compter', 'composer', 'moins', 'rendre', 'comparer'],
-    notation: 'ec',
-    saisieDecimale: false,
-    compter: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000], nb: [2, 6], min: 300, max: 9900 },
-      centimes: { euros: [100, 200, 500, 1000], nbEuros: [1, 3], maxEuros: 2000,
-                  cents: [1, 2, 5, 10, 20, 50], nbCents: [2, 5], maxCents: 99 },
-    },
-    composer: {
-      entiers:  { min: 300, max: 9900, pas: 100 },
-      centimes: { euros: [1, 20], cents: [1, 99] },
-    },
-    moins: { minPieces: { entiers: 2, centimes: 3 } },
-    rendre: {
-      entiers: [
-        { paye: 500,  rendu: [100, 400],  pas: 100 },
-        { paye: 1000, rendu: [100, 900],  pas: 100 },
-        { paye: 2000, rendu: [100, 1000], pas: 100 },
-        { paye: 5000, rendu: [100, 2500], pas: 100 },
-      ],
-      centimes: [
-        { paye: 100, rendu: [5, 95],  pas: 5 },
-        { paye: 200, rendu: [5, 95],  pas: 5 },
-        { paye: 500, rendu: [5, 250], pas: 5 },
-      ],
-    },
-    comparer: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000], nb: [2, 6], max: 5000 },
-      centimes: { valeurs: [5, 10, 20, 50, 100, 200, 500], nb: [3, 6], max: 1000 },
-      probaEgal: 0.15,
-    },
-    palette: {
-      entiers:  [100, 200, 500, 1000, 2000, 5000],
-      centimes: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000],
-    },
-  },
-  // CE2 : euros et centimes, 1 € = 100 c, écriture « 3,50 € », sommes jusqu'à 200 €, billet de 100 €
-  ce2: {
-    types: ['compter', 'composer', 'moins', 'rendre', 'comparer', 'convertir'],
-    notation: 'les2',
-    saisieDecimale: true,
-    compter: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000, 10000], nb: [3, 8], min: 1000, max: 19900 },
-      // plus de 1 € en pièces de centimes : il faut regrouper 100 c = 1 €
-      centimes: { euros: [100, 200, 500, 1000, 2000, 5000], nbEuros: [2, 4], maxEuros: 10000,
-                  cents: [1, 2, 5, 10, 20, 50], nbCents: [3, 7], maxCents: 250 },
-    },
-    composer: {
-      entiers:  { min: 1000, max: 19900, pas: 100 },
-      centimes: { euros: [1, 99], cents: [1, 99] },
-    },
-    moins: { minPieces: { entiers: 3, centimes: 4 } },
-    rendre: {
-      entiers: [
-        { paye: 2000,  rendu: [100, 1000], pas: 100 },
-        { paye: 5000,  rendu: [100, 2500], pas: 100 },
-        { paye: 10000, rendu: [100, 5000], pas: 100 },
-      ],
-      centimes: [
-        { paye: 500,  rendu: [5, 300],  pas: 5 },
-        { paye: 1000, rendu: [5, 500],  pas: 5 },
-        { paye: 2000, rendu: [5, 1000], pas: 5 },
-      ],
-    },
-    comparer: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000], nb: [3, 7], max: 20000 },
-      centimes: { valeurs: [5, 10, 20, 50, 100, 200, 500, 1000], nb: [4, 7], max: 3000 },
-      probaEgal: 0.15,
-    },
-    convertir: { min: 105, max: 995 },
-    palette: {
-      entiers:  [100, 200, 500, 1000, 2000, 5000, 10000],
-      centimes: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000],
-    },
-  },
-}
-
-// Emojis des objets à acheter, rangés par prix plausible ; noms dans le catalogue de contenu (`objets`, même ordre)
-const EMOJIS = {
-  pasCher:  ['🍎', '✏️', '🍬', '🧃', '🥖'],
-  moyen:    ['🍫', '📒', '⚽', '🖍️', '🚗'],
-  cher:     ['🧸', '🧩', '📕', '🎨'],
-  tresCher: ['🛴', '🛼', '🎲', '🎧'],
-}
-// « qui coûte » / « qui coûtent »
-const coute = objet => C.t('coute', objet)
-
-const NB = ' '
-function formatSomme(c) {
-  const e = Math.floor(c / 100), r = c % 100
-  if (r === 0) return `${e}${NB}€`
-  if (e === 0) return `${r}${NB}c`
-  return `${e}${NB}€ ${r}${NB}c`
-}
-// « 3,50 € »
-function formatDecimal(c) {
-  return `${Math.floor(c / 100)},${String(c % 100).padStart(2, '0')}${NB}€`
-}
-// Notation selon le niveau : au CE2 on montre aussi l'écriture à virgule
-function fmt(c, niv) {
-  if (niv?.notation === 'les2' && c % 100 !== 0) return `${formatDecimal(c)} (${formatSomme(c)})`
-  return formatSomme(c)
-}
-// Lit une somme écrite par l'enfant : « 3,50 », « 3.5 € », « 3 € 50 », « 3 € 50 c », « 350 c », « 7 ». Renvoie des centimes ou null.
-function lireSomme(texte) {
-  const s = String(texte ?? '').toLowerCase().trim()
-    .replace(/euros?/g, '€').replace(/centimes?|santim(?:où)?/g, 'c').replace(/\s+/g, ' ')
-  let m
-  if ((m = s.match(/^(\d{1,4}) ?[,.] ?(\d{1,2}) ?€?$/))) return +m[1] * 100 + (m[2].length === 1 ? +m[2] * 10 : +m[2])
-  if ((m = s.match(/^(\d{1,4}) ?€ ?(?:(\d{1,2}) ?c?)?$/))) return +m[1] * 100 + (m[2] ? +m[2] : 0)
-  if ((m = s.match(/^(\d{1,5}) ?c$/))) return +m[1]
-  if ((m = s.match(/^(\d{1,4})$/))) return +m[1] * 100
-  return null
-}
-// « billet de 5 € », « pièce de 2 centimes »
-const nomArgent = v => C.t('nomArgent', { v })
-function totalDe(items) { return items.reduce((s, v) => s + v, 0) }
-function trierDesc(items) { return [...items].sort((a, b) => b - a) }
-function aleatoirePas(min, max, pas) { return min + pas * aleatoire(0, Math.floor((max - min) / pas)) }
-function pioche(t) { return t[aleatoire(0, t.length - 1)] }
-
-// Le système de l'euro est « canonique » : l'algorithme glouton donne le nombre minimal
-function glouton(total, valeurs = VALEURS) {
-  const r = []
-  let reste = total
-  for (const v of trierDesc(valeurs)) while (reste >= v) { r.push(v); reste -= v }
-  return r
-}
-
-function tirerItems(valeurs, nbMin, nbMax) {
-  const n = aleatoire(nbMin, nbMax)
-  return Array.from({ length: n }, () => pioche(valeurs))
-}
-
-// Tire des items dont le total est dans [min, max] (essais bornés, sinon décomposition)
-function tirerDansPlage(valeurs, nbMin, nbMax, min, max) {
-  for (let essai = 0; essai < 200; essai++) {
-    const items = tirerItems(valeurs, nbMin, nbMax)
-    const t = totalDe(items)
-    if (t >= min && t <= max) return trierDesc(items)
-  }
-  const pas = Math.min(...valeurs)
-  return decomposerAuHasard(aleatoirePas(min, max, pas), valeurs, nbMax)
-}
-
-// Décomposition aléatoire (pas forcément minimale) d'un total
-function decomposerAuHasard(total, valeurs, maxItems) {
-  const dispo = trierDesc(valeurs)
-  for (let essai = 0; essai < 30; essai++) {
-    const r = []
-    let reste = total
-    while (reste > 0) {
-      const possibles = dispo.filter(v => v <= reste).slice(0, 3)
-      if (!possibles.length) break
-      const v = pioche(possibles)
-      r.push(v); reste -= v
-    }
-    if (reste === 0 && r.length <= maxItems) return trierDesc(r)
-  }
-  return glouton(total, dispo)
-}
-
-function genCompter(niv, centimes) {
-  let items
-  if (!centimes) {
-    const p = niv.compter.entiers
-    items = tirerDansPlage(p.valeurs, p.nb[0], p.nb[1], p.min, p.max)
-  } else {
-    const p = niv.compter.centimes
-    const euros = tirerDansPlage(p.euros, p.nbEuros[0], p.nbEuros[1], 100, p.maxEuros)
-    const cents = tirerDansPlage(p.cents, p.nbCents[0], p.nbCents[1], 1, p.maxCents)
-    items = trierDesc([...euros, ...cents])
-  }
-  const total = totalDe(items)
-  return {
-    type: 'compter', cle: 'compter:' + items.join(','), items, total, avecCentimes: centimes,
-    texte: C.t('compterQ', { items: items.map(formatSomme).join(' + ') }),
-    attendu: fmt(total, niv),
-  }
-}
-
-function cibleComposer(niv, centimes) {
-  if (!centimes) {
-    const p = niv.composer.entiers
-    return aleatoirePas(p.min, p.max, p.pas)
-  }
-  const p = niv.composer.centimes
-  return aleatoire(p.euros[0], p.euros[1]) * 100 + aleatoire(p.cents[0], p.cents[1])
-}
-
-function genComposer(niv, centimes) {
-  const cible = cibleComposer(niv, centimes)
-  return {
-    type: 'composer', cle: 'composer:' + cible, cible, solution: glouton(cible),
-    texte: C.t('composerQ', { somme: fmt(cible, niv) }), attendu: fmt(cible, niv),
-  }
-}
-
-function genMoins(niv, centimes) {
-  const min = niv.moins.minPieces[centimes ? 'centimes' : 'entiers']
-  let cible, solution
-  for (let essai = 0; essai < 100; essai++) {
-    cible = cibleComposer(niv, centimes)
-    solution = glouton(cible)
-    if (solution.length >= min) break
-  }
-  return {
-    type: 'moins', cle: 'moins:' + cible, cible, solution,
-    texte: C.t('moinsQ', { somme: fmt(cible, niv) }),
-    attendu: `${solution.length} : ${solution.map(formatSomme).join(' + ')}`,
-  }
-}
-
-function objetPour(prix) {
-  const cat = prix <= 200 ? 'pasCher' : prix <= 1000 ? 'moyen' : prix <= 2000 ? 'cher' : 'tresCher'
-  const i = aleatoire(0, EMOJIS[cat].length - 1)
-  return { e: EMOJIS[cat][i], ...C.t('objets')[cat][i] }   // { e, nom, pluriel }
-}
-
-function genRendre(niv, centimes) {
-  const cas = pioche(niv.rendre[centimes ? 'centimes' : 'entiers'])
-  const rendu = aleatoirePas(cas.rendu[0], cas.rendu[1], cas.pas)
-  const prix = cas.paye - rendu
-  const objet = objetPour(prix)
-  return {
-    type: 'rendre', cle: `rendre:${prix}/${cas.paye}`, paye: cas.paye, prix, cible: rendu, objet,
-    solution: glouton(rendu),
-    texte: C.t('rendreQ', { e: objet.e, prix: fmt(prix, niv), paye: formatSomme(cas.paye) }),
-    attendu: fmt(rendu, niv),
-  }
-}
-
-function genComparer(niv, centimes) {
-  const p = niv.comparer[centimes ? 'centimes' : 'entiers']
-  const itemsA = tirerDansPlage(p.valeurs, p.nb[0], p.nb[1], 1, p.max)
-  const totalA = totalDe(itemsA)
-  let itemsB = null
-  if (Math.random() < niv.comparer.probaEgal) {
-    // Même somme, mais autrement composée
-    for (let essai = 0; essai < 10 && !itemsB; essai++) {
-      const b = decomposerAuHasard(totalA, p.valeurs, p.nb[1] + 2)
-      if (b.join(',') !== itemsA.join(',')) itemsB = b
-    }
-  }
-  if (!itemsB) {
-    for (let essai = 0; essai < 100; essai++) {
-      itemsB = tirerDansPlage(p.valeurs, p.nb[0], p.nb[1], 1, p.max)
-      if (totalDe(itemsB) !== totalA) break
-    }
-  }
-  const totalB = totalDe(itemsB)
-  const [nomA, nomB] = melanger(pioche(C.t('prenoms')))
-  const bonne = totalA > totalB ? 'A' : totalB > totalA ? 'B' : 'egal'
-  return {
-    type: 'comparer', cle: 'comparer:' + itemsA.join(',') + '|' + itemsB.join(','),
-    itemsA, itemsB, totalA, totalB, nomA, nomB, bonne,
-    texte: C.t('comparerQ', { a: nomA, ta: fmt(totalA, niv), b: nomB, tb: fmt(totalB, niv) }),
-    attendu: bonne === 'A' ? nomA : bonne === 'B' ? nomB : t('autant'),
-  }
-}
-
-// CE2 : 1 € = 100 c. sous : 'c2ec' (235 c = ? € ? c), 'ec2c' (2 € 35 c = ? c), 'dec2c' (2,35 € = ? c), 'ec2dec' (2 € 5 c = ? €)
-function genConvertir(niv) {
-  const p = niv.convertir || { min: 105, max: 995 }
-  const sous = pioche(['c2ec', 'ec2c', 'dec2c', 'ec2dec'])
-  let valeur = aleatoire(p.min, p.max)
-  if (valeur % 100 === 0) valeur += aleatoire(1, 9) * 5
-  // pour « 2 € 5 c = 2,05 € », on force souvent un petit nombre de centimes (piège classique)
-  if (sous === 'ec2dec' && Math.random() < 0.5) valeur = Math.floor(valeur / 100) * 100 + aleatoire(1, 9)
-  const ec = formatSomme(valeur), dec = formatDecimal(valeur)
-  const enonces = {
-    c2ec:   [`${valeur}${NB}c = ? € ? c`, ec],
-    ec2c:   [`${ec} = ? c`, `${valeur}${NB}c`],
-    dec2c:  [`${dec} = ? c`, `${valeur}${NB}c`],
-    ec2dec: [`${ec} = ? € (${C.t('avecVirgule')})`, dec],
-  }
-  const [texte, attendu] = enonces[sous]
-  return { type: 'convertir', sous, cle: `convertir:${sous}:${valeur}`, valeur, texte, attendu }
-}
-
-// Vérifie la réponse à une conversion. rep : { e, c } pour c2ec, { texte } sinon.
-function verifierConversion(q, rep) {
-  if (q.sous === 'c2ec') {
-    const e = parseInt(rep.e || '0', 10), c = parseInt(rep.c || '0', 10)
-    return !isNaN(e) && !isNaN(c) && c < 100 && e * 100 + c === q.valeur
-  }
-  const t = String(rep.texte ?? '').trim()
-  if (q.sous === 'ec2dec') return /^\d+\s*[,.]\s*\d{2}\s*(€|euros?)?$/i.test(t) && lireSomme(t) === q.valeur
-  const n = t.replace(/\s*(c|centimes?)$/i, '')
-  return /^\d+$/.test(n) && +n === q.valeur
-}
-
-const GENERATEURS = { compter: genCompter, composer: genComposer, moins: genMoins, rendre: genRendre, comparer: genComparer, convertir: genConvertir }
-
-function genererSansRepetition(typesDemandes, nb, niv, centimes) {
-  const types = typesDemandes.filter(t => !niv.types || niv.types.includes(t))
-  if (!types.length) types.push(niv.types?.[0] || 'compter')
-  // Types répartis équitablement puis mélangés
-  // types mélangés d'abord : avec moins de questions que de types, pas toujours les mêmes oubliés
-  const typesMelanges = melanger(types)
-  const liste = melanger(Array.from({ length: nb }, (_, i) => typesMelanges[i % typesMelanges.length]))
-  const vus = new Set()
-  const result = []
-  for (const type of liste) {
-    let q = null
-    for (let essai = 0; essai < 50; essai++) {
-      const c = GENERATEURS[type](niv, centimes)
-      if (!vus.has(c.cle)) { q = c; break }
-    }
-    if (q) { vus.add(q.cle); result.push(q) }
-  }
-  return result
-}
-
-// ── Dessins SVG ──
-function svgPiece(v, echelle = 1) {
-  const p = PIECES[v]
-  const taille = Math.round(p.d * 2.6 * echelle)
-  let disque
-  if (p.metal === 'bi1' || p.metal === 'bi2') {
-    const ext = p.metal === 'bi1' ? METAUX.or : METAUX.argent
-    const int = p.metal === 'bi1' ? METAUX.argent : METAUX.or
-    disque = `<circle cx="50" cy="50" r="47" fill="${ext.fond}" stroke="${ext.bord}" stroke-width="3"/>`
-           + `<circle cx="50" cy="50" r="31" fill="${int.fond}" stroke="${int.bord}" stroke-width="2"/>`
-  } else {
-    const m = METAUX[p.metal]
-    disque = `<circle cx="50" cy="50" r="47" fill="${m.fond}" stroke="${m.bord}" stroke-width="3"/>`
-           + `<circle cx="50" cy="50" r="39" fill="none" stroke="${m.bord}" stroke-width="1.5" opacity=".6"/>`
-  }
-  const fs = p.label.length > 1 ? 30 : 36
-  const texte = `<text x="50" y="${50 + fs * 0.36}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" `
-              + `font-weight="800" font-size="${fs}" fill="#222">${p.label}<tspan font-size="${Math.round(fs * 0.62)}" dx="2">${p.unite}</tspan></text>`
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${taille}" height="${taille}" viewBox="0 0 100 100" role="img" aria-label="${nomArgent(v)}">${disque}${texte}</svg>`
-}
-
-function svgBillet(v, echelle = 1) {
-  const b = BILLETS[v]
-  const W = Math.round(b.w * 0.9 * echelle), H = Math.round(b.h * 0.9 * echelle)
-  const n = String(v / 100)
-  const { w, h } = b
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${nomArgent(v)}">`
-    + `<rect x="1" y="1" width="${w - 2}" height="${h - 2}" rx="4" fill="${b.fond}" stroke="${b.fonce}" stroke-width="2"/>`
-    + `<rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="2" fill="none" stroke="#fff" stroke-width="1.2" opacity=".75"/>`
-    + `<path d="M ${w * 0.58} ${h - 6} V ${h * 0.45} A ${w * 0.12} ${w * 0.12} 0 0 1 ${w * 0.82} ${h * 0.45} V ${h - 6} Z" fill="#fff" opacity=".4"/>`
-    + `<text x="11" y="${h * 0.55}" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="${h * 0.44}" fill="${b.fonce}">${n}<tspan font-size="${h * 0.26}" dx="3">€</tspan></text>`
-    + `<text x="12" y="${h * 0.82}" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="${h * 0.13}" fill="#222" letter-spacing="2">EURO</text>`
-    + `<text x="${w - 9}" y="${h * 0.27}" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="${h * 0.18}" fill="#222">${n}</text>`
-    + `</svg>`
-}
-
-function svgArgent(v, echelle = 1) {
-  return v >= 500 ? svgBillet(v, echelle) : svgPiece(v, echelle)
-}
-// ── FIN LOGIQUE ──
-
-const DEFAUT = { niveau: 'ce1', exercices: ['compter', 'composer'], nbQ: 10, centimes: false, aideTotal: true }
-const stocke = chargerReglages('monnaie_config', DEFAUT)
-if (!NIVEAUX[stocke.niveau]) stocke.niveau = 'ce1'
-stocke.exercices = (Array.isArray(stocke.exercices) ? stocke.exercices : []).filter(e => GENERATEURS[e])
-if (!stocke.exercices.length) stocke.exercices = [...DEFAUT.exercices]
-if (![5, 10, 15].includes(stocke.nbQ)) stocke.nbQ = 10
-const config = ref(stocke)
+// ── Réglages : défauts et options du niveau dans la définition ──
+const config = ref(reglagesDuNiveau(DEFINITION, chargerReglages('monnaie_config', reglagesDuNiveau(DEFINITION))))
+if (![5, 10, 15].includes(config.value.nbQ)) config.value.nbQ = 10
 watch(config, v => sauvegarder('monnaie_config', v), { deep: true })
+// Changement de niveau : on garde les exercices et l'option « centimes » qui existent dans le nouveau niveau
+watch(() => config.value.niveau, () => {
+  const r = reglagesDuNiveau(DEFINITION, config.value)
+  config.value.exercices = r.exercices
+  config.value.centimes = r.centimes
+})
 
-const phase = ref('config')
-const questions = ref([])
-const idx = ref(0)
-const bonnes = ref(0)
-const mauvaises = ref(0)
-const historique = ref([])
-const etatsDots = ref([])
+const decimal = computed(() => donnees(config.value.niveau).saisieDecimale)
+const pieces = computed(() => palette(config.value.niveau, config.value.centimes))
+const f = c => fmt(c, config.value.niveau)
+// « billet de 5 € », « pièce de 2 centimes » : lecteurs d'écran et infobulles
+const nomArgent = v => T('nomArgent', { v })
+const argent = (v, echelle = 1) => svgArgent(v, echelle, nomArgent(v))
+
+// ── Jeu ──
 const saisieE = ref('')
 const saisieC = ref('')
 const saisieT = ref('')
 const selection = ref([])
-const repondu = ref(false)
-const dernierOk = ref(false)
-const feedback = ref('')
-const feedbackClass = ref('')
-const inputClass = ref('')
+const avis = ref('')          // somme illisible : message, sans compter de réponse
 const inputEl = ref(null)
-let minuterie = null
 
-const niveau = computed(() => NIVEAUX[config.value.niveau] || NIVEAUX.ce1)
-const typesNiveau = computed(() => TYPES.filter(t => niveau.value.types.includes(t.id)))
-const f = c => fmt(c, niveau.value)
-watch(() => config.value.niveau, () => {
-  const ex = config.value.exercices.filter(e => niveau.value.types.includes(e))
-  config.value.exercices = ex.length ? ex : [...DEFAUT.exercices]
+// message après une erreur, selon le type de question (rep : la réponse donnée ; null si passée)
+function messageErreur(q, rep) {
+  if (!rep) return ''
+  if (q.type === 'comparer') return `❌ ${q.bonne === 'egal' ? t('autantArgent', { s: f(q.totalA) }) : t('lePlus', { nom: q.attendu })}`
+  if (q.type === 'compter' || q.type === 'convertir') return `❌ ${t('pasTout')}`
+  const tot = totalDe(rep.selection)
+  if (q.type === 'moins') return `❌ ${tot !== q.cible ? t('auLieuDe', { t: f(tot), c: f(q.cible) }) : t('tropDePieces', { t: f(tot), n: q.solution.length })}`
+  return `❌ ${tot < q.cible ? t('ilManque', { t: f(tot), m: f(q.cible - tot) }) : t('deTrop', { t: f(tot), m: f(tot - q.cible) })}`
+}
+
+const jeu = useJeu({
+  // le jeu a sa propre graine (tirée à chaque partie) : la graine de la page sert aux fiches
+  generer: () => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()), T, nb: config.value.nbQ }),
+  verifier,
+  messageErreur,
+  delai: 900,
+  surQuestion: () => {
+    saisieE.value = ''; saisieC.value = ''; saisieT.value = ''; selection.value = []; avis.value = ''
+    nextTick(() => inputEl.value?.focus?.())
+  },
 })
-const q = computed(() => questions.value[idx.value])
-const palette = computed(() => niveau.value.palette[config.value.centimes ? 'centimes' : 'entiers'])
-const paletteApercu = computed(() => palette.value)
+const { phase, questions, q, bonnes, historique, retour, repondu, cleFin } = jeu
 
-function toggleExercice(id) {
-  const ex = config.value.exercices
-  if (ex.includes(id)) {
-    if (ex.length === 1) return
-    config.value.exercices = ex.filter(e => e !== id)
-  } else {
-    config.value.exercices = TYPES.map(t => t.id).filter(t => t === id || ex.includes(t))
-  }
-}
-
-function demarrer() {
-  clearTimeout(minuterie)
-  questions.value = genererSansRepetition(config.value.exercices, config.value.nbQ, niveau.value, config.value.centimes)
-  idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
-  etatsDots.value = questions.value.map(() => '')
-  phase.value = 'jeu'
-  afficherQuestion()
-}
-
-function quitter() {
-  clearTimeout(minuterie)
-  phase.value = 'config'
-}
-
-function afficherQuestion() {
-  saisieE.value = ''; saisieC.value = ''; saisieT.value = ''; selection.value = []
-  repondu.value = false; dernierOk.value = false
-  feedback.value = ''; feedbackClass.value = ''; inputClass.value = ''
-  nextTick(() => inputEl.value?.focus?.())
-}
+const dernierOk = computed(() => !!retour.value?.ok)
+const feedback = computed(() => retour.value?.message ?? avis.value)
+const inputClass = computed(() => (retour.value ? (retour.value.ok ? 'ok' : 'erreur') : ''))
+const feedbackClass = computed(() => inputClass.value || (avis.value ? 'erreur' : ''))
 
 function ajouter(v) { if (!repondu.value && selection.value.length < 30) selection.value.push(v) }
 function enlever(i) { if (!repondu.value) selection.value.splice(i, 1) }
-function annuler() { if (!repondu.value) selection.value.pop() }
 
 function entree() {
-  if (repondu.value) { if (!dernierOk.value) suivant() }
-  else valider()
+  if (!repondu.value) valider()
+  else if (!dernierOk.value) jeu.suivante()
 }
 
 function valider() {
   if (repondu.value) return
   const qu = q.value
   if (qu.type === 'convertir') {
-    const vide = qu.sous === 'c2ec' ? saisieE.value === '' && saisieC.value === '' : !String(saisieT.value).trim()
-    if (vide) return
-    const donne = qu.sous === 'c2ec' ? `${saisieE.value || 0} € ${saisieC.value || 0} c`
-      : `${String(saisieT.value).trim()}${qu.sous === 'ec2dec' ? '' : ' c'}`
-    terminer(verifierConversion(qu, { e: saisieE.value, c: saisieC.value, texte: saisieT.value }), donne,
-      t('pasTout'))
-    return
-  }
-  if (qu.type === 'compter' && qu.avecCentimes && niveau.value.saisieDecimale) {
-    if (!String(saisieT.value).trim()) return
-    const val = lireSomme(saisieT.value)
-    if (val === null) {
-      feedback.value = t('ecrisSomme')
-      feedbackClass.value = 'erreur'
-      return
-    }
-    terminer(val === qu.total, f(val), t('pasTout'))
+    const deux = qu.sous === 'c2ec'
+    if (deux ? saisieE.value === '' && saisieC.value === '' : !String(saisieT.value).trim()) return
+    const donne = deux ? `${saisieE.value || 0} € ${saisieC.value || 0} c` : `${String(saisieT.value).trim()}${qu.sous === 'ec2dec' ? '' : ' c'}`
+    jeu.repondre({ e: saisieE.value, c: saisieC.value, texte: saisieT.value }, { donne })
     return
   }
   if (qu.type === 'compter') {
-    if (saisieE.value === '' && saisieC.value === '') return
-    const e = parseInt(saisieE.value || '0', 10)
-    const c = qu.avecCentimes ? parseInt(saisieC.value || '0', 10) : 0
-    if (isNaN(e) || isNaN(c) || e < 0 || c < 0) return
-    const val = e * 100 + c
-    const ok = c < 100 && val === qu.total
-    terminer(ok, f(val), t('pasTout'))
+    const enTexte = qu.avecCentimes && decimal.value
+    if (enTexte ? !String(saisieT.value).trim() : saisieE.value === '' && saisieC.value === '') return
+    const rep = enTexte ? { texte: saisieT.value } : { e: saisieE.value, c: saisieC.value }
+    const val = sommeDonnee(qu, rep)
+    if (val === null) { if (enTexte) avis.value = t('ecrisSomme'); return }
+    jeu.repondre(rep, { donne: f(val) })
     return
   }
   if (!selection.value.length) return
-  const tot = totalDe(selection.value)
-  const n = selection.value.length
-  if (qu.type === 'moins') {
-    const donne = `${n} : ${trierDesc(selection.value).map(formatSomme).join(' + ')}`
-    if (tot !== qu.cible) {
-      terminer(false, donne, t('auLieuDe', { t: f(tot), c: f(qu.cible) }))
-    } else if (n > qu.solution.length) {
-      terminer(false, donne, t('tropDePieces', { t: f(tot), n: qu.solution.length }))
-    } else {
-      terminer(true, donne)
-    }
-    return
-  }
-  // composer / rendre
-  terminer(tot === qu.cible, f(tot),
-    tot < qu.cible ? t('ilManque', { t: f(tot), m: f(qu.cible - tot) })
-                   : t('deTrop', { t: f(tot), m: f(tot - qu.cible) }))
+  const sel = [...selection.value]
+  const donne = qu.type === 'moins' ? `${sel.length} : ${trierDesc(sel).map(formatSomme).join(' + ')}` : f(totalDe(sel))
+  jeu.repondre({ selection: sel }, { donne })
 }
 
 function choisirComparer(choix) {
-  if (repondu.value) return
   const qu = q.value
-  const donne = choix === 'A' ? qu.nomA : choix === 'B' ? qu.nomB : t('autant')
-  const msg = qu.bonne === 'egal'
-    ? t('autantArgent', { s: f(qu.totalA) })
-    : t('lePlus', { nom: qu.attendu })
-  terminer(choix === qu.bonne, donne, msg)
+  jeu.repondre({ choix }, { donne: choix === 'A' ? qu.nomA : choix === 'B' ? qu.nomB : t('autant') })
 }
 
-function terminer(ok, donne, msgErreur = '') {
-  const qu = q.value
-  repondu.value = true
-  dernierOk.value = ok
-  historique.value.push({ texte: qu.texte, donne, attendu: qu.attendu, ok })
-  etatsDots.value[idx.value] = ok ? 'ok' : 'erreur'
-  if (ok) {
-    bonnes.value++
-    inputClass.value = 'ok'
-    feedback.value = pioche(t('bravo'))
-    feedbackClass.value = 'ok'
-    minuterie = setTimeout(suivant, 900)
-  } else {
-    mauvaises.value++
-    inputClass.value = 'erreur'
-    feedback.value = '❌ ' + msgErreur
-    feedbackClass.value = 'erreur'
-  }
-}
-
+// passer : la question compte comme une erreur, et on enchaîne aussitôt
 function passer() {
   if (repondu.value) return
-  const qu = q.value
-  historique.value.push({ texte: qu.texte, donne: t('passe'), attendu: qu.attendu, ok: false })
-  etatsDots.value[idx.value] = 'erreur'
-  mauvaises.value++
-  suivant()
+  jeu.passer({ donne: t('passe') })
+  jeu.suivante()
 }
 
-function suivant() {
-  clearTimeout(minuterie)
-  if (phase.value !== 'jeu') return
-  idx.value++
-  if (idx.value >= questions.value.length) phase.value = 'resultats'
-  else afficherQuestion()
-}
-
-const resultMsg = computed(() => {
-  const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return t('resultat100') }
-  if (pct >= 80)   { confettis(25); return t('resultat80') }
-  if (pct >= 60)   return t('resultat60')
-  if (pct >= 40)   return t('resultat40')
-  return t('resultat0')
-})
-
-onUnmounted(() => clearTimeout(minuterie))
-
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
-function htmlFiche() {
-  const niv = niveau.value
-  // Parties de la fiche selon les exercices choisis (toutes si aucun n'a d'équivalent papier)
-  const choisis = config.value.exercices
-  let parties = {
-    compter: choisis.includes('compter'),
-    entoure: choisis.includes('composer'),
-    moins: choisis.includes('moins'),
-    rendre: choisis.includes('rendre'),
-    comparer: choisis.includes('comparer'),
-    convertir: choisis.includes('convertir') && niv.types.includes('convertir'),
-  }
-  if (!Object.values(parties).some(Boolean)) parties = { compter: true, entoure: true, rendre: true, convertir: niv.types.includes('convertir') }
-  let numPartie = 0
-  const titrePartie = txt => `<h2>${++numPartie}. ${txt}</h2>`
-  const centimes = config.value.centimes
-  const valeursPapier = niv.palette[centimes ? 'centimes' : 'entiers'].filter(v => v <= 2000)
-  const dessin = items => items.map(v => `<span class="arg">${svgArgent(v, 0.8)}</span>`).join('')
-  const decimale = centimes && niv.saisieDecimale
-  const ligneRep = decimale ? '__________ €' : centimes ? '______ € ______ c' : '__________ €'
-
-  // 1. Compter
-  const compter = genererSansRepetition(['compter'], 6, niv, centimes)
-  const blocCompter = compter.map((qu, i) => `
-    <div class="bloc">
-      <div class="num">${i + 1}.</div>
-      <div class="tas">${dessin(qu.items)}</div>
-      <div class="rep">${C.t('ficheIlYa')} : ${ligneRep}</div>
-    </div>`).join('')
-
-  // 2. Entoure pour payer
-  const valeursEntoure = niv.palette[centimes ? 'centimes' : 'entiers'].filter(v => v <= 2000)
-  const vus = new Set()
-  const entoure = []
-  for (let essai = 0; essai < 100 && entoure.length < 3; essai++) {
-    const cible = centimes ? aleatoire(1, 9) * 100 + aleatoirePas(10, 90, 5) : aleatoire(6, 45) * 100
-    if (vus.has(cible)) continue
-    vus.add(cible)
-    const bons = decomposerAuHasard(cible, valeursEntoure, 6)
-    const intrus = tirerItems(valeursEntoure, 2, 3)
-    entoure.push({ cible, bons, items: trierDesc([...bons, ...intrus]) })
-  }
-  const blocEntoure = entoure.map((e, i) => `
-    <div class="bloc">
-      <div class="num">${i + 1}.</div>
-      <div class="enonce">${C.t('ficheEntoure')} <strong>${fmt(e.cible, niv)}</strong>.</div>
-      <div class="tas">${dessin(e.items)}</div>
-    </div>`).join('')
-
-  // Le moins de pièces : deux façons de payer la même somme, entourer la plus économe
-  const moins = parties.moins ? genererSansRepetition(['moins'], 3, niv, centimes).map(qu => {
-    let autre = null
-    for (let essai = 0; essai < 30 && !autre; essai++) {
-      const a = decomposerAuHasard(qu.cible, valeursPapier, qu.solution.length + 4)
-      if (a.length > qu.solution.length) autre = trierDesc(a)
-    }
-    const optimaleEnA = Math.random() < 0.5
-    return { cible: qu.cible, A: optimaleEnA ? qu.solution : autre ?? qu.solution, B: optimaleEnA ? autre ?? qu.solution : qu.solution,
-      bonne: !autre ? 'A, B' : optimaleEnA ? 'A' : 'B' }
-  }) : []
-  const blocMoins = moins.map((m, i) => `
-    <div class="bloc">
-      <div class="num">${i + 1}.</div>
-      <div class="enonce">${C.t('fichePourPayer')} <strong>${fmt(m.cible, niv)}</strong>, ${C.t('ficheMoinsConsigne')}</div>
-      <div class="duo"><div><b class="lettre">A</b><div class="tas">${dessin(m.A)}</div></div>
-      <div><b class="lettre">B</b><div class="tas">${dessin(m.B)}</div></div></div>
-    </div>`).join('')
-
-  // Comparer deux porte-monnaie
-  const comparer = parties.comparer ? genererSansRepetition(['comparer'], 3, niv, centimes) : []
-  const blocComparer = comparer.map((qu, i) => `
-    <div class="bloc">
-      <div class="num">${i + 1}.</div>
-      <div class="enonce">${C.t('ficheComparerConsigne')}</div>
-      <div class="duo"><div><b class="lettre">${qu.nomA}</b><div class="tas">${dessin(qu.itemsA)}</div></div>
-      <div><b class="lettre">${qu.nomB}</b><div class="tas">${dessin(qu.itemsB)}</div></div></div>
-    </div>`).join('')
-
-  // 3. Rendre la monnaie
-  const rendre = genererSansRepetition(['rendre'], 4, niv, centimes)
-  const blocRendre = rendre.map((qu, i) => `
-    <div class="ligne-rendre">
-      <span class="num">${i + 1}.</span>
-      ${qu.objet.e} ${t('tuAchetes')} ${qu.objet.nom} ${C.t('ficheA')} <strong>${fmt(qu.prix, niv)}</strong>.
-      ${t('tuDonnes')} <strong>${formatSomme(qu.paye)}</strong>. ${C.t('ficheOnTeRend')} : ${centimes ? '______________' : '______ €'}
-    </div>`).join('')
-
-  // 4. Conversions (CE2)
-  let blocConvertir = ''
-  let conv = []
-  if (parties.convertir) {
-    conv = genererSansRepetition(['convertir'], 8, niv, centimes)
-    blocConvertir = `<div class="grille">`
-      + conv.map((qu, i) => `<div class="ligne-rendre"><span class="num">${i + 1}.</span> ${qu.texte
-        .replace('? € ? c', '______ € ______ c').replace(/\? € \(.*\)/, '__________ €').replace('? c', '__________ c')}</div>`).join('')
-      + '</div>'
-  }
-
-  // Corrigé : une ligne par partie, numérotée comme sur la fiche
-  const numeros = l => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
-  const corrige = [
-    parties.compter && [C.t('ficheCompterTitre'), numeros(compter.map(qu => qu.attendu))],
-    parties.entoure && [C.t('ficheEntoureTitre'), `${numeros(entoure.map(e => e.bons.map(formatSomme).join(' + ')))} ${C.t('corrigeUneSolution')}`],
-    parties.moins && [C.t('ficheMoinsTitre'), numeros(moins.map(m => m.bonne))],
-    parties.comparer && [C.t('ficheComparerTitre'), numeros(comparer.map(qu => qu.attendu))],
-    parties.rendre && [C.t('ficheRendreTitre'), numeros(rendre.map(qu => qu.attendu))],
-    parties.convertir && [C.t('ficheConvertirTitre'), numeros(conv.map(qu => qu.attendu))],
-  ].filter(Boolean).map(([titre, rep], i) => `<p><b>${i + 1}. ${titre}</b> ${rep}</p>`).join('')
-
-  const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
-    <meta charset="UTF-8"><title>${t('titre')} — ${config.value.niveau.toUpperCase()}</title>
-    <style>
-      body { font-family: Arial, sans-serif; max-width: 720px; margin: 1.2cm auto; color: #222; }
-      h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      h2 { font-size: 1.05rem; margin: 1.2rem 0 .4rem; }
-      h2 small { font-weight: 400; color: #666; }
-      .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
-      .bloc { border: 1.5px solid #bbb; border-radius: 8px; padding: .5rem .75rem; margin: .5rem 0; page-break-inside: avoid; }
-      .num { font-weight: 700; color: #777; display: inline-block; min-width: 1.6rem; }
-      .tas { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: .3rem 0; }
-      .arg svg { display: block; }
-      .rep { text-align: right; font-size: 1.1rem; margin-top: .3rem; }
-      .enonce { display: inline; }
-      .ligne-rendre { margin: .9rem 0; font-size: 1.05rem; line-height: 1.6; }
-      .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .75rem; }
-      .duo { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .4rem; }
-      .duo > div { border: 1px dashed #ccc; border-radius: 6px; padding: .3rem .5rem; }
-      .lettre { font-size: 1.1rem; }
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    </style></head><body>
-    <h1>💶 ${t('titre')} — ${config.value.niveau.toUpperCase()}</h1>
-    <p class="infos">${centimes ? C.t('ficheEurosCentimes') : C.t('ficheEuros')}</p>
-    ${ligneNomDate(langueContenu.value)}
-    ${parties.compter ? `${titrePartie(`${C.t('ficheCompterTitre')}${decimale ? ` <small>${C.t('ficheExempleVirgule')}</small>` : ''}`)}
-    <div class="grille">${blocCompter}</div>` : ''}
-    ${parties.entoure ? `${titrePartie(C.t('ficheEntoureTitre'))}
-    ${blocEntoure}` : ''}
-    ${parties.moins ? `${titrePartie(C.t('ficheMoinsTitre'))}
-    ${blocMoins}` : ''}
-    ${parties.comparer ? `${titrePartie(C.t('ficheComparerTitre'))}
-    ${blocComparer}` : ''}
-    ${parties.rendre ? `${titrePartie(C.t('ficheRendreTitre'))}
-    ${blocRendre}` : ''}
-    ${blocConvertir ? `${titrePartie(`${C.t('ficheConvertirTitre')} <small>(1 € = 100 c)</small>`)}${blocConvertir}` : ''}
-    <section class="corrige"><h2>${t('corrige')}</h2>${corrige}</section>
-  </body></html>`
-
-  return html
-}
-
-const { mode, graine, regenerer } = useModeExercice()
-// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
-const fiche = computed(() => {
-  if (mode.value !== 'imprimer') return ''
+// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
+const { mode } = useModeExercice()
+const { graine, nouvelle, rngFiche } = useGraine()
+// police choisie dans « Sur la fiche » (Andika par défaut)
+const policeFiche = usePoliceFiche()
+// tirage recalculé quand les réglages changent ou qu'on demande une nouvelle fiche (nouvelle graine) ; la mise en
+// page à part : changer de police ne retire pas de questions (le flux de la graine n'avance pas)
+const tirage = computed(() => {
+  if (mode.value !== 'imprimer') return null
   graine.value
-  return htmlFiche()
+  return questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng: rngFiche(), T })
 })
+const fiche = computed(() => (tirage.value
+  ? ficheMonnaie({ questions: tirage.value, reglages: config.value, T, langue: langueContenu.value, ...policeFiche.value })
+  : ''))
 </script>
 
 <style scoped>
@@ -1101,6 +437,6 @@ const fiche = computed(() => {
 
 @media (max-width: 520px) {
   .porte-monnaies { grid-template-columns: 1fr; }
-  .exercise-box { padding: 1.25rem .75rem; }
+  .container :deep(.exercise-box) { padding: 1.25rem .75rem; }
 }
 </style>

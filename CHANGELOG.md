@@ -1,5 +1,17 @@
 # Nouveautés
 
+## 5 octobre 2026
+
+- **Police des fiches au choix** : sous « Sur la fiche », choisis la police des fiches à imprimer. Elle est
+  maintenant en Andika (pensée pour apprendre à lire) par défaut.
+- **Le CP a de nouvelles fiches** : l'heure (heures entières), la monnaie (euros entiers) et les nombres jusqu'à 100.
+- **Les réponses sans accents ne comptent plus juste** : l'exercice t'avertit (« Attention aux accents ») et montre
+  la bonne orthographe. La conjugaison du CP s'écrit en entier plutôt qu'à trous.
+- **Dictée** : CM1 et CM2 ont chacun leur niveau.
+- **Les tables de multiplication** ont un niveau par classe ; les tables de 11 et 12 sont « pour aller plus loin ».
+- **Les billets et les pièces** de l'exercice de monnaie et de l'affiche sont dessinés à leur vraie taille.
+- Quand tu changes de niveau, les réglages reprennent les valeurs de ce niveau.
+
 ## 4 octobre 2026
 
 - **La petite section (PS) arrive** : compter jusqu'à 3, comparer des quantités très différentes, trier les

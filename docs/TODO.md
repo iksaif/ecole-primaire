@@ -3,6 +3,12 @@
 > Liste de travail interne : idées, bugs, décisions en attente. Rien ici n'est une promesse.
 > Ce qui est fait part dans le CHANGELOG et l'historique git ; `src/data/programme.js` fait foi pour les niveaux.
 
+## Demandes du 2026-10-05
+
+- [x] **Un seul dessin des pièces et des billets** pour l'exercice Monnaie (jeu et fiche) et l'affiche « Pièces et
+      billets » : `src/exercices/monnaie/argent.js` (`piece`, `billet`, `svgArgent`), tailles réelles, couleurs des
+      vrais billets, 1 € et 2 € bimétal dans le bon sens (l'affiche les avait inversés)
+
 ## Affiches et fiches
 
 - [ ] **« Ce que je sais faire » caché** (`RESUMES_VISIBLES = false` dans `affiches/catalogue.js`) en attendant l'avis d'enseignants ; à remettre après relecture

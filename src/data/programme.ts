@@ -42,8 +42,9 @@ import type { Classe, Cycle } from './classes.ts'
 export { NIVEAUX, CYCLE_DE }
 export type { Classe as Niveau, Cycle }
 
-export type DomaineId = (typeof DOMAINES)[number]['id']
-export type CompetenceId = (typeof COMPETENCES)[number]['id']
+// Les entrées fictives des exemples (DOMAINES_EXEMPLE, COMPETENCES_EXEMPLE) comptent dans les types : K et D les exposent
+export type DomaineId = (typeof DOMAINES)[number]['id'] | (typeof DOMAINES_EXEMPLE)[number]['id']
+export type CompetenceId = (typeof COMPETENCES)[number]['id'] | (typeof COMPETENCES_EXEMPLE)[number]['id']
 
 // ── Types ──
 // Les identifiants (DomaineId, CompetenceId) sont dérivés des données : une compétence qui cite un domaine inconnu,
@@ -72,6 +73,8 @@ export interface Domaine {
   officiel: ParCycle<string>
   source: ParCycle<Source>
   lien: ParCycle<string>
+  /** entrée fictive des exemples : développement seulement (voir DOMAINES_EXEMPLE) */
+  devSeulement?: true
 }
 
 export interface Competence {
@@ -83,6 +86,8 @@ export interface Competence {
   source: Source
   /** ce qui est une interprétation du texte, et pourquoi */
   interpretation?: string
+  /** entrée fictive des exemples : développement seulement (voir COMPETENCES_EXEMPLE) */
+  devSeulement?: true
 }
 
 export interface HorsProgramme {
@@ -335,9 +340,20 @@ export const DOMAINES = [
   },
 ] as const satisfies readonly Domaine[]
 
+// ── Entrées fictives des exemples (src/exercices/exemple/, src/affiches/exemple/) ──
+// Pour que les exemples ne dépendent pas des vraies données. Présentes avec `npm run dev` et dans node (tests, scripts),
+// absentes d'un build de production (import.meta.env.PROD : remplacé par Vite, puis le code mort est retiré) ; `DOMAINES`
+// et `COMPETENCES` ne les contiennent jamais, donc ni la couverture, ni le catalogue, ni la page « Le programme » ne les
+// voient. Seuls domaineDe, competenceDe et competencesDu les connaissent.
+const AVEC_EXEMPLES = !import.meta.env?.PROD
+
+export const DOMAINES_EXEMPLE = AVEC_EXEMPLES ? [
+  { id: 'exemple', court: 'Exemple (développement)', matiere: 'maths', cycles: [1, 2, 3], officiel: {}, source: {}, lien: {}, devSeulement: true },
+] as const satisfies readonly Domaine[] : []
+
 // ── Compétences utiles à nos activités (pas tout le programme) ──
 const c = <const I extends string, const D extends DomaineId>(
-  id: I, domaine: D, libelle: string, niveaux: readonly Classe[], source: Source, extra: { interpretation?: string } = {},
+  id: I, domaine: D, libelle: string, niveaux: readonly Classe[], source: Source, extra: { interpretation?: string, devSeulement?: true } = {},
 ) => ({ id, domaine, libelle, niveaux, source, ...extra })
 const depuis = classesDepuis     // de n jusqu'au CM2
 const entre = classesEntre
@@ -571,6 +587,15 @@ export const COMPETENCES = [
   c('complements', 'grammaire', 'Compléments du verbe (COD, COI) et compléments circonstanciels', ['cm1', 'cm2'],
     src('c3francais', 17, 'CM1 : COD/COI dans des phrases prototypiques, groupes circonstanciels sans les distinguer ; CM2 p. 19 : CC de temps, lieu, cause ; attribut du sujet')),
 ] as const satisfies readonly Competence[]
+
+export const COMPETENCES_EXEMPLE = AVEC_EXEMPLES ? [
+  c('exemple-compter', 'exemple', 'Compter de n en n et compléter une suite (fictive)', depuis('cp'),
+    src('c2maths', 1, 'Entrée fictive des exemples : ne correspond à aucun texte du programme'), { devSeulement: true }),
+  c('exemple-regle', 'exemple', 'Trouver la règle d’une suite (fictive)', depuis('ce1'),
+    src('c2maths', 1, 'Entrée fictive des exemples : ne correspond à aucun texte du programme'), { devSeulement: true }),
+  c('exemple-lire', 'exemple', 'Lire et placer des repères (fictive, pour l’exemple d’affiche)', entre('ms', 'ce1'),
+    src('c2maths', 1, 'Entrée fictive des exemples : ne correspond à aucun texte du programme'), { devSeulement: true }),
+] as const satisfies readonly Competence[] : []
 
 // ── Pour aller plus loin : notions que nos exercices proposent, mais qui ne sont dans aucun texte relu pour ces
 // niveaux. Elles ne sont jamais choisies par défaut et sont signalées comme telles dans les formulaires.
@@ -860,8 +885,8 @@ export const CONTRAINTES: readonly Contraintes[] = [
 // Les listes typées « larges » (Domaine, Competence) : les fonctions acceptent un id quelconque (venu d'un lien, d'un
 // réglage mémorisé…) et rendent null s'il est inconnu ; les identifiants précis (DomaineId, CompetenceId) servent aux
 // données écrites en dur.
-const DOMAINES_LISTE: readonly Domaine[] = DOMAINES
-const COMPETENCES_LISTE: readonly Competence[] = COMPETENCES
+const DOMAINES_LISTE: readonly Domaine[] = [...DOMAINES, ...DOMAINES_EXEMPLE]
+const COMPETENCES_LISTE: readonly Competence[] = [...COMPETENCES, ...COMPETENCES_EXEMPLE]
 export const domaineDe = (id: string): Domaine | null => DOMAINES_LISTE.find(d => d.id === id) ?? null
 export const competenceDe = (id: string): Competence | null => COMPETENCES_LISTE.find(k => k.id === id) ?? null
 export const competencesDu = (domaine: string, niveau?: Classe | null): Competence[] =>

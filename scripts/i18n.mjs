@@ -10,6 +10,7 @@ import { echapper } from '../src/utils/html.js'
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dossier = join(racine, 'src/i18n')
 const LANGUES = ['fr', 'br']
+const AUTRE = LANGUES[1]   // la langue à relire
 const relecture = process.argv.includes('--relecture')
 
 const lister = d => readdirSync(d).flatMap(n => (statSync(join(d, n)).isDirectory() ? lister(join(d, n)) : /\.(js|ts)$/.test(n) ? [join(d, n)] : []))
@@ -61,6 +62,53 @@ for (const m of modules) {
     }
   }
 }
+// ── Catalogues typés (src/langues/<langue>/textes/<section>.ts) ──
+// Le compilateur (npm run types) refuse déjà une clé manquante ou en trop ; ici on compte seulement les passages « à relire »
+// et on ajoute les textes au tableau de relecture. Une clé est marquée par « // br: à relire » sur sa ligne ou la ligne précédente
+// (une section marquée marque tout son contenu). L'indentation (2 espaces) donne le chemin de la clé.
+{
+  const dossierTextes = l => join(racine, 'src/langues', l, 'textes')
+  const sections = readdirSync(dossierTextes('fr')).filter(f => f.endsWith('.ts') && f !== 'index.ts').sort()
+  const feuilles = (o, pre = '') => Object.entries(o).flatMap(([k, v]) =>
+    typeof v === 'string' || Array.isArray(v) || (v && typeof v === 'object' && 'other' in v) ? [[pre + k, v]] : feuilles(v, `${pre}${k}.`))
+  // chemins marqués, d'après le source
+  function marques(source) {
+    const lignes = source.split('\n'), res = new Set(), pile = []
+    let precedenteMarquee = false
+    for (const l of lignes) {
+      const m = l.match(/^(\s*)(['"]?)([\w'-]+)\2:\s*(.*)$/)
+      const marquee = /br: à relire/.test(l)
+      if (!m) { precedenteMarquee = marquee && /^\s*\/\//.test(l); continue }
+      const niveau = m[1].length / 2 - 1
+      pile.length = Math.max(niveau, 0); pile[pile.length] = m[3]
+      if (marquee || precedenteMarquee || pile.slice(0, -1).some(c => res.has(c))) res.add(pile.join('.'))
+      precedenteMarquee = false
+    }
+    return res
+  }
+  let nbTypes = 0, nbTypesRelire = 0
+  for (const f of sections) {
+    const section = f.replace(/\.ts$/, '')
+    const fr = new Map(feuilles((await import(pathToFileURL(join(dossierTextes('fr'), f)))).default))
+    const br = new Map(feuilles((await import(pathToFileURL(join(dossierTextes(AUTRE), f)))).default))
+    const marquees = marques(readFileSync(join(dossierTextes(AUTRE), f), 'utf8'))
+    const estMarquee = k => [...marquees].some(c => k === c || k.startsWith(`${c}.`))
+    nbTypes += fr.size
+    for (const k of fr.keys()) if (estMarquee(k)) nbTypesRelire++
+    if ([...fr.keys()].some(k => !br.has(k)) || [...br.keys()].some(k => !fr.has(k))) { problemes++; console.log(`✗ langues/br/textes/${f} : clés différentes du français`) }
+    if (relecture) {
+      lignesHtml.push(`<tr class="module"><th colspan="4">${echapper(section)}</th></tr>`)
+      for (const [k, v] of fr) {
+        const relire = estMarquee(k)
+        lignesHtml.push(`<tr${relire ? ' class="relire"' : ''}><td><code>${echapper(`${section}.${k}`)}</code></td><td>${echapper(texte(v))}</td>
+<td>${br.has(k) ? echapper(texte(br.get(k))) : '<em>— manquant —</em>'}</td><td>${relire ? '⚠️' : ''}</td></tr>`)
+      }
+    }
+  }
+  total += nbTypes; nbRelire += nbTypesRelire
+  console.log(`${sections.length} sections typées (src/langues), ${nbTypes} textes ; ${nbTypesRelire} marqués « à relire »`)
+}
+
 console.log(`\n${modules.length} catalogues, ${total} textes ; ${nbRelire} marqués « à relire » ; ${problemes} problème(s)`)
 
 if (relecture) {

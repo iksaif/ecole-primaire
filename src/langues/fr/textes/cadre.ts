@@ -1,0 +1,22 @@
+// Textes de l'interface — cadre d'un exercice ou d'une affiche (CadreExercice, OptionsFiche, ChoixPolice du noyau), français.
+export default {
+  jouer: '🎯 Faire l’exercice',
+  imprimer: '🖨️ Imprimer une fiche',
+  nouvelle: '🎲 Nouvelle fiche',
+  surLaFiche: 'Sur la fiche',
+  entete: 'Prénom et date',
+  corrige_non: 'Sans corrigé',
+  corrige_page: 'Corrigé sur une autre page',
+  corrige_dessous: 'Corrigé en bas, à l’envers',
+  attache: 'Attaché',
+  script: 'Script',
+  police: 'Police',
+  exempleAttache: 'belle école',
+  exempleScript: 'a b g école',
+  retirer: 'Retirer cette police',
+  aideTitre: '➕ Utiliser Belle Allure, Écolier ou une autre police…',
+  aideTexte: 'Ces polices scolaires sont gratuites pour la classe et la maison, mais leur licence ne permet pas de les livrer avec le site. Deux solutions : les <strong>installer</strong> sur l’ordinateur (elles apparaîtront dans la liste après rechargement de la page), ou <strong>ajouter le fichier</strong> ici (il reste mémorisé dans ce navigateur).',
+  ajouterAttache: '📂 Ajouter une police attachée',
+  ajouterScript: '📂 Ajouter une police script',
+  astuce: 'Astuce Belle Allure : choisis le fichier sans lignes (pas « Ductus » ni « Lignes ») ; la taille est ajustée automatiquement au lignage Seyès.',
+} as const

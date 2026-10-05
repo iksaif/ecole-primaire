@@ -40,7 +40,8 @@ export function useOptionsFiche(): Ref<OptionsDeFiche> {
 
 export const aUnCorrige = (html: string): boolean => /class="corrige"/.test(html)
 
-const CSS = `
+/** Styles des options (en-tête, corrigé à part ou en bas) : ceux de appliquerOptionsFiche, et du build des fiches. */
+export const CSS_OPTIONS_FICHE = `
 .entete { font-size: .85rem; color: #666; margin-bottom: .8rem; }
 section.corrige { font-size: .85rem; color: #444; }
 section.corrige h2 { font-size: 1rem; margin: 0 0 .3rem; }
@@ -65,7 +66,7 @@ export function appliquerOptionsFiche(html: string, { entete = true, corrige = '
     } else s.classList.add('sur-page')
   })
   const style = doc.createElement('style')
-  style.textContent = CSS
+  style.textContent = CSS_OPTIONS_FICHE
   // en premier : la fiche peut toujours préciser ses propres styles
   doc.head.prepend(style)
   return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML

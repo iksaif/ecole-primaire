@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { echapper } from './html.js'
+import { fournirPolices } from './page.ts'
 
 // Outils communs aux documents imprimables (fiches, affiches).
 // Les polices sont embarquées dans le build : tout fonctionne hors ligne.
@@ -92,16 +93,6 @@ export function supprimerPolicePerso(id) {
   try { localStorage.setItem(CLE_PERSO, JSON.stringify(policesPerso.value)) } catch {}
 }
 
-export const FORMATS = {
-  A4: { w: 210, h: 297 },
-  A3: { w: 297, h: 420 },
-}
-
-export function dimensionsPage(format = 'A4', orientation = 'portrait') {
-  const f = FORMATS[format] ?? FORMATS.A4
-  return orientation === 'landscape' ? { w: f.h, h: f.w } : { w: f.w, h: f.h }
-}
-
 const abs = url => new URL(url, window.location.href).href
 
 // Polices incluses (les polices ajoutées depuis un fichier sont gérées à part)
@@ -173,35 +164,6 @@ export function policeInstallee(police) {
 }
 
 export { echapper }
-
-// Document complet : chaque page est un <section class="page"> de taille fixe.
-// À l'écran les pages apparaissent comme des feuilles ; à l'impression, une par feuille.
-export function documentImpression({ titre, format = 'A4', orientation = 'portrait', css = '', pages }) {
-  const contenu = pages.join('') + css
-  const { w, h } = dimensionsPage(format, orientation)
-  return `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
-<title>${echapper(titre)}</title>
-<style>
-${cssPolices()}${policesPerso.value.filter(p => contenu.includes(p.id)).map(p => `
-@font-face { font-family: '${p.id}'; src: url(${p.dataUrl}); }`).join('')}
-@page { size: ${format} ${orientation}; margin: 0; }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { background: #e9ecef; }
-body { font-family: '${POLICE_SCRIPT}', Arial, sans-serif; color: #222;
-  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.page { width: ${w}mm; height: ${h}mm; overflow: hidden; position: relative; background: white;
-  margin: 0 auto 8mm; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
-@media print {
-  html, body { background: white; }
-  .page { margin: 0; box-shadow: none; break-after: page; }
-  .page:last-child { break-after: auto; }
-}
-${css}
-</style></head><body>
-${pages.map(p => `<section class="page">${p}</section>`).join('\n')}
-</body></html>`
-}
-
 // Imprime un document HTML via une iframe cachée (pas de pop-up à autoriser)
 export function imprimerDocument(html) {
   const iframe = document.createElement('iframe')
@@ -221,3 +183,8 @@ export function imprimerDocument(html) {
   if (doc.readyState === 'complete') lancer()
   else iframe.onload = lancer
 }
+
+// Document complet et dimensions des pages : src/utils/page.ts (pur, lisible par node) ; les @font-face viennent d'ici
+export { FORMATS, dimensionsPage, documentImpression } from './page.ts'
+fournirPolices(contenu => `${cssPolices()}${policesPerso.value.filter(p => contenu.includes(p.id)).map(p => `
+@font-face { font-family: '${p.id}'; src: url(${p.dataUrl}); }`).join('')}`)

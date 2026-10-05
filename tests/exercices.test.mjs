@@ -7,11 +7,12 @@ import { readdirSync, statSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { REGISTRE } from '../src/exercices/index.js'
+import { REGISTRE_DEV } from '../src/exercices/dev.ts'
 import { toutAuProgramme, estBonus, raisonHorsProgramme, jeuxDeReglages, langueContenuDe, lireVerdict } from '../src/exercices/outils.js'
 // noyau i18n (traduire : pluriels, interpolation, catalogue commun) : imports avec extension, lisible par node
 import { contenu } from '../src/i18n/index.js'
 import { creerRng } from '../src/utils/hasard.js'
-import { COMPETENCES, DOMAINES, NIVEAUX, contraintesDe, competenceDe } from '../src/data/programme.js'
+import { COMPETENCES, NIVEAUX, contraintesDe, competenceDe, domaineDe } from '../src/data/programme.js'
 import { ACTIVITES } from '../src/data/activites.js'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -27,18 +28,20 @@ function controler(problemes, message) {
 
 console.log('Registre')
 const dossiers = readdirSync(join(racine, 'src/exercices')).filter(d => statSync(join(racine, 'src/exercices', d)).isDirectory())
-const ids = REGISTRE.map(e => e.definition.id)
+// les exemples (REGISTRE_DEV) sont vérifiés comme les autres, mais ne sont pas au catalogue public (activites.js)
+const TOUS = [...REGISTRE, ...REGISTRE_DEV]
+const ids = TOUS.map(e => e.definition.id)
 controler(dossiers.filter(d => !ids.includes(d)).map(d => `${d} absent de src/exercices/index.js`), `${dossiers.length} dossier(s), tous dans le registre`)
 controler(ids.filter((id, i) => ids.indexOf(id) !== i).map(id => `${id} en double`), 'ids uniques')
 
-for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
+for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
   console.log(`\n${d.id}`)
 
   // ── Définition ──
   const pbs = []
   for (const cle of ['id', 'route', 'domaine', 'contenu', 'niveauDefaut', 'niveaux', 'fiches']) if (d[cle] === undefined) pbs.push(`${cle} manquant`)
   if (!['fr', 'interface'].includes(d.contenu)) pbs.push(`contenu « ${d.contenu} »`)
-  if (!DOMAINES.some(x => x.id === d.domaine)) pbs.push(`domaine ${d.domaine} inconnu`)
+  if (!domaineDe(d.domaine)) pbs.push(`domaine ${d.domaine} inconnu`)
   if (!d.niveaux[d.niveauDefaut]) pbs.push(`niveauDefaut ${d.niveauDefaut} absent des niveaux`)
   for (const [n, niv] of Object.entries(d.niveaux)) {
     if (!NIVEAUX.includes(n)) pbs.push(`${n} : classe inconnue`)
@@ -49,7 +52,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
       if (!k) pbs.push(`${n} : compétence ${id} inconnue de programme.js`)
       else if (!k.niveaux.includes(n) && !declarees.includes(id)) pbs.push(`${n} : ${id} n'est pas au programme (ni déclarée horsProgramme)`)
       // même matière suffit : Orthographe (vocabulaire) travaille aussi les accords (grammaire)
-      else if (k && DOMAINES.find(x => x.id === k.domaine)?.matiere !== DOMAINES.find(x => x.id === d.domaine)?.matiere) pbs.push(`${n} : ${id} est du domaine ${k.domaine}`)
+      else if (k && domaineDe(k.domaine)?.matiere !== domaineDe(d.domaine)?.matiere) pbs.push(`${n} : ${id} est du domaine ${k.domaine}`)
     }
     for (const h of niv.horsProgramme ?? []) {
       if (!h.raison) pbs.push(`${n} : horsProgramme ${h.option} sans raison`)
@@ -81,7 +84,8 @@ for (const { definition: d, generateur: g, fiche: f, textes } of REGISTRE) {
     }
   }
   const activite = ACTIVITES.find(a => a.to === d.route)
-  if (!activite) pbs.push(`route ${d.route} absente de activites.js`)
+  if (REGISTRE_DEV.some(e => e.definition === d)) { if (activite) pbs.push(`${d.route} (exemple) ne doit pas être au catalogue`) }
+  else if (!activite) pbs.push(`route ${d.route} absente de activites.js`)
   else if (activite.niveaux.join() !== Object.keys(d.niveaux).join()) pbs.push(`activites.js : niveaux ${activite.niveaux} ≠ ${Object.keys(d.niveaux)}`)
   controler(pbs, `définition valide (${Object.keys(d.niveaux).join(', ')} ; ${COMPETENCES.length} compétences connues)`)
 

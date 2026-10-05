@@ -1,17 +1,8 @@
-import { ref, computed, watch } from 'vue'
-import { chargerValeur, sauvegarder } from '../utils'
+import { computed } from 'vue'
 import { langueRegionale } from '../data/languesRegionales'
-import { SITE } from '../site'
-import { langue as langueInterface } from '../i18n'
+import { regionaleEffective, reglageRegionale } from '../langues/etat.ts'
 
-// Langue régionale activée sur tout le site ('' = aucune)
-// Par défaut celle du site (breton sur skoolik.app)
-const code = ref(chargerValeur('langue_regionale', SITE.langueRegionale))
-watch(code, v => sauvegarder('langue_regionale', v))
-
-// Interface en breton → fonctions bretonnes activées d'office
-const effectif = computed(() => code.value || (langueInterface.value === 'br' ? 'br' : ''))
-
+// Ancien socle : l'état vit désormais dans src/langues/etat.ts (voir aussi src/langues/useLangueRegionale.ts)
 export function useLangueRegionale() {
-  return { code: effectif, reglage: code, langue: computed(() => langueRegionale(effectif.value)) }
+  return { code: regionaleEffective, reglage: reglageRegionale, langue: computed(() => langueRegionale(regionaleEffective.value)) }
 }

@@ -20,4 +20,4 @@ export function metriquesPolice(police: string): { x: number, majuscule: number,
 export function policeInstallee(police: string): boolean
 export function echapper(s: unknown): string
 export function imprimerDocument(html: string): void
-export { FORMATS, dimensionsPage, documentImpression } from './page.js'
+export { FORMATS, dimensionsPage, documentImpression } from './page.ts'

@@ -1,5 +1,9 @@
 # Exercices au format « définition » (plan 10)
 
+> **Pour créer un exercice** : `npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <ids>`
+> (ou copier `exemple/`, voir `exemple/README.md`). L'exemple est visible avec `npm run dev` sur la page **`/dev`**, qui
+> liste tous les exemples ; il n'existe pas en production. Il se déclare avec `definir` (`src/noyau/definir.ts`), en TypeScript.
+
 Un exercice se déclare une fois ; ses niveaux, fiches et tests en découlent. Modèles : `heure/` (pilote),
 `monnaie/` (phase 2a, réglage à choix unique, `bonneReponse`) et `conjugaison/` (phase 2b : contenu toujours `fr`,
 réponses tapées au clavier comparées par `src/utils/reponses.js`, une partie = les lignes d'un tableau, `ecartsFiche`).
@@ -138,3 +142,11 @@ s'écrit en `.ts` contre `src/noyau/` : `types.ts` (`DefinitionExercice<R>`, `Ge
 types, pas d'`enum` (voir AGENTS.md). Le registre `index.js` lit les définitions des deux mondes (même structure) ;
 `npm run types` vérifie le tout.
 
+
+## Les exemples (développement seulement)
+
+`exemple/` est un exercice complet et minimal, vérifié comme les autres (`tests/exercices.test.mjs`, `tests/instantanes.test.mjs`)
+mais **hors du catalogue public** : il est dans `dev.ts` (`REGISTRE_DEV`), pas dans `REGISTRE` (`index.js`), que lisent le build, le
+catalogue (`activites.js`), la couverture et `npm run qualite`. Sa page est la route `/dev/exemple`, ajoutée par le routeur seulement sous
+`import.meta.env.DEV`. Ses compétences (`K.exemple…`, domaine `D.exemple`) sont des entrées fictives de `programme.ts`
+(`COMPETENCES_EXEMPLE`), absentes d'un build de production et de `COMPETENCES`.

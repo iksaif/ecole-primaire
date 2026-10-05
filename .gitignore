@@ -26,6 +26,9 @@ dist-ssr
 # Polices non redistribuables utilisées pour générer les PDF (Belle Allure, Écolier…)
 polices-locales/
 
+# Fiches PDF produites pour `npm run dev` (npm run fiches:dev)
+public/fiches/
+
 # Builds VPS et configuration de déploiement locale
 dist-*/
 .deploy.env

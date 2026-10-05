@@ -7,7 +7,8 @@
     "mathRandomVues": 2,
     "attentesFixes": 23,
     "erreursDeType": 0,
-    "importeursAncienSocle": 95
+    "importeursAncienSocle": 93,
+    "ancienMondeNonReporte": 162
   },
   "min": {
     "couverture": 54.3,

@@ -122,6 +122,9 @@ export const K = fort('K', {
   conjugaison2eGroupe: 'conjugaison-2e-groupe',
   conjugaisonPasseSimple: 'conjugaison-passe-simple',
   complements: 'complements',
+  exempleCompter: 'exemple-compter',
+  exempleRegle: 'exemple-regle',
+  exempleLire: 'exemple-lire',
 } as const satisfies Record<string, CompetenceId>)
 
 /** Domaines de src/data/programme.ts. */
@@ -140,6 +143,7 @@ export const D = fort('D', {
   vocabulaire: 'vocabulaire',
   grammaire: 'grammaire',
   cultureLitteraire: 'culture-litteraire',
+  exemple: 'exemple',
 } as const satisfies Record<string, DomaineId>)
 
 // Complétude : ne compile plus si le programme a une compétence ou un domaine absent de K ou D (relancer scripts/ids.mjs)

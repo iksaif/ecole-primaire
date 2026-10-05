@@ -1,0 +1,188 @@
+// Des registres aux fiches à produire. Lit les registres d'exercices et d'affiches de la base et en dérive, sans
+// navigateur et sans clic, les métadonnées et le HTML de chaque document :
+//   - une affiche : une entrée par variante et par langue (src/affiches/catalogue.ts), HTML par `genererAffiche`
+//     dans chacun de ses formats ;
+//   - un exercice : par classe et par langue de contenu, le bilan (réglages par défaut du niveau) et une entrée par
+//     fiche de `definition.fiches`, avec NB_VARIANTES tirages (graine fixe, dérivée du slug) ; HTML par
+//     `questionsFiche` puis `fiche`, les mêmes modules purs que l'app.
+// Les exemples (domaine fictif) n'y entrent qu'avec `avecExemples`, jamais en production.
+import { contenu } from '../../src/i18n/index.js'
+import { REGISTRE as AFFICHES } from '../../src/affiches/index.ts'
+import { entreesDe as entreesAffiche, lienDe } from '../../src/affiches/catalogue.ts'
+import { genererAffiche } from '../../src/affiches/generer.ts'
+import { reglagesDe } from '../../src/affiches/outils.ts'
+import { reglagesDuNiveau, langueContenuDe } from '../../src/noyau/reglages.ts'
+import { creerRng } from '../../src/utils/hasard.ts'
+import { NIVEAUX } from '../../src/data/classes.ts'
+import { competenceDe, domaineDe } from '../../src/data/programme.ts'
+import { POLICE_SCOLAIRE } from '../../src/impression/document.ts'
+import { CSS_OPTIONS_FICHE } from '../../src/noyau/optionsFiche.ts'
+import type { CompetenceVisee, Texte } from '../../src/telechargements/types.ts'
+import type { Classe, CompetenceId, DefinitionExercice, ModuleExercice } from '../../src/noyau/types.ts'
+import type { DefinitionAffiche, ModuleAffiche, TextesAffiche } from '../../src/affiches/types.ts'
+import { cssPoliceScolaire } from './polices.ts'
+import type { DocumentSource, FicheSource, MetaFiche } from './types.ts'
+
+/** Langues dont on écrit les textes (titres, descriptions) et pour lesquelles les exercices ont une entrée. */
+export const LANGUES = ['fr', 'br'] as const
+
+/** Fiches différentes tirées pour le bilan d'une classe, et pour une fiche par compétence. */
+export const NB_VARIANTES = 4
+export const NB_VARIANTES_COMPETENCE = 2
+
+/**
+ * Les exercices de la base saine publiés par le build. Vide : l'existant est déconnecté (plan 11). Un exercice reporté
+ * dans le modèle de `src/exercices/exemple/` s'ajoute ici (et sort de `REGISTRE` de index.js).
+ */
+export const EXERCICES_DE_LA_BASE: readonly ModuleExercice[] = []
+
+export interface OptionsRegistres {
+  /** ajoute les exercices et les affiches d'exemple (domaine fictif) */
+  avecExemples?: boolean
+  /** ajoute les exercices de l'ancien registre (src/exercices/index.js), pour comparer ou reporter */
+  avecAnciens?: boolean
+  /** ne garder que les fiches dont le slug commence ainsi (test, mise au point) */
+  prefixe?: string
+}
+
+/** Graine stable d'un texte : les PDF sont identiques d'un build à l'autre. */
+export const graineDe = (s: string): number => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7) % 1e6
+
+const suffixeLangue = (langue: string): string => (langue === 'fr' ? '' : `-${langue}`)
+
+/** Un texte dans les langues d'interface, d'après un catalogue ; le français seul quand les autres langues n'ont pas de version. */
+function texteMulti(textes: TextesAffiche | ModuleExercice['textes'], cle: string, repli: string): Texte {
+  const lu = (l: string): string | null => {
+    const v = contenu(textes, l).t(cle)
+    return v === cle ? null : v
+  }
+  const fr = lu('fr') ?? repli
+  const res: Texte = { fr }
+  for (const l of LANGUES) if (l !== 'fr') { const v = lu(l); if (v && v !== fr) res[l] = v }
+  return res
+}
+
+const competencesVisees = (ids: readonly CompetenceId[]): CompetenceVisee[] => ids.flatMap(id => {
+  const k = competenceDe(id)
+  return k ? [{ id, libelle: k.libelle, niveaux: [...k.niveaux], source: k.source }] : []
+})
+
+const estExemple = (domaine: string): boolean => !!domaineDe(domaine)?.devSeulement
+
+/** `/dev/affiches?affiche=x&variante=y` → { route, requete } */
+function lienPersonnaliser(lien: string): { route: string, requete: Record<string, string> } {
+  const [route, requete = ''] = lien.split('?')
+  return { route, requete: Object.fromEntries(new URLSearchParams(requete)) }
+}
+
+// ── Affiches ──
+
+function fichesAffiche(module: ModuleAffiche): FicheSource[] {
+  const d = module.definition as DefinitionAffiche
+  return entreesAffiche(module).map(e => {
+    const { variante, langue } = e.config
+    const v = d.variantes[variante]
+    const formats = d.formats.map(format => {
+      const config = reglagesDe(d, { variante, langue, format })
+      return { format, html: genererAffiche(module, config, { script: 'Andika' }).html }
+    })
+    const reglages = reglagesDe(d, { variante, langue }) as unknown as MetaFiche['reglages']
+    const description = texteMulti(module.textes, `variante.${variante}.description`, e.description)
+    return {
+      meta: {
+        slug: e.slug,
+        titre: texteMulti(module.textes, `variante.${variante}.titre`, e.titre),
+        titreCourt: texteMulti(module.textes, `variante.${variante}.court`, e.court),
+        description, descriptionLongue: description,
+        niveaux: [...v.niveaux], domaine: d.domaine, genre: 'affiche', langues: [langue], parent: null, famille: d.id,
+        personnaliser: lienPersonnaliser(lienDe(d, variante, langue)),
+        exemple: estExemple(d.domaine), competences: competencesVisees(v.competences), reglages,
+      },
+      documents: [{ id: 'affiche', titre: null, graine: null, formats }],
+    }
+  })
+}
+
+// ── Exercices ──
+
+/**
+ * Les options par défaut du cadre (« Sur la fiche » : en-tête gardé, corrigé sur une autre page) appliquées au HTML d'une
+ * fiche, sans DOM : la fiche balise `<section class="corrige">` (voir src/noyau/optionsFiche.ts).
+ */
+export function avecOptionsParDefaut(html: string): string {
+  return html
+    .replace(/<section class="corrige">/g, '<section class="corrige sur-page">')
+    .replace('<style>', `<style>${CSS_OPTIONS_FICHE}`)
+}
+
+/** HTML complet d'une fiche d'exercice : questions tirées avec la graine, mises en page avec Andika embarquée. */
+function htmlFicheExercice(module: ModuleExercice, niveau: Classe, reglagesFiche: Record<string, unknown>, langue: string, graine: number): string {
+  const { definition, generateur, fiche, textes } = module
+  const reglages = reglagesDuNiveau(definition, { niveau, ...reglagesFiche })
+  const T = contenu(textes, langue).t
+  const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T })
+  return avecOptionsParDefaut(fiche.fiche({ questions, reglages, T, langue, police: POLICE_SCOLAIRE, cssPolices: cssPoliceScolaire() }))
+}
+
+function fichesExercice(module: ModuleExercice): FicheSource[] {
+  const def: DefinitionExercice = module.definition
+  const res: FicheSource[] = []
+  const langues = [...new Set(LANGUES.map(l => langueContenuDe(def, l)))]
+  const titre = texteMulti(module.textes, 'titre', def.id)
+  for (const niveau of NIVEAUX.filter((n): n is Classe => !!def.niveaux[n])) {
+    const niv = def.niveaux[niveau]!
+    for (const langue of langues) {
+      const slugBilan = `exercices-${def.id}-${niveau}${suffixeLangue(langue)}`
+      const lignes = [{ fiche: null as null | (typeof def.fiches)[number], slug: slugBilan, ids: niv.competences }]
+      for (const f of def.fiches.filter(x => x.niveau === niveau)) {
+        lignes.push({ fiche: f, slug: `exercices-${def.id}-${niveau}-${f.id}${suffixeLangue(langue)}`, ids: [f.competence] })
+      }
+      for (const { fiche: f, slug, ids } of lignes) {
+        const nb = f ? NB_VARIANTES_COMPETENCE : NB_VARIANTES
+        const competences = competencesVisees(ids)
+        const libelles = competences.map(k => k.libelle).join(' ; ')
+        const description = texteMulti(module.textes, 'description', libelles)
+        const documents: DocumentSource[] = Array.from({ length: nb }, (_, k) => {
+          const graine = graineDe(slug) + k + 1
+          return {
+            id: `fiche-${k + 1}`, titre: nb > 1 ? { fr: `Fiche ${k + 1}`, br: `Fichenn ${k + 1}` } : null, graine,   // br: à relire
+            formats: [{ format: 'A4', html: htmlFicheExercice(module, niveau, f?.reglages ?? {}, langue, graine) }],
+          }
+        })
+        res.push({
+          meta: {
+            slug,
+            titre: f ? { fr: `${titre.fr} — ${competences[0]?.libelle ?? f.id}` } : titre,
+            titreCourt: f ? { fr: competences[0]?.libelle ?? f.id } : titre,
+            description, descriptionLongue: description,
+            niveaux: [niveau], domaine: def.domaine, genre: 'exercice', langues: [langue], famille: def.id,
+            parent: f ? slugBilan : null,
+            personnaliser: { route: def.route, requete: { mode: 'imprimer' } },
+            exemple: estExemple(def.domaine), competences,
+            reglages: reglagesDuNiveau(def, { niveau, ...(f?.reglages ?? {}) }) as unknown as MetaFiche['reglages'],
+          },
+          documents,
+        })
+      }
+    }
+  }
+  return res
+}
+
+/** Les fiches à produire, dans l'ordre des registres (affiches d'abord). */
+export async function fichesDesRegistres({ avecExemples = false, avecAnciens = false, prefixe = '' }: OptionsRegistres = {}): Promise<FicheSource[]> {
+  const affiches: ModuleAffiche[] = [...AFFICHES as ModuleAffiche[]]
+  const exercices: ModuleExercice[] = [...EXERCICES_DE_LA_BASE]
+  if (avecExemples) {
+    affiches.push(...(await import('../../src/affiches/exemples.ts')).EXEMPLES as ModuleAffiche[])
+    exercices.push(...(await import('../../src/exercices/dev.ts')).REGISTRE_DEV as unknown as ModuleExercice[])
+  }
+  if (avecAnciens) exercices.push(...(await import('../../src/exercices/index.js')).REGISTRE as unknown as ModuleExercice[])
+  const fiches = [...affiches.flatMap(fichesAffiche), ...exercices.flatMap(fichesExercice)]
+  const vues = new Set<string>()
+  for (const f of fiches) {
+    if (vues.has(f.meta.slug)) throw new Error(`slug « ${f.meta.slug} » produit deux fois (registres)`)
+    vues.add(f.meta.slug)
+  }
+  return fiches.filter(f => f.meta.slug.startsWith(prefixe))
+}

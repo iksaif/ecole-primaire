@@ -1,34 +1,37 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { existsSync, statSync, createReadStream } from 'node:fs'
-import { join, extname } from 'node:path'
+import { site } from './src/sites.ts'
 
-const TYPES = { '.html': 'text/html; charset=utf-8', '.pdf': 'application/pdf', '.jpg': 'image/jpeg', '.xml': 'application/xml', '.json': 'application/json' }
-
-// En dev, sert les fiches PDF déjà générées (dist/telechargements, voir scripts/telechargements.mjs)
-function telechargementsEnDev(base) {
+// Identité du site dans index.html (titre, description, adresse, couleur) : vient de src/sites.ts, choisi par VITE_SITE
+// (.env.<mode>) ; l'adresse publique peut être surchargée par VITE_SITE_URL (GitHub Pages)
+function identiteDuSite(env) {
+  const s = site(env.VITE_SITE)
+  const valeurs = { TITRE: s.titre, NOM: s.nom, DESCRIPTION: s.description, URL: env.VITE_SITE_URL || s.url, COULEUR: s.couleur }
+  const echapper = v => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   return {
-    name: 'telechargements-en-dev',
-    configureServer(server) {
-      server.middlewares.use(`${base}telechargements`, (req, res) => {
-        let f = join(process.cwd(), 'dist/telechargements', decodeURIComponent(req.url.split('?')[0]))
-        if (existsSync(f) && statSync(f).isDirectory()) f = join(f, 'index.html')
-        if (!existsSync(f)) {
-          // pas de page générée : message clair plutôt que l'app (qui tournerait à la mauvaise adresse)
-          res.statusCode = 404
-          res.setHeader('Content-Type', 'text/html; charset=utf-8')
-          return res.end(`<!DOCTYPE html><meta charset="utf-8"><title>Fiches non générées</title>
-<body style="font-family:system-ui;max-width:640px;margin:3rem auto;line-height:1.5">
-<h1>📥 Pages de téléchargement pas encore générées</h1>
-<p><code>${req.url}</code> n'existe pas dans <code>dist/telechargements/</code>.</p>
-<p>Lance <code>npm run build</code> (≈ 3 min : génère les PDF et les pages) puis recharge.
-Si un build est en cours, attends sa fin.</p><p><a href="${base}">← Retour à l'app</a></p>`)
-        }
-        res.setHeader('Content-Type', TYPES[extname(f)] ?? 'application/octet-stream')
-        // toujours la dernière version générée (pas de page périmée en cache)
-        res.setHeader('Cache-Control', 'no-cache')
-        createReadStream(f).pipe(res)
-      })
+    name: 'identite-du-site',
+    transformIndexHtml: html => html.replace(/%SITE_(TITRE|NOM|DESCRIPTION|URL|COULEUR)%/g, (_, k) => echapper(valeurs[k])),
+  }
+}
+
+// site.webmanifest (installation sur l'écran d'accueil) : fait partie de l'identité du site, pas de la génération des
+// fiches. Écrit au build ; servi tel quel par le serveur de dev (sinon il retomberait sur index.html).
+function manifesteDuSite(env, base) {
+  const s = site(env.VITE_SITE)
+  const manifeste = JSON.stringify({
+    name: s.nom, short_name: s.nom, lang: s.langueInterface, start_url: base, display: 'standalone',
+    background_color: '#f8f9fa', theme_color: s.couleur,
+    icons: [
+      { src: `${base}icone-192.png`, sizes: '192x192', type: 'image/png' },
+      { src: `${base}icone-512.png`, sizes: '512x512', type: 'image/png' },
+      { src: `${base}favicon.svg`, sizes: 'any', type: 'image/svg+xml' },
+    ],
+  }, null, 2)
+  return {
+    name: 'manifeste-du-site',
+    generateBundle() { this.emitFile({ type: 'asset', fileName: 'site.webmanifest', source: manifeste }) },
+    configureServer(serveur) {
+      serveur.middlewares.use(`${base}site.webmanifest`, (_, res) => { res.setHeader('Content-Type', 'application/manifest+json'); res.end(manifeste) })
     },
   }
 }
@@ -38,7 +41,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
   const base = env.VITE_BASE || '/ecole-primaire/'
   return {
-    plugins: [vue(), telechargementsEnDev(base)],
+    plugins: [vue(), identiteDuSite(env), manifesteDuSite(env, base)],
     base,
   }
 })

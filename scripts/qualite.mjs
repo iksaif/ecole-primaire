@@ -19,6 +19,11 @@
 //                    les anciens composants ConfigExercice…, exercices/outils.js, les raccourcis legacy data/programme.js,
 //                    data/classes.js, utils/hasard.js, utils/reponses.js, impression/document.js) : ne doit que baisser,
 //                    jusqu'à 0 (suppression de l'ancien socle avec le dernier exercice migré vers src/noyau/, plan 10)
+//   ancienMondeNonReporte  fichiers de src/ (js, ts, vue) qu'aucun point d'entrée de la base n'atteint par ses imports
+//                    (src/main.ts, scripts/fiches/commande.ts, vite.config.js, index.html) : ce qui reste de l'ancien monde
+//                    (exercices, affiches, impressions, catalogues) déconnecté en attendant son report (plan 11). Approximation :
+//                    les imports sont lus au texte (import/from/import()), un fichier atteint seulement par un chemin construit
+//                    à l'exécution compte comme non atteint. Ne doit que baisser, jusqu'à 0.
 //   erreursDeType    erreurs de `npm run types` (vue-tsc strict ; seuls les .ts, .vue et .d.ts comptent, pas les .js) : toujours 0
 // Compteurs (min) :
 //   couverture       % des couples compétence × classe de src/data/programme.ts qui ont au moins une ressource
@@ -26,7 +31,7 @@
 //   exercicesMigres  exercices interactifs du catalogue (activites.js, `fiche: true`, sous /maths, /francais,
 //                    /maternelle) passés au modèle src/exercices/ (dans le registre) : avancement de la phase 2
 import { createServer } from 'vite'
-import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'node:fs'
 import { join, dirname, relative } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
@@ -42,7 +47,8 @@ const fichiers = dossier => readdirSync(join(racine, dossier)).flatMap(f => {
 })
 const lire = f => readFileSync(join(racine, f), 'utf8')
 const compter = (texte, re) => (texte.match(re) || []).length
-const horsLangues = f => !f.startsWith('src/i18n/') && f !== 'src/data/languesRegionales.js'
+// hors des endroits où les langues sont nommées : catalogues et registre de langues, données régionales, réglages des sites
+const horsLangues = f => !f.startsWith('src/i18n/') && !f.startsWith('src/langues/') && f !== 'src/data/languesRegionales.js' && f !== 'src/sites.ts'
 const code = [...fichiers('src'), ...fichiers('scripts')].filter(f => f !== 'scripts/qualite.mjs')
 
 const CLASSE = '(?:PS|MS|GS|CP|CE1|CE2|CM1|CM2)'
@@ -93,6 +99,30 @@ const importeursAncienSocle = () => [...code, ...fichiers('tests')]
   .filter(f => !f.startsWith('src/noyau/') && !f.startsWith('src/exercices/exemple/'))
   .filter(f => ANCIEN_SOCLE.test(lire(f))).length
 
+// fichiers de src/ atteints depuis les points d'entrée de la base (voir l'en-tête : ancienMondeNonReporte)
+const ENTREES = ['src/main.ts', 'scripts/fiches/commande.ts', 'vite.config.js']
+const IMPORT = /(?:\bfrom|\bimport)\s*\(?\s*['"]([^'"]+)['"]/g
+function resoudre(depuis, spec) {
+  if (!spec.startsWith('.')) return null
+  const base = join(dirname(depuis), spec).replace(/\\/g, '/')
+  const variantes = [base, base.replace(/\.js$/, '.ts'), `${base}.ts`, `${base}.js`, `${base}.vue`, `${base}/index.ts`, `${base}/index.js`]
+  return variantes.find(v => existsSync(join(racine, v)) && statSync(join(racine, v)).isFile()) ?? null
+}
+function ancienMondeNonReporte() {
+  const vus = new Set(), pile = [...ENTREES]
+  while (pile.length) {
+    const f = pile.pop()
+    if (vus.has(f)) continue
+    vus.add(f)
+    for (const m of lire(f).matchAll(IMPORT)) {
+      const cible = resoudre(f, m[1])
+      if (cible && /\.(js|mjs|ts|vue)$/.test(cible)) pile.push(cible)
+    }
+  }
+  const non = fichiers('src').filter(f => !f.endsWith('.d.ts') && !vus.has(f))
+  return { valeur: non.length, detail: `${non.length} fichiers de src/ non atteints (sur ${fichiers('src').length})` }
+}
+
 const COMPTEURS = {
   brEnDur: () => code.filter(horsLangues).reduce((n, f) => n + compter(lire(f), /['"]br['"]/g), 0),
   importsBr: () => code.filter(horsLangues).filter(f => /from\s+['"][^'"]*i18n\/br\//.test(lire(f))).length,
@@ -100,6 +130,7 @@ const COMPTEURS = {
   vuesLongues: () => fichiers('src/views').filter(f => f.endsWith('.vue') && lire(f).split('\n').length > 600).length,
   mathRandomVues: () => fichiers('src/views').reduce((n, f) => n + compter(lire(f), /Math\.random\b/g), 0),
   importeursAncienSocle,
+  ancienMondeNonReporte,
   erreursDeType,
   attentesFixes: () => fichiers('tests').reduce((n, f) => n + compter(lire(f), /waitForTimeout\b/g), 0),
   couverture,

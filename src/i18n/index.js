@@ -7,9 +7,7 @@
 //   t('score', { n: 3, total: 5 })  → interpolation de {n} et {total}
 // Recherche : messages locaux de la langue → messages communs (commun.js) → français → la clé elle-même.
 // Les traductions bretonnes sont à faire relire par un brittophone (voir README).
-import { ref, watch } from 'vue'
-import { chargerValeur, sauvegarder } from '../utils/index.js'
-import { SITE } from '../site.js'
+import { langue } from '../langues/etat.ts'
 import { COMMUN } from './commun.js'
 import { choisirPluriel } from './pluriel.js'
 
@@ -18,12 +16,9 @@ export const LANGUES_INTERFACE = [
   { id: 'br', label: 'Brezhoneg', court: 'BR' },
 ]
 
-// Langue de l'interface : celle du site par défaut (breton sur skoolik.app), mémorisée ensuite
-export const langue = ref(chargerValeur('langue_interface', SITE.langue))
-watch(langue, v => {
-  sauvegarder('langue_interface', v)
-  if (typeof document !== 'undefined') document.documentElement.lang = v
-}, { immediate: true })
+// Langue de l'interface : un seul état pour les deux mondes (src/langues/etat.ts : défaut et langues permises du site,
+// mémorisée sous `langue_interface`)
+export { langue }
 
 function interpoler(texte, params) {
   if (!params || typeof texte !== 'string') return texte

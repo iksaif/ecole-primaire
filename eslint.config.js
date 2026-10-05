@@ -43,7 +43,7 @@ export default [
     // avec le dernier exercice migré. Les modules partagés (utils/index.js, i18n, utils/impression.js, ApercuImpression,
     // SignalerErreur…) restent permis. data/classes.ts, data/programme.ts, utils/hasard.ts, utils/reponses.ts et
     // impression/document.ts s'importent avec leur extension .ts : leurs anciens chemins .js sont des raccourcis.
-    files: ['src/noyau/**', 'src/exercices/exemple/**'],
+    files: ['src/noyau/**', 'src/exercices/exemple/**', 'src/affiches/**'],
     rules: {
       'no-restricted-imports': ['error', {
         patterns: [

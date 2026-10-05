@@ -4,7 +4,7 @@
   <AppFooter />
 </template>
 
-<script setup>
-import AppNav from './components/AppNav.vue'
-import AppFooter from './components/AppFooter.vue'
+<script setup lang="ts">
+import AppNav from './shell/AppNav.vue'
+import AppFooter from './shell/AppFooter.vue'
 </script>

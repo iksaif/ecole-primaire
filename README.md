@@ -105,7 +105,8 @@ npm install
 npm run dev               # http://localhost:5173/ecole-primaire/
 npm run dev:skoolik       # la version bretonne
 npm run build:app         # build de l'app seule (dist/)
-npm test                  # tests (Chrome sans interface, ~3 min)
+npm test                  # tests de la base : node (sites, langues, définitions) + pages dans Chrome sans interface
+npm run types             # vue-tsc strict (0 erreur)
 npm run lint              # ESLint, règles de correction seulement (pas de règle de style)
 npm run qualite           # compteurs qui ne doivent pas régresser (scripts/qualite-seuils.json)
 npm run i18n              # vérifie que les traductions sont complètes
@@ -118,18 +119,24 @@ Node 22 ou plus récent, et Google Chrome pour les tests. La CI (`.github/workfl
 
 ### Organisation
 
-- `src/views/` — une vue par exercice. Toutes utilisent le cadre commun `ConfigExercice` : onglets « Faire
-  l'exercice » / « Imprimer une fiche » (mode dans l'URL, `?mode=imprimer`), aperçu en direct. Une vue
-  fournit son formulaire et une fonction `htmlFiche()` qui renvoie le document à imprimer.
-- `src/impression/` — les générateurs de fiches (écriture, alphabet, nombres, calcul) et d'affiches
-  (`affiches/` : un cadre commun et un module par famille), partagés par l'app et par la génération des PDF
-  au build. `catalogue.js` liste les fiches et affiches toutes prêtes, chacune avec son domaine du programme.
-- `src/i18n/` — traductions : un catalogue par composant et par langue (`fr/…`, `br/…`), les règles de
-  chaque langue (`regles.js` : mutations bretonnes, ha/hag, élision, pluriels).
-- `src/data/` — catalogue des activités (niveaux, filtre par classe, domaine), langues régionales, et
-  `programme.js` : les programmes officiels (domaines, compétences, contraintes de chaque classe, avec leurs
-  sources). C'est lui qui fait foi pour les niveaux, et il range les fiches par domaine.
-- `src/utils/nombres.js` — nombres en lettres en français (orthographe rectifiée ou traditionnelle) et en breton.
+Base saine en TypeScript (plan 11, branche `base-saine`) ; l'ancien code est déconnecté, pas supprimé (`main` = production).
+
+- `src/sites.ts` — les sites (`ecoleprimaire`, `skoolik`), choisis par le mode Vite : identité, langues d'interface
+  proposées et par défaut, langue régionale par défaut et proposées, contact, dépôt. `index.html` en tire son titre.
+- `src/langues/` — le registre des langues (`registre.ts` : `LANGUES`, type `Langue`), un dossier par langue
+  (`fr/`, `br/` : `index.ts`, `regles.ts`, `nombres.ts`, `drapeau.ts`, `donnees.ts` pour une langue régionale,
+  `textes/`). Textes typés : le français est la source, les autres langues ont exactement les mêmes clés
+  (`satisfies Traductions<…>`). `useLangue()` donne `t('section.cle', params)` ; `useLangueRegionale()`.
+- `src/shell/`, `src/pages/`, `src/router/index.ts`, `src/main.ts` — en-tête, pied de page, pages de la base
+  (accueil, réglages, langue régionale, à propos, nouveautés) ; `/dev` et ses exemples en développement seulement.
+- `src/noyau/` — le socle d'un exercice ou d'une affiche (`definir`, jeu, réglages, fiche, composants) ;
+  `src/exercices/exemple/` et `src/affiches/exemple/` en sont les modèles.
+- `src/data/programme.ts` — les programmes officiels (domaines, compétences, contraintes de chaque classe, avec leurs
+  sources) : il fait foi pour les niveaux.
+- Ancien monde, non branché : `src/views/` (vues d'exercices), `src/impression/` (générateurs et catalogues),
+  `src/components/`, `src/composables/`, `src/i18n/` (catalogues par composant), `src/data/activites.js`. Ils sont
+  reportés un par un ; `npm run qualite` compte ce qui reste (`ancienMondeNonReporte`). Leurs anciens tests sont dans
+  `tests/ancien/` (hors de `npm test`).
 
 ### Fiches PDF toutes prêtes
 

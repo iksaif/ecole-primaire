@@ -73,7 +73,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
   // options communes (nbQ…) : le défaut commun fait partie des valeurs proposées
   for (const [cle, offertes] of Object.entries(d.options ?? {})) {
     if (!(cle in (d.reglages ?? {}))) pbs.push(`option commune ${cle} sans défaut dans reglages`)
-    else if (!offertes.includes(d.reglages[cle])) pbs.push(`défaut commun ${cle}=${d.reglages[cle]} hors des options`)
+    else for (const v of [d.reglages[cle]].flat()) if (!offertes.includes(v)) pbs.push(`défaut commun ${cle}=${v} hors des options`)   // choix unique ou multiple
   }
   for (const fi of d.fiches) {
     const niv = d.niveaux[fi.niveau]

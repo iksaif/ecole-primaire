@@ -1,14 +1,18 @@
-// Le catalogue des affiches toutes prêtes, dérivé des définitions : une entrée par variante et par langue. Données pures,
-// sérialisables (aucune fonction) : le build en écrit l'index et un fichier JSON par entrée (plan 11), et l'app les lit.
+// Le catalogue des affiches toutes prêtes, dérivé des définitions : une entrée par variante et par ensemble de langues.
+// Données pures, sérialisables (aucune fonction) : le build en écrit l'index et un fichier JSON par entrée (plan 11), et
+// l'app les lit. Chaque site ne publie que les entrées dont toutes les langues sont les siennes (catalogueDe).
 import { contenu } from '../i18n/index.js'
+import type { Site } from '../sites.ts'
 import type { Classe, CompetenceId, DomaineId, Reglages } from '../noyau/types.ts'
+import { genererAffiche } from './generer.ts'
+import { ensemblesDeLangues, reglagesDe } from './outils.ts'
 import { cleVariante } from './textes.ts'
 import type { DefinitionAffiche, ModuleAffiche } from './types.ts'
 
 /** Une affiche toute prête du catalogue. */
 export interface EntreeAffiche {
   slug: string
-  /** nom court (carte), titre et description de la page de téléchargement, dans la langue de l'affiche */
+  /** nom court (carte), titre et description de la page de téléchargement, dans la première langue de l'entrée */
   court: string
   titre: string
   description: string
@@ -17,39 +21,49 @@ export interface EntreeAffiche {
   domaine: DomaineId
   genre: 'affiche'
   competences: readonly CompetenceId[]
-  /** langue de l'affiche : l'entrée n'est proposée que sur les sites qui la publient */
+  /** langues de la feuille (une, ou plusieurs pour une affiche bilingue) ; l'entrée n'est publiée que par les sites qui les proposent toutes */
   langues: readonly string[]
-  /** réglages qui produisent l'affiche : genererAffiche(module(config.affiche), config) */
-  config: { affiche: string, variante: string, langue: string }
-  /** lien « Personnaliser » : le formulaire ouvert sur cette affiche, cette variante et cette langue */
+  /** nombre de pages de la feuille */
+  pages: number
+  /** réglages qui produisent l'affiche : genererAffiche(module(config.affiche), reglagesDe(…, config)) */
+  config: { affiche: string, variante: string, langue: string, langues: readonly string[] }
+  /** lien « Personnaliser » : le formulaire ouvert sur cette affiche, cette variante et ces langues */
   lien: string
 }
 
 /**
  * Slug publié : celui de la variante s'il existe (affiche reportée : ses liens ne changent pas), sinon
- * `affiche-<id>-<variante>` ; une langue autre que le français ajoute `-<langue>`.
+ * `affiche-<id>-<variante>` ; une langue autre que le français seul ajoute `-<langue>` (`-fr-br` pour les deux).
  */
-export const slugDe = (d: DefinitionAffiche, variante: string, langue: string): string =>
-  `${d.variantes[variante].slug ?? `affiche-${d.id}-${variante}`}${langue === 'fr' ? '' : `-${langue}`}`
+export const slugDe = (d: DefinitionAffiche, variante: string, langues: readonly string[]): string =>
+  `${d.variantes[variante].slug ?? `affiche-${d.id}-${variante}`}${langues.join() === 'fr' ? '' : `-${langues.join('-')}`}`
 
-/** Lien « Personnaliser » : la page de réglage ouverte sur cette affiche, cette variante et cette langue. */
-export const lienDe = (d: DefinitionAffiche, variante: string, langue: string): string =>
-  `${d.route}?affiche=${d.id}&variante=${variante}${langue === 'fr' ? '' : `&langue=${langue}`}`
+/** Lien « Personnaliser » : la page de réglage ouverte sur cette affiche, cette variante et ces langues. */
+export const lienDe = (d: DefinitionAffiche, variante: string, langue: string, langues: readonly string[] = [langue]): string =>
+  `${d.route}?affiche=${d.id}&variante=${variante}${langues.join() === 'fr' ? '' : `&langues=${langues.join(',')}`}`
 
-/** Les entrées de catalogue d'une affiche : une par variante et par langue. */
-export function entreesDe<R extends Reglages>({ definition, textes }: ModuleAffiche<R>): EntreeAffiche[] {
-  const d = definition as DefinitionAffiche
-  return Object.entries(d.variantes).flatMap(([id, v]) => d.langues.map(langue => {
-    const T = contenu(textes, langue).t
+/** Les entrées de catalogue d'une affiche : une par variante et par ensemble de langues. */
+export function entreesDe<R extends Reglages>(module: ModuleAffiche<R>): EntreeAffiche[] {
+  const d = module.definition as DefinitionAffiche
+  return Object.entries(d.variantes).flatMap(([id, v]) => ensemblesDeLangues(d).map(langues => {
+    const T = contenu(module.textes, langues[0]).t
+    const config = { variante: id, langues }
     return {
-      slug: slugDe(d, id, langue),
+      slug: slugDe(d, id, langues),
       court: T(cleVariante(id, 'court')), titre: T(cleVariante(id, 'titre')), description: T(cleVariante(id, 'description')),
-      niveaux: v.niveaux, domaine: d.domaine, genre: d.genre, competences: v.competences, langues: [langue],
-      config: { affiche: d.id, variante: id, langue }, lien: lienDe(d, id, langue),
+      niveaux: v.niveaux, domaine: d.domaine, genre: d.genre, competences: v.competences, langues,
+      pages: genererAffiche(module, config).nbPages,
+      config: { affiche: d.id, variante: id, langue: reglagesDe(d, config).langue, langues }, lien: lienDe(d, id, langues[0], langues),
     }
   }))
 }
 
-/** Le catalogue d'une liste d'affiches, filtré sur les langues du site. */
-export const catalogueDe = (modules: readonly ModuleAffiche<never>[], langues: readonly string[]): EntreeAffiche[] =>
-  modules.flatMap(m => entreesDe(m as ModuleAffiche)).filter(e => e.langues.some(l => langues.includes(l)))
+/** Les langues qu'un site publie : celles de son interface et ses langues régionales. */
+export const languesDuSite = (site: Pick<Site, 'languesInterface' | 'languesRegionales'>): readonly string[] =>
+  [...new Set<string>([...site.languesInterface, ...site.languesRegionales])]
+
+/** Le catalogue d'une liste d'affiches pour un site : les entrées dont toutes les langues sont proposées par le site. */
+export function catalogueDe(modules: readonly ModuleAffiche<never>[], site: Pick<Site, 'languesInterface' | 'languesRegionales'>): EntreeAffiche[] {
+  const langues = languesDuSite(site)
+  return modules.flatMap(m => entreesDe(m as ModuleAffiche)).filter(e => e.langues.every(l => langues.includes(l)))
+}

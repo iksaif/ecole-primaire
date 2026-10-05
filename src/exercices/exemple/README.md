@@ -1,7 +1,9 @@
-# Exemple d'exercice (développement seulement)
+# Exemple d'exercice simple (développement seulement)
 
-Point de départ de tout exercice : `npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <ids>`
-le copie (ou copier ce dossier à la main). Visible sur `/dev/exemple` avec `npm run dev`, absent du build.
+**Quand l'utiliser** : l'exercice n'a pas de corpus (des nombres, des figures, des opérations tirés au hasard), son contenu
+suit la langue de l'interface, et un seul catalogue de textes suffit. Pour un exercice de français ou à corpus, voir
+`../exemple-corpus/`. Point de départ : `npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <ids>`
+(modèle `simple`, par défaut) ou copier ce dossier. Visible sur `/dev/exemple` avec `npm run dev`, absent du build.
 Lire dans cet ordre, chaque fichier commente ses choix :
 
 | Fichier | Rôle |
@@ -11,6 +13,13 @@ Lire dans cet ordre, chaque fichier commente ses choix :
 | `fiche.ts` | mise en page de la fiche (`documentFiche`, corrigé), pure |
 | `textes.ts` | catalogues fr et br (`src/i18n/<langue>/views/dev/ExempleView.js`) |
 | `src/views/dev/ExempleView.vue` | la vue, mince : réglages, jeu, fiche |
+
+Ce que l'exemple montre : plusieurs niveaux avec réglages par niveau (`herite`) ; un choix multiple de **nombres**
+(`pas`, mémorisé tel quel) et de chaînes (`sens`) ; un **bonus** (`pas` 5 et `sens` « on descend » au CP) ; un réglage
+**hors programme** (`pas` 100, `exercices` « trouver la règle » au CP) ; une **compétence hors programme** (`horsProgramme:
+[{ competence, raison }]` du niveau CP : l'exercice la travaille malgré le programme, avec la raison ; jamais cochée par
+défaut, voir `tests/definir.test.mjs`) ; une fiche par compétence ; un verdict `{ ok, nuance }` ; une union de questions
+et des `switch` exhaustifs ; un pluriel dans le texte de la fiche.
 
 Vérifier : `npm run types`, `npm run lint`, `npm run i18n`, `node tests/exercices.test.mjs`,
 `npm run instantanes -- --maj <id>` (puis sans `--maj`).

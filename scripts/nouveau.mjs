@@ -1,12 +1,14 @@
 // Crée un exercice neuf à partir du modèle src/exercices/exemple/ (voir src/exercices/README.md).
-//   npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <id,id> [--matiere maths|francais|maternelle]
+//   npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <id,id> [--modele simple|corpus] [--matiere maths|francais|maternelle]
+//   modèles : simple (src/exercices/exemple/, un catalogue de textes) ou corpus (src/exercices/exemple-corpus/ : français
+//   seulement, corpus dans src/data/<id>.ts, textes d'interface à part)
 //   npm run nouveau -- affiche <id> "<Titre>"     (voir scripts/nouveau-affiche.mjs)
 //   npm run nouveau -- exercice suites "Les suites" --domaine nombres-calcul --competences ajouter-dizaines,suites-nombres
 // Ce que le script écrit :
-//   src/exercices/<id>/              copie de exemple/ (id, titre, domaine et compétences remplacés)
-//   src/views/<matiere>/<Id>View.vue   copie de src/views/dev/ExempleView.vue
+//   src/exercices/<id>/              copie du modèle (id, titre, domaine et compétences remplacés) ; modèle corpus : et src/data/<id>.ts
+//   src/views/<matiere>/<Id>View.vue   copie de la vue du modèle (src/views/dev/)
 //   src/i18n/{fr,br}/views/<matiere>/<Id>View.js   catalogues copiés (titre breton à traduire)
-// et il ajoute, sans rien réécrire d'autre : 5 lignes au registre (src/exercices/index.js), 1 route (src/router/index.js)
+// et il ajoute, sans rien réécrire d'autre : 5 lignes au registre (src/exercices/index.js), 1 route (src/router/index.ts)
 // et 3 lignes de catalogue (src/data/activites.js). Tout est calculé avant d'écrire : si une ancre manque dans l'un de ces
 // trois fichiers (ils changent), rien n'est écrit et le script dit ce qui bloque.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, rmSync } from 'node:fs'
@@ -24,6 +26,13 @@ const option = nom => { const i = args.indexOf(`--${nom}`); return i < 0 ? null 
 const positionnels = args.filter((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')))
 const [commande, id, titre] = positionnels
 const matiere = option('matiere') ?? 'maths'
+// les modèles : dossier copié, vue, compétences fictives à remplacer, et le titre qui sert d'exemple
+const MODELES = {
+  simple: { dossier: 'exemple', vue: 'ExempleView', fictives: ['K.exempleCompter', 'K.exempleRegle'], titre: 'Suites de nombres' },
+  corpus: { dossier: 'exemple-corpus', vue: 'ExempleCorpusView', fictives: ['K.exempleSynonymes'], titre: 'Les synonymes', data: 'src/data/exemple-corpus.ts' },
+}
+const modeleNom = option('modele') ?? 'simple'
+const modele = MODELES[modeleNom]
 const domaine = option('domaine')
 const competences = (option('competences') ?? '').split(',').filter(Boolean)
 const USAGE = `usage : npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <id,id> [--matiere maths|francais|maternelle]
@@ -36,17 +45,19 @@ if (commande === 'affiche') {
 }
 if (commande !== 'exercice' || !id || !titre) echec(USAGE)
 if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(id) || id === 'exemple') echec(`identifiant « ${id} » invalide (minuscules, chiffres et tirets ; pas « exemple »)`)
+if (!modele) echec(`--modele : simple ou corpus (reçu : ${modeleNom})`)
 if (!['maths', 'francais', 'maternelle'].includes(matiere)) echec(`--matiere : maths, francais ou maternelle (reçu : ${matiere})`)
 if (!domaine || !domaineDe(domaine)) echec(`--domaine manquant ou inconnu.\n${USAGE}`)
 if (!competences.length) echec(`--competences manquant : au moins une compétence réelle de src/data/programme.ts.\n${USAGE}`)
 for (const k of competences) if (!competenceDe(k) || competenceDe(k).devSeulement) echec(`compétence « ${k} » inconnue de src/data/programme.ts`)
 if (existsSync(chemin('src/exercices', id))) echec(`src/exercices/${id}/ existe déjà`)
+if (modele.data && existsSync(chemin('src/data', `${id}.ts`))) echec(`src/data/${id}.ts existe déjà`)
 
 const camel = s => s.replace(/-(\w)/g, (_, c) => c.toUpperCase())
 const pascal = s => camel(s).replace(/^./, c => c.toUpperCase())
 const nomVue = `${pascal(id)}View`
 const route = `/${matiere}/${id}`
-const ancien = { vue: 'src/views/dev/ExempleView.vue', fr: 'src/i18n/fr/views/dev/ExempleView.js', br: 'src/i18n/br/views/dev/ExempleView.js' }
+const ancien = { vue: `src/views/dev/${modele.vue}.vue`, fr: `src/i18n/fr/views/dev/${modele.vue}.js`, br: `src/i18n/br/views/dev/${modele.vue}.js` }
 const neuf = { vue: `src/views/${matiere}/${nomVue}.vue`, fr: `src/i18n/fr/views/${matiere}/${nomVue}.js`, br: `src/i18n/br/views/${matiere}/${nomVue}.js` }
 for (const f of Object.values(neuf)) if (existsSync(chemin(f))) echec(`${f} existe déjà`)
 
@@ -55,27 +66,37 @@ const sortie = new Map()   // chemin relatif → contenu
 const lire = f => readFileSync(chemin(f), 'utf8')
 const remplacer = (texte, de, vers) => { if (!texte.includes(de)) echec(`« ${de} » introuvable dans le modèle : le script est en retard sur exemple/`); return texte.replaceAll(de, vers) }
 
-for (const nom of readdirSync(chemin('src/exercices/exemple')).filter(n => statSync(chemin('src/exercices/exemple', n)).isFile())) {
-  let t = lire(`src/exercices/exemple/${nom}`)
+// textes d'un fichier copié : le titre en tête, le nom du modèle partout où il désigne l'exercice
+const titreJs = titre.replaceAll("'", "\\'")
+const adapter = t => {
+  t = t.replace(/^\/\/ Exemple d'exercice[^—\n]*— /m, `// ${titre} — `)
+  t = t.replaceAll(`'${modele.titre}'`, `'${titreJs}'`)
+  if (modeleNom === 'corpus') t = t.replaceAll('exemple-corpus', id)
+  return t
+}
+
+for (const nom of readdirSync(chemin('src/exercices', modele.dossier)).filter(n => statSync(chemin('src/exercices', modele.dossier, n)).isFile() && n.endsWith('.ts'))) {
+  let t = adapter(lire(`src/exercices/${modele.dossier}/${nom}`))
   if (nom === 'definition.ts') {
-    t = remplacer(t, "id: 'exemple'", `id: '${id}'`)
-    t = remplacer(t, "route: '/dev/exemple'", `route: '${route}'`)
+    if (modeleNom === 'simple') {
+      t = remplacer(t, "id: 'exemple'", `id: '${id}'`)
+      t = remplacer(t, "route: '/dev/exemple'", `route: '${route}'`)
+    } else {
+      t = remplacer(t, `route: '/dev/${id}'`, `route: '${route}'`)
+    }
     t = remplacer(t, 'D.exemple', `D.${camel(domaine)}`)
-    // les deux compétences fictives deviennent les vraies (une seule : elle sert deux fois)
-    const [a, b = a] = competences.map(k => `K.${camel(k)}`)
-    t = remplacer(t, 'K.exempleCompter', a)
-    t = remplacer(t, 'K.exempleRegle', b)
+    // les compétences fictives deviennent les vraies (s'il y en a moins, la première sert plusieurs fois)
+    const reelles = competences.map(k => `K.${camel(k)}`)
+    modele.fictives.forEach((f, i) => { t = remplacer(t, f, reelles[i] ?? reelles[0]) })
     t = t.replace(/\/\/ Programme :[\s\S]*?\n(?=import)/, '// Programme : les compétences de src/data/programme.ts (K.…) et le domaine (D.…) de l\'exercice.\n')
-    t = t.replace(/\/\/ Exemple d'exercice — /, `// ${titre} — `)
   }
-  if (nom === 'textes.ts') {
-    t = remplacer(t, 'views/dev/ExempleView.js', `views/${matiere}/${nomVue}.js`)
-  }
+  if (nom === 'textes.ts') t = remplacer(t, `views/dev/${modele.vue}.js`, `views/${matiere}/${nomVue}.js`)
   sortie.set(`src/exercices/${id}/${nom}`, t)
 }
-sortie.set(neuf.vue, remplacer(lire(ancien.vue), 'exercices/exemple/', `exercices/${id}/`))
-sortie.set(neuf.fr, lire(ancien.fr).replace("titre: 'Suites de nombres'", `titre: '${titre.replaceAll("'", "\\'")}'`).replace(/exemple d'exercice/, titre))
-sortie.set(neuf.br, lire(ancien.br).replace(/titre: '[^']*', \/\/ br: à relire/, `titre: '${titre.replaceAll("'", "\\'")}', // br: à relire (non traduit)`).replace(/exemple d'exercice/, titre))
+if (modele.data) sortie.set(`src/data/${id}.ts`, adapter(lire(modele.data)))
+sortie.set(neuf.vue, modeleNom === 'corpus' ? adapter(lire(ancien.vue)) : remplacer(adapter(lire(ancien.vue)), 'exercices/exemple/', `exercices/${id}/`))
+sortie.set(neuf.fr, adapter(lire(ancien.fr)).replace(/exemple d'exercice[^(\n]*/, titre))
+sortie.set(neuf.br, adapter(lire(ancien.br)).replace(/titre: '[^']*', \/\/ br: à relire/, `titre: '${titreJs}', // br: à relire (non traduit)`).replace(/exemple d'exercice[^(\n]*/, titre))
 
 // ── Les trois fichiers existants : une insertion chacun, sur une ancre qui doit exister ──
 function inserer(texte, ancre, ajout, apres = true) {
@@ -103,8 +124,8 @@ modifier('src/exercices/index.js', [
     `import ${nom}Definition from './${id}/definition.ts'\nimport * as ${nom}Generateur from './${id}/generateur.ts'\nimport * as ${nom}Fiche from './${id}/fiche.ts'\nimport { TEXTES as ${nom}Textes } from './${id}/textes.ts'\n`],
   [/(?<=export const REGISTRE = \[\n[\s\S]*?\n)(?=\]\n)/, `  { definition: ${nom}Definition, generateur: ${nom}Generateur, fiche: ${nom}Fiche, textes: ${nom}Textes },\n`, false],
 ])
-modifier('src/router/index.js', [
-  [/(?<=const routes = \[\n[\s\S]*?\n)(?=\]\n)/, `  { path: '${route}', component: () => import('../views/${matiere}/${nomVue}.vue') },\n`, false],
+modifier('src/router/index.ts', [
+  [/(?<=const routes(?:: RouteRecordRaw\[\])? = \[\n[\s\S]*?\n)(?=\]\n)/, `  { path: '${route}', component: () => import('../views/${matiere}/${nomVue}.vue') },\n`, false],
 ])
 modifier('src/data/activites.js', [
   [/^import \w+ from '\.\.\/exercices\/[\w-]+\/definition\.js'\n(?![\s\S]*^import \w+ from '\.\.\/exercices\/[\w-]+\/definition\.js')/m,
@@ -129,7 +150,7 @@ try {
 
 console.log(`✓ exercice « ${id} » créé : ${route}
   src/exercices/${id}/   ${neuf.vue}   catalogues ${neuf.fr} et ${neuf.br}
-  inscrit dans src/exercices/index.js, src/router/index.js et src/data/activites.js (icône et description à compléter)
+  inscrit dans src/exercices/index.js, src/router/index.ts et src/data/activites.js (icône et description à compléter)
 Ensuite :
   1. adapter définition, générateur, fiche et textes (les commentaires du modèle expliquent chaque choix) ;
   2. npm run types && npm run lint && npm run i18n && node tests/exercices.test.mjs ;

@@ -5,6 +5,7 @@ import { definir, choix, cases, herite } from '../src/noyau/definir.ts'
 import { K, D } from '../src/noyau/ids.ts'
 import { COMPETENCES, COMPETENCES_EXEMPLE, DOMAINES, DOMAINES_EXEMPLE } from '../src/data/programme.ts'
 import exemple from '../src/exercices/exemple/definition.ts'
+import { reglagesDuNiveau, raisonHorsProgramme, toutAuProgramme } from '../src/noyau/reglages.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const base = { id: 't', route: '/dev/t', domaine: D.exemple, competences: [K.exempleCompter, K.exempleRegle] }
@@ -53,5 +54,17 @@ const ids = [...COMPETENCES, ...COMPETENCES_EXEMPLE].map(c => c.id).sort()
 verifier(JSON.stringify(Object.values(K).sort()) === JSON.stringify(ids), 'K contient toutes les compétences du programme (node scripts/ids.mjs sinon)')
 verifier(JSON.stringify(Object.values(D).sort()) === JSON.stringify([...DOMAINES, ...DOMAINES_EXEMPLE].map(x => x.id).sort()), 'D contient tous les domaines du programme')
 verifier(exemple.id === 'exemple', 'la définition de l\'exemple se charge')
+
+console.log('Choix multiple de nombres')
+const lus = reglagesDuNiveau(exemple, { niveau: 'ce1', pas: [5, 10] })
+verifier(JSON.stringify(lus.pas) === '[5,10]', 'une liste de nombres mémorisée reste une liste de nombres')
+verifier(JSON.stringify(reglagesDuNiveau(exemple, { niveau: 'ce1', pas: ['5'] }).pas) === '[2,5,10,100]', 'des chaînes à la place des nombres : retour au défaut')
+verifier(JSON.stringify(reglagesDuNiveau(exemple, { niveau: 'ce1', pas: [7, 5] }).pas) === '[5]', 'une valeur non proposée est retirée')
+
+console.log('Compétence hors programme (niveau CP de l\'exemple)')
+const cp = exemple.niveaux.cp
+verifier(cp.competences.includes(K.exempleRegle) && cp.horsProgramme.some(h => h.option === K.exempleRegle && h.raison), 'déclarée hors programme, avec sa raison')
+verifier(!cp.reglages.exercices.includes('regle') && !toutAuProgramme(exemple, 'cp').exercices.includes('regle'), 'jamais cochée par défaut (ni dans « tout au programme »)')
+verifier(!!raisonHorsProgramme(exemple, 'cp', 'exercices', 'regle') && !!raisonHorsProgramme(exemple, 'cp', 'pas', 100), 'les réglages hors programme ont leur raison')
 
 process.exit(nbEchecs() ? 1 : 0)

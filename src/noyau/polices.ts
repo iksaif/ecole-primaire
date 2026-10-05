@@ -24,6 +24,7 @@ const choix: Ref<ChoixPolices> = ref(chargerReglages('polices', DEFAUT))
 watch(choix, v => sauvegarder('polices', v), { deep: true })
 
 const installees: Ref<string[]> = ref([])
+const installeesAttache: Ref<string[]> = ref([])
 const pret = ref(false)
 let detection: Promise<void> | null = null
 
@@ -31,6 +32,7 @@ let detection: Promise<void> | null = null
 function detecter() {
   detection ??= chargerPolices().then(() => {
     installees.value = POLICES_CONNUES.script.filter(policeInstallee)
+    installeesAttache.value = POLICES_CONNUES.attache.filter(policeInstallee)
     pret.value = true
   })
   return detection
@@ -42,6 +44,16 @@ export const disponibles: ComputedRef<PoliceDisponible[]> = computed(() => [
   ...installees.value.map(id => ({ id, label: `${id} (installée)` })),
   ...policesPerso.value.filter(p => p.type === 'script').map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true })),
 ])
+
+/** Les polices proposées pour un type d'écriture : incluses, installées, ajoutées depuis un fichier (affiches à polices par type). */
+export function disponiblesDe(type: TypePolice): ComputedRef<PoliceDisponible[]> {
+  if (type === 'script') return disponibles
+  return computed(() => [
+    ...POLICES_INCLUSES[type],
+    ...installeesAttache.value.map(id => ({ id, label: `${id} (installée)` })),
+    ...policesPerso.value.filter(p => p.type === type).map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true })),
+  ])
+}
 
 // Si la police mémorisée n'est plus disponible (autre ordinateur…), on revient à celle incluse
 watch([disponibles, pret], () => {

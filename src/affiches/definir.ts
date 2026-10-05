@@ -11,7 +11,8 @@ import { NIVEAUX } from '../data/classes.ts'
 import { decrireChoix, estChoix } from '../noyau/definir.ts'
 import type { SpecReglages, ReglagesDe } from '../noyau/definir.ts'
 import type { Classe, CompetenceId, DomaineId, Reglages, ValeurOption } from '../noyau/types.ts'
-import type { DefinitionAffiche, Format, Orientation, VarianteAffiche } from './types.ts'
+import { CODES } from '../langues/registre.ts'
+import type { DefinitionAffiche, Format, Orientation, PlanFormulaire, PoliceAffiche, VarianteAffiche } from './types.ts'
 
 export { choix, cases } from '../noyau/definir.ts'
 
@@ -32,8 +33,16 @@ export interface SpecAffiche<C extends SpecReglages, V extends Record<string, Sp
   orientation?: Orientation
   /** défaut : A4 et A3 */
   formats?: readonly Format[]
-  /** défaut : français seulement */
+  /** langues de contenu ; défaut : français seulement */
   langues?: readonly string[]
+  /** plusieurs langues sur la même feuille (réglage « langues affichées ») ; défaut : non, une langue par feuille */
+  bilingue?: boolean
+  /** police du contenu ; défaut : un seul choix (`{ mode: 'unique' }`). Le titre reste dans la police de base. */
+  police?: PoliceAffiche
+  /** le dessin a du hasard (réglage `graine`, bouton « Nouvelle ») ; défaut : non */
+  hasard?: boolean
+  /** groupes, ordre et « visible si » du formulaire */
+  formulaire?: PlanFormulaire
   /** défaut : /imprimer/affiches */
   route?: string
   marge?: number
@@ -42,11 +51,14 @@ export interface SpecAffiche<C extends SpecReglages, V extends Record<string, Sp
   competences: readonly CompetenceId[]
   /** réglages communs à toutes les variantes */
   reglages?: C
-  variantes: V
+  /** les variantes par identifiant, ou une fonction pure qui les produit (niveaux × un paramètre…) : elle est appelée ici */
+  variantes: V | (() => V)
 }
 
 // noms réservés : ce sont les réglages de la feuille, communs à toutes les affiches
-const RESERVES = ['variante', 'format', 'orientation', 'langue']
+const RESERVES = ['variante', 'format', 'orientation', 'langue', 'langues', 'titre', 'polices', 'graine']
+// réglages de la feuille que le formulaire peut placer dans un groupe ou rendre conditionnels
+const DE_LA_FEUILLE = ['langues', 'titre', 'polices', 'graine']
 
 export function definirAffiche<C extends SpecReglages = {}, V extends Record<string, SpecVariante> = {}>(
   spec: SpecAffiche<C, V>,
@@ -61,6 +73,9 @@ export function definirAffiche<C extends SpecReglages = {}, V extends Record<str
   const formats = spec.formats ?? ['A4', 'A3']
   const langues = spec.langues ?? ['fr']
   if (!formats.length || !langues.length) erreur('au moins un format et une langue')
+  for (const l of langues) if (!CODES.includes(l as never)) erreur(`langue « ${l} » absente du registre (src/langues/registre.ts)`)
+  const police: PoliceAffiche = spec.police ?? { mode: 'unique' }
+  if (police.mode === 'parType' && !police.types.length) erreur('police parType : au moins un type')
 
   const reglages: Reglages = {}
   const options: Record<string, ValeurOption[]> = {}
@@ -73,7 +88,7 @@ export function definirAffiche<C extends SpecReglages = {}, V extends Record<str
     options[cle] = d.options
   }
 
-  const declarees = spec.variantes as Record<string, SpecVariante>
+  const declarees = (typeof spec.variantes === 'function' ? spec.variantes() : spec.variantes) as Record<string, SpecVariante>
   const ids = Object.keys(declarees)
   if (!ids.length) erreur('aucune variante')
   const variantes: Record<string, VarianteAffiche> = {}
@@ -105,9 +120,18 @@ export function definirAffiche<C extends SpecReglages = {}, V extends Record<str
     variantes[vid] = v
   }
 
+  // le formulaire ne parle que de réglages qui existent
+  const formulaire: PlanFormulaire = spec.formulaire ?? {}
+  const connus = new Set([...DE_LA_FEUILLE, ...Object.keys(options), ...Object.values(variantes).flatMap(v => Object.keys(v.reglages))])
+  for (const cle of [...(formulaire.groupes ?? []).flatMap(g => g.reglages), ...Object.keys(formulaire.visibleSi ?? {})]) {
+    if (!connus.has(cle)) erreur(`formulaire : réglage « ${cle} » inconnu`)
+  }
+  for (const [cle, c] of Object.entries(formulaire.visibleSi ?? {})) if (!connus.has(c.reglage)) erreur(`formulaire : « ${cle} » visible si « ${c.reglage} », réglage inconnu`)
+
   // les types de ReglagesDe décrivent ce que les contrôles ci-dessus viennent de vérifier : un seul point de conversion
   return {
     id, domaine: spec.domaine, genre: 'affiche', orientation: spec.orientation ?? 'portrait', formats, langues,
+    bilingue: spec.bilingue ?? false, police, hasard: spec.hasard ?? false, formulaire,
     route: spec.route ?? '/imprimer/affiches', marge: spec.marge, hTitre: spec.hTitre, reglages, options, variantes,
   } as unknown as DefinitionAffiche<ReglagesDe<C, V>>
 }

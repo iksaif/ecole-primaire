@@ -124,6 +124,7 @@ export const K = fort('K', {
   complements: 'complements',
   exempleCompter: 'exemple-compter',
   exempleRegle: 'exemple-regle',
+  exempleSynonymes: 'exemple-synonymes',
   exempleLire: 'exemple-lire',
 } as const satisfies Record<string, CompetenceId>)
 

@@ -26,7 +26,7 @@ const PLAFOND: Record<string, number> = { cp: 100, ce1: 1000, ce2: 10000 }
 
 function question(niveau: Classe, reglages: Config, rng: ParamsGenerateur<Reglages>['rng']): Question {
   // Toujours tirer dans le même ordre : même graine, mêmes questions, donc même fiche (instantanés).
-  const { pas } = reglages
+  const pas = rng.choisir(reglages.pas)   // plusieurs pas cochés : un par question
   const descend = rng.choisir(reglages.sens) === 'descend'
   const type = rng.choisir(reglages.exercices)
   const base = pas >= 10 ? 10 : 1                                   // compter de 10 en 10 : départ « rond »

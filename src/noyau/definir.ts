@@ -28,10 +28,10 @@ interface ChoixQuelconque {
 }
 
 // Sans `defaut` : s'il y était, TypeScript en tirerait un `T` élargi à ValeurOption pour chaque appel de choix().
-type ChoixLu = ChoixQuelconque & { readonly defaut: ValeurOption | string[] }
+type ChoixLu = ChoixQuelconque & { readonly defaut: ValeurOption | ValeurOption[] }
 
 /** Un réglage à choix, décrit une fois. T : le type de sa valeur (une valeur, ou une liste pour un choix multiple). */
-export interface Choix<T extends ValeurOption | string[]> extends ChoixQuelconque {
+export interface Choix<T extends ValeurOption | ValeurOption[]> extends ChoixQuelconque {
   readonly defaut: T
 }
 
@@ -52,7 +52,7 @@ export function choix<const V extends ValeurOption, const B extends ValeurOption
 }
 
 /** Choix multiple (cases à cocher) : `cases(['lire', 'placer'])`, tout coché par défaut (`defaut` pour une partie). */
-export function cases<const V extends string, const B extends string = never, const H extends string = never>(
+export function cases<const V extends string | number, const B extends string | number = never, const H extends string | number = never>(
   valeurs: readonly V[],
   { defaut = valeurs, bonus = [], horsProgramme = [] }: { defaut?: readonly NoInfer<V>[] } & Ecarts<B, H> = {},
 ): Choix<(V | B | H)[]> {
@@ -140,7 +140,7 @@ export function decrireChoix(cle: string, choix: ChoixQuelconque, ou: string, er
   }
   if (Array.isArray(v.defaut) && !v.defaut.length) erreur(`${lieu} : défaut vide`)
   for (const h of v.horsProgramme) if (!h.raison) erreur(`${lieu} : horsProgramme « ${h.option} » sans raison`)
-  return { defaut: v.defaut, options: proposees as ValeurOption[] }
+  return { defaut: v.defaut as ValeurReglage, options: proposees as ValeurOption[] }
 }
 
 // ── definir ──

@@ -33,7 +33,7 @@ const outDir = resolve(racine, values.outDir)
 if (values.mode === 'production' && values['avec-exemples']) throw new Error('--avec-exemples : jamais dans un build de production (donner un --mode de développement)')
 
 installerPolices()
-const fiches = await fichesDesRegistres({ avecExemples: values['avec-exemples'], avecAnciens: values['avec-anciens'], prefixe: values.prefixe })
+const fiches = await fichesDesRegistres({ avecExemples: values['avec-exemples'], avecAnciens: values['avec-anciens'], prefixe: values.prefixe, site: values.mode })
 console.log(`Fiches (${values.mode}) → ${values.outDir}/fiches/ : ${fiches.length} à produire`)
 
 const debut = performance.now()

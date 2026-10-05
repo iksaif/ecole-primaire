@@ -145,8 +145,25 @@ types, pas d'`enum` (voir AGENTS.md). Le registre `index.js` lit les définition
 
 ## Les exemples (développement seulement)
 
-`exemple/` est un exercice complet et minimal, vérifié comme les autres (`tests/exercices.test.mjs`, `tests/instantanes.test.mjs`)
-mais **hors du catalogue public** : il est dans `dev.ts` (`REGISTRE_DEV`), pas dans `REGISTRE` (`index.js`), que lisent le build, le
-catalogue (`activites.js`), la couverture et `npm run qualite`. Sa page est la route `/dev/exemple`, ajoutée par le routeur seulement sous
-`import.meta.env.DEV`. Ses compétences (`K.exemple…`, domaine `D.exemple`) sont des entrées fictives de `programme.ts`
-(`COMPETENCES_EXEMPLE`), absentes d'un build de production et de `COMPETENCES`.
+Deux exercices complets et minimaux, vérifiés comme les autres (`tests/exercices.test.mjs`, `tests/instantanes.test.mjs`) mais
+**hors du catalogue public** : ils sont dans `dev.ts` (`REGISTRE_DEV`), pas dans `REGISTRE` (`index.js`), que lisent le build, le
+catalogue (`activites.js`), la couverture et `npm run qualite`.
+- `exemple/` — **simple** : suites de nombres, un catalogue de textes ; pour un exercice sans corpus.
+- `exemple-corpus/` — **à corpus** : synonymes, contenu toujours en français, corpus dans `src/data/`, textes d'interface à part.
+
+Leurs pages sont les routes `/dev/exemple` et `/dev/exemple-corpus`, ajoutées par le routeur seulement sous `import.meta.env.DEV`
+(liste sur `/dev`). Leurs compétences (`K.exemple…`, domaine `D.exemple`) sont des entrées fictives de `programme.ts`
+(`COMPETENCES_EXEMPLE`), absentes d'un build de production et de `COMPETENCES`. `npm run nouveau -- exercice … --modele simple|corpus`
+copie l'un ou l'autre.
+
+## Décisions (2026-10-05)
+
+1. **Choix multiple de chaînes ou de nombres** : `ValeurReglage` admet `string[]` et `number[]`. `cases([1, 2, 10])` donne
+   `config.pas : (1 | 2 | 10)[]`, mémorisé tel quel (`chargerReglages` ne vérifie que « c'est une liste », `reglagesDuNiveau` retire
+   les valeurs non proposées, donc des chaînes à la place des nombres reprennent le défaut). Un mélange chaînes et nombres dans
+   une même liste est refusé par le type.
+2. **Un niveau sans compétence au programme est une erreur franche** à l'import (`definir`), avec le message qui dit quoi
+   corriger : retirer ce niveau ou ajouter une compétence.
+3. **Deux exemples**, simple et à corpus (ci-dessus), plutôt qu'un seul qui mélangerait tout.
+4. **Une compétence hors programme** se déclare au niveau, avec sa raison : `horsProgramme: [{ competence: K.…, raison }]`. Elle
+   s'ajoute aux compétences du niveau, et rien ne la coche par défaut (le réglage qui y mène est lui-même `horsProgramme`).

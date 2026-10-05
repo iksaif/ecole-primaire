@@ -593,6 +593,8 @@ export const COMPETENCES_EXEMPLE = AVEC_EXEMPLES ? [
     src('c2maths', 1, 'Entrée fictive des exemples : ne correspond à aucun texte du programme'), { devSeulement: true }),
   c('exemple-regle', 'exemple', 'Trouver la règle d’une suite (fictive)', depuis('ce1'),
     src('c2maths', 1, 'Entrée fictive des exemples : ne correspond à aucun texte du programme'), { devSeulement: true }),
+  c('exemple-synonymes', 'exemple', 'Choisir le synonyme d’un mot (fictive, pour l’exemple à corpus)', depuis('ce1'),
+    src('c2maths', 1, 'Entrée fictive des exemples : ne correspond à aucun texte du programme'), { devSeulement: true }),
   c('exemple-lire', 'exemple', 'Lire et placer des repères (fictive, pour l’exemple d’affiche)', entre('ms', 'ce1'),
     src('c2maths', 1, 'Entrée fictive des exemples : ne correspond à aucun texte du programme'), { devSeulement: true }),
 ] as const satisfies readonly Competence[] : []

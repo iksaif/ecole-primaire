@@ -3,18 +3,20 @@
     Choix de la police des fiches d'exercice (« Sur la fiche ») : une liste de polices script (incluses, installées,
     ajoutées depuis un fichier), l'aide pour en obtenir d'autres et l'ajout d'un fichier de police. Le choix est
     mémorisé (polices.ts) et lu par usePoliceFiche pour mettre en page la fiche.
+    Sans propriété : le choix commun des fiches. Pour une affiche à polices par type : v-model (la valeur à la place du
+    choix commun), `type` ('script' ou 'attache'), `libelle` (nom du choix) et `aide` (false : pas de seconde aide).
   -->
   <div class="choix-police">
     <div class="ligne">
-      <label class="lib">{{ tt('police') }}</label>
-      <select :value="choix.unique" class="select" @change="choix.unique = ($event.target as HTMLSelectElement).value">
-        <option v-for="p in disponibles" :key="p.id" :value="p.id">{{ libellePolice(p) }}</option>
+      <label class="lib">{{ libelle || tt('police') }}</label>
+      <select :value="valeur" class="select" @change="valeur = ($event.target as HTMLSelectElement).value">
+        <option v-for="p in liste" :key="p.id" :value="p.id">{{ libellePolice(p) }}</option>
       </select>
-      <span class="exemple" :style="{ fontFamily: `'${choix.unique}'` }">{{ tt('exempleScript') }}</span>
-      <button v-if="estPerso" class="btn-suppr" :title="tt('retirer')" @click="supprimerPolicePerso(choix.unique)">🗑</button>
+      <span class="exemple" :style="{ fontFamily: `'${valeur}'` }">{{ tt(type === 'attache' ? 'exempleAttache' : 'exempleScript') }}</span>
+      <button v-if="estPerso" class="btn-suppr" :title="tt('retirer')" @click="supprimerPolicePerso(valeur)">🗑</button>
     </div>
 
-    <details class="aide">
+    <details v-if="aide" class="aide">
       <summary>{{ tt('aideTitre') }}</summary>
       <p v-html="tt('aideTexte')"></p>
       <ul>
@@ -32,13 +34,22 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { usePolices } from './polices.ts'
+import { usePolices, disponiblesDe } from './polices.ts'
 import type { PoliceDisponible } from './polices.ts'
+import type { TypePolice } from '../utils/impression.js'
 import { LIENS_POLICES, ajouterPolicePerso, supprimerPolicePerso, policesPerso } from '../utils/impression.js'
 import { useI18n } from '../i18n'
 import { TEXTES_CHOIX_POLICE } from './textes.ts'
 
-const { choix, disponibles } = usePolices()
+const props = withDefaults(defineProps<{ type?: TypePolice, modelValue?: string, libelle?: string, aide?: boolean }>(), { type: 'script', modelValue: undefined, libelle: '', aide: true })
+const emit = defineEmits<{ 'update:modelValue': [police: string] }>()
+const { choix } = usePolices()
+const liste = disponiblesDe(props.type)
+// la police choisie : celle du parent (v-model), sinon le choix commun des fiches
+const valeur = computed({
+  get: () => props.modelValue ?? choix.value.unique,
+  set: (v: string) => { if (props.modelValue === undefined) choix.value.unique = v; else emit('update:modelValue', v) },
+})
 const erreur = ref('')
 
 // tt : un nom court pour ne pas masquer d'autres variables « t »
@@ -65,7 +76,7 @@ function libellePolice(p: PoliceDisponible): string {
   return tr({ fr: p.label, br: POLICES_BR[p.id] ?? p.label.replace(/ \(installée\)$/, ' (staliet)').replace(/ \(ajoutée\)$/, ' (ouzhpennet)') }) as string
 }
 
-const estPerso = computed(() => policesPerso.value.some(p => p.id === choix.value.unique))
+const estPerso = computed(() => policesPerso.value.some(p => p.id === valeur.value))
 
 async function ajouter(e: Event) {
   const entree = e.target as HTMLInputElement
@@ -74,7 +85,7 @@ async function ajouter(e: Event) {
   if (!f) return
   erreur.value = ''
   try {
-    choix.value.unique = await ajouterPolicePerso(f, 'script')
+    valeur.value = await ajouterPolicePerso(f, props.type)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     erreur.value = tr({ fr: message, br: ERREURS_BR[message] ?? message }) as string

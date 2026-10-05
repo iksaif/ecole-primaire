@@ -23,10 +23,16 @@
 // Pour ajouter un exemple ou un document : une entrée de plus dans EXEMPLES ou DOCS.
 const EXEMPLES = [
   {
-    titre: 'Exemple d\'exercice',
+    titre: 'Exemple d\'exercice simple',
     to: '/dev/exemple',
-    description: 'une suite de nombres à compléter : niveaux, bonus, fiche par compétence, jeu et fiche imprimable',
+    description: 'une suite de nombres à compléter : niveaux, bonus, hors programme, fiche par compétence, jeu et fiche imprimable ; un seul catalogue de textes',
     fichiers: 'src/exercices/exemple/ et src/views/dev/ExempleView.vue',
+  },
+  {
+    titre: 'Exemple d\'exercice à corpus',
+    to: '/dev/exemple-corpus',
+    description: 'les synonymes : exercice de français (contenu toujours en français), corpus dans src/data/, QCM, textes d\'interface à part',
+    fichiers: 'src/exercices/exemple-corpus/, src/data/exemple-corpus.ts et src/views/dev/ExempleCorpusView.vue',
   },
   {
     titre: 'Exemple d\'affiche',
@@ -36,7 +42,7 @@ const EXEMPLES = [
   },
 ]
 const DOCS = [
-  { fichier: 'src/exercices/README.md', description: 'créer un exercice (npm run nouveau -- exercice <id> "<Titre>", ou copier exemple/)' },
+  { fichier: 'src/exercices/README.md', description: 'créer un exercice (npm run nouveau -- exercice <id> "<Titre>" --modele simple|corpus, ou copier un exemple)' },
   { fichier: 'src/affiches/README.md', description: 'créer une affiche (npm run nouveau -- affiche <id> "<Titre>", ou copier exemple/)' },
 ]
 </script>

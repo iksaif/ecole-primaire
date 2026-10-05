@@ -31,7 +31,7 @@ export function reglagesDuNiveau<R extends Reglages>(definition: DefinitionExerc
     if (!Array.isArray(defaut)) { if (!offertes.includes(res[cle] as ValeurOption)) res[cle] = defaut; continue }
     const lue = res[cle]
     const choisies = Array.isArray(lue) ? lue.filter(v => offertes.includes(v)) : []
-    res[cle] = choisies.length ? choisies : [...defaut]
+    res[cle] = (choisies.length ? choisies : [...defaut]) as string[] | number[]
   }
   return res as Config<R>
 }
@@ -64,7 +64,7 @@ export function toutAuProgramme<R extends Reglages>(definition: DefinitionExerci
   const niv = niveauDe(def, niveau)!
   const res = { ...defautsDe(def, niv), niveau } as Reglages
   for (const [cle, offertes] of Object.entries(niv.options ?? {}) as [string, readonly ValeurOption[]][]) {
-    if (Array.isArray(niv.reglages[cle])) res[cle] = offertes.filter(v => !(niv.bonus as Record<string, readonly ValeurOption[]> | undefined)?.[cle]?.includes(v) && !raisonHorsProgramme(def, niveau, cle, v)) as string[]
+    if (Array.isArray(niv.reglages[cle])) res[cle] = offertes.filter(v => !(niv.bonus as Record<string, readonly ValeurOption[]> | undefined)?.[cle]?.includes(v) && !raisonHorsProgramme(def, niveau, cle, v)) as string[] | number[]
   }
   return res as Config<R>
 }

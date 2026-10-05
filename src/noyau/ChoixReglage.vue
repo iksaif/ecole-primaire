@@ -77,19 +77,19 @@ const liste = computed(() => props.valeurs ?? valeursDe(props.definition, props.
 const sections = computed(() => (props.groupes
   ? props.groupes.map(g => ({ titre: g.titre, valeurs: g.valeurs.filter(v => liste.value.includes(v)) })).filter(g => g.valeurs.length)
   : [{ titre: '', valeurs: liste.value }]))
-const choisies = computed(() => (Array.isArray(props.modelValue) ? props.modelValue : null))
+const choisies = computed(() => (Array.isArray(props.modelValue) ? (props.modelValue as ValeurOption[]) : null))
 const texte = (v: ValeurOption) => (props.libelle ? props.libelle(v) : props.cle === 'niveau' ? String(v).toUpperCase() : String(v))
 // « bonus » ou « hors programme » (clé du catalogue commun), sinon null
 const marque = (v: ValeurOption) => (estBonus(props.definition, props.niveau, props.cle, v) ? 'bonus'
   : raisonHorsProgramme(props.definition, props.niveau, props.cle, v) ? 'horsProgramme' : null)
-const actif = (v: ValeurOption) => (choisies.value ? choisies.value.includes(v as string) : props.modelValue === v)
+const actif = (v: ValeurOption) => (choisies.value ? choisies.value.includes(v) : props.modelValue === v)
 
 function choisir(v: ValeurOption) {
   const courantes = choisies.value
   if (!courantes) return emit('update:modelValue', v)
-  if (courantes.includes(v as string)) {
-    if (courantes.length > 1) emit('update:modelValue', courantes.filter(x => x !== v))
-  } else emit('update:modelValue', liste.value.filter(x => x === v || courantes.includes(x as string)) as string[])
+  if (courantes.includes(v)) {
+    if (courantes.length > 1) emit('update:modelValue', courantes.filter(x => x !== v) as string[] | number[])
+  } else emit('update:modelValue', liste.value.filter(x => x === v || courantes.includes(x)) as string[] | number[])
 }
 </script>
 

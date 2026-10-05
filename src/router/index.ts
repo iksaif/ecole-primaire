@@ -20,6 +20,7 @@ if (import.meta.env.DEV) {
   routes.push(
     { path: '/dev', component: () => import('../views/dev/DevView.vue') },
     { path: '/dev/exemple', component: () => import('../views/dev/ExempleView.vue') },
+    { path: '/dev/exemple-corpus', component: () => import('../views/dev/ExempleCorpusView.vue') },
     { path: '/dev/affiches', component: () => import('../views/dev/AfficheDevView.vue') },
   )
 }

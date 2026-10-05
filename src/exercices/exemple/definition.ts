@@ -22,35 +22,37 @@ export default definir({
     nbQ: choix([5, 10, 15], { defaut: 10 }),
   },
 
-  // Réglages qui changent avec le niveau. Le type de `config` s'en déduit : `config.pas` est 1 | 2 | 5 | 10 | 100 | 1000.
+  // Réglages qui changent avec le niveau. Le type de `config` s'en déduit : `config.pas` est (1 | 2 | 5 | 10 | 100 | 1000)[].
+  // Un choix multiple peut porter des nombres comme des chaînes ; la valeur choisie reste un nombre, mémorisée telle quelle.
   niveaux: {
     cp: {
       reglages: {
-        exercices: cases(['complete']),
-        sens: cases(['monte'], { bonus: ['descend'] }),   // bonus : proposé, jamais coché, hors du programme du niveau
-        pas: choix([1, 2, 10], {
-          defaut: 2,
-          bonus: [5],
-          // hors programme, mais utile : la raison s'affiche en infobulle, et les tests ne l'essaient pas
-          horsProgramme: [{ option: 100, raison: 'Les centaines arrivent au CE1 : au CP, les nombres vont jusqu\'à 100.' }],
+        exercices: cases(['complete'], {
+          // hors programme, mais proposé : la raison s'affiche en infobulle ; jamais coché par défaut, les tests ne l'essaient pas
+          horsProgramme: [{ option: 'regle', raison: 'Trouver la règle d\'une suite commence au CE1 ; proposé aux élèves en avance.' }],
         }),
+        sens: cases(['monte'], { bonus: ['descend'] }),   // bonus : proposé, jamais coché, au-delà du programme du niveau
+        pas: cases([1, 2, 10], { bonus: [5], horsProgramme: [{ option: 100, raison: 'Les centaines arrivent au CE1 : au CP, les nombres vont jusqu\'à 100.' }] }),
       },
+      // La compétence « trouver la règle » n'est pas au programme du CP : l'exercice la travaille quand même, si on coche
+      // « Trouver la règle (hors programme) ». Elle est déclarée ici, avec sa raison, pour que rien ne sorte du programme en silence.
+      horsProgramme: [{ competence: K.exempleRegle, raison: 'Proposée aux élèves en avance ; au programme dès le CE1.' }],
     },
     ce1: {
       reglages: {
         exercices: cases(['complete', 'regle']),
         sens: cases(['monte', 'descend']),
-        pas: choix([2, 5, 10, 100]),
+        pas: cases([2, 5, 10, 100]),
       },
     },
-    // le CE2 reprend les réglages du CE1 et ne change que le pas
-    ce2: herite('ce1', { reglages: { pas: choix([2, 5, 10, 100, 1000]) } }),
+    // le CE2 reprend les réglages du CE1 et ne change que les pas
+    ce2: herite('ce1', { reglages: { pas: cases([2, 5, 10, 100, 1000]) } }),
   },
 
   // Une fiche à télécharger par compétence et niveau (pages /telechargements/) ; le bilan d'une classe (réglages par
   // défaut du niveau) existe toujours. Les réglages d'une fiche doivent être proposés par le niveau.
   fiches: [
-    { id: 'dizaines', competence: K.exempleCompter, niveau: 'ce1', reglages: { exercices: ['complete'], pas: 10 } },
+    { id: 'dizaines', competence: K.exempleCompter, niveau: 'ce1', reglages: { exercices: ['complete'], pas: [10] } },
     { id: 'regle', competence: K.exempleRegle, niveau: 'ce1', reglages: { exercices: ['regle'] } },
   ],
 })

@@ -8,7 +8,8 @@
 // Les exemples (domaine fictif) n'y entrent qu'avec `avecExemples`, jamais en production.
 import { contenu } from '../../src/i18n/index.js'
 import { REGISTRE as AFFICHES } from '../../src/affiches/index.ts'
-import { entreesDe as entreesAffiche, lienDe } from '../../src/affiches/catalogue.ts'
+import { entreesDe as entreesAffiche, languesDuSite } from '../../src/affiches/catalogue.ts'
+import { site as siteDe } from '../../src/sites.ts'
 import { genererAffiche } from '../../src/affiches/generer.ts'
 import { reglagesDe } from '../../src/affiches/outils.ts'
 import { reglagesDuNiveau, langueContenuDe } from '../../src/noyau/reglages.ts'
@@ -41,6 +42,8 @@ export interface OptionsRegistres {
   avecExemples?: boolean
   /** ajoute les exercices de l'ancien registre (src/exercices/index.js), pour comparer ou reporter */
   avecAnciens?: boolean
+  /** site (mode Vite) : les affiches ne sont produites que dans les langues qu'il publie ; défaut : toutes */
+  site?: string
   /** ne garder que les fiches dont le slug commence ainsi (test, mise au point) */
   prefixe?: string
 }
@@ -77,16 +80,16 @@ function lienPersonnaliser(lien: string): { route: string, requete: Record<strin
 
 // ── Affiches ──
 
-function fichesAffiche(module: ModuleAffiche): FicheSource[] {
+function fichesAffiche(module: ModuleAffiche, publiees: readonly string[]): FicheSource[] {
   const d = module.definition as DefinitionAffiche
-  return entreesAffiche(module).map(e => {
-    const { variante, langue } = e.config
+  return entreesAffiche(module).filter(e => e.langues.every(l => publiees.includes(l))).map(e => {
+    const { variante } = e.config
     const v = d.variantes[variante]
     const formats = d.formats.map(format => {
-      const config = reglagesDe(d, { variante, langue, format })
+      const config = reglagesDe(d, { ...e.config, format })
       return { format, html: genererAffiche(module, config, { script: 'Andika' }).html }
     })
-    const reglages = reglagesDe(d, { variante, langue }) as unknown as MetaFiche['reglages']
+    const reglages = reglagesDe(d, e.config) as unknown as MetaFiche['reglages']
     const description = texteMulti(module.textes, `variante.${variante}.description`, e.description)
     return {
       meta: {
@@ -94,8 +97,8 @@ function fichesAffiche(module: ModuleAffiche): FicheSource[] {
         titre: texteMulti(module.textes, `variante.${variante}.titre`, e.titre),
         titreCourt: texteMulti(module.textes, `variante.${variante}.court`, e.court),
         description, descriptionLongue: description,
-        niveaux: [...v.niveaux], domaine: d.domaine, genre: 'affiche', langues: [langue], parent: null, famille: d.id,
-        personnaliser: lienPersonnaliser(lienDe(d, variante, langue)),
+        niveaux: [...v.niveaux], domaine: d.domaine, genre: 'affiche', langues: [...e.langues], parent: null, famille: d.id,
+        personnaliser: lienPersonnaliser(e.lien),
         exemple: estExemple(d.domaine), competences: competencesVisees(v.competences), reglages,
       },
       documents: [{ id: 'affiche', titre: null, graine: null, formats }],
@@ -170,7 +173,7 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
 }
 
 /** Les fiches à produire, dans l'ordre des registres (affiches d'abord). */
-export async function fichesDesRegistres({ avecExemples = false, avecAnciens = false, prefixe = '' }: OptionsRegistres = {}): Promise<FicheSource[]> {
+export async function fichesDesRegistres({ avecExemples = false, avecAnciens = false, prefixe = '', site }: OptionsRegistres = {}): Promise<FicheSource[]> {
   const affiches: ModuleAffiche[] = [...AFFICHES as ModuleAffiche[]]
   const exercices: ModuleExercice[] = [...EXERCICES_DE_LA_BASE]
   if (avecExemples) {
@@ -178,7 +181,8 @@ export async function fichesDesRegistres({ avecExemples = false, avecAnciens = f
     exercices.push(...(await import('../../src/exercices/dev.ts')).REGISTRE_DEV as unknown as ModuleExercice[])
   }
   if (avecAnciens) exercices.push(...(await import('../../src/exercices/index.js')).REGISTRE as unknown as ModuleExercice[])
-  const fiches = [...affiches.flatMap(fichesAffiche), ...exercices.flatMap(fichesExercice)]
+  const publiees = site ? languesDuSite(siteDe(site)) : LANGUES
+  const fiches = [...affiches.flatMap(m => fichesAffiche(m, publiees)), ...exercices.flatMap(fichesExercice)]
   const vues = new Set<string>()
   for (const f of fiches) {
     if (vues.has(f.meta.slug)) throw new Error(`slug « ${f.meta.slug} » produit deux fois (registres)`)

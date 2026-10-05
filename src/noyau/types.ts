@@ -15,7 +15,7 @@ export type { Classe, CompetenceId, DomaineId, Contraintes, Rng }
 // ── Réglages ──
 
 /** Valeur d'un réglage : simple, ou liste de valeurs choisies (ids) pour un choix multiple. */
-export type ValeurReglage = string | number | boolean | string[]
+export type ValeurReglage = string | number | boolean | string[] | number[]
 
 /** Valeur proposée pour un réglage à choix (`options`, `bonus`). */
 export type ValeurOption = string | number | boolean

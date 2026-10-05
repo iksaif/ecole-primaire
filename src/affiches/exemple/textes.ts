@@ -1,33 +1,44 @@
 // Les textes de l'affiche d'exemple, par langue de l'affiche, lus avec T(clé) (src/i18n/index.js, `contenu`). Les clés
-// suivent la convention de src/affiches/textes.ts (titre, variante.<id>.court…, reglage.<cle>, valeur.<cle>.<valeur>).
-// Une langue sans traduction retombe sur le français. Breton : chaque texte est à faire relire.
+// suivent la convention de src/affiches/textes.ts (titre, variante.<id>.court…, reglage.<cle>, valeur.<cle>.<valeur>,
+// groupe.<id>, aide.<cle>). Les variantes sont calculées : leurs textes aussi. Une langue sans traduction retombe sur le
+// français. Breton : chaque texte est à faire relire.
 import type { TextesAffiche } from '../types.ts'
+import { BANDES } from './definition.ts'
+
+// Les textes des variantes : une bande, avec ou sans la page à compléter
+const variantes = (bande: (b: (typeof BANDES)[number]) => string, titre: (b: (typeof BANDES)[number]) => string, description: (b: (typeof BANDES)[number]) => string, completer: string): Record<string, string> =>
+  Object.fromEntries(BANDES.flatMap(b => [false, true].flatMap(c => {
+    const id = c ? `${b.id}-completer` : b.id
+    return [[`variante.${id}.court`, bande(b) + (c ? completer : '')], [`variante.${id}.titre`, titre(b) + (c ? completer : '')], [`variante.${id}.description`, description(b) + (c ? completer : '')]]
+  })))
 
 export const TEXTES: TextesAffiche = {
   fr: {
     titre: 'La bande numérique',
-    'variante.jusqua6.court': 'Bande numérique 1 à 6',
-    'variante.jusqua6.titre': 'Bande numérique de 1 à 6 à imprimer',
-    'variante.jusqua6.description': 'La bande numérique de 1 à 6, une case par nombre, avec les points à compter (programme de la moyenne section).',
-    'variante.jusqua10.court': 'Bande numérique 0 à 10',
-    'variante.jusqua10.titre': 'Bande numérique de 0 à 10 à imprimer',
-    'variante.jusqua10.description': 'La bande numérique de 0 à 10, une case par nombre, avec les points à compter (programme de la grande section).',
+    'page.completer': 'Je complète la bande',
+    ...variantes(b => `Bande numérique ${b.debut} à ${b.max}`, b => `Bande numérique de ${b.debut} à ${b.max} à imprimer`,
+      b => `La bande numérique de ${b.debut} à ${b.max}, une case par nombre, avec les points à compter.`, ' (avec une page à compléter)'),
     'reglage.points': 'Points à compter',
     'reglage.lettres': 'Nombres en lettres',
     'valeur.points.false': 'Sans', 'valeur.points.true': 'Avec',
     'valeur.lettres.false': 'Sans', 'valeur.lettres.true': 'Avec',
+    'groupe.repere': 'Ce que montre la bande',
+    'groupe.completer': 'Page à compléter',
+    'aide.langues': 'Avec plusieurs langues, chaque nombre écrit en lettres l’est dans chacune.',
+    'aide.graine': 'Quels nombres sont à compléter ? « Nouvelle » en tire d’autres.',
   },
   br: {
     titre: 'Ar vandenn niveroù', // br: à relire
-    'variante.jusqua6.court': 'Bandenn niveroù 1 da 6', // br: à relire
-    'variante.jusqua6.titre': 'Bandenn niveroù eus 1 da 6 da voullañ', // br: à relire
-    'variante.jusqua6.description': 'Ar vandenn niveroù eus 1 da 6, ur gael evit pep niver, gant ar pikoù da gontañ.', // br: à relire
-    'variante.jusqua10.court': 'Bandenn niveroù 0 da 10', // br: à relire
-    'variante.jusqua10.titre': 'Bandenn niveroù eus 0 da 10 da voullañ', // br: à relire
-    'variante.jusqua10.description': 'Ar vandenn niveroù eus 0 da 10, ur gael evit pep niver, gant ar pikoù da gontañ.', // br: à relire
+    'page.completer': 'Klokaat a ran ar vandenn', // br: à relire
+    ...variantes(b => `Bandenn niveroù ${b.debut} da ${b.max}`, b => `Bandenn niveroù eus ${b.debut} da ${b.max} da voullañ`,
+      b => `Ar vandenn niveroù eus ${b.debut} da ${b.max}, ur gael evit pep niver, gant ar pikoù da gontañ.`, ' (gant ur bajenn da glokaat)'), // br: à relire
     'reglage.points': 'Pikoù da gontañ', // br: à relire
     'reglage.lettres': 'Niveroù e lizherennoù', // br: à relire
     'valeur.points.false': 'Hep', 'valeur.points.true': 'Gant', // br: à relire
     'valeur.lettres.false': 'Hep', 'valeur.lettres.true': 'Gant', // br: à relire
+    'groupe.repere': 'Ar pezh a ziskouez ar vandenn', // br: à relire
+    'groupe.completer': 'Pajenn da glokaat', // br: à relire
+    'aide.langues': 'Gant meur a yezh e vez skrivet pep niver en pep hini anezho.', // br: à relire
+    'aide.graine': 'Peseurt niveroù da glokaat ? « Unan nevez » a zibab re all.', // br: à relire
   },
 }

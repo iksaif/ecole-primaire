@@ -4,11 +4,11 @@
 
     <!-- Config -->
     <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
-      @commencer="demarrer" @regenerer="regenerer">
+      @commencer="jeu.demarrer" @regenerer="nouvelle">
       <div class="config-section">
         <div class="config-section-title">{{ t('niveau') }}</div>
         <div class="btn-group">
-          <button v-for="niv in Object.keys(NIVEAUX)" :key="niv"
+          <button v-for="niv in Object.keys(DEFINITION.niveaux)" :key="niv"
             class="level-btn" :class="{ active: config.niveau === niv }"
             @click="config.niveau = niv">{{ niv.toUpperCase() }}</button>
         </div>
@@ -17,7 +17,7 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('exercices') }}</div>
         <div class="btn-group">
-          <button v-for="ex in niveau.exercices" :key="ex"
+          <button v-for="ex in options.exercices" :key="ex"
             class="level-btn" :class="{ active: config.exercices.includes(ex) }"
             @click="basculer('exercices', ex)">{{ t(`ex_${ex}`) }}</button>
         </div>
@@ -26,10 +26,11 @@
       <div class="config-section">
         <div class="config-section-title">{{ t('precision') }}</div>
         <div class="btn-group">
-          <button v-for="p in niveau.precisions" :key="p"
+          <button v-for="p in options.precisions" :key="p"
             class="level-btn" :class="{ active: config.precisions.includes(p) }"
-            @click="basculer('precisions', p)">{{ t(`prec_${p}`) }}{{ niveau.bonus?.includes(p) ? ` (${t('bonus')})` : '' }}</button>
+            @click="basculer('precisions', p)">{{ t(`prec_${p}`) }}{{ estBonus(DEFINITION, config.niveau, 'precisions', p) ? ` (${t('bonus')})` : '' }}</button>
         </div>
+        <div v-if="config.niveau === 'cp'" class="aide-config">{{ t('aideCp') }}</div>
         <div v-if="config.niveau === 'ce1'" class="aide-config">{{ t('aideCe1') }}</div>
       </div>
 
@@ -74,7 +75,7 @@
     <!-- Exercice -->
     <template v-if="phase === 'jeu' && q">
       <div class="score-bar">
-        <button class="btn-quitter" @click="quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
+        <button class="btn-quitter" @click="jeu.quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
         <span>{{ t('question', { n: idx + 1, total: questions.length }) }}</span>
         <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
       </div>
@@ -95,14 +96,6 @@
             <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
               :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
           </div>
-          <div v-else class="saisie-heure">
-            <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" max="23" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">h</span>
-            <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" max="59" placeholder="00" v-model="repM" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">min</span>
-          </div>
         </template>
 
         <!-- (b) Placer les aiguilles -->
@@ -111,7 +104,7 @@
             {{ t('placeAiguilles') }}
             <strong v-if="q.consigneOrale">« {{ q.oral }} »</strong>
             <strong v-else>{{ q.ecrit }}</strong>
-            <button v-if="langue !== 'br'" class="btn-ecouter" :title="t('ecouter')" @click="lire(q.oral)">🔊</button>
+            <button v-if="voixFr" class="btn-ecouter" :title="t('ecouter')" @click="lire(q.oral)">🔊</button>
           </div>
           <div ref="cadranEl" class="horloge deplacable"
             @pointerdown="debutGlisser" @pointermove="glisser" @pointerup="finGlisser" @pointercancel="finGlisser"
@@ -141,14 +134,6 @@
         <template v-else-if="q.type === 'journee' && q.sous === 'lire24'">
           <div class="consigne">{{ q.phrase }}<br>{{ t('quelleHeure') }} <small>{{ t('ecrisNumerique') }}</small></div>
           <div class="horloge" v-html="horlogeSvg(q.h, q.m)"></div>
-          <div class="saisie-heure">
-            <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" max="23" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">h</span>
-            <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" max="59" placeholder="00" v-model="repM" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">min</span>
-          </div>
         </template>
 
         <template v-else-if="q.type === 'journee' && q.sous === 'choisir'">
@@ -156,7 +141,7 @@
           <div class="choix-horloges">
             <button v-for="(o, i) in q.options" :key="i" class="choix-horloge"
               :class="classeChoix(i)" :disabled="repondu" :aria-label="t('choixHorloge', { n: i + 1 })" @click="validerChoix(i)">
-              <span v-html="svgHorloge(o.h, o.m, { aideMinutes: false })"></span>
+              <span v-html="horlogeSvg(o.h, o.m, null, false)"></span>
             </button>
           </div>
         </template>
@@ -180,14 +165,6 @@
               <div class="horloge petite" v-html="horlogeSvg(q.h2, q.m2)"></div>
               <figcaption>{{ q.sous === 'apres' ? t('plusTard') : t('fin') }}</figcaption>
             </figure>
-          </div>
-          <div class="saisie-heure">
-            <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">h</span>
-            <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" placeholder="00" v-model="repM" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">min</span>
           </div>
         </template>
 
@@ -220,524 +197,163 @@
             <button v-for="(o, i) in q.options" :key="i" class="choix-btn"
               :class="classeChoix(i)" :disabled="repondu" @click="validerChoix(i)">{{ o.label }}</button>
           </div>
-          <div v-else class="saisie-heure">
-            <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">h</span>
-            <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
-              min="0" placeholder="00" v-model="repM" :disabled="repondu" @keydown.enter="valider">
-            <span class="unite">min</span>
-          </div>
         </template>
+
+        <!-- saisie « ? h ? min » (lire au clavier, matin / après-midi, durées, emploi du temps) -->
+        <div v-if="saisieHM" class="saisie-heure">
+          <input ref="inputEl" class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
+            min="0" :max="sur24 ? 23 : null" placeholder="?" v-model="repH" :disabled="repondu" @keydown.enter="valider">
+          <span class="unite">h</span>
+          <input class="exercise-input champ" :class="inputClass" type="number" inputmode="numeric"
+            min="0" :max="sur24 ? 59 : null" placeholder="00" v-model="repM" :disabled="repondu" @keydown.enter="valider">
+          <span class="unite">min</span>
+        </div>
 
         <div class="feedback" :class="feedbackClass">
           {{ feedback }}
           <div v-if="feedbackOral" class="oral">
             « {{ feedbackOral }} »
-            <button v-if="langue !== 'br'" class="btn-ecouter" :title="t('ecouter')" @click="lire(feedbackOral)">🔊</button>
+            <button v-if="voixFr" class="btn-ecouter" :title="t('ecouter')" @click="lire(feedbackOral)">🔊</button>
           </div>
         </div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
           <template v-if="!repondu">
-            <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
+            <button class="btn btn-ghost" @click="jeu.passer({ donne: t('passe') })">{{ t('passer') }}</button>
             <button v-if="!estChoix" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
           </template>
-          <button v-else-if="!dernierOk" class="btn btn-primary" @click="suivant">{{ t('suivant') }}</button>
+          <button v-else-if="!dernierOk" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
         </div>
       </div>
     </template>
 
     <!-- Résultats -->
-    <div v-if="phase === 'resultats'" class="exercise-box" style="text-align:center;">
-      <div class="result-score">{{ bonnes }} / {{ questions.length }}</div>
-      <div class="result-msg">{{ resultMsg }}</div>
-
+    <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
+      @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <table class="correction-table">
         <thead><tr><th>{{ t('colQuestion') }}</th><th>{{ t('taReponse') }}</th><th>{{ t('bonneReponse') }}</th><th></th></tr></thead>
         <tbody>
           <tr v-for="(h, i) in historique" :key="i" :class="h.ok ? 'ok' : 'erreur'">
             <td>
-              <span v-if="h.horloge" class="mini-horloge" v-html="svgHorloge(h.horloge.h, h.horloge.m, { aideMinutes: false })"></span>
-              {{ h.texte }}
+              <span v-if="horlogeDe(h.question)" class="mini-horloge" v-html="horlogeSvg(h.question.h, h.question.m, null, false)"></span>
+              {{ h.question.texte }}
             </td>
             <td>{{ h.donne }}</td>
-            <td class="mot-attendu">{{ h.attendu }}</td>
+            <td class="mot-attendu">{{ h.question.attendu }}</td>
             <td>{{ h.ok ? '✅' : '❌' }}</td>
           </tr>
         </tbody>
       </table>
-
-      <div class="btn-group" style="justify-content:center;">
-        <button class="btn btn-primary" @click="demarrer">{{ t('rejouer') }}</button>
-        <button class="btn btn-ghost" @click="phase = 'config'">{{ t('parametres') }}</button>
-      </div>
-    </div>
+    </ResultatsJeu>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { aleatoire, melanger, confettis, sauvegarder, chargerReglages } from '../../utils'
+// Lire l'heure : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
+// src/exercices/heure/ (definition.js, generateur.js, fiche.js).
+import { ref, computed, nextTick, watch } from 'vue'
+import { sauvegarder, chargerReglages } from '../../utils'
+import { creerRng, graineAleatoire } from '../../utils/hasard'
 import { useTTS } from '../../composables/useTTS'
 import { useI18n, contenu } from '../../i18n'
-import messagesFr from '../../i18n/fr/views/maths/HeureView.js'
-import messagesBr from '../../i18n/br/views/maths/HeureView.js'
-import contenuFr from '../../i18n/fr/contenu/heure.js'
-import contenuBr from '../../i18n/br/contenu/heure.js'
 import ConfigExercice from '../../components/ConfigExercice.vue'
+import ResultatsJeu from '../../components/ResultatsJeu.vue'
 import { useModeExercice } from '../../composables/useModeExercice'
-import { ligneNomDate } from '../../composables/useOptionsFiche'
+import { useGraine } from '../../composables/useGraine'
+import { useJeu } from '../../composables/useJeu'
+import { reglagesDuNiveau, estBonus } from '../../exercices/outils'
+import DEFINITION from '../../exercices/heure/definition'
+import { INTERFACE, TEXTES } from '../../exercices/heure/textes'
+import { questions as genererQuestions, questionsFiche, verifier, choisis, ecrit, deux, hm } from '../../exercices/heure/generateur'
+import { fiche as ficheHeure } from '../../exercices/heure/fiche'
+import { svgHorloge } from '../../exercices/heure/horloge'
 
-const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
+const { t, langue } = useI18n(INTERFACE)
 // Maths : le contenu (énoncés, fiche) suit la langue de l'interface
-const langueContenu = computed(() => langue.value)
-const C = contenu({ fr: contenuFr, br: contenuBr }, () => langueContenu.value)
-
-// #region logique (fonctions pures, testées hors Vue)
-
-// Exercices et précisions : libellés dans le catalogue d'interface (clés `ex_<id>`, `prec_<id>`)
-
-const MINUTES_PAR_PRECISION = {
-  heure: [0],
-  demi: [30],
-  quart: [15, 45],
-  cinq: [5, 10, 20, 25, 35, 40, 50, 55],
-  minute: Array.from({ length: 60 }, (_, i) => i).filter(i => i % 5 !== 0),
-}
-
-// Activités et créneaux plausibles (heures sur 24 h) ; noms dans le catalogue de contenu (`activites`)
-const ACTIVITES = [
-  { id: 'dessinAnime', debut: [8, 18], dureeMax: 60 },
-  { id: 'film', debut: [14, 17], dureeMax: 150 },
-  { id: 'promenade', debut: [9, 17], dureeMax: 180 },
-  { id: 'match', debut: [9, 17], dureeMax: 120 },
-  { id: 'sieste', debut: [13, 15], dureeMax: 120 },
-  { id: 'piqueNique', debut: [11, 13], dureeMax: 120 },
-  { id: 'piscine', debut: [9, 17], dureeMax: 90 },
-  { id: 'gouter', debut: [16, 17], dureeMax: 30 },
-  { id: 'peinture', debut: [9, 16], dureeMax: 120 },
-]
-
-// Données par niveau : pour ajouter un niveau, il suffit d'ajouter une entrée ici.
-const NIVEAUX = {
-  ce1: {
-    exercices: ['lire', 'placer', 'journee', 'duree'],
-    exercicesDefaut: ['lire'],
-    // programme du CE1 : heures, demi-heures et quarts d'heure ; les 5 minutes (CE2) restent un bonus, jamais
-    // proposé par défaut
-    precisions: ['heure', 'demi', 'quart', 'cinq'],
-    precisionsDefaut: ['heure', 'demi', 'quart'],
-    bonus: ['cinq'],
-    // durées proposées (en minutes)
-    durees: [15, 30, 45, 60, 90, 120, 180],
-    dureesCinq: [5, 10, 20],
-    dureesMinute: [],
-    dureeMax: 180,
-    conversions: [],
-  },
-  ce2: {
-    exercices: ['lire', 'placer', 'journee', 'duree', 'conversion', 'emploi'],
-    exercicesDefaut: ['lire', 'duree', 'conversion'],
-    precisions: ['heure', 'demi', 'quart', 'cinq', 'minute'],
-    precisionsDefaut: ['quart', 'cinq', 'minute'],
-    durees: [15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 180, 210],
-    dureesCinq: [5, 10, 20, 25, 35, 40, 50, 55, 70, 80, 100, 110, 125, 140, 160],
-    dureesMinute: [12, 18, 27, 33, 48, 52, 64, 72, 87, 96],
-    dureeMax: 240,
-    // 1 h = 60 min (les secondes sont au programme du CM2 : 'min-s', 'minsec-s', 's-min')
-    conversions: ['h-min', 'hmin-min', 'min-hmin'],
-  },
-}
-
-function pioche(t) { return t[aleatoire(0, t.length - 1)] }
-function deux(n) { return String(n).padStart(2, '0') }
-
-// « 3 h », « 3 h 05 », « 15 h 30 »
-function ecrit(h, m) { return m === 0 ? `${h} h` : `${h} h ${deux(m)}` }
-
-// « 1 h 30 min », « 2 h », « 45 min »
-function ecritDuree(d) {
-  const h = Math.floor(d / 60), m = d % 60
-  if (h && m) return `${h} h ${m} min`
-  return h ? `${h} h` : `${m} min`
-}
-
-// Heure sur un cadran (1 → 12) dite en lettres (« trois heures et quart ») : voir le catalogue de contenu
-const oral12 = (h, m) => C.t('oral12', { h, m })
-// « trois heures et quart de l'après-midi »
-const oralMoment = (h, m, moment) => C.t('oralMoment', { oral: oral12(h, m), moment: C.t('moments')[moment.nom] })
-
-function minutesDisponibles(precisions) {
-  return [...new Set(precisions.flatMap(p => MINUTES_PAR_PRECISION[p] || []))].sort((a, b) => a - b)
-}
-
-function dureesDisponibles(niv, precisions) {
-  const fin = precisions.includes('cinq') || precisions.includes('minute')
-  const ok = d => {
-    const r = d % 60
-    if (r % 5 !== 0) return precisions.includes('minute')
-    if (r === 0) return true
-    if (r === 30) return precisions.includes('demi') || fin
-    if (r === 15 || r === 45) return precisions.includes('quart') || fin
-    return fin
-  }
-  const liste = [...niv.durees,
-    ...(precisions.includes('cinq') || precisions.includes('minute') ? niv.dureesCinq : []),
-    ...(precisions.includes('minute') ? niv.dureesMinute : [])]
-  const res = [...new Set(liste.filter(ok))]
-  return res.length ? res : [60, 120]
-}
-
-const egal = (a, b) => a.h === b.h && a.m === b.m
-const h12 = x => ((x - 1 + 120) % 12) + 1
-
-// Distracteurs plausibles pour une heure (h 1..12, m) : erreurs typiques d'enfants.
-function distracteurs(h, m, pool) {
-  const cands = [
-    { h: h12(h + 1), m },                      // « 2 h 45 » lu « 3 h 45 »
-    { h: h12(h - 1), m },
-    { h: m === 0 ? 12 : m / 5, m: (h * 5) % 60 }, // aiguilles inversées
-    { h, m: (m + 30) % 60 },
-    { h, m: (60 - m) % 60 },
-    { h: h12(h + 1), m: (60 - m) % 60 },       // « moins le quart » ↔ « et quart »
-    { h, m: (m + 5) % 60 },
-  ].filter(c => Number.isInteger(c.h) && c.h >= 1 && c.h <= 12 && !egal(c, { h, m }) && pool.includes(c.m))  // précision du niveau
-  const uniques = []
-  for (const c of melanger(cands)) if (!uniques.some(u => egal(u, c))) uniques.push(c)
-  let essais = 0
-  while (uniques.length < 3 && essais++ < 100) {
-    const c = { h: aleatoire(1, 12), m: pioche(pool) }
-    if (!egal(c, { h, m }) && !uniques.some(u => egal(u, c))) uniques.push(c)
-  }
-  return uniques.slice(0, 3)
-}
-
-// phrase et suffixe (« du matin ») : catalogue de contenu, `moments`
-const MOMENTS = [
-  { nom: 'matin', heures: [7, 8, 9, 10, 11], decalage: 0 },
-  { nom: 'apres-midi', heures: [1, 2, 3, 4, 5], decalage: 12 },
-  { nom: 'soir', heures: [6, 7, 8, 9, 10], decalage: 12 },
-]
-
-// Emploi du temps d'une matinée ou d'un après-midi : créneaux consécutifs.
-function genererEmploi(niv) {
-  const matin = Math.random() < 0.6
-  let t = matin ? 8 * 60 + 30 : 13 * 60 + 30
-  const pas = niv.precisions.includes('minute') ? [30, 45, 60, 40, 50] : [30, 45, 60]
-  const noms = melanger(C.t('matieres'))
-  const lignes = []
-  for (let i = 0; i < 4; i++) {
-    const d = pioche(pas)
-    lignes.push({ nom: noms[i], debut: t, fin: t + d })
-    t += d
-    if (i === 1) { lignes.push({ nom: C.t('recre'), recre: true, debut: t, fin: t + 15 }); t += 15 }
-  }
-  return lignes
-}
-const hm = t => ecrit(Math.floor(t / 60), t % 60)
-
-function genererConversion(niv) {
-  const k = pioche(niv.conversions)
-  if (k === 'h-min') { const h = aleatoire(1, 4); return { k, texte: `${h} h = ? min`, unites: ['min'], valeurs: [h * 60] } }
-  if (k === 'hmin-min') {
-    const h = aleatoire(1, 3), m = pioche([5, 10, 15, 20, 30, 40, 45, 50])
-    return { k, texte: `${h} h ${m} min = ? min`, unites: ['min'], valeurs: [h * 60 + m] }
-  }
-  if (k === 'min-hmin') {
-    const t = pioche([70, 75, 80, 90, 100, 110, 120, 130, 135, 150, 180, 200])
-    return { k, texte: `${t} min = ? h ? min`, unites: ['h', 'min'], valeurs: [Math.floor(t / 60), t % 60] }
-  }
-  if (k === 'min-s') { const m = aleatoire(1, 5); return { k, texte: `${m} min = ? s`, unites: ['s'], valeurs: [m * 60] } }
-  if (k === 'minsec-s') {
-    const m = aleatoire(1, 2), s = pioche([10, 15, 20, 30, 45])
-    return { k, texte: `${m} min ${s} s = ? s`, unites: ['s'], valeurs: [m * 60 + s] }
-  }
-  const s = pioche([60, 120, 180, 240, 300])
-  return { k, texte: `${s} s = ? min`, unites: ['min'], valeurs: [s / 60] }
-}
-
-function genererQuestion(cfg) {
-  const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
-  const types = cfg.exercices.filter(e => niv.exercices.includes(e))
-  const type = pioche(types.length ? types : ['lire'])
-  const precisions = cfg.precisions.filter(p => niv.precisions.includes(p))
-  const pool = minutesDisponibles(precisions.length ? precisions : ['heure'])
-
-  if (type === 'lire') {
-    const h = aleatoire(1, 12), m = pioche(pool)
-    const q = { type, cle: `lire-${h}-${m}`, h, m, mode: cfg.saisie === 'clavier' ? 'clavier' : 'choix',
-      texte: C.t('lireQ'), attendu: `${ecrit(h, m)} (${oral12(h, m)})`, oral: oral12(h, m) }
-    if (q.mode === 'choix') {
-      const enLettres = Math.random() < 0.4
-      const opts = melanger([{ h, m }, ...distracteurs(h, m, pool)])
-      q.options = opts.map(o => ({ ...o, label: enLettres ? oral12(o.h, o.m) : ecrit(o.h, o.m) }))
-      q.bonne = opts.findIndex(o => egal(o, { h, m }))
-    }
-    return q
-  }
-
-  if (type === 'placer') {
-    const h = aleatoire(1, 12), m = pioche(pool)
-    let depart
-    do { depart = { h: aleatoire(0, 11), m: aleatoire(0, 11) * 5 } } while (depart.h === h % 12 && depart.m === m)
-    return { type, cle: `placer-${h}-${m}`, h, m, depart, consigneOrale: Math.random() < 0.5,
-      ecrit: ecrit(h, m), oral: oral12(h, m),
-      texte: C.t('placerQ', { ecrit: ecrit(h, m) }), attendu: `${ecrit(h, m)} (${oral12(h, m)})` }
-  }
-
-  if (type === 'journee') {
-    const moment = pioche(Math.random() < 0.25 ? [MOMENTS[0]] : MOMENTS.slice(1))
-    const h = pioche(moment.heures), m = pioche(pool)
-    const h24 = h + moment.decalage
-    const oral = oralMoment(h, m, moment)
-    const sous = Math.random() < 0.5 ? 'lire24' : 'choisir'
-    const q = { type, sous, cle: `journee-${sous}-${h24}-${m}`, h, m, h24, ecrit24: ecrit(h24, m),
-      phrase: C.t('moments')[moment.nom].phrase, oral,
-      attendu: `${ecrit(h24, m)} (${oral})` }
-    if (sous === 'lire24') {
-      q.texte = C.t('journeeLireQ', { moment: C.t('moments')[moment.nom] })
-    } else {
-      q.texte = C.t('journeeChoisirQ', { ecrit: ecrit(h24, m) })
-      const cands = [
-        { h: h12(h + 2), m },          // « 16 h » confondu avec « 6 h »
-        { h: h12(h + 1), m },
-        { h: h12(h - 1), m },
-        { h, m: (m + 30) % 60 },
-      ].filter(c => !egal(c, { h, m }))
-      const uniques = []
-      for (const c of cands) if (!uniques.some(u => egal(u, c))) uniques.push(c)
-      const opts = melanger([{ h, m }, ...uniques.slice(0, 3)])
-      q.options = opts
-      q.bonne = opts.findIndex(o => egal(o, { h, m }))
-    }
-    return q
-  }
-
-  if (type === 'conversion') {
-    const c = genererConversion(niv)
-    return { type, cle: `conv-${c.texte}`, ...c,
-      attendu: c.texte.replace(/\?\s*h\s*\?\s*min/, `${c.valeurs[0]} h ${c.valeurs[1]} min`).replace('?', c.valeurs[0]) }
-  }
-
-  if (type === 'emploi') {
-    const emploi = genererEmploi(niv)
-    const cours = emploi.filter(l => !l.recre)
-    const sous = pioche(['debut', 'duree', 'quoi'])
-    const l = pioche(sous === 'duree' ? emploi : cours)
-    const q = { type, sous, emploi, cle: `emploi-${sous}-${l.nom}-${l.debut}-${l.fin}` }
-    if (sous === 'debut') {
-      q.question = C.t('emploiDebutQ', { nom: l.nom })
-      q.h24 = Math.floor(l.debut / 60); q.m = l.debut % 60
-      q.attendu = hm(l.debut)
-    } else if (sous === 'duree') {
-      q.question = l.recre ? C.t('emploiDureeRecreQ') : C.t('emploiDureeQ', { nom: l.nom })
-      q.d = l.fin - l.debut
-      q.attendu = ecritDuree(q.d)
-    } else {
-      const t = l.debut + aleatoire(1, Math.floor((l.fin - l.debut) / 5) - 1) * 5
-      q.question = C.t('emploiQuoiQ', { ecrit: hm(t) })
-      const autres = melanger(emploi.filter(x => x.nom !== l.nom).map(x => x.nom)).slice(0, 3)
-      q.options = melanger([l.nom, ...autres]).map(n => ({ label: n }))
-      q.bonne = q.options.findIndex(o => o.label === l.nom)
-      q.attendu = l.nom
-    }
-    q.texte = q.question
-    return q
-  }
-
-  // Durées : départ à une heure plausible (8 h → 11 h ou 13 h → 18 h), fin avant 19 h.
-  const d = pioche(dureesDisponibles(niv, precisions).filter(x => x <= niv.dureeMax))
-  const departsPour = ([hMin, hMax]) => {
-    const res = []
-    for (let h = hMin; h <= hMax; h++) {
-      if (h === 12) continue
-      for (const m of pool) if (h * 60 + m + d <= 19 * 60) res.push({ h, m })
-    }
-    return res
-  }
-  const acts = ACTIVITES.filter(a => a.dureeMax >= d && departsPour(a.debut).length)
-  const sous = Math.random() < 0.6 || !acts.length ? 'apres' : 'combien'
-  const act = sous === 'combien' ? pioche(acts) : null
-  const { h: h24, m } = pioche(departsPour(act ? act.debut : [8, 18]))
-  const debut = h24 * 60 + m
-  const fin = debut + d
-  const h24f = Math.floor(fin / 60), m2 = fin % 60
-  const q = { type, sous, cle: `duree-${sous}-${debut}-${d}`, h: h12(h24), m, h2: h12(h24f), m2, h24, h24f, d,
-    ecritDebut: ecrit(h24, m), ecritFin: ecrit(h24f, m2), ecritDuree: ecritDuree(d) }
-  if (sous === 'apres') {
-    q.texte = C.t('dureeApresQ', { debut: ecrit(h24, m), duree: ecritDuree(d) })
-    q.attendu = ecrit(h24f, m2)
-  } else {
-    q.act = C.t('activites')[act.id]   // { nom, pronom } dans la langue du contenu
-    q.texte = C.t('dureeCombienQ', { act: q.act, debut: ecrit(h24, m), fin: ecrit(h24f, m2) })
-    q.attendu = ecritDuree(d)
-  }
-  return q
-}
-
-function genererSansRepetition(cfg, nb) {
-  const vus = new Set()
-  const result = []
-  let essais = 0
-  while (result.length < nb && essais < nb * 60) {
-    essais++
-    const q = genererQuestion(cfg)
-    if (!vus.has(q.cle)) { vus.add(q.cle); result.push(q) }
-  }
-  return result
-}
-
-// rep : { choix } | { h, m } (saisie, nombres ou chaînes) | { aiguilles: { h: 0..11, m } }
-function verifier(q, rep) {
-  if (rep.choix !== undefined) return rep.choix === q.bonne
-  if (rep.aiguilles) return rep.aiguilles.h === q.h % 12 && rep.aiguilles.m === q.m
-  const vide = v => v === '' || v === null || v === undefined
-  if (vide(rep.h) && vide(rep.m)) return false
-  const h = vide(rep.h) ? 0 : Number(rep.h)
-  const m = vide(rep.m) ? 0 : Number(rep.m)
-  if (!Number.isInteger(h) || !Number.isInteger(m) || h < 0 || m < 0) return false
-  if (q.type === 'conversion') {
-    if (q.valeurs.length === 1) return h === q.valeurs[0]
-    return h === q.valeurs[0] && m === q.valeurs[1]
-  }
-  if (q.type === 'lire') return m === q.m && h % 12 === q.h % 12 && h <= 23 // 3 h 15 ou 15 h 15
-  if (q.type === 'journee') return m === q.m && h === q.h24
-  if (q.type === 'emploi' && q.sous === 'debut') return m === q.m && h === q.h24
-  if (q.type === 'duree' && q.sous === 'apres') return m === q.m2 && h % 12 === q.h24f % 12 && h <= 23
-  if (q.type === 'duree' || q.type === 'emploi') return m < 60 && h * 60 + m === q.d || (h === 0 && m === q.d)
-  return false
-}
-
-// Horloge analogique en SVG (chaîne). h : 0..23 (seul h % 12 compte), m : 0..59.
-function svgHorloge(h, m, { aiguilles = true, aideMinutes = false, fantome = null, taille = null, impression = false } = {}) {
-  const R = 100
-  const ext = aideMinutes ? 122 : 104
-  const pt = (angle, r) => {
-    const a = angle * Math.PI / 180
-    return [+(r * Math.sin(a)).toFixed(2), +(-r * Math.cos(a)).toFixed(2)]
-  }
-  const encre = '#2c3e50'
-  const couleurH = impression ? '#111' : '#c0392b'
-  const couleurM = impression ? '#111' : '#1a5fb4'
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-ext} ${-ext} ${2 * ext} ${2 * ext}"`
-    + (taille ? ` width="${taille}" height="${taille}"` : ' width="100%" height="100%"')
-    + ` role="img" aria-label="${C.t('horloge')}">`
-  s += `<circle r="${R}" fill="${impression ? '#fff' : '#fffdf5'}" stroke="${encre}" stroke-width="5"/>`
-  // graduations des minutes (60) et des heures (12)
-  for (let i = 0; i < 60; i++) {
-    const heure = i % 5 === 0
-    const [x1, y1] = pt(i * 6, heure ? 80 : 87)
-    const [x2, y2] = pt(i * 6, 94)
-    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${encre}" stroke-width="${heure ? 3.5 : 1.3}" stroke-linecap="round"/>`
-  }
-  for (let n = 1; n <= 12; n++) {
-    const [x, y] = pt(n * 30, 66)
-    s += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="${encre}">${n}</text>`
-  }
-  if (aideMinutes) {
-    for (let n = 0; n < 12; n++) {
-      const [x, y] = pt(n * 30, 113)
-      s += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="${couleurM}">${n * 5}</text>`
-    }
-  }
-  const aiguille = (angle, long, larg, coul, opacite = 1) => {
-    const [x, y] = pt(angle, long)
-    const [xq, yq] = pt(angle + 180, 12)
-    return `<line x1="${xq}" y1="${yq}" x2="${x}" y2="${y}" stroke="${coul}" stroke-width="${larg}" stroke-linecap="round" opacity="${opacite}"/>`
-  }
-  const angleH = (hh, mm) => (hh % 12) * 30 + mm * 0.5
-  if (fantome) {
-    s += aiguille(angleH(fantome.h, fantome.m), 48, 9, '#27ae60', 0.55)
-    s += aiguille(fantome.m * 6, 78, 6, '#27ae60', 0.55)
-  }
-  if (aiguilles) {
-    s += aiguille(angleH(h, m), 48, 9, couleurH)
-    s += aiguille(m * 6, 78, 5, couleurM)
-  }
-  s += `<circle r="6" fill="${encre}"/></svg>`
-  return s
-}
-
-// #endregion
-
+const langueContenu = computed(() => (DEFINITION.contenu === 'fr' ? 'fr' : langue.value))
+const T = contenu(TEXTES, () => langueContenu.value).t
+// la lecture à voix haute n'a qu'une voix française
+const voixFr = computed(() => langueContenu.value === 'fr')
 const { lire } = useTTS()
 
-const DEFAUT = { niveau: 'ce1', exercices: NIVEAUX.ce1.exercicesDefaut, precisions: NIVEAUX.ce1.precisionsDefaut, saisie: 'choix', aideMinutes: true, nbQ: 10, nbHorloges: 8 }
-const config = ref(chargerReglages('heure_config', DEFAUT))
-if (!NIVEAUX[config.value.niveau]) config.value.niveau = 'ce1'
+// ── Réglages : défauts et options du niveau dans la définition ──
+const DEFAUT = reglagesDuNiveau(DEFINITION)
+const config = ref(reglagesDuNiveau(DEFINITION, chargerReglages('heure_config', DEFAUT)))
 if (![4, 8, 12].includes(config.value.nbHorloges)) config.value.nbHorloges = 8
 watch(config, v => sauvegarder('heure_config', v), { deep: true })
+const options = computed(() => DEFINITION.niveaux[config.value.niveau].options)
 
-const niveau = computed(() => NIVEAUX[config.value.niveau] || NIVEAUX.ce1)
-
-// Changement de niveau : on garde ce qui existe dans le nouveau niveau, sinon ses valeurs par défaut.
+// Changement de niveau : on garde les exercices qui existent dans le nouveau niveau (sinon ses défauts), et on
+// reprend ses précisions par défaut.
 watch(() => config.value.niveau, () => {
-  const niv = niveau.value
-  const ex = config.value.exercices.filter(e => niv.exercices.includes(e))
-  config.value.exercices = ex.length ? ex : [...niv.exercicesDefaut]
-  config.value.precisions = [...niv.precisionsDefaut]
+  const niv = DEFINITION.niveaux[config.value.niveau]
+  const ex = config.value.exercices.filter(e => niv.options.exercices.includes(e))
+  config.value.exercices = ex.length ? ex : [...niv.reglages.exercices]
+  config.value.precisions = [...niv.reglages.precisions]
 })
 
 function basculer(champ, val) {
-  const t = config.value[champ]
-  if (t.includes(val)) {
-    if (t.length === 1) return
-    config.value[champ] = t.filter(x => x !== val)
+  const liste = config.value[champ]
+  if (liste.includes(val)) {
+    if (liste.length === 1) return
+    config.value[champ] = liste.filter(x => x !== val)
   } else {
-    config.value[champ] = [...t, val]
+    config.value[champ] = [...liste, val]
   }
 }
 
-const phase = ref('config')
-const questions = ref([])
-const idx = ref(0)
-const bonnes = ref(0)
-const mauvaises = ref(0)
-const historique = ref([])
+// ── Jeu ──
 const repH = ref('')
 const repM = ref('')
+const champs = ref(['', ''])
 const choixDonne = ref(null)
-const repondu = ref(false)
-const dernierOk = ref(false)
-const feedback = ref('')
-const feedbackOral = ref('')
-const feedbackClass = ref('')
-const inputClass = ref('')
 const inputEl = ref(null)
 const cadranEl = ref(null)
 const aiguilles = ref({ h: 0, m: 0 })
-let minuteur = null
 
-const q = computed(() => questions.value[idx.value])
-const champs = ref(['', ''])
-const pasMinutes = computed(() =>
-  niveau.value.precisions.includes('minute') && config.value.precisions.includes('minute') ? 1 : 5)
+// message après une erreur, selon le type de question
+function messageErreur(q) {
+  if (q.type === 'duree' && q.sous === 'combien') return T('dureeCombienFaux', { act: q.act, attendu: q.attendu })
+  if (q.type === 'conversion') return `❌ ${q.attendu}`
+  if (q.type === 'emploi') return `❌ ${T('bonneReponse')} : ${q.attendu}`
+  if (q.type === 'duree') return T('dureeApresFaux', { attendu: q.attendu })
+  if (q.type === 'journee') return `❌ ${T('bonneReponse')} : ${ecrit(q.h24, q.m)}`
+  if (q.type === 'placer') return T('placerFaux', { ecrit: q.ecrit })
+  return T('lireFaux', { ecrit: ecrit(q.h, q.m) })
+}
+
+const jeu = useJeu({
+  // le jeu a sa propre graine (tirée à chaque partie) : la graine de la page sert aux fiches
+  generer: () => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()), T, nb: config.value.nbQ }),
+  verifier,
+  messageErreur,
+  surQuestion: q => {
+    repH.value = ''; repM.value = ''; champs.value = ['', '']; choixDonne.value = null
+    if (q?.type === 'placer') aiguilles.value = { ...q.depart }
+    nextTick(() => (inputEl.value || document.querySelector('.exercise-box input:not([disabled])'))?.focus?.())
+  },
+})
+const { phase, questions, index: idx, q, bonnes, mauvaises, historique, retour, repondu, cleFin } = jeu
+
+const dernierOk = computed(() => !!retour.value?.ok)
+const feedback = computed(() => retour.value?.message ?? '')
+const feedbackClass = computed(() => (retour.value ? (retour.value.ok ? 'ok' : 'erreur') : ''))
+const inputClass = feedbackClass
+const feedbackOral = computed(() => {
+  if (!repondu.value) return ''
+  if (q.value.type === 'journee') return T('oralJournee', { h: q.value.h24, m: q.value.m, oral: q.value.oral })
+  return q.value.oral ?? ''
+})
 const estChoix = computed(() => q.value && (q.value.options !== undefined))
+// saisie « ? h ? min » : lire au clavier, matin / après-midi (lire24), durées, emploi du temps sans propositions
+const saisieHM = computed(() => q.value && ((q.value.type === 'lire' && q.value.mode !== 'choix')
+  || (q.value.type === 'journee' && q.value.sous === 'lire24') || q.value.type === 'duree' || (q.value.type === 'emploi' && !q.value.options)))
+const sur24 = computed(() => q.value && (q.value.type === 'lire' || q.value.type === 'journee'))
+const pasMinutes = computed(() => (choisis(config.value.niveau, config.value, 'precisions').includes('minute') ? 1 : 5))
+const horlogeDe = question => ['lire', 'journee', 'duree'].includes(question.type)
 
-function horlogeSvg(h, m, fantome = null) {
-  return svgHorloge(h, m, { aideMinutes: config.value.aideMinutes, fantome })
-}
-
-function demarrer() {
-  clearTimeout(minuteur)
-  questions.value = genererSansRepetition(config.value, config.value.nbQ)
-  idx.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
-  phase.value = 'jeu'
-  afficherQuestion()
-}
-
-function quitter() {
-  clearTimeout(minuteur)
-  phase.value = 'config'
-}
-
-function afficherQuestion() {
-  repH.value = ''; repM.value = ''; champs.value = ['', '']; choixDonne.value = null
-  repondu.value = false; dernierOk.value = false
-  feedback.value = ''; feedbackOral.value = ''; feedbackClass.value = ''; inputClass.value = ''
-  if (q.value?.type === 'placer') aiguilles.value = { ...q.value.depart }
-  nextTick(() => (inputEl.value || document.querySelector('.exercise-box input:not([disabled])'))?.focus?.())
+function horlogeSvg(h, m, fantome = null, aideMinutes = config.value.aideMinutes) {
+  return svgHorloge(h, m, { aideMinutes, fantome, libelle: T('horloge') })
 }
 
 function classeChoix(i) {
@@ -751,8 +367,7 @@ function validerChoix(i) {
   if (repondu.value) return
   choixDonne.value = i
   const o = q.value.options[i]
-  const donne = o.label ?? ecrit(o.h, o.m)
-  terminer(verifier(q.value, { choix: i }), donne)
+  jeu.repondre({ choix: i }, { donne: o.label ?? ecrit(o.h, o.m) })
 }
 
 function valider() {
@@ -760,13 +375,13 @@ function valider() {
   const question = q.value
   if (question.type === 'placer') {
     const { h, m } = aiguilles.value
-    terminer(verifier(question, { aiguilles: aiguilles.value }), ecrit(h === 0 ? 12 : h, m))
+    jeu.repondre({ aiguilles: aiguilles.value }, { donne: ecrit(h === 0 ? 12 : h, m) })
     return
   }
   if (question.type === 'conversion') {
     if (champs.value.slice(0, question.unites.length).every(v => v === '')) return
     const donne = question.unites.map((u, i) => `${champs.value[i] || 0} ${u}`).join(' ')
-    terminer(verifier(question, { h: champs.value[0], m: champs.value[1] }), donne)
+    jeu.repondre({ h: champs.value[0], m: champs.value[1] }, { donne })
     return
   }
   if (repH.value === '' && repM.value === '') return
@@ -774,46 +389,7 @@ function valider() {
   const donne = enDuree
     ? `${repH.value || 0} h ${repM.value || 0} min`
     : `${repH.value || 0} h ${deux(+repM.value || 0)}`
-  terminer(verifier(question, { h: repH.value, m: repM.value }), donne)
-}
-
-function passer() {
-  if (repondu.value) return
-  terminer(false, t('passe'))
-}
-
-function terminer(ok, donne) {
-  const question = q.value
-  repondu.value = true
-  dernierOk.value = ok
-  inputClass.value = ok ? 'ok' : 'erreur'
-  feedbackClass.value = ok ? 'ok' : 'erreur'
-  if (ok) {
-    feedback.value = pioche(t('bravo'))
-    bonnes.value++
-  } else {
-    mauvaises.value++
-    if (question.type === 'duree' && question.sous === 'combien') feedback.value = C.t('dureeCombienFaux', { act: question.act, attendu: question.attendu })
-    else if (question.type === 'conversion') feedback.value = `❌ ${question.attendu}`
-    else if (question.type === 'emploi') feedback.value = `❌ ${t('bonneReponse')} : ${question.attendu}`
-    else if (question.type === 'duree') feedback.value = C.t('dureeApresFaux', { attendu: question.attendu })
-    else if (question.type === 'journee') feedback.value = `❌ ${t('bonneReponse')} : ${ecrit(question.h24, question.m)}`
-    else if (question.type === 'placer') feedback.value = C.t('placerFaux', { ecrit: question.ecrit })
-    else feedback.value = C.t('lireFaux', { ecrit: ecrit(question.h, question.m) })
-  }
-  if (question.type === 'journee') feedbackOral.value = C.t('oralJournee', { h: question.h24, m: question.m, oral: question.oral })
-  else if (question.oral) feedbackOral.value = question.oral
-
-  const horloge = ['lire', 'journee', 'duree'].includes(question.type) ? { h: question.h, m: question.m } : null
-  historique.value.push({ texte: question.texte, donne, attendu: question.attendu, ok, horloge })
-  if (ok) minuteur = setTimeout(suivant, 1600)
-}
-
-function suivant() {
-  clearTimeout(minuteur)
-  idx.value++
-  if (idx.value >= questions.value.length) phase.value = 'resultats'
-  else afficherQuestion()
+  jeu.repondre({ h: repH.value, m: repM.value }, { donne })
 }
 
 // ── Aiguilles : boutons ──
@@ -866,135 +442,17 @@ function glisser(e) {
 }
 function finGlisser() { aiguilleTenue = null }
 
-const resultMsg = computed(() => {
-  const pct = bonnes.value / questions.value.length * 100
-  if (pct === 100) { confettis(50); return t('resultat100') }
-  if (pct >= 80) { confettis(25); return t('resultat80') }
-  if (pct >= 60) return t('resultat60')
-  if (pct >= 40) return t('resultat40')
-  return t('resultat0')
-})
-
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
-function htmlFiche() {
-  const cfg = config.value
-  const niv = NIVEAUX[cfg.niveau] || NIVEAUX.ce1
-  const precisions = cfg.precisions.filter(p => niv.precisions.includes(p))
-  const pool = minutesDisponibles(precisions.length ? precisions : ['heure'])
-  const aide = cfg.aideMinutes
-
-  const tirer = (n, exclus = new Set()) => {
-    const res = []
-    let essais = 0
-    while (res.length < n && essais++ < 500) {
-      const h = aleatoire(1, 12), m = pioche(pool), k = `${h}-${m}`
-      if (!exclus.has(k)) { exclus.add(k); res.push({ h, m }) }
-    }
-    return res
-  }
-  const vus = new Set()
-  const nbH = cfg.nbHorloges || 8
-  // parties « horloges » selon les exercices choisis (les deux si aucune autre partie n'est demandée)
-  const autres = ['journee', 'duree', 'conversion', 'emploi'].some(e => cfg.exercices.includes(e) && niv.exercices.includes(e))
-  let avecLire = cfg.exercices.includes('lire'), avecPlacer = cfg.exercices.includes('placer')
-  if (!avecLire && !avecPlacer && !autres) avecLire = avecPlacer = true
-  const aLire = tirer(nbH, vus)
-  const aDessiner = tirer(nbH, vus)
-
-  const opt = { aideMinutes: aide, taille: '3.8cm', impression: true }
-  const cellLire = aLire.map((t, i) => `<div class="cell">
-      <div class="num">${i + 1}.</div>${svgHorloge(t.h, t.m, opt)}
-      <div class="rep">______ h ______</div></div>`).join('')
-  const cellDessin = aDessiner.map((t, i) => `<div class="cell">
-      <div class="num">${i + 1}.</div>${svgHorloge(0, 0, { ...opt, aiguilles: false })}
-      <div class="rep cible">${i % 2 ? oral12(t.h, t.m) : ecrit(t.h, t.m)}</div></div>`).join('')
-
-  let extra = ''
-  const corrige = avecLire
-    ? [`<p><b>${C.t('corrigeLire')} :</b> ${aLire.map((t, i) => `${i + 1}. ${ecrit(t.h, t.m)}`).join(' — ')}</p>`]
-    : []
-  if (cfg.exercices.includes('journee')) {
-    const lignes = []
-    const vusJ = new Set()
-    let essais = 0
-    while (lignes.length < 6 && essais++ < 200) {
-      const mo = pioche(MOMENTS.slice(1)), h = pioche(mo.heures), m = pioche(pool)
-      if (vusJ.has(`${h}-${m}-${mo.nom}`)) continue
-      vusJ.add(`${h}-${m}-${mo.nom}`)
-      lignes.push({ t: `${ecrit(h, m)} ${C.t('moments')[mo.nom].suffixe}`, r: ecrit(h + 12, m) })
-    }
-    extra += `<h2>${C.t('ficheJourneeTitre')}</h2><p class="consigne">${C.t('ficheJourneeConsigne')}</p>
-      ${lignes.map((l, i) => `<div class="ligne">${i + 1}. ${l.t} &nbsp;→&nbsp; ________ h ________</div>`).join('')}`
-    corrige.push(`<p><b>${C.t('corrigeJournee')} :</b> ${lignes.map((l, i) => `${i + 1}. ${l.r}`).join(' — ')}</p>`)
-  }
-  if (cfg.exercices.includes('duree')) {
-    const qs = genererSansRepetition({ ...cfg, exercices: ['duree'] }, 4)
-    extra += `<h2>${C.t('ficheDureesTitre')}</h2>
-      ${qs.map((d, i) => `<div class="ligne">${i + 1}. ${d.sous === 'apres'
-        ? C.t('ficheDureeApres', { debut: d.ecritDebut, duree: d.ecritDuree })
-        : C.t('ficheDureeCombien', { act: d.act, debut: d.ecritDebut, fin: d.ecritFin })}</div>`).join('')}`
-    corrige.push(`<p><b>${C.t('corrigeDurees')} :</b> ${qs.map((d, i) => `${i + 1}. ${d.attendu}`).join(' — ')}</p>`)
-  }
-  if (cfg.exercices.includes('conversion') && niv.exercices.includes('conversion')) {
-    const qs = genererSansRepetition({ ...cfg, exercices: ['conversion'] }, 6)
-    extra += `<h2>${C.t('ficheConversionTitre')}</h2><p class="consigne">${t('rappel')} : 1 h = 60 min</p>
-      <div class="deux-col">${qs.map((c, i) => `<div class="ligne">${i + 1}. ${c.texte.replace(/\?/g, '______')}</div>`).join('')}</div>`
-    corrige.push(`<p><b>${C.t('corrigeConversions')} :</b> ${qs.map((c, i) => `${i + 1}. ${c.attendu}`).join(' — ')}</p>`)
-  }
-  if (cfg.exercices.includes('emploi') && niv.exercices.includes('emploi')) {
-    const emploi = genererEmploi(niv)
-    const cours = emploi.filter(l => !l.recre)
-    const [a, b, c] = melanger(cours)
-    extra += `<h2>${C.t('ficheEmploiTitre')}</h2>
-      <table class="emploi"><tr><th>${t('debut')}</th><th>${t('fin')}</th><th>${t('activite')}</th></tr>
-      ${emploi.map(l => `<tr><td>${hm(l.debut)}</td><td>${hm(l.fin)}</td><td>${l.nom}</td></tr>`).join('')}</table>
-      <div class="ligne">1. ${C.t('emploiDebutQ', { nom: a.nom })} ________________</div>
-      <div class="ligne">2. ${C.t('emploiDureeQ', { nom: b.nom })} ________________</div>
-      <div class="ligne">3. ${C.t('emploiQuoiQ', { ecrit: hm(c.debut + 10) })} ________________</div>`
-    corrige.push(`<p><b>${C.t('ficheEmploiTitre')} :</b> 1. ${hm(a.debut)} — 2. ${ecritDuree(b.fin - b.debut)} — 3. ${c.nom}</p>`)
-  }
-
-  const html = `<!DOCTYPE html><html lang="${langueContenu.value}"><head>
-    <meta charset="UTF-8"><title>${t('titre')} — ${cfg.niveau.toUpperCase()}</title>
-    <style>
-      body { font-family: Arial, sans-serif; max-width: 18cm; margin: 1cm auto; color: #222; }
-      h1 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
-      h2 { font-size: 1.05rem; margin: 1rem 0 .3rem; }
-      .consigne { font-size: .9rem; margin: .2rem 0 .4rem; }
-      .grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: .3cm .2cm; }
-      .cell { text-align: center; page-break-inside: avoid; position: relative; }
-      .num { position: absolute; left: 0; top: 0; font-weight: 700; color: #777; }
-      .rep { margin-top: .15cm; font-size: .95rem; font-weight: 700; }
-      .rep.cible { font-size: .9rem; min-height: 2.4em; }
-      .ligne { margin: .5cm 0; font-size: 1rem; }
-      .deux-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1cm; }
-      table.emploi { border-collapse: collapse; margin: .3cm 0; }
-      table.emploi td, table.emploi th { border: 1px solid #555; padding: .15cm .4cm; text-align: left; }
-    </style></head><body>
-    <h1>🕐 ${t('titre')} — ${cfg.niveau.toUpperCase()}</h1>
-    ${ligneNomDate(langueContenu.value)}
-    ${avecLire ? `<h2>${t('quelleHeure')}</h2>
-    <p class="consigne">${C.t('ficheLireConsigne')}</p>
-    <div class="grille">${cellLire}</div>` : ''}
-    ${avecPlacer ? `<h2>${C.t('ficheDessineTitre')}</h2>
-    <p class="consigne">${C.t('ficheDessineConsigne')}</p>
-    <div class="grille">${cellDessin}</div>` : ''}
-    ${extra}
-    <section class="corrige"><h2>${C.t('ficheCorrige')}</h2>${corrige.join('')}</section>
-  </body></html>`
-
-  return html
-}
-
-const { mode, graine, regenerer } = useModeExercice()
-// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche
+// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
+const { mode } = useModeExercice()
+const { graine, nouvelle, rngFiche } = useGraine()
+// recalculée quand les réglages changent ou qu'on demande une nouvelle fiche (nouvelle graine)
 const fiche = computed(() => {
   if (mode.value !== 'imprimer') return ''
   graine.value
-  return htmlFiche()
+  const reglages = config.value
+  const tirage = questionsFiche({ niveau: reglages.niveau, reglages, rng: rngFiche(), T })
+  return ficheHeure({ questions: tirage, reglages, T, langue: langueContenu.value })
 })
-
-onUnmounted(() => clearTimeout(minuteur))
 </script>
 
 <style scoped>

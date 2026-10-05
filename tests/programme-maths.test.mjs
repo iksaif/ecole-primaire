@@ -109,6 +109,7 @@ const CAS = [
   ...['100', '1 ?000'].map(n => ['/maths/problemes', '^CE2$', 'ce2', [champ()], [`^Jusqu'à ${n}$`]]),
   ['/maths/fractions', '^CE1$', 'ce1', [fractions], ['^Aussi 2/3']],
   ['/maths/fractions', '^CE2$', 'ce2', [fractions]],
+  ['/maths/heure', '^CP$', 'cp', [heure], ['tout:Exercices', 'tout:Précision']],
   ['/maths/heure', '^CE1$', 'ce1', [heure], ['tout:Exercices', 'tout:Précision']],
   ['/maths/heure', '^CE2$', 'ce2', [heure], ['tout:Exercices', 'tout:Précision']],
   ['/maths/monnaie', '^CE1$', 'ce1', [champ()], ['tout:Exercices']],

@@ -30,6 +30,7 @@ export default {
     resultat60: "Mat ! Gallout a rez ober gwelloc'h c'hoazh 💪",
     resultat40: "Kalon vat, kendalc'h da embreger ! 🤓",
     resultat0: "Na ziskoulz ket, kendalc'h da embreger ! 📚",
+    scoreSur: '{bonnes} respont mat diwar {total}', // br: à relire
     prenom: 'Anv-bihan',
     nom: 'Anv',
     date: 'Deiziad',

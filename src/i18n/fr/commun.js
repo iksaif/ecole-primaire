@@ -30,6 +30,8 @@ export default {
     resultat60: 'Bien ! Tu peux encore progresser 💪',
     resultat40: "Courage, continue à t'entraîner ! 🤓",
     resultat0: "N'abandonne pas, pratique encore ! 📚",
+    // écran de fin commun (ResultatsJeu) : score lu par les lecteurs d'écran
+    scoreSur: '{bonnes} bonnes réponses sur {total}',
     prenom: 'Prénom',
     nom: 'Nom',
     date: 'Date',

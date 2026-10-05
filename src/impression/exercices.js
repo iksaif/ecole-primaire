@@ -5,6 +5,7 @@
 // n'importe que des données pures.
 import { ACTIVITES } from '../data/activites.js'
 import { classesEntre, CM } from '../data/classes.js'
+import HEURE from '../exercices/heure/definition.js'
 
 export const NB_VARIANTES = 4
 
@@ -77,12 +78,13 @@ const LISTE = [
       F('droite', 'les fractions sur la droite', 'fractions-mesure', ['Lire sur la droite', 'Placer sur la droite'], { classes: ['ce2'] }),
     ] },
   { id: 'heure', route: '/maths/heure', groupe: 'maths', titre: { fr: "Lire l'heure", br: 'Lenn an eur' },
-    classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$')],
+    classes: [C('cp', '^CP$'), C('ce1', '^CE1$'), C('ce2', '^CE2$')],
     choix: ["Lire l'heure", 'Placer les aiguilles', 'Matin', 'Durées', 'h et min', 'Emploi du temps'],
     fiches: [
       F('lire', "lire et placer l'heure (demies et quarts)", 'heure-demi-quart', ["Lire l'heure", 'Placer les aiguilles', 'Matin'], { classes: ['ce1'] }),
       F('lire', "lire et placer l'heure à la minute près", 'heure-minutes', ["Lire l'heure", 'Placer les aiguilles'], { classes: ['ce2'] }),
-      F('durees', 'les durées', 'durees', ['Durées', 'h et min', 'Emploi du temps']),
+      // classes : celles de la définition (pas de durées au CP)
+      F('durees', 'les durées', 'durees', ['Durées', 'h et min', 'Emploi du temps'], { classes: HEURE.fiches.filter(f => f.id === 'durees').map(f => f.niveau) }),
     ] },
   { id: 'monnaie', route: '/maths/monnaie', groupe: 'maths', titre: { fr: 'La monnaie', br: 'Ar moneiz' },
     classes: [C('ce1', '^CE1$'), C('ce2', '^CE2$')],

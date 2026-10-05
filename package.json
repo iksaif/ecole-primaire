@@ -17,6 +17,7 @@
     "preview": "vite preview",
     "test": "node tests/lancer.mjs",
     "test:complet": "node tests/lancer.mjs --complet",
+    "instantanes": "node tests/instantanes.test.mjs",
     "i18n": "node scripts/i18n.mjs",
     "i18n:relecture": "node scripts/i18n.mjs --relecture",
     "couverture": "node --no-warnings scripts/couverture.mjs",

@@ -24,7 +24,7 @@ if (!process.env.TEST_URL) {
   process.env.TEST_URL = 'http://localhost:4190/'
 }
 
-const fichiers = ['exercices', 'logique', 'routes', 'cadre', 'memorises', 'statiques', 'affiches', 'programme-francais', 'programme-maths', ...(complet ? ['reglages'] : [])]
+const fichiers = ['exercices', 'instantanes', 'logique', 'routes', 'cadre', 'memorises', 'statiques', 'affiches', 'programme-francais', 'programme-maths', ...(complet ? ['reglages'] : [])]
 // chaque fichier finit par process.exit(nbEchecs() ? 1 : 0) : on ne lit que son code de sortie (exception, échec
 // d'une vérification ou signal comptent comme un échec)
 const echoues = []

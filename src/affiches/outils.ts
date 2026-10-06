@@ -190,6 +190,14 @@ export function reglagesApresVariante<R extends object>(definition: DefinitionAf
   const def = definition as DefinitionAffiche
   const v = varianteDe(def, variante)
   const gardes = reglagesReportes({ ...reglages, variante }, { ...v, options: optionsDe(def, v) }, defautsDe(def.reglages, v))
+  // un réglage que l'une des deux variantes redéfinit (« une lettre par page » fixe la disposition, « attaché » les écritures) prend
+  // le défaut de la nouvelle variante, sauf si le lecteur l'avait modifié depuis le défaut de la précédente : sinon, un réglage
+  // mémorisé qui vaut l'ancien défaut garderait la variante sans effet
+  const avant = varianteDe(def, reglages.variante)
+  const defautsAvant = defautsDe(def.reglages, avant)
+  for (const cle of new Set([...Object.keys(avant.reglages ?? {}), ...Object.keys(v.reglages ?? {})])) {
+    if (JSON.stringify(gardes[cle]) === JSON.stringify(defautsAvant[cle])) delete gardes[cle]
+  }
   return reglagesDe(definition, gardes)
 }
 

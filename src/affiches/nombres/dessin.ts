@@ -71,7 +71,8 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, _T, ctx) => {
       const type = avecRepr && e.repr ? REPRESENTATION[e.repr] : undefined
       const repr = type ? representation(type, n, hLigne * 0.72, d.reprW * 0.92) : ''
       const mots = ecrit(n).map((m, i) => `<span class="l${i}">${echapper(m)}</span>`).join('')
-      return `<div class="ligne" style="height:${hLigne}mm">
+      // l'écart entre le nombre, son dessin et ses lettres suit le corps du texte (2 mm collait « 10 » à « dix » sur les grands corps)
+      return `<div class="ligne" style="height:${hLigne}mm;gap:${(t * 0.45).toFixed(2)}mm">
   <span class="chiffres" style="font-size:${t * 1.5}mm;width:${t * 1.5 * 2.6}mm">${n}</span>
   ${avecRepr ? `<span class="repr" style="width:${d.reprW}mm">${repr}</span>` : ''}
   <span class="mots" style="font-size:${t}mm">${mots}</span></div>`

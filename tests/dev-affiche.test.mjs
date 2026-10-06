@@ -126,7 +126,7 @@ verifier(await page.locator('label[for]').count() >= 1 && await page.locator('in
 
 // L'affiche de l'alphabet est dans le registre réel : sa page est /imprimer/affiches (pas /dev), le formulaire est le même
 console.log('Alphabet (registre réel)')
-const pages = () => page.locator('iframe').evaluate(f => f.contentDocument.querySelectorAll('.page').length)
+const nbPages = () => page.locator('iframe').evaluate(f => f.contentDocument.querySelectorAll('.page').length)
 await ouvrir('/imprimer/affiches?affiche=alphabet&variante=cursive')
 verifier(await actif('variante') === 'cursive', 'le lien ouvre la fiche « alphabet en attaché »')
 verifier(await nb('[data-reglage="variante"] [data-valeur]') === 6, 'une variante par fiche publiée, et les lettres spéciales')
@@ -140,10 +140,10 @@ verifier(await nb('[data-reglage="styles"] .level-btn.active') === 1, 'au moins 
 // les deux langues sur la même feuille : une page par langue, chacune avec son alphabet et son titre
 await cliquer('langues', 'br')
 await attendre(new Function(`return ${dansApercu('Al lizherenneg')} && ${dansApercu('L’alphabet')}`), 'français et breton : un titre par langue')
-verifier(await pages() === 2, 'deux langues : deux pages')
+verifier(await nbPages() === 2, 'deux langues : deux pages')
 await cliquer('langues', 'fr')
 await attendre(new Function(`return ${dansApercu('C\'h')} || ${dansApercu('Ch')}`), 'le breton seul : ses digrammes (ch, c’h)')
-verifier(await pages() === 1, 'le breton seul : une page')
+verifier(await nbPages() === 1, 'le breton seul : une page')
 // une lettre par page
 await ouvrir('/imprimer/affiches?affiche=alphabet&variante=une-lettre-par-page')
 await attendre(new Function("return document.querySelector('iframe')?.contentDocument?.querySelectorAll('.page').length === 26"), 'une lettre par page : 26 pages')
@@ -154,6 +154,16 @@ await ouvrir('/imprimer/affiches?affiche=alphabet&variante=lettres-speciales')
 await attendre(new Function(`return ${dansApercu('>œ<')} && ${dansApercu('>Ç<')}`), 'les lettres spéciales : œ et Ç')
 await cliquer('serie', 'alphabet')
 await attendre(new Function(`return !${dansApercu('>œ<')} && ${dansApercu('>Z<')}`), 'la série se change dans le formulaire')
+// choisir une VARIANTE change l'aperçu même quand un réglage qu'elle redéfinit est déjà mémorisé (« une lettre par page » fixe la
+// disposition : un « grille » mémorisé la laissait sans effet) ; revenir à la première variante rend sa disposition
+await ouvrir('/imprimer/affiches?affiche=alphabet')
+const pagesAvant = await nbPages()
+await page.locator('[data-reglage="variante"] [data-valeur="une-lettre-par-page"]').click()
+await page.waitForFunction(n => document.querySelector('iframe')?.contentDocument?.querySelectorAll('.page').length > n, pagesAvant, { timeout: 5000 }).catch(() => {})
+verifier(await nbPages() > pagesAvant && await actif('disposition') === 'carte', `variante « une lettre par page » : une page par lettre (${pagesAvant} → ${await nbPages()})`)
+await page.locator('[data-reglage="variante"] [data-valeur="a4-paysage"]').click()
+await page.waitForFunction(n => document.querySelector('iframe')?.contentDocument?.querySelectorAll('.page').length === n, pagesAvant, { timeout: 5000 }).catch(() => {})
+verifier(await nbPages() === pagesAvant && await actif('disposition') === 'grille', 'retour à « A4 paysage » : toutes les lettres sur une feuille')
 // l'ancienne adresse mène à l'affiche
 await ouvrir('/imprimer/alphabet?preset=affiche-alphabet-cursive')
 verifier(page.url().includes('/imprimer/affiches') && page.url().includes('affiche=alphabet'), '/imprimer/alphabet redirige vers l’affiche')

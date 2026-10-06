@@ -15,28 +15,31 @@ const COULEURS = {
   plaque: { fond: '#cfe3fb', trait: '#2f6db3', graduation: '#6fa0d8' },
 } as const
 
+// Les traits sont dessinés pour l'exercice (pixels : plaque de 80, cube de 8). `k` les met à l'échelle d'un dessin plus petit ou plus
+// grand (l'affiche dessine en millimètres : sans `k`, une barre de 12 mm aurait des bordures de 1,5 mm et un quadrillage qui la noie).
+
 // des traits réguliers (tous les `pas`) dans un rectangle : nx colonnes et ny rangées de cases
-function lignes(x0: number, y0: number, w: number, h: number, nx: number, ny: number, coul: string, pas: number): string {
+function lignes(x0: number, y0: number, w: number, h: number, nx: number, ny: number, coul: string, pas: number, k: number): string {
   let r = ''
-  for (let i = 1; i < nx; i++) r += `<line x1="${x0 + i * pas}" y1="${y0}" x2="${x0 + i * pas}" y2="${y0 + h}" stroke="${coul}" stroke-width="0.7"/>`
-  for (let j = 1; j < ny; j++) r += `<line x1="${x0}" y1="${y0 + j * pas}" x2="${x0 + w}" y2="${y0 + j * pas}" stroke="${coul}" stroke-width="0.7"/>`
+  for (let i = 1; i < nx; i++) r += `<line x1="${x0 + i * pas}" y1="${y0}" x2="${x0 + i * pas}" y2="${y0 + h}" stroke="${coul}" stroke-width="${0.7 * k}"/>`
+  for (let j = 1; j < ny; j++) r += `<line x1="${x0}" y1="${y0 + j * pas}" x2="${x0 + w}" y2="${y0 + j * pas}" stroke="${coul}" stroke-width="${0.7 * k}"/>`
   return r
 }
 
 /** Une plaque de 100 : carré de côté L, quadrillé de 10 × 10 cases. */
-const plaque = (x: number, y: number, L: number): string => {
+const plaque = (x: number, y: number, L: number, k = 1): string => {
   const c = COULEURS.plaque
-  return `<rect x="${x}" y="${y}" width="${L}" height="${L}" fill="${c.fond}" stroke="${c.trait}" stroke-width="1.5"/>${lignes(x, y, L, L, 10, 10, c.graduation, L / 10)}`
+  return `<rect x="${x}" y="${y}" width="${L}" height="${L}" fill="${c.fond}" stroke="${c.trait}" stroke-width="${1.5 * k}"/>${lignes(x, y, L, L, 10, 10, c.graduation, L / 10, k)}`
 }
 /** Une barre de 10 : largeur e, hauteur L, dix cases. */
-const barre = (x: number, y: number, e: number, L: number): string => {
+const barre = (x: number, y: number, e: number, L: number, k = 1): string => {
   const c = COULEURS.barre
-  return `<rect x="${x}" y="${y}" width="${e}" height="${L}" fill="${c.fond}" stroke="${c.trait}" stroke-width="1.5"/>${lignes(x, y, e, L, 1, 10, c.graduation, L / 10)}`
+  return `<rect x="${x}" y="${y}" width="${e}" height="${L}" fill="${c.fond}" stroke="${c.trait}" stroke-width="${1.5 * k}"/>${lignes(x, y, e, L, 1, 10, c.graduation, L / 10, k)}`
 }
 /** Un cube-unité de côté s. */
-const cube = (x: number, y: number, s: number): string => {
+const cube = (x: number, y: number, s: number, k = 1): string => {
   const c = COULEURS.cube
-  return `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${c.fond}" stroke="${c.trait}" stroke-width="1.5"/>`
+  return `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${c.fond}" stroke="${c.trait}" stroke-width="${1.5 * k}"/>`
 }
 
 /** Le matériel d'une question : m gros cubes (1000), c plaques (100), d barres (10), u cubes (1), en pixels. */
@@ -97,28 +100,31 @@ export function representation(type: TypeRepresentation, n: number, h: number, l
 function dessinBrut(type: TypeRepresentation, n: number, h: number): { w: number, corps: string } {
   if (type === 'unites') {
     if (n === 0) return { w: h * 0.6, corps: '' }
-    // des cubes par colonnes de 2 ... rangés par 5 sur deux rangées (comme les cartes à points de la maternelle)
-    const cote = h / 3.4, pas = cote * 1.25
+    // des cubes rangés par 5 sur deux rangées (comme les cartes à points de la maternelle), assez écartés pour se compter un à un
+    const cote = h / 3.4, pas = cote * 1.6, k = cote / 8
     const parRangee = Math.min(n, 5), rangees = n > 5 ? 2 : 1
     const haut = rangees * pas - (pas - cote)
     const y0 = (h - haut) / 2
     let s = ''
-    for (let k = 0; k < n; k++) s += cube((k % 5) * pas, y0 + Math.floor(k / 5) * pas, cote)
+    for (let i = 0; i < n; i++) s += cube((i % 5) * pas, y0 + Math.floor(i / 5) * pas, cote, k)
     return { w: (parRangee - 1) * pas + cote, corps: s }
   }
   if (type === 'dizaines') {
     // une barre = dix cases carrées : largeur h / 10 au plus étroit ; élargie à h / 5 pour rester lisible à petite taille
     const e = h / 5, ecart = e * 0.6
-    const nb = n / 10
+    const nb = n / 10, k = h / 80
     let s = ''
-    for (let k = 0; k < nb; k++) s += barre(k * (e + ecart), 0, e, h)
+    for (let i = 0; i < nb; i++) s += barre(i * (e + ecart), 0, e, h, k)
     return { w: nb * (e + ecart) - ecart, corps: s }
   }
-  // centaines : plaques par rangées de 5, sans chevauchement pour pouvoir les compter
+  // centaines : plaques par rangées de 5, sans chevauchement pour pouvoir les compter. La taille d'une plaque est la MÊME pour tout
+  // nombre (celle de deux rangées, le plus qu'il y ait : 1 000 = 10 plaques) : une plaque ne rétrécit pas quand il y en a plus ;
+  // une seule rangée est centrée en hauteur
   const nb = n / 100, parRang = Math.min(nb, 5), rangs = Math.ceil(nb / 5)
   const ecart = h * 0.06
-  const c = (h - (rangs - 1) * ecart) / rangs
+  const c = (h - ecart) / 2, k = c / 80
+  const y0 = (h - (rangs * c + (rangs - 1) * ecart)) / 2
   let s = ''
-  for (let k = 0; k < nb; k++) s += plaque((k % 5) * (c + ecart), Math.floor(k / 5) * (c + ecart), c)
+  for (let i = 0; i < nb; i++) s += plaque((i % 5) * (c + ecart), y0 + Math.floor(i / 5) * (c + ecart), c, k)
   return { w: parRang * (c + ecart) - ecart, corps: s }
 }

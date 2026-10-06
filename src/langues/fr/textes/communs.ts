@@ -30,6 +30,12 @@ export default {
   etoiles3: 'Bien ! Continue ! 💪',
   etoiles0: "On va s'entraîner encore ! 📚",
   etoilesSur: '{n} étoiles sur 5',
+  // retour de réponse lu par les lecteurs d'écran (QCM, tableau de correction)
+  juste: 'Juste',
+  faux: 'Faux',
+  annuler: '↩ Annuler',
+  ecouter: 'Écouter la consigne',
+  tempsRestant: 'Temps restant : {n} secondes',
   // mots des fiches
   prenom: 'Prénom',
   date: 'Date',

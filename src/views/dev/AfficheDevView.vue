@@ -1,6 +1,6 @@
+<!-- Dev seulement (route /dev/affiches, atteinte sous AVEC_DEV : src/dev.ts) : une affiche d'exemple et son formulaire.
+  Le modèle de la future page des affiches : choisir une affiche du registre, puis <FormulaireAffiche>. -->
 <template>
-  <!-- Dev seulement (route /dev/affiches, atteinte sous import.meta.env.DEV) : une affiche d'exemple et son formulaire.
-       Le modèle de la future page des affiches : choisir une affiche du registre, puis <FormulaireAffiche>. -->
   <div class="container">
     <h1 class="section-heading">{{ t('dev.afficheDevTitre') }}</h1>
     <p class="intro">{{ t('dev.afficheDevIntro') }}</p>
@@ -16,19 +16,20 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLangue } from '../../langues/useLangue.ts'
-import FormulaireAffiche from '../../noyau/FormulaireAffiche.vue'
+import { AVEC_DEV } from '../../dev.ts'
+import FormulaireAffiche from '../../affiches/FormulaireAffiche.vue'
 import { REGISTRE } from '../../affiches/index.ts'
+import { lireLien } from '../../affiches/catalogue.ts'
 import type { ModuleAffiche } from '../../affiches/types.ts'
 
 const { t } = useLangue()
 const route = useRoute()
 const modules = ref<ModuleAffiche[]>([...REGISTRE])
-// import dynamique : le module d'exemples n'entre pas dans le build de production
-import('../../affiches/exemples.ts').then(m => { modules.value = [...REGISTRE, ...m.EXEMPLES] })
+// import dynamique, seulement en développement (AVEC_DEV) : le module d'exemples n'entre pas dans le build de production
+if (AVEC_DEV) import('../../affiches/dev.ts').then(m => { modules.value = [...REGISTRE, ...m.EXEMPLES] })
 const courant = computed(() => modules.value.find(a => a.definition.id === route.query.affiche) ?? modules.value[0])
-const texte = (q: unknown): string | undefined => (typeof q === 'string' ? q : undefined)
-const depart = computed(() => Object.fromEntries(
-  (['variante', 'langue'] as const).flatMap(cle => { const v = texte(route.query[cle]); return v ? [[cle, v]] : [] })))
+// le lien (?affiche=…&variante=…&langues=fr,br) ouvre le formulaire sur cette variante et ces langues
+const depart = computed(() => lireLien(route.query))
 </script>
 
 <style scoped>

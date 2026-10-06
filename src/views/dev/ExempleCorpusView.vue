@@ -6,15 +6,14 @@
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="themes" v-model="config.themes"
-        :titre="t('exempleCorpus.themes')" :libelle="th => t(th === 'actions' ? 'exempleCorpus.actions' : 'exempleCorpus.sentiments')" />
+        :titre="t('exempleCorpus.themes')" :libelles="{ actions: t('exempleCorpus.actions'), sentiments: t('exempleCorpus.sentiments') }" />
       <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="consigne">{{ t('exempleCorpus.consigne') }} <strong>{{ q.mot }}</strong> ?</div>
-      <!-- un QCM : le composant garde la proposition choisie et colore la bonne réponse -->
       <ChoixReponses :options="q.options" :bonne="q.bonne" :repondu="repondu" @choisir="choisir" />
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+      <RetourReponse :message="retour?.message" :etat="etat" />
       <div class="btn-group">
         <button v-if="repondu && !retour?.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
       </div>
@@ -35,6 +34,7 @@ import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
 import TableauCorrection from '../../noyau/TableauCorrection.vue'
 import { useReglages } from '../../noyau/useReglages.ts'
@@ -48,6 +48,7 @@ import { fiche as mettreEnPage } from '../../exercices/exemple-corpus/fiche.ts'
 
 const { t } = useLangue()
 // langueContenu vaut toujours 'fr' ici (`contenu: 'fr'`) : T, donné au générateur et à la fiche, lit CONTENU (français seulement)
+// Un QCM (ChoixReponses) : le composant garde la proposition choisie et colore la bonne réponse
 const { config, langueContenu } = useReglages(DEFINITION)
 const T = traducteur(CONTENU, () => langueContenu.value)
 

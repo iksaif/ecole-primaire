@@ -21,7 +21,7 @@ const niveau = n => {
   return { competences: COMPETENCES, options: { cats, mode: ['mots', 'phrases'] }, reglages: { cats: [...cats], mode: 'mots' } }
 }
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'dictee',
   route: '/francais/dictee',

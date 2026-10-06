@@ -60,7 +60,7 @@ const FICHES = [
   { id: 'categories', competence: 'familles-mots', types: ['categorie', 'intrus'], niveaux: CE1 },
 ]
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'vocabulaire',
   route: '/francais/vocabulaire',

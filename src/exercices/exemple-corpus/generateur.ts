@@ -8,8 +8,11 @@ import type { Contraintes, ParamsGenerateur, Verdict } from '../../noyau/types.t
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { Rng } from '../../utils/hasard.ts'
 import type DEFINITION from './definition.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type { CONTENU } from './textes.ts'
 
 type Reglages = ReglagesDeDefinition<typeof DEFINITION>
+type Cle = CleContenu<typeof CONTENU>   // T ne connaît que les clés du catalogue et les mots communs
 
 export interface Question {
   mot: string
@@ -44,15 +47,17 @@ function question(niveau: Classe, reglages: Reglages, rng: Rng): Question {
   }
 }
 
-export const questions = ({ niveau, reglages, rng, nb = reglages.nbQ }: ParamsGenerateur<Reglages>): Question[] =>
+export const questions = ({ niveau, reglages, rng, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] =>
   Array.from({ length: nb }, () => question(niveau, reglages, rng))
 
-export const questionsFiche = (p: Omit<ParamsGenerateur<Reglages>, 'nb'>): Question[] => questions({ ...p, nb: NB_FICHE })
+export const questionsFiche = (p: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): Question[] => questions({ ...p, nb: NB_FICHE })
 
 /** Un QCM : juste si c'est la bonne proposition (un booléen suffit, pas de « presque »). */
 export const verifier = (q: Question, rep: Reponse): Verdict => rep.choix === q.bonne
 
 export const bonneReponse = (q: Question): Reponse => ({ choix: q.bonne })
+
+export const mauvaiseReponse = (q: Question): Reponse => ({ choix: (q.bonne + 1) % q.options.length })
 
 /** Un mot du corpus prévu pour une classe plus avancée que le niveau serait hors programme. */
 export const ecartsAuProgramme = (questions: Question[], contraintes: Contraintes): string[] =>

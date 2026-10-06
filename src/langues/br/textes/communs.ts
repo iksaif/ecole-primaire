@@ -33,6 +33,12 @@ export default {
   prenom: 'Anv-bihan',
   date: 'Deiziad',
   corrige: 'Reizhadenn',
+  // retour de réponse lu par les lecteurs d'écran (QCM, tableau de correction)
+  juste: 'Reizh', // br: à relire
+  faux: 'Fazi', // br: à relire
+  annuler: '↩ Nullañ',
+  ecouter: "Selaou ar c'hemenn", // br: à relire
+  tempsRestant: 'Amzer chomet : {n} eilenn', // br: à relire
   bonus: 'bonus', // br: à relire
   horsProgramme: 'er-maez ar programm', // br: à relire
 } satisfies Traductions<typeof fr>

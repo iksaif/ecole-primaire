@@ -5,6 +5,10 @@ import { existsSync } from 'node:fs'
 // URL du site testé (servi par tests/lancer.mjs, ou TEST_URL=https://ecoleprimaire.app/ pour la production)
 export const URL_SITE = (process.env.TEST_URL || 'http://localhost:4190/').replace(/\/?$/, '/')
 export const app = route => `${URL_SITE}#${route}`
+// Site AVEC les pages de développement (/dev/exemple, /dev/affiches : les exemples). `npm test` en construit un
+// (VITE_AVEC_DEV=1, tests/lancer.mjs → TEST_URL_DEV) ; sur le serveur de dev (`npm run dev`), c'est le site lui-même.
+export const URL_DEV = (process.env.TEST_URL_DEV || URL_SITE).replace(/\/?$/, '/')
+export const appDev = route => `${URL_DEV}#${route}`
 
 export function trouverChrome() {
   const c = [process.env.CHROME_PATH, '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',

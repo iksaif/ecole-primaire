@@ -5,7 +5,7 @@
 //   au CE1 et 10 000 au CE2 (numeration-10000) ; les produits restent dans les tables du niveau.
 // plage : plus grand nombre des données ('petits' 20, 'moyens' 100, 'grands' 1 000, 'tresGrands' 10 000), voir PLAGES.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'problemes',
   route: '/maths/problemes',

@@ -19,4 +19,18 @@ export default {
   ajouterAttache: '📂 Ajouter une police attachée',
   ajouterScript: '📂 Ajouter une police script',
   astuce: 'Astuce Belle Allure : choisis le fichier sans lignes (pas « Ductus » ni « Lignes ») ; la taille est ajustée automatiquement au lignage Seyès.',
+  modes: 'Mode de l’exercice',
+  installee: 'installée',
+  ajoutee: 'ajoutée',
+  // polices incluses et notes sur les polices à obtenir ailleurs (ChoixPolice)
+  policeAttache: 'Playwrite FR Trad — cursive scolaire française',
+  policeAndika: 'Andika — conçue pour apprendre à lire (a et g simples)',
+  policeLuciole: 'Luciole — très lisible, conçue pour les enfants malvoyants',
+  policeOpenDyslexic: 'OpenDyslexic — pour les lecteurs dyslexiques',
+  noteBelleAllure: 'cursive très utilisée en classe, plusieurs variantes (GS, CP, CE…)',
+  noteEcolier: 'cursive classique, version « court » pour petites boucles',
+  noteCursif: 'et d’autres polices scolaires (catégorie Script › Scolaire)',
+  // erreurs de l'ajout d'une police depuis un fichier (src/utils/impression.js)
+  erreurPoliceTropGrosse: 'Fichier trop gros (3 Mo maximum)',
+  erreurPoliceNonMemorisee: 'Police chargée pour cette session, mais impossible de la mémoriser (stockage du navigateur plein)',
 } as const

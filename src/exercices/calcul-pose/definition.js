@@ -12,7 +12,7 @@
 const RETENUE = ['non', 'oui', 'mix']
 const LIMITE_CP = 'La soustraction posée commence au CE1 (programme du cycle 2)'
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'calcul-pose',
   route: '/maths/calcul-pose',

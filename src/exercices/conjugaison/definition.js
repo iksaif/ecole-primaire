@@ -29,7 +29,7 @@ const C = [
 ]
 const jusqua = (n, ...autres) => [...C.slice(0, n), ...autres]
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'conjugaison',
   route: '/francais/conjugaison',

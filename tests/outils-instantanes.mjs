@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto'
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { jeuxDeReglages, langueContenuDe } from '../src/exercices/outils.js'
+import { jeuxDeReglages, langueContenuDe } from '../src/noyau/reglages.ts'
 
 export const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 export const DOSSIER_INSTANTANES = join(racine, 'tests/instantanes')
@@ -27,7 +27,7 @@ export const cleCas = ({ exercice, niveau, graine, langue, nom }) => `${exercice
 // Langues de contenu d'un exercice : fr seulement si le contenu est toujours en français, sinon fr et br
 export const languesDe = definition => [...new Set(['fr', 'br'].map(l => langueContenuDe(definition, l)))]
 
-// Jeux de réglages d'un niveau (src/exercices/outils.js, jeuxDeReglages) : défauts, « tout au programme », chaque autre
+// Jeux de réglages d'un niveau (src/noyau/reglages.ts, jeuxDeReglages) : défauts, « tout au programme », chaque autre
 // valeur d'un réglage à choix unique (y compris bonus et hors programme : la fiche ne doit pas changer non plus),
 // chaque fiche par compétence de la définition. Tous passent par reglagesDuNiveau, comme les réglages mémorisés.
 export const reglagesDe = (definition, niveau) => jeuxDeReglages(definition, niveau, { horsProgramme: true })

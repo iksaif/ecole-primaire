@@ -6,7 +6,7 @@
 // Un exercice de la liste = un type de question (symétrie, reproduction, repérage, figures, solides, angles droits,
 // propriétés, cercle, patrons) ; les niveaux ne diffèrent que par la liste des exercices et la taille des quadrillages.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'geometrie',
   route: '/maths/geometrie',

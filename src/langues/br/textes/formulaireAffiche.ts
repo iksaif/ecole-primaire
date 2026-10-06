@@ -16,5 +16,6 @@ export default {
   orientation: 'Tuadur', // br: à relire
   paysage: 'Gweledva', // br: à relire
   portrait: 'Poltred',
+  prereglages: 'Dibaboù prest', // br: à relire
   polices: 'Nodrezhoù', // br: à relire
 } satisfies Traductions<typeof fr>

@@ -9,7 +9,7 @@
 // lu dans le catalogue de contenu (`alphabet`, `voyelles` : src/i18n/<langue>/contenu/lettres.js).
 // Exercice : « Reconnaître » (retrouver la lettre montrée) ou « Majuscule / minuscule » ; lettres : voyelles, consonnes ou toutes.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'lettres',
   route: '/maternelle/lettres',

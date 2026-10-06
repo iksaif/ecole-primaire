@@ -7,7 +7,7 @@
 
 const TYPES = ['decomposer', 'representation', 'lettresChiffres', 'chiffresLettres', 'comparer', 'suites', 'droite', 'ranger']
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'numeration',
   route: '/maths/numeration',

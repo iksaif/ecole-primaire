@@ -8,7 +8,7 @@
 import { ref } from 'vue'
 defineProps({ route: { type: String, required: true } })
 const routes = ref(null)
-import('../exercices/index.js').then(m => { routes.value = new Set(m.REGISTRE.map(e => e.definition.route)) })
+import('../exercices/ancien.js').then(m => { routes.value = new Set(m.REGISTRE.map(e => e.definition.route)) })
 </script>
 
 <style scoped>

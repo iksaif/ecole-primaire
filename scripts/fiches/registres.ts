@@ -7,6 +7,9 @@
 //     `questionsFiche` puis `fiche`, les mêmes modules purs que l'app.
 // Les exemples (domaine fictif) n'y entrent qu'avec `avecExemples`, jamais en production.
 import { traducteurExercice } from '../../src/exercices/traducteur.ts'
+import { REGISTRE as EXERCICES } from '../../src/exercices/index.ts'
+import { CODES } from '../../src/langues/registre.ts'
+import type { Langue } from '../../src/langues/registre.ts'
 import { REGISTRE as AFFICHES } from '../../src/affiches/index.ts'
 import { entreesDe as entreesAffiche, languesDuSite } from '../../src/affiches/catalogue.ts'
 import { site as siteDe } from '../../src/sites.ts'
@@ -24,23 +27,17 @@ import type { DefinitionAffiche, ModuleAffiche, TextesAffiche } from '../../src/
 import { cssPoliceScolaire } from './polices.ts'
 import type { DocumentSource, FicheSource, MetaFiche } from './types.ts'
 
-/** Langues dont on écrit les textes (titres, descriptions) et pour lesquelles les exercices ont une entrée. */
-export const LANGUES = ['fr', 'br'] as const
+/** Langues dont on écrit les textes (titres, descriptions) et pour lesquelles les exercices ont une entrée : celles du registre de langues. */
+export const LANGUES: readonly Langue[] = CODES
 
 /** Fiches différentes tirées pour le bilan d'une classe, et pour une fiche par compétence. */
 export const NB_VARIANTES = 4
 export const NB_VARIANTES_COMPETENCE = 2
 
-/**
- * Les exercices de la base saine publiés par le build. Vide : l'existant est déconnecté (plan 11). Un exercice reporté
- * dans le modèle de `src/exercices/exemple/` s'ajoute ici (et sort de `REGISTRE` de index.js).
- */
-export const EXERCICES_DE_LA_BASE: readonly ModuleExercice[] = []
-
 export interface OptionsRegistres {
   /** ajoute les exercices et les affiches d'exemple (domaine fictif) */
   avecExemples?: boolean
-  /** ajoute les exercices de l'ancien registre (src/exercices/index.js), pour comparer ou reporter */
+  /** ajoute les exercices de l'ancien registre (src/exercices/ancien.js), pour comparer ou reporter */
   avecAnciens?: boolean
   /** site (mode Vite) : les affiches ne sont produites que dans les langues qu'il publie ; défaut : toutes */
   site?: string
@@ -97,7 +94,7 @@ function fichesAffiche(module: ModuleAffiche, publiees: readonly string[]): Fich
         titre: texteMulti(module.textes, `variante.${variante}.titre`, e.titre),
         titreCourt: texteMulti(module.textes, `variante.${variante}.court`, e.court),
         description, descriptionLongue: description,
-        niveaux: [...v.niveaux], domaine: d.domaine, genre: 'affiche', langues: [...e.langues], parent: null, famille: d.id,
+        niveaux: [...v.classes], domaine: d.domaine, genre: 'affiche', langues: [...e.langues], parent: null, famille: d.id,
         personnaliser: lienPersonnaliser(e.lien),
         exemple: estExemple(d.domaine), competences: competencesVisees(v.competences), reglages,
       },
@@ -175,12 +172,10 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
 /** Les fiches à produire, dans l'ordre des registres (affiches d'abord). */
 export async function fichesDesRegistres({ avecExemples = false, avecAnciens = false, prefixe = '', site }: OptionsRegistres = {}): Promise<FicheSource[]> {
   const affiches: ModuleAffiche[] = [...AFFICHES as ModuleAffiche[]]
-  const exercices: ModuleExercice[] = [...EXERCICES_DE_LA_BASE]
-  if (avecExemples) {
-    affiches.push(...(await import('../../src/affiches/exemples.ts')).EXEMPLES as ModuleAffiche[])
-    exercices.push(...(await import('../../src/exercices/dev.ts')).REGISTRE_DEV as unknown as ModuleExercice[])
-  }
-  if (avecAnciens) exercices.push(...(await import('../../src/exercices/index.js')).REGISTRE as unknown as ModuleExercice[])
+  // le registre ; les exemples (`exemple: true`) seulement avec `avecExemples`, jamais en production
+  const exercices: ModuleExercice[] = EXERCICES.filter(e => avecExemples || !e.exemple)
+  if (avecExemples) affiches.push(...(await import('../../src/affiches/dev.ts')).EXEMPLES as ModuleAffiche[])
+  if (avecAnciens) exercices.push(...(await import('../../src/exercices/ancien.js')).REGISTRE as unknown as ModuleExercice[])
   const publiees = site ? languesDuSite(siteDe(site)) : LANGUES
   const fiches = [...affiches.flatMap(m => fichesAffiche(m, publiees)), ...exercices.flatMap(fichesExercice)]
   const vues = new Set<string>()

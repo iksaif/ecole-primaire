@@ -7,7 +7,7 @@
 //        [--url http://localhost:5173/ecole-primaire/] [--paralleles 8] [--recharger]
 //
 // - Serveur : --url, sinon TEST_URL, sinon le serveur de dev (npm run dev).
-// - Cas : pour un exercice du registre (src/exercices/index.js), ceux du test des instantanés (défauts du niveau,
+// - Cas : pour un exercice du registre (src/exercices/ancien.js), ceux du test des instantanés (défauts du niveau,
 //   tout au programme, fiches de la définition) ; sinon ceux de --reglages :
 //     { "cle": "monnaie_config",                       // clé des réglages mémorisés de la vue (chargerReglages)
 //       "cas": [{ "niveau": "ce1", "nom": "defauts",    // → clé <id>/ce1/graineN/<langue>/defauts
@@ -24,7 +24,7 @@
 //   cas. --recharger : un chargement complet par cas (plus lent, si une vue garde un état entre deux montages).
 import { chromium } from 'playwright-core'
 import { readFileSync } from 'node:fs'
-import { REGISTRE } from '../src/exercices/index.js'
+import { REGISTRE } from '../src/exercices/ancien.js'
 import { trouverChrome } from '../tests/outils.mjs'
 import {
   GRAINES, DOSSIER_HTML, casDe, cleCas, languesDe, empreinte, ecrireInstantanes, ecrireHtml, fichierInstantanes, lireInstantanes,

@@ -3,10 +3,14 @@
 import type { Classe, Contraintes, ParamsGenerateur, Verdict } from '../../noyau/types.ts'
 import type { ConfigDe, ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type DEFINITION from './definition.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type { CONTENU } from './textes.ts'
 
 // Le type des réglages vient de la définition : le changer là change ici, et une faute de frappe ne compile pas.
 type Reglages = ReglagesDeDefinition<typeof DEFINITION>
 type Config = ConfigDe<typeof DEFINITION>
+// T ne connaît que les clés du catalogue de l'exercice (textes.ts) et les mots communs : une clé inconnue ne compile pas
+type Cle = CleContenu<typeof CONTENU>
 
 // Une question est l'une des formes de l'union, reconnue à `type`. Ajouter une forme fait échouer la compilation de
 // chaque `switch (q.type)` qui l'oublie (verifier, fiche, corrigé) : on ne peut pas l'oublier en silence.
@@ -24,7 +28,7 @@ const NB_FICHE = 8          // suites sur une fiche
 // Plus grand nombre de la suite, par niveau. Le test l'oppose au programme (ecartsAuProgramme) : une erreur ici se voit.
 const PLAFOND: Record<string, number> = { cp: 100, ce1: 1000, ce2: 10000 }
 
-function question(niveau: Classe, reglages: Config, rng: ParamsGenerateur<Reglages>['rng']): Question {
+function question(niveau: Classe, reglages: Config, rng: ParamsGenerateur<Reglages, Cle>['rng']): Question {
   // Toujours tirer dans le même ordre : même graine, mêmes questions, donc même fiche (instantanés).
   const pas = rng.choisir(reglages.pas)   // plusieurs pas cochés : un par question
   const descend = rng.choisir(reglages.sens) === 'descend'
@@ -46,11 +50,11 @@ function question(niveau: Classe, reglages: Config, rng: ParamsGenerateur<Reglag
 }
 
 /** Les questions de l'exercice à l'écran. `nb` : le réglage nbQ, sauf si l'appelant en veut un autre. */
-export const questions = ({ niveau, reglages, rng, nb = reglages.nbQ }: ParamsGenerateur<Reglages>): Question[] =>
+export const questions = ({ niveau, reglages, rng, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] =>
   Array.from({ length: nb }, () => question(niveau, reglages, rng))
 
 /** Ce que tire la fiche imprimable : les mêmes questions, en nombre fixe (fiche.ts les met en page). */
-export const questionsFiche = (p: Omit<ParamsGenerateur<Reglages>, 'nb'>): Question[] => questions({ ...p, nb: NB_FICHE })
+export const questionsFiche = (p: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): Question[] => questions({ ...p, nb: NB_FICHE })
 
 /**
  * Verdict : un booléen, ou { ok, nuance } quand la réponse est « presque » juste. useJeu affiche alors le message de
@@ -69,6 +73,9 @@ export function verifier(q: Question, rep: Reponse): Verdict {
 
 /** Une réponse juste, que `verifier` doit accepter (les tests le vérifient pour chaque question tirée). */
 export const bonneReponse = (q: Question): Reponse => ({ nombre: q.attendu })
+
+/** Une réponse fausse, que `verifier` doit refuser (les tests le vérifient pour chaque question tirée). */
+export const mauvaiseReponse = (q: Question): Reponse => ({ nombre: q.attendu + (q.type === 'complete' ? 7 * q.pas : 1) })
 
 /** Ce qui sort du programme du niveau, [] si tout y est. Les tests l'appellent sur toutes les questions tirées. */
 export function ecartsAuProgramme(questions: Question[], contraintes: Contraintes): string[] {

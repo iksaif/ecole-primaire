@@ -39,6 +39,7 @@
 // classes et cycles : src/data/classes.ts (réexportés ici pour les modules qui les lisent avec le programme)
 import { NIVEAUX, CYCLE_DE, classesEntre, classesDepuis } from './classes.ts'
 import type { Classe, Cycle } from './classes.ts'
+import { AVEC_DEV } from '../dev.ts'
 export { NIVEAUX, CYCLE_DE }
 export type { Classe as Niveau, Cycle }
 
@@ -345,7 +346,8 @@ export const DOMAINES = [
 // absentes d'un build de production (import.meta.env.PROD : remplacé par Vite, puis le code mort est retiré) ; `DOMAINES`
 // et `COMPETENCES` ne les contiennent jamais, donc ni la couverture, ni le catalogue, ni la page « Le programme » ne les
 // voient. Seuls domaineDe, competenceDe et competencesDu les connaissent.
-const AVEC_EXEMPLES = !import.meta.env?.PROD
+// condition écrite ici avec les littéraux de Vite (src/dev.ts) : en production le code mort est retiré, ids et textes compris
+const AVEC_EXEMPLES: boolean = import.meta.env ? (import.meta.env.DEV || !!import.meta.env.VITE_AVEC_DEV) : AVEC_DEV
 
 export const DOMAINES_EXEMPLE = AVEC_EXEMPLES ? [
   { id: 'exemple', court: 'Exemple (développement)', matiere: 'maths', cycles: [1, 2, 3], officiel: {}, source: {}, lien: {}, devSeulement: true },

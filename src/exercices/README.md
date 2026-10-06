@@ -1,181 +1,125 @@
-# Exercices au format « définition » (plan 10)
+# Exercices (modèle de la base saine, plan 11)
 
-> **Pour créer un exercice** : `npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <ids>`
-> (ou copier `exemple/`, voir `exemple/README.md`). L'exemple est visible avec `npm run dev` sur la page **`/dev`**, qui
-> liste tous les exemples ; il n'existe pas en production. Il se déclare avec `definir` (`src/noyau/definir.ts`), en TypeScript.
+Un exercice est un dossier de `src/exercices/`, écrit en **TypeScript**, déclaré une fois avec `definir` : ses niveaux, fiches
+et tests en découlent. Deux modèles complets à copier, visibles avec `npm run dev` sur **`/dev`** (absents d'un build de
+production) :
+- `exemple/` : simple (suites de nombres, un catalogue de textes) ; `exemple/README.md` explique chaque mécanisme ;
+- `exemple-corpus/` : français, corpus dans `src/data/`, contenu toujours en français (QCM).
 
-Un exercice se déclare une fois ; ses niveaux, fiches et tests en découlent. Modèles : `heure/` (pilote),
-`monnaie/` (phase 2a, réglage à choix unique, `bonneReponse`) et `conjugaison/` (phase 2b : contenu toujours `fr`,
-réponses tapées au clavier comparées par `src/utils/reponses.js`, une partie = les lignes d'un tableau, `ecartsFiche`).
+**Créer un exercice** : `npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <id,id> [--modele simple|corpus]
+[--matiere maths|francais|maternelle]`. Il copie le modèle, la vue, les textes d'interface, et inscrit l'exercice aux repères
+`// nouveau:…` de `src/exercices/index.ts` (le registre), `src/router/index.ts` et `src/langues/{fr,br}/textes/index.ts`.
+Il faut ensuite adapter niveaux et compétences (un niveau sans compétence au programme est refusé à l'import).
 
 ```
 src/exercices/<id>/
-  definition.js   la déclaration (ci-dessous), données pures
-  generateur.js   pur : questions({ niveau, reglages, rng, T, nb? }), questionsFiche(…), verifier(q, rep) → booléen
-                  ou { ok, nuance }, ecartsAuProgramme(questions, contraintesDe(niveau))
-                  bonneReponse(q), ecartsFiche(html, contraintes), manquesAuProgramme(reglages, contraintes) :
-                  facultatifs, vérifiés par les tests s'ils existent
-  fiche.js        pur : fiche({ questions, reglages, T, langue, police, cssPolices }) → documentFiche(…)
-                  (src/impression/document.js ; police : usePoliceFiche() dans l'app, Andika par défaut)
-  textes.ts       catalogue de CONTENU (`catalogue(…)`), lu avec T(cle, params) ; l'interface est dans src/langues/
-src/exercices/index.js   registre (imports statiques : app, node et tests) ; outils.js : reglagesDuNiveau…
-src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <ChoixReglage>, useJeu + <QuestionJeu> +
-                         <ResultatsJeu> (+ <TableauCorrection>), useFicheExercice ; rendu d'une question avec
-                         <ChoixReponses> (QCM) et <SaisieReponse> (champ)
+  definition.ts   la déclaration (`definir`) : niveaux → compétences du programme, réglages, bonus, hors programme, fiches
+  generateur.ts   pur : questions, questionsFiche, verifier, ecartsAuProgramme, bonneReponse, mauvaiseReponse
+  fiche.ts        pur : fiche({ questions, reglages, T, langue, police, cssPolices }) → documentFiche(…)
+  textes.ts       catalogue de CONTENU (`catalogue(…)`) lu par T ; l'interface est dans src/langues/<langue>/textes/<id>.ts
+  index.ts        le module { definition, generateur, fiche, textes } (satisfies ModuleExercice)
+src/views/<matiere>/<Id>View.vue   la vue, mince
 ```
 
-```js
-{ id, route, domaine, contenu: 'fr' | 'interface', niveauDefaut, reglages /* communs */, options? /* communes */,
-  niveaux: { <classe>: { competences: [ids de programme.js], reglages /* défauts */, options?, bonus?,
-                         horsProgramme?: [{ option, raison }] } },
-  fiches: [{ id, competence, niveau, reglages }] }   // fiches prégénérées par compétence
+Le registre est **un seul fichier** : `src/exercices/index.ts` (`REGISTRE`). L'app, le build des fiches (`scripts/fiches/`), les
+tests et `/dev` le lisent. Les exemples y sont marqués `exemple: true` et chargés par import dynamique en développement
+seulement (`src/dev.ts`). Les 22 anciens exercices (JavaScript) sont dans `ancien.js` tant qu'ils ne sont pas reportés.
+
+## La définition
+
+```ts
+export default definir({
+  id: 'heure', route: '/maths/heure', domaine: D.grandeursMesures,   // id : minuscules et tirets ; route : « /… »
+  contenu: 'interface',      // 'fr' : exercice de français, toujours en français
+  jeu: true,                 // false : exercice « fiche seule » (voir plus bas)
+  competences: [K.heureEntiere, K.heureDemiQuart],   // toutes ; chaque niveau garde celles de son programme
+  autresDomaines: [],        // domaines des autres compétences, déclarés
+  reglages: { nbQ: choix([5, 10, 15], { defaut: 10 }) },   // communs à tous les niveaux
+  niveaux: {
+    cp: { reglages: { exercices: cases(['lire', 'placer']) } },
+    ce1: herite('cp', { reglages: { precisions: cases(['heure', 'demi'], { bonus: ['cinq'] }) } }),
+  },
+  fiches: [{ id: 'lire', competence: K.heureEntiere, niveau: 'ce1', reglages: { exercices: ['lire'] } }],
+})
 ```
 
-- `competences` : ids de `src/data/programme.js`, **au programme du niveau** ; `reglages` : défauts, dans le programme.
-- `options` : valeurs proposées par réglage à choix : multiple si le défaut est une liste (`exercices: [...]`), unique
-  sinon (`centimes: [false, true]`) ; `bonus` : celles hors programme (jamais par défaut, affichées « (bonus) ») ;
-  `horsProgramme: [{ reglage, option, raison }]` : tout autre écart (affiché « (hors programme) », raison en infobulle),
-  ou `{ option: <compétence>, raison }`. Rien d'autre ne peut sortir du programme.
-- `options` communes (hors niveaux) : valeurs proposées pour un réglage commun à choix (`nbQ: [5, 10, 15]`,
-  `nbHorloges`, `saisie`) ; `<ChoixReglage>` les lit, une valeur mémorisée hors liste reprend le défaut, et les tests
-  essaient chaque valeur (instantanés compris).
-- Ajouts de la phase 2d, lot A (français ; tous rétrocompatibles) : `useJeu({ delai: null })` (on attend « Suivant », pour lire
-  l'explication) ; `<ChoixReglage :groupes="[{ titre, valeurs }]">` (boutons sous des sous-titres) ; `<ChoixReponses colonne>` ;
-  `documentFiche({ h1: null })` (fiche en plusieurs pages qui ont chacune leur titre) ; `src/views/francais/QuestionFrancais.vue`
-  et `EtiquettesOrdre.vue` (question de grammaire / vocabulaire : consigne, phrase, choix, mots à cliquer, étiquettes à ranger,
-  saisie, retour avec explication ; textes des questions = fonctions de `T`, appelées avec `t` en jeu et `T` (français) sur la fiche).
-  Un corpus de français (jamais traduit) va dans `src/data/<exercice>.js`, comme `data/conjugaison.js`.
-- `nb` (nombre de questions) est facultatif : un exercice dont la partie est fixée par ses données (6 lignes d'un
-  tableau) l'ignore.
-- `verifier(q, rep)` rend un booléen, ou `{ ok, nuance }` quand une réponse peut être « presque juste » (nuance
-  `'accents'` : `verdictSaisie` de `src/utils/reponses.js`, accents oubliés comptés **faux** par défaut, avec un
-  avertissement) ; `useJeu` range la nuance dans `retour` et l'historique, et l'état devient `'presque'` (orange).
-- Hasard : `rng` de `src/utils/hasard.js`, jamais `Math.random`. Même graine, mêmes questions, même fiche.
-- La vue affiche les niveaux de `definition.niveaux` : on ne déclare pas de niveau ailleurs.
-- `tests/exercices.test.mjs` (node, sans Chrome) vérifie chaque exercice du registre, chaque niveau, 5 graines.
-- Ajouter un exercice : un dossier ici, une ligne dans `index.js` (le test échoue sinon).
+- `choix(valeurs, { defaut?, bonus?, horsProgramme? })` : un réglage à choix unique ; `cases(valeurs, …)` : choix multiple
+  (tout coché par défaut). **Une seule sorte de valeurs par réglage** : chaînes, nombres ou booléens, jamais un mélange
+  (`cases([1, 'a'])` ne compile pas ; `definir` refuse la liste). Un réglage simple (texte libre, liste de mots, nombre) s'écrit
+  tel quel (`texte: ''`, `mots: ['papa']`) : il n'a pas d'options.
+- `bonus` : valeur proposée, au-delà du programme, jamais cochée (« bonus ») ; `horsProgramme: [{ option, raison }]` : écart
+  assumé (« hors programme », raison en infobulle). Au niveau : `horsProgramme: [{ competence: K.…, raison }]` pour une compétence
+  travaillée malgré le programme.
+- `definir` vérifie à l'import (erreur claire avec le chemin « niveau ce1, réglage « a » ») : id et id de fiche (forme, unicité par
+  niveau), route, compétences connues, **du domaine de l'exercice** (ou d'`autresDomaines`), pas de doublon, niveaux couverts, défauts
+  au programme, `horsProgramme` non redondant avec le programme, fiches cohérentes avec les options.
+- **Le type des réglages est fermé** : `ConfigDe<typeof DEFINITION>` donne `config.pas : (1 | 2 | 10)[]`, `config.typo` ne
+  compile pas (`tests/definir.types.ts` : ce que le compilateur doit refuser).
+- Les identifiants viennent de `K` (compétences) et `D` (domaines) de `src/noyau/ids.ts` (généré : `node scripts/ids.mjs`).
+  `K.exemple…` et `D.exemple` sont fictifs : un exercice réel qui les cite échoue à l'import en production
+  (`tests/production.test.mjs`).
 
-## Migrer un exercice (checklist)
+### Exercice « fiche seule » (écriture, calcul en mode fiche)
 
-1. **Avant de toucher la vue** : capturer le `srcdoc` des fiches (script jetable dans le dépôt, supprimé ensuite ;
-   playwright-core, Chrome, serveur de dev). Pour chaque niveau × 3 graines × 5 à 7 combinaisons de réglages × fr/br :
-   `about:blank` puis `?graine=N#/route?mode=imprimer` (sinon même URL = pas de rechargement), `Math.random` remplacé
-   par mulberry32(N) comme `scripts/telechargements.mjs`, localStorage vidé, clic du niveau puis des réglages
-   (positions relevées en fr, rejouées en br). Vérifier que les captures diffèrent entre elles.
-2. **Programme** : lire `src/data/programme.js` (COMPETENCES, CONTRAINTES) pour chaque classe. Un niveau au programme
-   absent est un écart : l'ajouter si c'est raisonnable, sinon l'écrire dans le plan. Une option hors programme :
-   `bonus` ou `horsProgramme` avec raison, jamais par défaut.
-3. **`definition.js`** : niveaux → `competences`, `options`, `reglages` (défauts), `bonus`/`horsProgramme` ; réglages
-   communs ; `fiches` = celles de `src/impression/exercices.js` (mêmes `id`, slugs inchangés).
-4. **`generateur.js`** pur : recopier la logique de la vue en remplaçant `aleatoire` → `rng.entier`, `pioche` →
-   `rng.choisir`, `melanger` → `rng.melanger`, `Math.random() < p` → `rng.vrai(p)`, **dans le même ordre de tirage**
-   (y compris les tirages faits pour une partie non affichée). `questionsFiche` renvoie des données, pas du HTML ;
-   `ecartsAuProgramme` lit `contraintesDe(niveau)` ; `bonneReponse(q)` si `verifier` n'est pas un simple choix.
-   Les options du niveau viennent de la définition (pas de copie). Attention aux caractères invisibles
-   (espace insécable : écrire `'\u00a0'`).
-5. **`fiche.js`** pur : même corps HTML, via `documentFiche({ titre, langue, police, cssPolices, h1, css, largeur, marge })`
-   et `ligneNomDate`. Le CSS de base (body, h1) vient de `documentFiche`.
-6. **Textes**, en deux endroits typés (le français est la source ; une clé manquante ou en trop ne compile pas) :
-   - l'**interface** (titres, réglages, jeu) : une section par exercice dans `src/langues/fr/textes/<id>.ts` et
-     `src/langues/br/textes/<id>.ts` (`satisfies Traductions<typeof fr>`), ajoutée aux deux `index.ts` ; lue dans la
-     vue par `const { t } = useLangue()` puis `t('<id>.titre')`. Les mots communs (valider, niveau, quitter, corrigé…) :
-     section `communs`. Une clé dynamique se règle par une table ou une expression à deux branches, pas par `t(String(x))` ;
-   - le **contenu** (consignes de fiche, énoncés, titre de la fiche) : `textes.ts` de l'exercice exporte
-     `CONTENU = catalogue({ …français… }, { br: { … } })` (`src/langues/catalogue.ts`). Le breton est facultatif et, s'il
-     est donné, doit avoir les mêmes clés (compilateur) ; **sans breton** (exercice de français, contenu toujours en `fr`) :
-     `catalogue({ … })` seul, la fiche reste en français quelle que soit l'interface. Un pluriel est `{ one, other }`.
-     La vue fait `const T = traducteur(CONTENU, () => langueContenu.value)` et le passe au générateur et à la fiche
-     (`T(cle, params)` : untyped, les clés écrites en dur sont vérifiées par `tests/langues.test.mjs` pour les exemples) ;
-     `contenuDe(CONTENU, langue).t('cle')` donne un `t` typé. `T` lit aussi la section `communs` (`T('corrige')`).
-   Le module de l'exercice déclare `textes: CONTENU` (registre `dev.ts`). Chaque texte breton nouveau : `// br: à relire`
-   (`npm run i18n` les compte, contenu compris). Les anciens catalogues `src/i18n/` ne servent plus qu'à l'ancien monde.
-7. **Registre** : 4 lignes dans `index.js`. **`activites.js`** (`niveaux` et compétences par classe depuis la
-   définition) et **`impression/exercices.js`** (`classes` depuis `definition.niveaux`, `classes` des fiches depuis
-   `definition.fiches`).
-8. **Vue mince** (modèles : `HeureView`, `MonnaieView`, `ConjugaisonView`), dans cet ordre :
-   - réglages : `const { config, langueContenu } = useReglages(DEFINITION, '<id>_config')` (mémorisation, options du
-     niveau et communes, **politique commune au changement de niveau** : choix multiples → défauts du nouveau niveau,
-     choix unique gardé s'il est au programme ; pas de `watch` du niveau dans la vue), puis
-     `const T = traducteur(CONTENU, () => langueContenu.value)` ; la clé de mémorisation ne change pas ;
-   - `<ChoixReglage>` pour le niveau et chaque réglage à choix (`cartes` + `icone` / `description` pour un choix de mode),
-     sans `:valeurs` si les valeurs sont dans la définition (`options` du niveau ou communes) ;
-   - jeu : `useJeu({ generer: rng => questions({ …, rng }), verifier, messageErreur, delai })` (la graine du jeu est
-     tirée par `useJeu`) ; `apresErreur: 'continuer'` pour enchaîner sans bouton (maternelle) ; `serie: true` (ou
-     `q => clé`) pour plusieurs questions sur un écran (lignes d'un tableau, Conjugaison) ; classes d'état :
-     `jeu.etat` / `etatDe(entrée)` ;
-   - rendu : `<QuestionJeu :jeu>` ; `<ChoixReponses :options :bonne :repondu @choisir>` (QCM, `images` pour des
-     dessins) ; `<SaisieReponse v-model type="nombre|decimal|texte" :etat :disabled focus @entree>` (pas de `ref` ni de
-     `nextTick` pour le focus) ; `<ResultatsJeu>` + `<TableauCorrection :historique>` (slot `#question` pour un dessin) ;
-   - fiche : `const { mode, fiche, nouvelle } = useFicheExercice({ tirer: rng => questionsFiche(…), mettreEnPage:
-     (questions, police) => fiche({ …, ...police }) })` et `<ConfigExercice police>` ;
-   - plus de `Math.random`, d'import `i18n/` (ni `i18n/br/`), de `'br'`, de `chargerReglages` / `sauvegarder` / `useGraine` direct.
-9. **Après** : recapturer, comparer le `<body>` (identique attendu ; la police est dans le `<head>`), justifier et
-   regarder en image chaque écart. `npm run lint`, `npm run i18n`, `node tests/exercices.test.mjs`, `npm run qualite`
-   (puis `-- --enregistrer`), `npm test` (seul), et un passage dans le navigateur : fr/br, jeu et impression, chaque
-   niveau, sans erreur JS. Ajouter un cas au test `programme-maths` pour un niveau ajouté. Retirer du test Chrome
-   de programme ce que `tests/exercices.test.mjs` couvre désormais (garder un test de rendu minimal, comme
-   Conjugaison dans `programme-francais`). `npm run qualite` : `exercicesMigres` monte, `-- --enregistrer`.
+Un exercice qui n'a pas de mode en ligne se déclare `jeu: false` : pas de `questions` ni de `verifier` (type `GenerateurFicheSeule` :
+`questionsFiche` et `ecartsAuProgramme`), la vue utilise `<CadreExercice fiche-seule>` et `useFicheExercice({ …, ficheSeule: true })`
+(le mode est toujours « imprimer »). Même modèle, pas de troisième genre ; `aUnJeu(definition)` (`reglages.ts`) le dit.
 
-Dans le socle depuis la phase 2d : `<OrdonnerClics>` (ranger par clics), `<ResultatsEtoiles>` (fin de la maternelle), `useMinuteur`,
-`<ChoixReponses grand>` et `useReglages(…, { suivreClasse: true })` (maternelle). Pas encore extraite : la droite graduée (lot B).
+## Le générateur et la fiche
 
-## Vérifier qu'une migration ne change rien
+Purs (lisibles par node : aucun import de Vue, aucun `Math.random`). `questions({ niveau, reglages, rng, T, nb })`,
+`questionsFiche({ niveau, reglages, rng, T })`, `verifier(q, rep)` → booléen ou `{ ok, nuance }` (nuance : « presque juste »).
+`bonneReponse(q)` et `mauvaiseReponse(q)` : une réponse juste et une fausse, que les tests essaient sur chaque question (un
+`verifier` toujours vrai échoue). `ecartsAuProgramme(questions, contraintesDe(niveau))` : ce qui sort du programme.
+`T` est typé par le catalogue (`CleContenu<typeof CONTENU>`) : une clé inconnue ne compile pas. Hasard : `rng` de
+`src/utils/hasard.ts` (`rng.choisir([])` lève). Les fiches sont mises en page par `documentFiche` (`src/impression/document.ts`).
 
-Les fiches d'un exercice migré sont des fonctions pures : `tests/instantanes.test.mjs` (node, ~1 s, sans Chrome)
-garde l'empreinte de chacune dans `tests/instantanes/<id>.json`, une ligne par cas
-(`"heure/ce1/graine1/fr/defauts": "<sha1>"` : niveau, graines 1 à 3, langues de contenu, réglages `defauts`, `tout`
-au programme, `<cle>=<valeur>` pour chaque autre valeur d'un réglage à choix unique — bonus compris — et `fiche-<id>` de
-`definition.fiches` : `jeuxDeReglages` de `outils.js`, partagé avec `tests/exercices.test.mjs`). Empreinte du HTML normalisé : espaces regroupés, `@font-face`
-retirés (leurs `url(...)` dépendent du build ; le nom de la police reste dans le `font-family`).
+## La vue
 
-1. **Avant** (vue pas encore migrée) : capturer ses fiches dans Chrome, au même format et avec les mêmes clés :
-   `node scripts/capturer-fiches.mjs /maths/<id> --reglages cas.json --sortie tests/instantanes/<id>.json`
-   (serveur de dev lancé ; `--niveaux CE1,CE2 --graines 1,2,3 --langues fr,br` ; format de `cas.json` et options en tête
-   du script). Donner les réglages comme réglages mémorisés de la vue (`"reglages"`) plutôt que par des clics : la
-   fiche est alors le premier tirage de la graine, comme en node. Les HTML vont dans `/tmp/instantanes/`.
-2. **Migrer**, puis ajouter l'exercice au registre.
-3. `npm run instantanes` doit passer **sans `--maj`** : la capture d'avant sert de référence. Pour un exercice déjà
-   migré, `npm run instantanes -- --maj <id>` avant de commencer suffit.
-4. Écart voulu (ou à comprendre) : `npm run instantanes -- --diff <cas>` (le HTML recalculé et le diff avec celui
-   d'avant, dans `/tmp/instantanes/`), regarder, puis `npm run instantanes -- --maj [préfixe]` et justifier l'écart
-   dans le message de commit. Un préfixe (`heure/ce1`) limite la vérification ou la mise à jour à ces cas.
+```ts
+const { config, langueContenu } = useReglages(DEFINITION)   // mémorisés sous <id>_config ; options { cle?, suivreClasse? }
+const jeu = useJeu<Question, Reponse>({ generer: rng => questions({ …, rng }), verifier, messageErreur, delai: 1600 })
+const { mode, fiche, nouvelle } = useFicheExercice({ tirer: rng => questionsFiche({ …, rng }), mettreEnPage: (q, police) => fiche({ …, ...police }) })
+```
+```html
+<CadreExercice v-model:mode="mode" :fiche="fiche" :config="config" @commencer="jeu.demarrer" @regenerer="nouvelle">
+  <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" … />   <!-- cle et v-model typés -->
+</CadreExercice>
+<QuestionJeu :jeu> … <ChoixReponses> | <SaisieReponse> … </QuestionJeu>
+<ResultatsJeu …><TableauCorrection :historique /></ResultatsJeu>
+```
+- `useReglages` : charge avec les clés de **tous** les niveaux (un réglage propre à un niveau n'est pas perdu au rechargement),
+  répare une sauvegarde corrompue, et applique la **politique de changement de niveau** commune (`reglagesApresNiveau` :
+  choix multiples → défauts du nouveau niveau ; choix unique gardé s'il est au programme ; bonus et hors programme jamais
+  reportés ; une clé que le nouveau niveau ne connaît pas est retirée ; un niveau absent de l'exercice lève une erreur).
+- `useJeu` : `apresErreur: 'attendre'` (bouton « Suivant », défaut) ou un nombre de ms ; `delai: null` (jamais seul après une
+  bonne réponse) ; `serie: true | q => clé` (plusieurs questions par écran). `demarrer` **lève** si `generer` rend `[]`
+  (jamais d'écran blanc).
+- **Fiche reproductible** : le tirage est une fonction de la graine et des réglages (un `rng` neuf à chaque calcul). La graine
+  vient de `?graine=N` ; « Nouvelle fiche » en tire une autre et l'écrit dans l'URL. Jouer → Imprimer → Jouer → Imprimer donne la
+  même fiche (`tests/jeu-dev.test.mjs`).
+- Textes : l'**interface** dans `src/langues/<langue>/textes/<id>.ts` (`t('<id>.titre')`, français source, breton
+  `satisfies Traductions<…>`) ; le **contenu** dans `textes.ts` (`catalogue(…)`), lu par `T`. Breton nouveau : `// br: à relire`.
 
-`capturer-fiches` sur une route du registre reprend d'office les cas du test et dit combien sont identiques à
-l'instantané : c'est aussi le moyen de vérifier que la vue affiche bien la fiche calculée en node.
+## Tests
 
-## TypeScript
+- `tests/definir.test.mjs`, `tests/definir.types.ts` : la déclaration (erreurs, types refusés).
+- `tests/noyau.test.mjs` : la logique (réglages mémorisés, corrompus, changement de niveau, bonne et mauvaise réponse, partie vide,
+  graine), avec les composables Vue dans node (localStorage factice).
+- `tests/exercices.test.mjs` : chaque exercice du registre (et de `ancien.js`), chaque niveau, 5 graines, contre le programme.
+- `tests/instantanes.test.mjs` : empreinte de chaque fiche (`tests/instantanes/<id>.json`) ; `npm run instantanes -- --maj <id>`
+  une fois la fiche stable, `--diff <cas>` pour un écart voulu (à justifier dans le commit).
+- `tests/jeu-dev.test.mjs`, `tests/dev-affiche.test.mjs` : le jeu et la fiche dans Chrome, sur un site construit avec les pages
+  de développement (`VITE_AVEC_DEV=1`, port 4192, `tests/lancer.mjs`) ; sur le serveur de dev : `TEST_URL=http://localhost:5173/ecole-primaire/ node tests/jeu-dev.test.mjs`.
+- `tests/production.test.mjs` : aucun exemple (ids, textes, chunks `/dev`, JSON de `public/fiches/`) dans les builds de production.
 
-Les exercices existants sont en JavaScript (JSDoc dans `index.js`) et le restent jusqu'à leur migration. Un exercice neuf
-s'écrit en `.ts` contre `src/noyau/` : `types.ts` (`DefinitionExercice<R>`, `Generateur<Q, Rep, R>`, `ModuleExercice`,
-`Verdict`, `Config<R>`…), `reglages.ts` (fonctions pures : `reglagesDuNiveau`, `jeuxDeReglages`…), `useJeu`,
-`useReglages`, `useFicheExercice` et les composants `CadreExercice`, `ChoixReglage`, `ChoixReponses`, `SaisieReponse`,
-`QuestionJeu`, `ResultatsJeu`, `TableauCorrection`. Les identifiants (compétences, domaines, classes) sont typés d'après
-`src/data/programme.ts` : une compétence inconnue ne compile pas. Imports avec l'extension `.ts`, `import type` pour les
-types, pas d'`enum` (voir AGENTS.md). Le registre `index.js` lit les définitions des deux mondes (même structure) ;
-`npm run types` vérifie le tout.
+## Reporter un ancien exercice (de `ancien.js` vers la base)
 
-
-## Les exemples (développement seulement)
-
-Deux exercices complets et minimaux, vérifiés comme les autres (`tests/exercices.test.mjs`, `tests/instantanes.test.mjs`) mais
-**hors du catalogue public** : ils sont dans `dev.ts` (`REGISTRE_DEV`), pas dans `REGISTRE` (`index.js`), que lisent le build, le
-catalogue (`activites.js`), la couverture et `npm run qualite`.
-- `exemple/` — **simple** : suites de nombres, un catalogue de textes ; pour un exercice sans corpus.
-- `exemple-corpus/` — **à corpus** : synonymes, contenu toujours en français, corpus dans `src/data/`, textes d'interface à part.
-
-Leurs pages sont les routes `/dev/exemple` et `/dev/exemple-corpus`, ajoutées par le routeur seulement sous `import.meta.env.DEV`
-(liste sur `/dev`). Leurs compétences (`K.exemple…`, domaine `D.exemple`) sont des entrées fictives de `programme.ts`
-(`COMPETENCES_EXEMPLE`), absentes d'un build de production et de `COMPETENCES`. `npm run nouveau -- exercice … --modele simple|corpus`
-copie l'un ou l'autre.
-
-## Décisions (2026-10-05)
-
-1. **Choix multiple de chaînes ou de nombres** : `ValeurReglage` admet `string[]` et `number[]`. `cases([1, 2, 10])` donne
-   `config.pas : (1 | 2 | 10)[]`, mémorisé tel quel (`chargerReglages` ne vérifie que « c'est une liste », `reglagesDuNiveau` retire
-   les valeurs non proposées, donc des chaînes à la place des nombres reprennent le défaut). Un mélange chaînes et nombres dans
-   une même liste est refusé par le type.
-2. **Un niveau sans compétence au programme est une erreur franche** à l'import (`definir`), avec le message qui dit quoi
-   corriger : retirer ce niveau ou ajouter une compétence.
-3. **Deux exemples**, simple et à corpus (ci-dessus), plutôt qu'un seul qui mélangerait tout.
-4. **Une compétence hors programme** se déclare au niveau, avec sa raison : `horsProgramme: [{ competence: K.…, raison }]`. Elle
-   s'ajoute aux compétences du niveau, et rien ne la coche par défaut (le réglage qui y mène est lui-même `horsProgramme`).
+1. Capturer les fiches de l'ancienne version (`scripts/capturer-fiches.mjs`, voir `npm run instantanes`) : elles deviennent les
+   instantanés ; la fiche reportée doit les retrouver sans `--maj`.
+2. `npm run nouveau -- exercice …`, puis recopier la logique : `aleatoire` → `rng.entier`, `pioche` → `rng.choisir`, `Math.random() < p` →
+   `rng.vrai(p)`, **dans le même ordre de tirage**. Les niveaux et compétences viennent du programme (`src/data/programme.ts`) ;
+   les écarts sont `bonus` ou `horsProgramme` avec leur raison.
+3. Rebrancher la route, retirer l'exercice de `ancien.js`, supprimer l'ancien fichier ; `npm run qualite` : les compteurs de l'ancien
+   monde ne font que baisser (`-- --enregistrer`).
+4. `npm run types && npm run lint && npm run i18n && npm test`, puis un passage dans le navigateur (fr et br, jeu et impression).

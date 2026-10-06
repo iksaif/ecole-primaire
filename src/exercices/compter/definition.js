@@ -3,7 +3,7 @@
 //   PS : collection jusqu'à 3 (« voire 4 » : pas systématique), réponse en constellation de points, jamais de chiffre à écrire ;
 //   MS : jusqu'à 6 ; GS : jusqu'à 10 (« voire au-delà »). Sur la fiche, l'enfant écrit le nombre ou entoure le bon.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'compter',
   route: '/maternelle/compter',

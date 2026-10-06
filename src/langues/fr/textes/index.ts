@@ -17,5 +17,10 @@ import domaines from './domaines.ts'
 import exemple from './exemple.ts'
 import exempleCorpus from './exempleCorpus.ts'
 import dev from './dev.ts'
+import { AVEC_DEV } from '../../../dev.ts'
 
-export default { nav, accueil, reglages, langueRegionale, apropos, pied, avis, nouveautes, cadre, formulaireAffiche, telechargements, communs, domaines, exemple, exempleCorpus, dev } as const
+// Textes des exemples et des pages /dev : absents d'un build de production (AVEC_DEV, src/dev.ts). Le type les garde : en production
+// aucun code ne les lit (les exemples n'y sont pas).
+const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev }
+
+export default { nav, accueil, reglages, langueRegionale, apropos, pied, avis, nouveautes, cadre, formulaireAffiche, telechargements, communs, domaines, ...sectionsDev } as const

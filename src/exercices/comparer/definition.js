@@ -3,7 +3,7 @@
 //   PS : comparer « à vue » deux collections dont l'une a au moins deux fois plus d'objets (jusqu'à 10), sans égalité,
 //        en touchant le groupe ; MS : nombres jusqu'à 5 (programme : 6), avec égalité ; GS : jusqu'à 10.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'comparer',
   route: '/maternelle/comparer',

@@ -22,4 +22,17 @@ export default {
   ajouterAttache: '📂 Ouzhpennañ un nodrezh a-stag',
   ajouterScript: '📂 Ouzhpennañ un nodrezh skript',
   astuce: 'Alioù evit Belle Allure : dibab ar restr hep linennoù (ket « Ductus » na « Lignes ») ; ment al lizherennoù a vez azasaet ent emgefre ouzh al linennoù Seyès.',
+  modes: 'Mod ar boelladenn', // br: à relire
+  installee: 'staliet',
+  ajoutee: 'ouzhpennet',
+  // polices incluses et notes sur les polices à obtenir ailleurs (ChoixPolice) : repris à l'identique des anciens textes
+  policeAttache: 'Playwrite FR Trad — skritur a-stag skol Bro-C\'hall', // br: à relire
+  policeAndika: 'Andika — savet evit deskiñ lenn (a ha g eeun)',
+  policeLuciole: 'Luciole — lennus-tre, savet evit ar vugale a wel fall', // br: à relire
+  policeOpenDyslexic: 'OpenDyslexic — evit al lennerien dislekseg', // br: à relire
+  noteBelleAllure: "skritur a-stag implijet kalz er c'hlas, meur a stumm (GS, CP, CE…)",
+  noteEcolier: 'skritur a-stag klasel, stumm « court » evit lagadennoù bihan',
+  noteCursif: 'ha nodrezhoù-skol all (rummad Script › Scolaire)',
+  erreurPoliceTropGrosse: "Re vras eo ar restr (3 Mo d'ar muiañ)",
+  erreurPoliceNonMemorisee: "Karget eo an nodrezh evit an dro-mañ, met ne c'haller ket e virout (leun eo memor ar merdeer)", // br: à relire
 } satisfies Traductions<typeof fr>

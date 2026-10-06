@@ -19,7 +19,7 @@ const STRATEGIES = [VERS_DIZAINE, DIZAINES, NEUF_ONZE, PASSAGE]
 const CM = ['+', '−', '×', '÷', 'Compléments à 10', 'Compléments à 100', ...STRATEGIES, 'Doubles', 'Moitiés', '× 10 / × 100']
 const defaut = { ops: ['+', '−'] }
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'calcul-mental',
   route: '/maths/calcul-mental',

@@ -7,7 +7,7 @@
 
 const RAISON_CALENDRIER = 'Le calendrier relève de « Questionner le monde », pas du programme de mathématiques du cycle 2'
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'mesures',
   route: '/maths/mesures',

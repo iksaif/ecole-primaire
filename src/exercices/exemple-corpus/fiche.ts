@@ -3,6 +3,11 @@ import { documentFiche, ligneNomDate } from '../../impression/document.ts'
 import type { ParamsFiche } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type DEFINITION from './definition.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type { CONTENU } from './textes.ts'
+
+// les clés que T accepte : celles du catalogue de l'exercice et les mots communs (une clé inconnue ne compile pas)
+type Cle = CleContenu<typeof CONTENU>
 import type { Question } from './generateur.ts'
 
 const CSS = `
@@ -11,7 +16,7 @@ const CSS = `
       .choix { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: .3rem; }
       .case { display: inline-block; width: .9rem; height: .9rem; border: 2px solid #444; border-radius: 3px; margin-right: .3rem; vertical-align: middle; }`
 
-export function fiche({ questions, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[]>): string {
+export function fiche({ questions, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
   const titre = T('titre')
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS,

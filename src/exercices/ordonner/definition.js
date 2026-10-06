@@ -4,7 +4,7 @@
 //   numérique). On range 3 à 5 nombres pris entre 1 et 5 (MS) ou 1 et 10 (GS) : sous le plafond du programme.
 //   Pas de PS : ranger des nombres n'est pas un attendu avant 4 ans.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'ordonner',
   route: '/maternelle/ordonner',

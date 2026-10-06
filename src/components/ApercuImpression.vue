@@ -9,7 +9,7 @@
       </span>
     </div>
     <div ref="cadre" class="apercu-cadre" :style="{ height: hauteurCadre + 'px' }">
-      <iframe v-if="html" :srcdoc="document" :class="{ fluide }" :title="t('titreCadre')"
+      <iframe v-if="html" :srcdoc="document" sandbox="allow-same-origin" :class="{ fluide }" :title="t('titreCadre')"
         :style="{ width: largeurPx + 'px', height: hauteurPx + 'px', transform: `scale(${echelle})`, left: decalage + 'px' }"></iframe>
     </div>
     <p class="apercu-note">{{ t('conseil') }}</p>
@@ -26,6 +26,8 @@ import messagesFr from '../i18n/fr/components/ApercuImpression.js'
 import messagesBr from '../i18n/br/components/ApercuImpression.js'
 
 const { t } = useI18n({ fr: messagesFr, br: messagesBr })
+// L'iframe d'aperçu est en bac à sable sans allow-scripts : la fiche n'exécute aucun script ; allow-same-origin laisse
+// charger les polices du site (l'impression passe par un autre iframe : imprimerDocument)
 
 const props = defineProps({
   html: { type: String, default: '' },
@@ -83,5 +85,5 @@ function imprimer() {
   border: 0; transform-origin: 0 0; position: absolute; top: 0; background: #e9ecef;
 }
 .apercu-cadre iframe.fluide { background: white; }
-.apercu-note { font-size: .8rem; color: #888; margin-top: .5rem; text-align: center; }
+.apercu-note { font-size: .8rem; color: var(--texte-doux); margin-top: .5rem; text-align: center; }
 </style>

@@ -14,7 +14,7 @@ const niveau = (tables) => ({
   bonus: { tables: [11, 12], jusqu: [12] },
 })
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'tables',
   route: '/maths/tables',

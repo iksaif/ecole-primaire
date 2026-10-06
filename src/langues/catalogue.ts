@@ -13,6 +13,7 @@ import type { Langue } from './registre.ts'
 import { LANGUES, LANGUE_SOURCE, estLangue } from './registre.ts'
 import type { ArgsParams, CleListeDe, CleTexteDe, Feuille, FeuilleA, Traductions, ValeurParam } from './types.ts'
 import { lireFeuille, texteDeFeuille } from './traduire.ts'
+import type { CleTexte } from './traduire.ts'
 
 /** Un arbre de textes : des sections imbriquées dont les feuilles sont des textes, des listes ou des pluriels. */
 export interface Arbre { readonly [cle: string]: Feuille | Arbre }
@@ -44,6 +45,11 @@ export const estCatalogue = (v: unknown): v is CatalogueContenu => typeof v === 
 
 /** Langues qui ont une version de ce catalogue, la source comprise. */
 export const languesDe = (cat: CatalogueContenu): Langue[] => [LANGUE_SOURCE, ...(Object.keys(cat.traductions) as LangueTraduite[])]
+
+/** Les mots communs lus par T en plus du catalogue de l'exercice (section `communs` : « corrige », « prenom »…). */
+export type CleCommune = CleTexte extends infer K ? (K extends `communs.${infer M}` ? M : never) : never
+/** Clés que T accepte pour le catalogue `C` : les siennes (typées d'après le français) et les mots communs. */
+export type CleContenu<C> = C extends Catalogue<infer S> ? CleTexteDe<S> | CleCommune : never
 
 /** T(cle, params) : le texte de l'exercice, que reçoivent le générateur et la fiche (type `Traducteur` du noyau). */
 export type TraducteurContenu = (cle: string, params?: Record<string, unknown>) => string

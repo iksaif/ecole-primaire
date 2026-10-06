@@ -13,5 +13,6 @@ export default {
   orientation: 'Orientation',
   paysage: 'Paysage',
   portrait: 'Portrait',
+  prereglages: 'Préréglages',
   polices: 'Polices',
 } as const

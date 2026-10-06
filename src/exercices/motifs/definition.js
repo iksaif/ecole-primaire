@@ -3,7 +3,7 @@
 //   (BO n° 41 p. 70-71). Les types de motifs par niveau sont ceux de src/utils/motifs.js (TYPES_DU_NIVEAU) :
 //   PS : alternance AB ; MS : AB, ABB, AAB, ABC ; GS : + AABB, ABCD et motifs évolutifs (réservés à 5 ans).
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'motifs',
   route: '/maternelle/motifs',

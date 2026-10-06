@@ -1,5 +1,11 @@
 :root {
-  --bleu:     #4a90e2;
+  --bleu:     #4a90e2;   /* aplats, bordures, points : l'identité du site (contraste 3,29:1 : pas pour du texte) */
+  /* variantes accessibles (WCAG AA, 4,5:1 pour le texte) : texte bleu, fond des boutons à texte blanc, gris, retours */
+  --bleu-fort:   #2f70c0;   /* 5,0:1 sur blanc, 4,7:1 sur --gris-bg */
+  --texte-doux:  #6b6b6b;   /* 5,3:1 sur blanc, 5,1:1 sur --gris-bg (remplace #888) */
+  --vert-texte:  #2e7d32;
+  --rouge-texte: #c0392b;
+  --orange-texte: #8f5500;
   --vert:     #5cb85c;
   --rouge:    #e74c3c;
   --orange:   #f39c12;
@@ -21,6 +27,16 @@ body {
   color: var(--texte);
   min-height: 100vh;
 }
+
+/* Texte pour les lecteurs d'écran seulement */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* Focus clavier visible partout (les champs gardent aussi leur bordure) */
+:where(a, button, summary, select, input, [tabindex]):focus-visible { outline: 3px solid var(--bleu-fort); outline-offset: 2px; }
+[tabindex="-1"]:focus { outline: none; }
 
 /* ── Container ── */
 .container {
@@ -90,7 +106,7 @@ body {
 }
 .btn:hover   { opacity: .88; }
 .btn:active  { transform: scale(.97); }
-.btn-primary { background: var(--bleu);   color: white; }
+.btn-primary { background: var(--bleu-fort); color: white; }
 .btn-success { background: var(--vert);   color: white; }
 .btn-danger  { background: var(--rouge);  color: white; }
 .btn-warning { background: var(--orange); color: white; }
@@ -107,8 +123,8 @@ body {
   cursor: pointer;
   transition: border-color .15s, background .15s, color .15s;
 }
-.level-btn:hover  { border-color: var(--bleu); color: var(--bleu); }
-.level-btn.active { background: var(--bleu); border-color: var(--bleu); color: white; }
+.level-btn:hover  { border-color: var(--bleu); color: var(--bleu-fort); }
+.level-btn.active { background: var(--bleu-fort); border-color: var(--bleu-fort); color: white; }
 
 /* ── Exercise box ── */
 .exercise-box {
@@ -137,10 +153,10 @@ body {
   border: 3px solid var(--gris-brd);
   border-radius: var(--radius);
   padding: .5rem;
-  outline: none;
   transition: border-color .15s;
 }
 .exercise-input:focus  { border-color: var(--bleu); }
+.exercise-input[readonly] { cursor: default; }
 .exercise-input.ok     { border-color: var(--vert); background: #f0faf0; }
 .exercise-input.erreur { border-color: var(--rouge); background: #fef0f0; }
 /* presque : réponse à une nuance près (accents…), voir useJeu */
@@ -154,9 +170,9 @@ body {
   min-height: 2rem;
   padding: .5rem;
 }
-.feedback.ok     { color: var(--vert); }
-.feedback.erreur { color: var(--rouge); }
-.feedback.presque { color: #b86e00; }
+.feedback.ok     { color: var(--vert-texte); }
+.feedback.erreur { color: var(--rouge-texte); }
+.feedback.presque { color: var(--orange-texte); }
 
 /* ── Quit button (inside score-bar) ── */
 .btn-quitter {
@@ -166,7 +182,7 @@ body {
   padding: .2rem .6rem;
   font-size: .8rem;
   font-weight: 600;
-  color: #888;
+  color: var(--texte-doux);
   cursor: pointer;
   transition: background .15s, color .15s;
   white-space: nowrap;
@@ -225,7 +241,7 @@ body {
 .config-section-title {
   font-weight: 800; font-size: .9rem;
   text-transform: uppercase; letter-spacing: .05em;
-  color: #888; margin-bottom: .5rem;
+  color: var(--texte-doux); margin-bottom: .5rem;
 }
 .config-row {
   display: flex; align-items: center;
@@ -275,7 +291,7 @@ body {
 }
 .loading-badge {
   display: inline-flex; align-items: center; gap: .4rem;
-  font-size: .85rem; color: #888; padding: .25rem .75rem;
+  font-size: .85rem; color: var(--texte-doux); padding: .25rem .75rem;
   border-radius: 20px; border: 2px solid var(--gris-brd);
 }
 

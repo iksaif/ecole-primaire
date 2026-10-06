@@ -7,7 +7,7 @@
 
 const CE1 = ['identifier', 'colorier', 'lettres', 'partDe']
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'fractions',
   route: '/maths/fractions',

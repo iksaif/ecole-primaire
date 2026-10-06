@@ -24,6 +24,8 @@ console.log('Grille')
   verifier(n > 0, `${n} fiche(s) affichée(s)`)
   verifier(titres.some(t => /bande numérique/i.test(t)) && titres.some(t => /suites de nombres/i.test(t)), 'les fiches d\'exemple (affiche et exercice) sont là')
   verifier(await page.locator('.carte.apprendre').count() > 0 && await page.locator('.carte.sentrainer').count() > 0, 'pour apprendre / pour s\'entraîner')
+  // les miniatures hors écran se chargent à la demande : on les amène à l'écran (la grille peut avoir autant de cartes qu'on veut)
+  await page.evaluate(() => document.querySelectorAll('.carte img').forEach(i => i.scrollIntoView()))
   await page.waitForFunction(() => [...document.querySelectorAll('.carte img')].every(i => i.complete && i.naturalWidth > 0), null, { timeout: 10000 }).then(
     () => verifier(true, 'toutes les miniatures sont chargées'), () => verifier(false, 'toutes les miniatures sont chargées'))
   verifier(!(await page.locator('.carte').allTextContents()).some(t => /breton|brezhoneg/i.test(t)), 'langue régionale inactive : pas de fiche en breton')

@@ -44,7 +44,10 @@ export function creerRng(graineOuSource: number | (() => number)): Rng {
   const rng = (() => source()) as Rng
   // entier dans [min, max], bornes comprises
   rng.entier = (min, max) => Math.floor(source() * (max - min + 1)) + min
-  rng.choisir = liste => liste[rng.entier(0, liste.length - 1)]
+  rng.choisir = liste => {
+    if (!liste.length) throw new Error('rng.choisir : liste vide (rien à tirer ; un réglage sans valeur ?)')
+    return liste[rng.entier(0, liste.length - 1)]
+  }
   // mélange de Fisher-Yates (copie : la liste d'origine n'est pas modifiée)
   rng.melanger = liste => {
     const t = [...liste]

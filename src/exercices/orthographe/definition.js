@@ -35,7 +35,7 @@ const niveau = (themes, competences) => ({
 const SANS = ['accords', 'lettres']
 const AVEC = ['accords', 'lettres', 'homophones']
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'orthographe',
   route: '/francais/orthographe',

@@ -4,7 +4,7 @@
 // avec le rectangle (5 ans). Un bouton par niveau : PS, MS, GS.
 // mode : 'meme' (la même forme que le modèle), 'trouver' (montre le…), 'reconnaitre' (le nom), 'compter' (les côtés).
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'formes',
   route: '/maternelle/formes',

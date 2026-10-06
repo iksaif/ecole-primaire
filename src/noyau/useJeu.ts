@@ -107,13 +107,16 @@ export function useJeu<Q, Rep = unknown>({
 
   function nouvelleQuestion() {
     retour.value = null
-    surQuestion?.(q.value as Q)   // jamais undefined : generer rend au moins une question
+    surQuestion?.(q.value as Q)   // jamais undefined : demarrer refuse une partie sans question
   }
 
   function demarrer() {
     arreter()
     // le jeu a sa propre graine, tirée à chaque partie (la graine de la page sert aux fiches : useGraine)
-    questions.value = generer(creerRng(graineAleatoire()))
+    const tirees = generer(creerRng(graineAleatoire()))
+    // une partie vide serait un écran blanc sans issue : on refuse, la page reste sur ses réglages
+    if (!tirees.length) throw new Error('useJeu : `generer` n\'a rendu aucune question (réglages sans valeur ? nombre de questions nul ?)')
+    questions.value = tirees
     index.value = 0; bonnes.value = 0; mauvaises.value = 0; historique.value = []
     phase.value = 'jeu'
     nouvelleQuestion()

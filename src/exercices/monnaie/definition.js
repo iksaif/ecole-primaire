@@ -5,7 +5,7 @@
 //   CE2 : euros et centimes, 1 € = 100 c, écriture à virgule, montants plus grands (p. 30-31).
 // Les sommes sont toujours en centimes entiers dans le générateur.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'monnaie',
   route: '/maths/monnaie',

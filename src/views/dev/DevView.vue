@@ -6,6 +6,10 @@
     <h2>{{ t('dev.exemples') }}</h2>
     <ul class="liste">
       <li v-for="e in EXEMPLES" :key="e.to">
+        <router-link :to="e.to">{{ e.titre }}</router-link> — {{ e.description }}
+        <div class="fichiers">{{ e.fichiers }}</div>
+      </li>
+      <li v-for="e in PAGES" :key="e.to">
         <router-link :to="e.to">{{ t(e.titre) }}</router-link> — {{ t(e.description) }}
         <div class="fichiers">{{ e.fichiers }}</div>
       </li>
@@ -19,19 +23,44 @@
 </template>
 
 <script setup lang="ts">
-// Page de développement (route /dev, ajoutée par src/router/index.ts seulement sous import.meta.env.DEV).
-// Pour ajouter un exemple ou un document : une entrée de plus dans EXEMPLES ou DOCS, et ses textes dans la section `dev`.
+// Page de développement (route /dev, ajoutée par src/router/index.ts seulement en développement : src/dev.ts).
+// Les exemples viennent des registres (exercices : `exemple: true` de src/exercices/index.ts ; affiches : src/affiches/dev.ts),
+// jamais d'une liste écrite ici : un exemple de plus au registre apparaît tout seul. Seules la page des composants et la
+// documentation sont listées à la main (DOCS, PAGES).
 import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import { traducteurAffiche } from '../../affiches/textes.ts'
+import { competenceDe } from '../../data/programme.ts'
 import type { CleTexte } from '../../langues/traduire.ts'
+import { REGISTRE } from '../../exercices/index.ts'
+import { ref, computed, onMounted } from 'vue'
+import type { ModuleAffiche } from '../../affiches/types.ts'
 
 type CleDev = Extract<CleTexte, `dev.${string}`>
 
-const { t } = useLangue()
-const EXEMPLES: { titre: CleDev, to: string, description: CleDev, fichiers: string }[] = [
-  { titre: 'dev.exerciceSimpleTitre', to: '/dev/exemple', description: 'dev.exerciceSimpleDescription', fichiers: 'src/exercices/exemple/ et src/views/dev/ExempleView.vue' },
-  { titre: 'dev.exerciceCorpusTitre', to: '/dev/exemple-corpus', description: 'dev.exerciceCorpusDescription',
-    fichiers: 'src/exercices/exemple-corpus/, src/data/exemple-corpus.ts et src/views/dev/ExempleCorpusView.vue' },
-  { titre: 'dev.afficheTitre', to: '/dev/affiches?affiche=exemple', description: 'dev.afficheDescription', fichiers: 'src/affiches/exemple/ et src/views/dev/AfficheDevView.vue' },
+const { t, langue } = useLangue()
+interface Exemple { titre: string, to: string, description: string, fichiers: string }
+const titreExercice = (textes: Parameters<typeof traducteur>[0]) => traducteur(textes, () => langue.value)('titre')
+const libelles = (ids: readonly string[]) => ids.map(k => competenceDe(k)?.libelle ?? k).join(' ; ')
+
+// les affiches d'exemple : import dynamique (src/affiches/dev.ts n'est jamais importé statiquement, tests/affiches-modele.test.mjs)
+const affiches = ref<ModuleAffiche[]>([])
+onMounted(async () => { affiches.value = (await import('../../affiches/dev.ts')).EXEMPLES as ModuleAffiche[] })
+const EXEMPLES = computed<Exemple[]>(() => [
+  ...REGISTRE.filter(e => e.exemple).map(e => ({
+    titre: titreExercice(e.textes), to: e.definition.route,
+    description: `${Object.keys(e.definition.niveaux).join(', ')} — ${libelles([...new Set(Object.values(e.definition.niveaux).flatMap(n => n?.competences ?? []))])}`,
+    fichiers: `src/exercices/${e.definition.id}/`,
+  })),
+  ...affiches.value.map(a => ({
+    titre: traducteurAffiche(a.textes, langue.value)('titre'), to: `/dev/affiches?affiche=${a.definition.id}`,
+    description: `affiche — ${Object.keys(a.definition.variantes).join(', ')}`,
+    fichiers: `src/affiches/${a.definition.id}/`,
+  })),
+])
+// pages de développement qui ne sont pas des exemples d'un registre
+const PAGES: { titre: CleDev, to: string, description: CleDev, fichiers: string }[] = [
+  { titre: 'dev.composantsTitre', to: '/dev/composants', description: 'dev.composantsDescription', fichiers: 'src/noyau/ et src/views/dev/ComposantsView.vue' },
 ]
 const DOCS: { fichier: string, description: CleDev }[] = [
   { fichier: 'src/exercices/README.md', description: 'dev.docExercice' },
@@ -40,8 +69,8 @@ const DOCS: { fichier: string, description: CleDev }[] = [
 </script>
 
 <style scoped>
-.intro { color: #666; margin: -.5rem 0 1rem; }
+.intro { color: var(--texte-doux); margin: -.5rem 0 1rem; }
 h2 { font-size: 1.1rem; margin: 1.5rem 0 .5rem; }
 .liste { padding-left: 1.2rem; line-height: 1.7; }
-.fichiers { font-size: .8rem; color: #888; font-family: monospace; }
+.fichiers { font-size: .8rem; color: var(--texte-doux); font-family: monospace; }
 </style>

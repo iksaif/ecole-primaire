@@ -1,5 +1,4 @@
 <template>
-  <!-- Prépare un mail (pas de formulaire ni de données stockées) avec ce qu'il faut pour retrouver l'erreur -->
   <a class="signaler" :href="lien" :title="t('titre')">{{ t('signaler') }}</a>
 </template>
 
@@ -13,6 +12,7 @@ import { useClasse } from '../composables/useClasse'
 import { useLangueRegionale } from '../composables/useLangueRegionale'
 import { CONTACT, SITE } from '../site'
 
+// Prépare un mail (pas de formulaire ni de données stockées) avec ce qu'il faut pour retrouver l'erreur
 // reglages : réglages de l'exercice en cours (facultatif) ; detail : texte en plus (ex. question affichée)
 const props = defineProps({ reglages: { type: Object, default: null }, detail: { type: String, default: '' } })
 const { t, langue } = useI18n({ fr: messagesFr, br: messagesBr })
@@ -35,6 +35,6 @@ const lien = computed(() => {
 </script>
 
 <style scoped>
-.signaler { font-size: .85rem; color: #888; text-decoration: none; border: 1px dashed var(--gris-brd); border-radius: 16px; padding: .2rem .7rem; white-space: nowrap; }
+.signaler { font-size: .85rem; color: var(--texte-doux); text-decoration: none; border: 1px dashed var(--gris-brd); border-radius: 16px; padding: .2rem .7rem; white-space: nowrap; }
 .signaler:hover { color: var(--texte); border-color: #aaa; }
 </style>

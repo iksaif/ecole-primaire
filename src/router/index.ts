@@ -10,18 +10,20 @@ const routes: RouteRecordRaw[] = [
   { path: '/parametres', component: () => import('../pages/ReglagesView.vue') },
   { path: '/about', component: () => import('../pages/AProposView.vue') },
   { path: '/nouveautes', component: () => import('../pages/NouveautesView.vue') },
+  // nouveau:routes
   // fiches PDF toutes prêtes : lues dans fiches/index.json et fiches/<slug>.json (src/telechargements/README.md)
   { path: '/telechargements', component: () => import('../views/Telechargements.vue') },
   { path: '/telechargements/:slug', component: () => import('../views/TelechargementsFiche.vue') },
 ]
 
 // Pages de développement (liste : src/views/dev/DevView.vue) : ajoutées seulement par `npm run dev`, absentes du build
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV || import.meta.env.VITE_AVEC_DEV) {   // expression écrite ici (src/dev.ts) : Vite la remplace avant le graphe de modules, la branche et ses pages /dev disparaissent
   routes.push(
     { path: '/dev', component: () => import('../views/dev/DevView.vue') },
     { path: '/dev/exemple', component: () => import('../views/dev/ExempleView.vue') },
     { path: '/dev/exemple-corpus', component: () => import('../views/dev/ExempleCorpusView.vue') },
     { path: '/dev/affiches', component: () => import('../views/dev/AfficheDevView.vue') },
+    { path: '/dev/composants', component: () => import('../views/dev/ComposantsView.vue') },
   )
 }
 

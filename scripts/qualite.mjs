@@ -75,7 +75,7 @@ async function couverture() {
 
 async function exercicesMigres() {
   const { ACTIVITES } = await charger('/src/data/activites.js')
-  const { REGISTRE } = await charger('/src/exercices/index.js')
+  const { REGISTRE } = await charger('/src/exercices/ancien.js')
   const exercices = ACTIVITES.filter(a => a.fiche && /^\/(maths|francais|maternelle)\//.test(a.to)).map(a => a.to)
   const migres = new Set(REGISTRE.map(e => e.definition.route))
   const restants = exercices.filter(r => !migres.has(r))

@@ -4,6 +4,11 @@ import { documentFiche, ligneNomDate } from '../../impression/document.ts'
 import type { ParamsFiche, Traducteur } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type DEFINITION from './definition.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type { CONTENU } from './textes.ts'
+
+// les clés que T accepte : celles du catalogue de l'exercice et les mots communs (une clé inconnue ne compile pas)
+type Cle = CleContenu<typeof CONTENU>
 import type { Question } from './generateur.ts'
 
 const CSS = `
@@ -16,7 +21,7 @@ const CSS = `
 const caseVide = '<span class="case"></span>'
 
 // Ce que montre la ligne d'une question. Le switch est exhaustif : une nouvelle forme de question ne compile pas ici.
-function ligne(q: Question, T: Traducteur): string {
+function ligne(q: Question, T: Traducteur<Cle>): string {
   switch (q.type) {
     case 'complete':
       return q.termes.map((n, i) => (i === q.trou ? caseVide : `<span class="terme">${n}</span>`)).join('')
@@ -26,7 +31,7 @@ function ligne(q: Question, T: Traducteur): string {
 }
 
 // Ce que montre le corrigé
-function corrige(q: Question, T: Traducteur): string {
+function corrige(q: Question, T: Traducteur<Cle>): string {
   switch (q.type) {
     case 'complete':
       return String(q.attendu)
@@ -35,7 +40,7 @@ function corrige(q: Question, T: Traducteur): string {
   }
 }
 
-export function fiche({ questions, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[]>): string {
+export function fiche({ questions, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
   const titre = T('titre')
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS,

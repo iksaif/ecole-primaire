@@ -2,15 +2,36 @@
 // Des constantes plutôt que des chaînes : K.heureEntiere se complète dans l'éditeur, une faute de frappe ne compile pas
 // (et lève une erreur claire si le code tourne sans vérification de types : voir fort()).
 import type { CompetenceId, DomaineId } from './types.ts'
+import { AVEC_DEV } from '../dev.ts'
 
 /** Pourquoi un Proxy : node retire les types sans les vérifier, et `K.inconnue` vaudrait undefined en silence. */
 function fort<T extends object>(nom: string, ids: T): T {
   return new Proxy(ids, {
     get: (cible, cle, recepteur) => {
-      if (typeof cle === 'string' && !(cle in cible)) throw new Error(`${nom}.${cle} n'existe pas (src/noyau/ids.ts, généré d'après programme.ts)`)
+      if (typeof cle === 'string' && !(cle in cible)) throw new Error(`${nom}.${cle} n'existe pas (src/noyau/ids.ts, généré d'après programme.ts)${cle.startsWith('exemple') ? ' : les entrées « exemple… » sont fictives, développement seulement : jamais dans un exercice réel ni en production (src/dev.ts)' : ''}`)
       return Reflect.get(cible, cle, recepteur)
     },
   })
+}
+
+// Les entrées fictives des exemples (développement seulement) : leurs ids ne doivent pas entrer dans un build de production.
+// La condition est écrite ICI avec les littéraux de Vite (src/dev.ts explique pourquoi) : en production, `{}`.
+const avecDev: boolean = import.meta.env ? (import.meta.env.DEV || !!import.meta.env.VITE_AVEC_DEV) : AVEC_DEV
+const competencesFictives = (avecDev ? {
+  exempleCompter: 'exemple-compter',
+  exempleRegle: 'exemple-regle',
+  exempleSynonymes: 'exemple-synonymes',
+  exempleLire: 'exemple-lire',
+} : {}) as {
+  exempleCompter: 'exemple-compter',
+  exempleRegle: 'exemple-regle',
+  exempleSynonymes: 'exemple-synonymes',
+  exempleLire: 'exemple-lire',
+}
+const domainesFictifs = (avecDev ? {
+  exemple: 'exemple',
+} : {}) as {
+  exemple: 'exemple',
 }
 
 /** Compétences de src/data/programme.ts. */
@@ -122,10 +143,7 @@ export const K = fort('K', {
   conjugaison2eGroupe: 'conjugaison-2e-groupe',
   conjugaisonPasseSimple: 'conjugaison-passe-simple',
   complements: 'complements',
-  exempleCompter: 'exemple-compter',
-  exempleRegle: 'exemple-regle',
-  exempleSynonymes: 'exemple-synonymes',
-  exempleLire: 'exemple-lire',
+  ...competencesFictives,
 } as const satisfies Record<string, CompetenceId>)
 
 /** Domaines de src/data/programme.ts. */
@@ -144,7 +162,7 @@ export const D = fort('D', {
   vocabulaire: 'vocabulaire',
   grammaire: 'grammaire',
   cultureLitteraire: 'culture-litteraire',
-  exemple: 'exemple',
+  ...domainesFictifs,
 } as const satisfies Record<string, DomaineId>)
 
 // Complétude : ne compile plus si le programme a une compétence ou un domaine absent de K ou D (relancer scripts/ids.mjs)

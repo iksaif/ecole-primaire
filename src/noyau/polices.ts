@@ -15,7 +15,15 @@ import type { TypePolice } from '../utils/impression.js'
 /** Police choisie pour l'attaché et pour le script ; `unique` : celle des documents qui n'ont qu'une police (les fiches). */
 export type ChoixPolices = Record<TypePolice | 'unique', string>
 /** Une police proposée dans les menus. */
-export interface PoliceDisponible { id: string, label: string, perso?: boolean }
+export interface PoliceDisponible {
+  id: string
+  /** libellé en français (celui des polices incluses est traduit par ChoixPolice, section `cadre`) */
+  label: string
+  perso?: boolean
+  /** police installée sur l'ordinateur ou ajoutée depuis un fichier : `nom` est alors son nom, sans la mention de statut */
+  statut?: 'installee' | 'ajoutee'
+  nom?: string
+}
 /** Ce que reçoit la mise en page d'une fiche : familles CSS du texte et @font-face à embarquer (documentFiche). */
 export interface PoliceFiche { police: string, cssPolices: string }
 
@@ -41,8 +49,8 @@ function detecter() {
 /** Les polices script proposées pour une fiche : incluses, installées, ajoutées depuis un fichier. */
 export const disponibles: ComputedRef<PoliceDisponible[]> = computed(() => [
   ...POLICES_INCLUSES.script,
-  ...installees.value.map(id => ({ id, label: `${id} (installée)` })),
-  ...policesPerso.value.filter(p => p.type === 'script').map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true })),
+  ...installees.value.map(id => ({ id, label: `${id} (installée)`, statut: 'installee' as const, nom: id })),
+  ...policesPerso.value.filter(p => p.type === 'script').map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true, statut: 'ajoutee' as const, nom: p.label })),
 ])
 
 /** Les polices proposées pour un type d'écriture : incluses, installées, ajoutées depuis un fichier (affiches à polices par type). */
@@ -50,8 +58,8 @@ export function disponiblesDe(type: TypePolice): ComputedRef<PoliceDisponible[]>
   if (type === 'script') return disponibles
   return computed(() => [
     ...POLICES_INCLUSES[type],
-    ...installeesAttache.value.map(id => ({ id, label: `${id} (installée)` })),
-    ...policesPerso.value.filter(p => p.type === type).map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true })),
+    ...installeesAttache.value.map(id => ({ id, label: `${id} (installée)`, statut: 'installee' as const, nom: id })),
+    ...policesPerso.value.filter(p => p.type === type).map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true, statut: 'ajoutee' as const, nom: p.label })),
   ])
 }
 

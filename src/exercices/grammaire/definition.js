@@ -73,7 +73,7 @@ const FICHES = [
   { id: 'complements', competence: 'complements', types: ['cplt', 'cpltQ', 'cpltNature'], niveaux: CM },
 ]
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'grammaire',
   route: '/francais/grammaire',

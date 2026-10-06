@@ -47,6 +47,23 @@ echoue('sauf étranger', { ...base, niveaux: { ce1: { sauf: [K.exempleLire] } } 
 echoue('fiche : niveau absent', { ...base, niveaux: { cp: {} }, fiches: [{ id: 'f', competence: K.exempleCompter, niveau: 'ce1', reglages: {} }] }, 'niveau absent')
 echoue('fiche : compétence du niveau', { ...base, niveaux: { cp: {}, ce1: {} }, fiches: [{ id: 'f', competence: K.exempleRegle, niveau: 'cp', reglages: {} }] }, 'n\'est pas une compétence de cp')
 echoue('fiche : réglage non proposé', { ...base, niveaux: { cp: { reglages: { pas: choix([1, 2]) } } }, fiches: [{ id: 'f', competence: K.exempleCompter, niveau: 'cp', reglages: { pas: 7 } }] }, '« 7 » n\'est pas proposé')
+
+console.log('Erreurs de déclaration : id, route, fiches, valeurs, programme')
+echoue('id vide', { ...base, id: '', niveaux: { cp: {} } }, 'id «  » invalide')
+echoue('id en majuscules', { ...base, id: 'Heure', niveaux: { cp: {} } }, 'id « Heure » invalide')
+echoue('route sans /', { ...base, route: 'maths/heure', niveaux: { cp: {} } }, 'route « maths/heure » invalide')
+echoue('route avec espace', { ...base, route: '/maths/une heure', niveaux: { cp: {} } }, 'invalide')
+const f = (id, niveau = 'ce1') => ({ id, competence: K.exempleCompter, niveau, reglages: {} })
+echoue('id de fiche invalide', { ...base, niveaux: { ce1: {} }, fiches: [f('Dizaines')] }, 'fiche « Dizaines » (ce1) : id invalide')
+echoue('id de fiche en double (même slug)', { ...base, niveaux: { ce1: {} }, fiches: [f('a'), f('a')] }, 'fiche « a » (ce1) : id de fiche déjà pris pour ce niveau')
+try { definir({ ...base, niveaux: { cp: {}, ce1: {} }, fiches: [f('a', 'cp'), f('a', 'ce1')] }); verifier(true, 'le même id de fiche à deux niveaux est permis (slugs différents)') } catch (e) { verifier(false, `même id à deux niveaux refusé : ${e.message}`) }
+echoue('mélange 1 et « 1 » (cases)', { ...base, niveaux: { cp: { reglages: { pas: cases([1, '1']) } } } }, 'niveau cp, réglage « pas » : des valeurs de sortes différentes')
+echoue('mélange dans un bonus', { ...base, niveaux: { cp: { reglages: { pas: choix([1, 2], { bonus: ['x'] }) } } } }, 'sortes différentes')
+echoue('NaN', { ...base, niveaux: { cp: { reglages: { pas: choix([1, NaN]) } } } }, '« NaN » n\'est pas un nombre fini')
+echoue('horsProgramme déjà au programme', { ...base, niveaux: { ce1: { horsProgramme: [{ competence: K.exempleCompter, raison: 'r' }] } } }, 'niveau ce1 : horsProgramme « exemple-compter » est déjà au programme')
+echoue('compétence d\'un autre domaine', { ...base, domaine: D.nombresCalcul }, 'du domaine « exemple », pas de « nombres-calcul »')
+try { definir({ ...base, domaine: D.nombresCalcul, autresDomaines: [D.exemple], niveaux: { cp: {} } }); verifier(true, 'autresDomaines déclare l\'écart de domaine') } catch (e) { verifier(false, `autresDomaines : ${e.message}`) }
+echoue('compétence fictive citée comme inconnue', { ...base, competences: ['exemple-fantome'], niveaux: { cp: {} } }, 'fictives')
 try { K.inconnue; verifier(false, 'K.inconnue devrait lever une erreur') } catch (e) { verifier(e.message.includes('K.inconnue'), 'K.inconnue : erreur claire') }
 
 console.log('Constantes K et D')
@@ -63,7 +80,7 @@ verifier(JSON.stringify(reglagesDuNiveau(exemple, { niveau: 'ce1', pas: [7, 5] }
 
 console.log('Compétence hors programme (niveau CP de l\'exemple)')
 const cp = exemple.niveaux.cp
-verifier(cp.competences.includes(K.exempleRegle) && cp.horsProgramme.some(h => h.option === K.exempleRegle && h.raison), 'déclarée hors programme, avec sa raison')
+verifier(cp.competences.includes(K.exempleRegle) && cp.horsProgramme.some(h => 'competence' in h && h.competence === K.exempleRegle && h.raison), 'déclarée hors programme, avec sa raison')
 verifier(!cp.reglages.exercices.includes('regle') && !toutAuProgramme(exemple, 'cp').exercices.includes('regle'), 'jamais cochée par défaut (ni dans « tout au programme »)')
 verifier(!!raisonHorsProgramme(exemple, 'cp', 'exercices', 'regle') && !!raisonHorsProgramme(exemple, 'cp', 'pas', 100), 'les réglages hors programme ont leur raison')
 

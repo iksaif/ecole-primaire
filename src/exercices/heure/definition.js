@@ -4,7 +4,7 @@
 //   CE1 : demi-heures et quarts d'heure, heures après midi, durées (p. 28-29) ; les 5 minutes sont un bonus ;
 //   CE2 : heures et minutes, durées, 1 h = 60 min (p. 31) ; pas de secondes au cycle 2.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'heure',
   route: '/maths/heure',

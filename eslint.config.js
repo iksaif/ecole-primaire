@@ -29,6 +29,7 @@ export default [
     rules: {
       // la règle de base ne connaît pas les types (un import de type n'est pas « inutilisé »)
       'no-unused-vars': 'off',
+      'no-redeclare': 'off',   // les surcharges de fonction (choix, cases) en sont ; TypeScript vérifie les vraies redéclarations
       '@typescript-eslint/no-unused-vars': ['error', { args: 'after-used', argsIgnorePattern: '^_', caughtErrors: 'none' }],
       'no-empty': ['error', { allowEmptyCatch: true }],
       'vue/multi-word-component-names': 'off',

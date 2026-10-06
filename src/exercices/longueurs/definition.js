@@ -3,7 +3,7 @@
 // « comparer-longueurs-maternelle » (BO n° 41 p. 69-70) : PS longueurs très différentes (rapport ≥ 2), ranger 3 objets ;
 // MS écarts plus petits, 4 objets ; GS écarts fins, 5 objets. Les crayons partent tous du même bord.
 
-/** @type {import('../index.js').DefinitionExercice} */
+/** @type {import('../ancien.js').DefinitionExercice} */
 export default {
   id: 'longueurs',
   route: '/maternelle/longueurs',

@@ -15,4 +15,11 @@ export default {
   vocabulaire: 'Vocabulaire',
   grammaire: 'Grammaire et conjugaison',
   'culture-litteraire': 'Culture littéraire',
+  vivant: 'Les êtres vivants',
+  'corps-sante': 'Le corps humain et la santé',
+  matiere: 'La matière',
+  'objets-techniques': 'Objets et technologie',
+  histoire: 'Histoire',
+  geographie: 'Géographie',
+  emc: 'Enseignement moral et civique',
 } as const

@@ -25,8 +25,12 @@
 //                    à l'exécution compte comme non atteint. Ne doit que baisser, jusqu'à 0.
 //   erreursDeType    erreurs de `npm run types` (vue-tsc strict ; seuls les .ts, .vue et .d.ts comptent, pas les .js) : toujours 0
 // Compteurs (min) :
-//   couverture       % des couples compétence × classe de src/data/programme.ts qui ont au moins une ressource
-//                    (exercice, fiche ou affiche ; src/impression/couverture.js, comme `npm run couverture`)
+//   couverture       % des couples compétence × classe des domaines de maths et de français (src/data/programme.ts) qui ont
+//                    au moins une ressource (exercice, fiche ou affiche ; src/impression/couverture.js, comme `npm run couverture`)
+//   couvertureMonde  même pourcentage pour « le monde » (matière `autres` : sciences, histoire-géographie, EMC, temps et
+//                    espace du cycle 1). Séparé le 2026-10-06, à l'ajout des programmes du Monde (168 cases sans ressource) :
+//                    seuil à 0 tant qu'aucune ressource n'existe, il monte avec les premières. Le quiz de culture générale
+//                    n'est rattaché à aucune compétence.
 //   exercicesMigres  exercices interactifs du catalogue (activites.js, `fiche: true`, sous /maths, /francais,
 //                    /maternelle) passés au modèle src/exercices/ (dans le registre) : avancement de la phase 2
 import { createServer } from 'vite'
@@ -61,17 +65,26 @@ const charger = async module => {
   return vite.ssrLoadModule(module)
 }
 
-async function couverture() {
-  const { COMPETENCES } = await charger('/src/data/programme.ts')
+// Couverture par matière : « maths et français » (les matières à programme chiffré, déjà couvertes par des exercices) et
+// « le monde » (matière `autres` : sciences, histoire-géographie, EMC, temps et espace du cycle 1), dont les ressources
+// arrivent après les compétences. Les deux dans un seul pourcentage feraient baisser le compteur de maths et français
+// à chaque compétence du Monde ajoutée sans ressource, sans que rien n'ait régressé.
+async function couvertureDes(matieres) {
+  const { COMPETENCES, domaineDe } = await charger('/src/data/programme.ts')
   const { ressourcesDe } = await charger('/src/impression/couverture.js')
   let cases = 0, couvertes = 0
-  for (const k of COMPETENCES) for (const n of k.niveaux) {
-    cases++
-    if (Object.values(ressourcesDe(k.id, n)).some(l => l.length)) couvertes++
+  for (const k of COMPETENCES) {
+    if (!matieres.includes(domaineDe(k.domaine)?.matiere)) continue
+    for (const n of k.niveaux) {
+      cases++
+      if (Object.values(ressourcesDe(k.id, n)).some(l => l.length)) couvertes++
+    }
   }
   // arrondi vers le bas au dixième : le seuil enregistré ne dépasse jamais la valeur réelle
   return { valeur: Math.floor(1000 * couvertes / cases) / 10, detail: `${couvertes} / ${cases} cases` }
 }
+const couverture = () => couvertureDes(['maths', 'francais'])
+const couvertureMonde = () => couvertureDes(['autres'])
 
 async function exercicesMigres() {
   const { ACTIVITES } = await charger('/src/data/activites.js')
@@ -133,6 +146,7 @@ const COMPTEURS = {
   erreursDeType,
   attentesFixes: () => fichiers('tests').reduce((n, f) => n + compter(lire(f), /waitForTimeout\b/g), 0),
   couverture,
+  couvertureMonde,
   exercicesMigres,
 }
 

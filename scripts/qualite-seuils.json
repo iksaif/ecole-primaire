@@ -11,7 +11,8 @@
     "ancienMondeNonReporte": 161
   },
   "min": {
-    "couverture": 54.3,
-    "exercicesMigres": 22
+    "couverture": 55.8,
+    "exercicesMigres": 22,
+    "couvertureMonde": 0
   }
 }

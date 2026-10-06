@@ -18,4 +18,11 @@ export default {
   vocabulaire: 'Geriaoueg', // br: à relire
   grammaire: 'Yezhadur ha displegañ', // br: à relire
   'culture-litteraire': 'Sevenadur lennegel', // br: à relire
+  vivant: 'Ar bezhioù bev', // br: à relire
+  'corps-sante': 'Korf an den hag ar yec’hed', // br: à relire
+  matiere: 'Ar materi', // br: à relire
+  'objets-techniques': 'Traoù ha teknologiezh', // br: à relire
+  histoire: 'Istor', // br: à relire
+  geographie: 'Douaroniezh', // br: à relire
+  emc: 'Deskadurezh moral ha keodedel', // br: à relire
 } satisfies Traductions<typeof fr>

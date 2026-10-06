@@ -20,7 +20,23 @@
 //     par année (CP, CE1, CE2, CM1, CM2) et, au cycle 1, par âge.
 //   - Exemples de réussite du cycle 3 en français (Éduscol, CM1, CM2, 6e), publiés à part : cherchés le 2026-10-04 pour
 //     les homophones et les homonymes seulement (SOURCES.exemplesCM1…), pas relus en entier.
-//   - Non relus : les livrets d'accompagnement ; « Questionner le monde » (cycle 2), hors de ces BO.
+//   - « Le monde » (matière `autres`, comme dans activites.js) : textes parus après les BO ci-dessus, lus en entier le
+//     2026-10-06 (PDF de chaque annexe sur education.gouv.fr ; pages du PDF de l'annexe) :
+//       · Cycle 1, « Découvrir le monde du vivant, de la matière et des objets » : BO n° 19 du 7 mai 2026 (déjà cité).
+//       · Cycles 2 et 3, sciences et technologie : arrêté du 5-6-2026 (NOR MENE2611650A), BO n° 24 du 11 juin 2026,
+//         annexes 1 (cycle 2) et 2 (cycle 3). Il remplace « Questionner le monde » (cycle 2) et le programme de sciences
+//         de 2023 (cycle 3). Application : CP et CM1 à la rentrée 2026 ; CE1, CE2, CM2 à la rentrée 2027.
+//       · Cycles 2 et 3, histoire-géographie : arrêté du 22-4-2026 (NOR MENE2608631A), BO n° 22 du 28 mai 2026, annexes 3
+//         (cycle 2) et 4 (cycle 3). Il remplace « Questionner l'espace et le temps » (cycle 2) et le programme de 2020
+//         (cycle 3). Même calendrier d'application : CP et CM1 en 2026, CE1, CE2, CM2 en 2027.
+//       · Enseignement moral et civique : arrêté du 29-5-2024 (NOR MENE2413934A), BO n° 24 du 13 juin 2024, du CP à la
+//         terminale ; en application partout depuis la rentrée 2026 (CP et CM1 en 2024, CE1 et CM2 en 2025, CE2 en 2026).
+//     En 2026-2027, les classes de CE1, CE2 et CM2 suivent donc encore les anciens programmes (« Questionner le monde » et
+//     « Questionner l'espace et le temps » de 2020, sciences cycle 3 de 2023, histoire-géographie cycle 3 de 2020), que
+//     nous n'avons PAS relus : le référentiel retient le texte nouveau, et chaque compétence concernée le dit dans
+//     `interpretation`. Le BO n° 16 du 17 avril 2025 ne contient que le français et les mathématiques du cycle 3 : ni
+//     sciences, ni histoire-géographie, ni EMC.
+//   - Non relus : les livrets d'accompagnement ; les anciens programmes ci-dessus (2015, 2020, 2023).
 //
 // Le texte de ces PDF est dans docs/programmes/ (une section « Page N » par page du PDF, comme les `page` ci-dessous).
 //
@@ -34,6 +50,10 @@
 //     ajoutée le 2026-10-04 (plans/10-couverture-ps.md ; pages vérifiées dans docs/programmes/).
 //   - `niveaux` d'une compétence : l'année d'introduction d'abord, puis les années suivantes (jusqu'au CM2) où elle
 //     reste travaillée ou réinvestie.
+//   - Le Monde : chaque domaine est un domaine du programme de sciences, d'histoire-géographie ou d'EMC ; les noms sont
+//     ceux des textes. Le cycle 1 les range sous « Découvrir le monde du vivant, de la matière et des objets » : nous
+//     séparons le vivant, le corps et la santé, la matière, les objets (rattachement aux domaines des cycles 2 et 3 :
+//     interprétation de la continuité, comme en mathématiques). Le quiz de culture générale de l'app reste hors programme.
 //   - `officiel`, `source` et `lien` d'un domaine sont indexés par cycle (1, 2, 3) : le nom change d'un cycle à l'autre.
 
 // classes et cycles : src/data/classes.ts (réexportés ici pour les modules qui les lisent avec le programme)
@@ -210,6 +230,31 @@ export const SOURCES = {
     url: 'https://eduscol.education.gouv.fr/sites/default/files/document/exemplesmiseenoeuvre6e-francaispdf-111534.pdf',
     page: 'https://eduscol.education.gouv.fr/4800/ressources-d-accompagnement-du-programme-de-francais-au-cycle-3',
   },
+  c2sciences: {
+    titre: 'Programme de sciences et technologie du cycle 2 (annexe 1 de l’arrêté du 5 juin 2026, BO n° 24 du 11 juin 2026) ; pages du PDF de l’annexe',
+    url: 'https://www.education.gouv.fr/sites/default/files/document/annexe-1-programme-de-sciences-et-technologie-du-cycle-2-519020.pdf',
+    page: 'https://www.education.gouv.fr/bo/2026/Hebdo24/MENE2611650A',
+  },
+  c3sciences: {
+    titre: 'Programme de sciences et technologie du cycle 3 (annexe 2 de l’arrêté du 5 juin 2026, BO n° 24 du 11 juin 2026) ; pages du PDF de l’annexe',
+    url: 'https://www.education.gouv.fr/sites/default/files/document/annexe-2-programme-de-sciences-et-technologie-du-cycle-3-519023.pdf',
+    page: 'https://www.education.gouv.fr/bo/2026/Hebdo24/MENE2611650A',
+  },
+  c2histgeo: {
+    titre: 'Programme d’histoire-géographie du cycle 2 (annexe 3 de l’arrêté du 22 avril 2026, BO n° 22 du 28 mai 2026) ; pages du PDF de l’annexe',
+    url: 'https://www.education.gouv.fr/sites/default/files/document/annexe-3-programme-d-histoire-geographie-cycle-2-516776.pdf',
+    page: 'https://www.education.gouv.fr/bo/2026/Hebdo22/MENE2608631A',
+  },
+  c3histgeo: {
+    titre: 'Programme d’histoire-géographie du cycle 3 (annexe 4 de l’arrêté du 22 avril 2026, BO n° 22 du 28 mai 2026) ; pages du PDF de l’annexe',
+    url: 'https://www.education.gouv.fr/sites/default/files/document/annexe-4-programme-d-histoire-geographie-cycle-3-516779.pdf',
+    page: 'https://www.education.gouv.fr/bo/2026/Hebdo22/MENE2608631A',
+  },
+  emc: {
+    titre: 'Programme d’enseignement moral et civique du CP à la terminale (annexe de l’arrêté du 29 mai 2024, BO n° 24 du 13 juin 2024) ; pages du PDF de l’annexe',
+    url: 'https://www.education.gouv.fr/sites/default/files/document/Annexe%20%E2%80%94%20Programme%20d%E2%80%99enseignement%20moral%20et%20civique%20du%20cours%20pr%C3%A9paratoire%20%C3%A0%20la%20classe%20terminale%20des%20voies%20g%C3%A9n%C3%A9rale,%20technologique%20et%20professionnelle%20et%20des%20classes%20pr%C3%A9parant%20au%20CAP-402159.pdf',
+    page: 'https://www.education.gouv.fr/bo/2024/Hebdo24/MENE2413934A',
+  },
   // Anciens programmes, plus en vigueur : seulement pour dater une notion qui a disparu (copies académiques du texte)
   c2ancien2015: {
     titre: 'Ancien programme du cycle 2 (BO spécial n° 11 du 26 novembre 2015), copie de l’académie de Versailles — abrogé',
@@ -295,11 +340,56 @@ export const DOMAINES = [
   },
   {
     // domaine du BO n° 19 (2026), hors mathématiques au cycle 1 ; au cycle 2, l'heure et les durées sont dans
-    // « Grandeurs et mesures » et le calendrier relève de « Questionner le monde » (non relu)
+    // « Grandeurs et mesures » et le calendrier relève de l'histoire-géographie (voir « Le monde » plus bas)
     id: 'temps-espace', court: 'Se repérer dans le temps et l’espace', matiere: 'autres', cycles: [1],
     officiel: { 1: 'Se repérer dans le temps et l’espace' },
     source: { 1: src('bo19', 23, 'Se repérer dans le temps et l’espace') },
     lien: { 1: PARENTS[1] },
+  },
+  // Le monde (matière `autres`) : sciences et technologie, histoire-géographie, EMC (voir l'en-tête). Au cycle 1, le
+  // temps et l'espace sont dans `temps-espace` ci-dessus ; au cycle 2, le calendrier et les repères d'espace relèvent
+  // de l'histoire-géographie (domaines `histoire` et `geographie`).
+  {
+    id: 'vivant', court: 'Les êtres vivants', matiere: 'autres', cycles: [1, 2, 3],
+    officiel: { 1: 'Découvrir le monde du vivant', 2: 'Les êtres vivants dans leur environnement', 3: 'Les êtres vivants dans leur environnement' },
+    source: { 1: src('bo19', 30, 'Découvrir le monde du vivant'), 2: src('c2sciences', 5, 'Les êtres vivants dans leur environnement'), 3: src('c3sciences', 9, 'Les êtres vivants dans leur environnement') },
+    lien: parCycle([1, 2, 3], c => PARENTS[c]),
+  },
+  {
+    id: 'corps-sante', court: 'Le corps humain et la santé', matiere: 'autres', cycles: [1, 2, 3],
+    officiel: { 1: 'Découvrir le corps humain et la santé', 2: 'Le corps humain et la santé', 3: 'Le corps humain et la santé' },
+    source: { 1: src('bo19', 31, 'Découvrir le corps humain et la santé'), 2: src('c2sciences', 8, 'Le corps humain et la santé'), 3: src('c3sciences', 14, 'Le corps humain et la santé') },
+    lien: parCycle([1, 2, 3], c => PARENTS[c]),
+  },
+  {
+    id: 'matiere', court: 'La matière', matiere: 'autres', cycles: [1, 2, 3],
+    officiel: { 1: 'Découvrir les états de la matière et les mélanges', 2: 'La matière, les mesures, l’électricité', 3: 'La matière, les mouvements et les signaux' },
+    source: { 1: src('bo19', 33, 'Découvrir les états de la matière et les mélanges'), 2: src('c2sciences', 3, 'La matière, les mesures, l’électricité'), 3: src('c3sciences', 3, 'La matière, les mouvements et les signaux') },
+    lien: parCycle([1, 2, 3], c => PARENTS[c]),
+  },
+  {
+    id: 'objets-techniques', court: 'Objets et technologie', matiere: 'autres', cycles: [1, 2, 3],
+    officiel: { 1: 'Découvrir les objets et les matériaux', 2: 'Les objets techniques au cœur de la société', 3: 'Les objets techniques au cœur de la société' },
+    source: { 1: src('bo19', 32, 'Découvrir les objets et les matériaux'), 2: src('c2sciences', 10, 'Les objets techniques au cœur de la société'), 3: src('c3sciences', 16, 'Les objets techniques au cœur de la société') },
+    lien: parCycle([1, 2, 3], c => PARENTS[c]),
+  },
+  {
+    id: 'histoire', court: 'Histoire', matiere: 'autres', cycles: [2, 3],
+    officiel: { 2: 'Histoire', 3: 'Histoire' },
+    source: { 2: src('c2histgeo', 3, 'Histoire (cours préparatoire, thème 1)'), 3: src('c3histgeo', 4, 'Histoire (cours moyen première année)') },
+    lien: parCycle([2, 3], c => PARENTS[c]),
+  },
+  {
+    id: 'geographie', court: 'Géographie', matiere: 'autres', cycles: [2, 3],
+    officiel: { 2: 'Géographie', 3: 'Géographie' },
+    source: { 2: src('c2histgeo', 6, 'Géographie (cours préparatoire : des clés pour se repérer)'), 3: src('c3histgeo', 11, 'Géographie (cours moyen première année)') },
+    lien: parCycle([2, 3], c => PARENTS[c]),
+  },
+  {
+    id: 'emc', court: 'Enseignement moral et civique', matiere: 'autres', cycles: [2, 3],
+    officiel: { 2: 'Enseignement moral et civique', 3: 'Enseignement moral et civique' },
+    source: { 2: src('emc', 7, 'CP : Se reconnaitre comme individu et élève'), 3: src('emc', 11, 'CM1 : Faire société') },
+    lien: parCycle([2, 3], c => PARENTS[c]),
   },
   // Français (au cycle 1 : domaine « Le développement et la structuration du langage oral et écrit »)
   {
@@ -359,6 +449,18 @@ const c = <const I extends string, const D extends DomaineId>(
 ) => ({ id, domaine, libelle, niveaux, source, ...extra })
 const depuis = classesDepuis     // de n jusqu'au CM2
 const entre = classesEntre
+
+// Le monde, sciences et histoire-géographie : CE1, CE2 et CM2 suivent les nouveaux programmes à la rentrée 2027 seulement
+// (en 2026-2027 : anciens programmes, non relus) ; la note est ajoutée à l'`interpretation` de chaque compétence concernée.
+const APRES_2026: readonly Classe[] = ['ce1', 'ce2', 'cm2']
+const m = <const I extends string, const D extends DomaineId>(
+  id: I, domaine: D, libelle: string, niveaux: readonly Classe[], source: Source, interpretation?: string,
+) => {
+  const concernees = niveaux.filter(n => APRES_2026.includes(n)).map(n => n.toUpperCase())
+  const note = concernees.length ? `${concernees.join(', ')} : texte applicable à la rentrée 2027 (en 2026-2027, ces classes suivent encore l’ancien programme, non relu)` : ''
+  const texte = [interpretation, note].filter(Boolean).join(' ; ')
+  return c(id, domaine, libelle, niveaux, source, texte ? { interpretation: texte } : {})
+}
 
 export const COMPETENCES = [
   // Nombres et calcul — cycle 1
@@ -588,6 +690,146 @@ export const COMPETENCES = [
     src('c3francais', 19, 'CM2 : passé simple, plus-que-parfait d’être, avoir, 1er et 2e groupes et des 8 irréguliers')),
   c('complements', 'grammaire', 'Compléments du verbe (COD, COI) et compléments circonstanciels', ['cm1', 'cm2'],
     src('c3francais', 17, 'CM1 : COD/COI dans des phrases prototypiques, groupes circonstanciels sans les distinguer ; CM2 p. 19 : CC de temps, lieu, cause ; attribut du sujet')),
+  // ── Le monde (matière `autres`) : cycle 1 (BO n° 19), cycles 2 et 3 (sciences BO n° 24 de 2026, histoire-géographie
+  // BO n° 22 de 2026, EMC BO n° 24 de 2024) ; m() ajoute la note « application à la rentrée 2027 » pour CE1, CE2 et CM2 ──
+  c('environnement-proche', 'temps-espace', 'Reconnaître l’école, le quartier ou le village et ses lieux (mairie, commerces, jardin)', ['ps', 'ms', 'gs'],
+    src('bo19', 29, 'Avant 4 ans : explorer les lieux de l’école et leur associer des éléments caractéristiques ; 4 ans : caractériser l’environnement extérieur proche ; 5 ans : reconnaitre les espaces proches de l’école et leurs usages, observer l’habitat')),
+  // Le vivant
+  m('parties-animaux-plantes', 'vivant', 'Nommer les parties d’un animal (tête, pattes, ailes) et d’une plante (racine, tige, feuille, fleur)', ['ps', 'ms', 'gs'],
+    src('bo19', 30, 'Avant 4 ans : repérer et nommer les caractéristiques morphologiques des plantes et des animaux ; 5 ans (p. 31) : identifier des éléments morphologiques spécifiques, légender un dessin ou une photographie')),
+  m('cycle-vie-vivants', 'vivant', 'Les étapes de la vie d’un animal ou d’une plante (œuf, petit, adulte ; graine, fleur)', ['ms', 'gs'],
+    src('bo19', 30, '4 ans : reconnaitre une ou plusieurs étapes d’un cycle de vie ; 5 ans (p. 31) : nommer et ordonner les étapes du cycle de vie d’une plante ou d’un animal (naissance, éclosion, germination, larve, nymphe…)')),
+  m('deplacements-animaux', 'vivant', 'Comment un animal se déplace (vole, marche, rampe, saute, nage) et dans quel milieu il vit', ['ms', 'gs', 'ce2'],
+    src('bo19', 30, '4 ans : observer et nommer le mode de déplacement de quelques animaux en relation avec leur milieu de vie ; CE2 : c2sciences p. 7, associer les organes locomoteurs (aile, patte, nageoire) à un mode de locomotion')),
+  m('besoins-vivants', 'vivant', 'Ce dont ont besoin les animaux et les plantes pour vivre (eau, lumière, nourriture)', ['ms', 'gs', 'ce1'],
+    src('bo19', 30, '4 ans : identifier et décrire les besoins essentiels de quelques animaux et végétaux ; CE1 : c2sciences p. 6, besoins d’une plante (eau et lumière) par l’expérience, régime alimentaire des animaux')),
+  m('vivant-non-vivant', 'vivant', 'Trier ce qui est vivant, non vivant ou fabriqué par des êtres vivants (nid, laine, œuf)', ['cp'],
+    src('c2sciences', 5, 'CP : caractériser et justifier à l’aide de critères simples ce qui est vivant, non vivant ou élaboré par des êtres vivants')),
+  m('observer-environnement', 'vivant', 'Observer un milieu proche, nommer les êtres vivants qui y vivent et leur milieu de vie', ['cp', 'ce1', 'ce2'],
+    src('c2sciences', 5, 'CP : décrire les êtres vivants de l’environnement proche et les caractéristiques du milieu ; CE1 p. 6 : le peuplement change avec les saisons ; CE2 p. 7 : sorties, classification du vivant, sol comme milieu vivant')),
+  m('chaines-alimentaires', 'vivant', 'Qui mange qui : herbivores, carnivores, omnivores ; chaînes et réseaux alimentaires', ['ce1', 'ce2', 'cm1'],
+    src('c2sciences', 6, 'CE1 : identifier le régime alimentaire d’animaux (herbivores, carnivores, omnivores) ; CE2 p. 7 : élaborer une courte chaine alimentaire ; CM1 c3sciences p. 11 : représenter par un réseau les liens alimentaires')),
+  m('croissance-reproduction', 'vivant', 'Grandir et se reproduire : de la graine au fruit, jeune, larve et adulte, ovipares et vivipares', ['ce2', 'cm1'],
+    src('c2sciences', 7, 'CE2 : ordonner les étapes de la vie d’une plante à fleurs, distinguer formes juvénile, larvaire et adulte ; CM1 c3sciences p. 11 : étapes du développement des animaux, ovipare et vivipare')),
+  m('classer-especes', 'vivant', 'Classer des espèces en groupes et les identifier avec une clé de détermination', ['cm1', 'cm2'],
+    src('c3sciences', 10, 'CM1 : à partir de quatre à six espèces, classification en groupes emboités ; identifier des espèces avec une clé de détermination (CM2 p. 11 : clé de détermination pour des fossiles)')),
+  m('proteger-environnement', 'vivant', 'Agir pour protéger l’environnement : gestes simples et projet de classe', ['gs', 'cp', 'ce1', 'ce2', 'cm2'],
+    src('bo19', 34, '5 ans : commencer à agir de manière autonome pour le respect de l’environnement ; CP à CE2 : c2sciences p. 6-8, « Agir pour protéger l’environnement » ; CM2 c3sciences p. 12 : projet d’éducation au développement durable')),
+  m('meteo-climat', 'vivant', 'Mesurer le temps qu’il fait (température, pluie, vent) et distinguer météo et climat', ['cm1', 'cm2'],
+    src('c3sciences', 11, 'CM1 : réaliser et exploiter des mesures météorologiques (thermomètre, pluviomètre, anémomètre) ; CM2 p. 12 : climat local, différence entre climat et météorologie'),
+    'sous la rubrique « La Terre, une planète active », rangée dans le domaine « Les êtres vivants dans leur environnement » du texte'),
+  // Le corps humain et la santé
+  m('parties-corps', 'corps-sante', 'Nommer les parties du corps et les articulations', ['ps', 'ms', 'gs', 'cp'],
+    src('bo19', 31, 'Avant 4 ans : nommer et représenter quelques parties du corps ; 4 ans : parties du corps ; 5 ans : articulations (cheville, genou, coude, poignet…) ; CP : c2sciences p. 8, principales articulations et quelques os')),
+  m('cinq-sens', 'corps-sante', 'Les cinq sens et les organes associés (yeux, nez, langue, peau, oreille)', ['ps', 'ms', 'gs'],
+    src('bo19', 31, 'Avant 4 ans : découvrir les sens utilisés lors d’expériences sensorielles ; 4 ans : associer les yeux et la vue, le nez et l’odorat, la langue et le gout, la peau et le toucher, l’oreille et l’audition')),
+  m('hygiene-vie', 'corps-sante', 'Les gestes pour rester en forme : se laver les mains et les dents, dormir, bouger, limiter les écrans', ['ps', 'ms', 'gs', 'cp', 'ce1'],
+    src('bo19', 31, 'Avant 4 ans : quelques règles d’hygiène (se laver les mains) ; 4 ans : règles d’hygiène corporelle ; CP : c2sciences p. 9, règles d’hygiène de vie (sommeil, activité, écrans) ; CE1 p. 9 : hygiène buccodentaire')),
+  m('croissance-corps', 'corps-sante', 'Grandir : observer et mesurer sa croissance (taille, pointure, dents de lait)', ['ms', 'gs', 'ce1'],
+    src('bo19', 31, '4 ans : observer des changements liés à sa croissance (vêtements, chaussures, toise) ; CE1 : c2sciences p. 9, suivre la croissance avec un mètre-ruban, dents de lait et dents définitives')),
+  m('aliments-equilibre', 'corps-sante', 'Les familles d’aliments, leur origine et l’équilibre alimentaire', ['cp', 'ce1'],
+    src('c2sciences', 8, 'CP : catégories d’aliments (fruits et légumes, viandes, poissons et œufs, produits laitiers, féculents…) et origine animale, végétale, minérale ; CE1 p. 9 : apports des aliments, composer des menus équilibrés')),
+  m('mouvement-effort', 'corps-sante', 'Os, muscles et articulations : comment on bouge, et ce que l’effort change (souffle, pouls)', ['ce2'],
+    src('c2sciences', 10, 'CE2 : modéliser un mouvement de flexion/extension (rôle des muscles et des articulations), relier l’activité physique au rythme respiratoire et cardiaque (pouls)')),
+  m('cerveau-attention', 'corps-sante', 'Le cerveau, l’attention et la mémoire : mieux apprendre', ['ce1', 'ce2', 'cm1'],
+    src('c2sciences', 9, 'CE1 : le rôle de l’attention dans les apprentissages ; CE2 p. 10 : notions sur le fonctionnement du cerveau pour mieux apprendre ; CM1 c3sciences p. 14 : le cerveau et ses grandes fonctions, stratégies d’attention et de mémorisation')),
+  m('digestion', 'corps-sante', 'La digestion : le trajet des aliments dans le corps et le rôle du sang', ['cm2'],
+    src('c3sciences', 15, 'CM2 : nommer et localiser les organes du système digestif et leur fonction, rôle de la circulation sanguine dans l’approvisionnement des organes')),
+  // La matière
+  m('eau-etats', 'matiere', 'L’eau sous ses formes : glace, eau liquide, vapeur ; fondre et geler', ['ms', 'gs', 'cp', 'ce1', 'cm2'],
+    src('bo19', 34, '4 ans : fusion de la glace ; 5 ans : identifier et nommer l’état de l’eau dans différentes situations ; CP : c2sciences p. 4, états solide et liquide de l’eau ; CE1 : changement d’état et réversibilité ; CM2 c3sciences p. 6 : ébullition, évaporation, liquéfaction')),
+  m('air-existe', 'matiere', 'L’air existe : le sentir, le mettre en évidence', ['ps', 'ms', 'gs', 'ce1'],
+    src('bo19', 33, 'Avant 4 ans : constater les effets d’un déplacement d’air sur des objets ; 4 ans : mettre en évidence la présence d’air en le mettant en mouvement ; CE1 : c2sciences p. 4, expériences sur la matérialité de l’air')),
+  m('melanges-dissolution', 'matiere', 'Faire des mélanges : ce qui se dissout dans l’eau (sel, sucre) et ce qui ne se dissout pas (sable, riz)', ['ps', 'ms', 'gs', 'cm1', 'cm2'],
+    src('bo19', 33, 'Avant 4 ans : réaliser et observer des mélanges ; 4 ans : distinguer les solides qui se dissolvent dans l’eau de ceux qui ne se dissolvent pas ; CM1 c3sciences p. 4 : mélanges homogènes et hétérogènes, séparer par tamisage, décantation, filtration')),
+  m('solide-liquide-gaz', 'matiere', 'Solide, liquide, gaz : reconnaître l’état d’une matière à sa forme et à son volume', ['ce2', 'cm2'],
+    src('c2sciences', 5, 'CE2 : différencier les états solide (forme et volume propres) et liquide (volume propre, surface horizontale) ; CM2 c3sciences p. 6 : ajouter l’état gazeux')),
+  m('masse-mesurer', 'matiere', 'Comparer et mesurer des masses avec une balance ; passer du gramme au kilogramme', ['cp', 'ce1', 'ce2', 'cm1', 'cm2'],
+    src('c2sciences', 3, 'CP : comparer les masses de différents objets ; CE1 p. 4 : mesurer avec une balance ; CE2 p. 4 : convertir gramme et kilogramme ; CM1 c3sciences p. 4 : tarer une balance ; CM2 p. 5 : tonne, kilogramme, gramme, milligramme')),
+  m('electricite', 'matiere', 'Réaliser un circuit électrique simple (pile, interrupteur, ampoule) ; matériaux conducteurs et isolants', ['ce1', 'ce2', 'cm1', 'cm2'],
+    src('c2sciences', 4, 'CE1 : circuit à une boucle avec pile, interrupteur et ampoule, circuit ouvert ou fermé, isolants et conducteurs ; CM2 c3sciences p. 7 : un ou deux récepteurs, schémas normalisés, règles de sécurité électrique'),
+    'seul le CE1 et le CM2 sont cités par le texte ; CE2 et CM1 sont des années de réinvestissement, lues à partir du principe du programme de revisiter les notions d’un cycle à l’autre'),
+  m('lumiere-ombres', 'matiere', 'Lumière et ombres : transparent, opaque, ombre portée, phases de la Lune', ['cm1'],
+    src('c3sciences', 5, 'CM1 : classer des matériaux transparents, opaques ou translucides, produire des ombres et relier leur position et leur taille à celles de la source, observer et nommer les phases de la Lune')),
+  // Les objets et la technologie
+  m('materiaux-objets', 'objets-techniques', 'Reconnaître des matériaux (papier, bois, métal, plastique) et trier des objets selon leurs propriétés', ['ps', 'ms', 'gs'],
+    src('bo19', 32, 'Avant 4 ans : reconnaitre et comparer des matériaux usuels, identifier les objets en papier, carton, plastique, métal ; 4 ans (p. 32-33) : différencier des matériaux selon leurs propriétés et un objet du matériau qui le constitue')),
+  m('construire-fabriquer', 'objets-techniques', 'Construire et fabriquer un objet en suivant un modèle, une recette ou une fiche technique', ['ps', 'ms', 'gs'],
+    src('bo19', 32, 'Avant 4 ans : réaliser une construction, fabriquer un objet ; 4 ans (p. 32-33) : à partir d’un modèle ; 5 ans (p. 33) : en suivant une recette ou une fiche technique')),
+  m('instructions-robot', 'objets-techniques', 'Donner des instructions dans le bon ordre à un robot (avancer, tourner) pour atteindre une case', ['gs', 'ce1', 'ce2', 'cm1', 'cm2'],
+    src('bo19', 33, '5 ans : élaborer une suite d’instructions pour réaliser une tâche simple (3 à 5 instructions pour conduire un robot sur un quadrillage) ; CE1 : c2sciences p. 11, commander un robot ; CE2 p. 12, programme par blocs ; CM1-CM2 c3sciences p. 17-18')),
+  m('objet-technique-besoin', 'objets-techniques', 'Un objet technique répond à un besoin (s’habiller selon la météo, se déplacer) et évolue avec le temps', ['cp', 'ce1', 'ce2', 'cm1'],
+    src('c2sciences', 10, 'CP : identifier qu’un objet technique est obtenu par intervention des êtres humains et répond à un besoin ; CE2 p. 12 : diversité d’objets pour un même besoin ; CM1 c3sciences p. 17 : évolutions d’un objet')),
+  m('parties-objet-technique', 'objets-techniques', 'Décrire les parties d’un objet (forme, matériau, fonction), l’électrique ou non, le démonter', ['ce1', 'ce2', 'cm1'],
+    src('c2sciences', 11, 'CE1 : identifier les parties d’un objet technique (forme, matériau, fonction), objets avec ou sans énergie électrique ; CE2 p. 12 : pièces d’un objet démonté ; CM1 c3sciences p. 17 : fonctions des composants, croquis')),
+  m('maquette-technologie', 'objets-techniques', 'Concevoir et fabriquer une maquette : idées, matériaux adaptés, essais et comparaison', ['cm2'],
+    src('c3sciences', 18, 'CM2 : rechercher des idées de solutions à l’aide de croquis, associer une contrainte à un choix de matériau, organiser le travail de conception d’une maquette, comparer des solutions')),
+  // Histoire
+  m('jour-nuit-saisons', 'histoire', 'Le jour et la nuit, les quatre saisons', ['cp'],
+    src('c2histgeo', 3, 'CP, thème 1 : expliquer l’alternance du jour et de la nuit avec un globe, nommer les saisons et donner leurs caractéristiques'),
+    'continuité de « moments-journee » et « jours-mois » du cycle 1 (texte du cycle 2 : « dans la continuité du cycle 1 », p. 1)'),
+  m('calendrier-mesure-temps', 'histoire', 'Le calendrier : jours, semaines, mois, année ; sablier, pendule, montre et réveil', ['cp'],
+    src('c2histgeo', 3, 'CP, thème 2 : l’année (12 mois), la semaine (7 jours), la journée (24 heures) ; repérer, ordonner et nommer les jours ; utiliser divers calendriers ; observer et utiliser sablier, pendule, montre et réveil')),
+  m('situer-evenements', 'histoire', 'Situer des événements dans le temps : hier, demain, avant, après (passé, présent, futur)', ['cp'],
+    src('c2histgeo', 3, 'CP, thème 3 : situer et planifier sur un calendrier des évènements avec les temps verbaux et marqueurs temporels adaptés (hier, avant-hier, dans un mois…) ; compléter une frise chronologique de la journée ou de la vie de l’élève')),
+  m('frise-chronologique', 'histoire', 'Construire et lire une frise chronologique', ['cp', 'ce1', 'ce2', 'cm1', 'cm2'],
+    src('c2histgeo', 3, 'CP : compléter une frise chronologique de la journée, de la vie de l’élève ; CE1 p. 4 : positionner des évènements récents et anciens ; CM1 et CM2 c3histgeo p. 4-8 : situer règnes et évènements sur une frise')),
+  m('periodes-histoire', 'histoire', 'Les grandes périodes de l’histoire : Préhistoire, Antiquité, Moyen Âge, Temps modernes, époque contemporaine', ['ce1', 'ce2', 'cm1', 'cm2'],
+    src('c2histgeo', 4, 'CE1, thème 2 : repérer et mémoriser sur une frise les grandes périodes de l’histoire, par convention en Europe (Préhistoire jusqu’à 3000 av. J.-C., Antiquité jusqu’à 476, Moyen Âge 476-1492, Temps modernes 1492-1789, époque contemporaine) ; passé proche et passé lointain, siècle, millénaire (thème 1)')),
+  m('traces-du-passe', 'histoire', 'Les traces du passé : fossiles, ruines, monuments, objets, écrits ; le métier d’archéologue', ['ce1'],
+    src('c2histgeo', 4, 'CE1, thème 3 : comprendre que le passé laisse des traces ; identifier et situer dans le temps des traces (fossiles, ossements, ruines, monuments, objets, écrits, images, témoignages) ; métiers d’archéologue, d’historien')),
+  m('prehistoire', 'histoire', 'La Préhistoire : chasseurs-cueilleurs du Paléolithique, agriculteurs et éleveurs du Néolithique', ['ce2'],
+    src('c2histgeo', 5, 'CE2, thème 1 : mode de vie nomade des chasseurs-cueilleurs au Paléolithique, mode de vie sédentaire au Néolithique (agriculture, élevage), art pariétal, apparition de l’écriture vers 3000 av. J.-C.')),
+  m('rome-gaule', 'histoire', 'Vivre à Rome et en Gaule romaine : maisons, thermes, forum, aqueduc, Vercingétorix', ['ce2'],
+    src('c2histgeo', 5, 'CE2, thème 2 : vie quotidienne à Rome, usage d’un monument caractéristique, étendue de l’empire romain, Gaule romaine ; repères : 52 av. J.-C. siège d’Alésia, règne d’Auguste')),
+  m('royaume-de-france', 'histoire', 'La construction du royaume de France : Capétiens et Valois, le sacre du roi', ['ce2'],
+    src('c2histgeo', 5, 'CE2, thème 3 : grandes étapes de la construction du royaume de France sur des cartes, cérémonie du sacre, dynasties Capétiens et Valois ; repères : 987 Hugues Capet, guerre de Cent Ans')),
+  m('moyen-age', 'histoire', 'Le Moyen Âge : château, seigneurie, paysans, villes, abbayes et cathédrales (XIe-XIIIe siècles)', ['cm1'],
+    src('c3histgeo', 4, 'CM1, thème 1 : fonctions d’un château, seigneurie et paroisse, vie des paysans et des habitants des villes, rôle de l’Église, art roman et art gothique')),
+  m('monarchie-ancien-regime', 'histoire', 'La monarchie en France : François Ier, Henri IV, Louis XIV et Versailles ; la société des trois ordres', ['cm1'],
+    src('c3histgeo', 5, 'CM1, thème 2 : situer sur une frise les règnes de François Ier, Henri IV et Louis XIV, château de Versailles et pouvoir absolu, société d’ordres (clergé, noblesse, tiers état) ; repères 1515, 1598, 1643-1715')),
+  m('revolution-1789', 'histoire', '1789 : la fin de la monarchie absolue (Bastille, Déclaration des droits de l’Homme et du citoyen)', ['cm1'],
+    src('c3histgeo', 6, 'CM1, thème 4 : contexte en 1789, idées des Lumières, compléter une frise de l’année 1789, droits énoncés dans la Déclaration ; repères 14 juillet, 4 août, 26 août 1789')),
+  m('republique-xixe', 'histoire', 'De la République à l’Empire, puis à la IIIe République : lois fondatrices, école et laïcité (1792-1914)', ['cm2'],
+    src('c3histgeo', 6, 'CM2, thème 1 : chute du roi, naissance de la République (1792), Bonaparte empereur (1804) ; thème 2 : lois fondatrices (suffrage universel masculin, abolition de l’esclavage, liberté de la presse, lois scolaires, laïcité), symboles de la République ; repères 1848, 1882-1886, 1905')),
+  m('guerres-mondiales', 'histoire', 'Les deux guerres mondiales vues de France (1914-1918 et 1939-1945)', ['cm2'],
+    src('c3histgeo', 7, 'CM2, thèmes 4 et 5 : situer la Première Guerre mondiale sur une frise, vie des soldats, armistice du 11 novembre 1918 ; étapes de la Seconde Guerre mondiale en France, Occupation, Résistance ; repères 1914-1918, 18 juin 1940, 6 juin 1944, 8 mai 1945')),
+  // Géographie
+  m('plan-ecole', 'geographie', 'Se repérer dans la classe et l’école, lire et faire un plan, décrire un trajet', ['cp'],
+    src('c2histgeo', 6, 'CP, thème 1 : nommer et situer les éléments de la classe (à gauche, à droite, au-dessus, devant, derrière…), faire le plan de la classe, se déplacer dans l’école avec un plan, décrire un trajet'),
+    'continuité de « reperes-espace » du cycle 1'),
+  m('planisphere-continents', 'geographie', 'Reconnaître le planisphère, les continents et les océans ; situer la France', ['cp', 'ce1', 'ce2', 'cm1', 'cm2'],
+    src('c2histgeo', 6, 'CP, thème 2 : reconnaitre un planisphère, localiser les continents et les océans (Atlantique, Pacifique, Indien), situer la France ; CE1 p. 6 : localiser les grands foyers de peuplement ; CM1 c3histgeo p. 11 : aires régionales du monde')),
+  m('villes-peuplement', 'geographie', 'Où vivent les êtres humains : ville et village, grandes villes du monde', ['ce1'],
+    src('c2histgeo', 6, 'CE1, thème 1 : grands foyers de peuplement, principales villes du monde, différence entre ville et village, entre ville et campagne')),
+  m('climats-reliefs', 'geographie', 'Les paysages du monde : zones climatiques, forêts et déserts, montagnes, plaines, fleuves', ['ce1'],
+    src('c2histgeo', 7, 'CE1, thème 2 : trois zones climatiques (tropicale, tempérée, froide), types de végétation, reliefs (montagne, plaine, plateau, vallée), fleuve et rivière ; repères : Amazone, Mississippi, Nil, Andes, Alpes, Atlas, Himalaya, Rocheuses')),
+  m('france-cartes', 'geographie', 'La France sur une carte : villes, massifs montagneux, fleuves, où vit la population', ['ce2', 'cm2'],
+    src('c2histgeo', 7, 'CE2, thème 1 : localiser les espaces de fortes et faibles densités, les cinq principales agglomérations, les massifs (Alpes, Corse, Jura, Massif central, Pyrénées, Vosges) et fleuves (Garonne, Loire, Maroni, Rhin, Rhône, Seine) ; CM2 c3histgeo p. 12 : agglomérations, axes de transport'),
+    'le CM2 reprend les mêmes repères sur fond de carte (c3histgeo p. 12-13)'),
+  m('regions-departements', 'geographie', 'Le découpage de la France : communes, départements, les 18 régions et leurs capitales', ['cm2'],
+    src('c3histgeo', 12, 'CM2, thème 1 : découpage administratif du territoire français, les dix-huit Régions administratives et leur capitale régionale, le département de l’élève')),
+  m('modes-de-vie-monde', 'geographie', 'Vivre dans le monde : se nourrir, inégalités, se déplacer, communiquer avec Internet', ['cm1'],
+    src('c3histgeo', 11, 'CM1 : la diversité des modes de vie dans le monde ; thème 1 se nourrir, thème 2 les inégalités (aires régionales à localiser), thème 3 se déplacer (modes de transport et infrastructures), thème 4 communiquer avec Internet')),
+  m('union-europeenne', 'geographie', 'L’Europe et l’Union européenne : situer dix pays membres, traités de Rome et de Maastricht', ['cm2'],
+    src('c3histgeo', 13, 'CM2, thème 3 : différence entre Europe (continent) et Union européenne (construction politique), localiser et nommer dix pays membres dont les six fondateurs ; repères 1957 traité de Rome, 1992 traité de Maastricht')),
+  // Enseignement moral et civique
+  c('regles-vie-ecole', 'emc', 'Respecter les règles de l’école et de la classe : droits et devoirs de l’élève', ['cp', 'ce1', 'ce2'],
+    src('emc', 7, 'CP : s’approprier les règles de l’école (droits et devoirs) ; CE1 p. 9 : règles communes et civilité, respecter les biens personnels et collectifs ; CE2 p. 10 : élaboration collective de règles de vie')),
+  c('emotions-respect', 'emc', 'Reconnaître les émotions, respecter les autres et leurs différences, refuser la violence et le harcèlement', ['cp', 'ce1', 'cm1'],
+    src('emc', 7, 'CP : comprendre ses émotions et ses sentiments ; CE1 p. 8-9 : prendre en compte les émotions d’autrui, empathie, stéréotype et préjugé, situations de violence et de harcèlement ; CM1 p. 11-12 : égalité, dignité, fraternité et empathie')),
+  c('symboles-republique', 'emc', 'Les symboles de la République : drapeau, Marseillaise, devise, Marianne, 14 juillet', ['cp', 'ce1', 'ce2', 'cm2'],
+    src('emc', 8, 'CP : identifier le drapeau français, reconnaitre La Marseillaise ; CE1 p. 9 : devise « Liberté, Égalité, Fraternité », 1er couplet et refrain ; CM2 p. 13 : drapeau, hymne, devise, Marianne, fête nationale du 14 juillet, drapeau européen')),
+  c('laicite', 'emc', 'La laïcité à l’école : liberté de croire ou de ne pas croire', ['ce1', 'ce2', 'cm1', 'cm2'],
+    src('emc', 9, 'CE1 : aborder la laïcité comme liberté de croire, de ne pas croire ou de changer de croyance, Charte de la laïcité ; CM2 p. 14 : « Laïcité (vue en CE1) », pourquoi l’école est laïque')),
+  c('dangers-alerter', 'emc', 'Reconnaître un danger et donner l’alerte (numéros d’urgence, premiers secours, route)', ['ce1', 'ce2', 'cm1'],
+    src('emc', 9, 'CE1 : identifier les dangers, savoir où trouver les numéros d’urgence et passer un message d’alerte (APS, APER) ; CE2 p. 10 : situations dangereuses hors de l’école, permis piéton ; CM1 p. 11 : reconnaitre un danger, alerter, se mettre en sécurité')),
+  c('bien-commun-institutions', 'emc', 'Le bien commun et l’intérêt général : service public, éco-gestes, élus de la commune', ['ce2', 'cm1'],
+    src('emc', 10, 'CE2 : bien commun, intérêt général et intérêt particulier, institutions et associations au service du bien commun, éco-gestes ; le maire élu local, le président de la République élu ; CM1 p. 11 : civisme, sobriété numérique')),
+  c('democratie-vote', 'emc', 'La démocratie : voter, élire, participer aux décisions ; droits et devoirs du citoyen', ['ce2', 'cm1', 'cm2'],
+    src('emc', 11, 'CE2 p. 10 : organiser une élection de délégué, conseils d’élèves ; CM1 : signification de « démocratie » et suffrage direct ; CM2 p. 12-13 : citoyenneté et nationalité, droits civils et politiques, devoirs (respecter les lois, impôt, voter)')),
+  c('droits-libertes-egalite', 'emc', 'Les droits, les libertés et l’égalité : droits de l’enfant, discriminations, liberté d’expression', ['cp', 'cm1', 'cm2'],
+    src('emc', 13, 'CM2 : libertés et droits fondamentaux (Déclaration des droits de l’homme et du citoyen, droits de l’enfant), lutte contre les discriminations et les préjugés ; CP p. 8 : droits de l’enfant, égalité filles-garçons ; CM1 p. 11 : égalité en droit, dignité')),
 ] as const satisfies readonly Competence[]
 
 export const COMPETENCES_EXEMPLE = AVEC_EXEMPLES ? [

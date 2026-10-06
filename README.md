@@ -63,7 +63,7 @@ vers un autre site que le nôtre.
 - Pour savoir ce qui sert, l'app envoie à notre serveur un signal anonyme (page vue, fiche imprimée et ses
   réglages, langue) : pas de cookie, pas d'identifiant, et nginx l'enregistre **sans adresse IP**
   (`src/utils/journal.js`, `deploy/setup-nginx.sh`). Rien n'est envoyé si le navigateur demande à ne pas être
-  suivi. `node scripts/stats-vps.mjs` en fait un résumé (pages vues, fiches imprimées, PDF téléchargés).
+  suivi. `node scripts/deploiement/stats-vps.ts` en fait un résumé (pages vues, fiches imprimées, PDF téléchargés).
 - Le serveur ne fait que servir des fichiers statiques. Comme tout serveur web, il garde des journaux
   techniques (IP, page demandée) quelque temps.
 - Seule exception, facultative : si vous entrez votre propre clé API Mistral dans les Paramètres, la dictée
@@ -108,13 +108,13 @@ npm run build:app         # build de l'app seule (dist/)
 npm test                  # tests de la base : node (sites, langues, définitions) + pages dans Chrome sans interface
 npm run types             # vue-tsc strict (0 erreur)
 npm run lint              # ESLint, règles de correction seulement (pas de règle de style)
-npm run qualite           # compteurs qui ne doivent pas régresser (scripts/qualite-seuils.json)
+npm run qualite           # compteurs qui ne doivent pas régresser (scripts/verifier/qualite-seuils.json)
 npm run i18n              # vérifie que les traductions sont complètes
 npm run couverture        # couverture du programme (couverture.html) : domaine × classe × compétence
-                          # (la même chose côté site : page /programme, src/impression/couverture.js)
+                          # (l'ancien monde ; côté site, la page /programme lit le catalogue neuf, src/ressources/)
 ```
 
-Node 22 ou plus récent, et Google Chrome pour les tests. La CI (`.github/workflows/tests.yml`) lance `lint`,
+Node 22 ou plus récent, et Google Chrome pour les tests. Les scripts (`scripts/`) sont rangés par rôle : voir `scripts/README.md`. La CI (`.github/workflows/tests.yml`) lance `lint`,
 `qualite` et `npm test` sur chaque push et pull request vers `main`.
 
 ### Organisation
@@ -141,8 +141,8 @@ Base saine en TypeScript (plan 11, branche `base-saine`) ; l'ancien code est dé
 ### Fiches PDF toutes prêtes
 
 `npm run build:ecoleprimaire` et `npm run build:skoolik` construisent le site, puis lancent
-`scripts/fiches/commande.ts` (PDF et vignettes, via Chrome sans interface avec playwright-core, et l'index
-`fiches/index.json` + un JSON par fiche) et `scripts/statique/commande.ts` (une page HTML statique
+`scripts/build/fiches/commande.ts` (PDF et vignettes, via Chrome sans interface avec playwright-core, et l'index
+`fiches/index.json` + un JSON par fiche) et `scripts/build/statique/commande.ts` (une page HTML statique
 `telechargements/<slug>/` par fiche, que les moteurs de recherche peuvent indexer, `sitemap.xml`,
 `robots.txt`, page 404, JSON-LD). Chrome est cherché aux emplacements habituels, ou via `CHROME_PATH`.
 `npm run fiches` et `npm run statique` lancent chaque étape seule.
@@ -160,15 +160,15 @@ Le déploiement se fait par rsync sur un VPS :
 
 ```sh
 cp .deploy.env.example .deploy.env   # hôte et dossiers (non versionné)
-scripts/deploy-vps.sh --dry-run      # ce qui serait envoyé
-scripts/deploy-vps.sh                # construit et envoie les deux sites
-scripts/deploy-vps.sh skoolik        # un seul site
+scripts/deploiement/deploy-vps.sh --dry-run      # ce qui serait envoyé
+scripts/deploiement/deploy-vps.sh                # construit et envoie les deux sites
+scripts/deploiement/deploy-vps.sh skoolik        # un seul site
 ```
 
 `deploy/setup-nginx.sh` configure nginx et les certificats Let's Encrypt sur le serveur (à lancer avec sudo).
 
 GitHub Pages ne sert plus qu'une redirection vers https://ecoleprimaire.app, qui garde le chemin et la
-route (`scripts/redirection-gh-pages.mjs`, publiée à chaque push sur `main`).
+route (`scripts/deploiement/redirection-gh-pages.mjs`, publiée à chaque push sur `main`).
 
 ## Polices
 

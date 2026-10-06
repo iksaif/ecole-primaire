@@ -104,7 +104,7 @@ server {
         expires max;
         try_files \$uri =404;
     }
-    # pages statiques des fiches (scripts/statique/, <slug>/index.html) : servies si elles existent, sinon c'est l'app
+    # pages statiques des fiches (scripts/build/statique/, <slug>/index.html) : servies si elles existent, sinon c'est l'app
     # (adresses propres, plan 13) qui affiche la page ; réécrites à chaque déploiement : un jour de cache
     location /telechargements/ {
         expires 5m;

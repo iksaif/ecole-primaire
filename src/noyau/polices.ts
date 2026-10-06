@@ -5,25 +5,17 @@
 //   const police = usePoliceFiche()        // → fiche({ …, ...police.value })
 import { ref, computed, watch } from 'vue'
 import type { Ref, ComputedRef } from 'vue'
-import { chargerReglages, sauvegarder } from '../utils/index.js'
+import { charger, chargerReglages, sauvegarder } from '../utils/index.js'
 import {
   POLICE_ATTACHE, POLICE_SCRIPT, POLICES_CONNUES, POLICES_INCLUSES,
   policesPerso, chargerPolices, policeInstallee, cssPolices,
 } from '../utils/impression.js'
 import type { TypePolice } from '../utils/impression.js'
+import { regrouper, selectionnables, choixValide, assainirNoms, nomPoliceValide, POLICE_REPLI } from './groupesPolices.ts'
+import type { EntreePolice, GroupesPolices } from './groupesPolices.ts'
 
 /** Police choisie pour l'attaché et pour le script ; `unique` : celle des documents qui n'ont qu'une police (les fiches). */
 export type ChoixPolices = Record<TypePolice | 'unique', string>
-/** Une police proposée dans les menus. */
-export interface PoliceDisponible {
-  id: string
-  /** libellé en français (celui des polices incluses est traduit par ChoixPolice, section `cadre`) */
-  label: string
-  perso?: boolean
-  /** police installée sur l'ordinateur ou ajoutée depuis un fichier : `nom` est alors son nom, sans la mention de statut */
-  statut?: 'installee' | 'ajoutee'
-  nom?: string
-}
 /** Ce que reçoit la mise en page d'une fiche : familles CSS du texte et @font-face à embarquer (documentFiche). */
 export interface PoliceFiche { police: string, cssPolices: string }
 
@@ -31,46 +23,88 @@ const DEFAUT: ChoixPolices = { attache: POLICE_ATTACHE, script: POLICE_SCRIPT, u
 const choix: Ref<ChoixPolices> = ref(chargerReglages('polices', DEFAUT))
 watch(choix, v => sauvegarder('polices', v), { deep: true })
 
-const installees: Ref<string[]> = ref([])
-const installeesAttache: Ref<string[]> = ref([])
+// Polices de l'ordinateur choisies ou saisies : leurs noms sont mémorisés à part (clé `polices_systeme`, une liste de noms) ;
+// à la relecture, seuls les noms encore détectés comme installés sont gardés (une police désinstallée retombe sur Andika).
+const systemeMemo: Ref<string[]> = ref([])
+// toutes les polices du système, listées à la demande (queryLocalFonts) : pour la session seulement
+const systemeListe: Ref<string[]> = ref([])
+const connuesInstallees: Ref<Set<string>> = ref(new Set())
 const pret = ref(false)
 let detection: Promise<void> | null = null
 
-// polices script installées sur l'ordinateur (détectées une fois que les polices incluses sont chargées)
+// polices suggérées installées sur l'ordinateur (détectées une fois que les polices incluses sont chargées)
 function detecter() {
   detection ??= chargerPolices().then(() => {
-    installees.value = POLICES_CONNUES.script.filter(policeInstallee)
-    installeesAttache.value = POLICES_CONNUES.attache.filter(policeInstallee)
+    connuesInstallees.value = new Set([...POLICES_CONNUES.script, ...POLICES_CONNUES.attache].filter(policeInstallee))
+    systemeMemo.value = assainirNoms(charger('polices_systeme', [])).filter(policeInstallee)
     pret.value = true
   })
   return detection
 }
 
-/** Les polices script proposées pour une fiche : incluses, installées, ajoutées depuis un fichier. */
-export const disponibles: ComputedRef<PoliceDisponible[]> = computed(() => [
-  ...POLICES_INCLUSES.script,
-  ...installees.value.map(id => ({ id, label: `${id} (installée)`, statut: 'installee' as const, nom: id })),
-  ...policesPerso.value.filter(p => p.type === 'script').map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true, statut: 'ajoutee' as const, nom: p.label })),
-])
+/** Un type d'écriture, ou `tous` : le choix des fiches, qui n'ont qu'une police (script et attaché confondus). */
+export type TypeChoix = TypePolice | 'tous'
+const typesDe = (type: TypeChoix): TypePolice[] => (type === 'tous' ? ['script', 'attache'] : [type])
 
-/** Les polices proposées pour un type d'écriture : incluses, installées, ajoutées depuis un fichier (affiches à polices par type). */
-export function disponiblesDe(type: TypePolice): ComputedRef<PoliceDisponible[]> {
-  if (type === 'script') return disponibles
-  return computed(() => [
-    ...POLICES_INCLUSES[type],
-    ...installeesAttache.value.map(id => ({ id, label: `${id} (installée)`, statut: 'installee' as const, nom: id })),
-    ...policesPerso.value.filter(p => p.type === type).map(p => ({ id: p.id, label: `${p.label} (ajoutée)`, perso: true, statut: 'ajoutee' as const, nom: p.label })),
-  ])
+function groupesCalcules(type: TypeChoix): GroupesPolices {
+  const types = typesDe(type)
+  return regrouper({
+    incluses: types.flatMap(t => POLICES_INCLUSES[t]),
+    connues: types.flatMap(t => POLICES_CONNUES[t]).map(nom => ({ nom, installee: connuesInstallees.value.has(nom) })),
+    systeme: [...systemeMemo.value, ...systemeListe.value],
+    ajoutees: policesPerso.value.filter(p => types.includes(p.type)).map(p => ({ id: p.id, label: p.label })),
+  })
+}
+
+/** Les polices d'un type d'écriture, en groupes (favorites, installées, ajoutées, manquantes) : pour le sélecteur. */
+export function groupesDe(type: TypeChoix): ComputedRef<GroupesPolices> {
+  return computed(() => groupesCalcules(type))
+}
+
+/** Les polices sélectionnables pour un type d'écriture (celles de tous les groupes, sauf les manquantes). */
+export function disponiblesDe(type: TypeChoix): ComputedRef<EntreePolice[]> {
+  return computed(() => selectionnables(groupesCalcules(type)))
+}
+// les fiches n'ont qu'une police : toutes celles que l'on connaît
+const disponibles = disponiblesDe('tous')
+
+/**
+ * Ajoute des polices de l'ordinateur à la liste et les mémorise : les noms viennent de la saisie ou du système, et sont
+ * déjà contrôlés par l'appelant (policeInstallee) ; ceux qui ne sont pas des noms valides sont ignorés.
+ */
+export function memoriserSysteme(noms: string[]): void {
+  systemeMemo.value = assainirNoms([...systemeMemo.value, ...noms])
+  sauvegarder('polices_systeme', systemeMemo.value)
+}
+
+/**
+ * Liste toutes les polices de l'ordinateur (Chrome, Edge : demande une permission, rien ne sort de l'appareil).
+ * Renvoie leur nombre, ou null si l'API n'existe pas ; une permission refusée lève une erreur.
+ */
+export async function listerPolicesSysteme(): Promise<number | null> {
+  const lister = (window as Window & { queryLocalFonts?: () => Promise<{ family: string }[]> }).queryLocalFonts
+  if (!lister) return null
+  const familles = await lister.call(window)
+  systemeListe.value = assainirNoms([...new Set(familles.map(f => f.family))])
+  return systemeListe.value.length
+}
+
+/** Cherche une police installée par son nom : l'ajoute (et la mémorise) si elle est détectée ; sinon renvoie false. */
+export function ajouterPoliceInstallee(nom: string): boolean {
+  const n = nom.trim()
+  if (!nomPoliceValide(n) || !policeInstallee(n)) return false
+  memoriserSysteme([n])
+  return true
 }
 
 // Si la police mémorisée n'est plus disponible (autre ordinateur…), on revient à celle incluse
 watch([disponibles, pret], () => {
-  if (pret.value && !disponibles.value.some(p => p.id === choix.value.unique)) choix.value.unique = disponibles.value[0].id
+  if (pret.value && !disponibles.value.some(p => p.id === choix.value.unique)) choix.value.unique = POLICE_REPLI
 })
 
 /** La police des fiches, `unique` si elle est disponible, sinon Andika. */
 export function policeDeFiche(): string {
-  return disponibles.value.some(p => p.id === choix.value.unique) ? choix.value.unique : POLICE_SCRIPT
+  return choixValide(choix.value.unique, groupesCalcules('tous'), POLICE_SCRIPT)
 }
 
 /**

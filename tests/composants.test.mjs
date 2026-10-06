@@ -121,5 +121,100 @@ for (const langue of ['fr', 'br']) {
   verifier(erreurs.length === 0, `aucune erreur JavaScript${erreurs.length ? ' : ' + erreurs[0] : ''}`)
   await ctx.close()
 }
+
+// ── Bloc « Sur la fiche » et choix de police (/dev/exemple?mode=imprimer) : une ligne par préoccupation, sans débordement ;
+// les polices de l'ordinateur sont simulées (mesure du canvas et queryLocalFonts) : aucune dépendance à la machine de test
+const SIMULEES = ['BelleAllure CM', 'Verdana', 'Georgia']
+for (const largeur of [1280, 360]) {
+  console.log(`Sur la fiche : ${largeur} px`)
+  const ctx = await contexte(nav, { viewport: { width: largeur, height: 900 } })
+  await ctx.addInitScript(simulees => {
+    const mesurer = CanvasRenderingContext2D.prototype.measureText
+    const INCLUSES = ['Andika', 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']
+    // seules les polices simulées sont « installées » : toute autre police inconnue est mesurée comme son repli
+    CanvasRenderingContext2D.prototype.measureText = function (t) {
+      const m = /^\d+px "?([^",]+)"?, ([\w-]+)$/.exec(this.font)
+      if (!m || INCLUSES.includes(m[1])) return mesurer.call(this, t)
+      if (simulees.includes(m[1])) return { width: mesurer.call(this, t).width + 7 }
+      const avant = this.font
+      this.font = `40px ${m[2]}`
+      const r = mesurer.call(this, t)
+      this.font = avant
+      return r
+    }
+    window.queryLocalFonts = async () => [{ family: 'Verdana' }, { family: 'Georgia' }, { family: 'Verdana' }]
+  }, SIMULEES)
+  const page = await ctx.newPage()
+  const erreurs = surveiller(page)
+  await page.goto(appDev('/dev/exemple?mode=imprimer'))
+  await page.waitForSelector('.options-fiche .choix-police select')
+  await page.waitForFunction(() => document.querySelector('.options-fiche option[value="BelleAllure CM"]'))
+  const mise = await page.evaluate(() => {
+    const haut = s => Math.round(document.querySelector(s).getBoundingClientRect().top)
+    const pastilles = [...document.querySelectorAll('.options-fiche .pastille')]
+    return {
+      debord: document.documentElement.scrollWidth > window.innerWidth,
+      uneLigne: pastilles.every(p => p.getBoundingClientRect().height < 60 && p.scrollWidth <= p.clientWidth + 1),
+      topsCorrige: new Set([...document.querySelectorAll('.segmente .pastille')].map(p => Math.round(p.getBoundingClientRect().top))).size,
+      rangs: haut('.options-fiche .rang-entete') < haut('.options-fiche .segmente') && haut('.options-fiche .segmente') < haut('.options-fiche .choix-police'),
+    }
+  })
+  verifier(!mise.debord, 'aucun débordement horizontal')
+  verifier(mise.uneLigne, 'chaque libellé tient sur une seule ligne (« Prénom et date », corrigé)')
+  verifier(mise.rangs, 'une ligne par préoccupation : en-tête, corrigé, police')
+  if (largeur >= 1000) verifier(mise.topsCorrige === 1, 'le corrigé tient sur une ligne (contrôle d\'une seule pièce)')
+  const radios = page.locator('.segmente input[type=radio]')
+  await radios.nth(0).focus()
+  await page.keyboard.press('ArrowRight')
+  verifier(await radios.nth(1).isChecked(), 'corrigé : flèche droite change le choix (radios natifs)')
+  await page.keyboard.press('Space')
+  verifier(await page.locator('.segmente input:checked').count() === 1, 'un seul corrigé choisi')
+  verifier(await page.locator('.rang-entete input[type=checkbox]').evaluate(e => e.checked), '« Prénom et date » : case cochée par défaut')
+
+  // groupes, polices simulées installées, polices suggérées toujours visibles
+  const options = await page.locator('.choix-police optgroup').evaluateAll(gs => gs.map(g => [g.label, [...g.querySelectorAll('option')].map(o => [o.value, o.disabled, o.textContent.trim()])]))
+  const nos = options.find(([titre]) => titre === 'Nos polices')?.[1] ?? []
+  verifier(nos.length > 4 && nos.some(([v]) => v === 'Andika'), '« Nos polices » en tête, avec les polices incluses')
+  verifier(nos.some(([v, d, t]) => v === 'BelleAllure CM' && !d && t.includes('installée')), 'Belle Allure simulée installée : sélectionnable, marquée « installée »')
+  verifier(nos.some(([v, d, t]) => v === 'manquante:Écolier' && d && t.includes('non installée')), 'Écolier absent : grisé, « non installée »')
+  verifier(!nos.some(([v]) => v === 'manquante:Belle Allure'), 'aucune invite à installer ce qui est installé')
+  await page.locator('.aide summary').click()
+  const liens = await page.locator('.aide a').allTextContents()
+  verifier(liens.includes('Écolier') && liens.includes('Cursif') && !liens.includes('Belle Allure'), 'l\'aide ne propose que les polices qui manquent')
+
+  // toutes les polices de l'ordinateur, puis un choix qui change la fiche
+  await page.getByRole('button', { name: 'Afficher toutes les polices de cet ordinateur' }).click()
+  await page.waitForSelector('.choix-police option[value="Verdana"]', { state: 'attached' })
+  verifier((await page.locator('.aide [role=status]').textContent()).includes('2'), 'la liste du système est annoncée (role="status")')
+  await page.locator('.choix-police select').selectOption('Verdana')
+  await page.waitForFunction(() => document.querySelector('iframe')?.srcdoc.includes("'Verdana', Arial, sans-serif"))
+  verifier(true, 'choisir une police de l\'ordinateur change la fiche')
+  verifier(await page.locator('.choix-police .note').isVisible(), 'note : une police de l\'ordinateur n\'est pas incluse dans la fiche')
+  verifier(await page.evaluate(() => JSON.parse(localStorage.getItem('ep_polices_systeme')).includes('Verdana')), 'le nom de la police est mémorisé')
+  await page.reload()
+  await page.waitForFunction(() => document.querySelector('.choix-police select')?.value === 'Verdana')
+  verifier(true, 'après rechargement, la police de l\'ordinateur est conservée')
+
+  // saisie du nom d'une police installée : trouvée ou non
+  await page.locator('.aide summary').click()
+  await page.getByLabel('Nom d’une police installée').fill('Introuvable XYZ')
+  await page.getByRole('button', { name: 'Chercher', exact: true }).click()
+  verifier((await page.locator('.aide [role=alert]').textContent()).includes('Introuvable XYZ') && await page.locator('.choix-police option[value="Introuvable XYZ"]').count() === 0, 'police non détectée : message clair, pas ajoutée')
+  await page.getByLabel('Nom d’une police installée').fill('Georgia')
+  await page.getByRole('button', { name: 'Chercher', exact: true }).click()
+  await page.waitForFunction(() => document.querySelector('.choix-police select')?.value === 'Georgia')
+  verifier(true, 'police détectée : ajoutée au groupe « Installées » et choisie')
+
+  // un nom mémorisé qui n'est plus installé retombe sur Andika, sans erreur
+  await page.evaluate(() => {
+    localStorage.setItem('ep_polices_systeme', JSON.stringify(['Disparue', 42, "x'y"]))
+    localStorage.setItem('ep_polices', JSON.stringify({ attache: 'Playwrite FR Trad', script: 'Andika', unique: 'Disparue' }))
+  })
+  await page.reload()
+  await page.waitForFunction(() => document.querySelector('.choix-police select')?.value === 'Andika')
+  verifier(await page.locator('.choix-police option[value="Disparue"]').count() === 0, 'police mémorisée disparue : retour à Andika, sans erreur')
+  verifier(erreurs.length === 0, `aucune erreur JavaScript${erreurs.length ? ' : ' + erreurs[0] : ''}`)
+  await ctx.close()
+}
 await nav.close()
 process.exit(nbEchecs() ? 1 : 0)

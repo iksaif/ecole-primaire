@@ -1,6 +1,14 @@
-// Tables de multiplication — fiche imprimable (pure : lisible par node). Les calculs des tables choisies, avec corrigé.
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
+// Tables de multiplication — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node).
+// Les calculs des tables choisies, avec corrigé.
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import type { CalculFiche, TirageFiche } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       h1 { font-size: 1.25rem; }
@@ -12,10 +20,10 @@ const CSS = `
       .ligne { flex: 1; border-bottom: 1.5px solid #aaa; font-weight: 800; font-size: 1.2rem; font-family: monospace; color: #1a7f37; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const { tables, jusqu, questions: qs } = x
   const titre = tables.length === 1 ? T('pTable', { n: tables[0] }) : T('pTables', { liste: tables.join(', ') })
-  const ligne = (q, i, corrige) => `<div class="question">
+  const ligne = (q: CalculFiche, i: number, corrige: boolean): string => `<div class="question">
     <span class="num">${i + 1}.</span>
     <span class="calc">${q.a} × ${q.b} =</span>
     <span class="ligne">${corrige ? q.r : ''}</span>

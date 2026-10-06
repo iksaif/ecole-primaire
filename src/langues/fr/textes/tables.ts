@@ -1,0 +1,33 @@
+// Textes de l'interface — tables de multiplication (français) : la page et le jeu. Source des clés : br/textes/tables.ts doit avoir
+// exactement les mêmes. L'en-tête de la fiche est dans le catalogue de contenu de l'exercice : src/exercices/tables/textes.ts. Les
+// mots communs (niveau, valider, quitter…) : section `communs`.
+export default {
+  titre: 'Tables de multiplication',
+  description: "Entraîne-toi sur toutes les tables",
+  tablesAReviser: 'Tables à réviser',
+  toutes: 'Toutes',
+  mode: 'Mode',
+  entrainement: 'Entraînement',
+  entrainementDesc: 'Vois la table, puis réponds en ordre',
+  aleatoire: 'Aléatoire',
+  aleatoireDesc: 'Questions mélangées sur les tables choisies',
+  chrono: 'Défi chrono',
+  chronoDesc: 'Le plus de bonnes réponses en 1 minute',
+  multiplierJusqua: "Multiplier jusqu'à",
+  tableN: 'Table {n} / {total}',
+  tableDe: 'Table de × {n}',
+  jeLaConnais: 'Je la connais → Tester ! ✔',
+  bonnesEn1Min: 'bonnes réponses en 1 minute !',
+  revoirErreurs: '❌ Revoir les erreurs',
+  chrono50: '🏆 Impressionnant !',
+  chrono30: '🌟 Excellent !',
+  chrono20: '💪 Très bien !',
+  chronoBas: "📚 Continue à t'entraîner !",
+  ordreFiche: 'Ordre des calculs',
+  dansLOrdre: "Dans l'ordre",
+  melange: 'Mélangé',
+  nbCalculs: 'Nombre de calculs',
+  passer: 'Passer ⏭',
+  passe: '(passé)',
+  laBonneReponse: '{a} × {b} = {r}',
+} as const

@@ -1,17 +1,25 @@
-// Calcul posé — fiche imprimable (pure : lisible par node). Des opérations en colonnes à compléter, avec corrigé.
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
+// Calcul posé — fiche imprimable : la mise en page des opérations que tire `questionsFiche`. Pure (lisible par node).
+// Des opérations en colonnes à compléter, avec corrigé.
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import type { Question } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
     `
 
-export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }) {
+export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
   const titre = `${T('titre')} — ${reglages.niveau.toUpperCase()}`
-  const operations = T(({ add: 'additions', sou: 'soustractions', mul: 'multiplications' })[reglages.op] ?? 'melange')
+  const operations = T(({ add: 'additions', sou: 'soustractions', mul: 'multiplications' } as const)[reglages.op as 'add' | 'sou' | 'mul'] ?? 'melange')
 
-  const carte = (q, corrige) => {
-    const cell = ch => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;">${ch.trim() || '&nbsp;'}</td>`
+  const carte = (q: Question, corrige: boolean): string => {
+    const cell = (ch: string): string => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;">${ch.trim() || '&nbsp;'}</td>`
     const rowA = q.chiffresA.map(cell).join('')
     const rowB = q.chiffresB.map(cell).join('')
     const rowR = q.chiffresR.map(ch => `<td style="width:2.2rem;text-align:center;font-size:1.5rem;font-weight:800;font-family:monospace;color:#1a7f37;border-bottom:2px solid #333;">${corrige ? (ch.trim() || '&nbsp;') : '&nbsp;'}</td>`).join('')

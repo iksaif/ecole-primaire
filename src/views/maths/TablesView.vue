@@ -1,42 +1,44 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">✖️ {{ t('titre') }}</h1>
+    <h1 class="section-heading">✖️ {{ t('tables.titre') }}</h1>
 
     <!-- ══ CONFIG ══ -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
-      :aleatoire="ficheAleatoire" @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
-      <!-- le programme s'arrête à 10 × 10 : les tables de 11 et 12 sont un bonus -->
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="tables" v-model="config.tables"
-        :titre="t('tablesAReviser')" :libelle="n => `× ${n}`">
-        <div class="btn-group" style="margin-top:.5rem;">
-          <button class="level-btn" :class="{ active: toutesSelectionnees }" @click="toggleToutes">{{ t('toutes') }}</button>
-        </div>
-      </ChoixReglage>
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" :aleatoire="ficheAleatoire"
+      @commencer="jeu.demarrer" @regenerer="nouvelle">
+      <template #default="{ mode: modeCourant }">
+        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
+        <!-- le programme s'arrête à 10 × 10 : les tables de 11 et 12 sont un bonus -->
+        <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="tables" v-model="config.tables"
+          :titre="t('tables.tablesAReviser')" :libelle="n => `× ${n}`">
+          <div class="btn-group" style="margin-top:.5rem;">
+            <button type="button" class="level-btn" :class="{ active: toutesSelectionnees }" :aria-pressed="toutesSelectionnees" @click="toggleToutes">{{ t('tables.toutes') }}</button>
+          </div>
+        </ChoixReglage>
 
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="mode" v-model="config.mode" cartes
-        :titre="t('mode')" :libelle="m => t(m)" :icone="m => ICONES[m]" :description="m => t(m + 'Desc')" />
+        <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" cle="mode" v-model="config.mode" cartes
+          :titre="t('tables.mode')" :libelle="m => t(`tables.${m}`)" :icone="m => ICONES[m]" :description="m => t(`tables.${m}Desc`)" />
 
-      <ChoixReglage v-if="mode === 'imprimer' || config.mode !== 'chrono'" :definition="DEFINITION" :niveau="config.niveau"
-        cle="jusqu" v-model="config.jusqu" :titre="t('multiplierJusqua')" :libelle="m => `× ${m}`" />
-      <ChoixReglage v-if="mode === 'jouer' && config.mode === 'aleatoire'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ"
-        :titre="t('nbQuestions')" />
+        <ChoixReglage v-if="modeCourant === 'imprimer' || config.mode !== 'chrono'" :definition="DEFINITION" :niveau="config.niveau"
+          cle="jusqu" v-model="config.jusqu" :titre="t('tables.multiplierJusqua')" :libelle="m => `× ${m}`" />
+        <ChoixReglage v-if="modeCourant === 'jouer' && config.mode === 'aleatoire'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ"
+          :titre="t('communs.nbQuestions')" />
 
-      <template v-if="mode === 'imprimer'">
-        <ChoixReglage :definition="DEFINITION" cle="ordreFiche" v-model="config.ordreFiche" :titre="t('ordreFiche')"
-          :libelle="o => t(o === 'ordre' ? 'dansLOrdre' : 'melange')" />
-        <ChoixReglage :definition="DEFINITION" cle="nbFiche" v-model="config.nbFiche" :titre="t('nbCalculs')"
-          :libelle="n => (n === 0 ? t('toutes') : String(n))" />
+        <template v-if="modeCourant === 'imprimer'">
+          <ChoixReglage :definition="DEFINITION" cle="ordreFiche" v-model="config.ordreFiche" :titre="t('tables.ordreFiche')"
+            :libelle="o => t(o === 'ordre' ? 'tables.dansLOrdre' : 'tables.melange')" />
+          <ChoixReglage :definition="DEFINITION" cle="nbFiche" v-model="config.nbFiche" :titre="t('tables.nbCalculs')"
+            :libelle="n => (n === 0 ? t('tables.toutes') : String(n))" />
+        </template>
       </template>
-    </ConfigExercice>
+    </CadreExercice>
 
     <!-- ══ APPRENTISSAGE (mode entraînement : affiche la table avant) ══ -->
-    <div v-if="phase === 'jeu' && apprendre" class="exercise-box" style="text-align:center;">
+    <div v-if="phase === 'jeu' && apprendre && q" class="exercise-box" style="text-align:center;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;">
-        <button class="btn-quitter" @click="jeu.quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
-        <span style="font-size:.85rem;color:#888;font-weight:600;">{{ t('tableN', { n: tableN, total: config.tables.length }) }}</span>
+        <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')">{{ t('communs.quitter') }}</button>
+        <span style="font-size:.85rem;color:#666;font-weight:600;">{{ t('tables.tableN', { n: tableN, total: config.tables.length }) }}</span>
       </div>
-      <div class="table-title">{{ t('tableDe', { n: q.a }) }}</div>
+      <h2 class="table-title">{{ t('tables.tableDe', { n: q.a }) }}</h2>
       <div class="table-grid">
         <div v-for="i in config.jusqu" :key="i" class="table-row">
           <span class="table-cell-a">{{ q.a }} × {{ i }}</span>
@@ -44,7 +46,7 @@
           <span class="table-cell-r">{{ q.a * i }}</span>
         </div>
       </div>
-      <button class="btn btn-primary" style="margin-top:1.5rem;" @click="apprendre = false">{{ t('jeLaConnais') }}</button>
+      <button type="button" class="btn btn-primary" style="margin-top:1.5rem;" @click="apprendre = false">{{ t('tables.jeLaConnais') }}</button>
     </div>
 
     <!-- ══ EXERCICE ══ -->
@@ -52,123 +54,137 @@
       <!-- défi chrono : le temps, pas la question -->
       <template v-if="config.mode === 'chrono'">
         <div class="score-bar">
-          <button class="btn-quitter" @click="jeu.quitter" :title="t('quitterTitre')">{{ t('quitter') }}</button>
-          <span>⏱ <span :style="{ color: urgent ? 'var(--rouge)' : 'inherit' }">{{ restant }}s</span></span>
-          <span>✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
-        </div>
-        <div class="progress-track" style="max-width:680px;margin:0 auto .75rem;">
-          <div class="progress-fill" :class="{ urgent }" :style="{ width: (restant / DUREE_CHRONO * 100) + '%', background: urgent ? 'var(--rouge)' : undefined }"></div>
+          <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')">{{ t('communs.quitter') }}</button>
+          <Chronometre :restant="restant" :duree="DUREE_CHRONO" />
+          <span role="img" :aria-label="t('communs.scoreSur', { bonnes, total: historique.length })">✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
         </div>
       </template>
 
-      <component :is="config.mode === 'chrono' ? 'div' : QuestionJeu" v-bind="config.mode === 'chrono' ? { class: 'exercise-box' } : { jeu }">
+      <!-- la question : dans le cadre commun, ou (défi chrono) dans une simple boîte sous le temps -->
+      <QuestionJeu v-if="config.mode !== 'chrono'" :jeu="jeu">
         <div class="exercise-question">{{ q.texte }}</div>
         <SaisieReponse v-model="reponse" type="nombre" class="exercise-input" :etat="etat" placeholder="?" :disabled="repondu"
-          focus @entree="valider" />
-        <div class="feedback" :class="etat">{{ retour?.message }}</div>
+          focus aria-describedby="tables-retour" @entree="valider" />
+        <RetourReponse id="tables-retour" :message="retour?.message" :etat="etat" />
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button v-if="config.mode !== 'chrono'" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('passer') }}</button>
-          <button class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('valider') }}</button>
+          <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('tables.passer') }}</button>
+          <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }}</button>
         </div>
-      </component>
+      </QuestionJeu>
+      <div v-else class="exercise-box">
+        <div class="exercise-question">{{ q.texte }}</div>
+        <SaisieReponse v-model="reponse" type="nombre" class="exercise-input" :etat="etat" placeholder="?" :disabled="repondu"
+          focus aria-describedby="tables-retour" @entree="valider" />
+        <RetourReponse id="tables-retour" :message="retour?.message" :etat="etat" />
+        <div class="btn-group" style="justify-content:center;margin-top:1rem;">
+          <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }}</button>
+        </div>
+      </div>
     </template>
 
     <!-- ══ RÉSULTATS ══ -->
     <div v-if="phase === 'resultats' && config.mode === 'chrono'" class="exercise-box resultats-jeu" style="text-align:center;">
-      <div class="result-score">{{ bonnes }}</div>
-      <div class="result-msg">{{ t('bonnesEn1Min') }} {{ messageChrono }}</div>
+      <h2 ref="titreChrono" class="result-score" tabindex="-1">{{ bonnes }}</h2>
+      <div class="result-msg">{{ t('tables.bonnesEn1Min') }} {{ messageChrono }}</div>
       <div class="btn-group actions" style="justify-content:center;">
-        <button class="btn btn-primary" @click="jeu.recommencer">{{ t('rejouer') }}</button>
-        <button class="btn btn-ghost" @click="jeu.quitter">{{ t('parametres') }}</button>
+        <button type="button" class="btn btn-primary" @click="jeu.recommencer">{{ t('communs.rejouer') }}</button>
+        <button type="button" class="btn btn-ghost" @click="jeu.quitter">{{ t('communs.parametres') }}</button>
       </div>
     </div>
     <ResultatsJeu v-else-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <TableauCorrection :historique="historique" />
       <div v-if="mauvaises" class="btn-group" style="justify-content:center;margin-bottom:1rem;">
-        <button class="btn btn-warning" @click="revoirErreurs">{{ t('revoirErreurs') }}</button>
+        <button type="button" class="btn btn-warning" @click="revoirErreurs">{{ t('tables.revoirErreurs') }}</button>
       </div>
     </ResultatsJeu>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Tables de multiplication : la vue ne fait que les réglages, le minuteur du défi et le rendu d'une question. Niveaux,
-// générateur et fiche : src/exercices/tables/ (definition.js, generateur.js, fiche.js).
-import { ref, computed, watch } from 'vue'
-import { confettis } from '../../utils'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import SaisieReponse from '../../components/SaisieReponse.vue'
-import TableauCorrection from '../../components/TableauCorrection.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import { useMinuteur } from '../../composables/useMinuteur'
-import DEFINITION from '../../exercices/tables/definition'
-import { INTERFACE, TEXTES } from '../../exercices/tables/textes'
-import { questions as genererQuestions, questionsFiche, verifier } from '../../exercices/tables/generateur'
-import { fiche as ficheTables } from '../../exercices/tables/fiche'
+// générateur et fiche : src/exercices/tables/ (definition.ts, generateur.ts, fiche.ts).
+import { ref, computed, watch, nextTick } from 'vue'
+import { confettis } from '../../utils/index.js'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import Chronometre from '../../noyau/Chronometre.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import SaisieReponse from '../../noyau/SaisieReponse.vue'
+import TableauCorrection from '../../noyau/TableauCorrection.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import { useMinuteur } from '../../noyau/useMinuteur.ts'
+import DEFINITION from '../../exercices/tables/definition.ts'
+import { CONTENU } from '../../exercices/tables/textes.ts'
+import { questions as tirer, questionsFiche, verifier } from '../../exercices/tables/generateur.ts'
+import type { Question, Reponse } from '../../exercices/tables/generateur.ts'
+import { fiche as mettreEnPage } from '../../exercices/tables/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
-const { config, langueContenu } = useReglages(DEFINITION, 'tables_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
-const ICONES = { entrainement: '📖', aleatoire: '🎲', chrono: '⏱️' }
+const { t } = useLangue()
+// Réglages mémorisés, ajustés au changement de niveau ; maths : le contenu (fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION)
+const T = traducteur(CONTENU, () => langueContenu.value)
+const ICONES = { entrainement: '📖', aleatoire: '🎲', chrono: '⏱️' } as const
 const DUREE_CHRONO = 60 // secondes
 
 // « Toutes » : les tables du programme, de 1 à 10 (11 et 12 en bonus)
-const toutesSelectionnees = computed(() => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].every(n => config.value.tables.includes(n)))
+const PROGRAMME = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
+const toutesSelectionnees = computed(() => PROGRAMME.every(n => config.value.tables.includes(n)))
 function toggleToutes() {
-  config.value.tables = toutesSelectionnees.value ? DEFINITION.niveaux[config.value.niveau].reglages.tables : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  config.value.tables = toutesSelectionnees.value ? [...DEFINITION.niveaux[config.value.niveau]?.reglages.tables ?? []] : [...PROGRAMME]
 }
 
 // ── Jeu : entraînement (voir la table, puis répondre dans l'ordre), aléatoire, défi chrono d'une minute ──
-const reponse = ref('')
+const reponse = ref<number | ''>('')
 const apprendre = ref(false)   // entraînement : la table s'affiche avant ses questions
-const aRevoir = ref(null)      // « revoir les erreurs » : les calculs ratés, à la place d'un nouveau tirage
+const aRevoir = ref<Question[] | null>(null)   // « revoir les erreurs » : les calculs ratés, à la place d'un nouveau tirage
+const titreChrono = ref<HTMLElement | null>(null)
 const minuteur = useMinuteur()
 const { restant } = minuteur
-const urgent = computed(() => restant.value <= 10)
 
-const jeu = useJeu({
+const jeu = useJeu<Question, Reponse>({
   generer: rng => {
     if (aRevoir.value) { const liste = rng.melanger(aRevoir.value); aRevoir.value = null; return liste }
-    return genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T })
+    return tirer({ niveau: config.value.niveau, reglages: config.value, rng, T })
   },
   verifier,
-  messageErreur: q => `❌ ${q.a} × ${q.b} = ${q.reponse}`,
-  apresErreur: 'continuer',
+  messageErreur: q => `❌ ${t('tables.laBonneReponse', { a: q.a, b: q.b, r: q.reponse })}`,
+  apresErreur: 1000,
   delai: 700,
-  delaiErreur: 1000,
-  surQuestion: q => { reponse.value = ''; apprendre.value = !!q?.premiere },
+  surQuestion: q => { reponse.value = ''; apprendre.value = !!q.premiere },
 })
 const { phase, questions, q, bonnes, mauvaises, historique, retour, repondu, etat, cleFin } = jeu
 // entraînement : rang de la table en cours
-const tableN = computed(() => config.value.tables.indexOf(q.value?.a) + 1)
+const tableN = computed(() => config.value.tables.indexOf(q.value?.a as never) + 1)
 
 // défi chrono : une minute pour tout, les réponses enchaînent plus vite
 watch(phase, p => {
   if (p === 'jeu' && config.value.mode === 'chrono') minuteur.demarrer(DUREE_CHRONO, { surFin: () => { jeu.phase.value = 'resultats' } })
   else minuteur.arreter()
 })
-const messageChrono = computed(() => t(bonnes.value >= 50 ? 'chrono50' : bonnes.value >= 30 ? 'chrono30' : bonnes.value >= 20 ? 'chrono20' : 'chronoBas'))
+const messageChrono = computed(() => t(bonnes.value >= 50 ? 'tables.chrono50' : bonnes.value >= 30 ? 'tables.chrono30' : bonnes.value >= 20 ? 'tables.chrono20' : 'tables.chronoBas'))
 watch(phase, p => {
-  if (p === 'resultats' && config.value.mode === 'chrono') confettis(bonnes.value >= 50 ? 50 : bonnes.value >= 30 ? 25 : 0)
+  if (p !== 'resultats' || config.value.mode !== 'chrono') return
+  confettis(bonnes.value >= 50 ? 50 : bonnes.value >= 30 ? 25 : 0)
+  nextTick(() => titreChrono.value?.focus({ preventScroll: true }))
 })
 
 function valider() {
-  if (repondu.value || String(reponse.value).trim() === '') return
+  if (repondu.value || reponse.value === '') return
   const i = jeu.index.value
-  const ok = jeu.repondre(reponse.value, { donne: String(reponse.value) })
+  const ok = jeu.repondre(Number(reponse.value), { donne: String(reponse.value) })
   if (config.value.mode === 'chrono') setTimeout(() => { if (jeu.index.value === i && phase.value === 'jeu') jeu.suivante() }, ok ? 400 : 600)
 }
 // passer : la question compte comme une erreur, et on enchaîne aussitôt
 function passer() {
   if (repondu.value) return
-  jeu.passer({ donne: t('passe') })
+  jeu.passer({ donne: t('tables.passe') })
   jeu.suivante()
 }
 function revoirErreurs() {
@@ -176,22 +192,21 @@ function revoirErreurs() {
   jeu.demarrer()
 }
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) ──
 // la fiche ne change au hasard que si les calculs sont mélangés ou tirés parmi tous
 const ficheAleatoire = computed(() => config.value.ordreFiche === 'melange' || config.value.nbFiche > 0)
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheTables({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (questions, police) => mettreEnPage({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
 <style scoped>
 /* Table d'apprentissage */
-.table-title { font-size: 1.8rem; font-weight: 900; color: var(--bleu); margin-bottom: 1.25rem; }
+.table-title { font-size: 1.8rem; font-weight: 900; color: var(--bleu); margin: 0 0 1.25rem; }
 .table-grid { display: inline-grid; grid-template-columns: auto auto auto; gap: .3rem 1rem; text-align: right; margin: 0 auto; }
 .table-row { display: contents; }
 .table-cell-a  { font-size: 1.3rem; font-weight: 700; text-align: right; }
-.table-cell-eq { font-size: 1.3rem; color: #aaa; text-align: center; }
+.table-cell-eq { font-size: 1.3rem; color: #767676; text-align: center; }
 .table-cell-r  { font-size: 1.3rem; font-weight: 900; color: var(--bleu); text-align: left; }
-.urgent { background: var(--rouge) !important; }
 </style>

@@ -1,10 +1,8 @@
 // Langues (node, sans Chrome) : registre, parité des catalogues fr/br, textes typés, règles de langue, nombres en lettres,
-// pluriels, données de la langue régionale. Le compilateur (`npm run types`) refuse déjà une clé manquante ou en trop ;
+// pluriels (nombres en lettres : tests/nombres.test.mjs), données de la langue régionale. Le compilateur (`npm run types`) refuse déjà une clé manquante ou en trop ;
 // ce test échoue aussi si un catalogue diverge à l'exécution (cas d'un `any` ou d'un contournement).
 import { LANGUES, CODES, REGIONALES, estLangue, estRegionale, regles, nomDeLangue, donneesRegionales, LANGUE_SOURCE } from '../src/langues/registre.ts'
 import { traduire, traduireListe, contenu } from '../src/langues/traduire.ts'
-import { enLettresFr } from '../src/langues/fr/nombres.ts'
-import { enLettresBr } from '../src/langues/br/nombres.ts'
 import { catalogue, traducteur, contenuDe, estCatalogue, languesDe } from '../src/langues/catalogue.ts'
 import { DOMAINES } from '../src/data/programme.ts'
 import { CONTENU as CONTENU_EXEMPLE } from '../src/exercices/exemple/textes.ts'
@@ -96,17 +94,6 @@ const exemples = [
 ]
 for (const [obtenu, attendu] of exemples) verifier(obtenu === attendu, `${attendu}${obtenu !== attendu ? ` (obtenu : ${obtenu})` : ''}`)
 verifier(F.adoucir === undefined, 'le français n’a pas de mutations')
-
-console.log('Nombres en lettres')
-const FRN = { 0: 'zéro', 21: 'vingt-et-un', 71: 'soixante-et-onze', 80: 'quatre-vingts', 81: 'quatre-vingt-un', 91: 'quatre-vingt-onze',
-  200: 'deux-cents', 201: 'deux-cent-un', 280: 'deux-cent-quatre-vingts', 1000: 'mille', 80000: 'quatre-vingt-mille' }
-for (const [n, attendu] of Object.entries(FRN)) verifier(enLettresFr(+n) === attendu, `${n} → ${attendu}`)
-verifier(enLettresFr(71, { rectifiee: false }) === 'soixante et onze', '71 (traditionnelle) → soixante et onze')
-// Breton : vérifiés dans le Wiktionnaire et le Meurgorf
-const BRN = { 21: 'unan warn-ugent', 31: 'unan ha tregont', 42: 'daou ha daou-ugent', 51: 'unan hag hanter-kant', 70: 'dek ha tri-ugent',
-  75: 'pemzek ha tri-ugent', 80: 'pevar-ugent', 99: 'naontek ha pevar-ugent', 101: 'kant unan', 125: 'kant pemp warn-ugent',
-  200: "daou c'hant", 2000: 'daou vil' }
-for (const [n, attendu] of Object.entries(BRN)) verifier(enLettresBr(+n) === attendu, `${n} → ${attendu}`)
 
 console.log('Données de la langue régionale')
 const d = donneesRegionales('br')

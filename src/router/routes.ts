@@ -49,6 +49,10 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     { path: '/imprimer/affiches', component: () => import('../pages/AfficheView.vue'), meta: { titre: 'routeur.titre.affiche' } },
     // ancienne adresse de l'affiche de l'alphabet (liens externes, favoris)
     { path: '/imprimer/alphabet', redirect: to => ({ path: '/imprimer/affiches', query: { affiche: 'alphabet' }, hash: to.hash }) },
+    // ancienne adresse de l'affiche des nombres (liens externes, favoris) ; ?mise=fiche : toutes les sections sur une feuille
+    { path: '/imprimer/nombres', redirect: to => ({ path: '/imprimer/affiches', query: { affiche: 'nombres' }, hash: to.hash }) },
+    // ancienne adresse des affiches des tables (liens externes, favoris)
+    { path: '/imprimer/calcul', redirect: to => ({ path: '/imprimer/affiches', query: { affiche: 'tables' }, hash: to.hash }) },
     // nouveau:routes
   ]
 }

@@ -151,9 +151,9 @@ console.log('Interprétation (Le monde)')
 
 console.log('Page d’une compétence')
 {
-  const k = COMPETENCES.find(c => c.id === 'denombrer-6')
+  const k = COMPETENCES.find(c => c.id === 'composer-decomposer')
   const { ctx, page, erreurs } = await ouvrir()
-  await page.goto(app('/competence/denombrer-6?classes=ms'))
+  await page.goto(app('/competence/composer-decomposer?classes=ms'))
   await pret(page)
   verifier((await page.locator('main h1').textContent()).includes(k.libelle) && await page.locator('main h1').count() === 1, 'h1 : l’intitulé de la compétence')
   verifier((await page.title()).startsWith(k.libelle) && (await page.title()).endsWith(' — École Primaire'), `titre du document : l’intitulé (${(await page.title()).slice(0, 50)}…)`)
@@ -198,7 +198,7 @@ for (const largeur of [1280, 360]) {
   for (const [langue, base] of [['fr', app], ['br', URL_SKOOLIK ? (r => `${URL_SKOOLIK}${r.replace(/^\//, '')}`) : null]]) {
     if (!base) { console.log('  (pas de build skoolik : breton ignoré)'); continue }
     const { ctx, page } = await ouvrir({ largeur, langue, profil: 'enseignant' })
-    for (const route of ['/programme?affichage=tableau&classes=ce1,cm2&refs=1', '/programme?affichage=liste&matiere=monde&classes=cm1&refs=1', '/programme?matiere=francais&domaine=lecture&affichage=tableau', '/competence/denombrer-6?classes=ms']) {
+    for (const route of ['/programme?affichage=tableau&classes=ce1,cm2&refs=1', '/programme?affichage=liste&matiere=monde&classes=cm1&refs=1', '/programme?matiere=francais&domaine=lecture&affichage=tableau', '/competence/composer-decomposer?classes=ms']) {
       await page.goto(base(route))
       await pret(page)
       await page.waitForSelector('table.prog, ul.competences, .officiel, p.vide')

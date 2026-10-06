@@ -11,10 +11,8 @@ import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
 import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
 import LETTRES from '../exercices/lettres/definition.js'
-import NUMERATION from '../exercices/numeration/definition.js'
 import FRACTIONS from '../exercices/fractions/definition.js'
 import GEOMETRIE from '../exercices/geometrie/definition.js'
-import ORDONNER from '../exercices/ordonner/definition.js'
 import PROBLEMES from '../exercices/problemes/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
@@ -42,17 +40,6 @@ const LISTE = [
     fiches: [
       F('addition', "l'addition posée", 'addition-posee', ['Opération › Addition'], { clics: ['Retenue › ^Mélangé$'], classes: classesFiche(CALCUL_POSE, 'addition') }),
       F('soustraction', 'la soustraction posée', 'soustraction-posee', ['Opération › Soustraction'], { clics: ['Retenue › ^Mélangé$'], classes: classesFiche(CALCUL_POSE, 'soustraction') }),
-    ] },
-  { id: 'nombres', route: '/maths/numeration', groupe: 'maths', titre: { fr: 'Les nombres', br: 'An niveroù' },
-    // classes et fiches : celles de la définition (src/exercices/numeration/definition.js)
-    classes: Object.keys(NUMERATION.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Décomposer', 'Représentation', 'Écrire en chiffres', 'Écrire en lettres', 'Comparer', 'Suivant', 'Droite graduée', 'Ranger'],
-    fiches: [
-      F('numeration', 'lire, écrire et décomposer les nombres', Object.fromEntries(NUMERATION.fiches.filter(f => f.id === 'numeration').map(f => [f.niveau, f.competence])), ['Décomposer', 'Représentation', 'Écrire en chiffres']),
-      F('en-lettres', 'écrire les nombres en lettres', 'nombres-en-lettres', ['Écrire en lettres']),
-      F('comparer-ranger', 'comparer et ranger', 'comparer-ranger', ['Comparer', 'Ranger']),
-      F('suites', 'les suites de nombres', 'suites-nombres', ['Suivant'], { classes: NUMERATION.fiches.filter(f => f.id === 'suites').map(f => f.niveau) }),
-      F('droite', 'la droite graduée', 'droite-graduee', ['Droite graduée']),
     ] },
   { id: 'problemes', route: '/maths/problemes', groupe: 'maths', titre: { fr: 'Problèmes', br: 'Kudennoù' },
     classes: Object.keys(PROBLEMES.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
@@ -158,12 +145,6 @@ const LISTE = [
       return F(id, titre, fiches[0].competence, [seul], { classes: fiches.map(f => f.niveau) })
     }) },
   // ── Maternelle ──
-  { id: 'compter', route: '/maternelle/compter', groupe: 'maternelle', titre: { fr: 'Compter les objets', br: 'Kontañ an traoù' },
-    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
-  { id: 'comparer', route: '/maternelle/comparer', groupe: 'maternelle', titre: { fr: 'Comparer les quantités', br: "Keñveriañ ar c'hementadoù" },
-    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
-  { id: 'ranger', route: '/maternelle/ordonner', groupe: 'maternelle', titre: { fr: 'Ranger les nombres', br: 'Renkañ an niveroù' },
-    classes: Object.keys(ORDONNER.niveaux).map(n => C(n, `\\b${n.toUpperCase()}\\b`)) },
   { id: 'lettres', route: '/maternelle/lettres', groupe: 'maternelle', titre: { fr: 'Les lettres', br: 'Al lizherennoù' },
     // une seule fiche publiée (exercices-lettres-gs-cp), celle du niveau par défaut : les niveaux de la définition
     classes: [C(Object.keys(LETTRES.niveaux).join('-'), null)] },

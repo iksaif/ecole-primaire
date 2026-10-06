@@ -1,13 +1,11 @@
 // Affiches en lien avec les programmes officiels (cycles 1 à 3) — partagées par l'app et le build des PDF :
-// droite numérique, tableau de numération, horloge, pièces et billets, conjugaison, figures et solides.
+// horloge, pièces et billets, conjugaison, figures et solides.
 // Sources : BO n° 41 du 31 octobre 2024 (cycles 1 et 2) et BO n° 16 du 17 avril 2025 (cycle 3).
 // Les textes sont en français ; une version bretonne attend un relecteur brittophone (voir README).
 // Un module par famille dans affiches/ ; variantes, niveaux et affiches toutes prêtes dans affiches/catalogue.js.
 import { VERBES } from '../data/conjugaison.js'
 import { cadreAffiche, mesuresAffiche } from './affiches/cadre.js'
 import { AFFICHES_PROGRAMME, RESUMES } from './affiches/catalogue.js'
-import * as droite from './affiches/droite.js'
-import * as numeration from './affiches/numeration.js'
 import * as horloge from './affiches/horloge.js'
 import * as conjugaison from './affiches/conjugaison.js'
 import * as formes from './affiches/formes.js'
@@ -15,7 +13,7 @@ import * as resume from './affiches/resume.js'
 export { VERBES, TEMPS_CM2, conjuguer } from '../data/conjugaison.js'
 export { AFFICHES_PROGRAMME, RESUMES, TEMPS_PRESENT, TEMPS_DU_CHOIX, choixTemps } from './affiches/catalogue.js'
 
-const FAMILLES = { droite, numeration, horloge, conjugaison, formes, resume }
+const FAMILLES = { horloge, conjugaison, formes, resume }
 const ORIENTATION = Object.fromEntries(AFFICHES_PROGRAMME.map(a => [a.id, a.orientation]))
 
 // Commun aux affiches du programme : titre en bleu, dessins SVG dans la police du texte, légende sous le titre
@@ -23,7 +21,7 @@ const CSS = `h1 { color: #1d4e9e; }
   svg { display: block; flex: none; } svg text { font-family: inherit; }
   .legende { text-align: center; color: #555; margin-bottom: 3mm; flex: none; }`
 
-export const DEFAUTS = { affiche: 'droite', variante: '100', verbe: 'etre', temps: null, domaine: 'nombres-calcul', niveau: 'ce1', format: 'A4', orientation: null, titre: '' }
+export const DEFAUTS = { affiche: 'horloge', variante: 'heures', verbe: 'etre', temps: null, domaine: 'nombres-calcul', niveau: 'ce1', format: 'A4', orientation: null, titre: '' }
 
 export function normaliserConfig(config = {}) {
   const c = { ...DEFAUTS, ...config }

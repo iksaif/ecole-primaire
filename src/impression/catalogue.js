@@ -3,7 +3,7 @@
 // Le mode normal reste la génération à la demande dans l'app.
 
 import { LANGUES_REGIONALES } from '../data/languesRegionales.js'
-import { DOMAINES_AFFICHES, TELECHARGEMENTS_AFFICHES } from './affiches/catalogue.js'
+import { TELECHARGEMENTS_AFFICHES } from './affiches/catalogue.js'
 import { COMPETENCES } from '../data/programme.js'
 
 // Chaque entrée a un `domaine` (id de src/data/programme.js) et un `genre` ('affiche' | 'fiche') : le build range
@@ -20,8 +20,6 @@ const NOMS_STYLES = {
 
 export const CATEGORIES = [
   { id: 'ecriture', titre: "✏️ Fiches d'écriture", titreBr: '✏️ Fichennoù skrivañ', introBr: "War linennoù Seyès, gant ar skouer e du, lizherennoù gris da adtresañ ha linennoù evit skrivañ e-unan.", intro: "Sur lignage Seyès, avec le modèle en noir, des lettres grises à repasser puis des lignes pour écrire seul." },
-  { id: 'calcul',   titre: '🧮 Fiches de calcul', titreBr: '🧮 Fichennoù jediñ', introBr: 'Taolennoù liesañ ha sammañ, klokaat, doubl hag hanter, jediñ e penn — gant ar reizhadenn.', intro: 'Tables de multiplication et d\'addition, compléments, doubles et moitiés, calcul mental du programme — avec le corrigé.' },
-  { id: 'nombres',  titre: '🔢 Les nombres en lettres — français et breton', titreBr: '🔢 An niveroù e lizherennoù — galleg ha brezhoneg', introBr: 'Skritelloù ha fichennoù-eñvor evit deskiñ skrivañ an niveroù e lizherennoù, e galleg hag e brezhoneg.', intro: 'Affiches et fiches mémo pour apprendre à écrire les nombres en lettres, en français et en breton.' },
 ]
 
 const ecritureBase = { contenu: 'lettres', lier: false, interligne: 3, sauter: false, repasser: 2, copie: 1, couleur: true }
@@ -81,55 +79,7 @@ const mots = [
 
 // Les affiches de l'alphabet sont au format « définition » : src/affiches/alphabet/ (registre src/affiches/index.ts)
 
-// langues : langues des nombres écrits ; langue : langue du document (titres)
-const nombresBase = { langues: ['fr', 'br'], langue: 'fr', miseEnPage: 'affiches', format: 'A4', orientation: 'portrait', representation: true, rectifiee: true, de: 0, a: 0, pas: 1 }
-const dizaines = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
-  slug: `nombres-francais-breton-${d * 10}-${d * 10 + 10}`,
-  court: `De ${d * 10} à ${d * 10 + 10}`,
-  titre: `Les nombres de ${d * 10} à ${d * 10 + 10} en français et en breton`,
-  description: `Affiche bilingue : les nombres de ${d * 10} à ${d * 10 + 10} écrits en chiffres, en lettres en français et en breton (brezhoneg). Pour l'école bilingue ou Diwan.`,
-  // écriture en lettres jusqu'à 50 au CP (programme.js, nombresEnLettresMax) : de 50 à 100, dès le CE1
-  niveaux: d < 5 ? 'CP · CE1' : 'CE1 · CE2',
-  config: { ...nombresBase, sections: [`d${d}`] },
-}))
-const nombres = [
-  {
-    slug: 'nombres-francais-breton-0-100', court: 'Tableau de 0 à 100',
-    titre: 'Les nombres de 0 à 100 en français et en breton',
-    description: 'Tableau bilingue des nombres de 0 à 100 en chiffres et en lettres, en français et en breton (brezhoneg). Gratuit à imprimer.',
-    niveaux: 'CE1 · CE2',
-    config: { ...nombresBase, sections: ['cent'] },
-  },
-  {
-    slug: 'affiches-nombres-francais-breton', court: 'Unités, dizaines, centaines',
-    titre: 'Affiches des nombres en français et en breton : unités, dizaines, centaines, milliers',
-    description: 'Cinq affiches bilingues français / breton : les unités, de 10 à 20, les dizaines, les centaines et les milliers, avec points, barres de dix et plaques de cent.',
-    niveaux: 'CE2',
-    config: { ...nombresBase, sections: ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] },
-  },
-  ...dizaines,
-  {
-    slug: 'nombres-en-breton-0-100', court: 'Breton de 0 à 100',
-    titre: 'Les nombres en breton de 0 à 100',
-    description: 'Les nombres de 0 à 100 en breton (brezhoneg) : unan, daou, tri… ugent, tregont, hanter-kant, pevar-ugent, kant. Tableau à imprimer.',
-    niveaux: 'CE1 · CE2',
-    config: { ...nombresBase, langues: ['br'], langue: 'br', sections: ['cent'] },
-  },
-  {
-    slug: 'nombres-en-lettres-0-100', court: 'Français de 0 à 100',
-    titre: 'Les nombres en lettres de 0 à 100 (orthographe rectifiée)',
-    description: "Tableau des nombres de 0 à 100 écrits en lettres en français, avec l'orthographe rectifiée de 1990 utilisée à l'école (vingt-et-un, quatre-vingts…).",
-    niveaux: 'CE1 · CE2',
-    config: { ...nombresBase, langues: ['fr'], sections: ['cent'] },
-  },
-  {
-    slug: 'nombres-en-lettres-dizaines-centaines', court: 'Dizaines et centaines (français)',
-    titre: 'Écrire les nombres en lettres : dizaines, centaines et milliers',
-    description: 'Affiches mémo pour écrire les nombres en lettres en français : unités, 10 à 20, dizaines, centaines et milliers, avec représentations.',
-    niveaux: 'CE2',
-    config: { ...nombresBase, langues: ['fr'], sections: ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] },
-  },
-].map(e => ({ ...e, categorie: 'nombres', type: 'nombres', domaine: DOMAINES_AFFICHES.nombres, genre: 'affiche', competences: ['nombres-en-lettres'], lien: `/imprimer/nombres?mise=${e.config.miseEnPage ?? 'affiches'}` }))
+// Les affiches des nombres en lettres sont au format « définition » : src/affiches/nombres/ (registre src/affiches/index.ts)
 
 // Fiches propres à chaque langue régionale (alphabet, listes de mots, une fiche par lettre, affiches),
 // générées à partir de sa définition dans src/data/languesRegionales.js
@@ -185,8 +135,6 @@ const avecLangues = (liste, langues) => liste.map(t => ({ langues, ...t }))
 export const TELECHARGEMENTS = [
   ...[
     ...avecLangues([...lettres, ...alphabets, ...mots], ['fr']),
-    // nombres : français seul, breton seul, ou bilingue
-    ...nombres.map(t => ({ langues: t.config.langues, ...t })),
     // contenu en langue régionale (alphabet, jours, mois, nombres, lettres une à une)
     ...LANGUES_REGIONALES.filter(r => r.fiches).flatMap(fichesRegionales),
   ].map(t => ({ ...t, lien: avecPreset(t.lien, t.slug), competences: auProgramme(t.competences, t.niveaux) })),

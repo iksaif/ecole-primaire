@@ -7,5 +7,11 @@ export const VUES: Readonly<Record<string, VueExercice>> = {
   '/maths/calcul-mental': () => import('./maths/CalculMentalView.vue'),
   '/maths/monnaie': () => import('./maths/MonnaieView.vue'),
   '/maths/heure': () => import('./maths/HeureView.vue'),
+  '/maths/numeration': () => import('./maths/NumerationView.vue'),
+  '/maternelle/compter': () => import('./maternelle/CompterView.vue'),
+  '/maternelle/comparer': () => import('./maternelle/ComparerView.vue'),
+  '/maternelle/ordonner': () => import('./maternelle/OrdonnerView.vue'),
+  '/maths/tables': () => import('./maths/TablesView.vue'),
+  '/maths/calcul-pose': () => import('./maths/CalcuPoseView.vue'),
   // nouveau:vues
 }

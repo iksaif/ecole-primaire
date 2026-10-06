@@ -6,6 +6,10 @@
 // Les exemples (développement seulement) sont dans dev.ts, jamais importé par du code de production.
 import { module as alphabet } from './alphabet/index.ts'
 import { module as monnaie } from './monnaie/index.ts'
+import { module as nombres } from './nombres/index.ts'
+import { module as numeration } from './numeration/index.ts'
+import { module as droite } from './droite/index.ts'
+import { module as tables } from './tables/index.ts'
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'
@@ -13,6 +17,10 @@ import type { ModuleAffiche } from './types.ts'
 export const REGISTRE: ModuleAffiche<Reglages>[] = [
   alphabet,
   monnaie,
+  nombres,
+  numeration,
+  droite,
+  tables,
   // nouveau:registre
 ]
 

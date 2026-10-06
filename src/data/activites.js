@@ -4,13 +4,9 @@ import { CLASSES, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
 import MESURES from '../exercices/mesures/definition.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
-import NUMERATION from '../exercices/numeration/definition.js'
 import FRACTIONS from '../exercices/fractions/definition.js'
 import GEOMETRIE from '../exercices/geometrie/definition.js'
-import ORDONNER from '../exercices/ordonner/definition.js'
-import TABLES from '../exercices/tables/definition.js'
 import PROBLEMES from '../exercices/problemes/definition.js'
-import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
 import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
@@ -48,16 +44,8 @@ export const DOMAINES_BR = {
 export const ACTIVITES = [
   // ── À imprimer ── (genre : 'affiche' pour apprendre, 'fiche' pour s'entraîner)
   { to: '/imprimer/ecriture', matiere: 'imprimer', domaine: 'ecriture', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
-  { to: '/imprimer/calcul?mode=affiche', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', icon: '🧮', titre: 'Affiches des tables', desc: 'Tables de multiplication et d\'addition à afficher', niveaux: de('cp', 'cm2'),
-    br: { titre: 'Skritelloù an taolennoù', desc: 'Taolennoù liesañ ha sammañ da stagañ' } }, // br: à relire
-  { to: '/imprimer/calcul?mode=fiche', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'fiche', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
-  { to: '/imprimer/nombres?mise=affiches', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', icon: '🔢', titre: 'Nombres en lettres', desc: 'Unités, dizaines, centaines… en chiffres et en lettres', descRegionale: 'Unités, dizaines, centaines… en français et en breton', niveaux: de('gs', 'cm2') },
 
   // Affiches du programme : une carte par famille, dans son domaine, seulement sur la page « À imprimer » (`detail`)
-  { to: '/imprimer/affiches?affiche=droite', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', detail: true, icon: '📏', titre: 'Droite numérique', desc: 'De 0 à 20, 100 ou 1 000, avec les nombres en lettres', niveaux: ['cp', 'ce1'],
-    br: { titre: 'Linenn niverel', desc: 'Eus 0 da 20, 100 pe 1 000, gant an niveroù e lizherennoù' } }, // br: à relire
-  { to: '/imprimer/affiches?affiche=numeration', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', detail: true, icon: '🔟', titre: 'Tableau de numération', desc: 'Unités, dizaines, centaines… et décimaux au CM', niveaux: ['ce1', 'cm1', 'cm2'],
-    br: { titre: 'Taolenn niveriñ', desc: 'Unanennoù, degadoù, kantadoù… ha niveroù degedel er CM' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=horloge', matiere: 'imprimer', domaine: 'grandeurs-mesures', genre: 'affiche', detail: true, icon: '🕐', titre: "L'horloge", desc: 'Heures entières, demies et quarts, minutes', niveaux: de('cp', 'ce2'),
     br: { titre: 'An horolaj', desc: 'Eurioù klok, hanterioù ha kardoù, munutennoù' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=formes', matiere: 'imprimer', domaine: 'espace-geometrie', genre: 'affiche', detail: true, icon: '🔷', titre: 'Figures et solides', desc: 'Formes planes, figures du cycle 3, solides', niveaux: de('gs', 'cm2'),
@@ -74,12 +62,6 @@ export const ACTIVITES = [
   })),
 
   // ── Maths ──
-  { fiche: true, to: '/maternelle/compter',  matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🔢', titre: 'Compter les objets', desc: 'Compte et trouve le bon nombre', niveaux: ['ps', 'ms', 'gs'] },
-  { fiche: true, to: '/maternelle/comparer', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '⚖️', titre: 'Comparer les quantités', desc: 'Quel groupe a le plus ?', niveaux: ['ps', 'ms', 'gs'] },
-  { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: Object.keys(ORDONNER.niveaux) },
-  { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: Object.keys(NUMERATION.niveaux) },
-  { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions, soustractions et multiplications en colonnes', niveaux: Object.keys(CALCUL_POSE.niveaux) },
-  { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: Object.keys(TABLES.niveaux) },
   { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: Object.keys(FRACTIONS.niveaux) },
   { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: Object.keys(PROBLEMES.niveaux) },
   { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: Object.keys(MESURES.niveaux) },
@@ -105,14 +87,7 @@ export const ACTIVITES = [
 // Traductions bretonnes des activités [titre, description] — à faire relire par un brittophone
 const BR = {
   '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
-  '/imprimer/calcul':   ['Fichennoù jediñ', 'Taolennoù, klokaat, doubl hag hanter… gant ar reizhadenn'],
-  '/imprimer/nombres':  ['An niveroù e lizherennoù', 'Unanennoù, degadoù, kantadoù… e sifroù hag e lizherennoù', 'Unanennoù, degadoù, kantadoù… e galleg hag e brezhoneg'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
-  '/maternelle/comparer': ["Keñveriañ ar c'hementadoù", 'Peseurt strollad en deus ar muiañ ?'],
-  '/maternelle/ordonner': ['Renkañ an niveroù', "Eus ar bihanañ d'ar brasañ"],
-  '/maths/numeration':    ['An niveroù', 'Betek 1 000 (CE1) ha 10 000 (CE2) : dispartiañ, keñveriañ, renkañ'],
-  '/maths/calcul-pose':   ['Jedadurioù lakaet', 'Sammadennoù, lamadennoù ha liesadennoù e bannoù'], // br: à relire
-  '/maths/tables':        ['Taolennoù liesañ', 'En em bleustr war an holl daolennoù'],
   '/maths/fractions':     ['An darnaouennoù', "An hanter, an trederenn, ar c'hard…"],
   '/maths/problemes':     ['Kudennoù', 'Lenn, kompren ha jediñ'],
   '/maths/mesures':       ['Muzulioù', "Hirderioù, pouezioù, endalc'hioù, deiziadur"],
@@ -129,25 +104,17 @@ const BR = {
   '/lecture': ['Lenn ha silabennoù', 'Silabennoù, adsevel gerioù ha testennoù (e galleg)'],
   '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
 }
-// (les deux cartes de /imprimer/calcul n'ont pas le même sens : seule la carte « fiches » reprend la traduction)
 // Compétences de src/data/programme.js travaillées par chaque exercice ou générateur (rapport de couverture :
 // `npm run couverture`, page /programme), seulement aux niveaux de l'activité. Une liste vaut pour tous ses niveaux ;
 // un objet { classe: [...] } dit ce que l'exercice propose vraiment à chaque classe (options du niveau). Les affiches
 // ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
-  '/imprimer/nombres': ['nombres-en-lettres', 'numeration-100', 'numeration-1000'],
-  '/maternelle/compter': { ps: ['denombrer-3'], ms: ['denombrer-6'], gs: ['denombrer-10'] },
-  '/maternelle/comparer': ['comparer-quantites'],
-  '/maternelle/ordonner': Object.fromEntries(Object.entries(ORDONNER.niveaux).map(([n, v]) => [n, v.competences])),
   '/maternelle/formes': ['formes-maternelle'],
   '/maternelle/motifs': ['motifs-maternelle'],
   '/maternelle/longueurs': ['comparer-longueurs-maternelle'],
   '/maternelle/lettres': Object.fromEntries(Object.entries(LETTRES.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/numeration': Object.fromEntries(Object.entries(NUMERATION.niveaux).map(([n, v]) => [n, v.competences])),
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
-  '/maths/calcul-pose': Object.fromEntries(Object.entries(CALCUL_POSE.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/tables': Object.fromEntries(Object.entries(TABLES.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/fractions': Object.fromEntries(Object.entries(FRACTIONS.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/problemes': Object.fromEntries(Object.entries(PROBLEMES.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/mesures': Object.fromEntries(Object.entries(MESURES.niveaux).map(([n, v]) => [n, v.competences])),
@@ -161,15 +128,14 @@ const COMPETENCES_ROUTES = {
   // compréhension : le mode « Lecture de textes » n'a pas encore de questions
   '/lecture': ['decodage'],
 }
-const COMPETENCES_CALCUL = { affiche: ['tables-addition', 'tables-multiplication'], fiche: ['tables-addition', 'tables-multiplication', 'complement-dizaine', 'doubles-moities', 'ajouter-dizaines', 'ajouter-9', 'multiplier-10-100', 'sens-division', 'suites-nombres'] }
 for (const a of ACTIVITES) {
-  const [chemin, requete] = a.to.split('?')
-  a.competences = chemin === '/imprimer/calcul' ? COMPETENCES_CALCUL[new URLSearchParams(requete).get('mode')] : COMPETENCES_ROUTES[chemin] ?? []
+  const [chemin] = a.to.split('?')
+  a.competences = COMPETENCES_ROUTES[chemin] ?? []
 }
 
 for (const a of ACTIVITES) {
   const cle = a.to.split('?')[0]
-  if (!a.br && a.to !== '/imprimer/calcul?mode=affiche' && BR[cle]) a.br = { titre: BR[cle][0], desc: BR[cle][1], descRegionale: BR[cle][2] }
+  if (!a.br && BR[cle]) a.br = { titre: BR[cle][0], desc: BR[cle][1], descRegionale: BR[cle][2] }
 }
 
 // « CE1 → CM2 », « MS / GS »…

@@ -55,6 +55,8 @@ function horsZone(svg, W, H) {
       const taille = attr(el, 'font-size'), contenu = (el.match(/>([^<]*)</)?.[1] ?? '').replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"')
       const largeur = mesureEstimee.largeur(contenu, el.match(/font-family="'([^']+)'/)?.[1] ?? 'Andika') * taille
       const ancre = el.match(/text-anchor="(\w+)"/)?.[1] ?? 'middle'
+      // texte tourné de 90° (nom d'un nombre sous la droite) : il s'étend vers le bas à partir de (x, y), ancré au début, sur ± la moitié de la taille
+      if (/transform="rotate\(90 /.test(el)) { dans(attr(el, 'x') - taille / 2, attr(el, 'y'), 'text tourné'); dans(attr(el, 'x') + taille / 2, attr(el, 'y') + largeur, 'text tourné'); continue }
       const gauche = ancre === 'middle' ? attr(el, 'x') - largeur / 2 : ancre === 'end' ? attr(el, 'x') - largeur : attr(el, 'x')
       // centré sur y (`dominant-baseline="central"`) : ± la moitié de la taille ; sinon y est la ligne de base : au-dessus, la plus haute
       // des majuscules et des hampes de la police (plus un accent) ; au-dessous, son jambage

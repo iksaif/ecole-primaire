@@ -11,6 +11,12 @@ import { AVEC_DEV } from '../dev.ts'
 import { module as calculMental } from './calcul-mental/index.ts'
 import { module as monnaie } from './monnaie/index.ts'
 import { module as heure } from './heure/index.ts'
+import { module as numeration } from './numeration/index.ts'
+import { module as compter } from './compter/index.ts'
+import { module as comparer } from './comparer/index.ts'
+import { module as ranger } from './ranger/index.ts'
+import { module as tables } from './tables/index.ts'
+import { module as calculPose } from './calcul-pose/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -24,6 +30,12 @@ const BASE: readonly EntreeRegistre[] = [
   calculMental,
   monnaie,
   heure,
+  numeration,
+  compter,
+  comparer,
+  ranger,
+  tables,
+  calculPose,
   // nouveau:registre
 ]
 

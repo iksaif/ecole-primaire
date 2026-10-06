@@ -2,15 +2,11 @@
 // générer les PDF avec exactement le même code que l'app. Chargé seulement avec ?generation.
 import { chargerPolices, ajouterPolicePerso, POLICE_ATTACHE, POLICE_SCRIPT } from '../utils/impression'
 import { genererEcriture } from './ecriture'
-import { genererNombres } from './nombres'
 import { TELECHARGEMENTS as FICHES, catalogueDuSite } from './catalogue'
-import { genererCalcul, TELECHARGEMENTS_CALCUL } from './calcul'
 import { genererAffichesProgramme } from './affichesProgramme'
 
-const GENERATEURS = { ecriture: genererEcriture, nombres: genererNombres, calcul: genererCalcul, affiche: genererAffichesProgramme }
-// Les fiches de calcul (textes en français) ne sont publiées que sur le site français
-const CALCUL = TELECHARGEMENTS_CALCUL.map(t => ({ langues: ['fr'], ...t }))
-const TELECHARGEMENTS = [...FICHES, ...CALCUL]
+const GENERATEURS = { ecriture: genererEcriture, affiche: genererAffichesProgramme }
+const TELECHARGEMENTS = FICHES
 const polices = { attache: POLICE_ATTACHE, script: POLICE_SCRIPT }
 
 export async function preparer() {
@@ -26,8 +22,7 @@ export async function utiliserPolice(type, nom, dataUrl) {
 }
 
 export function catalogue(langues = ['fr']) {
-  const duSite = liste => liste.filter(t => t.langues.some(l => langues.includes(l)))
-  return [...catalogueDuSite(langues), ...duSite(CALCUL)]
+  return catalogueDuSite(langues)
 }
 
 export function generer(slug) {

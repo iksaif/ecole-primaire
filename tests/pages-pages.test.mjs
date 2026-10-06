@@ -236,8 +236,8 @@ console.log('Production : état vide, domaines « à venir »')
     '/maths en production : le calcul mental, en ligne et imprimable, dans « Nombres et calcul »')
   await aller(page, app('/maths?classes=ms'))
   await page.waitForSelector('.groupe[data-domaine="nombres-calcul"]')
-  verifier(await page.locator('[data-ressource="exercice:calcul-mental"]').count() === 0 && await page.locator('.groupe[data-domaine="nombres-calcul"]').evaluate(e => !e.open),
-    '/maths à la MS : le calcul mental est hors classe, le domaine reste là (replié)')
+  verifier(await page.locator('[data-ressource="exercice:calcul-mental"]').count() === 0 && await page.locator('[data-ressource="exercice:compter"]').count() === 1,
+    '/maths à la MS : le calcul mental est hors classe, les exercices de maternelle (compter) sont là')
   await aller(page, app('/monde?classes=ps'))
   await page.waitForSelector('.vide')
   const cycle1 = await page.locator('.a-venir [data-domaine]').count()

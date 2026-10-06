@@ -9,8 +9,8 @@ import { enClasse } from '../../data/classes.js'
 
 // Domaine du programme (id de DOMAINES, src/data/programme.js) de chaque famille d'affiches
 export const DOMAINES_AFFICHES = {
-  alphabet: 'lecture', nombres: 'nombres-calcul', tables: 'nombres-calcul',
-  droite: 'nombres-calcul', numeration: 'nombres-calcul', horloge: 'grandeurs-mesures',
+  alphabet: 'lecture',
+  horloge: 'grandeurs-mesures',
   conjugaison: 'grammaire', formes: 'espace-geometrie',
   // resume : un domaine par affiche (config.domaine)
 }
@@ -29,19 +29,6 @@ export const choixTemps = temps => (!temps?.length ? 'cycle' : temps.includes('p
 export const TEMPS_DU_CHOIX = { cycle: null, present: TEMPS_PRESENT, cm2: TEMPS_CM2 }
 
 // ── Contenu des variantes ────────────────────────────────────────────────────
-// Tableau de numération. CE1 : jusqu'à 1 000 ; CM1 : six chiffres et centièmes ; CM2 : neuf chiffres et millièmes
-// (decimales : nombre de colonnes après la virgule, cf. decimalesMax dans programme.js)
-const RANGS = ['centaines', 'dizaines', 'unités']
-const NOTE_RANGS = 'Chaque rang vaut 10 fois le rang de droite et 10 fois moins que le rang de gauche.'
-export const NUMERATION = {
-  ce1: { classes: [{ nom: 'mille', rangs: ['mille'] }, { nom: 'unités simples', rangs: RANGS }], decimales: 0,
-    exemples: [['207'], ['1000']], valeurs: ['1 000', '100', '10', '1'], note: '10 unités = 1 dizaine · 10 dizaines = 1 centaine · 10 centaines = 1 mille' },
-  cm1: { classes: [{ nom: 'classe des milliers', rangs: RANGS }, { nom: 'classe des unités simples', rangs: RANGS }], decimales: 2,
-    exemples: [['407305'], ['52,36']], valeurs: ['100 000', '10 000', '1 000', '100', '10', '1'], note: NOTE_RANGS },
-  cm2: { classes: [{ nom: 'classe des millions', rangs: RANGS }, { nom: 'classe des milliers', rangs: RANGS }, { nom: 'classe des unités simples', rangs: RANGS }], decimales: 3,
-    exemples: [['125407038'], ['3406,275']], valeurs: ['100 000 000', '10 000 000', '1 000 000', '100 000', '10 000', '1 000', '100', '10', '1'], note: NOTE_RANGS },
-}
-
 // Figures et solides : ids des dessins (affiches/formes.js). Les listes suivent celles de programme.js par année.
 export const LOTS_FORMES = {
   'plan-cycle2': { titre: 'Les formes planes', type: 'figures', liste: ['disque', 'carre', 'rectangle', 'triangle'] },
@@ -54,11 +41,6 @@ export const LOTS_FORMES = {
 // ── Les affiches et leurs variantes (choix de la page /imprimer/affiches) ─────
 // horloge : precision = ce que l'affiche fait lire ('entiere' | 'quart' | 'minute', comme heure dans programme.js)
 export const AFFICHES_PROGRAMME = [
-  { id: 'droite', label: 'Droite numérique', orientation: 'landscape', variantes: [
-    { id: '20', label: 'De 0 à 20', niveaux: 'CP' }, { id: '100', label: 'De 0 à 100', niveaux: 'CP' }, { id: '1000', label: 'De 0 à 1 000', niveaux: 'CE1' } ] },
-  { id: 'numeration', label: 'Tableau de numération', orientation: 'landscape', variantes: [
-    { id: 'ce1', label: "Jusqu'à 1 000", niveaux: 'CE1' }, { id: 'cm1', label: "Jusqu'aux centaines de mille + centièmes", niveaux: 'CM1' },
-    { id: 'cm2', label: "Jusqu'aux centaines de millions + millièmes", niveaux: 'CM2' } ] },
   { id: 'horloge', label: "L'horloge", orientation: 'landscape', variantes: [
     { id: 'heures', label: 'Les heures entières', niveaux: 'CP', precision: 'entiere' },
     { id: 'quarts', label: 'Les demies et les quarts', niveaux: 'CE1', precision: 'quart' },
@@ -78,15 +60,12 @@ const NIVEAUX_GROUPE = { auxiliaire: 'CE1 · CE2 · CM1 · CM2', '1er groupe': '
 export const niveauxConjugaison = (verbe, temps) => ({ present: 'CP · CE1', cm2: 'CM2' }[choixTemps(temps)] ?? NIVEAUX_GROUPE[VERBES[verbe].groupe])
 
 // ── Affiches toutes prêtes (PDF générés au build) ────────────────────────────
-const cm = n => (n >= 1000 ? n.toLocaleString('fr-FR') : String(n))
 // le lien « Personnaliser » ouvre la page de réglage sur cette affiche (et pas sur une autre)
 const lienAffiche = c => `/imprimer/affiches?affiche=${c.affiche}${c.variante ? `&variante=${c.variante}` : ''}${c.verbe ? `&verbe=${c.verbe}` : ''}${c.temps ? `&temps=${choixTemps(c.temps)}` : ''}${c.domaine ? `&domaine=${c.domaine}&niveau=${c.niveau}` : ''}`
 // compétences de programme.js d'une affiche du programme (rapport de couverture : `npm run couverture`)
 const COMPETENCES_GROUPE = { auxiliaire: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps'], '1er groupe': ['conjugaison-4-temps'], '3e groupe': ['conjugaison-irreguliers'], '2e groupe': ['conjugaison-2e-groupe'] }
 export function competencesAffiche(c) {
   switch (c.affiche) {
-    case 'droite': return ['droite-graduee', 'nombres-en-lettres']
-    case 'numeration': return { ce1: ['numeration-1000'], cm1: ['numeration-6-chiffres', 'decimaux'], cm2: ['numeration-9-chiffres', 'decimaux'] }[c.variante] ?? []
     case 'horloge': return { heures: ['heure-entiere'], quarts: ['heure-demi-quart'], minutes: ['heure-minutes'] }[c.variante] ?? []
     case 'conjugaison': return { present: ['conjugaison-present-etre-avoir'], cm2: ['conjugaison-passe-simple'] }[choixTemps(c.temps)] ?? COMPETENCES_GROUPE[VERBES[c.verbe]?.groupe] ?? []
     case 'formes': return c.variante?.startsWith('solides') ? ['solides', 'solides-maternelle'] : ['figures-planes', 'formes-maternelle']
@@ -114,14 +93,6 @@ const conjugaison = (id, [suffixe, court, fin, description, temps]) => entree(`a
   { affiche: 'conjugaison', verbe: id, ...(temps ? { temps } : {}) })
 
 export const TELECHARGEMENTS_AFFICHES = [
-  ...[['20', 'de-0-a-20', 'CP'], ['100', 'de-0-a-100', 'CP'], ['1000', 'de-0-a-1000', 'CE1']].map(([v, s, niv]) => entree(
-    `affiche-droite-numerique-${s}`, `Droite numérique 0–${cm(+v)}`, `Droite numérique de 0 à ${cm(+v)} à imprimer`,
-    `Affiche de la droite numérique graduée de 0 à ${cm(+v)}, avec le nom de chaque nombre en lettres. Pour repérer, comparer et ranger les nombres (programme de cycle 2).`,
-    niv, { affiche: 'droite', variante: v })),
-  ...[['ce1', 'jusqu-a-1000', "Jusqu'à 1 000", 'CE1', "Tableau de numération jusqu'à 1 000 : unités, dizaines, centaines et mille."],
-    ['cm1', 'cm1', 'CM1 (6 chiffres, décimaux)', 'CM1', 'Tableau de numération du CM1 : nombres jusqu’à six chiffres (classe des milliers) et partie décimale (dixièmes, centièmes).'],
-    ['cm2', 'cm2', 'CM2 (9 chiffres, décimaux)', 'CM2', 'Tableau de numération du CM2 : nombres jusqu’à neuf chiffres (classe des millions) et partie décimale jusqu’aux millièmes.']]
-    .map(([v, s, court, niv, d]) => entree(`affiche-tableau-numeration-${s}`, `Numération ${court}`, `Tableau de numération ${court} à imprimer`, d, niv, { affiche: 'numeration', variante: v })),
   entree('affiche-horloge-heures-entieres', 'Horloge : heures', "Affiche de l'horloge : lire les heures entières", "L'horloge à aiguilles pour lire et positionner les heures entières, avec des moments de la journée (programme du CP).", 'CP', { affiche: 'horloge', variante: 'heures' }),
   entree('affiche-horloge-quarts-demies', 'Horloge : quarts et demies', "Affiche de l'horloge : et quart, et demie, moins le quart", "L'horloge à aiguilles pour lire les heures entières, les demi-heures et les quarts d'heure, avec les heures de l'après-midi (programme du CE1).", 'CE1', { affiche: 'horloge', variante: 'quarts' }),
   entree('affiche-horloge-heures-minutes', 'Horloge : minutes', "Affiche de l'horloge : heures, minutes, quart et demie", "L'horloge avec les minutes, « et quart », « et demie » et « moins le quart », et l'affichage numérique 24 h (programme du CE2).", 'CE2', { affiche: 'horloge', variante: 'minutes' }),

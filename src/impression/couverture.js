@@ -5,7 +5,6 @@
 import { NIVEAUX } from '../data/programme.js'
 import { ACTIVITES } from '../data/activites.js'
 import { TELECHARGEMENTS } from './catalogue.js'
-import { TELECHARGEMENTS_CALCUL } from './calcul'
 import { EXERCICES, classesDe, fichesDe } from './exercices.js'
 // les exercices reportés dans la base (src/exercices/index.ts) : un exercice par classe, et leurs fiches par compétence
 import { REGISTRE } from '../exercices/index.ts'
@@ -33,7 +32,7 @@ export const RESSOURCES = [
     sorte: a.matiere === 'imprimer' ? (a.genre === 'affiche' ? 'affiche' : 'fiche') : 'exercice',
     generateur: a.matiere === 'imprimer', titre: a.titre, icone: a.icon, route: a.to, competences: competencesActivite(a, classe), classes: [classe],
   }))).filter(r => r.competences.length),
-  ...[...TELECHARGEMENTS.filter(t => t.langues.includes('fr')), ...TELECHARGEMENTS_CALCUL.filter(t => t.config.langue !== 'br')].map(t => ({
+  ...TELECHARGEMENTS.filter(t => t.langues.includes('fr')).map(t => ({
     // lien : le générateur réglé sur cette fiche ou affiche (`lien` du catalogue) ; slug : sa page de téléchargement
     sorte: t.genre === 'affiche' ? 'affiche' : 'fiche', titre: t.court ?? t.titre, slug: t.slug, lien: t.lien, config: t.config,
     competences: t.competences ?? [], classes: classesDuTexte(t.niveaux),

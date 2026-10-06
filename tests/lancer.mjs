@@ -94,7 +94,7 @@ const NODE = ['sites', 'langues', 'nombres', 'uniques', 'contexte', 'definir', '
 // CHROME : pages dans Chrome, du plus long au plus court (durées : tableau de fin de run). Les tests de l'ancien code sont dans
 // tests/ancien/, hors de ces listes.
 const CHROME = ['pages-shell', 'accessibilite', 'pages-pages', 'pages-programme', 'pages-fiches', 'pages-recherche', 'memorises', 'dev-affiche', 'affiches-alphabet', 'affiches-monnaie', 'routes-langues',
-  'navigation', 'vie-privee', 'base', 'composants', 'statique-fumee', 'jeu-dev', 'production']
+  'navigation', 'vie-privee', 'base', 'composants', 'statique-fumee', 'jeu-dev', 'production', 'statique-debordement', 'fiches-debordement']
 const fichiers = [...NODE, ...CHROME]
 
 // chaque fichier finit par process.exit(nbEchecs() ? 1 : 0) : on ne lit que son code de sortie (exception, échec

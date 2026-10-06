@@ -2,7 +2,7 @@
 // Données pures, sérialisables (aucune fonction) : le build en écrit l'index et un fichier JSON par entrée (plan 11), et
 // l'app les lit. Chaque site ne publie que les entrées dont toutes les langues sont les siennes (catalogueDe).
 import type { Site } from '../sites.ts'
-import type { Classe, CompetenceId, DomaineId, Reglages } from '../noyau/types.ts'
+import type { Classe, CompetenceId, DomaineId } from '../noyau/types.ts'
 import { genererAffiche } from './generer.ts'
 import { ensemblesDeLangues, reglagesDe } from './outils.ts'
 import { cleVariante, traducteurAffiche } from './textes.ts'
@@ -16,7 +16,7 @@ export interface EntreeAffiche {
   titre: string
   description: string
   /** classes de la variante */
-  niveaux: readonly Classe[]
+  classes: readonly Classe[]
   domaine: DomaineId
   genre: 'affiche'
   competences: readonly CompetenceId[]
@@ -41,8 +41,20 @@ export const slugDe = (d: DefinitionAffiche, variante: string, langues: readonly
 export const lienDe = (d: DefinitionAffiche, variante: string, langue: string, langues: readonly string[] = [langue]): string =>
   `${d.route}?affiche=${d.id}&variante=${variante}${langues.join() === 'fr' ? '' : `&langues=${langues.join(',')}`}`
 
+/**
+ * Les réglages que porte un lien « Personnaliser » : l'inverse de lienDe, pour le formulaire (`depart`). `query` : les
+ * paramètres de l'adresse (chaîne ou liste, comme ceux du routeur). `variante` ; `langues` (liste séparée par des virgules) ou
+ * `langue` ; le reste est ignoré. Les valeurs ne sont pas validées ici : reglagesDe le fait.
+ */
+export function lireLien(query: Record<string, unknown>): { variante?: string, langues?: string[] } {
+  const texte = (v: unknown): string | undefined => (typeof v === 'string' && v ? v : Array.isArray(v) && typeof v[0] === 'string' && v[0] ? v[0] : undefined)
+  const variante = texte(query.variante)
+  const langues = (texte(query.langues) ?? texte(query.langue))?.split(',').filter(Boolean)
+  return { ...(variante ? { variante } : {}), ...(langues?.length ? { langues } : {}) }
+}
+
 /** Les entrées de catalogue d'une affiche : une par variante et par ensemble de langues. */
-export function entreesDe<R extends Reglages>(module: ModuleAffiche<R>): EntreeAffiche[] {
+export function entreesDe<R extends object>(module: ModuleAffiche<R>): EntreeAffiche[] {
   const d = module.definition as DefinitionAffiche
   return Object.entries(d.variantes).flatMap(([id, v]) => ensemblesDeLangues(d).map(langues => {
     const T = traducteurAffiche(module.textes, langues[0])
@@ -50,7 +62,7 @@ export function entreesDe<R extends Reglages>(module: ModuleAffiche<R>): EntreeA
     return {
       slug: slugDe(d, id, langues),
       court: T(cleVariante(id, 'court')), titre: T(cleVariante(id, 'titre')), description: T(cleVariante(id, 'description')),
-      niveaux: v.niveaux, domaine: d.domaine, genre: d.genre, competences: v.competences, langues,
+      classes: v.classes, domaine: d.domaine, genre: d.genre, competences: v.competences, langues,
       pages: genererAffiche(module, config).nbPages,
       config: { affiche: d.id, variante: id, langue: reglagesDe(d, config).langue, langues }, lien: lienDe(d, id, langues[0], langues),
     }

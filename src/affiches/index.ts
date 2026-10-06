@@ -1,9 +1,9 @@
 // Registre des affiches au format « définition » (src/affiches/README.md). Imports statiques, avec extensions : le même
 // fichier se lit dans l'app (Vite), par node (build, scripts) et dans les tests. Un dossier de src/affiches/ absent d'ici
-// et de exemples.ts fait échouer tests/affiches-modele.test.mjs.
+// et de dev.ts fait échouer tests/affiches-modele.test.mjs.
 //
 // Vide pour l'instant : les anciennes affiches (plan 11) y entreront une par une, reportées dans ce modèle.
-// Les exemples (développement seulement) sont dans exemples.ts, jamais importé par du code de production.
+// Les exemples (développement seulement) sont dans dev.ts, jamais importé par du code de production.
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'

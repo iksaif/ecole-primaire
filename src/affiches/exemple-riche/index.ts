@@ -1,4 +1,4 @@
-// L'affiche d'exemple, assemblée : définition, dessin, textes. Le registre (../index.ts, ../dev.ts) lit `module`.
+// L'affiche d'exemple riche, assemblée : définition, dessin, textes (registre : ../dev.ts).
 import definition from './definition.ts'
 import type { Reglages } from './definition.ts'
 import * as rendu from './dessin.ts'

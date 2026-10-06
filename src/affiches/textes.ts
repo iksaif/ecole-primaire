@@ -8,6 +8,8 @@
 //   groupe.<id>                    titre d'un groupe du formulaire
 //   aide.<cle>                     aide sous un réglage (facultative : sans texte, pas d'aide)
 //   police.<type>                  nom d'un type de police (mode parType)
+//   prereglage.<id>                nom d'un préréglage (jeu de réglages nommé)
+// Le formulaire lit ces textes dans la langue de l'INTERFACE ; le titre et ce que dessine l'affiche, dans la langue de la feuille.
 import { LANGUES, LANGUE_SOURCE, estLangue } from '../langues/registre.ts'
 import { lireFeuille, texteDeFeuille } from '../langues/traduire.ts'
 import type { Traducteur } from '../noyau/types.ts'
@@ -17,6 +19,7 @@ export const cleReglage = (cle: string): string => `reglage.${cle}`
 export const cleValeur = (cle: string, valeur: unknown): string => `valeur.${cle}.${valeur}`
 export const cleGroupe = (id: string): string => `groupe.${id}`
 export const cleAide = (cle: string): string => `aide.${cle}`
+export const clePrereglage = (id: string): string => `prereglage.${id}`
 export const clePolice = (type: string): string => `police.${type}`
 
 /**

@@ -15,7 +15,7 @@ const definition = definirAffiche({
   // la police du mot (script) et celle du tracé (attaché) se choisissent séparément ; les défauts sont ceux du site
   police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
   competences: [K.exempleLire, K.exempleCompter],
-  variantes: { semaine: { niveaux: ['cp'] } },
+  variantes: { semaine: { classes: ['cp'] } },
 })
 
 export default definition

@@ -3,26 +3,30 @@
 import { cadreAffiche, mesuresAffiche } from '../impression/affiches/cadre.ts'
 import { POLICE_SCOLAIRE } from '../impression/document.ts'
 import { creerRng } from '../utils/hasard.ts'
-import type { Reglages } from '../noyau/types.ts'
+import { mesureEstimee } from './mesure.ts'
 import { reglagesDe, POLICE_BASE } from './outils.ts'
 import { cleVariante, traducteurAffiche } from './textes.ts'
-import type { ContexteDessin, ModuleAffiche, TypePolice } from './types.ts'
+import type { ContexteDessin, Mesure, ModuleAffiche, TypePolice } from './types.ts'
 
 /**
  * Le document d'une affiche : une page par page du dessin.
  * @param config réglages lus (reglagesDe les rend valides)
  * @param polices police du texte quand `config.polices` n'en dit pas (Andika si absente)
+ * @param mesure mesure de texte du dessin : le canvas dans le navigateur (mesureNavigateur), sinon l'estimation tabulée (mesure.ts)
  */
-export function genererAffiche<R extends Reglages>({ definition, rendu, textes }: ModuleAffiche<R>, config: Record<string, unknown> = {}, polices?: { script?: string }) {
+export function genererAffiche<R extends object>({ definition, rendu, textes }: ModuleAffiche<R>, config: Record<string, unknown> = {}, polices?: { script?: string }, mesure: Mesure = mesureEstimee) {
   const r = reglagesDe(definition, config)
   const Tde = (langue: string) => traducteurAffiche(textes, langue)
   const m = mesuresAffiche({ format: r.format, orientation: r.orientation, marge: definition.marge, hTitre: definition.hTitre })
   // le titre : celui de l'élève, sinon celui de l'affiche dans chaque langue de la feuille
   const titre = r.titre || r.langues.map(l => Tde(l)('titre')).join(' · ')
+  const nomPolice = (type?: TypePolice): string => r.polices[type ?? 'unique'] ?? polices?.script ?? POLICE_BASE
   const contexte: ContexteDessin = {
     Tde,
-    police: (type?: TypePolice) => `'${r.polices[type ?? 'unique'] ?? polices?.script ?? POLICE_BASE}', Arial, sans-serif`,
+    nomPolice,
+    police: type => `'${nomPolice(type)}', Arial, sans-serif`,
     rng: creerRng(r.graine),
+    mesure,
   }
   const pages = rendu.dessin(r, { W: m.W, H: m.H }, Tde(r.langue), contexte)
   if (!pages.length) throw new Error(`affiche « ${definition.id} » : le dessin doit rendre au moins une page`)

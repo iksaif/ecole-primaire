@@ -14,15 +14,16 @@ const lettres = choix([false], { horsProgramme: [{ option: true, raison: 'Le pro
 
 /** Les bandes : une classe et ses nombres. Les variantes en sont dérivées ci-dessous (bande × avec/sans page à compléter). */
 export const BANDES = [
-  { id: 'jusqua6', niveaux: ['ms'], debut: 1, max: 6 },
-  { id: 'jusqua10', niveaux: ['gs'], debut: 0, max: 10 },
+  { id: 'jusqua6', classes: ['ms'], debut: 1, max: 6 },
+  { id: 'jusqua10', classes: ['gs'], debut: 0, max: 10 },
 ] as const
 
 const definition = definirAffiche({
   id: 'exemple',
   // domaine et compétences fictifs, dev seulement (src/data/programme.ts) ; une vraie affiche : D.nombresCalcul, K.bandeNumerique…
   domaine: D.exemple,
-  orientation: 'landscape',
+  // paysage par défaut ; les deux sont proposées (une seule : orientation fixe, non proposée dans le formulaire)
+  orientations: ['landscape', 'portrait'],
   // langues de la feuille : toutes celles du registre ; `bilingue` : on peut en mettre plusieurs sur la même feuille
   // (le catalogue publie chaque langue seule, puis toutes ensemble)
   langues: CODES,
@@ -46,7 +47,7 @@ const definition = definirAffiche({
   // `max`, `debut`, `completer` sont des réglages sans choix, propres à la variante, que lit le dessin
   variantes: () => Object.fromEntries(BANDES.flatMap(b => [false, true].map(completer => [
     completer ? `${b.id}-completer` : b.id,
-    { niveaux: b.niveaux, reglages: { max: b.max, debut: b.debut, completer, lettres } },
+    { classes: b.classes, reglages: { max: b.max, debut: b.debut, completer, lettres } },
   ]))),
 })
 

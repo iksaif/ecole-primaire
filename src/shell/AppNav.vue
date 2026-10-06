@@ -1,115 +1,99 @@
 <template>
-  <nav class="nav" :aria-label="t('nav.menu')">
-    <RouterLink to="/" class="nav-logo" :title="t('nav.logo')">{{ SITE.emoji }} {{ SITE.nom }}</RouterLink>
-    <ul class="nav-links">
-      <li><RouterLink to="/" :class="{ active: route.path === '/' }">{{ t('nav.accueil') }}</RouterLink></li>
-      <!-- langue régionale : seulement si elle est active (réglage, ou interface dans cette langue) -->
-      <li v-if="regionale.def.value">
-        <RouterLink to="/langue-regionale" :class="{ active: route.path === '/langue-regionale' }">
-          <Drapeau :langue="regionale.def.value.code" /> {{ majuscule(regionale.def.value.nomLocal) }}
-        </RouterLink>
-      </li>
-      <li><RouterLink to="/telechargements" :class="{ active: route.path.startsWith('/telechargements') }">🖨️ {{ t('nav.telechargements') }}</RouterLink></li>
-      <li><RouterLink to="/nouveautes" :class="{ active: route.path === '/nouveautes' }">{{ t('nav.nouveautes') }}</RouterLink></li>
-      <li v-if="DEV"><RouterLink to="/dev" :class="{ active: route.path.startsWith('/dev') }">🛠️ {{ t('nav.dev') }}</RouterLink></li>
-      <li><RouterLink to="/parametres" :class="{ active: route.path === '/parametres' }" class="nav-settings" :title="t('nav.reglages')" :aria-label="t('nav.reglages')">⚙️</RouterLink></li>
-    </ul>
+  <!-- barre de navigation : logo · rubriques · recherche · langue · classe · profil · réglages. Le profil enfant n'a que le logo,
+       la classe (verrouillée) et le profil ; au téléphone (≤ 640 px) : logo, recherche, classe, ☰ (le menu porte le reste). -->
+  <header class="nav" :class="{ enfant, regional: modeRegionalSeul }">
+    <RouterLink to="/" class="logo" :aria-label="t('shell.logoTitre', { nom: SITE.nom })">{{ SITE.emoji }} {{ SITE.nom }}</RouterLink>
+    <nav v-if="!enfant" class="rubriques" :aria-label="t('shell.barre.rubriques')">
+      <ul class="nav-links">
+        <li v-for="r in liens" :key="r.id"><LienRubrique :rubrique="r" /></li>
+        <!-- entrée de développement : l'emoji seul (le nom est dans l'étiquette) pour ne pas allonger la barre -->
+        <li v-if="AVEC_DEV"><RouterLink to="/dev" :class="{ 'router-link-active': route.path.startsWith('/dev') }" :aria-label="t('shell.barre.dev')" :title="t('shell.barre.dev')">{{ EMOJI_BARRE.dev }}</RouterLink></li>
+      </ul>
+    </nav>
     <div class="nav-droite">
-      <!-- langue de l'interface : un drapeau par langue proposée par le site -->
-      <div v-if="langues.length > 1" class="nav-langue" role="group" :aria-label="t('nav.langueInterface')">
-        <button v-for="l in langues" :key="l.code" :class="{ active: langue === l.code }"
-          :title="majuscule(l.nomLocal)" :aria-label="majuscule(l.nomLocal)" :aria-pressed="langue === l.code" @click="langue = l.code">
-          <Drapeau :langue="l.code" />
-        </button>
-      </div>
-      <!-- langue régionale : choix rapide si le site en propose -->
-      <label v-if="regionale.proposees.length" class="nav-regionale" :class="{ actif: regionale.reglage.value }" :title="t('nav.langueRegionale')">
-        <span aria-hidden="true">🏴</span>
-        <select v-model="regionale.reglage.value" :aria-label="t('nav.langueRegionale')">
-          <option value="">{{ t('reglages.regionale.aucune') }}</option>
-          <option v-for="l in regionale.proposees" :key="l.code" :value="l.code">{{ majuscule(l.nomLocal) }}</option>
-        </select>
-      </label>
-      <label class="nav-classe" :class="{ filtre: classe }" :title="t('nav.filtrerClasse')">
-        <span aria-hidden="true">🎒</span>
-        <span class="nav-classe-label">{{ t('nav.classe') }}</span>
-        <select v-model="classe" :aria-label="t('nav.filtrerClasse')">
-          <option value="">{{ t('nav.toutes') }}</option>
-          <option v-for="c in CLASSES" :key="c.id" :value="c.id">{{ c.label }}</option>
-        </select>
-      </label>
+      <button v-if="modeRegionalSeul" type="button" class="nbtn retour" lang="fr" @click="choisirMode('fr')">
+        <span class="sr-only">{{ tf('shell.langue.retour') }}</span>
+        <span aria-hidden="true">←</span> <Drapeau langue="fr" aria-hidden="true" /><span class="retour-long" aria-hidden="true">{{ tf('shell.langue.retour') }}</span><span class="retour-court" aria-hidden="true">{{ tf('shell.langue.retourCourt') }}</span>
+      </button>
+      <BoutonRecherche v-if="!enfant" class="cache-regional" />
+      <SelecteurLangue v-if="!enfant" class="grand-ecran" />
+      <SelecteurClasse />
+      <PastilleProfil :class="{ 'grand-ecran': !enfant }" />
+      <RouterLink v-if="!enfant" to="/parametres" class="nbtn grand-ecran" :aria-label="t('shell.barre.reglages')" :title="t('shell.barre.reglages')">{{ EMOJI_BARRE.reglages }}</RouterLink>
+      <MenuMobile v-if="!enfant" :rubriques="liens" />
     </div>
-  </nav>
-  <AvisTraduction />
+  </header>
 </template>
 
 <script setup lang="ts">
+import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { CLASSES } from '../data/classes.ts'
-import { useClasse } from '../noyau/useClasse.ts'
-import { SITE } from '../sites.ts'
+import { useContexte } from '../contexte/useContexte.ts'
+import { LANGUE_SOURCE } from '../langues/registre.ts'
+import { contenu } from '../langues/traduire.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { useLangueRegionale } from '../langues/useLangueRegionale.ts'
+import { SITE } from '../sites.ts'
+import './barre.css'
+import BoutonRecherche from './BoutonRecherche.vue'
 import Drapeau from './Drapeau.vue'
-import AvisTraduction from './AvisTraduction.vue'
+import LienRubrique from './LienRubrique.vue'
+import MenuMobile from './MenuMobile.vue'
+import PastilleProfil from './PastilleProfil.vue'
+import SelecteurClasse from './SelecteurClasse.vue'
+import SelecteurLangue from './SelecteurLangue.vue'
+import { EMOJI_BARRE } from './emojis.ts'
+import { menuOuvert } from './menus.ts'
+import { rubriques } from './rubriques.ts'
 
-const DEV = import.meta.env.DEV
+// pages et entrées de développement : absentes d'un build de production (expression écrite telle quelle pour que Vite la replie)
+const AVEC_DEV = import.meta.env.DEV || !!import.meta.env.VITE_AVEC_DEV
 const route = useRoute()
-const classe = useClasse()
-const regionale = useLangueRegionale()
-const { t, langue, langues } = useLangue()
-const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
+const { t } = useLangue()
+const { contexte, modeRegionalSeul, choisirMode } = useContexte()
+// « Retour en français » reste en français : c'est la sortie de l'immersion, il doit se lire sans savoir la langue régionale
+const tf = contenu(LANGUE_SOURCE).t
+const enfant = computed(() => contexte.value.profil === 'enfant')
+const liens = computed(() => rubriques(contexte.value.regionale, contexte.value.profil))
+// changer de page referme les menus (un changement de contexte, lui, garde la page : le menu des classes reste ouvert)
+watch(() => route.path, () => { menuOuvert.value = null })
 </script>
 
 <style scoped>
 .nav {
-  background: white;
-  box-shadow: var(--shadow);
-  padding: .6rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: .75rem 1rem;
+  position: sticky; top: 0; z-index: 30; background: white; box-shadow: var(--shadow); padding: .5rem 1.25rem;
+  display: flex; align-items: center; gap: .4rem 1rem;
 }
-.nav-logo { font-size: 1.4rem; font-weight: 800; text-decoration: none; color: var(--bleu); white-space: nowrap; }
-.nav-links { display: flex; gap: .35rem; list-style: none; min-width: 0; }
-.nav-links a {
-  text-decoration: none; padding: .35rem .7rem; border-radius: 20px; font-weight: 600; font-size: .9rem;
-  white-space: nowrap; transition: background .15s, color .15s; color: var(--texte); display: inline-block;
+.logo { font-size: 1.4rem; font-weight: 800; text-decoration: none; color: var(--bleu-fort); white-space: nowrap; }
+.nav-links { display: flex; gap: .3rem; list-style: none; }
+.nav-links :deep(a) {
+  display: inline-block; text-decoration: none; padding: .35rem .8rem; border-radius: 20px; font-weight: 700; font-size: .92rem;
+  white-space: nowrap; line-height: 1.15; color: var(--texte);
 }
-.nav-links a:hover { background: var(--gris-bg); }
-.nav-links a.active { background: var(--bleu); color: white; }
-.nav-settings { opacity: .55; font-size: 1.05rem; }
-.nav-settings:hover { opacity: 1; }
+.nav-links :deep(a:hover) { background: var(--gris-bg); }
+.nav-links :deep(a.router-link-active) { background: var(--bleu-fort); color: white; }
+.nav-droite { margin-left: auto; display: flex; align-items: center; gap: .4rem; min-width: 0; }
+.retour-court { display: none; }
 
-.nav-droite { margin-left: auto; display: flex; gap: .5rem; align-items: center; flex-shrink: 0; }
-.nav-langue { display: flex; align-items: center; gap: 2px; background: var(--gris-bg); border-radius: 20px; padding: 3px; }
-.nav-langue button { border: none; background: none; border-radius: 16px; padding: .3rem .45rem; cursor: pointer; display: inline-flex; align-items: center; line-height: 1; }
-.nav-langue button:hover { background: white; }
-.nav-langue button.active { background: white; box-shadow: 0 0 0 2px var(--bleu); }
-.nav-classe, .nav-regionale {
-  display: flex; align-items: center; gap: .35rem; background: var(--gris-bg); border-radius: 20px;
-  padding: .2rem .35rem .2rem .7rem; font-size: .85rem; cursor: pointer; white-space: nowrap;
+/* un peu moins large avant que la barre ne passe sur deux lignes */
+@media (max-width: 1440px) { .nav-links :deep(a) { padding: .35rem .6rem; } .nav { padding-inline: 1rem; gap: .4rem .7rem; } }
+/* écrans moyens : les rubriques passent sur une seconde ligne */
+@media (max-width: 1240px) {
+  .nav { flex-wrap: wrap; padding: .5rem 1rem; }
+  .rubriques { order: 3; flex-basis: 100%; overflow-x: auto; scrollbar-width: none; }
+  .rubriques::-webkit-scrollbar { display: none; }
 }
-.nav-classe.filtre, .nav-regionale.actif { background: #e8f6e8; box-shadow: 0 0 0 2px var(--vert); }
-.nav-classe-label { font-size: .72rem; font-weight: 800; color: #888; text-transform: uppercase; }
-.nav-classe select, .nav-regionale select {
-  border: none; background: white; border-radius: 14px; padding: .25rem .5rem; font: inherit; font-weight: 700; color: var(--texte); cursor: pointer;
+/* téléphone : logo, recherche, classe, ☰ ; rien ne déborde à 320 px */
+@media (max-width: 640px) {
+  .nav { padding: .4rem 16px; gap: .25rem; flex-wrap: nowrap; }
+  .logo { font-size: 1.05rem; flex: 1 1 auto; min-width: 0; padding: 2px; display: inline-flex; align-items: center; min-height: 44px; }
+  .rubriques, .grand-ecran { display: none; }
+  .nav-droite { gap: .25rem; flex: 0 0 auto; }
+  .retour-long { display: none; }
+  .retour-court { display: inline; }
+  /* immersion : le « Retour en français » prend la place de la recherche (qui reste dans le ☰) */
+  .regional .cache-regional { display: none; }
 }
-
-/* Écrans étroits : le logo et les réglages sur une ligne, les rubriques défilent sur la suivante */
-@media (max-width: 1180px) {
-  .nav { flex-wrap: wrap; padding: .5rem .75rem; }
-  .nav-logo { font-size: 1.2rem; }
-  .nav-links { order: 3; flex-basis: 100%; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-  .nav-links::-webkit-scrollbar { display: none; }
-  .nav-classe-label { display: none; }
-}
-@media (max-width: 480px) {
-  .nav { gap: .5rem; }
-  .nav-logo { font-size: 1.05rem; }
-  .nav-droite { gap: .3rem; }
-  .nav-langue button { padding: .25rem .3rem; }
-  .nav-classe, .nav-regionale { padding: .15rem .25rem .15rem .45rem; }
-}
+/* étroit : le nom passe sur deux lignes plutôt que d'être coupé */
+@media (max-width: 400px) { .logo { font-size: .95rem; white-space: normal; line-height: 1.1; } }
 @media print { .nav { display: none; } }
 </style>

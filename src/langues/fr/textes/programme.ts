@@ -1,0 +1,56 @@
+// Textes de l'interface — page « Le programme » (français) : classe × domaine → compétences → ressources, en tableau ou en liste.
+// Source des clés : br/textes/programme.ts doit avoir exactement les mêmes.
+export default {
+  titre: 'Le programme',
+  chapeau: '{classes} · {matiere}. Chaque compétence mène à ses ressources.',
+  fil: 'Fil d’Ariane',
+  matiere: { legende: 'Matière', maths: 'Mathématiques', francais: 'Français', monde: 'Le monde' },
+  classes: { legende: 'Classes', verrouillee: 'La classe est verrouillée.' },
+  domaine: { legende: 'Domaine', aucun: 'Aucun domaine de cette matière pour les classes choisies.' },
+  affichage: { legende: 'Présentation', tableau: 'Tableau', liste: 'Liste' },
+  refs: 'Afficher les références',
+  lien: {
+    copier: 'Copier le lien vers ce tableau',
+    copie: 'Lien copié : il rouvre exactement cette vue.',
+    echec: 'Copie impossible : copiez l’adresse de la page dans la barre du navigateur.',
+  },
+  tableau: {
+    legende: 'Compétences du domaine « {domaine} » par classe : chaque case est un lien vers la page de la compétence.',
+    competence: 'Compétence',
+    ressources: 'Ressources',
+    cellule: '{competence}, {classe}',
+    nonConcernee: 'Pas au programme de cette classe',
+    choisie: 'classe choisie',
+    cle: '● : au programme de la classe · colonne en bleu : classe choisie · ⓘ : notre lecture du texte',
+  },
+  liste: {
+    aucune: 'Aucune compétence de ce domaine pour les classes choisies : essayez la vue tableau.',
+    autresClasses: { one: '+ {n} ressource pour d’autres classes', other: '+ {n} ressources pour d’autres classes' },
+    toutes: 'Toutes les ressources de cette compétence',
+  },
+  sansRessource: 'Pas encore d’exercice pour cette compétence.',
+  reference: {
+    page: 'p. PDF {page}',
+    ouvre: 'texte officiel, ouvre le PDF dans un nouvel onglet',
+  },
+  interpretation: { resume: 'Lecture du texte', titre: 'Notre lecture du programme' },
+  // étiquette courte d'un texte officiel (les noms propres des BO ne se traduisent pas ; « annexe » seulement)
+  source: {
+    bo41: 'BO 41',
+    c2maths: 'BO 41 · annexe 4',
+    bo19: 'BO 19',
+    c3maths: 'BO 16 · maths',
+    c3francais: 'BO 16 · français',
+    exemplesCM1: 'Éduscol · CM1',
+    exemplesCM2: 'Éduscol · CM2',
+    exemples6e: 'Éduscol · 6e',
+    c2sciences: 'BO 24 · annexe 1',
+    c3sciences: 'BO 24 · annexe 2',
+    c2histgeo: 'BO 22 · annexe 3',
+    c3histgeo: 'BO 22 · annexe 4',
+    emc: 'BO 24 (2024) · EMC',
+    c2ancien2015: 'Ancien programme 2015',
+    c2ancien2020: 'Ancien programme 2020',
+    c1consolide: 'Éduscol · cycle 1',
+  },
+} as const

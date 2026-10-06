@@ -17,16 +17,16 @@
     <title>%SITE_TITRE%</title>
     <meta name="description" content="%SITE_DESCRIPTION%" />
     <link rel="canonical" href="%SITE_URL%" />
-    <!-- aperçu lors d'un partage (og-image.jpg et site.webmanifest sont générés au build : scripts/telechargements.mjs) -->
+    <!-- aperçu lors d'un partage : l'icône du site (public/icone-512.png) ; site.webmanifest est produit par le plugin Vite (vite.config.js) ; titre, canonical et noindex suivent la route (src/router/canonique.ts) ; les pages de fiches ont leurs propres balises (scripts/statique/) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="%SITE_NOM%" />
     <meta property="og:title" content="%SITE_TITRE%" />
     <meta property="og:description" content="%SITE_DESCRIPTION%" />
     <meta property="og:url" content="%SITE_URL%" />
-    <meta property="og:image" content="%SITE_URL%og-image.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="%SITE_URL%icone-512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta name="twitter:card" content="summary" />
     <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="%BASE_URL%favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />

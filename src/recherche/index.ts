@@ -32,6 +32,10 @@ export interface EntreeRecherche {
   readonly type: TypeRessource
   /** titre dans la langue de l'index */
   readonly titre: string
+  /** icône de la ressource (celle de son domaine) */
+  readonly emoji: string
+  /** description dans la langue de l'index ; vide quand la ressource n'en a pas */
+  readonly sousTitre: string
   readonly classes: readonly Classe[]
   readonly route: string
   readonly titreNormalise: string
@@ -59,7 +63,7 @@ export function construireIndexRecherche(
     const domaine = 'domaine' in r ? langues.map(l => nomDomaine(r.domaine, l)) : []
     const libelles = r.type === 'competence' ? [] : r.competences.map(k => competenceDe(k)?.libelle ?? '')
     const texte = [...langues.flatMap(l => [texteDe(r.titre, l), r.description ? texteDe(r.description, l) : '']), ...domaine, ...libelles, ...r.classes]
-    return { id: r.id, type: r.type, titre, classes: r.classes, route: r.route, titreNormalise: normaliser(titre), texteNormalise: normaliser(texte.join(' ')) }
+    return { id: r.id, type: r.type, titre, emoji: r.emoji, sousTitre: r.description ? texteDe(r.description, langue) : '', classes: r.classes, route: r.route, titreNormalise: normaliser(titre), texteNormalise: normaliser(texte.join(' ')) }
   })
 }
 

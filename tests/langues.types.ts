@@ -9,15 +9,15 @@ import { catalogue, contenuDe } from '../src/langues/catalogue.ts'
 export function verifications() {
   traduire('fr', 'nav.accueil')
   traduire('br', 'reglages.remise.fait', { n: 2 })
-  traduire('fr', 'langueRegionale.intro', { nom: 'breton', ecoles: 'les écoles' })
+  traduire('fr', 'regionale.intro', { nom: 'breton', ecoles: 'les écoles' })
   // @ts-expect-error clé inconnue
   traduire('fr', 'nav.inconnue')
   // @ts-expect-error section inconnue
   traduire('fr', 'rien.du.tout')
   // @ts-expect-error paramètre manquant
-  traduire('fr', 'langueRegionale.intro', { nom: 'breton' })
+  traduire('fr', 'regionale.intro', { nom: 'breton' })
   // @ts-expect-error paramètres obligatoires
-  traduire('fr', 'langueRegionale.intro')
+  traduire('fr', 'regionale.intro')
   // @ts-expect-error le pluriel demande n
   traduire('fr', 'reglages.remise.fait')
   // @ts-expect-error paramètre en trop

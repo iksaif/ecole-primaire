@@ -1,5 +1,5 @@
-// Schéma des fiches « toutes prêtes » (PDF) : ce que le build écrit (scripts/fiches/) et ce que la page /telechargements
-// lit (src/views/Telechargements*.vue, useFiches). Un seul jeu de types pour les deux côtés ; tout est de la donnée pure,
+// Schéma des fiches « toutes prêtes » (PDF) : ce que le build écrit (scripts/fiches/) et ce que les pages /<matière>/fiches et /telechargements
+// lit (src/pages/FichesPretes*.vue, Feuille*.vue, useFiches). Un seul jeu de types pour les deux côtés ; tout est de la donnée pure,
 // sérialisable en JSON (pas de Date, de Map ni de fonction). Spécification : README.md de ce dossier.
 //
 // Les identifiants viennent du programme : une classe, un domaine ou une compétence inconnus ne compilent pas.

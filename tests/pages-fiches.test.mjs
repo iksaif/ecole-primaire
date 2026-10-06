@@ -1,0 +1,192 @@
+// Pages des fiches toutes prêtes dans Chrome : liste d'une matière (filtres, langue seulement en bilingue, cartes et liste), index
+// /telechargements, feuille ouverte à froid (aperçu multipage au clavier, Télécharger et Imprimer séparés, format seulement s'il y en a
+// plusieurs, même fiche dans une autre langue, voisines sans filtre de classe, jeu lié), états absent / vide, axe à 360 et 1280 px.
+// Besoin : un site construit avec les fiches d'exemple (tests/lancer.mjs le fait ; en développement : `npm run fiches:dev`).
+//   TEST_URL=http://localhost:5173/ecole-primaire/ node tests/pages-fiches.test.mjs
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, appDev } from './outils.mjs'
+import { verifierAxe } from './outils-axe.mjs'
+
+const nav = await lancerNavigateur()
+async function ouvrir({ langue = 'fr', largeur = 1280, regionale } = {}) {
+  const ctx = await contexte(nav, { langue, regionale, viewport: { width: largeur, height: 900 } })
+  const page = await ctx.newPage()
+  const erreurs = surveiller(page)
+  page.on('console', m => { if (m.type() === 'error' && !/404|Failed to load resource/.test(m.text())) erreurs.push(m.text().slice(0, 200)) })
+  return { ctx, page, erreurs }
+}
+const cartes = page => page.locator('article.carte')
+const pret = page => page.waitForSelector('main#contenu h1', { timeout: 10000 })
+const SLUG = 'exercices-exemple-ce1'
+
+console.log('Liste d\'une matière')
+{
+  const { ctx, page, erreurs } = await ouvrir()
+  await page.goto(app('/maths/fiches?classes=ce1'))
+  await cartes(page).first().waitFor({ timeout: 10000 })
+  verifier(await page.locator('h1').count() === 1 && /Fiches toutes prêtes — Maths/.test(await page.locator('h1').textContent()), 'un seul h1, avec la matière')
+  verifier((await page.title()).startsWith('Fiches de mathématiques'), 'titre du document')
+  const n = await cartes(page).count()
+  verifier(/CE1/.test(await page.getByRole('status').filter({ hasText: /fiche/ }).first().textContent()), `compteur annoncé (${n} fiche(s) pour CE1)`)
+  verifier(await page.getByRole('group', { name: 'Langue' }).count() === 0, 'mode français : pas de filtre de langue')
+  verifier(await page.getByRole('button', { name: 'CE1', exact: true }).getAttribute('aria-pressed') === 'true', 'la classe du contexte est choisie')
+  await page.getByRole('button', { name: /Toutes les classes/ }).click()
+  const toutes = await cartes(page).count()
+  verifier(toutes > n, `« Toutes les classes » : ${toutes} fiches`)
+  await page.getByRole('button', { name: /Pour apprendre/ }).click()
+  verifier(await cartes(page).count() > 0 && await cartes(page).count() < toutes, 'filtre d\'usage')
+  await page.getByRole('button', { name: /^🌐 Tous$/ }).click()
+  await page.getByRole('searchbox').fill('zzzz')
+  verifier(await cartes(page).count() === 0 && await page.getByRole('button', { name: 'Tout réinitialiser' }).count() === 1, 'aucun résultat : message et bouton')
+  await page.getByRole('button', { name: 'Tout réinitialiser' }).click()
+  verifier(await cartes(page).count() === n, 'réinitialiser rend la classe et les résultats de départ')
+  await page.getByRole('button', { name: /Liste/ }).click()
+  await page.locator('table').waitFor()
+  verifier(await page.locator('tbody tr').count() === n, 'présentation « Liste » : une ligne par fiche')
+  await page.goto(app('/maths/fiches?classes=ce1&vue=cartes'))
+  await cartes(page).first().waitFor()
+  verifier(await page.locator('table').count() === 0, 'l\'adresse impose la présentation (cartes)')
+  verifier(!erreurs.length, `aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
+  await ctx.close()
+}
+
+console.log('Langue : seulement en mode bilingue')
+{
+  const { ctx, page } = await ouvrir({ regionale: 'br' })
+  await page.goto(app('/maths/fiches?mode=bi&classes=ce1'))
+  await cartes(page).first().waitFor({ timeout: 10000 })
+  const groupe = page.getByRole('group', { name: 'Langue' })
+  verifier(await groupe.count() === 1, 'mode bilingue : le filtre de langue apparaît')
+  const avant = await cartes(page).count()
+  await groupe.getByRole('button').nth(2).click()
+  verifier(await cartes(page).count() < avant && await cartes(page).count() > 0, 'filtrer sur une langue réduit la liste')
+  await page.goto(app('/maths/fiches?mode=reg&classes=ce1'))
+  await cartes(page).first().waitFor({ timeout: 10000 })
+  verifier(await page.getByRole('group', { name: 'Langue' }).count() === 0, 'langue régionale seule : pas de filtre de langue')
+  await ctx.close()
+}
+
+console.log('Index /telechargements')
+{
+  const { ctx, page } = await ouvrir()
+  await page.goto(app('/telechargements'))
+  await page.locator('table').first().waitFor({ timeout: 10000 })
+  verifier(/Toutes les fiches à imprimer/.test(await page.locator('h1').textContent()) && await page.locator('main h2').count() >= 1, 'index par matière')
+  const titres = await page.locator('section.matiere').first().locator('tbody td.c-titre strong').allTextContents()
+  verifier(titres.length > 1 && titres.join('|') === [...titres].sort((a, b) => a.localeCompare(b, 'fr')).join('|'), 'ordre alphabétique')
+  await ctx.close()
+}
+
+console.log('Feuille ouverte à froid')
+{
+  const { ctx, page, erreurs } = await ouvrir()
+  await page.goto(app(`/telechargements/${SLUG}`))
+  await pret(page)
+  await page.locator('.apercu img').waitFor()
+  verifier(/Suites de nombres/.test(await page.locator('h1').textContent()) && (await page.title()).startsWith('Suites de nombres'), 'titre et titre du document')
+  verifier(await page.locator('nav.fil li').count() >= 3, 'fil d\'Ariane')
+  const dl = page.getByRole('link', { name: /Télécharger/ }), imp = page.getByRole('button', { name: /Imprimer/ })
+  const href = await dl.getAttribute('href')
+  const r = await page.request.get(new URL(href, page.url()).href)
+  verifier(/\.pdf$/.test(href) && r.ok() && (await r.body()).subarray(0, 4).toString() === '%PDF', 'Télécharger : lien vers le PDF existant')
+  verifier(await imp.count() === 1 && await page.getByRole('group', { name: 'Format' }).count() === 0, 'Imprimer : bouton séparé ; un seul format : pas de choix')
+  await imp.click()
+  const cadre = page.locator('iframe[aria-hidden="true"]')
+  verifier(await cadre.count() === 1 && /\.pdf$/.test(await cadre.getAttribute('src')), 'Imprimer charge le PDF dans un cadre caché')
+  verifier(await page.getByRole('link', { name: /Personnaliser/ }).evaluate(a => /mode=imprimer/.test(a.href)), 'Personnaliser : lien vers l\'exercice avec ses réglages')
+  verifier(await page.locator('a[href^="/competence/"], a[href*="/competence/"]').count() > 0, 'compétences : liens vers /competence/<id>')
+  // même fiche dans une autre langue : lien vers l'entrée sœur
+  const soeur = page.locator('.langues a')
+  verifier(await soeur.count() === 1 && /-br$/.test(await soeur.getAttribute('href')), '« Même fiche » : lien vers l\'entrée en breton (langues de l\'index)')
+  await soeur.click()
+  await page.waitForURL(/-br$/)
+  await page.locator('.langues [aria-current]').waitFor()
+  verifier(await page.locator('.langues [aria-current]').count() === 1, 'la langue courante n\'est pas un lien')
+  verifier(!erreurs.length, `aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
+  // affiche : deux formats de PDF
+  await page.goto(app('/telechargements/affiche-exemple-jusqua6'))
+  await pret(page)
+  const formats = page.getByRole('group', { name: 'Format' })
+  await formats.waitFor()
+  const h0 = await page.getByRole('link', { name: /Télécharger/ }).getAttribute('href')
+  await formats.getByRole('button', { name: 'A3' }).click()
+  verifier(await page.getByRole('link', { name: /Télécharger/ }).getAttribute('href') !== h0, 'plusieurs formats : le choix change le PDF')
+  await ctx.close()
+}
+
+console.log('Aperçu multipage au clavier')
+{
+  const { ctx, page } = await ouvrir()
+  await page.route(`**/fiches/${SLUG}.json`, async r => {
+    const reponse = await r.fetch()
+    const j = await reponse.json()
+    j.variantes[0].pages = [0, 1, 2].map(() => j.variantes[0].pages[0])
+    await r.fulfill({ response: reponse, json: j })
+  })
+  await page.goto(app(`/telechargements/${SLUG}`))
+  await pret(page)
+  const pos = page.locator('.position')
+  const suiv = page.getByRole('button', { name: 'Page suivante' }), prec = page.getByRole('button', { name: 'Page précédente' })
+  await pos.waitFor()
+  verifier(/Page 1 sur 3/.test(await pos.textContent()) && await pos.getAttribute('aria-live') === 'polite' && await prec.getAttribute('aria-disabled') === 'true', 'page 1 sur 3, annoncée, ◀ inactif')
+  await suiv.click()
+  verifier(/Page 2 sur 3/.test(await pos.textContent()), '▶')
+  await suiv.focus()
+  await page.keyboard.press('ArrowRight')
+  verifier(/Page 3 sur 3/.test(await pos.textContent()) && await suiv.getAttribute('aria-disabled') === 'true', 'flèche droite ; ▶ inactif à la fin mais toujours focalisable')
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('ArrowLeft')
+  verifier(/Page 2 sur 3/.test(await pos.textContent()), 'flèche gauche (bornée)')
+  await ctx.close()
+}
+
+console.log('Voisines et jeu lié (site avec le catalogue de développement)')
+{
+  const { ctx, page } = await ouvrir()
+  await page.goto(appDev(`/telechargements/${SLUG}`))
+  await pret(page)
+  await page.getByRole('heading', { name: 'Même compétence' }).waitFor({ timeout: 15000 })
+  const memeComp = await page.locator('h3', { hasText: 'Même compétence' }).locator('xpath=following-sibling::ul[1]//article//h4').allTextContents()
+  verifier(memeComp.length > 0, `fiches de la même compétence (${memeComp.length})`)
+  verifier((await page.locator('ul.grille article').allTextContents()).some(t => /CP|CE2/.test(t)), 'voisines sans filtre de classe (d\'autres classes y sont)')
+  verifier(await page.getByRole('heading', { name: /Même domaine/ }).count() === 1, 'liste « Même domaine »')
+  verifier(await page.getByRole('link', { name: /Faire en ligne/ }).count() === 1, '« Faire en ligne » : l\'exercice lié existe')
+  await ctx.close()
+}
+
+console.log('États : absent, vide, fiche inconnue')
+for (const [nom, repondre, attendu] of [
+  ['absent', r => r.fulfill({ status: 404, body: 'x' }), /introuvable/],
+  ['vide', r => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ version: 1, genereLe: '2026-10-05T00:00:00Z', site: 'x', filtres: { classes: [], langues: [], usages: [], domaines: [] }, entrees: [] }) }), /arrivent/],
+]) {
+  const { ctx, page } = await ouvrir()
+  await page.route('**/fiches/index.json', repondre)
+  await page.goto(app('/maths/fiches'))
+  await page.locator('p[role="status"], div[role="alert"]').filter({ hasText: attendu }).waitFor({ timeout: 10000 }).then(
+    () => verifier(true, `index ${nom} : message, pas de cartes`), () => verifier(false, `index ${nom} : message`))
+  verifier(await cartes(page).count() === 0, `index ${nom} : aucune carte`)
+  await ctx.close()
+}
+{
+  const { ctx, page } = await ouvrir()
+  await page.goto(app('/telechargements/n-existe-pas'))
+  await page.getByRole('alert').waitFor({ timeout: 10000 })
+  verifier(/n’existe pas/.test(await page.getByRole('alert').textContent()), 'fiche inconnue : message et lien vers la liste')
+  await ctx.close()
+}
+
+console.log('Accessibilité (axe)')
+for (const langue of ['fr', 'br']) for (const largeur of [360, 1280]) {
+  const { ctx, page } = await ouvrir({ langue, largeur, regionale: langue === 'br' ? 'br' : undefined })
+  for (const [nom, route, attente] of [
+    ['liste', '/maths/fiches?mode=bi&classes=ce1', 'article.carte'], ['liste en tableau', '/maths/fiches?vue=liste', 'table'],
+    ['index', '/telechargements', 'table'], ['feuille', `/telechargements/${SLUG}`, '.apercu img'],
+  ]) {
+    await page.goto(app(route))
+    await page.locator(attente).first().waitFor({ timeout: 10000 })
+    await verifierAxe(page, `${nom} (${langue}, ${largeur})`, { inclure: [['main#contenu']] })
+  }
+  await ctx.close()
+}
+
+await nav.close()
+process.exit(nbEchecs() ? 1 : 0)

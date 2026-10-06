@@ -1,6 +1,9 @@
 <template>
   <a :href="`#${ID_CONTENU}`" class="lien-evitement" @click.prevent="focaliserContenu">{{ t('routeur.evitement') }}</a>
   <AppNav />
+  <!-- avis de traduction automatique (modale, une fois par langue) ; palette de recherche (Ctrl+K, ⌘K, « / » ou le 🔍 de la barre) -->
+  <AvisTraduction />
+  <Recherche />
   <main :id="ID_CONTENU" tabindex="-1">
     <RouterView />
   </main>
@@ -10,6 +13,8 @@
 <script setup lang="ts">
 import AppNav from './shell/AppNav.vue'
 import AppFooter from './shell/AppFooter.vue'
+import AvisTraduction from './shell/AvisTraduction.vue'
+import Recherche from './recherche/Recherche.vue'
 import { useLangue } from './langues/useLangue.ts'
 import { ID_CONTENU, focaliserContenu } from './router/focus.ts'
 

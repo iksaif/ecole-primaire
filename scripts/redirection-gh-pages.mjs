@@ -1,7 +1,9 @@
 // Génère le site GitHub Pages : uniquement une redirection vers https://ecoleprimaire.app,
 // en conservant le chemin, la requête et le # (routes de l'app) :
-//   https://iksaif.github.io/ecole-primaire/#/maths/heure  →  https://ecoleprimaire.app/#/maths/heure
+//   https://iksaif.github.io/ecole-primaire/maths/heure  →  https://ecoleprimaire.app/maths/heure
 //   https://iksaif.github.io/ecole-primaire/telechargements/x/  →  https://ecoleprimaire.app/telechargements/x/
+//   https://iksaif.github.io/ecole-primaire/#/maths/heure  →  https://ecoleprimaire.app/#/maths/heure  (ancienne adresse :
+//   l'index.html de l'app la réécrit en /maths/heure)
 // index.html sert la racine, 404.html tous les autres chemins (GitHub Pages le renvoie pour les pages absentes).
 import { mkdirSync, writeFileSync } from 'node:fs'
 

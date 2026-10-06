@@ -2,6 +2,9 @@
 import { construireIndexRecherche, chercher, normaliser } from '../src/recherche/index.ts'
 import { ressourcesCompetences } from '../src/ressources/catalogue.ts'
 import { catalogueDeTest } from './donnees-ressources.mjs'
+import { pagesDuSite } from '../src/recherche/pages.ts'
+import { estZoneDeSaisie, ouvreLaRecherche, deplacer } from '../src/recherche/clavier.ts'
+import { aplatir, groupesAffiches, LIGNES_PAR_GROUPE } from '../src/recherche/resultats.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const page = (id, titre, extra = {}) => ({ id: `page:${id}`, type: 'page', titre: { texte: titre }, description: null, emoji: '📄', classes: [], competences: [], langues: ['fr'], route: `/${id}`, exemple: false, ...extra })
@@ -83,5 +86,46 @@ const rien = chercher(L, 'compter', { classes: ['ps'], toutesLesClasses: false }
 verifier(idsDe(rien).join() === 'page:compter' && rien.masques === 4, 'classe sans résultat : les masqués sont comptés')
 const absent = chercher(L, 'zzz', { classes: ['cp'], toutesLesClasses: false })
 verifier(absent.groupes.length === 0 && absent.masques === 0, 'aucun résultat : aucun masqué')
+
+console.log('Entrées : icône et sous-titre')
+const avecDescription = construireIndexRecherche([fiche('d1', 'Avec phrase', ['cp'], 'Une phrase.'), fiche('d2', 'Sans phrase', ['cp'])], [], [], 'fr')
+verifier(avecDescription[0].sousTitre === 'Une phrase.' && avecDescription[1].sousTitre === '' && avecDescription.every(e => e.emoji === '📄'), 'sous-titre = description (vide sans), emoji de la ressource')
+
+console.log('Pages du site (table des routes)')
+const route = (path, meta = {}, redirect) => ({ path, meta, redirect })
+const PP = pagesDuSite([
+  route('/', { titre: 'routeur.titre.accueil' }), route('/maths', { titre: 'routeur.titre.maths' }),
+  route('/brezhoneg', { titreLibre: 'Brezhoneg' }), route('/maths/heure', { titre: 'routeur.titre.exercice' }),
+  route('/competence/:id', { titre: 'routeur.titre.competence' }), route('/telechargements/:slug', { titre: 'routeur.titre.fiche' }),
+  route('/dev', { titre: 'nav.dev' }), route('/dev/exemple', { titre: 'nav.dev' }), route('/langue-regionale', {}, () => '/'),
+  route('/:chemin(.*)*', { titre: 'routeur.titre.introuvable' }), route('/sans-titre'),
+])
+verifier(PP.map(p => p.route).join() === '/,/maths,/brezhoneg', 'accueil, matières, langue régionale ; ni paramètres, ni /dev, ni exercices, ni redirections, ni sans titre')
+verifier(PP.every(p => p.type === 'page' && p.classes.length === 0 && p.id === `page:${p.route}`), 'type page, toutes les classes, id stable')
+const IP = construireIndexRecherche([], [], PP, 'fr')
+verifier(IP.map(e => e.titre).join() === 'Exercices et fiches à imprimer,Mathématiques,Brezhoneg', 'titres lus dans le catalogue (clé) ou libres')
+verifier(construireIndexRecherche([], [], PP, 'br')[1].titre === 'Jedoniezh', 'titre de page en breton')
+
+console.log('Clavier : ouverture')
+const frappe = (key, extra = {}, cible = { tagName: 'BODY' }) => ({ key, ctrlKey: false, metaKey: false, altKey: false, target: cible, ...extra })
+verifier(ouvreLaRecherche(frappe('k', { ctrlKey: true })) && ouvreLaRecherche(frappe('K', { metaKey: true })), 'Ctrl+K et ⌘K')
+verifier(ouvreLaRecherche(frappe('k', { ctrlKey: true }, { tagName: 'INPUT' })), 'Ctrl+K ouvre même dans un champ')
+verifier(!ouvreLaRecherche(frappe('k')) && !ouvreLaRecherche(frappe('j', { ctrlKey: true })) && !ouvreLaRecherche(frappe('k', { ctrlKey: true, altKey: true })), 'K seul, Ctrl+J, Ctrl+Alt+K : non')
+verifier(ouvreLaRecherche(frappe('/')) && ouvreLaRecherche(frappe('/', {}, null)), '« / » hors champ')
+verifier(!ouvreLaRecherche(frappe('/', {}, { tagName: 'INPUT' })) && !ouvreLaRecherche(frappe('/', {}, { tagName: 'textarea' })) && !ouvreLaRecherche(frappe('/', {}, { tagName: 'SELECT' })) && !ouvreLaRecherche(frappe('/', {}, { tagName: 'DIV', isContentEditable: true })), '« / » jamais dans un champ de saisie')
+verifier(!ouvreLaRecherche(frappe('/', { ctrlKey: true })) && !ouvreLaRecherche(frappe('/', { altKey: true })), '« / » avec Ctrl ou Alt : non')
+verifier(estZoneDeSaisie({ tagName: 'input' }) && !estZoneDeSaisie({ tagName: 'BUTTON' }) && !estZoneDeSaisie(null), 'zone de saisie')
+
+console.log('Clavier : déplacement')
+verifier(deplacer(0, 3, 1) === 1 && deplacer(2, 3, 1) === 0 && deplacer(0, 3, -1) === 2 && deplacer(1, 3, -1) === 0, 'suivant, précédent, en bouclant')
+verifier(deplacer(0, 0, 1) === 0 && deplacer(0, 0, -1) === 0 && deplacer(0, 1, 1) === 0, 'liste vide ou d’un élément')
+
+console.log('Résultats affichés')
+const gros = Array.from({ length: 8 }, (_, i) => fiche(`g${i}`, `Gros ${i}`, ['cp']))
+const G = chercher(construireIndexRecherche([...gros, ...K], [], [page('gros', { fr: 'Gros' })], 'fr'), 'gros', tout)
+const A = groupesAffiches(G.groupes)
+verifier(A[0].lignes.length === LIGNES_PAR_GROUPE && A[0].restants === 8 - LIGNES_PAR_GROUPE && A[1].lignes.length === 1 && A[1].restants === 0, 'au plus quelques lignes par type, le reste est compté')
+verifier(aplatir(A).map(l => l.position).join() === Array.from({ length: LIGNES_PAR_GROUPE + 1 }, (_, i) => i).join(), 'positions continues de haut en bas, d’un groupe à l’autre')
+verifier(groupesAffiches([]).length === 0 && aplatir([]).length === 0, 'rien : rien')
 
 process.exit(nbEchecs() ? 1 : 0)

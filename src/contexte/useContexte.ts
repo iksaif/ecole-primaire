@@ -107,7 +107,7 @@ export function installerContexte(router: Router, site: Site = SITE): void {
     const memo = ref(lireMemorise(site))
     const profil = ref(lireProfil())
     const deverrouille = ref(false)
-    const defauts = computed(() => defautsContexte(site, memo.value))
+    const defauts = computed(() => defautsContexte(site, memo.value, profil.value))
     const requete = (): QueryBrute => router.currentRoute.value.query
     const contexteDe = (query: QueryBrute): Contexte => ({ ...lireContexteDeLAdresse(query, defauts.value), profil: profil.value })
     const contexte = computed(() => contexteDe(requete()))

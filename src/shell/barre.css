@@ -1,0 +1,38 @@
+/* Styles communs de la barre de navigation (AppNav et ses sélecteurs) : boutons « nbtn », menus déroulants, options.
+   Texte bleu : --bleu-fort (5,0:1 sur blanc) ; --bleu ne sert qu'aux aplats sans texte. Cibles ≥ 44 px au téléphone. */
+.nbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .35rem; min-height: 38px; background: var(--gris-bg);
+  border: 2px solid transparent; border-radius: 20px; padding: .3rem .7rem; font: inherit; font-size: .88rem; font-weight: 700;
+  text-decoration: none; color: var(--texte); white-space: nowrap; cursor: pointer;
+}
+.nbtn:hover { border-color: var(--gris-brd); }
+.nbtn[aria-expanded="true"] { border-color: var(--bleu); background: white; }
+.nbtn.classe { background: #e8f6e8; border-color: var(--vert); }
+.nbtn.verrou { background: #fff8e1; border-color: #f5c27a; }
+.nbtn.retour { background: #fff; border-color: var(--bleu-fort); color: var(--bleu-fort); }
+.nbtn .etiquette { font-size: .72rem; font-weight: 800; color: var(--texte-doux); text-transform: uppercase; }
+
+.menu-deroulant { position: relative; }
+.menu-panneau {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 40; background: white; border-radius: var(--radius);
+  box-shadow: 0 8px 28px rgba(0,0,0,.2); border: 1px solid var(--gris-brd); padding: .75rem; min-width: 280px; max-width: calc(100vw - 16px);
+}
+.menu-panneau h3 { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--texte-doux); margin-bottom: .4rem; }
+.menu-panneau .note { font-size: .78rem; color: var(--texte-doux); margin-top: .3rem; }
+
+.option {
+  display: flex; gap: .6rem; align-items: flex-start; width: 100%; text-align: left; font: inherit; color: var(--texte); background: white;
+  border: 2px solid var(--gris-brd); border-radius: 10px; padding: .5rem .65rem; margin-bottom: .4rem; cursor: pointer; min-height: 44px;
+}
+.option:hover { border-color: var(--bleu); }
+.option[aria-pressed="true"] { border-color: var(--bleu-fort); background: #eef5fd; }
+.option strong { display: block; font-size: .92rem; }
+.option small { display: block; color: var(--texte-doux); font-size: .78rem; line-height: 1.25; }
+.option .icone { font-size: 1.2rem; line-height: 1.2; min-width: 2.4rem; display: inline-flex; gap: 2px; }
+
+@media (max-width: 640px) {
+  .nbtn { min-height: 44px; min-width: 44px; padding: .3rem .6rem; }
+  /* au téléphone le panneau se cale sur la barre entière (le parent positionné est la barre, pas le bouton) */
+  .menu-deroulant { position: static; }
+  .menu-panneau { left: 8px; right: 8px; top: 100%; min-width: 0; max-width: none; max-height: 80vh; overflow: auto; }
+}

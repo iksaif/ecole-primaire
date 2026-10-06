@@ -1,0 +1,17 @@
+// Textes de l'interface — page d'une matière (français) : /maths, /francais, /monde.
+export default {
+  fil: 'Fil d’Ariane',
+  accueil: 'Accueil',
+  fichesTitre: 'Des fiches toutes prêtes (PDF à télécharger) : c’est ici →',
+  fichesTexte: 'Ci-dessous, personnalisez vos fiches et exercices.',
+  fichesBouton: 'Fiches toutes prêtes →',
+  classe: { one: 'Classe', other: 'Classes' },
+  chargement: 'Chargement des ressources…',
+  videTitre: 'Les ressources de cette matière arrivent.',
+  videTexte: 'Le site est en cours de reprise : les exercices et les fiches reviennent un par un. Les domaines du programme sont déjà là.',
+  aVenirTitre: 'À venir : les domaines du programme',
+  aVenirTexte: 'Pas encore de ressource pour ces domaines ({classes}). Rien de factice en attendant.',
+  aVenirBadge: 'à venir',
+  cycle: 'Cycle {n}',
+  programme: 'Voir le programme',
+} as const

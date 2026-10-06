@@ -52,7 +52,7 @@ function revenir() {
 .modale { background: white; border-radius: var(--radius); box-shadow: 0 10px 40px rgba(0,0,0,.3); max-width: 520px; padding: 1.5rem 1.75rem; }
 h2 { display: flex; align-items: center; gap: .6rem; font-size: 1.3rem; margin-bottom: .75rem; }
 p { margin: .6rem 0; line-height: 1.5; color: #444; }
-.contact a { font-weight: 700; color: var(--bleu); }
+.contact a { font-weight: 700; color: var(--bleu-fort); }
 .merci { font-weight: 700; color: #333; }
 .actions { display: flex; gap: .5rem; justify-content: flex-end; flex-wrap: wrap; margin-top: 1rem; }
 </style>

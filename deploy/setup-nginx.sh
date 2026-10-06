@@ -104,11 +104,29 @@ server {
         expires max;
         try_files \$uri =404;
     }
-    # fiches PDF, aperçus et pages statiques ; une adresse sans fichier (index A→Z, page inconnue) est celle de l'app,
-    # qui affiche sa page « introuvable » (adresses propres, plan 13)
+    # pages statiques des fiches (scripts/statique/, <slug>/index.html) : servies si elles existent, sinon c'est l'app
+    # (adresses propres, plan 13) qui affiche la page ; réécrites à chaque déploiement : un jour de cache
     location /telechargements/ {
         expires 1d;
         try_files \$uri \$uri/index.html /index.html;
+    }
+    # fiches PDF, aperçus, miniatures : un fichier absent est une vraie erreur 404 (page 404.html), pas la page de l'app ;
+    # l'index et les entrées JSON : cache court (la page refuse un index d'une autre version)
+    location /fiches/ {
+        expires 1d;
+        try_files \$uri =404;
+    }
+    location ~ ^/fiches/[^/]+\.json\$ {
+        expires 5m;
+        try_files \$uri =404;
+    }
+    # pour les moteurs de recherche : courts, ils changent à chaque déploiement
+    location = /sitemap.xml { expires 1h; try_files \$uri =404; }
+    location = /robots.txt { expires 1h; try_files \$uri =404; }
+    # page d'erreur des fichiers manquants hors application (assets, fiches) : autonome, jamais servie directement
+    location = /404.html {
+        internal;
+        expires -1;
     }
     # l'app : adresses propres (mode history), toute adresse qui n'est pas un fichier est servie par index.html (jamais en cache)
     location / {

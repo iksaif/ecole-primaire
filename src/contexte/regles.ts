@@ -24,8 +24,11 @@ export const PROFIL_PAR_DEFAUT: Profil = 'parent'
 /** Mode de langue d'un site : le breton est actif d'office quand le site en désigne un (skoolik : bilingue), sinon le français. */
 export const modeDuSite = (site: Site): Mode => (site.langueRegionale ? 'bilingue' : 'fr')
 
-/** Les défauts d'un site, puis ce que l'appareil a mémorisé par-dessus. */
-export function defautsContexte(site: Site, memo: Memorise = MEMORISE_VIDE): DefautsContexte {
+/**
+ * Les défauts d'un site, puis ce que l'appareil a mémorisé par-dessus. `profil` : les références officielles du tableau du
+ * programme sont affichées d'office pour un enseignant (et seulement lui) tant qu'il n'a rien choisi.
+ */
+export function defautsContexte(site: Site, memo: Memorise = MEMORISE_VIDE, profil?: Profil): DefautsContexte {
   const regionales: readonly Langue[] = site.languesRegionales
   const classes = normaliserClasses(memo.classes ?? [])
   const regionale = memo.regionale && regionales.includes(memo.regionale) ? memo.regionale : (site.langueRegionale || null)
@@ -37,7 +40,7 @@ export function defautsContexte(site: Site, memo: Memorise = MEMORISE_VIDE): Def
     regionale,
     languesRegionales: regionales,
     vue: memo.vue ?? 'cartes',
-    refs: memo.refs ?? false,
+    refs: memo.refs ?? profil === 'enseignant',
   }
 }
 

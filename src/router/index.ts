@@ -8,6 +8,8 @@ import { SITE } from '../sites.ts'
 import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
 import { journaliser } from '../utils/journal.js'
 import { routesDeBase, routesDesExercices } from './routes.ts'
+import { idsParRoute } from '../ressources/recents.ts'
+import { enregistrerOuverture } from '../ressources/useRecents.ts'
 
 const routes: RouteRecordRaw[] = routesDeBase(SITE.languesRegionales)
 
@@ -26,6 +28,9 @@ if (import.meta.env.DEV || import.meta.env.VITE_AVEC_DEV) {   // expression écr
 // léger ce n'est rien ; s'il grossit, il faudra un index des routes seul (sans les générateurs).
 const { REGISTRE } = await import('../exercices/index.ts')
 routes.push(...routesDesExercices(REGISTRE, routes))
+
+// « Reprendre » (accueil) : l'arrivée sur la page d'un exercice du registre est mémorisée sur l'appareil (src/ressources/recents.ts)
+const idsExercices = idsParRoute(REGISTRE)
 
 // Une adresse inconnue (ancienne route, lien externe) : page « introuvable » avec un lien vers l'accueil. Toujours en dernier.
 routes.push({ path: '/:chemin(.*)*', component: () => import('../pages/IntrouvableView.vue'), meta: { titre: 'routeur.titre.introuvable' } })
@@ -47,6 +52,11 @@ router.beforeEach((to, from) => {
 
 // page vue (sans le détail des réglages) : langue de l'interface, langue régionale, classe filtrée
 const lu = (cle: string): string | undefined => localStorage.getItem(`ep_${cle}`)?.replace(/"/g, '')
+router.afterEach(to => {
+  const id = idsExercices.get(to.path)
+  if (id) enregistrerOuverture(id)
+})
+
 router.afterEach((to, from) => {
   if (to.path === from.path) return
   journaliser('vue', { r: to.path, m: to.query.mode, l: lu('langue_interface'), g: lu('langue_regionale'), c: lu('classe') })

@@ -1,6 +1,6 @@
 # Fiches PDF toutes prêtes : un JSON d'index, un JSON par fiche
 
-Plan 11. Plus de pages HTML statiques : le build écrit des **données**, la page `/telechargements` de l'app les lit.
+Plan 11. Le build écrit des **données**, la page `/telechargements` de l’app les lit ; les pages HTML statiques (référencement) en sont dérivées (section « Pages statiques »).
 Les mêmes types (`types.ts`) servent à l'écriture (`scripts/fiches/`) et à la lecture (`useFiches`, les vues).
 Données pures, sérialisables ; aucune date, fonction ni `Map`.
 
@@ -53,13 +53,16 @@ Les modules (générateurs, fiches, dessins d'affiches, `documentFiche`) sont pu
 ## Côté page
 
 - `useFiches()` charge `fiches/index.json` une fois (partagé), puis `fiches/<slug>.json` à la demande.
-- **Index absent** (404, ou réponse HTML d'un serveur de développement sans `public/fiches/`) : état « indisponible »
-  avec un message ; en développement, la commande à lancer. **Index illisible ou d'une autre version** : état « erreur ».
-- **Site sans entrée** (`entrees: []`) : état « vide » (pas une erreur). Un filtre sans résultat : « aucune fiche ne
-  correspond », avec un bouton pour effacer les filtres.
-- Routes : `/telechargements` (grille), `/telechargements/:slug` (page d'une fiche).
+- Pages (plan 13, `src/pages/`) : `FichesPretesView` (`/maths|francais|monde/fiches` : filtres, cartes ou liste), `FichesPretesIndexView`
+  (`/telechargements` : A→Z par matière), `FeuilleView` (`/telechargements/<slug>` : aperçu multipage, Télécharger / Imprimer, même fiche
+  dans d'autres langues, Personnaliser, compétences, voisines). Logique pure : `pages.ts` ; état : `useFichesPage.ts`, `useFeuille.ts` ;
+  impression : `imprimer.ts` (cadre caché sans `sandbox` : Chrome n'affiche pas un PDF dans un cadre à bac à sable).
+- Classes et mode de langue viennent du contexte ; le filtre de langue n'existe qu'en mode bilingue. « Même fiche » = entrées de l'index
+  de même slug de base (`slugDeBase` : le suffixe `-<langues>` vient de l'entrée). Voisines = `voisines` du catalogue, sans la classe.
+- **Index absent** (404, ou réponse HTML d'un serveur de développement sans `public/fiches/`) : état « indisponible » avec un message ;
+  en développement, la commande à lancer. **Illisible ou d'une autre version** : état « erreur ». **Site sans entrée** : état « vide »
+  (pas une erreur). Un filtre sans résultat : « aucune fiche avec ces filtres », avec un bouton pour tout réinitialiser.
 
 ## Hors périmètre pour l'instant
 
-Pas de sitemap, `robots.txt`, `404.html`, manifeste, image de partage ni JSON-LD, pas de page HTML par fiche : si
-l'accessibilité ou le référencement l'exigent, on les produira plus tard à partir de ces JSON.
+Pas d'image de partage dédiée au site (les pages d'accueil partagent `icone-512.png`, celles des fiches leur miniature).

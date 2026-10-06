@@ -140,21 +140,12 @@ Base saine en TypeScript (plan 11, branche `base-saine`) ; l'ancien code est dé
 
 ### Fiches PDF toutes prêtes
 
-`npm run build:ecoleprimaire` et `npm run build:skoolik` construisent le site puis lancent
-`scripts/telechargements.mjs`. Ce script ouvre le site dans Chrome sans interface (playwright-core) et
-génère, pour chaque fiche de `src/impression/catalogue.js` (et des fiches de calcul ; pour chaque exercice et
-chaque classe, 4 fiches « bilan » et 2 fiches par compétence du programme, voir `src/impression/exercices.js`) :
-
-- un PDF ;
-- une vignette ;
-- une page statique `telechargements/<fiche>/`, que les moteurs de recherche peuvent indexer.
-
-Les fiches sont générées en parallèle, un onglet de Chrome par cœur (`--travailleurs <n>` pour changer) :
-environ 2 minutes par site. `--exercice <id>` ne génère qu'un exercice, `--sans-exercices` aucun (pour tester).
-
-Il génère aussi l'index des fiches (rangé par domaine du programme, puis « pour apprendre » /
-« pour s'entraîner »), le `sitemap.xml`, le `robots.txt` et la page 404. Chrome est cherché
-aux emplacements habituels, ou via `CHROME_PATH`.
+`npm run build:ecoleprimaire` et `npm run build:skoolik` construisent le site, puis lancent
+`scripts/fiches/commande.ts` (PDF et vignettes, via Chrome sans interface avec playwright-core, et l'index
+`fiches/index.json` + un JSON par fiche) et `scripts/statique/commande.ts` (une page HTML statique
+`telechargements/<slug>/` par fiche, que les moteurs de recherche peuvent indexer, `sitemap.xml`,
+`robots.txt`, page 404, JSON-LD). Chrome est cherché aux emplacements habituels, ou via `CHROME_PATH`.
+`npm run fiches` et `npm run statique` lancent chaque étape seule.
 
 Pour générer les PDF avec une police qu'on n'a pas le droit de redistribuer (Belle Allure, Écolier…),
 déposez-la dans `polices-locales/attache/` : ce dossier n'est pas versionné. Vérifiez la licence avant

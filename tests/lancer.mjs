@@ -49,6 +49,9 @@ if (!process.env.TEST_URL) {
       if (!dossierExistait && !readdirSync(dossierFiches).length) rmSync(dossierFiches, { recursive: true, force: true })
     }
     node('scripts/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')
+    // le site de développement a aussi les fiches d'exemple : son catalogue (fiches voisines, jeu lié) en a besoin (tests/pages-fiches)
+    node('scripts/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT_DEV, '--avec-exemples')
+    node('scripts/statique/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')
   }
   const servir = async (mode, dossier, port) => {
     const s = await preview({ root: racine, mode, build: { outDir: dossier }, preview: { port, strictPort: true }, logLevel: 'warn' })
@@ -65,7 +68,7 @@ if (!process.env.TEST_URL) {
 // La base : tests node (sites, langues, définitions, noyau, exercices, affiches, réponses, instantanés, fiches) puis pages dans
 // Chrome (pages de la base, jeu et fiche des exemples). Les tests de l'ancien code sont dans tests/ancien/, hors de cette liste.
 const fichiers = ['sites', 'langues', 'contexte', 'definir', 'noyau', 'exercices', 'affiches-modele', 'reponses', 'instantanes', 'ressources', 'recherche', 'production',
-  'fiches', 'base', 'navigation', 'fiches-fumee', 'jeu-dev', 'dev-affiche', 'composants', 'accessibilite']
+  'fiches', 'base', 'navigation', 'fiches-pages', 'pages-fiches', 'statique', 'statique-fumee', 'jeu-dev', 'dev-affiche', 'composants', 'accessibilite', 'pages-recherche', 'programme-page', 'pages-programme', 'pages-shell', 'recents', 'pages-pages']
 // chaque fichier finit par process.exit(nbEchecs() ? 1 : 0) : on ne lit que son code de sortie (exception, échec
 // d'une vérification ou signal comptent comme un échec)
 const lancer = f => new Promise(ok => {

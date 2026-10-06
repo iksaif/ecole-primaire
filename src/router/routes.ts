@@ -18,28 +18,30 @@ declare module 'vue-router' {
 }
 
 const aVenir = () => import('../pages/AVenirView.vue')
+const matiere = () => import('../pages/Matiere.vue')
+const fiches = () => import('../pages/FichesPretesView.vue')
 const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
 
 /** Les routes de l'application, hors pages de développement, exercices et page introuvable. `regionales` : langues régionales du site. */
 export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
   return [
-    { path: '/', component: () => import('../pages/AccueilView.vue'), meta: { titre: 'routeur.titre.accueil' } },
-    { path: '/maths', component: aVenir, meta: { titre: 'routeur.titre.maths' } },
-    { path: '/francais', component: aVenir, meta: { titre: 'routeur.titre.francais' } },
-    { path: '/monde', component: aVenir, meta: { titre: 'routeur.titre.monde' } },
+    { path: '/', component: () => import('../pages/Accueil.vue'), meta: { titre: 'routeur.titre.accueil' } },
+    { path: '/maths', component: matiere, meta: { titre: 'routeur.titre.maths' } },
+    { path: '/francais', component: matiere, meta: { titre: 'routeur.titre.francais' } },
+    { path: '/monde', component: matiere, meta: { titre: 'routeur.titre.monde' } },
     ...regionales.map((l): RouteRecordRaw => ({
-      path: cheminRegional(l), component: () => import('../pages/LangueRegionaleView.vue'), meta: { titreLibre: majuscule(LANGUES[l].nomLocal) },
+      path: cheminRegional(l), component: () => import('../pages/LangueRegionale.vue'), meta: { titreLibre: majuscule(LANGUES[l].nomLocal) },
     })),
     // ancienne adresse de la page de la langue régionale
     { path: '/langue-regionale', redirect: to => ({ path: regionales[0] ? cheminRegional(regionales[0]) : '/', query: to.query, hash: to.hash }) },
-    { path: '/maths/fiches', component: aVenir, meta: { titre: 'routeur.titre.fichesMaths' } },
-    { path: '/francais/fiches', component: aVenir, meta: { titre: 'routeur.titre.fichesFrancais' } },
-    { path: '/monde/fiches', component: aVenir, meta: { titre: 'routeur.titre.fichesMonde' } },
+    { path: '/maths/fiches', component: fiches, props: { matiere: 'maths' }, meta: { titre: 'routeur.titre.fichesMaths' } },
+    { path: '/francais/fiches', component: fiches, props: { matiere: 'francais' }, meta: { titre: 'routeur.titre.fichesFrancais' } },
+    { path: '/monde/fiches', component: fiches, props: { matiere: 'monde' }, meta: { titre: 'routeur.titre.fichesMonde' } },
     // fiches PDF toutes prêtes : lues dans fiches/index.json et fiches/<slug>.json (src/telechargements/README.md)
-    { path: '/telechargements', component: () => import('../views/Telechargements.vue'), meta: { titre: 'nav.telechargements' } },
-    { path: '/telechargements/:slug', component: () => import('../views/TelechargementsFiche.vue'), meta: { titre: 'routeur.titre.fiche' } },
-    { path: '/programme', component: aVenir, meta: { titre: 'routeur.titre.programme' } },
-    { path: '/competence/:id', component: aVenir, meta: { titre: 'routeur.titre.competence' } },
+    { path: '/telechargements', component: () => import('../pages/FichesPretesIndexView.vue'), meta: { titre: 'fichesPretes.titreIndex' } },
+    { path: '/telechargements/:slug', component: () => import('../pages/FeuilleView.vue'), meta: { titre: 'routeur.titre.fiche' } },
+    { path: '/programme', component: () => import('../pages/ProgrammeView.vue'), meta: { titre: 'routeur.titre.programme' } },
+    { path: '/competence/:id', component: () => import('../pages/CompetenceView.vue'), meta: { titre: 'routeur.titre.competence' } },
     { path: '/parametres', component: () => import('../pages/ReglagesView.vue'), meta: { titre: 'nav.reglages' } },
     { path: '/about', component: () => import('../pages/AProposView.vue'), meta: { titre: 'nav.apropos' } },
     { path: '/nouveautes', component: () => import('../pages/NouveautesView.vue'), meta: { titre: 'nav.nouveautes' } },

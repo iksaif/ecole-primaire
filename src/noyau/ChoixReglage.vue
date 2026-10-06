@@ -38,9 +38,9 @@
 </template>
 
 <script setup lang="ts">
-// textes : catalogue commun (bonus, horsProgramme) ; marques lues dans la définition (src/noyau/reglages.ts)
+// textes : section `communs` (bonus, horsProgramme) ; marques lues dans la définition (src/noyau/reglages.ts)
 import { computed } from 'vue'
-import { useI18n } from '../i18n'
+import { useLangue } from '../langues/useLangue.ts'
 import { estBonus, raisonHorsProgramme, valeursDe } from './reglages.ts'
 import type { DefinitionExercice, Reglages, ValeurOption, ValeurReglage } from './types.ts'
 
@@ -70,7 +70,7 @@ defineSlots<{
   // aide sous les boutons
   default?(): unknown
 }>()
-const { t } = useI18n()
+const { t } = useLangue()
 
 const liste = computed(() => props.valeurs ?? valeursDe(props.definition, props.niveau, props.cle))
 // rangées de boutons : une seule, ou une par groupe (props.groupes)
@@ -79,9 +79,9 @@ const sections = computed(() => (props.groupes
   : [{ titre: '', valeurs: liste.value }]))
 const choisies = computed(() => (Array.isArray(props.modelValue) ? (props.modelValue as ValeurOption[]) : null))
 const texte = (v: ValeurOption) => (props.libelle ? props.libelle(v) : props.cle === 'niveau' ? String(v).toUpperCase() : String(v))
-// « bonus » ou « hors programme » (clé du catalogue commun), sinon null
-const marque = (v: ValeurOption) => (estBonus(props.definition, props.niveau, props.cle, v) ? 'bonus'
-  : raisonHorsProgramme(props.definition, props.niveau, props.cle, v) ? 'horsProgramme' : null)
+// « bonus » ou « hors programme » (clé de la section `communs`), sinon null
+const marque = (v: ValeurOption) => (estBonus(props.definition, props.niveau, props.cle, v) ? 'communs.bonus' as const
+  : raisonHorsProgramme(props.definition, props.niveau, props.cle, v) ? 'communs.horsProgramme' as const : null)
 const actif = (v: ValeurOption) => (choisies.value ? choisies.value.includes(v) : props.modelValue === v)
 
 function choisir(v: ValeurOption) {

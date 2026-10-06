@@ -10,7 +10,7 @@
   -->
   <div class="config-box large">
     <div class="config-section" data-reglage="variante">
-      <div class="config-section-title">{{ t('version') }}</div>
+      <div class="config-section-title">{{ t('formulaireAffiche.version') }}</div>
       <div class="btn-group">
         <button v-for="(v, id) in definition.variantes" :key="id" class="level-btn" :data-valeur="id"
           :class="{ active: config.variante === id }" @click="config = reglagesApresVariante(definition, config, id)">
@@ -25,49 +25,49 @@
           :model-value="valeur(e.cle)" :titre="T(cleReglage(e.cle))" :libelle="v => T(cleValeur(e.cle, v))"
           @update:model-value="changer(e.cle, $event)"><p v-if="aide(e.cle)" class="aide-reglage">{{ aide(e.cle) }}</p></ChoixReglage>
 
-        <GroupeReglages v-else-if="e.sorte === 'langues'" id="langues" :titre="t('langues')" :aide="aide('langues')">
+        <GroupeReglages v-else-if="e.sorte === 'langues'" id="langues" :titre="t('formulaireAffiche.langues')" :aide="aide('langues')">
           <div class="btn-group" data-reglage="langues">
             <button v-for="l in definition.langues" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langues.includes(l) }"
               @click="basculerLangue(l)">{{ l.toUpperCase() }}</button>
           </div>
         </GroupeReglages>
 
-        <GroupeReglages v-else-if="e.sorte === 'polices'" id="polices" :titre="t('polices')" :aide="aide('polices')">
-          <ChoixPolice v-if="definition.police.mode === 'unique'" v-model="config.polices.unique" :libelle="t('policeTexte')" />
+        <GroupeReglages v-else-if="e.sorte === 'polices'" id="polices" :titre="t('formulaireAffiche.polices')" :aide="aide('polices')">
+          <ChoixPolice v-if="definition.police.mode === 'unique'" v-model="config.polices.unique" :libelle="t('formulaireAffiche.policeTexte')" />
           <ChoixPolice v-for="(type, i) in typesParType" v-else :key="type" v-model="config.polices[type]" :type="type"
             :libelle="T(clePolice(type))" :aide="i === 0" />
         </GroupeReglages>
 
-        <GroupeReglages v-else-if="e.sorte === 'graine'" id="graine" :titre="t('hasard')" :aide="aide('graine')">
-          <button class="btn btn-ghost" data-action="nouvelle" @click="config.graine = graineAleatoire()">{{ t('nouvelle') }}</button>
+        <GroupeReglages v-else-if="e.sorte === 'graine'" id="graine" :titre="t('formulaireAffiche.hasard')" :aide="aide('graine')">
+          <button class="btn btn-ghost" data-action="nouvelle" @click="config.graine = graineAleatoire()">{{ t('formulaireAffiche.nouvelle') }}</button>
         </GroupeReglages>
 
-        <GroupeReglages v-else id="titre" :titre="t('titre')" :aide="aide('titre')">
-          <input v-model="config.titre" class="champ-titre" type="text" :maxlength="LONGUEUR_TITRE" :placeholder="t('titreVide')" data-reglage="titre">
+        <GroupeReglages v-else id="titre" :titre="t('formulaireAffiche.titre')" :aide="aide('titre')">
+          <input v-model="config.titre" class="champ-titre" type="text" :maxlength="LONGUEUR_TITRE" :placeholder="t('formulaireAffiche.titreVide')" data-reglage="titre">
         </GroupeReglages>
       </template>
     </component>
 
     <div class="config-grid">
       <div v-if="!definition.bilingue && definition.langues.length > 1" class="config-section" data-reglage="langue">
-        <div class="config-section-title">{{ t('langue') }}</div>
+        <div class="config-section-title">{{ t('formulaireAffiche.langue') }}</div>
         <div class="btn-group">
           <button v-for="l in definition.langues" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langue === l }"
             @click="config.langue = l; config.langues = [l]">{{ l.toUpperCase() }}</button>
         </div>
       </div>
       <div v-if="definition.formats.length > 1" class="config-section" data-reglage="format">
-        <div class="config-section-title">{{ t('format') }}</div>
+        <div class="config-section-title">{{ t('formulaireAffiche.format') }}</div>
         <div class="btn-group">
           <button v-for="f in definition.formats" :key="f" class="level-btn" :data-valeur="f" :class="{ active: config.format === f }"
             @click="config.format = f">{{ f }}</button>
         </div>
       </div>
       <div class="config-section" data-reglage="orientation">
-        <div class="config-section-title">{{ t('orientation') }}</div>
+        <div class="config-section-title">{{ t('formulaireAffiche.orientation') }}</div>
         <div class="btn-group">
           <button v-for="o in ORIENTATIONS" :key="o" class="level-btn" :data-valeur="o" :class="{ active: config.orientation === o }"
-            @click="config.orientation = o">{{ t(o === 'landscape' ? 'paysage' : 'portrait') }}</button>
+            @click="config.orientation = o">{{ t(o === 'landscape' ? 'formulaireAffiche.paysage' : 'formulaireAffiche.portrait') }}</button>
         </div>
       </div>
     </div>
@@ -84,12 +84,11 @@ import ChoixReglage from './ChoixReglage.vue'
 import GroupeReglages from './GroupeReglages.vue'
 import { usePolices, disponiblesDe } from './polices.ts'
 import { chargerReglages, sauvegarder } from '../utils/index.js'
-import { useI18n, contenu } from '../i18n/index.js'
+import { useLangue } from '../langues/useLangue.ts'
 import { graineAleatoire } from '../utils/hasard.ts'
-import { TEXTES_FORMULAIRE_AFFICHE } from './textes.ts'
 import { reglagesDe, reglagesApresVariante, groupesDuFormulaire, commeExercice, ORIENTATIONS, LONGUEUR_TITRE } from '../affiches/outils.ts'
 import { genererAffiche } from '../affiches/generer.ts'
-import { cleVariante, cleReglage, cleValeur, cleGroupe, cleAide, clePolice } from '../affiches/textes.ts'
+import { cleVariante, cleReglage, cleValeur, cleGroupe, cleAide, clePolice, traducteurAffiche } from '../affiches/textes.ts'
 import type { ModuleAffiche, TypePolice } from '../affiches/types.ts'
 import type { Reglages, ValeurReglage } from './types.ts'
 
@@ -98,7 +97,7 @@ const props = withDefaults(defineProps<{
   // réglages donnés par le lien : ils l'emportent sur ceux mémorisés
   depart?: Record<string, unknown>
 }>(), { depart: () => ({}) })
-const { t } = useI18n(TEXTES_FORMULAIRE_AFFICHE)
+const { t } = useLangue()
 const definition = props.module.definition
 const choix = commeExercice(definition)
 
@@ -113,7 +112,7 @@ const changer = (cle: string, v: ValeurReglage): void => { (config.value as Regl
 watch(() => ({ ...config.value }), c => { if (JSON.stringify(reglagesDe(definition, c)) !== JSON.stringify(c)) config.value = reglagesDe(definition, c) }, { deep: true })
 
 // textes de l'affiche, dans la langue de l'affiche (titres des réglages, noms des variantes)
-const T = (cle: string): string => contenu(props.module.textes, config.value.langue).t(cle)
+const T = (cle: string): string => traducteurAffiche(props.module.textes, config.value.langue)(cle)
 const aide = (cle: string): string => { const a = T(cleAide(cle)); return a === cleAide(cle) ? '' : a }
 const groupes = computed(() => groupesDuFormulaire(definition, config.value))
 const typesParType = computed<readonly TypePolice[]>(() => (definition.police.mode === 'parType' ? definition.police.types : []))

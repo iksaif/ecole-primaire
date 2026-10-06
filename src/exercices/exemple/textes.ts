@@ -1,8 +1,24 @@
-// Exemple d'exercice — textes, par langue, lus avec T(cle, params) : T est fourni au générateur et à la fiche, `t` à la vue.
-// Ici un seul catalogue (interface et contenu) : l'exercice n'a pas de corpus. Avec des énoncés, des noms ou des phrases
-// (ce qu'on ne veut pas mélanger aux textes de l'interface), un second catalogue de contenu : voir heure/textes.js.
-// Les textes se trouvent dans src/i18n/<langue>/ ; `npm run i18n` vérifie que fr et br ont les mêmes clés.
-import interfaceFr from '../../i18n/fr/views/dev/ExempleView.js'
-import interfaceBr from '../../i18n/br/views/dev/ExempleView.js'
+// Exemple d'exercice — textes de CONTENU : ce que la fiche et les énoncés écrivent. Le générateur et la fiche les lisent avec
+// T(cle, params) ; la vue les passe par `traducteur(CONTENU, …)`. Les textes de l'INTERFACE (boutons, réglages, jeu) sont dans
+// src/langues/<langue>/textes/exemple.ts (section `exemple`, lue par `t('exemple.titre')`) ; les mots communs (« corrige »…)
+// dans la section `communs`, que T lit aussi.
+//
+// `catalogue(français, { br })` : le français est la source ; le breton doit avoir exactement les mêmes clés, des pluriels pour
+// des pluriels (une clé manquante ou en trop ne compile pas). Chaque texte breton nouveau : `// br: à relire`.
+// Un exercice dont le contenu n'a pas de breton (français, corpus) : `catalogue({ … })` seul, voir exemple-corpus/textes.ts.
+import { catalogue } from '../../langues/catalogue.ts'
 
-export const TEXTES = { fr: interfaceFr, br: interfaceBr }
+export const CONTENU = catalogue({
+  titre: 'Suites de nombres',
+  // pluriel selon n (Intl.PluralRules) : un texte { one, other } ; en breton, `other` suffit
+  consigneFiche: { one: 'Complète la suite de nombres.', other: 'Complète les {n} suites de nombres.' },
+  regleFiche: 'on change de',
+  corrigeRegle: 'de {pas} en {pas}',
+}, {
+  br: {
+    titre: 'Heuliadoù niveroù', // br: à relire
+    consigneFiche: { one: 'Klok an heuliad niveroù.', other: 'Klok an {n} heuliad niveroù.' }, // br: à relire
+    regleFiche: 'cheñchet e vez a', // br: à relire
+    corrigeRegle: 'a {pas} e {pas}', // br: à relire
+  },
+})

@@ -11,7 +11,7 @@ Lire dans cet ordre, chaque fichier commente ses choix :
 | `definition.ts` | niveaux, compétences, réglages (`choix`, `cases`, bonus, hors programme), fiches par compétence |
 | `generateur.ts` | questions (hasard `rng`), `verifier` (verdict `{ ok, nuance }`), `ecartsAuProgramme`, pur |
 | `fiche.ts` | mise en page de la fiche (`documentFiche`, corrigé), pure |
-| `textes.ts` | catalogues fr et br (`src/i18n/<langue>/views/dev/ExempleView.js`) |
+| `textes.ts` | catalogue de **contenu** fr + br (`catalogue(…)` : consigne de fiche, corrigé) ; l'interface est la section `exemple` de `src/langues/<langue>/textes/` |
 | `src/views/dev/ExempleView.vue` | la vue, mince : réglages, jeu, fiche |
 
 Ce que l'exemple montre : plusieurs niveaux avec réglages par niveau (`herite`) ; un choix multiple de **nombres**

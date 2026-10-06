@@ -39,6 +39,11 @@ export type NomsParams<F> = F extends string ? ParamsDeTexte<F>
   : F extends { other: infer O extends string } ? 'n' | ParamsDeTexte<O>
   : never
 
+/** Clés (chemins) dont la feuille est un texte ou un pluriel, pas une liste. */
+export type CleTexteDe<S> = { [C in Chemins<S>]: FeuilleA<S, C> extends readonly string[] ? never : C }[Chemins<S>]
+/** Clés (chemins) dont la feuille est une liste de textes. */
+export type CleListeDe<S> = { [C in Chemins<S>]: FeuilleA<S, C> extends readonly string[] ? C : never }[Chemins<S>]
+
 export type ValeurParam = string | number
 
 /** Arguments de `t(cle, …)` : les paramètres du texte, absents si le texte n'en a pas. */

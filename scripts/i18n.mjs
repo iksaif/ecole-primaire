@@ -109,6 +109,41 @@ for (const m of modules) {
   console.log(`${sections.length} sections typées (src/langues), ${nbTypes} textes ; ${nbTypesRelire} marqués « à relire »`)
 }
 
+// ── Catalogues de contenu des exercices (src/exercices/<id>/textes.ts, `catalogue(…)` de src/langues/catalogue.ts) ──
+// Le compilateur vérifie déjà les clés du breton contre le français ; ici on compte les passages « à relire » (clé marquée
+// sur sa ligne, dans le bloc `br: { … }`) et on ajoute les textes au tableau de relecture. Sans bloc `br`, rien à relire.
+{
+  const dossierExercices = join(racine, 'src/exercices')
+  let nbContenu = 0, nbContenuRelire = 0, nbCatalogues = 0
+  for (const id of readdirSync(dossierExercices).sort()) {
+    const f = join(dossierExercices, id, 'textes.ts')
+    let source
+    try { source = readFileSync(f, 'utf8') } catch { continue }
+    if (!/catalogue\(/.test(source)) continue
+    const cat = Object.values(await import(pathToFileURL(f))).find(v => v?.sorte === 'catalogue')
+    if (!cat) continue
+    nbCatalogues++
+    const feuillesDe = (o, pre = '') => Object.entries(o).flatMap(([k, v]) =>
+      typeof v === 'string' || Array.isArray(v) || (v && typeof v === 'object' && 'other' in v) ? [[pre + k, v]] : feuillesDe(v, `${pre}${k}.`))
+    const fr = new Map(feuillesDe(cat.source)), br = new Map(feuillesDe(cat.traductions[AUTRE] ?? {}))
+    const bloc = source.slice(Math.max(0, source.search(/\bbr:\s*\{/)))
+    const marquees = new Set(cat.traductions[AUTRE] ? [...bloc.matchAll(/^\s*(['"]?)([\w'-]+)\1:.*br: à relire/gm)].map(m => m[2]) : [])
+    if (br.size && ([...fr.keys()].some(k => !br.has(k)) || [...br.keys()].some(k => !fr.has(k)))) { problemes++; console.log(`✗ exercices/${id}/textes.ts : clés du breton différentes du français`) }
+    nbContenu += fr.size
+    for (const k of br.keys()) if (marquees.has(k.split('.')[0])) nbContenuRelire++
+    if (relecture) {
+      lignesHtml.push(`<tr class="module"><th colspan="4">contenu : ${echapper(id)}</th></tr>`)
+      for (const [k, v] of fr) {
+        const relire = marquees.has(k.split('.')[0])
+        lignesHtml.push(`<tr${relire ? ' class="relire"' : ''}><td><code>${echapper(`${id}.${k}`)}</code></td><td>${echapper(texte(v))}</td>
+<td>${br.has(k) ? echapper(texte(br.get(k))) : '<em>— français seulement —</em>'}</td><td>${relire ? '⚠️' : ''}</td></tr>`)
+      }
+    }
+  }
+  total += nbContenu; nbRelire += nbContenuRelire
+  console.log(`${nbCatalogues} catalogues de contenu d'exercice (src/exercices), ${nbContenu} textes ; ${nbContenuRelire} marqués « à relire »`)
+}
+
 console.log(`\n${modules.length} catalogues, ${total} textes ; ${nbRelire} marqués « à relire » ; ${problemes} problème(s)`)
 
 if (relecture) {

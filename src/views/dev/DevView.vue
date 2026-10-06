@@ -1,49 +1,41 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">Développement</h1>
-    <p class="intro">Cette page et ses exemples n'existent qu'avec <code>npm run dev</code> : rien n'en reste dans le build.</p>
+    <h1 class="section-heading">{{ t('dev.titre') }}</h1>
+    <p class="intro" v-html="t('dev.intro')"></p>
 
-    <h2>Exemples de départ</h2>
+    <h2>{{ t('dev.exemples') }}</h2>
     <ul class="liste">
-      <li v-for="e in EXEMPLES" :key="e.titre">
-        <router-link :to="e.to">{{ e.titre }}</router-link> — {{ e.description }}
+      <li v-for="e in EXEMPLES" :key="e.to">
+        <router-link :to="e.to">{{ t(e.titre) }}</router-link> — {{ t(e.description) }}
         <div class="fichiers">{{ e.fichiers }}</div>
       </li>
     </ul>
 
-    <h2>Documentation</h2>
+    <h2>{{ t('dev.documentation') }}</h2>
     <ul class="liste">
-      <li v-for="d in DOCS" :key="d.fichier"><code>{{ d.fichier }}</code> — {{ d.description }}</li>
+      <li v-for="d in DOCS" :key="d.fichier"><code>{{ d.fichier }}</code> — {{ t(d.description) }}</li>
     </ul>
   </div>
 </template>
 
-<script setup>
-// Page de développement (route /dev, ajoutée par src/router/index.js seulement sous import.meta.env.DEV).
-// Pour ajouter un exemple ou un document : une entrée de plus dans EXEMPLES ou DOCS.
-const EXEMPLES = [
-  {
-    titre: 'Exemple d\'exercice simple',
-    to: '/dev/exemple',
-    description: 'une suite de nombres à compléter : niveaux, bonus, hors programme, fiche par compétence, jeu et fiche imprimable ; un seul catalogue de textes',
-    fichiers: 'src/exercices/exemple/ et src/views/dev/ExempleView.vue',
-  },
-  {
-    titre: 'Exemple d\'exercice à corpus',
-    to: '/dev/exemple-corpus',
-    description: 'les synonymes : exercice de français (contenu toujours en français), corpus dans src/data/, QCM, textes d\'interface à part',
-    fichiers: 'src/exercices/exemple-corpus/, src/data/exemple-corpus.ts et src/views/dev/ExempleCorpusView.vue',
-  },
-  {
-    titre: 'Exemple d\'affiche',
-    to: '/dev/affiches?affiche=exemple',
-    description: 'la bande numérique : variantes MS et GS, options, formulaire générique, impression A4 / A3',
-    fichiers: 'src/affiches/exemple/ et src/views/dev/AfficheDevView.vue',
-  },
+<script setup lang="ts">
+// Page de développement (route /dev, ajoutée par src/router/index.ts seulement sous import.meta.env.DEV).
+// Pour ajouter un exemple ou un document : une entrée de plus dans EXEMPLES ou DOCS, et ses textes dans la section `dev`.
+import { useLangue } from '../../langues/useLangue.ts'
+import type { CleTexte } from '../../langues/traduire.ts'
+
+type CleDev = Extract<CleTexte, `dev.${string}`>
+
+const { t } = useLangue()
+const EXEMPLES: { titre: CleDev, to: string, description: CleDev, fichiers: string }[] = [
+  { titre: 'dev.exerciceSimpleTitre', to: '/dev/exemple', description: 'dev.exerciceSimpleDescription', fichiers: 'src/exercices/exemple/ et src/views/dev/ExempleView.vue' },
+  { titre: 'dev.exerciceCorpusTitre', to: '/dev/exemple-corpus', description: 'dev.exerciceCorpusDescription',
+    fichiers: 'src/exercices/exemple-corpus/, src/data/exemple-corpus.ts et src/views/dev/ExempleCorpusView.vue' },
+  { titre: 'dev.afficheTitre', to: '/dev/affiches?affiche=exemple', description: 'dev.afficheDescription', fichiers: 'src/affiches/exemple/ et src/views/dev/AfficheDevView.vue' },
 ]
-const DOCS = [
-  { fichier: 'src/exercices/README.md', description: 'créer un exercice (npm run nouveau -- exercice <id> "<Titre>" --modele simple|corpus, ou copier un exemple)' },
-  { fichier: 'src/affiches/README.md', description: 'créer une affiche (npm run nouveau -- affiche <id> "<Titre>", ou copier exemple/)' },
+const DOCS: { fichier: string, description: CleDev }[] = [
+  { fichier: 'src/exercices/README.md', description: 'dev.docExercice' },
+  { fichier: 'src/affiches/README.md', description: 'dev.docAffiche' },
 ]
 </script>
 

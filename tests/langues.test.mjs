@@ -5,6 +5,10 @@ import { LANGUES, CODES, REGIONALES, estLangue, estRegionale, regles, nomDeLangu
 import { traduire, traduireListe, contenu } from '../src/langues/traduire.ts'
 import { enLettresFr } from '../src/langues/fr/nombres.ts'
 import { enLettresBr } from '../src/langues/br/nombres.ts'
+import { catalogue, traducteur, contenuDe, estCatalogue, languesDe } from '../src/langues/catalogue.ts'
+import { DOMAINES } from '../src/data/programme.ts'
+import { CONTENU as CONTENU_EXEMPLE } from '../src/exercices/exemple/textes.ts'
+import { CONTENU as CONTENU_CORPUS } from '../src/exercices/exemple-corpus/textes.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 console.log('Registre des langues')
@@ -51,6 +55,30 @@ verifier(contenu('br').t('nav.accueil') === 'Degemer' && contenu('br').langue ==
 // pluriel breton : Intl.PluralRules('br') donne one / two / few / many / other
 const rb = new Intl.PluralRules('br')
 verifier([1, 2, 3, 1000000, 5].map(n => rb.select(n)).join() === 'one,two,few,many,other', 'breton : formes de pluriel one, two, few, many, other')
+
+console.log('Catalogues de contenu des exercices')
+const cat = catalogue({ titre: 'Suites', n: { one: 'une', other: '{n} suites' }, liste: ['a', 'b'] }, { br: { titre: 'Heuliadoù', n: { one: 'un', other: '{n} heuliad' }, liste: ['c', 'd'] } })
+verifier(estCatalogue(cat) && languesDe(cat).join() === 'fr,br', 'catalogue : fr et br')
+verifier(traducteur(cat, 'br')('titre') === 'Heuliadoù' && traducteur(cat, 'fr')('titre') === 'Suites', 'catalogue : texte par langue')
+verifier(traducteur(cat, 'fr')('n', { n: 1 }) === 'une' && traducteur(cat, 'br')('n', { n: 5 }) === '5 heuliad', 'catalogue : pluriel')
+verifier(traducteur(cat, 'fr')('corrige') === 'Corrigé' && traducteur(cat, 'br')('corrige') === 'Reizhadenn', 'catalogue : mots communs (section communs)')
+verifier(traducteur(cat, 'fr')('absente') === 'absente', 'catalogue : clé absente rendue telle quelle')
+verifier(contenuDe(cat, 'br').liste('liste').join() === 'c,d', 'catalogue : liste')
+const frSeul = catalogue({ titre: 'Seul' })
+verifier(languesDe(frSeul).join() === 'fr' && traducteur(frSeul, 'br')('titre') === 'Seul', 'catalogue français seulement : le français sert à toutes les langues')
+let langueSuivie = 'fr'
+const suivi = traducteur(cat, () => langueSuivie)
+langueSuivie = 'br'
+verifier(suivi('titre') === 'Heuliadoù', 'catalogue : langue relue à chaque appel')
+verifier(languesDe(CONTENU_CORPUS).join() === 'fr' && languesDe(CONTENU_EXEMPLE).join() === 'fr,br', 'exemples : corpus en français seulement, exemple traduit')
+// chaque clé T('…') écrite en dur dans le générateur ou la fiche d'un exemple existe (T ne se vérifie pas à la compilation)
+for (const [dossier, c] of [['exemple', CONTENU_EXEMPLE], ['exemple-corpus', CONTENU_CORPUS]]) {
+  const T = traducteur(c, 'fr')
+  const cles = ['generateur', 'fiche'].flatMap(f => [...readFileSync(new URL(`../src/exercices/${dossier}/${f}.ts`, import.meta.url), 'utf8').matchAll(/\bT\('([\w.]+)'/g)].map(m => m[1]))
+  const absentes = [...new Set(cles)].filter(k => T(k) === k)
+  verifier(cles.length > 0 && !absentes.length, `${dossier} : ${new Set(cles).size} clés T('…') connues${absentes.length ? ` — absentes : ${absentes}` : ''}`)
+}
+verifier(DOMAINES.every(d => traduire('fr', `domaines.${d.id}`) === d.court) && DOMAINES.every(d => traduire('br', `domaines.${d.id}`) !== `domaines.${d.id}`), 'noms courts des domaines : identiques à programme.ts, avec un nom breton')
 
 console.log('Marquage « à relire »')
 import { readFileSync, readdirSync } from 'node:fs'

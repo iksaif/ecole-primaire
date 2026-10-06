@@ -27,13 +27,13 @@ import { creerRng, graineAleatoire } from '../utils/hasard.ts'
 import type { Rng } from '../utils/hasard.ts'
 import { lireVerdict } from './reglages.ts'
 import type { Verdict } from './types.ts'
-import { useI18n } from '../i18n/index.js'
+import { useLangue } from '../langues/useLangue.ts'
 
 /** Où en est la partie. */
 export type PhaseJeu = 'config' | 'jeu' | 'resultats'
 /** État d'un retour ou d'une entrée de l'historique : '' (pas encore répondu), 'ok', 'presque' (nuance), 'erreur'. */
 export type EtatJeu = '' | 'ok' | 'presque' | 'erreur'
-/** Clé du message de fin dans le catalogue commun. */
+/** Clé du message de fin, dans la section `communs` du catalogue. */
 export type CleFin = 'resultat100' | 'resultat80' | 'resultat60' | 'resultat40' | 'resultat0'
 
 /** Retour affiché après une réponse (null tant que la question attend sa réponse). */
@@ -67,7 +67,7 @@ export interface OptionsJeu<Q, Rep = unknown> {
 /** Ce que rend useJeu() : l'état de la partie et ses actions (jeu.q, jeu.repondre…). */
 export type Jeu<Q, Rep = unknown> = ReturnType<typeof useJeu<Q, Rep>>
 
-// clé du message de fin (catalogue commun) selon la part de bonnes réponses ; confettis à partir de 80 %
+// clé du message de fin (section `communs`) selon la part de bonnes réponses ; confettis à partir de 80 %
 export function cleFinDe(bonnes: number, total: number): CleFin {
   const pct = total ? (bonnes / total) * 100 : 0
   return pct === 100 ? 'resultat100' : pct >= 80 ? 'resultat80' : pct >= 60 ? 'resultat60' : pct >= 40 ? 'resultat40' : 'resultat0'
@@ -82,7 +82,7 @@ export function useJeu<Q, Rep = unknown>({
   generer, verifier, messageErreur = null, messageNuance = null, surQuestion = null,
   delai = 1600, apresErreur = 'attendre', serie = false,
 }: OptionsJeu<Q, Rep>) {
-  const { t } = useI18n()
+  const { liste } = useLangue()
   const phase = ref<PhaseJeu>('config')
   const questions = ref([]) as Ref<Q[]>
   const index = ref(0)
@@ -136,7 +136,7 @@ export function useJeu<Q, Rep = unknown>({
   function repondre(rep: Rep, infos: Record<string, unknown> = {}) {
     if (repondu.value || !q.value) return false
     const verdict = lireVerdict(verifier(q.value, rep))
-    const bravo = t('bravo')
+    const bravo = liste('communs.bravo')
     const message = verdict.nuance && messageNuance ? messageNuance(q.value, verdict.nuance)
       : verdict.ok ? bravo[Math.floor(Math.random() * bravo.length)] : (messageErreur?.(q.value, rep) ?? '')
     return noter(verdict, rep, infos, message)

@@ -4,6 +4,7 @@
 import { traduire } from '../src/langues/traduire.ts'
 import type { Traductions } from '../src/langues/types.ts'
 import type { Langue } from '../src/langues/registre.ts'
+import { catalogue, contenuDe } from '../src/langues/catalogue.ts'
 
 export function verifications() {
   traduire('fr', 'nav.accueil')
@@ -39,3 +40,24 @@ export const manque = { a: 'un', b: { c: 'x' } } satisfies Traductions<Source>
 export const enTrop = { a: 'un', z: 'trop', b: { c: 'x', d: { other: 'y' } } } satisfies Traductions<Source>
 // @ts-expect-error un pluriel doit rester un pluriel
 export const forme = { a: 'un', b: { c: 'x', d: 'pas un pluriel' } } satisfies Traductions<Source>
+
+// Catalogue de contenu d'un exercice : français seul, ou avec une traduction qui doit suivre le français
+export const frSeul = catalogue({ titre: 'a', consigne: { one: 'x', other: 'y {n}' } })
+export const avecBr = catalogue({ titre: 'a', corrige: 'c {pas}' }, { br: { titre: 'b', corrige: 'd {pas}' } })
+// @ts-expect-error clé manquante dans la traduction
+catalogue({ titre: 'a', autre: 'b' }, { br: { titre: 'x' } })
+// @ts-expect-error clé en trop dans la traduction
+catalogue({ titre: 'a' }, { br: { titre: 'x', trop: 'y' } })
+// @ts-expect-error un pluriel doit rester un pluriel
+catalogue({ n: { one: 'a', other: 'b' } }, { br: { n: 'pas un pluriel' } })
+// @ts-expect-error langue hors registre
+catalogue({ titre: 'a' }, { de: { titre: 'x' } })
+export function contenuTypé() {
+  contenuDe(frSeul, 'fr').t('titre')
+  contenuDe(frSeul, 'fr').t('consigne', { n: 3 })
+  contenuDe(avecBr, 'br').t('corrige', { pas: 2 })
+  // @ts-expect-error clé inconnue du catalogue
+  contenuDe(frSeul, 'fr').t('inconnue')
+  // @ts-expect-error paramètre manquant
+  contenuDe(avecBr, 'fr').t('corrige')
+}

@@ -1,4 +1,4 @@
-// Les textes de l'affiche d'exemple, par langue de l'affiche, lus avec T(clé) (src/i18n/index.js, `contenu`). Les clés
+// Les textes de l'affiche d'exemple, par langue de l'affiche, lus avec T(clé) (`traducteurAffiche`, src/affiches/textes.ts). Les clés
 // suivent la convention de src/affiches/textes.ts (titre, variante.<id>.court…, reglage.<cle>, valeur.<cle>.<valeur>,
 // groupe.<id>, aide.<cle>). Les variantes sont calculées : leurs textes aussi. Une langue sans traduction retombe sur le
 // français. Breton : chaque texte est à faire relire.

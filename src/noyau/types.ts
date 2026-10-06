@@ -9,6 +9,7 @@
 import type { Classe } from '../data/classes.ts'
 import type { CompetenceId, DomaineId, Contraintes } from '../data/programme.ts'
 import type { Rng } from '../utils/hasard.ts'
+import type { CatalogueContenu } from '../langues/catalogue.ts'
 
 export type { Classe, CompetenceId, DomaineId, Contraintes, Rng }
 
@@ -135,8 +136,11 @@ export interface ParamsFiche<R extends Reglages = Reglages, F = unknown> {
   cssPolices?: string
 }
 
-/** Catalogues de textes d'un exercice par langue (interface et contenu), lus par T. */
-export type TextesExercice = Record<string, Record<string, unknown>>
+/**
+ * Catalogue de CONTENU d'un exercice (consignes de fiche, énoncés), lu par T : `catalogue(…)` de src/langues/catalogue.ts.
+ * Les textes de l'interface ne sont pas là : ils sont dans les sections de src/langues/<langue>/textes/.
+ */
+export type TextesExercice = CatalogueContenu
 
 /** Un exercice : sa définition et ses trois modules. Le registre (src/exercices/index.js) le lit tel quel. */
 export interface ModuleExercice<Q = unknown, Rep = unknown, R extends Reglages = Reglages, F = Q[]> {

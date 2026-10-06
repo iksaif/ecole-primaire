@@ -1,12 +1,11 @@
 // Le catalogue des affiches toutes prêtes, dérivé des définitions : une entrée par variante et par ensemble de langues.
 // Données pures, sérialisables (aucune fonction) : le build en écrit l'index et un fichier JSON par entrée (plan 11), et
 // l'app les lit. Chaque site ne publie que les entrées dont toutes les langues sont les siennes (catalogueDe).
-import { contenu } from '../i18n/index.js'
 import type { Site } from '../sites.ts'
 import type { Classe, CompetenceId, DomaineId, Reglages } from '../noyau/types.ts'
 import { genererAffiche } from './generer.ts'
 import { ensemblesDeLangues, reglagesDe } from './outils.ts'
-import { cleVariante } from './textes.ts'
+import { cleVariante, traducteurAffiche } from './textes.ts'
 import type { DefinitionAffiche, ModuleAffiche } from './types.ts'
 
 /** Une affiche toute prête du catalogue. */
@@ -46,7 +45,7 @@ export const lienDe = (d: DefinitionAffiche, variante: string, langue: string, l
 export function entreesDe<R extends Reglages>(module: ModuleAffiche<R>): EntreeAffiche[] {
   const d = module.definition as DefinitionAffiche
   return Object.entries(d.variantes).flatMap(([id, v]) => ensemblesDeLangues(d).map(langues => {
-    const T = contenu(module.textes, langues[0]).t
+    const T = traducteurAffiche(module.textes, langues[0])
     const config = { variante: id, langues }
     return {
       slug: slugDe(d, id, langues),

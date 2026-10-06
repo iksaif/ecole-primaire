@@ -12,7 +12,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { REGISTRE } from '../src/exercices/index.js'
 import { REGISTRE_DEV } from '../src/exercices/dev.ts'
-import { contenu } from '../src/i18n/index.js'
+import { traducteurExercice } from '../src/exercices/traducteur.ts'
 import { creerRng } from '../src/utils/hasard.js'
 import {
   casDe, empreinte, normaliser, fichierInstantanes, lireInstantanes, ecrireInstantanes, ecrireHtml, fichierHtml, DOSSIER_HTML,
@@ -28,7 +28,7 @@ const retenu = cle => cle.startsWith(prefixe)
 
 // HTML d'un cas : exactement ce que la vue met dans l'aperçu (avant les options prénom/corrigé du cadre)
 function htmlDe({ generateur, fiche, textes }, { niveau, reglages, graine, langue }) {
-  const T = contenu(textes, langue).t
+  const T = traducteurExercice(textes, langue)
   const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T })
   return fiche.fiche({ questions, reglages, T, langue })
 }

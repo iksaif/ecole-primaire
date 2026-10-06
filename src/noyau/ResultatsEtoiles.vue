@@ -7,33 +7,33 @@
     Étoiles : 5 = sans faute, 4 ≥ 80 %, 3 ≥ 60 %, 2 ≥ 40 %, 1 sinon (le message « on va s'entraîner » commence sous 60 %).
   -->
   <div class="exercise-box resultats-etoiles">
-    <div class="result-score" :aria-label="t('scoreSur', { bonnes, total })">{{ bonnes }} / {{ total }}</div>
+    <div class="result-score" :aria-label="t('communs.scoreSur', { bonnes, total })">{{ bonnes }} / {{ total }}</div>
     <div class="result-msg">{{ message }}</div>
-    <div class="etoiles" :aria-label="t('etoilesSur', { n: etoiles })">
+    <div class="etoiles" :aria-label="t('communs.etoilesSur', { n: etoiles })">
       <span v-for="i in 5" :key="i" aria-hidden="true">{{ i <= etoiles ? '⭐' : '☆' }}</span>
     </div>
     <div class="btn-group actions">
-      <button class="btn btn-primary" @click="$emit('rejouer')">{{ t('rejouer') }}</button>
-      <button class="btn btn-ghost" @click="$emit('reglages')">{{ t('parametres') }}</button>
+      <button class="btn btn-primary" @click="$emit('rejouer')">{{ t('communs.rejouer') }}</button>
+      <button class="btn btn-ghost" @click="$emit('reglages')">{{ t('communs.parametres') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// textes : catalogue commun (rejouer, parametres, scoreSur, etoiles5…etoilesSur)
+// textes : section `communs` (rejouer, parametres, scoreSur, etoiles5…etoilesSur)
 import { computed } from 'vue'
-import { useI18n } from '../i18n'
+import { useLangue } from '../langues/useLangue.ts'
 
 const props = defineProps<{
   bonnes: number
   total: number
 }>()
 defineEmits<{ rejouer: [], reglages: [] }>()
-const { t } = useI18n()
+const { t } = useLangue()
 
 const part = computed(() => (props.total ? props.bonnes / props.total : 0))
 const etoiles = computed(() => (part.value === 1 ? 5 : part.value >= 0.8 ? 4 : part.value >= 0.6 ? 3 : part.value >= 0.4 ? 2 : 1))
-const message = computed(() => t(etoiles.value >= 3 ? `etoiles${etoiles.value}` : 'etoiles0'))
+const message = computed(() => t(etoiles.value >= 5 ? 'communs.etoiles5' : etoiles.value === 4 ? 'communs.etoiles4' : etoiles.value === 3 ? 'communs.etoiles3' : 'communs.etoiles0'))
 </script>
 
 <style scoped>

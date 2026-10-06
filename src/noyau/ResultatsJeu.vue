@@ -6,19 +6,19 @@
     Le message (cleFin) et les confettis viennent de useJeu (watch sur la phase).
   -->
   <div class="exercise-box resultats-jeu">
-    <div class="result-score" :aria-label="t('scoreSur', { bonnes, total })">{{ bonnes }} / {{ total }}</div>
-    <div v-if="cleFin" class="result-msg">{{ t(cleFin) }}</div>
+    <div class="result-score" :aria-label="t('communs.scoreSur', { bonnes, total })">{{ bonnes }} / {{ total }}</div>
+    <div v-if="cleFin" class="result-msg">{{ t(`communs.${cleFin}`) }}</div>
     <slot />
     <div class="btn-group actions">
-      <button class="btn btn-primary" @click="$emit('rejouer')">{{ t('rejouer') }}</button>
-      <button class="btn btn-ghost" @click="$emit('reglages')">{{ t('parametres') }}</button>
+      <button class="btn btn-primary" @click="$emit('rejouer')">{{ t('communs.rejouer') }}</button>
+      <button class="btn btn-ghost" @click="$emit('reglages')">{{ t('communs.parametres') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// textes : catalogue commun (resultat100…, rejouer, parametres, scoreSur), partagé avec les vues pas encore migrées
-import { useI18n } from '../i18n'
+// textes : section `communs` (resultat100…, rejouer, parametres, scoreSur), partagé avec les vues pas encore migrées
+import { useLangue } from '../langues/useLangue.ts'
 import type { CleFin } from './useJeu.ts'
 
 withDefaults(defineProps<{
@@ -30,7 +30,7 @@ withDefaults(defineProps<{
 defineEmits<{ rejouer: [], reglages: [] }>()
 defineSlots<{ default?(): unknown }>()
 
-const { t } = useI18n()
+const { t } = useLangue()
 </script>
 
 <style scoped>

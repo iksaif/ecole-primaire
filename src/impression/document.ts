@@ -6,7 +6,8 @@
 // Le contrat avec le cadre (ConfigExercice → appliquerOptionsFiche) ne change pas : le corps contient
 // `${ligneNomDate(langue)}` (→ <p class="entete">) et `<section class="corrige"><h2>…</h2>…</section>` ; le cadre
 // retire ou déplace ces deux parties selon les options de l'utilisateur.
-import { COMMUN } from '../i18n/commun.js'
+import { estLangue, LANGUE_SOURCE } from '../langues/registre.ts'
+import { traduire } from '../langues/traduire.ts'
 import { echapper } from '../utils/html.js'
 
 // Police des fiches : celle choisie dans « Sur la fiche » (ChoixPolice, usePoliceFiche), Andika par défaut (police
@@ -17,9 +18,8 @@ export const POLICE_SCOLAIRE = "'Andika', Arial, sans-serif"
 
 /** Ligne « Prénom : ____  Date : ____ » en haut de la fiche (retirée par le cadre si l'option est décochée). */
 export function ligneNomDate(langue: string): string {
-  const catalogues: Record<string, Record<string, unknown> | undefined> = COMMUN
-  const tr = (cle: string) => catalogues[langue]?.[cle] ?? catalogues.fr?.[cle]
-  return `<p class="entete">${tr('prenom')} : ________________________ &nbsp; ${tr('date')} : ______________</p>`
+  const l = estLangue(langue) ? langue : LANGUE_SOURCE
+  return `<p class="entete">${traduire(l, 'communs.prenom')} : ________________________ &nbsp; ${traduire(l, 'communs.date')} : ______________</p>`
 }
 
 /** Options de `documentFiche`. */

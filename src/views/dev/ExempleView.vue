@@ -1,23 +1,23 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 {{ t('titre') }}</h1>
+    <h1 class="section-heading">🔢 {{ t('exemple.titre') }}</h1>
 
     <!-- Réglages (et fiche imprimable, dans l'autre onglet) : les choix viennent tous de la définition -->
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
-        :titre="t('exercices')" :libelle="e => t(String(e))" />
+        :titre="t('exemple.exercices')" :libelle="e => libelleExercice(e)" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="sens" v-model="config.sens"
-        :titre="t('sens')" :libelle="s => t(String(s))" />
+        :titre="t('exemple.sens')" :libelle="s => libelleSens(s)" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="pas" v-model="config.pas"
-        :titre="t('pas')" :libelle="p => t('deEnDe', { pas: p })" />
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
+        :titre="t('exemple.pas')" :libelle="p => t('exemple.deEnDe', { pas: String(p) })" />
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
 
     <!-- Une question -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <div class="consigne">{{ t(q.type === 'complete' ? 'consigneComplete' : 'consigneRegle') }}</div>
+      <div class="consigne">{{ t(q.type === 'complete' ? 'exemple.consigneComplete' : 'exemple.consigneRegle') }}</div>
       <div class="suite">
         <template v-for="(n, i) in q.termes" :key="i">
           <SaisieReponse v-if="q.type === 'complete' && i === q.trou" v-model="saisie" type="nombre"
@@ -30,8 +30,8 @@
 
       <div class="feedback" :class="etat">{{ retour?.message }}</div>
       <div class="btn-group">
-        <button v-if="!repondu" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
-        <button v-else-if="!retour?.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+        <button v-if="!repondu" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+        <button v-else-if="!retour?.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
       </div>
     </QuestionJeu>
 
@@ -47,7 +47,8 @@
 // Exemple d'exercice — la vue : mince. Elle règle, pose et affiche ; les niveaux, les questions, la correction et la
 // fiche sont dans src/exercices/exemple/. Hors du noyau (src/noyau/), elle n'importe que le site (i18n).
 import { ref } from 'vue'
-import { useI18n, contenu } from '../../i18n'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
@@ -58,24 +59,27 @@ import { useReglages } from '../../noyau/useReglages.ts'
 import { useJeu } from '../../noyau/useJeu.ts'
 import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
 import DEFINITION from '../../exercices/exemple/definition.ts'
-import { TEXTES } from '../../exercices/exemple/textes.ts'
+import { CONTENU } from '../../exercices/exemple/textes.ts'
 import { questions as tirer, questionsFiche, verifier } from '../../exercices/exemple/generateur.ts'
 import type { Question, Reponse } from '../../exercices/exemple/generateur.ts'
 import { fiche as mettreEnPage } from '../../exercices/exemple/fiche.ts'
 
-const { t } = useI18n(TEXTES)
+const { t } = useLangue()
 // Réglages mémorisés, ajustés au changement de niveau (politique commune du noyau). `config` est typé d'après la définition.
 const { config, langueContenu } = useReglages(DEFINITION)
-// T : les textes du contenu, dans la langue du contenu (ici celle de l'interface) ; le générateur et la fiche le reçoivent
-const T = contenu(TEXTES, () => langueContenu.value).t
+// T : les textes du contenu (CONTENU, textes.ts), dans la langue du contenu (ici celle de l'interface) ; le générateur et la fiche le reçoivent
+// Libellés des choix : textes de l'interface (section `exemple`), clé par valeur de réglage
+const libelleExercice = (e: unknown) => t(e === 'regle' ? 'exemple.regle' : 'exemple.complete')
+const libelleSens = (s: unknown) => t(s === 'descend' ? 'exemple.descend' : 'exemple.monte')
+const T = traducteur(CONTENU, () => langueContenu.value)
 
 // ── Jeu ──
 const saisie = ref<number | ''>('')
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => `❌ ${t('laReponse', { attendu: q.attendu })}`,
-  messageNuance: q => `🤏 ${t('presque', { pas: q.pas })}`,
+  messageErreur: q => `❌ ${t('exemple.laReponse', { attendu: q.attendu })}`,
+  messageNuance: q => `🤏 ${t('exemple.presque', { pas: q.pas })}`,
   surQuestion: () => { saisie.value = '' },   // le focus : l'attribut `focus` de SaisieReponse
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu

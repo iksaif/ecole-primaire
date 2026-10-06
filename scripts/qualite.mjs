@@ -8,8 +8,7 @@
 //   brEnDur          littéraux 'br' / "br" dans src/ et scripts/, hors src/i18n/ et src/data/languesRegionales.js
 //                    (tables { fr, br }, `langue === 'br'`, boucles de langues du build…) : objectif 0 (phase 3)
 //   importsBr        fichiers de src/ et scripts/ hors src/i18n/ qui importent un module de i18n/br/
-//                    (seuil 53, relevé de 52 le 2026-10-05 : src/noyau/textes.ts, l'adaptateur du nouveau socle, est le
-//                    seul fichier du noyau qui lit les catalogues ; il remplace les imports des vues quand elles migrent)
+//                    (le noyau, les exemples et scripts/fiches/ lisent le catalogue typé src/langues/ : plus aucun import de ce genre)
 //   niveauxEnTexte   chaînes qui ne sont qu'une liste de classes (« CE1 · CE2 », « CP → CM2 », '^CP → CM2$'),
 //                    hors src/i18n/ : les niveaux doivent être des tableaux (src/data/classes.ts), pas du texte relu
 //   vuesLongues      vues de src/views/ de plus de 600 lignes : objectif 0 (fin de phase 2)

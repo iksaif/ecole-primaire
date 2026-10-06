@@ -14,5 +14,10 @@ import nouveautes from './nouveautes.ts'
 import cadre from './cadre.ts'
 import formulaireAffiche from './formulaireAffiche.ts'
 import telechargements from './telechargements.ts'
+import communs from './communs.ts'
+import domaines from './domaines.ts'
+import exemple from './exemple.ts'
+import exempleCorpus from './exempleCorpus.ts'
+import dev from './dev.ts'
 
-export default { nav, accueil, reglages, langueRegionale, apropos, pied, avis, nouveautes, cadre, formulaireAffiche, telechargements } satisfies Traductions<typeof fr>
+export default { nav, accueil, reglages, langueRegionale, apropos, pied, avis, nouveautes, cadre, formulaireAffiche, telechargements, communs, domaines, exemple, exempleCorpus, dev } satisfies Traductions<typeof fr>

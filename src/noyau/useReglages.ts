@@ -14,7 +14,7 @@
 import { ref, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import { chargerReglages, chargerValeur, sauvegarder } from '../utils/index.js'
-import { langue } from '../i18n/index.js'
+import { langue } from '../langues/etat.ts'
 import { reglagesDuNiveau, reglagesApresNiveau, langueContenuDe } from './reglages.ts'
 import type { Config, DefinitionExercice, Reglages } from './types.ts'
 

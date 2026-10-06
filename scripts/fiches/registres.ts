@@ -6,7 +6,7 @@
 //     fiche de `definition.fiches`, avec NB_VARIANTES tirages (graine fixe, dérivée du slug) ; HTML par
 //     `questionsFiche` puis `fiche`, les mêmes modules purs que l'app.
 // Les exemples (domaine fictif) n'y entrent qu'avec `avecExemples`, jamais en production.
-import { contenu } from '../../src/i18n/index.js'
+import { traducteurExercice } from '../../src/exercices/traducteur.ts'
 import { REGISTRE as AFFICHES } from '../../src/affiches/index.ts'
 import { entreesDe as entreesAffiche, languesDuSite } from '../../src/affiches/catalogue.ts'
 import { site as siteDe } from '../../src/sites.ts'
@@ -56,7 +56,7 @@ const suffixeLangue = (langue: string): string => (langue === 'fr' ? '' : `-${la
 /** Un texte dans les langues d'interface, d'après un catalogue ; le français seul quand les autres langues n'ont pas de version. */
 function texteMulti(textes: TextesAffiche | ModuleExercice['textes'], cle: string, repli: string): Texte {
   const lu = (l: string): string | null => {
-    const v = contenu(textes, l).t(cle)
+    const v = traducteurExercice(textes, l)(cle)
     return v === cle ? null : v
   }
   const fr = lu('fr') ?? repli
@@ -122,7 +122,7 @@ export function avecOptionsParDefaut(html: string): string {
 function htmlFicheExercice(module: ModuleExercice, niveau: Classe, reglagesFiche: Record<string, unknown>, langue: string, graine: number): string {
   const { definition, generateur, fiche, textes } = module
   const reglages = reglagesDuNiveau(definition, { niveau, ...reglagesFiche })
-  const T = contenu(textes, langue).t
+  const T = traducteurExercice(textes, langue)
   const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T })
   return avecOptionsParDefaut(fiche.fiche({ questions, reglages, T, langue, police: POLICE_SCOLAIRE, cssPolices: cssPoliceScolaire() }))
 }

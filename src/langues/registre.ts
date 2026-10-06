@@ -16,7 +16,7 @@ const _verification: { [L in Langue]: LangueDef<Langue> } = LANGUES
 void _verification
 
 /** Langue source de l'interface : celle des textes d'origine et du repli. */
-export const LANGUE_SOURCE: Langue = 'fr'
+export const LANGUE_SOURCE = 'fr' satisfies Langue
 
 /** Les codes, dans l'ordre du registre. */
 export const CODES = Object.keys(LANGUES) as Langue[]

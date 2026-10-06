@@ -17,7 +17,7 @@ src/exercices/<id>/
                   facultatifs, vérifiés par les tests s'ils existent
   fiche.js        pur : fiche({ questions, reglages, T, langue, police, cssPolices }) → documentFiche(…)
                   (src/impression/document.js ; police : usePoliceFiche() dans l'app, Andika par défaut)
-  textes.js       catalogues par langue (interface + contenu), lus avec T(cle, params)
+  textes.ts       catalogue de CONTENU (`catalogue(…)`), lu avec T(cle, params) ; l'interface est dans src/langues/
 src/exercices/index.js   registre (imports statiques : app, node et tests) ; outils.js : reglagesDuNiveau…
 src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <ChoixReglage>, useJeu + <QuestionJeu> +
                          <ResultatsJeu> (+ <TableauCorrection>), useFicheExercice ; rendu d'une question avec
@@ -75,8 +75,20 @@ src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <Choi
    (espace insécable : écrire `'\u00a0'`).
 5. **`fiche.js`** pur : même corps HTML, via `documentFiche({ titre, langue, police, cssPolices, h1, css, largeur, marge })`
    et `ligneNomDate`. Le CSS de base (body, h1) vient de `documentFiche`.
-6. **`textes.js`** : `INTERFACE` et `TEXTES` (interface + contenu, aucune clé commune) ; les catalogues restent dans
-   `src/i18n/<langue>/…`. Les textes communs (bonus, quitter, corrigé…) sont dans `commun.js`.
+6. **Textes**, en deux endroits typés (le français est la source ; une clé manquante ou en trop ne compile pas) :
+   - l'**interface** (titres, réglages, jeu) : une section par exercice dans `src/langues/fr/textes/<id>.ts` et
+     `src/langues/br/textes/<id>.ts` (`satisfies Traductions<typeof fr>`), ajoutée aux deux `index.ts` ; lue dans la
+     vue par `const { t } = useLangue()` puis `t('<id>.titre')`. Les mots communs (valider, niveau, quitter, corrigé…) :
+     section `communs`. Une clé dynamique se règle par une table ou une expression à deux branches, pas par `t(String(x))` ;
+   - le **contenu** (consignes de fiche, énoncés, titre de la fiche) : `textes.ts` de l'exercice exporte
+     `CONTENU = catalogue({ …français… }, { br: { … } })` (`src/langues/catalogue.ts`). Le breton est facultatif et, s'il
+     est donné, doit avoir les mêmes clés (compilateur) ; **sans breton** (exercice de français, contenu toujours en `fr`) :
+     `catalogue({ … })` seul, la fiche reste en français quelle que soit l'interface. Un pluriel est `{ one, other }`.
+     La vue fait `const T = traducteur(CONTENU, () => langueContenu.value)` et le passe au générateur et à la fiche
+     (`T(cle, params)` : untyped, les clés écrites en dur sont vérifiées par `tests/langues.test.mjs` pour les exemples) ;
+     `contenuDe(CONTENU, langue).t('cle')` donne un `t` typé. `T` lit aussi la section `communs` (`T('corrige')`).
+   Le module de l'exercice déclare `textes: CONTENU` (registre `dev.ts`). Chaque texte breton nouveau : `// br: à relire`
+   (`npm run i18n` les compte, contenu compris). Les anciens catalogues `src/i18n/` ne servent plus qu'à l'ancien monde.
 7. **Registre** : 4 lignes dans `index.js`. **`activites.js`** (`niveaux` et compétences par classe depuis la
    définition) et **`impression/exercices.js`** (`classes` depuis `definition.niveaux`, `classes` des fiches depuis
    `definition.fiches`).
@@ -84,7 +96,7 @@ src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <Choi
    - réglages : `const { config, langueContenu } = useReglages(DEFINITION, '<id>_config')` (mémorisation, options du
      niveau et communes, **politique commune au changement de niveau** : choix multiples → défauts du nouveau niveau,
      choix unique gardé s'il est au programme ; pas de `watch` du niveau dans la vue), puis
-     `const T = contenu(TEXTES, () => langueContenu.value).t` ; la clé de mémorisation ne change pas ;
+     `const T = traducteur(CONTENU, () => langueContenu.value)` ; la clé de mémorisation ne change pas ;
    - `<ChoixReglage>` pour le niveau et chaque réglage à choix (`cartes` + `icone` / `description` pour un choix de mode),
      sans `:valeurs` si les valeurs sont dans la définition (`options` du niveau ou communes) ;
    - jeu : `useJeu({ generer: rng => questions({ …, rng }), verifier, messageErreur, delai })` (la graine du jeu est
@@ -96,7 +108,7 @@ src/views/…/<Vue>.vue    mince : useReglages + <ConfigExercice police> + <Choi
      `nextTick` pour le focus) ; `<ResultatsJeu>` + `<TableauCorrection :historique>` (slot `#question` pour un dessin) ;
    - fiche : `const { mode, fiche, nouvelle } = useFicheExercice({ tirer: rng => questionsFiche(…), mettreEnPage:
      (questions, police) => fiche({ …, ...police }) })` et `<ConfigExercice police>` ;
-   - plus de `Math.random`, d'import `i18n/br/`, de `'br'`, de `chargerReglages` / `sauvegarder` / `useGraine` direct.
+   - plus de `Math.random`, d'import `i18n/` (ni `i18n/br/`), de `'br'`, de `chargerReglages` / `sauvegarder` / `useGraine` direct.
 9. **Après** : recapturer, comparer le `<body>` (identique attendu ; la police est dans le `<head>`), justifier et
    regarder en image chaque écart. `npm run lint`, `npm run i18n`, `node tests/exercices.test.mjs`, `npm run qualite`
    (puis `-- --enregistrer`), `npm test` (seul), et un passage dans le navigateur : fr/br, jeu et impression, chaque

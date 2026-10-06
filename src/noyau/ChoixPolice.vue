@@ -8,22 +8,22 @@
   -->
   <div class="choix-police">
     <div class="ligne">
-      <label class="lib">{{ libelle || tt('police') }}</label>
+      <label class="lib">{{ libelle || t('cadre.police') }}</label>
       <select :value="valeur" class="select" @change="valeur = ($event.target as HTMLSelectElement).value">
         <option v-for="p in liste" :key="p.id" :value="p.id">{{ libellePolice(p) }}</option>
       </select>
-      <span class="exemple" :style="{ fontFamily: `'${valeur}'` }">{{ tt(type === 'attache' ? 'exempleAttache' : 'exempleScript') }}</span>
-      <button v-if="estPerso" class="btn-suppr" :title="tt('retirer')" @click="supprimerPolicePerso(valeur)">🗑</button>
+      <span class="exemple" :style="{ fontFamily: `'${valeur}'` }">{{ t(type === 'attache' ? 'cadre.exempleAttache' : 'cadre.exempleScript') }}</span>
+      <button v-if="estPerso" class="btn-suppr" :title="t('cadre.retirer')" @click="supprimerPolicePerso(valeur)">🗑</button>
     </div>
 
     <details v-if="aide" class="aide">
-      <summary>{{ tt('aideTitre') }}</summary>
-      <p v-html="tt('aideTexte')"></p>
+      <summary>{{ t('cadre.aideTitre') }}</summary>
+      <p v-html="t('cadre.aideTexte')"></p>
       <ul>
         <li v-for="l in LIENS_POLICES" :key="l.nom"><a :href="l.url" target="_blank" rel="noopener">{{ l.nom }}</a> — {{ tr({ fr: l.note, br: NOTES_BR[l.nom] ?? l.note }) }}</li>
       </ul>
       <div class="ajout">
-        <label class="btn btn-ghost">{{ tt('ajouterScript') }}
+        <label class="btn btn-ghost">{{ t('cadre.ajouterScript') }}
           <input type="file" accept=".ttf,.otf,.woff,.woff2" hidden @change="ajouter">
         </label>
       </div>
@@ -38,8 +38,7 @@ import { usePolices, disponiblesDe } from './polices.ts'
 import type { PoliceDisponible } from './polices.ts'
 import type { TypePolice } from '../utils/impression.js'
 import { LIENS_POLICES, ajouterPolicePerso, supprimerPolicePerso, policesPerso } from '../utils/impression.js'
-import { useI18n } from '../i18n'
-import { TEXTES_CHOIX_POLICE } from './textes.ts'
+import { useLangue } from '../langues/useLangue.ts'
 
 const props = withDefaults(defineProps<{ type?: TypePolice, modelValue?: string, libelle?: string, aide?: boolean }>(), { type: 'script', modelValue: undefined, libelle: '', aide: true })
 const emit = defineEmits<{ 'update:modelValue': [police: string] }>()
@@ -52,8 +51,10 @@ const valeur = computed({
 })
 const erreur = ref('')
 
-// tt : un nom court pour ne pas masquer d'autres variables « t »
-const { t: tt, tr } = useI18n(TEXTES_CHOIX_POLICE)
+// Textes de l'interface : section `cadre`. `tr` choisit entre des valeurs écrites en dur par langue (les textes ci-dessous,
+// définis en français dans src/utils/impression.js et polices.ts), le français à défaut.
+const { t, langue } = useLangue()
+const tr = (valeurs: Record<string, string>): string => valeurs[langue.value] ?? valeurs.fr
 // Textes définis en français dans src/utils/impression.js et polices.ts
 const NOTES_BR: Record<string, string> = {
   'Belle Allure': "skritur a-stag implijet kalz er c'hlas, meur a stumm (GS, CP, CE…)",
@@ -73,7 +74,7 @@ const ERREURS_BR: Record<string, string> = {
 }
 
 function libellePolice(p: PoliceDisponible): string {
-  return tr({ fr: p.label, br: POLICES_BR[p.id] ?? p.label.replace(/ \(installée\)$/, ' (staliet)').replace(/ \(ajoutée\)$/, ' (ouzhpennet)') }) as string
+  return tr({ fr: p.label, br: POLICES_BR[p.id] ?? p.label.replace(/ \(installée\)$/, ' (staliet)').replace(/ \(ajoutée\)$/, ' (ouzhpennet)') })
 }
 
 const estPerso = computed(() => policesPerso.value.some(p => p.id === valeur.value))
@@ -88,7 +89,7 @@ async function ajouter(e: Event) {
     valeur.value = await ajouterPolicePerso(f, props.type)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
-    erreur.value = tr({ fr: message, br: ERREURS_BR[message] ?? message }) as string
+    erreur.value = tr({ fr: message, br: ERREURS_BR[message] ?? message })
   }
 }
 </script>

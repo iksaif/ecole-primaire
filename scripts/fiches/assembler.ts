@@ -2,7 +2,8 @@
 // testé par tests/fiches-ecriture.test.mjs avec de fausses fiches rendues.
 import { NIVEAUX } from '../../src/data/classes.ts'
 import { DOMAINES, DOMAINES_EXEMPLE, domaineDe, lienProgramme, nomOfficiel } from '../../src/data/programme.ts'
-import domainesBr from '../../src/i18n/br/domaines.js'
+import { CODES, LANGUES, LANGUE_SOURCE } from '../../src/langues/registre.ts'
+import { traduire } from '../../src/langues/traduire.ts'
 import { texteDeRecherche } from '../../src/telechargements/recherche.ts'
 import { USAGES, VERSION_SCHEMA, usageDe } from '../../src/telechargements/types.ts'
 import type { Classe, DomaineDeFiche, DomaineId, Entree, EntreeIndex, IndexFiches, LienProgramme, Texte } from '../../src/telechargements/types.ts'
@@ -34,8 +35,11 @@ function domaineDeFiche(id: DomaineId | null, classes: readonly Classe[]): Domai
   if (id === null) return { id, nom: HORS_PROGRAMME, matiere: 'autres', rang: rangDomaine(null), programme: [] }
   const d = domaineDe(id)
   if (!d) throw new Error(`domaine « ${id} » inconnu de programme.ts`)
-  const br = (domainesBr as Record<string, string>)[id]
-  return { id, nom: br ? { fr: d.court, br } : { fr: d.court }, matiere: d.matiere, rang: rangDomaine(id), programme: liensProgramme(id, classes) }
+  // noms dans les autres langues : section `domaines` du catalogue typé (absente pour le domaine fictif des exemples)
+  const autres = id in LANGUES[LANGUE_SOURCE].textes.domaines
+    ? Object.fromEntries(CODES.filter(c => c !== LANGUE_SOURCE).map(c => [c, traduire(c, `domaines.${id}` as 'domaines.donnees')]))
+    : {}
+  return { id, nom: { [LANGUE_SOURCE]: d.court, ...autres } as Texte, matiere: d.matiere, rang: rangDomaine(id), programme: liensProgramme(id, classes) }
 }
 
 /** Entrées voisines : celles du même bilan, sinon la même famille (autres classes), puis le même domaine et usage. */

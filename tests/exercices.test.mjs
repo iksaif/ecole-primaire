@@ -10,7 +10,7 @@ import { REGISTRE } from '../src/exercices/index.js'
 import { REGISTRE_DEV } from '../src/exercices/dev.ts'
 import { toutAuProgramme, estBonus, raisonHorsProgramme, jeuxDeReglages, langueContenuDe, lireVerdict } from '../src/exercices/outils.js'
 // noyau i18n (traduire : pluriels, interpolation, catalogue commun) : imports avec extension, lisible par node
-import { contenu } from '../src/i18n/index.js'
+import { traducteurExercice } from '../src/exercices/traducteur.ts'
 import { creerRng } from '../src/utils/hasard.js'
 import { COMPETENCES, NIVEAUX, contraintesDe, competenceDe, domaineDe } from '../src/data/programme.js'
 import { ACTIVITES } from '../src/data/activites.js'
@@ -99,7 +99,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
       const ecarts = [], fiches = []
       for (const l of LANGUES) {
         const langue = langueContenuDe(d, l)
-        const T = contenu(textes, langue).t
+        const T = traducteurExercice(textes, langue)
         for (const graine of GRAINES) {
           const qs = g.questions({ niveau: n, reglages, rng: creerRng(graine), T, nb: 10 })
           if (!qs.length) ecarts.push(`graine ${graine} : aucune question`)

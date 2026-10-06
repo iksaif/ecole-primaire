@@ -14,7 +14,7 @@ import { entreesDe, catalogueDe } from '../src/affiches/catalogue.ts'
 import { cleVariante, cleReglage, cleValeur, cleGroupe, clePolice } from '../src/affiches/textes.ts'
 import { SITES } from '../src/sites.ts'
 import { mesuresAffiche } from '../src/impression/affiches/cadre.ts'
-import { contenu } from '../src/i18n/index.js'
+import { traducteurAffiche } from '../src/affiches/textes.ts'
 import { NIVEAUX } from '../src/data/classes.ts'
 import { domaineDe, competenceDe } from '../src/data/programme.ts'
 import { creerRng } from '../src/utils/hasard.ts'
@@ -66,7 +66,7 @@ const rendu = (module, config) => module.rendu.dessin(config, mesures(config), .
 function mesures(c) { const m = mesuresAffiche({ format: c.format, orientation: c.orientation }); return { W: m.W, H: m.H } }
 // T et contexte comme genererAffiche les donne (sans passer par le cadre)
 function contextes(module, c) {
-  const Tde = l => contenu(module.textes, l).t
+  const Tde = l => traducteurAffiche(module.textes, l)
   return [Tde(c.langue), { Tde, police: () => 'Andika', rng: creerRng(c.graine) }]
 }
 

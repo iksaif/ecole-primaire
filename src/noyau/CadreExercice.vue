@@ -13,10 +13,10 @@
   <div class="config-box cadre-exercice">
     <div class="modes" role="tablist">
       <button role="tab" :aria-selected="mode === 'jouer'" :class="{ actif: mode === 'jouer' }" @click="$emit('update:mode', 'jouer')">
-        {{ t('jouer') }}
+        {{ t('cadre.jouer') }}
       </button>
       <button role="tab" :aria-selected="mode === 'imprimer'" :class="{ actif: mode === 'imprimer' }" @click="$emit('update:mode', 'imprimer')">
-        {{ t('imprimer') }}
+        {{ t('cadre.imprimer') }}
       </button>
     </div>
 
@@ -27,11 +27,11 @@
     <div class="signalement"><SignalerErreur :reglages="config ?? undefined" /></div>
 
     <div v-if="mode === 'jouer'" class="actions">
-      <button class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')">{{ t('commencer') }}</button>
+      <button class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')">{{ t('communs.commencer') }}</button>
     </div>
     <ApercuImpression v-else :html="ficheFinale" :fluide="true" :reglages="reglages">
       <template #actions>
-        <button class="btn btn-ghost" @click="$emit('regenerer')">{{ t('nouvelle') }}</button>
+        <button class="btn btn-ghost" @click="$emit('regenerer')">{{ t('cadre.nouvelle') }}</button>
       </template>
     </ApercuImpression>
   </div>
@@ -44,8 +44,7 @@ import SignalerErreur from '../components/SignalerErreur.vue'
 import OptionsFiche from './OptionsFiche.vue'
 import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige } from './optionsFiche.ts'
 import type { ModeExercice } from './useFicheExercice.ts'
-import { useI18n } from '../i18n'
-import { TEXTES_CADRE } from './textes.ts'
+import { useLangue } from '../langues/useLangue.ts'
 
 const props = withDefaults(defineProps<{
   mode: ModeExercice
@@ -60,7 +59,7 @@ defineEmits<{ 'update:mode': [mode: ModeExercice], commencer: [], regenerer: [] 
 // le formulaire de réglages reçoit le mode courant
 defineSlots<{ default?(props: { mode: ModeExercice }): unknown }>()
 
-const { t } = useI18n(TEXTES_CADRE)
+const { t } = useLangue()
 
 const options = useOptionsFiche()
 const avecCorrige = computed(() => aUnCorrige(props.fiche))

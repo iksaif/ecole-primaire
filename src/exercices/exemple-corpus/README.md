@@ -10,7 +10,7 @@ Ce qui le distingue de l'exemple simple :
 | Sujet | Où |
 |---|---|
 | le corpus (français seulement, jamais traduit) | `src/data/exemple-corpus.ts` : données pures, partageables avec une affiche ; chaque entrée dit à partir de quelle classe elle est proposée |
-| deux catalogues de textes | interface traduite dans `src/i18n/<langue>/views/dev/ExempleCorpusView.js` ; contenu de la fiche en français, dans `textes.ts` |
+| deux catalogues de textes | interface traduite : section `exempleCorpus` de `src/langues/<langue>/textes/` ; contenu de la fiche en **français seulement** : `catalogue({ … })` sans traduction dans `textes.ts` (le compilateur exigerait les mêmes clés si l'on ajoutait `{ br: … }`) |
 | contenu toujours `fr` | `definition.ts` : `contenu: 'fr'` ; la vue et les tests lisent `T` en français |
 | QCM | `<ChoixReponses>` dans la vue ; la réponse est l'indice choisi ; `verifier` rend un booléen |
 | programme | `ecartsAuProgramme` compare la classe prévue pour chaque mot au niveau joué |

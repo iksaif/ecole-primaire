@@ -201,11 +201,8 @@ console.log('Page de matière : cartes, liste, repli (exemples, développement)'
 {
   const { ctx, page } = await ouvrir({ largeur: 360 })
   await aller(page, appDev('/maths?classes=ce1'))
-  await page.waitForSelector('.groupe .ligne')
-  verifier(await page.locator('.carte').count() === 0, 'téléphone : la liste est la vue conseillée')
-  await page.getByRole('button', { name: /Cartes/ }).click()
   await page.waitForSelector('.groupe .carte')
-  verifier(await page.locator('.ligne').count() === 0, 'téléphone : un choix explicite l’emporte sur le conseil')
+  verifier(await page.locator('.ligne').count() === 0, 'téléphone : les cartes, comme sur ordinateur')
   verifier(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'téléphone : pas de débordement horizontal')
   await page.getByRole('button', { name: /Liste/ }).click()
   await page.waitForSelector('.groupe .ligne')

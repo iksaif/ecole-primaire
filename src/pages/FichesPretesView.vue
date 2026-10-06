@@ -14,7 +14,7 @@
 
       <div class="barre">
         <FichesPretesCompteur :page="page" />
-        <SelecteurVue :vue="vue" @choisie="apresChoix" />
+        <SelecteurVue />
       </div>
 
       <template v-if="page.resultats.length">
@@ -55,13 +55,12 @@ import FichesPretesTable from './FichesPretesTable.vue'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
 import { EMOJI_MATIERE } from '../ressources/composants/presentation.ts'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
-import { useVueAffichee } from '../ressources/composants/useVueAffichee.ts'
 
 const props = defineProps<{ matiere: Matiere }>()
 const { t } = useLangue()
 const page = useFichesPage(() => props.matiere)
 const idEncart = useId()
-const { vue, apresChoix } = useVueAffichee()
+const vue = computed(() => page.contexte.vue)
 
 const nomMatiere = computed(() => t(`fichesPretes.matieres.${props.matiere}`))
 const maillons = computed(() => [

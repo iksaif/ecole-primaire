@@ -17,7 +17,7 @@
 
       <MondeIntro v-if="matiere === 'monde'" />
 
-      <MatiereBarre :classes="classes" :total="total" :toutes="toutes" :vue="vue" @basculer="toutes = !toutes" @apres-choix="apresChoix" />
+      <MatiereBarre :classes="classes" :total="total" :toutes="toutes" @basculer="toutes = !toutes" />
       <SautDomaines :groupes="avecRessources" />
 
       <p v-if="!pret" class="chargement" role="status">{{ t('matiere.chargement') }}</p>
@@ -50,7 +50,6 @@ import { EMOJI_BARRE } from '../shell/emojis.ts'
 import EtatVide from '../ressources/composants/EtatVide.vue'
 import GroupeDomaine from '../ressources/composants/GroupeDomaine.vue'
 import { EMOJI_ACCUEIL, EMOJI_MATIERE, majuscule } from '../ressources/composants/presentation.ts'
-import { useVueAffichee } from '../ressources/composants/useVueAffichee.ts'
 import { NOM_COURT, cheminFiches, langueRegionaleDeLaRoute, matiereDeLaRoute } from './matieres.ts'
 import MatiereAVenir from './MatiereAVenir.vue'
 import MatiereBarre from './MatiereBarre.vue'
@@ -61,8 +60,8 @@ const route = useRoute()
 const { t, langueAffichee } = useLangue()
 const { contexte, choisirMode } = useContexte()
 const { catalogue, pret } = useRessources()
-const { vue, apresChoix } = useVueAffichee()
 const toutes = ref(false)
+const vue = computed(() => contexte.value.vue)
 
 const code = computed(() => langueRegionaleDeLaRoute(route.path))
 const pageMatiere = computed(() => matiereDeLaRoute(route.path))

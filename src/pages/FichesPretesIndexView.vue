@@ -14,7 +14,7 @@
       <FichesPretesFiltres :page="page" />
       <div class="barre">
         <FichesPretesCompteur :page="page" />
-        <SelecteurVue :vue="vue" @choisie="apresChoix" />
+        <SelecteurVue />
       </div>
 
       <section v-for="g in groupes" :key="g.matiere" class="matiere" :aria-labelledby="`m-${g.matiere}`">
@@ -40,7 +40,6 @@ import { grouperParMatiere } from '../telechargements/pages.ts'
 import { useFichesPage } from '../telechargements/useFichesPage.ts'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
 import { EMOJI_MATIERE } from '../ressources/composants/presentation.ts'
-import { useVueAffichee } from '../ressources/composants/useVueAffichee.ts'
 import FichesPretesCarte from './FichesPretesCarte.vue'
 import FichesPretesCompteur from './FichesPretesCompteur.vue'
 import FichesPretesEtat from './FichesPretesEtat.vue'
@@ -51,7 +50,7 @@ import FichesPretesTable from './FichesPretesTable.vue'
 
 const { t, langueAffichee } = useLangue()
 const page = useFichesPage(() => null)
-const { vue, apresChoix } = useVueAffichee()
+const vue = computed(() => page.contexte.vue)
 
 const maillons = computed(() => [{ texte: t('fichesPretes.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil }, { texte: t('fichesPretes.titreIndex'), emoji: EMOJI_BARRE.fichesPretes }])
 const groupes = computed(() => (page.index ? grouperParMatiere(page.index, page.resultats, MATIERES, langueAffichee.value) : []))

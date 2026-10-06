@@ -7,22 +7,21 @@
     <button type="button" class="toutes" :class="{ actif: toutes }" :aria-pressed="toutes" @click="emit('basculer')">
       <span aria-hidden="true">{{ EMOJI_BARRE.tous }}</span> {{ t('matiere.toutesLesClasses') }}
     </button>
-    <SelecteurVue :vue="vue" @choisie="emit('apresChoix')" />
+    <SelecteurVue />
   </div>
 </template>
 
 <script setup lang="ts">
 // La barre de contexte d'une page de matière : « Classe : CE1 · 12 ressources », le bouton « Toutes les classes » (montre les
 // ressources de toutes les classes sans changer la classe choisie) et le choix cartes / liste.
-import type { Vue } from '../contexte/types.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
 import { EMOJI_ACCUEIL, classesEnTexte } from '../ressources/composants/presentation.ts'
 import type { Classe } from '../ressources/types.ts'
 
-defineProps<{ classes: readonly Classe[], total: number, toutes: boolean, vue: Vue }>()
-const emit = defineEmits<{ basculer: [], apresChoix: [] }>()
+defineProps<{ classes: readonly Classe[], total: number, toutes: boolean }>()
+const emit = defineEmits<{ basculer: [] }>()
 const { t } = useLangue()
 </script>
 

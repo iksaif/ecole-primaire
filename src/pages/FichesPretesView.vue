@@ -14,11 +14,11 @@
 
       <div class="barre">
         <FichesPretesCompteur :page="page" />
-        <FichesPretesVue />
+        <SelecteurVue :vue="vue" @choisie="apresChoix" />
       </div>
 
       <template v-if="page.resultats.length">
-        <FichesPretesTable v-if="page.contexte.vue === 'liste'" :entrees="page.resultats" :index="page.index" :legende="nomMatiere" :selection="page.selection" :avec-langues="page.bilingue" />
+        <FichesPretesTable v-if="vue === 'liste'" :entrees="page.resultats" :index="page.index" :legende="nomMatiere" :selection="page.selection" :avec-langues="page.bilingue" />
         <ul v-else class="grille">
           <li v-for="e in page.resultats" :key="e.slug"><FichesPretesCarte :entree="e" :selection="page.selection" :avec-langues="page.bilingue" /></li>
         </ul>
@@ -52,12 +52,14 @@ import FichesPretesEtat from './FichesPretesEtat.vue'
 import FichesPretesFil from './FichesPretesFil.vue'
 import FichesPretesFiltres from './FichesPretesFiltres.vue'
 import FichesPretesTable from './FichesPretesTable.vue'
-import FichesPretesVue from './FichesPretesVue.vue'
+import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
+import { useVueAffichee } from '../ressources/composants/useVueAffichee.ts'
 
 const props = defineProps<{ matiere: Matiere }>()
 const { t } = useLangue()
 const page = useFichesPage(() => props.matiere)
 const idEncart = useId()
+const { vue, apresChoix } = useVueAffichee()
 
 const nomMatiere = computed(() => t(`fichesPretes.matieres.${props.matiere}`))
 const maillons = computed(() => [

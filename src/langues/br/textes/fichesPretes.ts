@@ -35,7 +35,6 @@ export default {
   colonnes: { titre: 'Titl', domaine: 'Domani', classes: 'Klasoù', pages: 'Pajennoù', actions: 'Obererezhioù' }, // br: à relire
   ouvrir: 'Digeriñ', // br: à relire
   ouvrirTitre: 'Digeriñ : {titre}', // br: à relire
-  vue: { titre: 'Doare diskouez', cartes: 'Kartennoù', liste: 'Roll' }, // br: à relire
   chargement: 'O kargañ ar fichennoù…', // br: à relire
   vide: 'Ar fichennoù prest a zeu : n’eus ket c’hoazh war al lec’hienn-mañ. An ekzersizoù da voullañ a c’haller personelaat dija eus pep danvez.', // br: à relire
   videMatiere: 'N’eus fichenn brest ebet c’hoazh en danvez-mañ.', // br: à relire

@@ -178,7 +178,7 @@ console.log('Accessibilité (axe)')
 for (const langue of ['fr', 'br']) for (const largeur of [360, 1280]) {
   const { ctx, page } = await ouvrir({ langue, largeur, regionale: langue === 'br' ? 'br' : undefined })
   for (const [nom, route, attente] of [
-    ['liste', '/maths/fiches?mode=bi&classes=ce1', 'article.carte'], ['liste en tableau', '/maths/fiches?vue=liste', 'table'],
+    ['liste', '/maths/fiches?mode=bi&classes=ce1&vue=cartes', 'article.carte'], ['liste en tableau', '/maths/fiches?vue=liste', 'table'],
     ['index', '/telechargements', 'table'], ['feuille', `/telechargements/${SLUG}`, '.apercu img'],
   ]) {
     await page.goto(app(route))

@@ -9,15 +9,17 @@ export default {
     titre: 'Yezh an etrefas', // br: à relire
     aide: 'Yezh al lañserioù hag an destennoù.', // br: à relire
   },
-  regionale: {
-    titre: 'Yezh rannvroel',
-    aide: 'Ouzhpennañ ar yezh rannvroel d\'ar fichennoù da voullañ ha d\'al lañser : niveroù, lizherenneg, deizioù, mizioù ha gerioù. Talvoudus evit ar skolioù divyezhek pe dre soubidigezh.',
-    aucune: 'Hini ebet',
-    imposee: 'Pa vez an etrefas er yezh-mañ, ez eo gweredekaet he fonksionoù ent emgefre.',
+  langues: {
+    titre: 'Yezhoù ar fichennoù hag an ekzersoù', // br: à relire
+    aide: 'Galleg hepken, galleg gant ar yezh rannvroel (niveroù, lizherenneg, deizioù, mizioù, gerioù), pe ar yezh rannvroel hepken. Talvoudus evit ar skolioù divyezhek pe dre soubidigezh.', // br: à relire
   },
   classe: {
     titre: 'Ma c\'hlas', // br: à relire
-    aide: 'Silañ ar poelladennoù hag ar fichennoù dre glas. « An holl » a ziskouez pep tra.', // br: à relire
+    aide: 'Ar rolloù a ziskouez ekzersoù ha fichennoù ar glas. Gant ar profil Kelenner e c\'haller dibab meur a glas.', // br: à relire
+  },
+  profil: {
+    titre: 'Piv a implij al lec\'hienn ?', // br: à relire
+    aide: 'Ar profil ne cheñch nemet an daolenn hag an niver a glasoù. Netra n\'eo prennet.', // br: à relire
   },
   police: {
     titre: 'Nodrezh ar fichennoù', // br: à relire

@@ -255,5 +255,20 @@ console.log('Page de la langue régionale')
   }
 }
 
+console.log('Réglages : classe, profil et mode de langue passent par le contexte')
+{
+  const o = await ouvrir()
+  await aller(o.page, app('/parametres?classes=ce1'))
+  verifier(await o.page.getByRole('button', { name: 'CE1', exact: true }).getAttribute('aria-pressed') === 'true', 'la classe de l’adresse est celle des réglages')
+  await o.page.getByRole('button', { name: 'CM2', exact: true }).click()
+  await o.page.waitForFunction(() => [...document.querySelectorAll('button[aria-pressed=true]')].some(b => b.textContent.trim() === 'CM2'))
+  verifier(!ou(o.page).includes('classes=ce1'), 'choisir une classe remplace celle de l’adresse')
+  await o.page.getByRole('button', { name: /Enseignant/ }).click()
+  await o.page.getByRole('button', { name: 'CE2', exact: true }).click()
+  verifier(await o.page.locator('button.pastille[aria-pressed=true]').count() === 2, 'profil enseignant : plusieurs classes')
+  verifier(!o.erreurs.length, 'aucune erreur JavaScript')
+  await o.ctx.close()
+}
+
 await nav.close()
 process.exit(nbEchecs() ? 1 : 0)

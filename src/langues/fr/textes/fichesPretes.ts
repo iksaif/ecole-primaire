@@ -34,7 +34,6 @@ export default {
   colonnes: { titre: 'Titre', domaine: 'Domaine', classes: 'Classes', pages: 'Pages', actions: 'Actions' },
   ouvrir: 'Ouvrir',
   ouvrirTitre: 'Ouvrir : {titre}',
-  vue: { titre: 'Présentation', cartes: 'Cartes', liste: 'Liste' },
   // états
   chargement: 'Chargement des fiches…',
   vide: 'Les fiches toutes prêtes arrivent : il n’y en a pas encore sur ce site. Les exercices à imprimer, eux, se personnalisent déjà depuis chaque matière.',

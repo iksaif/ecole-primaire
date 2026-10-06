@@ -6,15 +6,17 @@ export default {
     titre: 'Langue de l’interface',
     aide: 'La langue des menus et des textes du site.',
   },
-  regionale: {
-    titre: 'Langue régionale',
-    aide: 'Ajoute la langue régionale aux fiches à imprimer et au menu : nombres en lettres, alphabet, jours, mois et mots. Pratique pour les écoles bilingues ou immersives.',
-    aucune: 'Aucune',
-    imposee: 'Quand l’interface est dans cette langue, ses fonctions sont activées d’office.',
+  langues: {
+    titre: 'Langues des fiches et des exercices',
+    aide: 'Français seul, français avec la langue régionale (nombres en lettres, alphabet, jours, mois, mots), ou langue régionale seule. Pratique pour les écoles bilingues ou immersives.',
   },
   classe: {
     titre: 'Ma classe',
-    aide: 'Filtre les exercices et les fiches selon la classe. « Toutes » montre tout.',
+    aide: 'Les listes montrent les exercices et les fiches de la classe. Le profil Enseignant permet d’en choisir plusieurs.',
+  },
+  profil: {
+    titre: 'Qui utilise le site ?',
+    aide: 'Le profil ne change que la disposition et le nombre de classes. Rien n’est verrouillé.',
   },
   police: {
     titre: 'Police des fiches',

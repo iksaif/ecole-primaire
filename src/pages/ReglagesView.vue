@@ -14,25 +14,22 @@
     </section>
 
     <section v-if="regionale.proposees.length" class="bloc">
-      <h2>🏴 {{ t('reglages.regionale.titre') }}</h2>
-      <p class="aide">{{ t('reglages.regionale.aide') }}</p>
-      <div class="choix">
-        <button class="level-btn" :class="{ active: !regionale.reglage.value }" :aria-pressed="!regionale.reglage.value" @click="regionale.reglage.value = ''">{{ t('reglages.regionale.aucune') }}</button>
-        <button v-for="l in regionale.proposees" :key="l.code" class="level-btn" :class="{ active: regionale.reglage.value === l.code }"
-          :aria-pressed="regionale.reglage.value === l.code" @click="regionale.reglage.value = l.code">
-          <Drapeau :langue="l.code" /> {{ majuscule(l.nomLocal) }} ({{ l.nom[langue] }})
-        </button>
-      </div>
-      <p v-if="!regionale.reglage.value && regionale.code.value" class="aide">{{ t('reglages.regionale.imposee') }}</p>
+      <h2>🏴 {{ t('reglages.langues.titre') }}</h2>
+      <p class="aide">{{ t('reglages.langues.aide') }}</p>
+      <OptionsLangue />
     </section>
 
     <section class="bloc">
       <h2>🎒 {{ t('reglages.classe.titre') }}</h2>
       <p class="aide">{{ t('reglages.classe.aide') }}</p>
-      <div class="choix">
-        <button v-for="c in CLASSES" :key="c.id" class="level-btn" :class="{ active: classe === c.id }" :aria-pressed="classe === c.id" @click="classe = classe === c.id ? '' : c.id">{{ c.label }}</button>
-        <button class="level-btn" :class="{ active: !classe }" :aria-pressed="!classe" @click="classe = ''">{{ t('nav.toutes') }}</button>
-      </div>
+      <CadenasClasse v-if="verrouillee" @ouvert="deverrouillerClasse" />
+      <ChoixClasses v-else />
+    </section>
+
+    <section class="bloc">
+      <h2>👤 {{ t('reglages.profil.titre') }}</h2>
+      <p class="aide">{{ t('reglages.profil.aide') }}</p>
+      <OptionsProfil />
     </section>
 
     <section class="bloc">
@@ -53,17 +50,21 @@
 </template>
 
 <script setup lang="ts">
+// Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police.
 import { ref } from 'vue'
-import { CLASSES } from '../data/classes.ts'
-import { useClasse } from '../noyau/useClasse.ts'
+import { useContexte } from '../contexte/useContexte.ts'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { useLangueRegionale } from '../langues/useLangueRegionale.ts'
+import CadenasClasse from '../shell/CadenasClasse.vue'
+import ChoixClasses from '../shell/ChoixClasses.vue'
 import Drapeau from '../shell/Drapeau.vue'
+import OptionsLangue from '../shell/OptionsLangue.vue'
+import OptionsProfil from '../shell/OptionsProfil.vue'
 
 const { t, langue, langues } = useLangue()
 const regionale = useLangueRegionale()
-const classe = useClasse()
+const { verrouillee, deverrouillerClasse } = useContexte()
 const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
 
 const message = ref('')
@@ -79,12 +80,12 @@ function toutReinitialiser(): void {
 
 <style scoped>
 .reglages { max-width: 680px; }
-h1 { color: var(--bleu); margin-bottom: .25rem; }
-.intro { color: #555; margin-bottom: 1.5rem; }
+h1 { color: var(--bleu-fort); margin-bottom: .25rem; }
+.intro { color: var(--texte-doux); margin-bottom: 1.5rem; }
 .bloc { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
 h2 { font-size: 1.1rem; margin-bottom: .25rem; }
-.aide { color: #666; font-size: .9rem; margin-bottom: .75rem; }
+.aide { color: var(--texte-doux); font-size: .9rem; margin-bottom: .75rem; }
 .choix { display: flex; gap: .5rem; flex-wrap: wrap; }
-.succes { margin-top: .75rem; font-weight: 600; color: #2a7a2a; }
+.succes { margin-top: .75rem; font-weight: 600; color: var(--vert-texte); }
 .retour { display: inline-block; text-decoration: none; margin-top: .5rem; }
 </style>

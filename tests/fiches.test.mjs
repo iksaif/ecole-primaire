@@ -30,7 +30,7 @@ const jpeg = (l, h) => Uint8Array.from([0xff, 0xd8, 0xff, 0xc0, 0, 17, 8, h >> 8
 const faussePage = { octets: jpeg(794, 1123), largeur: 794, hauteur: 1123 }
 const rendu = {
   async rendre(doc) {
-    return { pdfs: doc.formats.map(f => ({ format: f.format, octets: new TextEncoder().encode(`%PDF ${f.html.length}`), nbPages: 1 })), pages: [faussePage] }
+    return { pdfs: doc.formats.map(f => ({ format: f.format, orientation: f.orientation, octets: new TextEncoder().encode(`%PDF ${f.html.length}`), nbPages: 1 })), pages: [faussePage] }
   },
   async reduire(octets) { return octets },
   async fermer() {},
@@ -78,7 +78,8 @@ verifier(lireIndex(lu).entrees.length === index.entrees.length, 'index.json se r
 verifier(entrees.every(e => lireEntree(JSON.parse(readFileSync(join(dossier, `${e.slug}.json`), 'utf8'))).slug === e.slug), 'chaque <slug>.json se relit (lireEntree)')
 verifier(JSON.stringify(JSON.parse(JSON.stringify(entrees))) === JSON.stringify(entrees), 'données pures : le JSON redonne les mêmes données')
 const affiche = entrees.find(e => e.genre === 'affiche')
-verifier(affiche.variantes[0].pdfs.length === 2 && affiche.variantes[0].pdfs.map(p => p.format).join() === 'A4,A3', 'une affiche : un PDF par format (A4, A3)')
+verifier(affiche.variantes[0].pdfs.length === 4 && affiche.variantes[0].pdfs.map(p => `${p.format}/${p.orientation}`).join() === 'A4/landscape,A4/portrait,A3/landscape,A3/portrait', 'une affiche : un PDF par format et par sens (A4, A3 × paysage, portrait)')
+verifier(new Set(affiche.variantes[0].pdfs.map(p => p.chemin)).size === 4, 'les quatre PDF ont des fichiers distincts')
 verifier(!affiche.variantes[0].pdfs.some(p => p.chemin.startsWith('/') || p.chemin.includes('..')), 'chemins relatifs à fiches/')
 
 console.log('Refus des données incohérentes')

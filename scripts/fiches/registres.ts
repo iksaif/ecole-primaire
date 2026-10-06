@@ -82,10 +82,11 @@ function fichesAffiche(module: ModuleAffiche, publiees: readonly string[]): Fich
   return entreesAffiche(module).filter(e => e.langues.every(l => publiees.includes(l))).map(e => {
     const { variante } = e.config
     const v = d.variantes[variante]
-    const formats = d.formats.map(format => {
-      const config = reglagesDe(d, { ...e.config, format })
-      return { format, html: genererAffiche(module, config, { script: 'Andika' }).html }
-    })
+    // un document par format et par sens que l'affiche permet (le premier de chaque liste est celui par défaut)
+    const formats = d.formats.flatMap(format => d.orientations.map(orientation => {
+      const config = reglagesDe(d, { ...e.config, format, orientation })
+      return { format, orientation, html: genererAffiche(module, config, { script: 'Andika' }).html }
+    }))
     const reglages = reglagesDe(d, e.config) as unknown as MetaFiche['reglages']
     const description = texteMulti(module.textes, `variante.${variante}.description`, e.description)
     return {
@@ -146,7 +147,7 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
           const graine = graineDe(slug) + k + 1
           return {
             id: `fiche-${k + 1}`, titre: nb > 1 ? { fr: `Fiche ${k + 1}`, br: `Fichenn ${k + 1}` } : null, graine,   // br: à relire
-            formats: [{ format: 'A4', html: htmlFicheExercice(module, niveau, f?.reglages ?? {}, langue, graine) }],
+            formats: [{ format: 'A4', orientation: 'portrait', html: htmlFicheExercice(module, niveau, f?.reglages ?? {}, langue, graine) }],
           }
         })
         res.push({

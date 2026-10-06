@@ -62,7 +62,9 @@ function corps(ctx: ContexteStatique, e: Entree, langue: Langue, titre: string):
     `<img src="${echapper(fiches(p.chemin))}" width="${p.largeur}" height="${p.hauteur}" alt="${echapper(t('statique.apercuPage', { n: k + 1, titre }))}"${k ? ' loading="lazy"' : ''}>`).join('\n      ')
   const pdfs = e.variantes.flatMap(v => v.pdfs.map(p => {
     const nom = v.titre ? texteDe(v.titre, langue) : titre
-    const detail = t('statique.pdfDetail', { titre: nom, format: p.format, taille: t('statique.taille', { n: kilo(p.taille) }) })
+    // le sens n'est dit que s'il y a le choix (sinon « A4 » suffit)
+    const sens = new Set(v.pdfs.map(x => x.orientation)).size > 1 ? `, ${t(`statique.${p.orientation}`)}` : ''
+    const detail = t('statique.pdfDetail', { titre: nom, format: `${p.format}${sens}`, taille: t('statique.taille', { n: kilo(p.taille) }) })
     return `<li><a href="${echapper(fiches(p.chemin))}">${echapper(t('statique.pdf'))} : ${echapper(detail)}</a> (${echapper(t('statique.pages', { n: p.nbPages }))})</li>`
   })).join('\n      ')
   const competences = e.competences.map(c =>

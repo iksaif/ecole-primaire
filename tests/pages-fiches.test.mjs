@@ -115,6 +115,14 @@ console.log('Feuille ouverte à froid')
   const h0 = await page.getByRole('link', { name: /Télécharger/ }).getAttribute('href')
   await formats.getByRole('button', { name: 'A3' }).click()
   verifier(await page.getByRole('link', { name: /Télécharger/ }).getAttribute('href') !== h0, 'plusieurs formats : le choix change le PDF')
+  // le sens : proposé avec le format, garde le format choisi
+  const sens = page.getByRole('group', { name: 'Sens' })
+  await sens.waitFor()
+  const h1 = await page.getByRole('link', { name: /Télécharger/ }).getAttribute('href')
+  const avant = await sens.getByRole('button', { pressed: false }).first().textContent()
+  await sens.getByRole('button', { pressed: false }).first().click()
+  verifier(await page.getByRole('link', { name: /Télécharger/ }).getAttribute('href') !== h1, `le sens (${avant}) change le PDF`)
+  verifier(await formats.getByRole('button', { name: 'A3' }).getAttribute('aria-pressed') === 'true', 'changer de sens garde le format')
   await ctx.close()
 }
 

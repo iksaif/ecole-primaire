@@ -72,17 +72,17 @@ export async function ouvrirRendu({ travailleurs = Math.min(availableParallelism
 
   async function rendreDocument(page: Page, { formats }: DocumentSource): Promise<DocumentRendu> {
     const res: DocumentRendu = { pdfs: [], pages: [] }
-    for (const [i, { format, html }] of formats.entries()) {
+    for (const [i, { format, orientation, html }] of formats.entries()) {
       await page.setViewportSize(VUE_LARGE)
       await page.setContent(html, { waitUntil: 'load' })
       await page.evaluate(() => document.fonts.ready)
       await page.emulateMedia({ media: 'print' })
       // `format` : le papier des fiches qui ne déclarent pas de @page ; un @page de la feuille l'emporte (preferCSSPageSize)
-      const pdf = await page.pdf({ format, preferCSSPageSize: true, printBackground: true })
+      const pdf = await page.pdf({ format, landscape: orientation === 'landscape', preferCSSPageSize: true, printBackground: true })
       await page.emulateMedia({ media: 'screen' })
       const feuilles = page.locator('.page')
       const nbFeuilles = await feuilles.count()
-      res.pdfs.push({ format, octets: pdf, nbPages: nbPagesPdf(pdf) || nbFeuilles || 1 })
+      res.pdfs.push({ format, orientation, octets: pdf, nbPages: nbPagesPdf(pdf) || nbFeuilles || 1 })
       if (i > 0) continue
       // aperçus au premier format : chaque feuille des documents « à pages », sinon le haut de la première page
       if (nbFeuilles) {

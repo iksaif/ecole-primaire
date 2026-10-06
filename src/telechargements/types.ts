@@ -6,9 +6,9 @@
 import type { Classe } from '../data/classes.ts'
 import type { CompetenceId, DomaineId, Matiere, Source } from '../data/programme.ts'
 import type { ValeurReglage } from '../noyau/types.ts'
-import type { Format } from '../utils/page.ts'
+import type { Format, Orientation } from '../utils/page.ts'
 
-export type { Classe, CompetenceId, DomaineId, Matiere, Source, ValeurReglage, Format }
+export type { Classe, CompetenceId, DomaineId, Matiere, Source, ValeurReglage, Format, Orientation }
 
 /** Numéro du schéma. Il monte à chaque changement incompatible ; la page refuse un index d'une autre version. */
 export const VERSION_SCHEMA = 1
@@ -45,10 +45,11 @@ export interface Image {
   hauteur: number
 }
 
-/** Un PDF dans un format de papier. `taille` en octets. */
+/** Un PDF dans un format de papier et un sens. `taille` en octets. */
 export interface FichierPdf {
   chemin: string
   format: Format
+  orientation: Orientation
   taille: number
   nbPages: number
 }
@@ -149,7 +150,7 @@ export interface Variante {
   titre: Texte | null
   /** graine qui a tiré les questions ; null pour une affiche */
   graine: number | null
-  /** un PDF par format de papier proposé ; le premier est celui par défaut */
+  /** un PDF par format de papier et par sens proposés ; le premier est celui par défaut */
   pdfs: FichierPdf[]
   /** aperçu de chaque page, dans l'ordre, au premier format */
   pages: Image[]

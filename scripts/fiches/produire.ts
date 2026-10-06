@@ -15,10 +15,12 @@ export async function produire(fiches: readonly FicheSource[], rendu: Rendu, pro
     const fichiers: FichierRendu[] = []
     const variantes = source.documents.map((d, i): Variante => {
       const r = rendus[i]
+      const plusieursSens = new Set(r.pdfs.map(p => p.orientation)).size > 1
       const pdfs = r.pdfs.map((p): FichierPdf => {
-        const chemin = `${slug}/${d.id}-${p.format.toLowerCase()}.pdf`
+        const sens = plusieursSens ? `-${p.orientation === 'landscape' ? 'paysage' : 'portrait'}` : ''
+        const chemin = `${slug}/${d.id}-${p.format.toLowerCase()}${sens}.pdf`
         fichiers.push({ chemin, octets: p.octets })
-        return { chemin, format: p.format, taille: p.octets.length, nbPages: p.nbPages }
+        return { chemin, format: p.format, orientation: p.orientation, taille: p.octets.length, nbPages: p.nbPages }
       })
       const pages = r.pages.map((p, k): Image => {
         const chemin = `${slug}/${d.id}-p${k + 1}.jpg`

@@ -7,7 +7,7 @@ import type { Mode } from '../contexte/types.ts'
 import { languesUtilisables, voisines } from '../ressources/filtres.ts'
 import type { RessourceDeContenu, RessourceFiche } from '../ressources/types.ts'
 import { normaliser } from './recherche.ts'
-import type { Classe, Entree, EntreeIndex, Format, IndexFiches, Matiere, Usage, Variante } from './types.ts'
+import type { Classe, Entree, EntreeIndex, Format, IndexFiches, Matiere, Orientation, Usage, Variante } from './types.ts'
 
 // ── Filtres de la liste ──
 
@@ -116,14 +116,27 @@ export function entreesSoeurs(e: EntreeIndex, entrees: readonly EntreeIndex[]): 
     .sort(parLangues)
 }
 
-/** Les formats de papier d'une variante, dans l'ordre de ses PDF (le premier est celui par défaut). */
-export const formatsDe = (v: Pick<Variante, 'pdfs'>): Format[] => v.pdfs.map(p => p.format)
+/** Les formats de papier d'une variante, sans doublon, dans l'ordre de ses PDF (le premier est celui par défaut). */
+export const formatsDe = (v: Pick<Variante, 'pdfs'>): Format[] => [...new Set(v.pdfs.map(p => p.format))]
 
-/** Le PDF d'une variante dans un format ; à défaut le premier (jamais de lien cassé). */
-export const pdfDe = (v: Pick<Variante, 'pdfs'>, format: Format | null): Variante['pdfs'][number] => v.pdfs.find(p => p.format === format) ?? v.pdfs[0]
+/** Les sens (portrait, paysage) d'une variante, sans doublon, dans l'ordre de ses PDF. */
+export const orientationsDe = (v: Pick<Variante, 'pdfs'>): Orientation[] => [...new Set(v.pdfs.map(p => p.orientation))]
+
+/**
+ * Le PDF d'une variante pour un format et un sens ; à défaut le même format (ou le même sens), sinon le premier : jamais de lien
+ * cassé, et choisir un format garde le sens déjà choisi quand il existe dans ce format.
+ */
+export function pdfDe(v: Pick<Variante, 'pdfs'>, format: Format | null, orientation: Orientation | null = null): Variante['pdfs'][number] {
+  const { pdfs } = v
+  return pdfs.find(p => p.format === format && p.orientation === orientation)
+    ?? pdfs.find(p => p.format === format) ?? pdfs.find(p => p.orientation === orientation) ?? pdfs[0]
+}
 
 /** Un choix de format n'est proposé que si l'entrée en déclare plusieurs (rien à choisir sinon). */
-export const proposeUnChoixDeFormat = (v: Pick<Variante, 'pdfs'>): boolean => new Set(formatsDe(v)).size > 1
+export const proposeUnChoixDeFormat = (v: Pick<Variante, 'pdfs'>): boolean => formatsDe(v).length > 1
+
+/** Idem pour le sens (portrait / paysage). */
+export const proposeUnChoixDeSens = (v: Pick<Variante, 'pdfs'>): boolean => orientationsDe(v).length > 1
 
 /** Le numéro de page voisin, borné : jamais en dehors de 0..nb-1. */
 export const pageVoisine = (courante: number, delta: number, nb: number): number => Math.min(Math.max(courante + delta, 0), Math.max(nb - 1, 0))

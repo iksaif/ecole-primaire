@@ -1,5 +1,5 @@
 // Logique pure des pages de fiches prêtes (node, sans Chrome) : filtres, langues proposées, entrées sœurs, formats, pages, voisines.
-import { filtrerFiches, languesProposees, domainesProposes, entreesSoeurs, memeFiche, slugDeBase, formatsDe, pdfDe, proposeUnChoixDeFormat,
+import { orientationsDe, proposeUnChoixDeSens, filtrerFiches, languesProposees, domainesProposes, entreesSoeurs, memeFiche, slugDeBase, formatsDe, pdfDe, proposeUnChoixDeFormat,
   pageVoisine, voisinesDeFiche, jeuDeLaFiche, grouperParMatiere, parTitre, matiereDe, dansLeMode, CRITERES_PAGE_VIDES, LANGUE_BILINGUE, cheminFiches } from '../src/telechargements/pages.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -48,8 +48,11 @@ verifier(slugs(memeFiche(index.entrees[1], index.entrees)) === 'tables,tables-br
 verifier(memeFiche(index.entrees[3], index.entrees).length === 0, 'aucune sœur : pas de « Même fiche »')
 
 console.log('Formats et pages')
-const v1 = { pdfs: [{ format: 'A4', chemin: 'a' }, { format: 'A3', chemin: 'b' }] }
+const v1 = { pdfs: [{ format: 'A4', orientation: 'portrait', chemin: 'a' }, { format: 'A3', orientation: 'portrait', chemin: 'b' }] }
 verifier(formatsDe(v1).join() === 'A4,A3' && proposeUnChoixDeFormat(v1) && !proposeUnChoixDeFormat({ pdfs: [v1.pdfs[0]] }), 'choix de format seulement s’il y en a plusieurs')
+const v2 = { pdfs: [['A4', 'landscape'], ['A4', 'portrait'], ['A3', 'landscape'], ['A3', 'portrait']].map(([format, orientation]) => ({ format, orientation, chemin: `${format}-${orientation}` })) }
+verifier(formatsDe(v2).join() === 'A4,A3' && orientationsDe(v2).join() === 'landscape,portrait' && proposeUnChoixDeSens(v2) && !proposeUnChoixDeSens(v1), 'format et sens sans doublon ; sens proposé seulement s’il y en a plusieurs')
+verifier(pdfDe(v2, 'A3', 'portrait').chemin === 'A3-portrait' && pdfDe(v2, 'A3', null).chemin === 'A3-landscape' && pdfDe(v2, null, 'portrait').chemin === 'A4-portrait', 'PDF par format et par sens, repli sur ce qui existe')
 verifier(pdfDe(v1, 'A3').chemin === 'b' && pdfDe(v1, null).chemin === 'a' && pdfDe(v1, 'A5').chemin === 'a', 'PDF par format, repli sur le premier')
 verifier(pageVoisine(0, -1, 3) === 0 && pageVoisine(2, 1, 3) === 2 && pageVoisine(0, 1, 3) === 1 && pageVoisine(0, 1, 0) === 0, 'page voisine bornée')
 

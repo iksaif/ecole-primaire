@@ -10,6 +10,8 @@ export default {
   apercu: 'Rakwel ar fichenn', // br: à relire
   apercuPage: 'Rakwel, pajenn {n} : {titre}', // br: à relire
   pdf: 'Pellgargañ ar PDF', // br: à relire
+  portrait: 'barzh hed', // br: à relire
+  landscape: 'led', // br: à relire
   pdfDetail: '{titre} ({format}, {taille})',
   taille: '{n} Ko',
   pages: { one: '{n} pajenn', two: '{n} bajenn', few: '{n} fajenn', many: '{n} pajenn', other: '{n} pajenn' }, // br: à relire

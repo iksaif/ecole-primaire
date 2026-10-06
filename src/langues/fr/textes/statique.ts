@@ -7,6 +7,8 @@ export default {
   apercu: 'Aperçu de la fiche',
   apercuPage: 'Aperçu, page {n} : {titre}',
   pdf: 'Télécharger le PDF',
+  portrait: 'portrait',
+  landscape: 'paysage',
   pdfDetail: '{titre} ({format}, {taille})',
   taille: '{n} Ko',
   pages: { one: '{n} page', other: '{n} pages' },

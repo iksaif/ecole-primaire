@@ -43,7 +43,7 @@ const entree = (slug, extra = {}) => ({
   exemple: false, recherche: slug, miniature: { chemin: `${slug}/miniature.jpg`, largeur: 300, hauteur: 424 },
   descriptionLongue: t(`Longue description de ${slug}`),
   competences: [{ id: 'numeration100', libelle: `Compétence de ${slug}`, niveaux: ['cp'], source: SOURCE }],
-  variantes: [{ id: 'fiche-1', titre: null, graine: 1, pdfs: [{ chemin: `${slug}/fiche-1-a4.pdf`, format: 'A4', taille: 4096, nbPages: 1 }], pages: [{ chemin: `${slug}/fiche-1-p1.jpg`, largeur: 794, hauteur: 1123 }] }],
+  variantes: [{ id: 'fiche-1', titre: null, graine: 1, pdfs: [{ chemin: `${slug}/fiche-1-a4.pdf`, format: 'A4', orientation: 'portrait', taille: 4096, nbPages: 1 }], pages: [{ chemin: `${slug}/fiche-1-p1.jpg`, largeur: 794, hauteur: 1123 }] }],
   reglages: {}, voisines: [], ...extra,
 })
 const PIEGE = 'Table <b>"x"</b> & \'y\' </script><script>alert(1)</script>'

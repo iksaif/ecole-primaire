@@ -19,7 +19,10 @@ export default {
   telecharger: '⬇️ Pellgargañ', // br: à relire
   imprimer: '🖨️ Moullañ', // br: à relire
   format: 'Ment', // br: à relire
-  detailPdf: { other: 'PDF {format} · {n} pajenn · {taille}' }, // br: à relire
+  sens: 'Tu', // br: à relire
+  portrait: 'Barzh hed', // br: à relire
+  landscape: 'Led', // br: à relire
+  detailPdf: { other: 'PDF {format} {sens} · {n} pajenn · {taille}' }, // br: à relire
   imprimerAide: 'Moullit e « ment wirion » (100 %), hep « ober e ment gant ar bajenn ».', // br: à relire
   personnaliser: '✏️ Personelaat', // br: à relire
   personnaliserAide: '« Personelaat » a zigor an ekzersiz gant e arventennoù : cheñchit anezho, ha grit kement a fichennoù ha ma karit.', // br: à relire

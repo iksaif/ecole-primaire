@@ -70,7 +70,7 @@ function problemesVariante(v: Variante, ou: string, p: string[]): void {
   if (!v.id) p.push(`${ou} : id absent`)
   if (v.titre) texteValide(v.titre, `${ou}.titre`, p)
   if (!Array.isArray(v.pdfs) || !v.pdfs.length) p.push(`${ou} : aucun PDF`)
-  else for (const f of v.pdfs) if (!f.chemin?.endsWith('.pdf') || !(f.taille > 0) || !(f.nbPages >= 1)) p.push(`${ou} : PDF ${f.chemin} invalide`)
+  else for (const f of v.pdfs) if (!f.chemin?.endsWith('.pdf') || !['portrait', 'landscape'].includes(f.orientation) || !(f.taille > 0) || !(f.nbPages >= 1)) p.push(`${ou} : PDF ${f.chemin} invalide`)
   if (!Array.isArray(v.pages) || !v.pages.length) p.push(`${ou} : aucun aperçu`)
   else v.pages.forEach((i, k) => imageValide(i, `${ou}.pages[${k}]`, p))
 }

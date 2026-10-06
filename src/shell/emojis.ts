@@ -2,4 +2,6 @@
 import type { Profil } from '../contexte/types.ts'
 
 export const EMOJI_PROFIL: Readonly<Record<Profil, string>> = { enfant: '🧒', parent: '👨‍👩‍👧', enseignant: '🧑‍🏫' }
-export const EMOJI_BARRE = { recherche: '🔍', langue: '🗣️', classe: '🎒', verrou: '🔒', reglages: '⚙️', dev: '🛠️', fichesPretes: '📄', programme: '📚', menu: '☰', fermer: '✕' } as const
+export const EMOJI_BARRE = { recherche: '🔍', langue: '🗣️', classe: '🎒', verrou: '🔒', reglages: '⚙️', accueil: '🏠', dev: '🛠️', fichesPretes: '📄', programme: '📚', menu: '☰', fermer: '✕' } as const
+/** Emojis des liens du pied de page qui n'ont pas de rubrique (le programme et les fiches prêtes gardent ceux de la barre). */
+export const EMOJI_PIED = { nouveautes: '🆕', apropos: 'ℹ️', signaler: '🐞', depot: '💻', contact: '✉️' } as const

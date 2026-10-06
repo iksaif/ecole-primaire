@@ -9,8 +9,9 @@
         if (h.charAt(1) !== '/') return
         // `?a=1#/chemin?b=2` → `/chemin?a=1&b=2` : les paramètres d'avant et d'après le # sont gardés
         var i = h.indexOf('?'), chemin = i < 0 ? h.slice(2) : h.slice(2, i)
+        if (/^[\\/]/.test(chemin)) return // `#//autre-site/x` : jamais une adresse hors de ce site
         var q = [location.search.slice(1), i < 0 ? '' : h.slice(i + 1)].filter(Boolean).join('&')
-        history.replaceState(null, '', '%BASE_URL%' + chemin + (q ? '?' + q : ''))
+        try { history.replaceState(null, '', '%BASE_URL%' + chemin + (q ? '?' + q : '')) } catch (e) {}
       })()
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

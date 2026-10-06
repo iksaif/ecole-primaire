@@ -6,6 +6,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { SITE } from '../sites.ts'
 import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
+import { useContexte } from '../contexte/useContexte.ts'
 import { journaliser } from '../utils/journal.js'
 import { routesDeBase, routesDesExercices } from './routes.ts'
 import { idsParRoute } from '../ressources/recents.ts'
@@ -50,7 +51,7 @@ router.beforeEach((to, from) => {
   }
 })
 
-// page vue (sans le détail des réglages) : langue de l'interface, langue régionale, classe filtrée
+// page vue (sans le détail des réglages) : langue de l'interface, mode de langue et langue régionale, classes filtrées (celles du contexte)
 const lu = (cle: string): string | undefined => localStorage.getItem(`ep_${cle}`)?.replace(/"/g, '')
 router.afterEach(to => {
   const id = idsExercices.get(to.path)
@@ -59,7 +60,8 @@ router.afterEach(to => {
 
 router.afterEach((to, from) => {
   if (to.path === from.path) return
-  journaliser('vue', { r: to.path, m: to.query.mode, l: lu('langue_interface'), g: lu('langue_regionale'), c: lu('classe') })
+  const contexte = useContexte().contexteDeLAdresse(to)
+  journaliser('vue', { r: to.path, m: contexte.mode, l: lu('langue_interface'), g: contexte.regionale ?? undefined, c: contexte.classes.join(',') })
 })
 
 export default router

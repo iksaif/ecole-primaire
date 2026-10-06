@@ -1,12 +1,6 @@
 <template>
   <div v-if="competence" class="container" data-page="competence">
-    <nav class="fil" :aria-label="t('competence.fil')">
-      <ol>
-        <li><RouterLink to="/">{{ t('competence.accueil') }}</RouterLink></li>
-        <li><RouterLink :to="adresseDuProgramme">{{ t('competence.programme') }}</RouterLink></li>
-        <li><span>{{ nomDuDomaine(competence.domaine, langueAffichee) }}</span></li>
-      </ol>
-    </nav>
+    <FilAriane :maillons="maillons" :etiquette="t('competence.fil')" />
     <h1 class="section-heading" :lang="LANGUE_SOURCE"><span aria-hidden="true">{{ EMOJI.competence }}</span> {{ competence.libelle }}</h1>
 
     <p class="meta">
@@ -50,6 +44,8 @@ import { competenceDe, domaineDe } from '../data/programme.ts'
 import type { CompetenceId } from '../data/programme.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
+import FilAriane from '../shell/FilAriane.vue'
+import { EMOJI_BARRE } from '../shell/emojis.ts'
 import CompetenceOfficiel from '../programme/CompetenceOfficiel.vue'
 import CompetenceRessources from '../programme/CompetenceRessources.vue'
 import { adresseCompetence, adresseProgramme } from '../programme/adresse.ts'
@@ -57,6 +53,7 @@ import { EMOJI } from '../programme/emojis.ts'
 import { MATIERES_PROGRAMME } from '../programme/etat.ts'
 import { nomDuDomaine } from '../programme/noms.ts'
 import { interpretationDe, referenceDe } from '../programme/references.ts'
+import { useNonIndexable } from '../router/useNonIndexable.ts'
 import { competencesVoisines, ressourcesDeCompetence } from '../ressources/filtres.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
 import { useRessources } from '../ressources/useRessources.ts'
@@ -68,6 +65,7 @@ const { contexte } = useContexte()
 const { catalogue } = useRessources()
 
 const competence = computed(() => competenceDe(String(route.params.id)))
+useNonIndexable(() => !competence.value)
 const domaine = computed(() => (competence.value ? domaineDe(competence.value.domaine) : null))
 // la page de la matière (la langue régionale n'a pas de page de ce nom : pas de lien)
 const matiere = computed(() => MATIERES_PROGRAMME.find(m => m === domaine.value?.matiere) ?? null)
@@ -77,13 +75,17 @@ const voisines = computed(() => (competence.value ? competencesVoisines(competen
 const adresseDuProgramme = computed(() => adresseProgramme(
   { matiere: matiere.value ?? 'maths', domaine: competence.value?.domaine ?? null, affichage: null }, contexte.value.classes, reportes.value))
 
+const maillons = computed(() => [
+  { texte: t('competence.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
+  { texte: t('competence.programme'), vers: adresseDuProgramme.value, emoji: EMOJI_BARRE.programme },
+  ...(competence.value ? [{ texte: nomDuDomaine(competence.value.domaine, langueAffichee.value), emoji: EMOJI_DOMAINE[competence.value.domaine] }] : []),
+])
+
 useTitreDePage(() => (competence.value ? competence.value.libelle : t('competence.inconnue.titre')))
 </script>
 
 <style scoped>
 .container :deep(a:not(.classe):not(.case)) { color: var(--bleu-fort); }
-.fil ol { list-style: none; display: flex; flex-wrap: wrap; gap: .3rem; font-size: .88rem; margin-bottom: .6rem; }
-.fil li + li::before { content: '›'; margin-right: .3rem; color: var(--texte-doux); }
 .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .9rem; margin: .4rem 0 .8rem; }
 .classes { gap: .4rem; }
 .classe { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 2px solid var(--gris-brd); background: #fff; font-weight: 700; text-decoration: none; color: var(--texte); }

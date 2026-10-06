@@ -6,7 +6,7 @@
       <h2 id="avis-titre"><Drapeau :langue="langue" /> {{ tf('avis.titre', { langue: nom }) }}</h2>
       <p>{{ tf('avis.p1', { langue: nom }) }}</p>
       <p>{{ tf('avis.p2') }}</p>
-      <p class="contact">{{ tf('avis.contact') }} <a :href="`mailto:${SITE.contact}?subject=${encodeURIComponent(`Traduction ${nom}`)}`">{{ SITE.contact }}</a></p>
+      <p class="contact">{{ tf('avis.contact') }} <a :href="`mailto:${SITE.contact}?subject=${encodeURIComponent(tf('avis.sujet', { langue: nom }))}`">{{ SITE.contact }}</a></p>
       <p class="merci">{{ tf('avis.merci') }}</p>
       <div class="actions">
         <button class="btn btn-ghost" @click="revenir">{{ tf('avis.revenir', { langue: nomSource }) }}</button>

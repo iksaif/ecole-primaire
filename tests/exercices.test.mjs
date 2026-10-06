@@ -12,7 +12,7 @@ import { toutAuProgramme, estBonus, raisonHorsProgramme, jeuxDeReglages, langueC
 // noyau i18n (traduire : pluriels, interpolation, catalogue commun) : imports avec extension, lisible par node
 import { traducteurExercice } from '../src/exercices/traducteur.ts'
 import { creerRng } from '../src/utils/hasard.js'
-import { COMPETENCES, NIVEAUX, contraintesDe, competenceDe, domaineDe } from '../src/data/programme.js'
+import { COMPETENCES, NIVEAUX, SOURCES, contraintesDe, competenceDe, domaineDe } from '../src/data/programme.js'
 import { ACTIVITES } from '../src/data/activites.js'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -136,6 +136,10 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
     }
   }
 }
+
+// les liens du référentiel sont mis tels quels dans des href : toujours en https
+controler([...Object.entries(SOURCES).flatMap(([id, s]) => [s.url, s.page].filter(u => u !== undefined && !/^https:\/\//.test(u)).map(u => `${id} : ${u}`)),
+  ...COMPETENCES.filter(k => !/^https:\/\//.test(k.source.url)).map(k => k.id)], 'liens du programme en https')
 
 // code de sortie lu par tests/lancer.mjs
 process.exit(nbEchecs() ? 1 : 0)

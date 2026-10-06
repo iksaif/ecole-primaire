@@ -68,11 +68,16 @@ console.log('Langue : seulement en mode bilingue')
 console.log('Index /telechargements')
 {
   const { ctx, page } = await ouvrir()
-  await page.goto(app('/telechargements'))
+  await page.goto(app('/telechargements?vue=liste&classes=ps,ms,gs,cp,ce1,ce2,cm1,cm2'))
   await page.locator('table').first().waitFor({ timeout: 10000 })
   verifier(/Toutes les fiches à imprimer/.test(await page.locator('h1').textContent()) && await page.locator('main h2').count() >= 1, 'index par matière')
   const titres = await page.locator('section.matiere').first().locator('tbody td.c-titre strong').allTextContents()
   verifier(titres.length > 1 && titres.join('|') === [...titres].sort((a, b) => a.localeCompare(b, 'fr')).join('|'), 'ordre alphabétique')
+  // la classe de l'adresse filtre l'index, présenté en cartes (comme la page d'une matière)
+  await page.goto(app('/telechargements?classes=cp&vue=cartes'))
+  await page.locator('article.carte').first().waitFor({ timeout: 10000 })
+  verifier(await page.locator('table').count() === 0, 'index : cartes par défaut')
+  verifier((await page.locator('.compteur, [role=status]').first().textContent()).includes('CP'), 'index : la classe de l\'adresse est appliquée')
   await ctx.close()
 }
 
@@ -179,7 +184,7 @@ for (const langue of ['fr', 'br']) for (const largeur of [360, 1280]) {
   const { ctx, page } = await ouvrir({ langue, largeur, regionale: langue === 'br' ? 'br' : undefined })
   for (const [nom, route, attente] of [
     ['liste', '/maths/fiches?mode=bi&classes=ce1&vue=cartes', 'article.carte'], ['liste en tableau', '/maths/fiches?vue=liste', 'table'],
-    ['index', '/telechargements', 'table'], ['feuille', `/telechargements/${SLUG}`, '.apercu img'],
+    ['index', '/telechargements?vue=liste&classes=ps,ms,gs,cp,ce1,ce2,cm1,cm2', 'table'], ['index en cartes', '/telechargements?vue=cartes&classes=ps,ms,gs,cp,ce1,ce2,cm1,cm2', 'article.carte'], ['feuille', `/telechargements/${SLUG}`, '.apercu img'],
   ]) {
     await page.goto(app(route))
     await page.locator(attente).first().waitFor({ timeout: 10000 })

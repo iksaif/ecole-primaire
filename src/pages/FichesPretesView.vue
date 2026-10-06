@@ -2,7 +2,7 @@
   <!-- Les fiches toutes prêtes d'une matière : /maths/fiches, /francais/fiches, /monde/fiches. Lit fiches/index.json (écrit par
        `npm run fiches`) ; la classe, le mode de langue et la présentation (cartes ou liste) viennent du contexte, dans l'adresse. -->
   <div class="container">
-    <FichesPretesFil :maillons="maillons" />
+    <FilAriane :maillons="maillons" :etiquette="t('fichesPretes.fil')" />
     <h1>{{ t('fichesPretes.titre', { matiere: nomMatiere }) }}</h1>
     <p class="lead">{{ t('fichesPretes.intro') }}</p>
 
@@ -49,9 +49,11 @@ import { useFichesPage } from '../telechargements/useFichesPage.ts'
 import FichesPretesCarte from './FichesPretesCarte.vue'
 import FichesPretesCompteur from './FichesPretesCompteur.vue'
 import FichesPretesEtat from './FichesPretesEtat.vue'
-import FichesPretesFil from './FichesPretesFil.vue'
+import FilAriane from '../shell/FilAriane.vue'
 import FichesPretesFiltres from './FichesPretesFiltres.vue'
 import FichesPretesTable from './FichesPretesTable.vue'
+import { EMOJI_BARRE } from '../shell/emojis.ts'
+import { EMOJI_MATIERE } from '../ressources/composants/presentation.ts'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
 import { useVueAffichee } from '../ressources/composants/useVueAffichee.ts'
 
@@ -63,9 +65,9 @@ const { vue, apresChoix } = useVueAffichee()
 
 const nomMatiere = computed(() => t(`fichesPretes.matieres.${props.matiere}`))
 const maillons = computed(() => [
-  { texte: t('fichesPretes.accueil'), vers: '/' },
-  ...(cheminMatiere(props.matiere) ? [{ texte: nomMatiere.value, vers: cheminMatiere(props.matiere) ?? '/' }] : [{ texte: nomMatiere.value }]),
-  { texte: t('fichesPretes.fichesPretes') },
+  { texte: t('fichesPretes.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
+  ...(cheminMatiere(props.matiere) ? [{ texte: nomMatiere.value, vers: cheminMatiere(props.matiere) ?? '/', emoji: EMOJI_MATIERE[props.matiere] }] : [{ texte: nomMatiere.value, emoji: EMOJI_MATIERE[props.matiere] }]),
+  { texte: t('fichesPretes.fichesPretes'), emoji: EMOJI_BARRE.fichesPretes },
 ])
 </script>
 

@@ -33,12 +33,11 @@ const toutes = (): Promise<boolean> => choisirClasses(NIVEAUX)
 .ligne-cycle { display: flex; align-items: center; flex-wrap: wrap; gap: .3rem; margin-bottom: .4rem; }
 .cycle { min-width: 5.5rem; font-size: .72rem; font-weight: 800; color: var(--texte-doux); text-transform: uppercase; }
 .pastille {
-  min-width: 44px; min-height: 36px; border: 2px solid var(--gris-brd); background: white; border-radius: 999px; padding: .2rem .7rem;
+  min-width: 44px; min-height: 44px; border: 2px solid var(--gris-brd); background: white; border-radius: 999px; padding: .2rem .7rem;
   font: inherit; font-size: .85rem; font-weight: 800; color: var(--texte); cursor: pointer;
 }
 .pastille:hover { border-color: var(--vert); }
 .pastille[aria-pressed="true"] { background: var(--vert-texte); border-color: var(--vert-texte); color: white; }
 .pastille.toutes { margin-top: .2rem; }
 .note { font-size: .78rem; color: var(--texte-doux); margin-top: .3rem; }
-@media (max-width: 640px) { .pastille { min-height: 44px; } }
 </style>

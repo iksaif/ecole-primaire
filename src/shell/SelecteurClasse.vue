@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import CadenasClasse from './CadenasClasse.vue'
@@ -36,7 +36,11 @@ const { racine, bouton, ouvert, basculer, touche, sortie } = useMenu('classe')
 const libelle = computed(() => libelleClasses(contexte.value.classes))
 
 /** Le cadenas s'est ouvert : la classe peut changer, le même menu montre alors les pastilles */
-const ouvrirClasses = (): void => deverrouillerClasse()
+const ouvrirClasses = async (): Promise<void> => {
+  deverrouillerClasse()
+  await nextTick()
+  racine.value?.querySelector<HTMLElement>('.pastille')?.focus()   // le cadenas disparaît : le focus passe à la première pastille
+}
 </script>
 
 <style scoped>

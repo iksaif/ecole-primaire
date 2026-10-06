@@ -21,7 +21,10 @@ export function useRechercheModale(champ: Ref<HTMLInputElement | null>, fenetre:
     ouvrirRecherche()
   }
   onMounted(() => window.addEventListener('keydown', surFrappe))
-  onBeforeUnmount(() => window.removeEventListener('keydown', surFrappe))
+  onBeforeUnmount(() => {
+    window.removeEventListener('keydown', surFrappe)
+    if (rechercheOuverte.value) document.documentElement.style.overflow = defilementAvant.value   // démontée ouverte : la page redéfile
+  })
 
   watch(rechercheOuverte, async ouverte => {
     if (ouverte) {

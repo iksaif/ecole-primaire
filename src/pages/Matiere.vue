@@ -1,8 +1,6 @@
 <template>
   <div v-if="matiere" class="container" :data-page="matiere">
-    <nav class="fil" :aria-label="t('matiere.fil')">
-      <RouterLink to="/">🏠 {{ t('matiere.accueil') }}</RouterLink> <span aria-hidden="true">›</span> <span aria-current="page">{{ nom }}</span>
-    </nav>
+    <FilAriane :maillons="maillons" :etiquette="t('matiere.fil')" />
     <h1 class="titre"><span aria-hidden="true">{{ EMOJI_MATIERE[matiere] }}</span> {{ nom }}</h1>
 
     <aside class="fiches-pretes">
@@ -39,6 +37,8 @@ import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { filtrerParMode, grouperParDomaine } from '../ressources/filtres.ts'
 import { useRessources } from '../ressources/useRessources.ts'
+import FilAriane from '../shell/FilAriane.vue'
+import { EMOJI_BARRE } from '../shell/emojis.ts'
 import EtatVide from '../ressources/composants/EtatVide.vue'
 import GroupeDomaine from '../ressources/composants/GroupeDomaine.vue'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
@@ -56,6 +56,10 @@ const { vue, apresChoix } = useVueAffichee()
 
 const matiere = computed(() => matiereDeLaRoute(route.path))
 const nom = computed(() => (matiere.value ? t(TITRE_MATIERE[matiere.value]) : ''))
+const maillons = computed(() => [
+  { texte: t('matiere.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
+  { texte: nom.value, emoji: matiere.value ? EMOJI_MATIERE[matiere.value] : undefined },
+])
 const classes = computed(() => contexte.value.classes)
 const groupes = computed(() => (matiere.value
   ? grouperParDomaine(filtrerParMode(catalogue.value, contexte.value.mode, contexte.value.regionale), { matiere: matiere.value, classes: classes.value })
@@ -67,8 +71,6 @@ const total = computed(() => avecRessources.value.reduce((n, g) => n + g.ressour
 </script>
 
 <style scoped>
-.fil { font-size: .9rem; margin-bottom: .5rem; color: var(--texte-doux); }
-.fil a { color: var(--bleu-fort); }
 .titre { font-size: 2rem; font-weight: 900; margin-bottom: 1rem; }
 .fiches-pretes {
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; background: #fff8e6; border: 2px solid #f3d38a; border-radius: var(--radius);

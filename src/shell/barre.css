@@ -1,7 +1,7 @@
 /* Styles communs de la barre de navigation (AppNav et ses sélecteurs) : boutons « nbtn », menus déroulants, options.
    Texte bleu : --bleu-fort (5,0:1 sur blanc) ; --bleu ne sert qu'aux aplats sans texte. Cibles ≥ 44 px au téléphone. */
 .nbtn {
-  display: inline-flex; align-items: center; justify-content: center; gap: .35rem; min-height: 38px; background: var(--gris-bg);
+  display: inline-flex; align-items: center; justify-content: center; gap: .35rem; min-height: 44px; background: var(--gris-bg);
   border: 2px solid transparent; border-radius: 20px; padding: .3rem .7rem; font: inherit; font-size: .88rem; font-weight: 700;
   text-decoration: none; color: var(--texte); white-space: nowrap; cursor: pointer;
 }

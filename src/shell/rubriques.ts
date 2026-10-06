@@ -25,7 +25,7 @@ export function rubriques(regionale: Langue | null, profil: Profil): Rubrique[] 
     { id: 'francais', chemin: '/francais', emoji: '📝', cle: 'shell.rubriques.francais', sous: ['/francais'] },
     { id: 'monde', chemin: '/monde', emoji: '🌍', cle: 'shell.rubriques.monde', sous: ['/monde'] },
     ...(regionale ? [{ id: 'regionale', chemin: cheminRegional(regionale), langue: regionale, sous: [cheminRegional(regionale)] } as const] : []),
-    ...(profil === 'enseignant' ? [{ id: 'programme', chemin: '/programme', cle: 'shell.rubriques.programme', sous: ['/programme', '/competence'] } as const] : []),
+    ...(profil === 'enseignant' ? [{ id: 'programme', chemin: '/programme', emoji: '📚', cle: 'shell.rubriques.programme', sous: ['/programme', '/competence'] } as const] : []),
   ]
 }
 

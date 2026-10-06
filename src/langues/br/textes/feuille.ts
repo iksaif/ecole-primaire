@@ -40,6 +40,7 @@ export default {
   aucuneCompetence: 'Fichenn all ebet evit ar varregezh-mañ.', // br: à relire
   aucuneDomaine: 'Fichenn all ebet er domani-mañ.', // br: à relire
   chargementVoisines: 'O klask ar fichennoù tost…', // br: à relire
+  titre: 'Fichenn', // br: à relire
   chargement: 'O kargañ ar fichenn…', // br: à relire
   introuvable: 'N’eus ket eus ar fichenn-mañ (pe n’eus ket mui).', // br: à relire
   absent: 'N’eo ket bet kavet roll ar fichennoù evit poent.', // br: à relire

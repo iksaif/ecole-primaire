@@ -43,6 +43,7 @@ export default {
   aucuneDomaine: 'Aucune autre fiche dans ce domaine.',
   chargementVoisines: 'Recherche des fiches voisines…',
   // états
+  titre: 'Fiche',
   chargement: 'Chargement de la fiche…',
   introuvable: 'Cette fiche n’existe pas (ou plus).',
   absent: 'La liste des fiches est introuvable pour le moment.',

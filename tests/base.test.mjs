@@ -50,12 +50,12 @@ console.log('ecoleprimaire')
   verifier(!e.menu.some(m => /Brezhoneg/i.test(m)), 'aucune langue régionale dans le menu par défaut')
   // activer la langue régionale avec le menu « Langue » de la barre : le menu s’enrichit
   await page.getByRole('button', { name: /^Langue :/ }).click()
-  await page.getByRole('button', { name: /Français \+ Brezhoneg/ }).click()
+  await page.locator('.menu-panneau').getByRole('button', { name: /Français \+ Brezhoneg/ }).click()
   await page.waitForSelector('.nav-links a[href$="/brezhoneg"]')
   verifier((await etat(page)).menu.some(m => /Brezhoneg/i.test(m)), 'langue régionale activable dans la barre')
   await page.goto(adresse(URL_SITE, '/brezhoneg'))
   await attendre(page, '/brezhoneg')
-  verifier(await page.locator('.lettre').count() === 25, 'page de la langue régionale : 25 lettres de l’alphabet breton')
+  verifier(await page.locator('[data-page="langue-regionale"] .vide h2').count() === 1 && await page.locator('.lettre').count() === 0, 'page de la langue régionale : page de matière, état vide honnête (les affiches et fiches arrivent)')
   // changer la langue d’interface dans les réglages
   await page.goto(adresse(URL_SITE, '/parametres'))
   await attendre(page, '/parametres')
@@ -82,7 +82,7 @@ if (URL_SKOOLIK) {
   verifier((await etat(page)).lang === 'br', 'le breton est disponible pour l’interface')
   await page.goto(adresse(URL_SKOOLIK, '/brezhoneg'))
   await attendre(page, '/brezhoneg')
-  verifier(await page.locator('.lettre').count() === 25, 'page de la langue régionale avec les données du breton')
+  verifier(await page.locator('[data-page="langue-regionale"] .vide h2').count() === 1 && await page.locator('.lettre').count() === 0, 'skoolik : page de la langue régionale, page de matière (état vide honnête)')
   verifier(!erreurs.length, `sans erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
   await ctx.close()
 }

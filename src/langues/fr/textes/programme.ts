@@ -1,7 +1,9 @@
 // Textes de l'interface — page « Le programme » (français) : classe × domaine → compétences → ressources, en tableau ou en liste.
 // Source des clés : br/textes/programme.ts doit avoir exactement les mêmes.
 export default {
-  titre: 'Le programme',
+  titre: 'Programme',
+  accueil: 'Accueil',
+  adresse: 'Adresse de cette vue',
   chapeau: '{classes} · {matiere}. Chaque compétence mène à ses ressources.',
   fil: 'Fil d’Ariane',
   matiere: { legende: 'Matière', maths: 'Mathématiques', francais: 'Français', monde: 'Le monde' },

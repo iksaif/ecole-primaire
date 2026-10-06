@@ -20,7 +20,7 @@
     </div>
 
     <div class="ligne">
-      <template v-if="page.domaines.length > 1">
+      <template v-if="page.domaines.length">
         <label class="lab" :for="idDomaine">{{ t('fichesPretes.domaine') }}</label>
         <select :id="idDomaine" :value="page.criteres.domaine" class="menu" @change="page.regler({ domaine: valeurDe($event) })">
           <option value="">{{ t('fichesPretes.tousDomaines') }}</option>
@@ -31,7 +31,7 @@
         <span class="lab" aria-hidden="true">{{ t('fichesPretes.langue') }}</span>
         <button type="button" class="puce" :aria-pressed="page.criteres.langue === ''" @click="page.regler({ langue: '' })">{{ t('fichesPretes.toutesLangues') }}</button>
         <button v-for="l in page.langues" :key="l" type="button" class="puce" :aria-pressed="page.criteres.langue === l" @click="page.regler({ langue: l })">
-          <FichesPretesLangues v-if="l !== LANGUE_BILINGUE" :langues="[l]" toujours />{{ nomDuChoix(l) }}
+          <FichesPretesLangues :langues="languesDuChoix(l)" toujours /><span aria-hidden="true">{{ codeDuChoix(l) }}</span><span class="sr-only">{{ nomDuChoix(l) }}</span>
         </button>
       </div>
     </div>
@@ -41,20 +41,23 @@
 <script setup lang="ts">
 import { useId } from 'vue'
 import { NIVEAUX } from '../data/classes.ts'
-import { estLangue, nomDeLangue } from '../langues/registre.ts'
+import { LANGUE_SOURCE, estLangue, nomDeLangue } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { LANGUE_BILINGUE } from '../telechargements/pages.ts'
 import { texteDe } from '../telechargements/recherche.ts'
 import { USAGES } from '../telechargements/types.ts'
 import type { PageFiches } from '../telechargements/useFichesPage.ts'
 import FichesPretesLangues from './FichesPretesLangues.vue'
 
-defineProps<{ page: PageFiches }>()
+const { page } = defineProps<{ page: PageFiches }>()
 const { t, langueAffichee } = useLangue()
 const idRecherche = useId()
 const idDomaine = useId()
 /** la valeur d'un champ (texte ou liste) qui vient de changer */
 const valeurDe = (e: Event): string => (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement ? e.target.value : '')
+/** les langues d'un choix : celle du code, ou le français et la langue régionale pour « bilingue » */
+const languesDuChoix = (valeur: string): string[] => (estLangue(valeur) ? [valeur] : [LANGUE_SOURCE, page.contexte.regionale].filter((l): l is string => !!l))
+/** « FR », « BR », « FR + BR » (comme la maquette) : visibles ; le nom complet est lu par les lecteurs d'écran */
+const codeDuChoix = (valeur: string): string => languesDuChoix(valeur).map(l => l.toUpperCase()).join(' + ')
 /** « Brezhoneg » pour une langue (dans la langue de l'interface), « Bilingue » pour les fiches à deux langues */
 const nomDuChoix = (valeur: string): string => (estLangue(valeur) ? nomDeLangue(valeur, langueAffichee.value) : t('fichesPretes.bilingue'))
 </script>

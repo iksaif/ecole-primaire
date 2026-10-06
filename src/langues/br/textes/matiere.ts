@@ -9,6 +9,8 @@ export default {
   fichesTexte: 'Dindan, personalizit ho fichennoù hag ho poelladennoù.', // br: à relire
   fichesBouton: 'Fichennoù prest →', // br: à relire
   classe: { one: 'Klas', other: 'Klasoù' }, // br: à relire
+  toutesLesClasses: 'An holl glasoù', // br: à relire
+  domaines: 'Domanioù', // br: à relire
   chargement: 'O kargañ an danvezioù…', // br: à relire
   videTitre: 'Danvezioù ar mirout-mañ a zeu abred.', // br: à relire
   videTexte: 'Emañ al lec\'hienn o vezañ adkemeret : ar poelladennoù hag ar fichennoù a zeu en-dro unan hag unan. Domanioù ar programm zo dija amañ.', // br: à relire

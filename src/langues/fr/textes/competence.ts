@@ -13,10 +13,6 @@ export default {
   interpretation: 'Notre lecture du programme',
   ressources: { titre: 'Toutes les ressources liées', nombre: { one: '{n} ressource', other: '{n} ressources' } },
   groupes: { exercices: 'Exercices et générateurs de fiches', affiches: 'Affiches et leçons', fiches: 'Fiches toutes prêtes' },
-  vide: {
-    exercices: 'Pas encore d’exercice pour cette compétence.',
-    affiches: 'Pas encore d’affiche pour cette compétence.',
-    fiches: 'Pas encore de fiche toute prête pour cette compétence.',
-  },
-  voisines: { titre: 'Compétences voisines', precision: 'même domaine', aucune: 'Pas d’autre compétence dans ce domaine.' },
+  vide: 'Pas encore de ressource pour cette compétence.',
+  voisines: { titre: 'Compétences voisines', precision: 'même domaine', aucune: 'Pas d’autre compétence dans ce domaine.', toutes: 'Voir tout le domaine dans le programme' },
 } as const

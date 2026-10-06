@@ -4,7 +4,9 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/programme.ts'
 
 export default {
-  titre: 'Ar programm', // br: à relire
+  titre: 'Programm', // br: à relire
+  accueil: 'Degemer', // br: à relire
+  adresse: 'Chomlec’h ar sell-mañ', // br: à relire
   chapeau: '{classes} · {matiere}. Pep barregezh a gas d’e frammoù.', // br: à relire
   fil: 'Roudenn', // br: à relire
   matiere: { legende: 'Danvez', maths: 'Jedoniezh', francais: 'Galleg', monde: 'Ar bed' }, // br: à relire

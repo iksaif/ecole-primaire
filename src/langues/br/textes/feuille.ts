@@ -6,15 +6,14 @@ import type fr from '../../fr/textes/feuille.ts'
 export default {
   fil: 'Roudenn', // br: à relire
   accueil: 'Degemer',
-  retour: '← Fichennoù prest : {matiere}', // br: à relire
-  retourIndex: '← An holl fichennoù da voullañ', // br: à relire
+  fichesPretes: 'Fichennoù prest', // br: à relire
   apercu: 'Rakwel', // br: à relire
   apercuPage: 'Rakwel {titre}, pajenn {n} diwar {total}', // br: à relire
   apercuAide: 'Biroù kleiz ha dehou : cheñch pajenn', // br: à relire
   page: 'Pajenn {n} diwar {total}', // br: à relire
   precedente: 'Pajenn a-raok', // br: à relire
   suivante: 'Pajenn war-lerc’h', // br: à relire
-  fiche: 'Fichenn {n}', // br: à relire
+  fiche: 'Skouerenn {n}', // br: à relire
   fiches: 'Skouerennoù eus ar fichenn', // br: à relire
   telecharger: '⬇️ Pellgargañ', // br: à relire
   imprimer: '🖨️ Moullañ', // br: à relire
@@ -24,7 +23,7 @@ export default {
   landscape: 'Led', // br: à relire
   detailPdf: { other: 'PDF {format} {sens} · {n} pajenn · {taille}' }, // br: à relire
   imprimerAide: 'Moullit e « ment wirion » (100 %), hep « ober e ment gant ar bajenn ».', // br: à relire
-  personnaliser: '✏️ Personelaat', // br: à relire
+  personnaliser: '🛠️ Personelaat', // br: à relire
   personnaliserAide: '« Personelaat » a zigor an ekzersiz gant e arventennoù : cheñchit anezho, ha grit kement a fichennoù ha ma karit.', // br: à relire
   enLigne: '🎮 C’hoari war-linenn', // br: à relire
   memeFiche: 'Memes fichenn :', // br: à relire

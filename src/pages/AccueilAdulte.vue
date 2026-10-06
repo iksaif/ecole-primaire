@@ -4,6 +4,7 @@
       <h1>{{ enseignant ? t('accueil.titreEnseignant') : t('accueil.titre') }}</h1>
       <p class="sous-titre">{{ enseignant ? t('accueil.sousTitreEnseignant') : t('accueil.sousTitre') }}</p>
       <AccueilClasses />
+      <AccueilLangue />
       <AccueilCopierLien v-if="enseignant" />
     </header>
     <ul class="tuiles">
@@ -27,6 +28,7 @@ import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
 import AccueilClasses from './AccueilClasses.vue'
+import AccueilLangue from './AccueilLangue.vue'
 import AccueilCopierLien from './AccueilCopierLien.vue'
 import AccueilReprendre from './AccueilReprendre.vue'
 import AccueilTuile from './AccueilTuile.vue'

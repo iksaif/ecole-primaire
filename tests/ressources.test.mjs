@@ -172,6 +172,7 @@ verifier(voisines(n1, C).map(r => r.id).join() === 'fiche:numeration-ce1-ce2,fic
 verifier(ressourcesDeCompetence(C, 'exemple-regle').every(r => r.competences.includes('exemple-regle')) && ressourcesDeCompetence(C, 'exemple-regle').length >= 2, 'ressourcesDeCompetence')
 const kv = competencesVoisines(COMPETENCES[0].id)
 verifier(kv.length > 0 && !kv.includes(COMPETENCES[0].id) && kv.every(k => competenceDe(k).domaine === COMPETENCES[0].domaine) && competencesVoisines('inconnue').length === 0, 'competencesVoisines : même domaine, sans elle-même')
+verifier(competencesVoisines(COMPETENCES[0].id, 2).length === Math.min(2, kv.length) && competencesVoisines(COMPETENCES[0].id, 2).join() === kv.slice(0, 2).join(), 'competencesVoisines : limite')
 
 console.log('useRessources (faux fetch)')
 const attendre = async cond => { for (let i = 0; i < 100 && !cond(); i++) await new Promise(ok => setTimeout(ok, 5)) }

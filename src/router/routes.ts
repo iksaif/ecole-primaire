@@ -30,7 +30,7 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     { path: '/francais', component: matiere, meta: { titre: 'routeur.titre.francais' } },
     { path: '/monde', component: matiere, meta: { titre: 'routeur.titre.monde' } },
     ...regionales.map((l): RouteRecordRaw => ({
-      path: cheminRegional(l), component: () => import('../pages/LangueRegionale.vue'), meta: { titreLibre: majuscule(LANGUES[l].nomLocal) },
+      path: cheminRegional(l), component: matiere, meta: { titreLibre: majuscule(LANGUES[l].nomLocal) },
     })),
     // ancienne adresse de la page de la langue régionale
     { path: '/langue-regionale', redirect: to => ({ path: regionales[0] ? cheminRegional(regionales[0]) : '/', query: to.query, hash: to.hash }) },

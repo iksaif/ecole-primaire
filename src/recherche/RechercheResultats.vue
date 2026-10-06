@@ -12,7 +12,7 @@
           :aria-selected="l.position === actif" @click="emit('choisir', l.entree)" @mousemove="emit('survol', l.position)">
           <span class="option-emoji" aria-hidden="true">{{ l.entree.emoji }}</span>
           <span class="option-texte">
-            <strong>{{ l.entree.titre }}</strong>
+            <strong><TexteSurligne :texte="l.entree.titre" :requete="requete" /></strong>
             <small v-if="l.entree.sousTitre">{{ l.entree.sousTitre }}</small>
           </span>
           <span v-if="l.entree.classes.length" class="option-classes">{{ resumeClasses(l.entree.classes) }}</span>
@@ -29,8 +29,9 @@ import type { Classe } from '../ressources/types.ts'
 import type { EntreeRecherche } from './index.ts'
 import { ID_LISTE, idOption } from './identifiants.ts'
 import type { GroupeAffiche } from './resultats.ts'
+import TexteSurligne from './TexteSurligne.vue'
 
-defineProps<{ groupes: readonly GroupeAffiche[], actif: number }>()
+defineProps<{ groupes: readonly GroupeAffiche[], actif: number, requete: string }>()
 const emit = defineEmits<{ choisir: [entree: EntreeRecherche], survol: [position: number] }>()
 const { t } = useLangue()
 

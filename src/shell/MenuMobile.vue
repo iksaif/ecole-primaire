@@ -6,7 +6,7 @@
       <span aria-hidden="true">{{ ouvert ? EMOJI_BARRE.fermer : EMOJI_BARRE.menu }}</span>
     </button>
     <div v-if="ouvert" id="menu-telephone" class="panneau-mobile" role="group" :aria-label="t('shell.barre.menuTelephone')">
-      <RouterLink to="/" class="grand">{{ t('shell.barre.accueil') }}</RouterLink>
+      <RouterLink to="/" class="grand"><span aria-hidden="true">{{ EMOJI_BARRE.accueil }}</span> {{ t('shell.barre.accueil') }}</RouterLink>
       <button type="button" class="grand" @click="chercher"><span aria-hidden="true">{{ EMOJI_BARRE.recherche }}</span> {{ t('shell.barre.rechercher') }}</button>
       <LienRubrique v-for="r in rubriques" :key="r.id" :rubrique="r" class="grand" />
       <RouterLink to="/programme" class="grand" v-if="!rubriques.some(r => r.id === 'programme')"><span aria-hidden="true">{{ EMOJI_BARRE.programme }}</span> {{ t('shell.rubriques.programme') }}</RouterLink>

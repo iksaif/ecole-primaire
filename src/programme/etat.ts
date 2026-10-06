@@ -23,7 +23,7 @@ export interface EtatProgramme {
   readonly matiere: MatiereProgramme
   /** domaine affiché : toujours un domaine de la matière aux cycles des classes choisies (`null` si la matière n'en a aucun) */
   readonly domaine: DomaineId | null
-  /** `null` : non précisé (tableau, sauf sur un petit écran : liste) */
+  /** `null` : non précisé (liste) */
   readonly affichage: Affichage | null
 }
 
@@ -54,5 +54,5 @@ export function ecrireEtatProgramme(etat: EtatProgramme): Record<string, string>
   return q
 }
 
-/** La présentation affichée : celle de l'adresse, sinon la liste sur un petit écran et le tableau ailleurs. */
-export const affichageEffectif = (etat: EtatProgramme, petitEcran: boolean): Affichage => etat.affichage ?? (petitEcran ? 'liste' : 'tableau')
+/** La présentation affichée : celle de l'adresse, sinon la liste (la maquette ouvre la liste pour tous les profils ; le tableau est un choix). */
+export const affichageEffectif = (etat: EtatProgramme): Affichage => etat.affichage ?? 'liste'

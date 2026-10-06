@@ -10,5 +10,6 @@ export const EMOJI = {
   classe: '🎒',
   lien: '🔗',
   references: '📖',
+  ressources: '🧰',
   interpretation: 'ⓘ',
 } as const

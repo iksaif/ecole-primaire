@@ -33,7 +33,7 @@ console.log('État de la page ↔ adresse')
   verifier(lireEtatProgramme({ matiere: 'francais', domaine: 'nombres-calcul' }, ['ce1']).domaine === 'lecture', 'un domaine d’une autre matière : le premier de la matière')
   verifier(lireEtatProgramme({ domaine: 'donnees' }, ['ps']).domaine === 'nombres-calcul', 'un domaine absent des cycles de la classe : le premier')
   verifier(lireEtatProgramme({ affichage: 'x', matiere: ['monde', 'maths'] }, ['cm1']).affichage === null && lireEtatProgramme({ matiere: ['monde', 'maths'] }, ['cm1']).matiere === 'monde', 'valeurs invalides ou multiples : sans exception')
-  verifier(affichageEffectif(defaut, true) === 'liste' && affichageEffectif(defaut, false) === 'tableau' && affichageEffectif({ ...defaut, affichage: 'tableau' }, true) === 'tableau', 'présentation par défaut : liste sur petit écran ; l’adresse l’emporte')
+  verifier(affichageEffectif(defaut) === 'liste' && affichageEffectif({ ...defaut, affichage: 'tableau' }) === 'tableau', 'présentation par défaut : la liste (comme la maquette) ; l’adresse l’emporte')
   verifier(ecrireEtatProgramme({ matiere: 'monde', domaine: null, affichage: null }).domaine === undefined, 'domaine absent : non écrit')
 }
 

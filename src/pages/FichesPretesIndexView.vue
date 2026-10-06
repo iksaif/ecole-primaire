@@ -19,9 +19,9 @@
 
       <section v-for="g in groupes" :key="g.matiere" class="matiere" :aria-labelledby="`m-${g.matiere}`">
         <h2 :id="`m-${g.matiere}`"><span aria-hidden="true">{{ EMOJI_MATIERE[g.matiere] }}</span> {{ t(`fichesPretes.matieres.${g.matiere}`) }}</h2>
-        <FichesPretesTable v-if="vue === 'liste'" :entrees="g.entrees" :index="page.index" :legende="t(`fichesPretes.matieres.${g.matiere}`)" :selection="page.selection" :avec-langues="page.bilingue" />
+        <FichesPretesTable v-if="vue === 'liste'" :entrees="g.entrees" :index="page.index" :legende="t(`fichesPretes.matieres.${g.matiere}`)" :selection="page.selection" />
         <ul v-else class="grille">
-          <li v-for="e in g.entrees" :key="e.slug"><FichesPretesCarte :entree="e" :selection="page.selection" :avec-langues="page.bilingue" /></li>
+          <li v-for="e in g.entrees" :key="e.slug"><FichesPretesCarte :entree="e" :selection="page.selection" /></li>
         </ul>
       </section>
       <div v-if="!groupes.length" class="vide" role="status">

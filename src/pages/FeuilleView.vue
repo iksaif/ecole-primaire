@@ -17,7 +17,6 @@
 
     <template v-else-if="feuille.entree">
       <FilAriane :maillons="maillons" :etiquette="t('feuille.fil')" />
-      <RouterLink class="retour" :to="versListe">{{ lienRetour }}</RouterLink>
       <div class="feuille">
         <FeuilleApercu :feuille="feuille" />
         <div class="panneau">
@@ -63,14 +62,10 @@ const maillons = computed(() => {
   return [
     { texte: t('feuille.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
     ...(matiere ? [{ texte: nomMatiere.value, vers: cheminMatiere(matiere) ?? undefined, emoji: EMOJI_MATIERE[matiere] }] : []),
-    ...(feuille.domaine ? [{ texte: texteDe(feuille.domaine.nom, langueAffichee.value), langue: langueDuTexte(feuille.domaine.nom, langueAffichee.value) }] : []),
+    { texte: t('feuille.fichesPretes'), vers: (matiere ? cheminFiches(matiere) : null) ?? '/telechargements', emoji: EMOJI_BARRE.fichesPretes },
     { texte: texteDe(e.titre, langueAffichee.value), langue: langueDuTexte(e.titre, langueAffichee.value) },
   ]
 })
-/** retour à la liste des fiches de la matière (celle de l'index global quand la matière n'a pas de page de fiches) */
-const versListe = computed(() => (feuille.matiere ? cheminFiches(feuille.matiere) : null) ?? '/telechargements')
-const lienRetour = computed(() => (feuille.matiere && cheminFiches(feuille.matiere) ? t('feuille.retour', { matiere: nomMatiere.value }) : t('feuille.retourIndex')))
-
 useNonIndexable(() => feuille.etat.etat === 'absent')
 // titre du document : le titre de la fiche (src/router/titres.ts)
 useTitreDePage(() => (feuille.entree ? texteDe(feuille.entree.titre, langueAffichee.value) : ''))
@@ -79,7 +74,6 @@ useTitreDePage(() => (feuille.entree ? texteDe(feuille.entree.titre, langueAffic
 <style scoped>
 .titre-etat { font-size: 1.6rem; font-weight: 900; margin-top: 1.5rem; }
 .message { color: var(--texte-doux); margin: 2rem 0; display: flex; flex-direction: column; gap: .75rem; align-items: flex-start; }
-.retour { display: inline-block; margin-bottom: 1rem; color: var(--bleu-fort); min-height: 24px; }
 .feuille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 1.6rem; align-items: start; }
 .panneau { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
 @media (max-width: 820px) { .feuille { grid-template-columns: 1fr; } }

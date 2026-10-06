@@ -18,9 +18,9 @@
       </div>
 
       <template v-if="page.resultats.length">
-        <FichesPretesTable v-if="vue === 'liste'" :entrees="page.resultats" :index="page.index" :legende="nomMatiere" :selection="page.selection" :avec-langues="page.bilingue" />
+        <FichesPretesTable v-if="vue === 'liste'" :entrees="page.resultats" :index="page.index" :legende="nomMatiere" :selection="page.selection" />
         <ul v-else class="grille">
-          <li v-for="e in page.resultats" :key="e.slug"><FichesPretesCarte :entree="e" :selection="page.selection" :avec-langues="page.bilingue" /></li>
+          <li v-for="e in page.resultats" :key="e.slug"><FichesPretesCarte :entree="e" :selection="page.selection" /></li>
         </ul>
       </template>
       <div v-else class="vide" role="status">

@@ -1,5 +1,5 @@
 <template>
-  <details class="groupe" :open="ouvert" :data-domaine="groupe.domaine" @toggle="suivre">
+  <details :id="`domaine-${groupe.domaine}`" class="groupe" :open="ouvert" :data-domaine="groupe.domaine" @toggle="suivre">
     <summary>
       <h2><span aria-hidden="true">{{ EMOJI_DOMAINE[groupe.domaine] }}</span> {{ nomDomaine(groupe.domaine, langueAffichee) }}</h2>
       <span v-if="groupe.ressources.length" class="compte">{{ t('ressource.ressources', { n: groupe.ressources.length }) }}</span>

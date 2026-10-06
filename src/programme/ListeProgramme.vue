@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-// Alternative au tableau (présentation par défaut sur téléphone) : une carte par compétence des classes choisies, avec ses ressources.
+// Présentation par défaut (le tableau en est l'alternative) : une carte par compétence des classes choisies, avec ses ressources.
 import { computed } from 'vue'
 import type { Classe } from '../data/classes.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'

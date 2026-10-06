@@ -25,6 +25,7 @@
         </li>
       </ul>
       <p v-else class="vide">{{ t('competence.voisines.aucune') }}</p>
+      <p v-if="aPlusDeVoisines" class="toutes"><RouterLink :to="adresseDuProgramme">{{ t('competence.voisines.toutes') }}</RouterLink></p>
     </section>
   </div>
   <div v-else class="container" data-page="competence">
@@ -71,7 +72,10 @@ const domaine = computed(() => (competence.value ? domaineDe(competence.value.do
 const matiere = computed(() => MATIERES_PROGRAMME.find(m => m === domaine.value?.matiere) ?? null)
 const reportes = computed(() => extraireParamsContexte(route.query))
 const ressources = computed(() => (competence.value ? ressourcesDeCompetence(catalogue.value, competence.value.id as CompetenceId) : []))
-const voisines = computed(() => (competence.value ? competencesVoisines(competence.value.id as CompetenceId).map(id => competenceDe(id)).filter(k => k !== null) : []))
+/** nombre de voisines montrées : le reste est dans le programme, filtré sur le domaine */
+const LIMITE_VOISINES = 6
+const voisines = computed(() => (competence.value ? competencesVoisines(competence.value.id as CompetenceId, LIMITE_VOISINES).map(id => competenceDe(id)).filter(k => k !== null) : []))
+const aPlusDeVoisines = computed(() => !!competence.value && competencesVoisines(competence.value.id as CompetenceId).length > LIMITE_VOISINES)
 const adresseDuProgramme = computed(() => adresseProgramme(
   { matiere: matiere.value ?? 'maths', domaine: competence.value?.domaine ?? null, affichage: null }, contexte.value.classes, reportes.value))
 
@@ -95,5 +99,6 @@ useTitreDePage(() => (competence.value ? competence.value.libelle : t('competenc
 .precision { font-size: .9rem; font-weight: 600; color: var(--texte-doux); }
 .liste { list-style: none; display: grid; gap: .4rem; }
 .liste li { background: #fff; border-radius: 10px; box-shadow: var(--shadow); padding: .6rem .8rem; border-left: 5px solid var(--violet); }
+.toutes { margin-top: .6rem; font-weight: 700; }
 .niveaux, .vide { color: var(--texte-doux); }
 </style>

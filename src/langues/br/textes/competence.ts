@@ -16,10 +16,6 @@ export default {
   interpretation: 'Hor lenn eus ar programm', // br: à relire
   ressources: { titre: 'An holl zanvezioù liammet', nombre: { one: '{n} danvez', two: '{n} zanvez', few: '{n} danvez', many: '{n} danvez', other: '{n} danvez' } }, // br: à relire
   groupes: { exercices: 'Poelladennoù ha produerien fichennoù', affiches: 'Skeudennoù ha gerioù-kaer', fiches: 'Fichennoù prest' }, // br: à relire
-  vide: {
-    exercices: 'Poelladenn ebet c’hoazh evit ar vareghezh-mañ.', // br: à relire
-    affiches: 'Skeudenn ebet c’hoazh evit ar vareghezh-mañ.', // br: à relire
-    fiches: 'Fichenn prest ebet c’hoazh evit ar vareghezh-mañ.', // br: à relire
-  },
-  voisines: { titre: 'Barregezhioù tost', precision: 'memes domani', aucune: 'Barregezh all ebet er domani-mañ.' }, // br: à relire
+  vide: 'Danvez ebet c’hoazh evit ar vareghezh-mañ.', // br: à relire
+  voisines: { titre: 'Barregezhioù tost', precision: 'memes domani', aucune: 'Barregezh all ebet er domani-mañ.', toutes: 'Gwelet an domani a-bezh er programm' }, // br: à relire
 } satisfies Traductions<typeof fr>

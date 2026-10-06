@@ -2,19 +2,19 @@
   <section aria-labelledby="h-ressources">
     <h2 id="h-ressources"><span aria-hidden="true">{{ EMOJI.programme }}</span> {{ t('competence.ressources.titre') }}
       <span class="nombre">{{ t('competence.ressources.nombre', { n: ressources.length }) }}</span></h2>
+    <p v-if="!groupes.length" class="vide">{{ t('competence.vide') }}</p>
     <div v-for="g in groupes" :key="g.cle" class="groupe">
       <h3>{{ t(`competence.groupes.${g.cle}`) }}</h3>
-      <ul v-if="g.ressources.length" class="liste">
+      <ul class="liste">
         <li v-for="r in g.ressources" :key="r.id"><CarteRessource :ressource="r" :classes-choisies="classes" :niveau-titre="4" /></li>
       </ul>
-      <p v-else class="vide">{{ t(`competence.vide.${g.cle}`) }}</p>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 // Toutes les ressources liées à une compétence, en trois groupes (exercices et générateurs, affiches, fiches toutes prêtes) ;
-// un groupe vide le dit honnêtement. Les cartes sont celles de src/ressources/composants/ (mêmes que les pages de matière).
+// un groupe sans ressource n'est pas montré ; sans aucune ressource, une seule ligne le dit. Les cartes sont celles de src/ressources/composants/ (mêmes que les pages de matière).
 import { computed } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import CarteRessource from '../ressources/composants/CarteRessource.vue'
@@ -25,7 +25,7 @@ const props = defineProps<{ ressources: readonly RessourceDeContenu[], classes: 
 const { t } = useLangue()
 const groupes = computed(() => (['exercices', 'affiches', 'fiches'] as const).map(cle => ({
   cle, ressources: props.ressources.filter(r => r.type === ({ exercices: 'exercice', affiches: 'affiche', fiches: 'fiche' } as const)[cle]),
-})))
+})).filter(g => g.ressources.length))
 </script>
 
 <style scoped>

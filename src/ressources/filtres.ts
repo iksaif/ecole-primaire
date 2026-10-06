@@ -90,9 +90,9 @@ export function voisines<T extends RessourceDeContenu>(ressource: T, catalogue: 
 
 /**
  * Les compétences proches d'une compétence, sans elle : celles du même domaine, les plus de classes en commun d'abord, puis
- * dans l'ordre du programme. Vide pour une compétence inconnue.
+ * dans l'ordre du programme, au plus `limite`. Vide pour une compétence inconnue.
  */
-export function competencesVoisines(competence: CompetenceId): CompetenceId[] {
+export function competencesVoisines(competence: CompetenceId, limite = Infinity): CompetenceId[] {
   const k = competenceDe(competence)
   if (!k) return []
   const communes = (niveaux: readonly Classe[]): number => niveaux.filter(n => k.niveaux.includes(n)).length
@@ -100,4 +100,5 @@ export function competencesVoisines(competence: CompetenceId): CompetenceId[] {
     .filter(autre => autre.domaine === k.domaine && autre.id !== k.id)
     .sort((a, b) => communes(b.niveaux) - communes(a.niveaux))
     .map(autre => autre.id as CompetenceId)
+    .slice(0, limite)
 }

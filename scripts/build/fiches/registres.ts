@@ -148,7 +148,7 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
         const documents: DocumentSource[] = Array.from({ length: nb }, (_, k) => {
           const graine = graineDe(slug) + k + 1
           return {
-            id: `fiche-${k + 1}`, titre: nb > 1 ? { fr: `Fiche ${k + 1}`, br: `Fichenn ${k + 1}` } : null, graine,   // br: à relire
+            id: `fiche-${k + 1}`, titre: nb > 1 ? { fr: `Exemplaire ${k + 1}`, br: `Skouerenn ${k + 1}` } : null, graine,   // br: à relire
             formats: [{ format: 'A4', orientation: 'portrait', html: htmlFicheExercice(module, niveau, f?.reglages ?? {}, langue, graine) }],
           }
         })

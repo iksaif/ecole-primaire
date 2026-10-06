@@ -1,7 +1,7 @@
 // État de la page « Programme » : ce que l'adresse dit (matière, domaine, présentation), le contexte (classes, références), les
 // lignes du tableau et les actions qui réécrivent l'adresse (`router.replace` : pas d'entrée d'historique pour un filtre).
 //   const { etat, lignes, choisirMatiere, … } = useProgramme()
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import { extraireParamsContexte } from '../contexte/url.ts'
@@ -11,9 +11,6 @@ import { PARAMS_DE_LA_PAGE, affichageEffectif, ecrireEtatProgramme, lireEtatProg
 import type { Affichage, EtatProgramme, MatiereProgramme } from './etat.ts'
 import { lignesDuProgramme } from './tableau.ts'
 
-/** Au-dessous de cette largeur, la liste est la présentation par défaut (le tableau défile : sticky + scroll horizontal). */
-const LARGEUR_TABLEAU = 700
-
 export function useProgramme() {
   const route = useRoute()
   const router = useRouter()
@@ -22,14 +19,7 @@ export function useProgramme() {
 
   const etat = computed<EtatProgramme>(() => lireEtatProgramme(route.query, contexte.value.classes))
 
-  // petit écran : réactif au redimensionnement (aucune lecture avant le montage : le rendu serveur n'existe pas, mais le test non plus)
-  const petitEcran = ref(false)
-  let media: MediaQueryList | null = null
-  const suivre = (): void => { petitEcran.value = media?.matches ?? false }
-  onMounted(() => { media = matchMedia(`(max-width: ${LARGEUR_TABLEAU - 1}px)`); suivre(); media.addEventListener('change', suivre) })
-  onBeforeUnmount(() => media?.removeEventListener('change', suivre))
-
-  const affichage = computed<Affichage>(() => affichageEffectif(etat.value, petitEcran.value))
+  const affichage = computed<Affichage>(() => affichageEffectif(etat.value))
   const lignes = computed(() => (etat.value.domaine ? lignesDuProgramme(etat.value.domaine, contexte.value.classes, catalogue.value) : []))
 
   /** Réécrit les paramètres propres à la page, en gardant le reste de l'adresse (contexte compris). */

@@ -9,7 +9,7 @@
           <th v-for="c in NIVEAUX" :key="c" scope="col" :class="{ choisie: classes.includes(c) }">
             {{ c.toUpperCase() }}<span v-if="classes.includes(c)" class="sr-only"> ({{ t('programme.tableau.choisie') }})</span>
           </th>
-          <th scope="col">{{ t('programme.tableau.ressources') }}</th>
+          <th scope="col"><span aria-hidden="true">{{ EMOJI.ressources }}</span><span class="sr-only">{{ t('programme.tableau.ressources') }}</span></th>
         </tr>
       </thead>
       <tbody>
@@ -48,6 +48,7 @@ import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { adresseCompetence } from './adresse.ts'
 import type { ParamsReportes } from './adresse.ts'
+import { EMOJI } from './emojis.ts'
 import EtiquetteReference from './EtiquetteReference.vue'
 import LectureInterpretation from './LectureInterpretation.vue'
 import { nomDuDomaine } from './noms.ts'

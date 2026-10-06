@@ -1,15 +1,9 @@
-// Textes de l'interface — page de la langue régionale (français) : /brezhoneg…
+// Textes de l'interface — page de la langue régionale (français) : /brezhoneg, page de matière comme les autres.
 export default {
   inactif: 'Cette page est inactive en mode « Français seul ».',
-  inactifAide: 'Activez la langue pour voir son alphabet, ses nombres, ses jours et ses mois.',
+  inactifAide: 'Activez la langue pour voir ses affiches et ses fiches.',
   activer: 'Activer : français + {nom}',
-  intro: 'Alphabet, nombres, jours et mois en {nom}, pour {ecoles}.',
-  alphabetAide: '{n} lettres. Les lettres en plus de l’alphabet latin : {plus}.',
-  motsIllustres: 'Un mot par lettre',
-  nombres: 'Les nombres en lettres',
-  nombresAide: 'De 1 à 10, les dizaines, quelques grands nombres.',
-  voixAbsente: 'La synthèse vocale du navigateur ne lit pas cette langue : pas de dictée à l’oreille.',
-  voixPresente: 'Le navigateur peut lire cette langue à voix haute.',
-  ressources: 'Exercices et fiches en {nom}',
-  ressourcesVide: 'Les exercices et les fiches en {nom} arrivent.',
+  intro: 'Affiches et fiches à imprimer pour apprendre le {nom}.',
+  videTitre: 'Les affiches et les fiches arrivent.',
+  videTexte: 'L’alphabet, les nombres, les jours, les mois et les mutations seront des affiches et des fiches à imprimer. Le programme du {nom} n’a pas encore de domaine.',
 } as const

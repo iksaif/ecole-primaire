@@ -115,6 +115,25 @@ console.log('Téléphone : liste par défaut, tableau sans débordement de la pa
   await ctx.close()
 }
 
+console.log('Programme : titre, fil d’Ariane, liste par défaut, adresse de la vue, colonne des ressources')
+{
+  const { ctx, page } = await ouvrir()
+  await page.goto(app('/programme?classes=ce1,ce2'))
+  await pret(page)
+  verifier(await page.locator('h1').count() === 1 && (await page.locator('h1').textContent()).trim() === '📚 Programme', 'titre « 📚 Programme »')
+  const fil = await page.locator('nav.fil li').allTextContents()
+  verifier(fil.length === 2 && /Accueil/.test(fil[0]) && /Programme/.test(fil[1]) && await page.locator('nav.fil li a').count() === 1, 'fil d’Ariane : Accueil › Programme')
+  verifier(await presse(page, 'Liste') && await page.locator('table.prog').count() === 0, 'la liste est la présentation par défaut (comme la maquette)')
+  const adresse = await page.locator('p.adresse code').textContent()
+  verifier(/^https?:\/\/.*\/programme\?/.test(adresse) && /classes=ce1(,|%2C)ce2/.test(adresse) && /affichage=liste/.test(adresse), `ligne « Adresse de cette vue » (${adresse.replace(/^.*programme/, 'programme')})`)
+  await page.getByRole('button', { name: 'Tableau', exact: true }).click()
+  await page.waitForSelector('table.prog')
+  const entete = page.locator('table.prog thead th').last()
+  verifier((await entete.textContent()).trim().startsWith('🧰') && await entete.locator('.sr-only').textContent() === 'Ressources' && await entete.locator('[aria-hidden="true"]').textContent() === '🧰', 'colonne « Ressources » : l’icône 🧰 et un libellé accessible')
+  verifier((await page.locator('p.adresse code').textContent()).includes('affichage=tableau'), 'l’adresse suit la vue')
+  await ctx.close()
+}
+
 console.log('Interprétation (Le monde)')
 {
   const k = COMPETENCES.find(c => c.interpretation && c.niveaux.includes('cm2'))
@@ -146,7 +165,8 @@ console.log('Page d’une compétence')
   verifier(await page.getByRole('heading', { name: /Compétences voisines/ }).count() === 1 && await page.locator('.voisines li a').count() > 0, 'compétences voisines (même domaine)')
   verifier(await page.getByRole('heading', { name: 'Toutes les ressources liées' }).count() === 1, 'toutes les ressources liées')
   const vides = await page.locator('.vide').allTextContents()
-  verifier(vides.length === 3 && vides.every(v => v.startsWith('Pas encore')), `aucune ressource : trois états vides honnêtes (${vides[0]})`)
+  verifier(vides.length === 1 && vides[0].startsWith('Pas encore de ressource'), `aucune ressource : une seule ligne d’état (${vides[0]})`)
+  verifier(await page.locator('.voisines li a').count() <= 6, 'compétences voisines : six au plus')
   verifier(!erreurs.length, `aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
   const avant = await page.title()
   await page.locator('.voisines li a').first().click()

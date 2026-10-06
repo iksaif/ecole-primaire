@@ -5,6 +5,7 @@ import { catalogueDeTest } from './donnees-ressources.mjs'
 import { pagesDuSite } from '../src/recherche/pages.ts'
 import { estZoneDeSaisie, ouvreLaRecherche, deplacer } from '../src/recherche/clavier.ts'
 import { aplatir, groupesAffiches, LIGNES_PAR_GROUPE } from '../src/recherche/resultats.ts'
+import { decouper } from '../src/recherche/surlignage.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const page = (id, titre, extra = {}) => ({ id: `page:${id}`, type: 'page', titre: { texte: titre }, description: null, emoji: '📄', classes: [], competences: [], langues: ['fr'], route: `/${id}`, exemple: false, ...extra })
@@ -127,5 +128,16 @@ const A = groupesAffiches(G.groupes)
 verifier(A[0].lignes.length === LIGNES_PAR_GROUPE && A[0].restants === 8 - LIGNES_PAR_GROUPE && A[1].lignes.length === 1 && A[1].restants === 0, 'au plus quelques lignes par type, le reste est compté')
 verifier(aplatir(A).map(l => l.position).join() === Array.from({ length: LIGNES_PAR_GROUPE + 1 }, (_, i) => i).join(), 'positions continues de haut en bas, d’un groupe à l’autre')
 verifier(groupesAffiches([]).length === 0 && aplatir([]).length === 0, 'rien : rien')
+
+console.log('Surlignage')
+const surligne = (texte, requete) => decouper(texte, requete).map(m => (m.trouve ? `[${m.texte}]` : m.texte)).join('')
+verifier(surligne('Les fractions', 'fraction') === 'Les [fraction]s', 'le mot trouvé est entouré, le reste intact')
+verifier(surligne('Écriture des Nombres', 'ecriture nombre') === '[Écriture] des [Nombre]s', 'sans accents ni casse, plusieurs mots : la casse et les accents d’origine sont gardés')
+verifier(surligne('Les chwec’h jours', 'chwech') === 'Les [chwec’h] jours', 'breton : « c’h » trouvé par « ch », l’apostrophe est dans le surlignage')
+verifier(surligne('Le Cœur', 'coeur') === 'Le [Cœur]', 'ligature : le surlignage couvre la ligature entière')
+verifier(surligne('a b a', 'a') === '[a] b [a]' && surligne('abab', 'ab a') === '[abab]', 'plusieurs occurrences, plages qui se touchent fusionnées')
+verifier(surligne('Rien', 'zzz') === 'Rien' && decouper('Rien', 'zzz').length === 1 && decouper('Rien', '  ').length === 1 && decouper('', 'a').length === 1, 'rien de trouvé ou requête vide : un seul morceau non marqué')
+verifier(decouper('<b>x</b> & y', 'x').map(m => m.texte).join('') === '<b>x</b> & y', 'le texte est restitué à l’identique (jamais de HTML produit)')
+verifier(surligne('Un 😀 emoji', 'emoji') === 'Un 😀 [emoji]', 'caractères hors plan de base : positions justes')
 
 process.exit(nbEchecs() ? 1 : 0)

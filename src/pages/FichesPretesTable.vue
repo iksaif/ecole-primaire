@@ -17,7 +17,7 @@
         <tr v-for="e in entrees" :key="e.slug">
           <td class="c-titre"><div class="titre">
             <RouterLink :to="`/telechargements/${e.slug}`" :lang="langueDuTexte(e.titre, langueAffichee)"><strong>{{ texteDe(e.titre, langueAffichee) }}</strong></RouterLink>
-            <FichesPretesLangues :langues="e.langues" :toujours="avecLangues" />
+            <FichesPretesLangues :langues="e.langues" regionales />
             <span v-if="e.exemple" class="badge">{{ t('fichesPretes.badgeExemple') }}</span>
           </div></td>
           <td class="c-dom">{{ nomDomaine(e) }}</td>
@@ -42,7 +42,6 @@ const props = withDefaults(defineProps<{
   index: IndexFiches
   legende: string
   selection?: readonly Classe[]
-  avecLangues?: boolean
 }>(), { selection: () => [] })
 const { t, langueAffichee } = useLangue()
 const nomDomaine = (e: EntreeIndex): string => {

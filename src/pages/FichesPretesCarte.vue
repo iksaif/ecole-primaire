@@ -11,7 +11,7 @@
       </component>
       <PastillesClasses :classes="entree.niveaux" :choisies="selection" />
       <p class="badges">
-        <FichesPretesLangues :langues="entree.langues" :toujours="avecLangues" />
+        <FichesPretesLangues :langues="entree.langues" regionales />
         <span class="badge">{{ t(entree.usage === 'apprendre' ? 'fichesPretes.apprendre' : 'fichesPretes.sentrainer') }}</span>
         <span v-if="entree.exemple" class="badge exemple">{{ t('fichesPretes.badgeExemple') }}</span>
       </p>
@@ -32,8 +32,6 @@ withDefaults(defineProps<{
   entree: EntreeIndex
   /** classes choisies (mises en valeur parmi celles de la fiche) */
   selection?: readonly Classe[]
-  /** montrer les langues même pour une fiche en français (mode bilingue) */
-  avecLangues?: boolean
   compacte?: boolean
   /** niveau du titre (2 sous le titre de la page, 4 sous un titre de sous-section) */
   niveauTitre?: 2 | 3 | 4

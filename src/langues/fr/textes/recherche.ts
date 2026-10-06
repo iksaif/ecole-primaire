@@ -9,7 +9,7 @@ export default {
   aide: 'Tapez quelques lettres pour chercher. Les accents sont facultatifs.',
   classe: 'Classe : {classes}',
   toutesLesClasses: 'Toutes les classes',
-  masques: { one: '+ {n} dans les autres classes', other: '+ {n} dans les autres classes' },
+  masques: { one: '{n} résultat masqué (autres classes)', other: '{n} résultats masqués (autres classes)' },
   nombre: { zero: 'Aucun résultat', one: '{n} résultat', other: '{n} résultats' },
   aucun: 'Aucun résultat pour « {requete} » en {classes}.',
   aucunPartout: 'Aucun résultat pour « {requete} ».',

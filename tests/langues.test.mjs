@@ -47,7 +47,7 @@ for (const c of CODES.filter(c => c !== LANGUE_SOURCE)) {
 console.log('t() typé')
 verifier(traduire('fr', 'nav.accueil') === 'Accueil' && traduire('br', 'nav.langueRegionale') === 'Yezh rannvroel', 'texte simple fr / br')
 verifier(traduire('fr', 'reglages.remise.fait', { n: 1 }) === '✅ 1 réglage supprimé.' && traduire('fr', 'reglages.remise.fait', { n: 4 }) === '✅ 4 réglages supprimés.', 'pluriel français (1 / 4)')
-verifier(traduire('br', 'regionale.alphabetAide', { n: 25, plus: 'ñ' }).includes('25'), 'paramètres interpolés')
+verifier(traduire('fr', 'regionale.intro', { nom: 'breton' }).includes('breton'), 'paramètres interpolés')
 verifier(traduireListe('fr', 'apropos.commentListe').length === 3, 'liste de textes')
 verifier(contenu('br').t('nav.accueil') === 'Degemer' && contenu('br').langue === 'br', 'contenu(langue) : texte dans la langue du contenu')
 // pluriel breton : Intl.PluralRules('br') donne one / two / few / many / other

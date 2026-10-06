@@ -6,6 +6,8 @@ export default {
   fichesTexte: 'Ci-dessous, personnalisez vos fiches et exercices.',
   fichesBouton: 'Fiches toutes prêtes →',
   classe: { one: 'Classe', other: 'Classes' },
+  toutesLesClasses: 'Toutes les classes',
+  domaines: 'Domaines',
   chargement: 'Chargement des ressources…',
   videTitre: 'Les ressources de cette matière arrivent.',
   videTexte: 'Le site est en cours de reprise : les exercices et les fiches reviennent un par un. Les domaines du programme sont déjà là.',

@@ -3,8 +3,7 @@
 export default {
   fil: 'Fil d’Ariane',
   accueil: 'Accueil',
-  retour: '← Fiches toutes prêtes : {matiere}',
-  retourIndex: '← Toutes les fiches à imprimer',
+  fichesPretes: 'Fiches toutes prêtes',
   // aperçu
   apercu: 'Aperçu',
   apercuPage: 'Aperçu de {titre}, page {n} sur {total}',
@@ -12,7 +11,7 @@ export default {
   page: 'Page {n} sur {total}',
   precedente: 'Page précédente',
   suivante: 'Page suivante',
-  fiche: 'Fiche {n}',
+  fiche: 'Exemplaire {n}',
   fiches: 'Exemplaires de la fiche',
   // actions
   telecharger: '⬇️ Télécharger',
@@ -23,7 +22,7 @@ export default {
   landscape: 'Paysage',
   detailPdf: { one: 'PDF {format} {sens} · {n} page · {taille}', other: 'PDF {format} {sens} · {n} pages · {taille}' },
   imprimerAide: 'Imprimez en « taille réelle » (100 %), sans « ajuster à la page ».',
-  personnaliser: '✏️ Personnaliser',
+  personnaliser: '🛠️ Personnaliser',
   personnaliserAide: '« Personnaliser » ouvre l’exercice avec ses réglages : changez-les, faites autant de fiches que vous voulez.',
   enLigne: '🎮 Faire en ligne',
   // même fiche, autres langues

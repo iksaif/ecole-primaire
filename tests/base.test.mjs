@@ -1,5 +1,5 @@
 // Pages de la base (Chrome) : chaque page, en français et en breton, sans erreur JavaScript ; comportement par site
-// (ecoleprimaire : interface française, aucune langue régionale ; skoolik : interface bretonne, breton actif).
+// (ecoleprimaire : interface française, aucune langue régionale ; skoolik : interface française, breton actif).
 // Le build de skoolik est servi par tests/lancer.mjs (TEST_URL_SKOOLIK) ; sans lui, la partie skoolik est ignorée.
 //   TEST_URL=http://localhost:5173/ecole-primaire/ node tests/base.test.mjs
 import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE } from './outils.mjs'
@@ -73,14 +73,13 @@ if (URL_SKOOLIK) {
   await page.goto(URL_SKOOLIK)
   await page.waitForSelector('.nav')
   const e = await etat(page)
-  verifier(e.lang === 'br' && e.interface === '"br"', 'interface en breton par défaut')
+  verifier(e.lang.startsWith('fr') && await page.locator('[role=dialog]').count() === 0, 'interface en français par défaut, sans avis de traduction')
   verifier(e.menu.some(m => /Brezhoneg/i.test(m)), 'langue régionale (breton) active : elle est dans le menu')
-  await page.locator('[role=dialog] .btn-primary').click()
   await page.goto(adresse(URL_SKOOLIK, '/parametres'))
   await attendre(page, '/parametres')
   verifier(await page.locator('.bloc').first().getByRole('button').count() === 2, 'interface en breton ou en français : deux langues dans les réglages')
-  await page.locator('.bloc').first().getByRole('button').nth(1).click()
-  verifier((await etat(page)).lang.startsWith('fr'), 'le français est disponible')
+  await page.locator('.bloc').first().getByRole('button', { name: /Brezhoneg/ }).click()
+  verifier((await etat(page)).lang === 'br', 'le breton est disponible pour l’interface')
   await page.goto(adresse(URL_SKOOLIK, '/brezhoneg'))
   await attendre(page, '/brezhoneg')
   verifier(await page.locator('.lettre').count() === 25, 'page de la langue régionale avec les données du breton')

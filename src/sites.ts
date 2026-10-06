@@ -60,8 +60,8 @@ export const SITES = {
     description: 'Poelladennoù ha fichennoù digoust da voullañ, e galleg hag e brezhoneg — exercices et fiches à imprimer pour les écoles bilingues : écriture, alphabet breton, calcul, nombres.',
     url: 'https://skoolik.app/',
     couleur: '#4a90e2',
-    languesInterface: ['br', 'fr'],
-    langueInterface: 'br',
+    languesInterface: ['fr', 'br'],
+    langueInterface: 'fr',   // décision du 2026-10-06 : interface en français, breton + français pour les contenus (changeable dans les réglages)
     languesRegionales: ['br'],
     langueRegionale: 'br',
     contact: CONTACT,

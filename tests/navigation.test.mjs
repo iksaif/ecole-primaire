@@ -127,7 +127,7 @@ console.log('Contexte dans l’adresse')
 if (URL_SKOOLIK) {
   console.log('skoolik')
   const ctx = await nav.newContext()
-  await ctx.addInitScript(() => { try { localStorage.setItem('ep_avis_traduction_vu', 'true') } catch {} })
+  await ctx.addInitScript(() => { try { localStorage.setItem('ep_avis_traduction_vu', 'true'); localStorage.setItem('ep_langue_interface', '"br"') } catch {} })
   const page = await ctx.newPage()
   const erreurs = surveiller(page)
   await page.goto(adresse(URL_SKOOLIK, '/maths'))

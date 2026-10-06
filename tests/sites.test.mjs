@@ -14,7 +14,7 @@ verifier(E.langueInterface === 'fr', 'interface en français par défaut')
 verifier(E.langueRegionale === '', 'aucune langue régionale active par défaut')
 verifier(E.languesRegionales.includes('br'), 'langue régionale activable (breton)')
 console.log('skoolik')
-verifier(S.langueInterface === 'br', 'interface en breton par défaut')
+verifier(S.langueInterface === 'fr', 'interface en français par défaut (décision du 2026-10-06)')
 verifier(S.languesInterface.includes('br') && S.languesInterface.includes('fr'), 'interface : breton ou français')
 verifier(S.langueRegionale === 'br', 'breton actif par défaut')
 

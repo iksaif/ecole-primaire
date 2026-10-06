@@ -45,6 +45,10 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     { path: '/parametres', component: () => import('../pages/ReglagesView.vue'), meta: { titre: 'nav.reglages' } },
     { path: '/about', component: () => import('../pages/AProposView.vue'), meta: { titre: 'nav.apropos' } },
     { path: '/nouveautes', component: () => import('../pages/NouveautesView.vue'), meta: { titre: 'nav.nouveautes' } },
+    // les affiches au format « définition » (src/affiches/) : une page, le formulaire générique (?affiche=<id>&variante=<v>)
+    { path: '/imprimer/affiches', component: () => import('../pages/AfficheView.vue'), meta: { titre: 'routeur.titre.affiche' } },
+    // ancienne adresse de l'affiche de l'alphabet (liens externes, favoris)
+    { path: '/imprimer/alphabet', redirect: to => ({ path: '/imprimer/affiches', query: { affiche: 'alphabet' }, hash: to.hash }) },
     // nouveau:routes
   ]
 }

@@ -130,7 +130,9 @@ const choix = commeExercice(definition)
 
 // réglages mémorisés par affiche, ramenés à des valeurs valides (reglagesDe)
 const CLE = `affiche_${definition.id.replaceAll('-', '_')}`
-const config = ref(reglagesDe(definition, { ...chargerReglages(CLE, reglagesDe(definition)), ...props.depart }))
+const memorises = reglagesDe(definition, chargerReglages(CLE, reglagesDe(definition)))
+// un lien vers une variante (fiche toute prête) ouvre CETTE fiche, avec ses réglages : seules les polices choisies sont gardées
+const config = ref(reglagesDe(definition, props.depart.variante ? { polices: memorises.polices, ...props.depart } : { ...memorises, ...props.depart }))
 watch(config, v => sauvegarder(CLE, v), { deep: true })
 // les réglages à choix, lus et écrits par clé (leurs clés dépendent de l'affiche)
 const valeur = (cle: string): ValeurReglage => (config.value as Reglages)[cle]

@@ -56,7 +56,12 @@ function horsZone(svg, W, H) {
       const largeur = mesureEstimee.largeur(contenu, el.match(/font-family="'([^']+)'/)?.[1] ?? 'Andika') * taille
       const ancre = el.match(/text-anchor="(\w+)"/)?.[1] ?? 'middle'
       const gauche = ancre === 'middle' ? attr(el, 'x') - largeur / 2 : ancre === 'end' ? attr(el, 'x') - largeur : attr(el, 'x')
-      dans(gauche, attr(el, 'y') - taille / 2, 'text'); dans(gauche + largeur, attr(el, 'y') + taille / 2, 'text')
+      // centré sur y (`dominant-baseline="central"`) : ± la moitié de la taille ; sinon y est la ligne de base : au-dessus, la plus haute
+      // des majuscules et des hampes de la police (plus un accent) ; au-dessous, son jambage
+      const centre = el.includes('dominant-baseline="central"')
+      const m = mesureEstimee.metriques(el.match(/font-family="'([^']+)'/)?.[1] ?? 'Andika')
+      const haut = attr(el, 'y') - taille * (centre ? 0.5 : Math.max(m.majuscule, m.hampe) + 0.15), bas = attr(el, 'y') + taille * (centre ? 0.5 : m.jambage)
+      dans(gauche, haut, 'text'); dans(gauche + largeur, bas, 'text')
     }
   }
   return pbs
@@ -174,7 +179,9 @@ for (const module of MODULES) {
       if (!a.html.includes(`inset:${m.marge}mm`)) hpbs.push(`${cas} : marge du cadre absente`)
       for (const p of pages) {
         const corps = typeof p === 'string' ? p : p.corps
-        if (corps.includes('<svg')) hpbs.push(...horsZone(corps, m.W, m.H).map(x => `${cas} : ${x}`))
+        // une page sans titre (`titre: null`) a aussi la place de celui-ci
+        const hauteur = typeof p !== 'string' && p.titre === null ? m.H + m.hTitre : m.H
+        if (corps.includes('<svg')) hpbs.push(...horsZone(corps, m.W, hauteur).map(x => `${cas} : ${x}`))
       }
       // le titre de l'élève est échappé ; le titre et l'interface restent dans la police de base
       if (nom === 'titre' && (!a.html.includes('Mon &lt;titre&gt; &amp; &quot;autre&quot;') || a.html.includes('<titre>'))) fpbs.push(`${cas} : titre personnalisé mal échappé`)
@@ -320,6 +327,99 @@ console.log('\nExemple riche')
     if (mesureEstimee.largeur(lettres.join(' '), police) * t > mesuresAffiche({ format: 'A4', orientation: 'portrait' }).W * 0.9 + 0.01) p6.push(`${police} : le texte dépasse 90 % de la largeur`)
   }
   controler(p6, 'mesure de texte injectée : le dessin ajuste la taille, sans canvas')
+}
+
+// ── L'alphabet (affiche reportée de `main`) : slugs publiés, écritures, langues, pages, rien ne sort de la feuille ──
+console.log('\nAlphabet')
+{
+  const module = REGISTRE.find(m => m.definition.id === 'alphabet')
+  const d = module.definition
+  const p = []
+  const slugs = entreesDe(module).map(e => e.slug)
+  // les fiches publiées par `main` (français) gardent leur slug ; le breton passe en -br ; les deux langues en -fr-br
+  const publies = ['affiche-alphabet-a4-paysage', 'affiche-alphabet-a3-paysage', 'affiche-alphabet-a4-portrait', 'affiche-alphabet-cursive', 'cartes-alphabet-une-lettre-par-page']
+  for (const s of publies) for (const suffixe of ['', '-br', '-fr-br']) if (!slugs.includes(s + suffixe)) p.push(`slug ${s + suffixe} absent`)
+  if (!slugs.includes('affiche-alphabet-lettres-speciales')) p.push('slug des lettres spéciales absent')
+  controler(p, 'les slugs publiés de l’alphabet sont conservés (français, -br, -fr-br)')
+
+  // chaque fiche s'ouvre dans son format et son sens
+  const q = []
+  for (const [v, format, orientation] of [['a4-paysage', 'A4', 'landscape'], ['a3-paysage', 'A3', 'landscape'], ['a4-portrait', 'A4', 'portrait'], ['cursive', 'A4', 'landscape']]) {
+    const r = reglagesDe(d, { variante: v })
+    if (r.format !== format || r.orientation !== orientation) q.push(`${v} : ${r.format} ${r.orientation}`)
+  }
+  if (reglagesDe(d, { variante: 'a3-paysage', format: 'A4' }).format !== 'A4') q.push('le format de la variante doit rester modifiable')
+  controler(q, 'format et sens par défaut de chaque fiche, modifiables')
+
+  // les quatre écritures : chacune est dessinée, avec sa police, et seulement elle
+  const html = o => genererAffiche(module, o).html
+  const e = []
+  const vu = (styles, motif) => new RegExp(motif).test(html({ variante: 'a4-paysage', mot: false, styles, polices: { script: 'PoliceScript', attache: 'PoliceAttache' } }))
+  if (!vu(['script-maj'], "PoliceScript[^>]*>A<") || vu(['script-maj'], 'PoliceAttache') || vu(['script-maj'], "PoliceScript[^>]*>a<")) e.push('script majuscule')
+  if (!vu(['script-min'], "PoliceScript[^>]*>a<") || vu(['script-min'], "PoliceScript[^>]*>A<")) e.push('script minuscule')
+  if (!vu(['attache-maj'], "PoliceAttache[^>]*>A<") || vu(['attache-maj'], "PoliceAttache[^>]*>a<") || vu(['attache-maj'], "PoliceScript[^>]*>A<")) e.push('attaché majuscule')
+  if (!vu(['attache-min'], "PoliceAttache[^>]*>a<") || vu(['attache-min'], "PoliceAttache[^>]*>A<")) e.push('attaché minuscule')
+  if (/<line [^>]*stroke="#8e9ad8"/.test(html({ variante: 'a4-paysage' })) || !/<line [^>]*stroke="#8e9ad8"/.test(html({ variante: 'a4-paysage', lignes: true }))) e.push('lignes sous l’attaché')
+  if (/<line [^>]*stroke="#8e9ad8"/.test(html({ variante: 'a4-paysage', styles: ['script-min'], lignes: true }))) e.push('lignes sans attaché')
+  if (/stroke-dasharray/.test(html({ variante: 'a4-paysage', mot: false }))) e.push('sans mot illustré')
+  if (!/>beille</.test(html({ variante: 'a4-paysage' })) || !/>val</.test(html({ variante: 'a4-paysage', langues: ['br'] }))) e.push('mot de chaque langue')
+  if (/#d62828/.test(html({ variante: 'a4-paysage', voyelles: false }))) e.push('sans couleurs')
+  controler(e, 'les quatre écritures, leurs polices, les lignes, le mot illustré, les couleurs')
+
+  // les lettres de chaque langue : 26 en français, 25 en breton (ch et c'h, ni c, ni q, ni x), les lettres spéciales
+  const l = []
+  const pages = o => genererAffiche(module, { variante: 'une-lettre-par-page', ...o }).nbPages
+  if (pages({}) !== 26) l.push(`français : ${pages({})} pages au lieu de 26`)
+  if (pages({ langues: ['br'] }) !== 25) l.push(`breton : ${pages({ langues: ['br'] })} pages au lieu de 25`)
+  if (pages({ langues: ['fr', 'br'] }) !== 51) l.push('les deux langues : 26 + 25 pages')
+  if (pages({ serie: 'speciales' }) !== 16) l.push('lettres spéciales du français : 16')
+  if (pages({ serie: 'speciales', langues: ['br'] }) !== 2) l.push('lettres spéciales du breton : ñ et ù')
+  const grille = o => genererAffiche(module, { variante: 'a4-paysage', ...o })
+  if (grille({}).nbPages !== 1 || grille({ langues: ['fr', 'br'] }).nbPages !== 2) l.push('grille : une page par langue')
+  const br = grille({ langues: ['br'] }).html
+  if (!br.includes('>Ch<') || !br.includes('>C&#39;h<') && !br.includes('>C\'h<') || br.includes('>Q<') || br.includes('>X<')) l.push('l’alphabet breton a Ch et C’h, ni Q ni X')
+  if (!br.includes('Al lizherenneg')) l.push('titre breton')
+  const sp = grille({ serie: 'speciales' }).html
+  for (const x of ['Œ', 'Æ', 'Ç', 'Ÿ', 'Ü', 'É']) if (!sp.includes(`>${x}<`)) l.push(`lettre spéciale ${x} absente`)
+  if (!grille({ titre: 'Mon titre' }).html.includes('>Mon titre</h1>')) l.push('le titre de l’élève')
+  if (genererAffiche(module, { variante: 'a4-paysage', langues: ['fr', 'br'] }).html.split('<h1').length !== 3) l.push('chaque page a son titre')
+  if (genererAffiche(module, { variante: 'une-lettre-par-page' }).html.includes('<h1')) l.push('une lettre par page : sans titre')
+  controler(l, 'lettres de chaque langue (26, 25, spéciales), pages, titres')
+
+  // la fiche de la lettre commence par sa lettre dans la police du mot ; chaque page « une lettre par page » est une lettre
+  // rien ne sort de la feuille : toutes les écritures, langues, séries, dispositions, formats et sens, avec la mesure estimée
+  const h = []
+  const combinaisons = [...Array(15).keys()].map(k => k + 1).map(m => ['script-maj', 'script-min', 'attache-maj', 'attache-min'].filter((_, i) => m & (1 << i)))
+  for (const styles of combinaisons) {
+    for (const [format, orientation] of [['A4', 'landscape'], ['A4', 'portrait'], ['A3', 'landscape'], ['A3', 'portrait']]) {
+      for (const langues of [['fr'], ['br'], ['fr', 'br']]) {
+        for (const serie of ['alphabet', 'speciales']) {
+          for (const disposition of ['grille', 'carte']) {
+            for (const lignes of [false, true]) {
+              const config = reglagesDe(d, { variante: 'a4-paysage', styles, format, orientation, langues, serie, disposition, lignes, mot: true })
+              const m = mesuresAffiche({ format, orientation, marge: d.marge, hTitre: d.hTitre })
+              for (const page of rendu(module, config)) {
+                const hauteur = page.titre === null ? m.H + m.hTitre : m.H
+                h.push(...horsZone(page.corps, m.W, hauteur).map(x => `${styles}/${format}/${orientation}/${langues}/${serie}/${disposition} : ${x}`))
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  controler(h, `rien ne sort de la zone : ${combinaisons.length} combinaisons d’écritures × 4 feuilles × 3 langues × séries × dispositions`)
+
+  // une police inconnue (installée sur l'ordinateur) est estimée comme Andika ; une police très large reste dans la carte
+  const g = []
+  for (const police of ['Andika', 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']) {
+    const config = reglagesDe(d, { variante: 'a4-portrait', polices: { script: police, attache: police } })
+    const m = mesuresAffiche({ format: 'A4', orientation: 'portrait', marge: d.marge, hTitre: d.hTitre })
+    for (const page of module.rendu.dessin(config, { W: m.W, H: m.H }, traducteurAffiche(module.textes, 'fr'), { ...contextes(module, config)[1], nomPolice: () => police, police: () => `'${police}', Arial, sans-serif` })) {
+      g.push(...horsZone(typeof page === 'string' ? page : page.corps, m.W, m.H).map(x => `${police} : ${x}`))
+    }
+  }
+  controler(g, 'rien ne sort de la zone dans chaque police livrée')
 }
 
 // La mesure estimée : cohérente, sans canvas, avec les proportions des polices livrées

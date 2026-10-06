@@ -65,7 +65,7 @@ export default {
     enfant: 'Bugel', // br: à relire
     enfantDesc: 'Ur c’hlas, prennet gant ur c’hadenn vihan', // br: à relire
     parent: 'Kerent', // br: à relire
-    parentDesc: 'Ur c’hlas, programm ha fichennoù prest', // br: à relire
+    parentDesc: 'Ur c’hlas pe meur a hini (meur a vugale), fichennoù prest', // br: à relire
     enseignant: 'Kelenner', // br: à relire
     enseignantDesc: 'Meur a glas, programm, liamm evit ar familhoù', // br: à relire
   },

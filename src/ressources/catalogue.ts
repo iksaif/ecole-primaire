@@ -90,7 +90,7 @@ function ressourceExercice({ definition, textes, exemple }: EntreeRegistre, site
   const description = typeof lireFeuille(LANGUES[LANGUE_SOURCE].textes, cle('description')) === 'string' ? { cle: cle('description') as CleTexte } : null
   return {
     id: `exercice:${definition.id}`, type: 'exercice', titre: { cle: cle('titre') as CleTexte }, description,
-    emoji: EMOJI_DOMAINE[domaine], matiere: domaineDe(domaine)?.matiere ?? 'monde', domaine, classes, competences,
+    emoji: definition.emoji ?? EMOJI_DOMAINE[domaine], matiere: domaineDe(domaine)?.matiere ?? 'monde', domaine, classes, competences,
     badges: { jeu: aUnJeu(definition), imprimable: true }, usage: 'sentrainer', langues, route: definition.route,
     exemple: estExemple(exemple === true, domaine),
   }
@@ -107,7 +107,7 @@ function ressourceAffiche({ definition: d, textes }: ModuleAffiche, site: Source
   const texte = Object.fromEntries(CODES.map(l => [l, traducteurAffiche(textes, l)('titre')])) as Texte
   return {
     id: `affiche:${d.id}`, type: 'affiche', titre: { texte }, description: null,
-    emoji: EMOJI_DOMAINE[domaine], matiere: domaineDe(domaine)?.matiere ?? 'monde', domaine, classes, competences,
+    emoji: d.emoji ?? EMOJI_DOMAINE[domaine], matiere: domaineDe(domaine)?.matiere ?? 'monde', domaine, classes, competences,
     badges: { jeu: false, imprimable: true }, usage: 'apprendre', langues, route: `${d.route}?affiche=${d.id}`,
     exemple: estExemple(false, domaine),
   }

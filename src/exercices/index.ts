@@ -9,6 +9,8 @@
 import type { ModuleExercice } from '../noyau/types.ts'
 import { AVEC_DEV } from '../dev.ts'
 import { module as calculMental } from './calcul-mental/index.ts'
+import { module as monnaie } from './monnaie/index.ts'
+import { module as heure } from './heure/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -20,6 +22,8 @@ export type EntreeRegistre = ModuleQuelconque & { readonly exemple?: true }
 // Exercices réels de la base (un exercice reporté de ancien.js y entre).
 const BASE: readonly EntreeRegistre[] = [
   calculMental,
+  monnaie,
+  heure,
   // nouveau:registre
 ]
 

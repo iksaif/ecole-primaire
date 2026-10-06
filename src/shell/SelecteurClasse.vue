@@ -1,5 +1,5 @@
 <template>
-  <!-- « Classe ▾ » : des pastilles par cycle. Parent : une classe ; enseignant : plusieurs ; enfant : classe verrouillée (cadenas) -->
+  <!-- « Classe ▾ » : des pastilles par cycle. Parent et enseignant : plusieurs ; enfant : classe verrouillée (cadenas) -->
   <div ref="racine" class="menu-deroulant" @keydown="touche" @focusout="sortie">
     <button v-if="verrouillee" ref="bouton" type="button" class="nbtn verrou" :aria-expanded="ouvert" aria-controls="menu-cadenas"
       :aria-label="t('shell.classe.verrouillee', { classes: libelle })" @click="basculer">

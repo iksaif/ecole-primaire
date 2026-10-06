@@ -102,8 +102,8 @@ export function reglagesDe<R extends object>(definition: DefinitionAffiche<R>, l
   const graine = typeof lus.graine === 'number' && Number.isInteger(lus.graine) && lus.graine >= 1 ? lus.graine : GRAINE_DEFAUT
   const res: Record<string, unknown> = {
     variante: id,
-    format: def.formats.find(f => f === lus.format) ?? def.formats[0],
-    orientation: def.orientations.find(o => o === lus.orientation) ?? def.orientations[0],
+    format: def.formats.find(f => f === lus.format) ?? variante.format ?? def.formats[0],
+    orientation: def.orientations.find(o => o === lus.orientation) ?? variante.orientation ?? def.orientations[0],
     langue: langues[0], langues,
     titre: typeof lus.titre === 'string' ? lus.titre.slice(0, LONGUEUR_TITRE) : '',
     polices, graine,

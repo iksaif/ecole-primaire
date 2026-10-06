@@ -59,6 +59,8 @@ export interface SpecExercice<C extends SpecReglages, N extends Partial<Record<C
   /** route de l'app (« /maths/heure ») */
   route: string
   domaine: DomaineId
+  /** emoji de la carte du catalogue (💶 pour la monnaie) ; défaut : celui du domaine */
+  emoji?: string
   /** 'fr' : exercice de français, contenu toujours en français ; 'interface' (défaut) : le contenu suit la langue de l'interface */
   contenu?: 'fr' | 'interface'
   /** `false` : exercice « fiche seule » (pas de jeu en ligne : ni `questions` ni `verifier`, pas d'onglet « Jouer »). Défaut : `true` */
@@ -152,7 +154,7 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
 
   // les types de ReglagesDe décrivent ce que les contrôles ci-dessus viennent de vérifier : un seul point de conversion
   return {
-    id: spec.id, route: spec.route, domaine: spec.domaine, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, niveauDefaut,
+    id: spec.id, route: spec.route, domaine: spec.domaine, emoji: spec.emoji, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, niveauDefaut,
     reglages, options, niveaux, fiches,
   } as unknown as DefinitionTypee<ReglagesDe<C, N>>
 }

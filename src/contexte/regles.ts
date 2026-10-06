@@ -44,12 +44,12 @@ export function defautsContexte(site: Site, memo: Memorise = MEMORISE_VIDE, prof
   }
 }
 
-/** Seul le profil enseignant choisit plusieurs classes. */
-export const plusieursClasses = (profil: Profil): boolean => profil === 'enseignant'
+/** Tout profil choisit plusieurs classes (un parent a parfois plusieurs enfants), sauf l'enfant : une seule, verrouillée. */
+export const plusieursClasses = (profil: Profil): boolean => profil !== 'enfant'
 
 /**
- * Les classes qu'un profil retient d'une demande : toutes (sans doublon, de PS à CM2) pour l'enseignant, la dernière
- * demandée pour un parent ou un enfant. Vide si la demande ne contient aucune classe valide.
+ * Les classes qu'un profil retient d'une demande : toutes (sans doublon, de PS à CM2) pour un parent ou un enseignant, la
+ * dernière demandée pour un enfant. Vide si la demande ne contient aucune classe valide.
  */
 export function classesPourProfil(profil: Profil, demandees: readonly unknown[]): Classe[] {
   const valides = normaliserClasses(demandees)

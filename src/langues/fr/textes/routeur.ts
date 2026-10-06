@@ -20,6 +20,7 @@ export default {
     programme: 'Le programme',
     competence: 'Compétence du programme',
     exercice: 'Exercice',
+    affiche: 'Affiche à imprimer',
     introuvable: 'Page introuvable',
   },
 } as const

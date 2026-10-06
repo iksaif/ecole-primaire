@@ -9,6 +9,7 @@ import { COMPETENCES, DOMAINES, MATIERES, competenceDe } from '../src/data/progr
 import { NIVEAUX, CYCLE_DE } from '../src/data/classes.ts'
 import { catalogueDeTest, sources, FICHES, SITE_FR, SITE_BR } from './donnees-ressources.mjs'
 import { REGISTRE as EXERCICES } from '../src/exercices/index.ts'
+import { REGISTRE as AFFICHES } from '../src/affiches/index.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const ids = c => c.map(r => r.id)
@@ -39,6 +40,26 @@ console.log('Registre réel : calcul mental')
   verifier(calcul.badges.jeu && calcul.badges.imprimable && calcul.classes.join() === 'cp,ce1,ce2,cm1,cm2' && calcul.route === '/maths/calcul-mental', 'calcul mental : badges en ligne et imprimable, cinq classes, route')
   verifier(texteDe(calcul.titre, 'fr') === 'Calcul mental' && texteDe(calcul.titre, 'br') === 'Jediñ e penn', 'calcul mental : titre dans chaque langue')
   verifier(!reel.some(r => r.exemple), 'en production : aucun exemple au catalogue')
+}
+
+console.log('Registre réel : la monnaie (emoji propre, exercice et affiche)')
+{
+  const reel = construireCatalogue({ exercices: EXERCICES, affiches: AFFICHES, fiches: null, site: SITE_FR, enDeveloppement: false })
+  const exercice = parId(reel, 'exercice:monnaie')
+  const affiche = parId(reel, 'affiche:monnaie')
+  verifier(exercice?.emoji === '💶' && affiche?.emoji === '💶', 'la carte de la monnaie (exercice et affiche) porte 💶, pas l\'emoji du domaine')
+  verifier(exercice.domaine === 'grandeurs-mesures' && exercice.emoji !== EMOJI_DOMAINE['grandeurs-mesures'] && parId(reel, 'exercice:calcul-mental').emoji === EMOJI_DOMAINE['nombres-calcul'], 'sans emoji déclaré, une carte garde celui de son domaine')
+  verifier(exercice.badges.jeu && exercice.badges.imprimable && exercice.classes.join() === 'cp,ce1,ce2' && exercice.route === '/maths/monnaie', 'monnaie : badges en ligne et imprimable, trois classes, route')
+  verifier(affiche.classes.join() === 'cp,ce1,ce2' && affiche.badges.imprimable && !affiche.badges.jeu, 'affiche « pièces et billets » : classes des quatre variantes, imprimable')
+}
+
+console.log("Registre réel : lire l'heure (emoji propre, badges, classes)")
+{
+  const reel = construireCatalogue({ exercices: EXERCICES, affiches: AFFICHES, fiches: null, site: SITE_FR, enDeveloppement: false })
+  const heure = parId(reel, 'exercice:heure')
+  verifier(heure?.emoji === '🕐' && heure.emoji !== EMOJI_DOMAINE['grandeurs-mesures'], "la carte de l'heure porte 🕐, pas l'emoji du domaine")
+  verifier(heure.badges.jeu && heure.badges.imprimable && heure.classes.join() === 'cp,ce1,ce2' && heure.route === '/maths/heure', 'heure : badges en ligne et imprimable, trois classes, route')
+  verifier(texteDe(heure.titre, 'fr') === "Lire l'heure" && texteDe(heure.titre, 'br') === 'Lenn an eur', "heure : titre dans chaque langue")
 }
 
 console.log('Textes (clés, pas de texte en dur)')

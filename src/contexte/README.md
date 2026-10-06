@@ -31,9 +31,9 @@ Anciennes clés lues (migration douce) : `classe` (une classe), `langue_regional
 ## Profils
 | Profil | Classes | Particularité |
 |---|---|---|
-| `parent` (défaut) | une | si l'adresse en donne plusieurs elles s'affichent ; on n'en choisit qu'une (la dernière citée) |
+| `parent` (défaut) | plusieurs | plusieurs enfants : `ajouterClasse` / `retirerClasse` (jamais moins d'une) ; ni « Programme » dans la barre ni références par défaut |
 | `enfant` | une | **verrouillée** (`verrouillee`) ; `deverrouillerClasse()` la lève jusqu'au rechargement |
-| `enseignant` | plusieurs | `ajouterClasse` / `retirerClasse` (jamais moins d'une) ; `lienFamilles()` |
+| `enseignant` | plusieurs | comme le parent, plus l'entrée « Programme », les références officielles par défaut et `lienFamilles()` |
 
 ## Langue d'interface et mode
 Deux notions distinctes : le mode ne change pas la langue de l'interface, sauf **`regionale`** (langue régionale seule) : si le

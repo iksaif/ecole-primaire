@@ -10,6 +10,9 @@ import { EXERCICES, classesDe, fichesDe } from './exercices.js'
 // les exercices reportés dans la base (src/exercices/index.ts) : un exercice par classe, et leurs fiches par compétence
 import { REGISTRE } from '../exercices/index.ts'
 import { slugFiche } from '../noyau/slugs.ts'
+// les affiches reportées dans la base (src/affiches/index.ts) : une affiche par variante (ses classes, ses compétences)
+import { REGISTRE as AFFICHES } from '../affiches/index.ts'
+import { slugDe } from '../affiches/catalogue.ts'
 
 // « GS · CP · CE1 », « CE1 → CM2 » → ['gs', 'cp', 'ce1'] ; une flèche donne toutes les classes entre les deux
 export function classesDuTexte(s) {
@@ -39,6 +42,10 @@ export const RESSOURCES = [
     ...Object.entries(d.niveaux).map(([classe, niv]) => ({ sorte: 'exercice', generateur: false, titre: d.id, icone: '', route: d.route, competences: niv.competences, classes: [classe] })),
     ...d.fiches.map(f => ({ sorte: 'fiche', titre: `${d.id} : ${f.id}`, slug: slugFiche(d.id, f), competences: [f.competence], classes: [f.niveau] })),
   ]),
+  ...AFFICHES.filter(a => a.definition.domaine !== 'exemple').flatMap(({ definition: d, textes }) => Object.entries(d.variantes).map(([id, v]) => ({
+    sorte: 'affiche', titre: textes.fr[`variante.${id}.court`] ?? id, slug: slugDe(d, id, ['fr']), lien: `${d.route}?affiche=${d.id}&variante=${id}`,
+    competences: v.competences, classes: [...v.classes],
+  }))),
   ...EXERCICES.flatMap(ex => ex.classes.flatMap(c => fichesDe(ex, c.classe).map(f => ({
     sorte: 'fiche', titre: `${ex.titre.fr} : ${f.titre}`, slug: `exercices-${ex.id}-${c.classe}-${f.id}`,
     competences: [f.competence], classes: classesDe(c.classe),

@@ -22,6 +22,7 @@ export default {
     programme: 'Ar programm', // br: à relire
     competence: 'Barregezh ar programm', // br: à relire
     exercice: 'Poelladenn', // br: à relire
+    affiche: 'Skritell da voullañ', // br: à relire
     introuvable: 'Pajenn ket kavet', // br: à relire
   },
 } satisfies Traductions<typeof fr>

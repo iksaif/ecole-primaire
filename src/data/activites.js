@@ -2,8 +2,6 @@
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
 import { CLASSES, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
-import HEURE from '../exercices/heure/definition.js'
-import MONNAIE from '../exercices/monnaie/definition.js'
 import MESURES from '../exercices/mesures/definition.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import NUMERATION from '../exercices/numeration/definition.js'
@@ -50,7 +48,6 @@ export const DOMAINES_BR = {
 export const ACTIVITES = [
   // ── À imprimer ── (genre : 'affiche' pour apprendre, 'fiche' pour s'entraîner)
   { to: '/imprimer/ecriture', matiere: 'imprimer', domaine: 'ecriture', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
-  { to: '/imprimer/alphabet', matiere: 'imprimer', domaine: 'lecture', genre: 'affiche', icon: '🔤', titre: "Affiche de l'alphabet", desc: 'Les 4 écritures, A4 ou A3', niveaux: de('ms', 'ce1') },
   { to: '/imprimer/calcul?mode=affiche', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'affiche', icon: '🧮', titre: 'Affiches des tables', desc: 'Tables de multiplication et d\'addition à afficher', niveaux: de('cp', 'cm2'),
     br: { titre: 'Skritelloù an taolennoù', desc: 'Taolennoù liesañ ha sammañ da stagañ' } }, // br: à relire
   { to: '/imprimer/calcul?mode=fiche', matiere: 'imprimer', domaine: 'nombres-calcul', genre: 'fiche', icon: '🧮', titre: 'Fiches de calcul', desc: 'Tables, compléments, doubles et moitiés… avec corrigé', niveaux: de('cp', 'cm2') },
@@ -63,8 +60,6 @@ export const ACTIVITES = [
     br: { titre: 'Taolenn niveriñ', desc: 'Unanennoù, degadoù, kantadoù… ha niveroù degedel er CM' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=horloge', matiere: 'imprimer', domaine: 'grandeurs-mesures', genre: 'affiche', detail: true, icon: '🕐', titre: "L'horloge", desc: 'Heures entières, demies et quarts, minutes', niveaux: de('cp', 'ce2'),
     br: { titre: 'An horolaj', desc: 'Eurioù klok, hanterioù ha kardoù, munutennoù' } }, // br: à relire
-  { to: '/imprimer/affiches?affiche=monnaie', matiere: 'imprimer', domaine: 'grandeurs-mesures', genre: 'affiche', detail: true, icon: '💶', titre: 'Pièces et billets', desc: "Les euros, puis les centimes", niveaux: de('cp', 'ce2'),
-    br: { titre: 'Pezhioù ha bilhedoù', desc: 'An euroioù, ha goude ar santimoù' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=formes', matiere: 'imprimer', domaine: 'espace-geometrie', genre: 'affiche', detail: true, icon: '🔷', titre: 'Figures et solides', desc: 'Formes planes, figures du cycle 3, solides', niveaux: de('gs', 'cm2'),
     br: { titre: 'Stummoù ha solidennoù', desc: 'Stummoù plaen, stummoù ar c\'helc\'hiad 3, solidennoù' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=conjugaison', matiere: 'imprimer', domaine: 'grammaire', genre: 'affiche', detail: true, icon: '✍️', titre: 'Affiches de conjugaison', desc: 'Être, avoir, 1er et 2e groupes, verbes irréguliers', niveaux: de('cp', 'cm2'),
@@ -87,8 +82,6 @@ export const ACTIVITES = [
   { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: Object.keys(TABLES.niveaux) },
   { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: Object.keys(FRACTIONS.niveaux) },
   { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: Object.keys(PROBLEMES.niveaux) },
-  { fiche: true, to: '/maths/heure',         matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '🕐', titre: "Lire l'heure", desc: 'Heures, demies, quarts sur une horloge', niveaux: Object.keys(HEURE.niveaux) },
-  { fiche: true, to: '/maths/monnaie',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '💶', titre: 'La monnaie', desc: 'Compter et payer en euros', niveaux: Object.keys(MONNAIE.niveaux) },
   { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: Object.keys(MESURES.niveaux) },
   { fiche: true, to: '/maternelle/longueurs', matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Plus long, plus court', desc: 'Comparer et ranger des crayons', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maternelle/motifs',   matiere: 'maths', domaine: 'motifs', rubrique: 'Motifs', icon: '🔁', titre: 'Les motifs', desc: 'Continuer un collier qui se répète', niveaux: ['ps', 'ms', 'gs'] },
@@ -112,7 +105,6 @@ export const ACTIVITES = [
 // Traductions bretonnes des activités [titre, description] — à faire relire par un brittophone
 const BR = {
   '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
-  '/imprimer/alphabet': ['Skritell al lizherenneg', 'Ar 4 doare skrivañ, A4 pe A3'],
   '/imprimer/calcul':   ['Fichennoù jediñ', 'Taolennoù, klokaat, doubl hag hanter… gant ar reizhadenn'],
   '/imprimer/nombres':  ['An niveroù e lizherennoù', 'Unanennoù, degadoù, kantadoù… e sifroù hag e lizherennoù', 'Unanennoù, degadoù, kantadoù… e galleg hag e brezhoneg'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
@@ -123,8 +115,6 @@ const BR = {
   '/maths/tables':        ['Taolennoù liesañ', 'En em bleustr war an holl daolennoù'],
   '/maths/fractions':     ['An darnaouennoù', "An hanter, an trederenn, ar c'hard…"],
   '/maths/problemes':     ['Kudennoù', 'Lenn, kompren ha jediñ'],
-  '/maths/heure':         ['Lenn an eur', 'Eurioù, hanterioù ha kardoù war un horolaj'],
-  '/maths/monnaie':       ['Ar moneiz', 'Kontañ ha paeañ gant euroioù'],
   '/maths/mesures':       ['Muzulioù', "Hirderioù, pouezioù, endalc'hioù, deiziadur"],
   '/maternelle/longueurs': ['Hiroc’h, berroc’h', 'Keñveriañ ha renkañ kreionoù'], // br: à relire
   '/maternelle/motifs':   ['Ar patromoù', "Kenderc'hel ur c'holier a en em adlavar"], // br: à relire
@@ -146,7 +136,6 @@ const BR = {
 // ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
-  '/imprimer/alphabet': ['nom-lettres'],
   '/imprimer/nombres': ['nombres-en-lettres', 'numeration-100', 'numeration-1000'],
   '/maternelle/compter': { ps: ['denombrer-3'], ms: ['denombrer-6'], gs: ['denombrer-10'] },
   '/maternelle/comparer': ['comparer-quantites'],
@@ -161,8 +150,6 @@ const COMPETENCES_ROUTES = {
   '/maths/tables': Object.fromEntries(Object.entries(TABLES.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/fractions': Object.fromEntries(Object.entries(FRACTIONS.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/problemes': Object.fromEntries(Object.entries(PROBLEMES.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/heure': Object.fromEntries(Object.entries(HEURE.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/monnaie': Object.fromEntries(Object.entries(MONNAIE.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/mesures': Object.fromEntries(Object.entries(MESURES.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/geometrie': Object.fromEntries(Object.entries(GEOMETRIE.niveaux).map(([n, v]) => [n, v.competences])),
   '/francais/dictee': Object.fromEntries(Object.entries(DICTEE.niveaux).map(([n, v]) => [n, v.competences])),

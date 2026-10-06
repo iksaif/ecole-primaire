@@ -5,8 +5,6 @@
 // n'importe que des données pures.
 import { ACTIVITES } from '../data/activites.js'
 import { classesEntre } from '../data/classes.js'
-import HEURE from '../exercices/heure/definition.js'
-import MONNAIE from '../exercices/monnaie/definition.js'
 import MESURES from '../exercices/mesures/definition.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
@@ -74,24 +72,6 @@ const LISTE = [
       F('fractions-1', 'les fractions jusqu’à 1 (2/3, 3/4…)', 'fractions-inferieures-1', ['Quelle fraction', 'Colorier', 'En lettres'], { clics: ['Fractions › Aussi'], classes: classesFiche(FRACTIONS, 'fractions-1') }),
       F('egales', 'les fractions égales', 'fractions-egales', ['Fractions égales'], { classes: classesFiche(FRACTIONS, 'egales') }),
       F('droite', 'les fractions sur la droite', 'fractions-mesure', ['Lire sur la droite', 'Placer sur la droite'], { classes: classesFiche(FRACTIONS, 'droite') }),
-    ] },
-  { id: 'heure', route: '/maths/heure', groupe: 'maths', titre: { fr: "Lire l'heure", br: 'Lenn an eur' },
-    classes: Object.keys(HEURE.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ["Lire l'heure", 'Placer les aiguilles', 'Matin', 'Durées', 'h et min', 'Emploi du temps'],
-    fiches: [
-      F('lire', "lire et placer l'heure (demies et quarts)", 'heure-demi-quart', ["Lire l'heure", 'Placer les aiguilles', 'Matin'], { classes: ['ce1'] }),
-      F('lire', "lire et placer l'heure à la minute près", 'heure-minutes', ["Lire l'heure", 'Placer les aiguilles'], { classes: ['ce2'] }),
-      // classes : celles de la définition (pas de durées au CP)
-      F('durees', 'les durées', 'durees', ['Durées', 'h et min', 'Emploi du temps'], { classes: HEURE.fiches.filter(f => f.id === 'durees').map(f => f.niveau) }),
-    ] },
-  { id: 'monnaie', route: '/maths/monnaie', groupe: 'maths', titre: { fr: 'La monnaie', br: 'Ar moneiz' },
-    // classes et fiches : celles de la définition (src/exercices/monnaie/definition.js)
-    classes: Object.keys(MONNAIE.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Compter une somme', 'Faire une somme', 'Le moins de pièces', 'Rendre la monnaie', 'Comparer', '1 € = 100 c'],
-    fiches: [
-      F('compter', 'compter et faire une somme', 'monnaie-euros', ['Compter une somme', 'Faire une somme', 'Le moins de pièces', 'Comparer']),
-      F('rendre', 'rendre la monnaie', 'monnaie-euros', ['Rendre la monnaie']),
-      F('centimes', 'les euros et les centimes', 'monnaie-centimes', ['Compter une somme', 'Faire une somme', '1 € = 100 c'], { clics: ['Options › Avec centimes'], classes: MONNAIE.fiches.filter(f => f.id === 'centimes').map(f => f.niveau) }),
     ] },
   { id: 'mesures', route: '/maths/mesures', groupe: 'maths', titre: { fr: 'Mesures', br: 'Muzulioù' },
     // classes et fiches : celles de la définition (src/exercices/mesures/definition.js)

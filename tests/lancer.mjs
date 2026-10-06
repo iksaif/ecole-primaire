@@ -89,11 +89,11 @@ const pret = preparer()
 pret.catch(() => {})   // l'échec est rapporté plus bas, par le test qui l'attend ou par la fin du run
 
 // NODE : tests node de la base (sites, langues, nombres, définitions, noyau, exercices, affiches, réponses, instantanés, fiches).
-const NODE = ['sites', 'langues', 'nombres', 'uniques', 'contexte', 'definir', 'noyau', 'exercices', 'affiches-modele', 'reponses', 'instantanes', 'ressources', 'recherche',
-  'polices', 'fiches', 'statique', 'programme-page', 'recents', 'fiches-pages']
+const NODE = ['sites', 'langues', 'nombres', 'uniques', 'contexte', 'definir', 'noyau', 'exercices', 'affiches-modele', 'affiches-planche', 'reponses', 'instantanes', 'ressources', 'recherche',
+  'polices', 'fiches', 'statique', 'programme-page', 'recents', 'fiches-pages', 'heure']
 // CHROME : pages dans Chrome, du plus long au plus court (durées : tableau de fin de run). Les tests de l'ancien code sont dans
 // tests/ancien/, hors de ces listes.
-const CHROME = ['pages-shell', 'accessibilite', 'pages-pages', 'pages-programme', 'pages-fiches', 'pages-recherche', 'memorises', 'dev-affiche', 'routes-langues',
+const CHROME = ['pages-shell', 'accessibilite', 'pages-pages', 'pages-programme', 'pages-fiches', 'pages-recherche', 'memorises', 'dev-affiche', 'affiches-alphabet', 'affiches-monnaie', 'routes-langues',
   'navigation', 'vie-privee', 'base', 'composants', 'statique-fumee', 'jeu-dev', 'production']
 const fichiers = [...NODE, ...CHROME]
 

@@ -1,5 +1,5 @@
 <template>
-  <!-- Les pastilles de classe par cycle (barre et page des réglages). Parent : une classe ; enseignant : plusieurs. -->
+  <!-- Les pastilles de classe par cycle (barre et page des réglages). Parent et enseignant : une ou plusieurs ; enfant : une seule (cadenas). -->
   <div v-for="cycle in CYCLES" :key="cycle.id" class="ligne-cycle">
     <span class="cycle">{{ t(cycle.cle) }}</span>
     <button v-for="c in cycle.classes" :key="c" type="button" class="pastille" :aria-pressed="contexte.classes.includes(c)" @click="choisir(c)">{{ c.toUpperCase() }}</button>

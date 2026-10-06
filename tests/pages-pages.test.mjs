@@ -214,12 +214,22 @@ console.log('Production : état vide, domaines « à venir »')
 {
   const { ctx, page, erreurs } = await ouvrir()
   // les maths ne sont plus vides : le calcul mental, premier exercice reporté, est au CP, au CE1, au CE2, au CM1 et au CM2 (voir plus bas)
-  for (const [route, domaine, classe] of [['/francais', 'lecture', 'cp'], ['/monde', 'histoire', 'cp']]) {
+  for (const [route, domaine, classe] of [['/monde', 'histoire', 'cp']]) {
     await aller(page, app(`${route}?classes=${classe}`))
     await page.waitForSelector('.vide')
     verifier(await page.locator('.carte, .ligne').count() === 0 && await page.locator('.a-venir [data-domaine]').count() > 0, `${route} : état vide expliqué et domaines du programme à venir`)
     verifier(await page.locator(`.a-venir [data-domaine="${domaine}"]`).count() === 1 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0, `${route} : « ${domaine} » à venir, aucun domaine inventé`)
   }
+  // le français n'est plus vide en maternelle et au CP : l'affiche de l'alphabet (première affiche reportée) est en lecture
+  await aller(page, app('/francais?classes=cp'))
+  await page.waitForSelector('[data-ressource="affiche:alphabet"]')
+  verifier(await page.locator('[data-ressource="affiche:alphabet"] .badge.imprimable').count() === 1 && await page.locator('[data-ressource="affiche:alphabet"] .badge.jeu').count() === 0 && await page.locator('.vide').count() === 0,
+    '/francais au CP en production : l’affiche de l’alphabet, imprimable, dans « Lecture »')
+  // au CE2 elle est hors classe : la lecture a une ressource (plus « à venir »), l'écriture n'en a pas encore
+  await aller(page, app('/francais?classes=ce2'))
+  await page.waitForSelector('.a-venir [data-domaine]')
+  verifier(await page.locator('[data-ressource="affiche:alphabet"]').count() === 0 && await page.locator('.a-venir [data-domaine="ecriture"]').count() === 1 && await page.locator('.a-venir [data-domaine="lecture"]').count() === 0 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0,
+    '/francais au CE2 : l’alphabet est hors classe, « écriture » à venir, aucun domaine inventé')
   await aller(page, app('/maths?classes=cp'))
   await page.waitForSelector('[data-ressource="exercice:calcul-mental"]')
   verifier(await page.locator('[data-ressource="exercice:calcul-mental"] .badge.jeu').count() === 1 && await page.locator('[data-ressource="exercice:calcul-mental"] .badge.imprimable').count() === 1 && await page.locator('.vide').count() === 0,
@@ -294,9 +304,13 @@ console.log('Réglages : classe, profil et mode de langue passent par le context
   const o = await ouvrir()
   await aller(o.page, app('/parametres?classes=ce1'))
   verifier(await o.page.getByRole('button', { name: 'CE1', exact: true }).getAttribute('aria-pressed') === 'true', 'la classe de l’adresse est celle des réglages')
+  // un parent a parfois plusieurs enfants : cliquer une autre classe l'ajoute
   await o.page.getByRole('button', { name: 'CM2', exact: true }).click()
-  await o.page.waitForFunction(() => [...document.querySelectorAll('button[aria-pressed=true]')].some(b => b.textContent.trim() === 'CM2'))
-  verifier(!ou(o.page).includes('classes=ce1'), 'choisir une classe remplace celle de l’adresse')
+  await o.page.waitForFunction(() => document.querySelectorAll('button.pastille[aria-pressed=true]').length === 2)
+  verifier(await o.page.getByRole('button', { name: 'CE1', exact: true }).getAttribute('aria-pressed') === 'true', 'parent : plusieurs classes (plusieurs enfants)')
+  await o.page.getByRole('button', { name: 'CE1', exact: true }).click()
+  await o.page.waitForFunction(() => document.querySelectorAll('button.pastille[aria-pressed=true]').length === 1)
+  verifier(!ou(o.page).includes('classes=ce1'), 'retirer une classe la retire de l’adresse')
   await o.page.getByRole('button', { name: /Enseignant/ }).click()
   await o.page.getByRole('button', { name: 'CE2', exact: true }).click()
   verifier(await o.page.locator('button.pastille[aria-pressed=true]').count() === 2, 'profil enseignant : plusieurs classes')

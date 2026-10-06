@@ -2,13 +2,12 @@
 // générer les PDF avec exactement le même code que l'app. Chargé seulement avec ?generation.
 import { chargerPolices, ajouterPolicePerso, POLICE_ATTACHE, POLICE_SCRIPT } from '../utils/impression'
 import { genererEcriture } from './ecriture'
-import { genererAlphabet } from './alphabet'
 import { genererNombres } from './nombres'
 import { TELECHARGEMENTS as FICHES, catalogueDuSite } from './catalogue'
 import { genererCalcul, TELECHARGEMENTS_CALCUL } from './calcul'
 import { genererAffichesProgramme } from './affichesProgramme'
 
-const GENERATEURS = { ecriture: genererEcriture, alphabet: genererAlphabet, nombres: genererNombres, calcul: genererCalcul, affiche: genererAffichesProgramme }
+const GENERATEURS = { ecriture: genererEcriture, nombres: genererNombres, calcul: genererCalcul, affiche: genererAffichesProgramme }
 // Les fiches de calcul (textes en français) ne sont publiées que sur le site français
 const CALCUL = TELECHARGEMENTS_CALCUL.map(t => ({ langues: ['fr'], ...t }))
 const TELECHARGEMENTS = [...FICHES, ...CALCUL]

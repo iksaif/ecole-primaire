@@ -1,5 +1,5 @@
 // Accessibilité des pages de la base dans Chrome, mesurée avec axe-core (WCAG 2.x A et AA) : aucune violation « critique » ou
-// « sérieuse » sur les pages de développement (/dev, les exemples, les composants) et les exercices reportés (calcul mental), en français et en breton, à 1280 px et à
+// « sérieuse » sur les pages de développement (/dev, les exemples, les composants) et les exercices reportés (calcul mental, lire l'heure, la monnaie), en français et en breton, à 1280 px et à
 // 360 px, et dans les états utiles (fiche à imprimer, question en cours, résultats).
 // La barre et le pied de page sont inclus (le shell a son propre test : pages-shell.test.mjs). Pour voir toutes les violations (y compris
 // moyennes et mineures) :
@@ -8,7 +8,7 @@
 import { lancerNavigateur, contexte, nbEchecs, appDev } from './outils.mjs'
 import { verifierAxe } from './outils-axe.mjs'
 
-const PAGES = ['/dev', '/dev/exemple', '/dev/exemple-corpus', '/dev/affiches', '/dev/composants', '/maths/calcul-mental']
+const PAGES = ['/dev', '/dev/exemple', '/dev/exemple-corpus', '/dev/affiches', '/dev/composants', '/maths/calcul-mental', '/maths/heure', '/maths/monnaie']
 const nav = await lancerNavigateur()
 
 const mesurer = verifierAxe
@@ -25,7 +25,7 @@ for (const largeur of [1280, 360]) {
       await page.waitForSelector('h1, h2')
       await mesurer(page, nom)
       // les exemples d'exercice : la fiche à imprimer, puis une question du jeu
-      if (route === '/dev/exemple' || route === '/dev/exemple-corpus' || route === '/maths/calcul-mental') {
+      if (route === '/dev/exemple' || route === '/dev/exemple-corpus' || route === '/maths/calcul-mental' || route === '/maths/heure' || route === '/maths/monnaie') {
         await page.locator('.modes button').nth(1).click()
         await page.waitForSelector('iframe')
         await mesurer(page, `${nom} fiche`)

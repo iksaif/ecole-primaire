@@ -3,14 +3,6 @@
 // le même fichier se lit dans l'app (Vite), par node (build, scripts) et dans les tests, sans import.meta.glob
 // (que node ne connaît pas). Un dossier de src/exercices/ absent d'ici fait échouer tests/exercices.test.mjs.
 // Les vues n'importent pas ce registre (il entraînerait tous les générateurs) : chacune importe son dossier.
-import heureDefinition from './heure/definition.js'
-import * as heureGenerateur from './heure/generateur.js'
-import * as heureFiche from './heure/fiche.js'
-import { TEXTES as heureTextes } from './heure/textes.js'
-import monnaieDefinition from './monnaie/definition.js'
-import * as monnaieGenerateur from './monnaie/generateur.js'
-import * as monnaieFiche from './monnaie/fiche.js'
-import { TEXTES as monnaieTextes } from './monnaie/textes.js'
 import conjugaisonDefinition from './conjugaison/definition.js'
 import * as conjugaisonGenerateur from './conjugaison/generateur.js'
 import * as conjugaisonFiche from './conjugaison/fiche.js'
@@ -150,8 +142,6 @@ import { TEXTES as lettresTextes } from './lettres/textes.js'
 
 /** @type {ModuleExercice[]} */
 export const REGISTRE = [
-  { definition: heureDefinition, generateur: heureGenerateur, fiche: heureFiche, textes: heureTextes },
-  { definition: monnaieDefinition, generateur: monnaieGenerateur, fiche: monnaieFiche, textes: monnaieTextes },
   { definition: conjugaisonDefinition, generateur: conjugaisonGenerateur, fiche: conjugaisonFiche, textes: conjugaisonTextes },
   { definition: ordonnerDefinition, generateur: ordonnerGenerateur, fiche: ordonnerFiche, textes: ordonnerTextes },
   { definition: problemesDefinition, generateur: problemesGenerateur, fiche: problemesFiche, textes: problemesTextes },

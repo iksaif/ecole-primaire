@@ -1,7 +1,7 @@
 # Affiches au format « définition » (plans 10 et 11)
 
 Une affiche **se déclare** ; sa feuille, son formulaire, son catalogue et ses tests en découlent. Modèle vivant :
-`exemple/` (la bande numérique, MS et GS : le point de départ), `exemple-jours/` (une langue par feuille, police par type) et
+`alphabet/` (la première affiche reportée de `main`, pour un cas réel), `exemple/` (la bande numérique, MS et GS : le point de départ), `exemple-jours/` (une langue par feuille, police par type) et
 `exemple-riche/` (champs libres, conditions, préréglages, valeurs dynamiques, format fixe, mesure de texte) ; ils sont visibles
 sur `/dev/affiches` avec `npm run dev` et absents du build.
 
@@ -51,6 +51,7 @@ export default definirAffiche({
   sont un tableau (`classes: ['ms']`), jamais du texte. `choix(valeurs, { defaut, bonus, horsProgramme })` (de `src/noyau/definir.ts`, comme les
   exercices) se déclare dans une variante, pas dans les réglages communs (ils dépendent du programme de ses classes).
 - Un réglage **sans** `choix` (`max`, `completer`) est une valeur de la variante, que lit le dessin ; l'élève ne le change pas.
+- Une variante peut avoir son `format` et son `orientation` par défaut (`format: 'A3'`) : ceux de la fiche publiée ; l'élève les change, et le premier PDF de la page de téléchargement est celui-là.
 - Les types suivent : `type Reglages = ReglagesDeAffiche<typeof definition>` donne à `dessin` des réglages typés.
 - `variantes` est un objet **ou une fonction pure** qui le produit (classes × un paramètre) ; elle est appelée à l'import, le
   catalogue n'en voit que des données. Une variante peut partir d'une autre : `herite: '<variante>'` (réglages seulement : ni
@@ -80,7 +81,7 @@ de pages** (au moins une) : `string`, ou `{ corps, titre? }` (`titre` absent : c
 Le cadre s'occupe du reste (titre, marge, A3, `@page`, polices, une feuille par page) ; l'aperçu, le test de mise en page et
 le catalogue (`pages`) comptent les pages. `contexte` : `Tde(langue)` (textes dans une autre langue de la feuille),
 `police(type?)` (famille CSS choisie), `nomPolice(type?)` (son nom seul), `rng` (le hasard de la graine) et `mesure` (ci-dessous).
-Pour un dessin riche, voir les affiches de `main`.
+Pour un dessin riche, voir `alphabet/` (des cartes en SVG, mesure de texte, une ou plusieurs langues, une page par lettre).
 
 **Mesure de texte** : `contexte.mesure.largeur(texte, police, gras?)` (en em) et `.metriques(police)` (hauteur d'x, de majuscule, de
 hampe, de jambage). Le dessin reste pur parce que la mesure lui est **injectée** (`genererAffiche(module, config, polices, mesure)`) :
@@ -107,7 +108,7 @@ chaque langue. Breton : chaque texte est marqué `// br: à relire`.
   `<route>?affiche=<id>&variante=<v>&langues=fr,br`, relu par `lireLien` (`catalogue.ts`, l'inverse de `lienDe` : le test vérifie
   que chaque entrée du catalogue rouvre les mêmes réglages). Réglages mémorisés sous `affiche_<id>`.
 - **Langues** : `langues` = langues de contenu. `bilingue: false` (défaut) : une langue par feuille, une entrée de catalogue par
-  langue (comme l'alphabet). `bilingue: true` : réglage « langues affichées » (une ou plusieurs sur la feuille) ; le catalogue
+  langue (comme les jours de la semaine). `bilingue: true` : réglage « langues affichées » (une ou plusieurs sur la feuille) ; le catalogue
   publie chaque langue seule puis toutes ensemble (`-fr-br`). Un **site ne publie que les entrées dont toutes les langues
   sont les siennes** : `catalogueDe(modules, site)` lit `site.languesInterface` et `site.languesRegionales` (`src/sites.ts`).
 - **Polices** : `police: { mode: 'unique', defaut? }` (un choix pour l'affiche) ou `{ mode: 'parType', types, defauts }`

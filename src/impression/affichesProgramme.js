@@ -9,14 +9,13 @@ import { AFFICHES_PROGRAMME, RESUMES } from './affiches/catalogue.js'
 import * as droite from './affiches/droite.js'
 import * as numeration from './affiches/numeration.js'
 import * as horloge from './affiches/horloge.js'
-import * as monnaie from './affiches/monnaie.js'
 import * as conjugaison from './affiches/conjugaison.js'
 import * as formes from './affiches/formes.js'
 import * as resume from './affiches/resume.js'
 export { VERBES, TEMPS_CM2, conjuguer } from '../data/conjugaison.js'
 export { AFFICHES_PROGRAMME, RESUMES, TEMPS_PRESENT, TEMPS_DU_CHOIX, choixTemps } from './affiches/catalogue.js'
 
-const FAMILLES = { droite, numeration, horloge, monnaie, conjugaison, formes, resume }
+const FAMILLES = { droite, numeration, horloge, conjugaison, formes, resume }
 const ORIENTATION = Object.fromEntries(AFFICHES_PROGRAMME.map(a => [a.id, a.orientation]))
 
 // Commun aux affiches du programme : titre en bleu, dessins SVG dans la police du texte, légende sous le titre

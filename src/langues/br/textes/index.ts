@@ -29,10 +29,12 @@ import exemple from './exemple.ts'
 import exempleCorpus from './exempleCorpus.ts'
 import dev from './dev.ts'
 import calculMental from './calculMental.ts'
+import heure from './heure.ts'
+import monnaie from './monnaie.ts'
 import { AVEC_DEV } from '../../../dev.ts'
 
 // Textes des exemples et des pages /dev : absents d'un build de production (AVEC_DEV, src/dev.ts). Le type les garde : en production
 // aucun code ne les lit (les exemples n'y sont pas).
 const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev }
 
-export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, ...sectionsDev } satisfies Traductions<typeof fr>
+export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, ...sectionsDev } satisfies Traductions<typeof fr>

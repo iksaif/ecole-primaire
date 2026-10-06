@@ -124,6 +124,40 @@ await attendre(new Function("return !!document.querySelector('[data-reglage=lett
 await cliquer('serie', 'mot')
 verifier(await page.locator('label[for]').count() >= 1 && await page.locator('input[data-reglage="mot"]').evaluate(i => !!i.labels?.length), 'le champ texte a une étiquette liée')
 
+// L'affiche de l'alphabet est dans le registre réel : sa page est /imprimer/affiches (pas /dev), le formulaire est le même
+console.log('Alphabet (registre réel)')
+const pages = () => page.locator('iframe').evaluate(f => f.contentDocument.querySelectorAll('.page').length)
+await ouvrir('/imprimer/affiches?affiche=alphabet&variante=cursive')
+verifier(await actif('variante') === 'cursive', 'le lien ouvre la fiche « alphabet en attaché »')
+verifier(await nb('[data-reglage="variante"] [data-valeur]') === 6, 'une variante par fiche publiée, et les lettres spéciales')
+verifier(await nb('[data-reglage="styles"] .level-btn.active') === 2 && await actif('serie') === 'alphabet', 'la fiche en attaché : deux écritures, tout l’alphabet')
+verifier(await nb('[data-reglage="lignes"]') === 1 && await page.locator('.choix-police select').count() === 2, 'écriture attachée : lignes d’écriture et deux polices (script, attaché)')
+verifier(await nb('[data-reglage="langues"] .level-btn.active') === 1 && await nb('[data-reglage="langues"] [data-valeur]') === 2, 'une langue sur la feuille, au choix parmi deux')
+await cliquer('styles', 'script-maj')
+await cliquer('styles', 'attache-maj'); await cliquer('styles', 'attache-min')
+await attendre(new Function("return document.querySelectorAll('.choix-police select').length === 1 && !document.querySelector('[data-reglage=lignes]')"), 'sans attaché : plus de lignes d’écriture ni de police de l’attaché')
+verifier(await nb('[data-reglage="styles"] .level-btn.active') === 1, 'au moins une écriture reste cochée')
+// les deux langues sur la même feuille : une page par langue, chacune avec son alphabet et son titre
+await cliquer('langues', 'br')
+await attendre(new Function(`return ${dansApercu('Al lizherenneg')} && ${dansApercu('L’alphabet')}`), 'français et breton : un titre par langue')
+verifier(await pages() === 2, 'deux langues : deux pages')
+await cliquer('langues', 'fr')
+await attendre(new Function(`return ${dansApercu('C\'h')} || ${dansApercu('Ch')}`), 'le breton seul : ses digrammes (ch, c’h)')
+verifier(await pages() === 1, 'le breton seul : une page')
+// une lettre par page
+await ouvrir('/imprimer/affiches?affiche=alphabet&variante=une-lettre-par-page')
+await attendre(new Function("return document.querySelector('iframe')?.contentDocument?.querySelectorAll('.page').length === 26"), 'une lettre par page : 26 pages')
+// la fiche A3 s'ouvre en A3, les lettres spéciales ont leurs lettres
+await ouvrir('/imprimer/affiches?affiche=alphabet&variante=a3-paysage')
+verifier(await actif('format') === 'A3' && await actif('orientation') === 'landscape', 'la fiche A3 s’ouvre en A3 paysage')
+await ouvrir('/imprimer/affiches?affiche=alphabet&variante=lettres-speciales')
+await attendre(new Function(`return ${dansApercu('>œ<')} && ${dansApercu('>Ç<')}`), 'les lettres spéciales : œ et Ç')
+await cliquer('serie', 'alphabet')
+await attendre(new Function(`return !${dansApercu('>œ<')} && ${dansApercu('>Z<')}`), 'la série se change dans le formulaire')
+// l'ancienne adresse mène à l'affiche
+await ouvrir('/imprimer/alphabet?preset=affiche-alphabet-cursive')
+verifier(page.url().includes('/imprimer/affiches') && page.url().includes('affiche=alphabet'), '/imprimer/alphabet redirige vers l’affiche')
+
 verifier(!erreurs.length, 'aucune erreur JavaScript')
 await nav.close()
 process.exit(nbEchecs() ? 1 : 0)

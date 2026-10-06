@@ -20,7 +20,6 @@ const NOMS_STYLES = {
 
 export const CATEGORIES = [
   { id: 'ecriture', titre: "✏️ Fiches d'écriture", titreBr: '✏️ Fichennoù skrivañ', introBr: "War linennoù Seyès, gant ar skouer e du, lizherennoù gris da adtresañ ha linennoù evit skrivañ e-unan.", intro: "Sur lignage Seyès, avec le modèle en noir, des lettres grises à repasser puis des lignes pour écrire seul." },
-  { id: 'alphabet', titre: "🔤 Affiches de l'alphabet", titreBr: '🔤 Skritelloù al lizherenneg', introBr: "Al lizherennoù e skript hag a-stag, pennlizherennoù ha lizherennoù bihan, da lakaat war ar voger pe er c'haier.", intro: 'Les lettres en script et en attaché, majuscules et minuscules, à afficher au mur ou à coller dans le cahier.' },
   { id: 'calcul',   titre: '🧮 Fiches de calcul', titreBr: '🧮 Fichennoù jediñ', introBr: 'Taolennoù liesañ ha sammañ, klokaat, doubl hag hanter, jediñ e penn — gant ar reizhadenn.', intro: 'Tables de multiplication et d\'addition, compléments, doubles et moitiés, calcul mental du programme — avec le corrigé.' },
   { id: 'nombres',  titre: '🔢 Les nombres en lettres — français et breton', titreBr: '🔢 An niveroù e lizherennoù — galleg ha brezhoneg', introBr: 'Skritelloù ha fichennoù-eñvor evit deskiñ skrivañ an niveroù e lizherennoù, e galleg hag e brezhoneg.', intro: 'Affiches et fiches mémo pour apprendre à écrire les nombres en lettres, en français et en breton.' },
 ]
@@ -80,23 +79,7 @@ const mots = [
   },
 ].map(e => ({ ...e, ...ECRITURE, lien: '/imprimer/ecriture' }))
 
-const affiches = [
-  { slug: 'affiche-alphabet-a4-paysage', court: 'Alphabet A4 paysage', format: 'A4', orientation: 'landscape', titre: "Affiche de l'alphabet A4 (script et attaché)" },
-  { slug: 'affiche-alphabet-a3-paysage', court: 'Alphabet A3 paysage', format: 'A3', orientation: 'landscape', titre: "Affiche de l'alphabet A3 pour la classe (script et attaché)" },
-  { slug: 'affiche-alphabet-a4-portrait', court: 'Alphabet A4 portrait', format: 'A4', orientation: 'portrait', titre: "Affiche de l'alphabet A4 portrait (script et attaché)" },
-  { slug: 'affiche-alphabet-cursive', court: 'Alphabet en attaché', format: 'A4', orientation: 'landscape', styles: ['attache-maj', 'attache-min'], titre: "Affiche de l'alphabet en écriture attachée (cursive)" },
-  { slug: 'cartes-alphabet-une-lettre-par-page', court: 'Une lettre par page', format: 'A4', orientation: 'landscape', disposition: 'carte', titre: "Alphabet : une grande lettre par page (frise de la classe)" },
-].map(a => ({
-  slug: a.slug, court: a.court, titre: a.titre,
-  categorie: 'alphabet', type: 'alphabet', domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche', competences: ['nom-lettres'],
-  description: `${a.titre} : les lettres en script et en attaché, majuscules et minuscules, avec un mot illustré pour chaque lettre. Gratuit, à imprimer en PDF.`,
-  niveaux: 'MS · GS · CP · CE1',
-  config: {
-    format: a.format, orientation: a.orientation, disposition: a.disposition ?? 'grille',
-    styles: a.styles ?? TOUS_STYLES, mot: true, voyelles: true, lignes: false,
-  },
-  lien: '/imprimer/alphabet',
-}))
+// Les affiches de l'alphabet sont au format « définition » : src/affiches/alphabet/ (registre src/affiches/index.ts)
 
 // langues : langues des nombres écrits ; langue : langue du document (titres)
 const nombresBase = { langues: ['fr', 'br'], langue: 'fr', miseEnPage: 'affiches', format: 'A4', orientation: 'portrait', representation: true, rectifiee: true, de: 0, a: 0, pas: 1 }
@@ -154,7 +137,6 @@ function fichesRegionales(r) {
   const nom = r.nom, f = r.fiches
   const maj = l => l[0].toUpperCase() + l.slice(1)
   const liste = ids => ids.flatMap(id => r.listes.find(l => l.id === id).mots).join('\n')
-  const exemplesMots = Object.values(r.mots ?? {}).slice(0, 3).map(m => m[0]).join(', ')
   const premieres = r.alphabet.slice(0, 5).join(', ')
   return [
     {
@@ -176,14 +158,6 @@ function fichesRegionales(r) {
           titre: titreListe.includes(nom) ? titreListe : `${titreListe} — ${l.resume} en ${nom}` },
       }
     }),
-    ...[['A4', 'landscape'], ['A3', 'landscape']].map(([format, orientation]) => ({
-      slug: `affiche-alphabet-${nom}-${format.toLowerCase()}`, court: `Alphabet ${nom} ${format}`, type: 'alphabet', categorie: 'alphabet',
-      domaine: DOMAINES_AFFICHES.alphabet, genre: 'affiche', competences: ['nom-lettres'],
-      titre: `Affiche de l'alphabet ${nom} ${format} (${r.titreAlphabet.toLowerCase()})`,
-      description: `Affiche ${format} de l'alphabet ${nom} : ${r.alphabet.length} lettres, en script et en attaché, majuscules et minuscules${exemplesMots ? `, avec un mot illustré (${exemplesMots}…)` : ''}. Pour ${f.ecoles}.`,
-      niveaux: 'MS · GS · CP · CE1', lien: '/imprimer/alphabet',
-      config: { format, orientation, disposition: 'grille', styles: TOUS_STYLES, mot: true, voyelles: true, lignes: false, alphabet: r.id },
-    })),
     // une fiche par lettre (digrammes compris)
     ...r.alphabet.map(l => ({
       slug: `fiche-ecriture-${f.motLettre}-${l.replace("'", '-')}`, court: `${maj(f.motLettre)} ${maj(l)}`, ...ECRITURE,
@@ -210,7 +184,7 @@ const avecLangues = (liste, langues) => liste.map(t => ({ langues, ...t }))
 
 export const TELECHARGEMENTS = [
   ...[
-    ...avecLangues([...lettres, ...alphabets, ...mots, ...affiches], ['fr']),
+    ...avecLangues([...lettres, ...alphabets, ...mots], ['fr']),
     // nombres : français seul, breton seul, ou bilingue
     ...nombres.map(t => ({ langues: t.config.langues, ...t })),
     // contenu en langue régionale (alphabet, jours, mois, nombres, lettres une à une)

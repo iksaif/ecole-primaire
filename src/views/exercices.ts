@@ -5,5 +5,7 @@ import type { VueExercice } from '../router/routes.ts'
 
 export const VUES: Readonly<Record<string, VueExercice>> = {
   '/maths/calcul-mental': () => import('./maths/CalculMentalView.vue'),
+  '/maths/monnaie': () => import('./maths/MonnaieView.vue'),
+  '/maths/heure': () => import('./maths/HeureView.vue'),
   // nouveau:vues
 }

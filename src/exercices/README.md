@@ -28,7 +28,8 @@ Le registre est **un seul fichier** : `src/exercices/index.ts` (`REGISTRE`). L'a
 tests et `/dev` le lisent. Les exemples y sont marqués `exemple: true` et chargés par import dynamique en développement
 seulement (`src/dev.ts`). Les anciens exercices (JavaScript) sont dans `ancien.js` tant qu'ils ne sont pas reportés ; **calcul mental**
 (`calcul-mental/`) est le premier report réel : un exercice qui a un jeu, une fiche par compétence et des fiches publiées sous leurs
-adresses historiques.
+adresses historiques. **Lire l'heure** (`heure/`) est le second : une question à plusieurs types, des horloges SVG (`horloge.ts`) partagées par le jeu et la fiche, et
+l'heure dite en lettres écrite dans le catalogue (listes `mots.*` en une chaîne séparée par « | »), pas dans le code.
 
 ## La définition
 

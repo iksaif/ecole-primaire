@@ -38,7 +38,7 @@ export interface UtilisationContexte {
   modeRegionalSeul: ComputedRef<boolean>
   /** Choisit les classes (une seule pour un parent ou un enfant : la dernière citée). `false` : refusé (verrou, liste vide). */
   choisirClasses: (classes: readonly Classe[]) => Promise<boolean>
-  /** Ajoute / retire une classe : profil enseignant seulement (`false` sinon, ou si on retirait la dernière). */
+  /** Ajoute / retire une classe : tous les profils sauf l'enfant (`false` sinon, ou si on retirait la dernière). */
   ajouterClasse: (classe: Classe) => Promise<boolean>
   retirerClasse: (classe: Classe) => Promise<boolean>
   /** Mode de langue ; `regionale` : la langue régionale voulue quand le site en propose plusieurs. `false` : le site n'en propose pas. */
@@ -159,7 +159,7 @@ export function installerContexte(router: Router, site: Site = SITE): void {
         profil.value = p
         deverrouille.value = false
         sauvegarder('profil', p)
-        // un parent ou un enfant n'a qu'une classe mémorisée (l'adresse, elle, garde ce qu'elle dit)
+        // un enfant n'a qu'une classe mémorisée (l'adresse, elle, garde ce qu'elle dit)
         const classes = memo.value.classes
         if (classes && classes.length > 1 && !plusieursClasses(p)) {
           memo.value = { ...memo.value, classes: classes.slice(0, 1) }

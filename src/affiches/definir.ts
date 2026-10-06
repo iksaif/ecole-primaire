@@ -29,6 +29,9 @@ export interface SpecVariante {
   /** identifiant d'une autre variante dont celle-ci part (réglages seulement : ni `classes`, ni `sauf`, ni `horsProgramme`) */
   herite?: string
   slug?: string
+  /** format et sens par défaut de la variante (parmi `formats` et `orientations` de l'affiche) : A3 pour « l'affiche de la classe » */
+  format?: Format
+  orientation?: Orientation
 }
 
 export interface SpecAffiche<C extends SpecReglages, V extends Record<string, SpecVariante>> {
@@ -60,6 +63,8 @@ export interface SpecAffiche<C extends SpecReglages, V extends Record<string, Sp
   prereglages?: Readonly<Record<string, Readonly<Record<string, ValeurReglage>>>>
   /** défaut : /imprimer/affiches */
   route?: string
+  /** emoji de la carte du catalogue (💶 pour les pièces et billets) ; défaut : celui du domaine */
+  emoji?: string
   marge?: number
   hTitre?: number
   /** toutes les compétences de l'affiche (K.…) */
@@ -111,6 +116,8 @@ export function definirAffiche<C extends SpecReglages = {}, V extends Record<str
     const v: VarianteAffiche = { classes: s.classes, ...niveau }
     if (Object.keys(champs).length) v.champs = champs
     if (s.slug) v.slug = s.slug
+    if (s.format) { if (!formats.includes(s.format)) erreur(`${ou} : format ${s.format} non permis (formats : ${formats.join(', ')})`); v.format = s.format }
+    if (s.orientation) { if (!orientations.includes(s.orientation)) erreur(`${ou} : orientation ${s.orientation} non permise (orientations : ${orientations.join(', ')})`); v.orientation = s.orientation }
     variantes[vid] = v
   }
 
@@ -147,7 +154,7 @@ export function definirAffiche<C extends SpecReglages = {}, V extends Record<str
   return {
     id, domaine: spec.domaine, genre: 'affiche', orientations, formats, langues,
     bilingue: spec.bilingue ?? false, police, hasard: spec.hasard ?? false, formulaire,
-    route: spec.route ?? '/imprimer/affiches', marge: spec.marge, hTitre: spec.hTitre,
+    route: spec.route ?? '/imprimer/affiches', emoji: spec.emoji, marge: spec.marge, hTitre: spec.hTitre,
     reglages: communs.reglages, options: communs.options, champs: communs.champs, offertes, prereglages, variantes,
   } as unknown as DefinitionAffiche<ReglagesDe<C, V>>
 }

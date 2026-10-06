@@ -10,7 +10,7 @@ import { enClasse } from '../../data/classes.js'
 // Domaine du programme (id de DOMAINES, src/data/programme.js) de chaque famille d'affiches
 export const DOMAINES_AFFICHES = {
   alphabet: 'lecture', nombres: 'nombres-calcul', tables: 'nombres-calcul',
-  droite: 'nombres-calcul', numeration: 'nombres-calcul', horloge: 'grandeurs-mesures', monnaie: 'grandeurs-mesures',
+  droite: 'nombres-calcul', numeration: 'nombres-calcul', horloge: 'grandeurs-mesures',
   conjugaison: 'grammaire', formes: 'espace-geometrie',
   // resume : un domaine par affiche (config.domaine)
 }
@@ -63,8 +63,6 @@ export const AFFICHES_PROGRAMME = [
     { id: 'heures', label: 'Les heures entières', niveaux: 'CP', precision: 'entiere' },
     { id: 'quarts', label: 'Les demies et les quarts', niveaux: 'CE1', precision: 'quart' },
     { id: 'minutes', label: 'Les heures et les minutes', niveaux: 'CE2', precision: 'minute' } ] },
-  { id: 'monnaie', label: 'Pièces et billets', orientation: 'landscape', variantes: [
-    { id: 'euros', label: 'Euros', niveaux: 'CP' }, { id: 'centimes', label: 'Euros et centimes', niveaux: 'CE1 · CE2' } ] },
   { id: 'conjugaison', label: 'Conjugaison', orientation: 'portrait', verbes: true },
   ...(RESUMES_VISIBLES ? [{ id: 'resume', label: 'Ce que je sais faire', orientation: 'portrait', domaines: true }] : []),
   { id: 'formes', label: 'Figures et solides', orientation: 'portrait', variantes: [
@@ -90,7 +88,6 @@ export function competencesAffiche(c) {
     case 'droite': return ['droite-graduee', 'nombres-en-lettres']
     case 'numeration': return { ce1: ['numeration-1000'], cm1: ['numeration-6-chiffres', 'decimaux'], cm2: ['numeration-9-chiffres', 'decimaux'] }[c.variante] ?? []
     case 'horloge': return { heures: ['heure-entiere'], quarts: ['heure-demi-quart'], minutes: ['heure-minutes'] }[c.variante] ?? []
-    case 'monnaie': return { euros: ['monnaie-euros'], centimes: ['monnaie-centimes'] }[c.variante] ?? []
     case 'conjugaison': return { present: ['conjugaison-present-etre-avoir'], cm2: ['conjugaison-passe-simple'] }[choixTemps(c.temps)] ?? COMPETENCES_GROUPE[VERBES[c.verbe]?.groupe] ?? []
     case 'formes': return c.variante?.startsWith('solides') ? ['solides', 'solides-maternelle'] : ['figures-planes', 'formes-maternelle']
     default: return []
@@ -128,8 +125,6 @@ export const TELECHARGEMENTS_AFFICHES = [
   entree('affiche-horloge-heures-entieres', 'Horloge : heures', "Affiche de l'horloge : lire les heures entières", "L'horloge à aiguilles pour lire et positionner les heures entières, avec des moments de la journée (programme du CP).", 'CP', { affiche: 'horloge', variante: 'heures' }),
   entree('affiche-horloge-quarts-demies', 'Horloge : quarts et demies', "Affiche de l'horloge : et quart, et demie, moins le quart", "L'horloge à aiguilles pour lire les heures entières, les demi-heures et les quarts d'heure, avec les heures de l'après-midi (programme du CE1).", 'CE1', { affiche: 'horloge', variante: 'quarts' }),
   entree('affiche-horloge-heures-minutes', 'Horloge : minutes', "Affiche de l'horloge : heures, minutes, quart et demie", "L'horloge avec les minutes, « et quart », « et demie » et « moins le quart », et l'affichage numérique 24 h (programme du CE2).", 'CE2', { affiche: 'horloge', variante: 'minutes' }),
-  entree('affiche-monnaie-euros', 'Euros', "Affiche des pièces et des billets de l'euro", "Les pièces de 1 € et 2 € et les billets de 5 à 100 €, avec les échanges usuels (10 pièces de 1 € = 1 billet de 10 €).", 'CP', { affiche: 'monnaie', variante: 'euros' }),
-  entree('affiche-monnaie-centimes', 'Euros et centimes', 'Affiche des pièces et billets avec les centimes', "Toutes les pièces (de 1 centime à 2 €) et les billets, avec la relation 1 € = 100 centimes (programme du CE1).", 'CE1 · CE2', { affiche: 'monnaie', variante: 'centimes' }),
   // chaque verbe : les 4 temps du cycle 2, puis passé simple et plus-que-parfait (CM2)
   ...Object.keys(VERBES).flatMap(v => [conjugaison(v, CONJUGAISONS[0]), conjugaison(v, CONJUGAISONS[1])]),
   // être et avoir au présent seul : le CP n'apprend que ce temps

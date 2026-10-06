@@ -62,7 +62,7 @@ export default {
     enfant: 'Enfant',
     enfantDesc: 'Une classe, verrouillée par un petit cadenas',
     parent: 'Parent',
-    parentDesc: 'Une classe, programme et fiches toutes prêtes',
+    parentDesc: 'Une ou plusieurs classes (plusieurs enfants), fiches toutes prêtes',
     enseignant: 'Enseignant',
     enseignantDesc: 'Plusieurs classes, entrée Programme, lien pour les familles',
   },

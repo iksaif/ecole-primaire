@@ -84,10 +84,12 @@ function fichesAffiche(module: ModuleAffiche, publiees: readonly string[]): Fich
     const { variante } = e.config
     const v = d.variantes[variante]
     // un document par format et par sens que l'affiche permet (le premier de chaque liste est celui par défaut)
+    // (la variante peut avoir son propre défaut : A3 pour l'affiche de la classe ; il passe en premier)
+    const defaut = reglagesDe(d, e.config)
     const formats = d.formats.flatMap(format => d.orientations.map(orientation => {
       const config = reglagesDe(d, { ...e.config, format, orientation })
       return { format, orientation, html: genererAffiche(module, config, { script: 'Andika' }).html }
-    }))
+    })).sort((a, b) => Number(b.format === defaut.format && b.orientation === defaut.orientation) - Number(a.format === defaut.format && a.orientation === defaut.orientation))
     const reglages = reglagesDe(d, e.config) as unknown as MetaFiche['reglages']
     const description = texteMulti(module.textes, `variante.${variante}.description`, e.description)
     return {

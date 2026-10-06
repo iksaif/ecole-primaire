@@ -68,6 +68,9 @@ export interface VarianteAffiche<R extends object = Reglages> extends NiveauExer
   champs?: Readonly<Record<string, Champ>>
   /** slug publié en français (une affiche reportée garde son slug publié) ; défaut `affiche-<id>-<variante>` */
   slug?: string
+  /** format et sens par défaut de cette variante (parmi ceux de l'affiche) ; défaut : le premier de chaque liste. L'élève peut les changer. */
+  format?: Format
+  orientation?: Orientation
 }
 
 /**
@@ -96,6 +99,8 @@ export interface DefinitionAffiche<R extends object = Reglages> {
   formulaire: PlanFormulaire
   /** page du formulaire « Personnaliser » */
   route: string
+  /** emoji de la carte du catalogue ; défaut : celui du domaine */
+  emoji?: string
   /** marge et hauteur du titre (mm, agrandis en A3) ; défauts du cadre */
   marge?: number
   hTitre?: number

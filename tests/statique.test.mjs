@@ -7,10 +7,10 @@ import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
-import { lireContexte } from '../scripts/statique/lire.ts'
-import { fichiersStatiques, pagesStatiques } from '../scripts/statique/ecrire.ts'
-import { adressesApp, adressesStatiques } from '../scripts/statique/sitemap.ts'
-import { racineDeSlug, siteDeReference } from '../scripts/statique/adresses.ts'
+import { lireContexte } from '../scripts/build/statique/lire.ts'
+import { fichiersStatiques, pagesStatiques } from '../scripts/build/statique/ecrire.ts'
+import { adressesApp, adressesStatiques } from '../scripts/build/statique/sitemap.ts'
+import { racineDeSlug, siteDeReference } from '../scripts/build/statique/adresses.ts'
 import { adresseCanonique, estIndexable } from '../src/router/canonique.ts'
 import { SITES } from '../src/sites.ts'
 import { verifier, nbEchecs } from './outils.mjs'
@@ -88,9 +88,9 @@ verifier(ctx.site.id === 'ecoleprimaire' && ctx.date === '2026-03-04', 'site du 
 verifier(!ctx.index.entrees.some(e => e.exemple) && !ctx.entrees.has('affiche-exemple-x'), 'sans --avec-exemples : aucune entrée d’exemple')
 verifier(lireContexte({ mode: 'ecoleprimaire', outDir: dossier, avecExemples: true }).entrees.has('affiche-exemple-x'), 'avec --avec-exemples : l’exemple est lu')
 {
-  const r = spawnSync(process.execPath, ['scripts/statique/commande.ts', '--mode', 'production', '--outDir', dossier, '--avec-exemples'], { cwd: racine, encoding: 'utf8' })
+  const r = spawnSync(process.execPath, ['scripts/build/statique/commande.ts', '--mode', 'production', '--outDir', dossier, '--avec-exemples'], { cwd: racine, encoding: 'utf8' })
   verifier(r.status !== 0 && /jamais dans un build de production/.test(r.stderr), 'la commande refuse --avec-exemples en production')
-  const bon = spawnSync(process.execPath, ['scripts/statique/commande.ts', '--mode', 'ecoleprimaire', '--outDir', dossier], { cwd: racine, encoding: 'utf8' })
+  const bon = spawnSync(process.execPath, ['scripts/build/statique/commande.ts', '--mode', 'ecoleprimaire', '--outDir', dossier], { cwd: racine, encoding: 'utf8' })
   verifier(bon.status === 0 && existsSync(join(dossier, 'telechargements', 'maths-cp', 'index.html')) && existsSync(join(dossier, 'sitemap.xml')) && existsSync(join(dossier, '404.html')), 'la commande écrit les pages, le sitemap et 404.html')
   verifier(!existsSync(join(dossier, 'telechargements', 'affiche-exemple-x')), 'aucune page d’exemple écrite sans --avec-exemples')
 }

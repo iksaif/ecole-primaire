@@ -17,7 +17,6 @@ import NUMERATION from '../exercices/numeration/definition.js'
 import FRACTIONS from '../exercices/fractions/definition.js'
 import GEOMETRIE from '../exercices/geometrie/definition.js'
 import ORDONNER from '../exercices/ordonner/definition.js'
-import CALCUL_MENTAL from '../exercices/calcul-mental/definition.js'
 import PROBLEMES from '../exercices/problemes/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
@@ -39,27 +38,6 @@ const classesFiche = (definition, id) => definition.fiches.filter(f => f.id === 
 
 const LISTE = [
   // ── Maths ──
-  { id: 'calcul-mental', route: '/maths/calcul-mental', groupe: 'maths', titre: { fr: 'Calcul mental', br: 'Jediñ e penn' },
-    // classes et fiches : celles de la définition (src/exercices/calcul-mental/definition.js)
-    classes: [
-      C('cp', '^CP$', ['^Compléments à 10$|^Klokadurioù da 10$', '^Doubles$|^Doubloù$']),
-      C('ce1', '^CE1$', ['^×$', '^Doubles$|^Doubloù$', '^Moitiés$|^Hanterioù$']),
-      C('ce2', '^CE2$', ['^×$', '^÷$', '^Compléments à 100$|^Klokadurioù da 100$']),
-      C('cm1', '^CM1$', ['^×$', '^÷$']),
-      C('cm2', '^CM2$', ['^×$', '^÷$']),
-    ],
-    choix: ['^\\+$', '^−$', '^×$', '^÷$', '^Compléments à 10$', '^Compléments à 100$', '^Vers la dizaine', '^± dizaines', '^± 9', '^Passage de dizaine', '^Doubles$', '^Moitiés$', '^× 10'],
-    fiches: [
-      F('tables-addition', "les tables d'addition", 'tables-addition', ['^\\+$', '^−$'], { classes: classesFiche(CALCUL_MENTAL, 'tables-addition') }),
-      F('tables-multiplication', 'les tables de multiplication', 'tables-multiplication', ['^×$'], { classes: classesFiche(CALCUL_MENTAL, 'tables-multiplication') }),
-      F('division', 'la division', 'sens-division', ['^÷$'], { classes: classesFiche(CALCUL_MENTAL, 'division') }),
-      F('complements', 'les compléments à 10', 'complement-dizaine', ['^Compléments à 10$'], { classes: classesFiche(CALCUL_MENTAL, 'complements').filter(n => n === 'cp') }),
-      F('complements', 'les compléments à la dizaine et à 100', 'complement-dizaine', ['^Compléments à 100$', '^Vers la dizaine'], { classes: classesFiche(CALCUL_MENTAL, 'complements').filter(n => n !== 'cp') }),
-      F('dizaines', 'ajouter des dizaines, passer la dizaine', 'ajouter-dizaines', ['^± dizaines', '^Passage de dizaine'], { classes: classesFiche(CALCUL_MENTAL, 'dizaines') }),
-      F('ajouter-9', 'ajouter ou retirer 9 et 11', 'ajouter-9', ['^± 9'], { classes: classesFiche(CALCUL_MENTAL, 'ajouter-9') }),
-      F('doubles-moities', 'doubles et moitiés', 'doubles-moities', ['^Doubles$', '^Moitiés$'], { classes: classesFiche(CALCUL_MENTAL, 'doubles-moities') }),
-      F('multiplier-10-100', 'multiplier par 10 et par 100', 'multiplier-10-100', ['^× 10'], { classes: classesFiche(CALCUL_MENTAL, 'multiplier-10-100') }),
-    ] },
   { id: 'calcul-pose', route: '/maths/calcul-pose', groupe: 'maths', titre: { fr: 'Calcul posé', br: 'Jedadurioù lakaet' },
     // classes et fiches : celles de la définition ; chaque niveau a la taille des nombres de son programme par défaut
     classes: Object.keys(CALCUL_POSE.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),

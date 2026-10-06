@@ -3,6 +3,7 @@
 import type { Classe, Contraintes, ParamsGenerateur, Verdict } from '../../noyau/types.ts'
 import type { ConfigDe, ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type DEFINITION from './definition.ts'
+import { tirerUniques } from '../../noyau/uniques.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
 import type { CONTENU } from './textes.ts'
 
@@ -51,7 +52,7 @@ function question(niveau: Classe, reglages: Config, rng: ParamsGenerateur<Reglag
 
 /** Les questions de l'exercice à l'écran. `nb` : le réglage nbQ, sauf si l'appelant en veut un autre. */
 export const questions = ({ niveau, reglages, rng, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] =>
-  Array.from({ length: nb }, () => question(niveau, reglages, rng))
+  tirerUniques(nb, () => question(niveau, reglages, rng))   // jamais deux fois la même question (noyau/uniques.ts)
 
 /** Ce que tire la fiche imprimable : les mêmes questions, en nombre fixe (fiche.ts les met en page). */
 export const questionsFiche = (p: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): Question[] => questions({ ...p, nb: NB_FICHE })

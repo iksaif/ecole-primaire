@@ -7,7 +7,8 @@ import { creerRessources } from '../src/ressources/useRessources.ts'
 import { EMOJI_DOMAINE } from '../src/ressources/emojis.ts'
 import { COMPETENCES, DOMAINES, MATIERES, competenceDe } from '../src/data/programme.ts'
 import { NIVEAUX, CYCLE_DE } from '../src/data/classes.ts'
-import { catalogueDeTest, sources, FICHES, SITE_FR } from './donnees-ressources.mjs'
+import { catalogueDeTest, sources, FICHES, SITE_FR, SITE_BR } from './donnees-ressources.mjs'
+import { REGISTRE as EXERCICES } from '../src/exercices/index.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const ids = c => c.map(r => r.id)
@@ -29,6 +30,16 @@ verifier(ex.route === '/dev/exemple' && ex.exemple === true, 'route de la défin
 const af = parId(C, 'affiche:exemple')
 verifier(af && af.badges.jeu === false && af.badges.imprimable && af.usage === 'apprendre' && af.classes.join() === 'ms,gs', 'affiche : classes des variantes en union, à apprendre, imprimable')
 verifier(af.route === '/dev/affiches?affiche=exemple' && af.langues.join() === 'fr,br', 'affiche : route du formulaire, langues')
+
+console.log('Registre réel : calcul mental')
+{
+  const reel = construireCatalogue({ exercices: EXERCICES, affiches: [], fiches: null, site: SITE_BR, enDeveloppement: false })
+  const calcul = parId(reel, 'exercice:calcul-mental')
+  verifier(calcul && calcul.matiere === 'maths' && calcul.domaine === 'nombres-calcul' && calcul.exemple === false, 'calcul mental : au catalogue de /maths, domaine nombres-calcul, pas un exemple')
+  verifier(calcul.badges.jeu && calcul.badges.imprimable && calcul.classes.join() === 'cp,ce1,ce2,cm1,cm2' && calcul.route === '/maths/calcul-mental', 'calcul mental : badges en ligne et imprimable, cinq classes, route')
+  verifier(texteDe(calcul.titre, 'fr') === 'Calcul mental' && texteDe(calcul.titre, 'br') === 'Jediñ e penn', 'calcul mental : titre dans chaque langue')
+  verifier(!reel.some(r => r.exemple), 'en production : aucun exemple au catalogue')
+}
 
 console.log('Textes (clés, pas de texte en dur)')
 verifier(C.filter(r => r.type === 'exercice').every(r => 'cle' in r.titre), 'titre d’un exercice : clé de l’interface')

@@ -1,6 +1,6 @@
 // Indexation des pages de l'app : adresse canonique par route (absolue, sans requête) et `noindex` pour les pages qui ne
 // s'indexent pas (réglages, développement, page introuvable). Posés par le routeur à chaque navigation (titres.ts).
-// Les pages de fiches ont aussi une page statique à la même adresse (scripts/statique/) : mêmes adresses (barre finale sous
+// Les pages de fiches ont aussi une page statique à la même adresse (scripts/build/statique/) : mêmes adresses (barre finale sous
 // /telechargements), même règle d'indexation (`estIndexable`, partagée avec le sitemap).
 import type { RouteLocationNormalizedLoaded, RouteMeta } from 'vue-router'
 

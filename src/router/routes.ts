@@ -2,7 +2,7 @@
 // son titre de document (src/router/titres.ts). Les pages que d'autres paquets écriront sont des composants provisoires
 // (AVenirView) derrière un import dynamique : le paquet qui possède la page remplace seulement l'import ici.
 // Pur côté données (aucun import de Vue à l'exécution) : lisible par node, les tests le parcourent.
-import type { RouteRecordRaw } from 'vue-router'
+import type { RouteComponent, RouteRecordRaw } from 'vue-router'
 import type { Langue } from '../langues/registre.ts'
 import { LANGUES } from '../langues/registre.ts'
 import type { CleTexte } from '../langues/traduire.ts'
@@ -55,18 +55,22 @@ export interface EntreeExercice {
   readonly exemple?: true
 }
 
+/** La vue d'un exercice, chargée à la demande (`() => import('…View.vue')`) : src/views/exercices.ts, par route. */
+export type VueExercice = () => Promise<unknown>
+
 /**
  * Une route par exercice du registre (sa `definition.route`, ex. « /maths/heure »). Les exemples n'en ont pas : leurs pages sont
  * les routes /dev. Deux exercices sur une même adresse, ou sur celle d'une autre page, sont une erreur de déclaration.
+ * `vues` : la vue de chaque exercice, par route ; un exercice sans vue montre la page provisoire « à venir ».
  */
-export function routesDesExercices(entrees: readonly EntreeExercice[], existantes: readonly RouteRecordRaw[]): RouteRecordRaw[] {
+export function routesDesExercices(entrees: readonly EntreeExercice[], existantes: readonly RouteRecordRaw[], vues: Readonly<Record<string, VueExercice>> = {}): RouteRecordRaw[] {
   const prises = new Set(existantes.map(r => r.path))
   const routes: RouteRecordRaw[] = []
   for (const { definition, exemple } of entrees) {
     if (exemple) continue
     if (prises.has(definition.route)) throw new Error(`route d’exercice « ${definition.route} » déjà prise`)
     prises.add(definition.route)
-    routes.push({ path: definition.route, component: aVenir, meta: { titre: 'routeur.titre.exercice' } })
+    routes.push({ path: definition.route, component: (vues[definition.route] ?? aVenir) as RouteComponent, meta: { titre: 'routeur.titre.exercice' } })
   }
   return routes
 }

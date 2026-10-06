@@ -13,6 +13,8 @@
 // Un exercice réel ne cite jamais K.exemple… ni D.exemple (entrées fictives, développement seulement : voir src/dev.ts).
 import { FORME_ID, decrireNiveau, decrireReglagesCommuns, reglagesHerites, verifierClasses, verifierProgramme } from './declaration.ts'
 import type { ReglagesDe, SpecReglages } from './declaration.ts'
+import { plageDeClasses } from '../data/classes.ts'
+import type { ClassesDe, NotationClasses } from '../data/classes.ts'
 import type { Classe, CompetenceId, Config, DefinitionExercice, DomaineId, FicheExercice } from './types.ts'
 
 // `choix`, `cases`, `herite`, `decrireChoix`… s'importent d'ici comme avant : la déclaration commune est dans declaration.ts
@@ -35,6 +37,22 @@ export interface SpecNiveau {
 /** `ce2: herite('ce1', { reglages: { pas: choix([2, 5, 10, 100]) } })` : les réglages de CE1, sauf ceux qu'on redit. */
 export const herite = <S extends SpecNiveau>(de: Classe, niveau: S): S & { herite: Classe } => ({ ...niveau, herite: de })
 
+/**
+ * Plusieurs niveaux identiques d'un coup : `niveaux: { cp: {…}, ...pourClasses('ce1-cm2', { reglages: {…} }) }`. La notation est celle
+ * de `plageDeClasses` (`'cp+'`, `'-gs'`, `'ce1-cm1'`, `'cp'`). Chaque classe de la plage reçoit le même niveau (il se combine avec
+ * `herite` : `pourClasses('cm1-cm2', herite('ce2', {…}))`). Attention : une classe écrite après la plage l'emporte (ordre des clés).
+ */
+export const pourClasses = <const N extends NotationClasses, S extends SpecNiveau>(notation: N, niveau: S): { [C in ClassesDe<N>]: S } =>
+  Object.fromEntries(plageDeClasses(notation).map(c => [c, niveau])) as { [C in ClassesDe<N>]: S }
+
+/**
+ * Une même fiche pour plusieurs classes : `fiches: [...fichesPourClasses('ce1-cm2', { id: 'division', competence: K.sensDivision, reglages: {…} })]`.
+ * Les réglages de la fiche sont vérifiés à l'import par `definir` (valeur non proposée = erreur franche), pas par le compilateur
+ * (une fiche écrite à la main, elle, est vérifiée aussi par le type). Pas de `slug` sur une fiche de plusieurs classes (il est unique).
+ */
+export const fichesPourClasses = <R extends object>(notation: NotationClasses, fiche: Omit<FicheExercice<NoInfer<R>>, 'niveau' | 'slug'>): FicheExercice<R>[] =>
+  plageDeClasses(notation).map(niveau => ({ ...fiche, niveau }))
+
 /** Ce que `definir` reçoit. C : réglages communs ; N : niveaux. Leurs types donnent celui des réglages (ReglagesDe). */
 export interface SpecExercice<C extends SpecReglages, N extends Partial<Record<Classe, SpecNiveau>>> {
   id: string
@@ -54,7 +72,7 @@ export interface SpecExercice<C extends SpecReglages, N extends Partial<Record<C
   /** réglages communs à tous les niveaux */
   reglages?: C
   niveaux: N
-  /** fiches prégénérées, une par compétence et niveau (pages /telechargements/) */
+  /** fiches prégénérées, une par compétence et niveau (pages /telechargements/) (`fichesPourClasses` : une fiche pour plusieurs classes) */
   fiches?: readonly FicheExercice<ReglagesDe<C, N>>[]
 }
 
@@ -108,6 +126,7 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
   // Les fiches par compétence : un niveau et une compétence de l'exercice, des réglages proposés
   const fiches = (spec.fiches ?? []) as readonly FicheExercice[]
   const idsFiches = new Set<string>()
+  const slugsFiches = new Set<string>()
   for (const f of fiches) {
     const niv = niveaux[f.niveau]
     const ou = `fiche « ${f.id} » (${f.niveau})`
@@ -116,6 +135,11 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
     const cle = `${f.niveau}/${f.id}`
     if (idsFiches.has(cle)) erreur(`${ou} : id de fiche déjà pris pour ce niveau (le slug publié serait le même)`)
     idsFiches.add(cle)
+    if (f.slug !== undefined) {
+      if (typeof f.slug !== 'string' || !FORME_ID.test(f.slug)) erreur(`${ou} : slug « ${f.slug} » invalide (minuscules, chiffres et tirets)`)
+      if (slugsFiches.has(f.slug)) erreur(`${ou} : slug « ${f.slug} » déjà pris par une autre fiche`)
+      slugsFiches.add(f.slug)
+    }
     if (!niv) erreur(`${ou} : niveau absent de l'exercice`)
     else if (!niv.competences.includes(f.competence)) erreur(`${ou} : « ${f.competence} » n'est pas une compétence de ${f.niveau} (${niv.competences.join(', ')})`)
     for (const [cle, v] of Object.entries(f.reglages)) {

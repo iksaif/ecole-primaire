@@ -1,7 +1,7 @@
 # Fiches PDF toutes prêtes : un JSON d'index, un JSON par fiche
 
 Plan 11. Le build écrit des **données**, la page `/telechargements` de l’app les lit ; les pages HTML statiques (référencement) en sont dérivées (section « Pages statiques »).
-Les mêmes types (`types.ts`) servent à l'écriture (`scripts/fiches/`) et à la lecture (`useFiches`, les vues).
+Les mêmes types (`types.ts`) servent à l'écriture (`scripts/build/fiches/`) et à la lecture (`useFiches`, les vues).
 Données pures, sérialisables ; aucune date, fonction ni `Map`.
 
 ## Ce que produit le build
@@ -15,7 +15,7 @@ Données pures, sérialisables ; aucune date, fonction ni `Map`.
   <slug>/<variante>-<format>.pdf     PDF d'une variante au format de papier (a4, a3)
 ```
 
-`npm run fiches -- --mode skoolik --outDir dist-skoolik [--avec-exemples]` (voir `scripts/fiches/commande.ts`).
+`npm run fiches -- --mode skoolik --outDir dist-skoolik [--avec-exemples]` (voir `scripts/build/fiches/commande.ts`).
 `--avec-exemples` ajoute les entrées d'exemple (domaine fictif `exemple`), marquées `exemple: true` ; jamais en production.
 En développement : `npm run fiches:dev` écrit dans `public/fiches/` (ignoré par git) et `npm run dev` le sert. Attention : `vite build` copie `public/` ; les scripts `build*` enchaînent la commande, qui vide `<outDir>/fiches/` avant d'écrire, donc rien d'exemple ne reste (`build:app` seul peut en garder).
 

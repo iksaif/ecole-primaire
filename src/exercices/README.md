@@ -7,9 +7,12 @@ production) :
 - `exemple-corpus/` : français, corpus dans `src/data/`, contenu toujours en français (QCM).
 
 **Créer un exercice** : `npm run nouveau -- exercice <id> "<Titre>" --domaine <domaine> --competences <id,id> [--modele simple|corpus]
-[--matiere maths|francais|maternelle]`. Il copie le modèle, la vue, les textes d'interface, et inscrit l'exercice aux repères
-`// nouveau:…` de `src/exercices/index.ts` (le registre), `src/router/index.ts` et `src/langues/{fr,br}/textes/index.ts`.
-Il faut ensuite adapter niveaux et compétences (un niveau sans compétence au programme est refusé à l'import).
+[--matiere maths|francais|maternelle]`. Il copie le modèle, la vue, les textes d'interface (breton marqué « br: à relire »), garde
+les niveaux du modèle où une compétence donnée est au programme (le squelette est valide d'emblée), et inscrit l'exercice aux
+repères `// nouveau:…` du registre `src/exercices/index.ts`, de la table des vues `src/views/exercices.ts` (c'est elle qui sert la route
+de l'exercice) et de `src/langues/{fr,br}/textes/index.ts`. L'exercice apparaît alors sur sa page de matière (`/maths`…), dans la
+recherche et dans les fiches PDF : le catalogue, le build des fiches et le routeur lisent tous le registre. Ensuite : adapter
+niveaux, réglages, générateur et textes, puis `npm run instantanes -- --maj <id>` (voir « Reporter un ancien exercice »).
 
 ```
 src/exercices/<id>/
@@ -18,12 +21,14 @@ src/exercices/<id>/
   fiche.ts        pur : fiche({ questions, reglages, T, langue, police, cssPolices }) → documentFiche(…)
   textes.ts       catalogue de CONTENU (`catalogue(…)`) lu par T ; l'interface est dans src/langues/<langue>/textes/<id>.ts
   index.ts        le module { definition, generateur, fiche, textes } (satisfies ModuleExercice)
-src/views/<matiere>/<Id>View.vue   la vue, mince
+src/views/<matiere>/<Id>View.vue   la vue, mince ; src/views/exercices.ts : sa route → sa vue
 ```
 
-Le registre est **un seul fichier** : `src/exercices/index.ts` (`REGISTRE`). L'app, le build des fiches (`scripts/fiches/`), les
+Le registre est **un seul fichier** : `src/exercices/index.ts` (`REGISTRE`). L'app, le build des fiches (`scripts/build/fiches/`), les
 tests et `/dev` le lisent. Les exemples y sont marqués `exemple: true` et chargés par import dynamique en développement
-seulement (`src/dev.ts`). Les 22 anciens exercices (JavaScript) sont dans `ancien.js` tant qu'ils ne sont pas reportés.
+seulement (`src/dev.ts`). Les anciens exercices (JavaScript) sont dans `ancien.js` tant qu'ils ne sont pas reportés ; **calcul mental**
+(`calcul-mental/`) est le premier report réel : un exercice qui a un jeu, une fiche par compétence et des fiches publiées sous leurs
+adresses historiques.
 
 ## La définition
 
@@ -55,6 +60,14 @@ export default definir({
   au programme, `horsProgramme` non redondant avec le programme, fiches cohérentes avec les options.
 - **Le type des réglages est fermé** : `ConfigDe<typeof DEFINITION>` donne `config.pas : (1 | 2 | 10)[]`, `config.typo` ne
   compile pas (`tests/definir.types.ts` : ce que le compilateur doit refuser).
+- **Plages de classes** : `pourClasses('ce1-cm2', { reglages: {…} })` déclare le même niveau pour plusieurs classes d'un coup
+  (`niveaux: { cp: {…}, ...pourClasses('ce1-cm2', {…}) }`), et `fichesPourClasses('ce1+', { id, competence, reglages })` la même fiche
+  pour chacune ; la notation (`src/data/classes.ts`, `plageDeClasses`) est `'cp'`, `'cp+'` (du CP à la dernière), `'-gs'` (de la
+  première à la GS) ou `'ce1-cm1'` ; une faute (`'cp-cm3'`, plage à l'envers) est refusée. Les réglages d'une fiche de plusieurs classes
+  sont vérifiés à l'import (valeur non proposée = erreur), pas par le compilateur.
+- **Fiche publiée sous une adresse historique** : `slug: 'fiche-complements-a-10'` sur une fiche remplace `exercices-<id>-<niveau>-<fiche>`
+  (les liens externes, le sitemap ne changent pas) ; unique parmi tous les exercices. Titre court, titre et description d'une fiche :
+  `fiche.<id>.court|titre|description` dans `textes.ts`, sinon un titre calculé d'après la compétence.
 - Les identifiants viennent de `K` (compétences) et `D` (domaines) de `src/noyau/ids.ts` (généré : `node scripts/ids.mjs`).
   `K.exemple…` et `D.exemple` sont fictifs : un exercice réel qui les cite échoue à l'import en production
   (`tests/production.test.mjs`).
@@ -71,7 +84,9 @@ Purs (lisibles par node : aucun import de Vue, aucun `Math.random`). `questions(
 `questionsFiche({ niveau, reglages, rng, T })`, `verifier(q, rep)` → booléen ou `{ ok, nuance }` (nuance : « presque juste »).
 `bonneReponse(q)` et `mauvaiseReponse(q)` : une réponse juste et une fausse, que les tests essaient sur chaque question (un
 `verifier` toujours vrai échoue). `ecartsAuProgramme(questions, contraintesDe(niveau))` : ce qui sort du programme.
-`T` est typé par le catalogue (`CleContenu<typeof CONTENU>`) : une clé inconnue ne compile pas. Hasard : `rng` de
+**Jamais deux fois la même question** dans une partie ou sur une fiche : `tirerUniques` (`src/noyau/uniques.ts`) retire les doublons
+(clé : ce qui rend deux questions identiques) ; si le réglage n'offre pas assez de questions distinctes, la liste est plus courte que
+demandée, et `tests/exercices.test.mjs` vérifie l'absence de doublon. `T` est typé par le catalogue (`CleContenu<typeof CONTENU>`) : une clé inconnue ne compile pas. Hasard : `rng` de
 `src/utils/hasard.ts` (`rng.choisir([])` lève). Les fiches sont mises en page par `documentFiche` (`src/impression/document.ts`).
 
 ## La vue

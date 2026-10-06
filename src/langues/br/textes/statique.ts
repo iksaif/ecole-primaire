@@ -1,4 +1,4 @@
-// Textes des pages statiques (breton) : fiches, index A→Z, page introuvable, écrits dans le HTML au build (scripts/statique/).
+// Textes des pages statiques (breton) : fiches, index A→Z, page introuvable, écrits dans le HTML au build (scripts/build/statique/).
 // Traduction automatique : les passages marqués « br: à relire » sont à faire vérifier par un brittophone.
 import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/statique.ts'

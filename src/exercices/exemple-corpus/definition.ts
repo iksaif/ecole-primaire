@@ -1,6 +1,6 @@
 // Exemple d'exercice à corpus — définition. Même forme que l'exemple simple (voir ../exemple/definition.ts, qui
 // commente chaque mécanisme) ; seul change ce qui tient au corpus : exercice de français, contenu toujours en français.
-import { definir, cases, choix } from '../../noyau/definir.ts'
+import { definir, cases, choix, pourClasses } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -16,7 +16,8 @@ export default definir({
     themes: cases(['sentiments', 'actions']),   // les thèmes du corpus (src/data/exemple-corpus.ts)
   },
   // pas de réglage propre aux niveaux : le niveau ne change que les mots tirés (le corpus dit à partir de quelle classe)
-  niveaux: { ce1: {}, ce2: {}, cm1: {} },
+  // `pourClasses('ce1-cm1', …)` : le même niveau pour chaque classe de la plage (plages : `'cp'`, `'cp+'`, `'-gs'`, `'ce1-cm1'`, src/data/classes.ts)
+  niveaux: pourClasses('ce1-cm1', {}),
   fiches: [
     { id: 'sentiments', competence: K.exempleSynonymes, niveau: 'ce2', reglages: { themes: ['sentiments'] } },
   ],

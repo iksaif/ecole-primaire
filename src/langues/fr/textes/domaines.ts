@@ -1,5 +1,5 @@
 // Noms courts des domaines du programme (français) : ceux de src/data/programme.ts, qui fait foi (tests/langues.test.mjs
-// vérifie qu'ils sont identiques). Lus par le build des fiches (scripts/fiches/assembler.ts) pour les noms de domaine en breton.
+// vérifie qu'ils sont identiques). Lus par le build des fiches (scripts/build/fiches/assembler.ts) pour les noms de domaine en breton.
 export default {
   'nombres-calcul': 'Nombres et calcul',
   'grandeurs-mesures': 'Grandeurs et mesures',

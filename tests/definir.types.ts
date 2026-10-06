@@ -52,3 +52,19 @@ export const ficheSeule = {
   fiche: { fiche: () => '' },
   textes: catalogue({ titre: 'Écriture' }),
 } satisfies ModuleExercice<never, never, ReglagesDeDefinition<typeof ecriture>, { lignes: number }>
+
+// Plages de classes (`pourClasses`, `fichesPourClasses`, `plageDeClasses`) : la notation et les réglages d'une fiche sont vérifiés
+import { pourClasses, fichesPourClasses } from '../src/noyau/definir.ts'
+import { plageDeClasses } from '../src/data/classes.ts'
+import type { ClassesDe } from '../src/data/classes.ts'
+export const plageOk: ClassesDe<'ce1-cm1'> = 'ce2'
+// @ts-expect-error — le CP n'est pas dans « ce1-cm1 »
+export const plageHors: ClassesDe<'ce1-cm1'> = 'cp'
+// @ts-expect-error — « cm3 » n'est pas une classe
+export const plageFausse = plageDeClasses('cp-cm3')
+export const plages = definir({
+  id: 'plages', route: '/maths/plages', domaine: D.exemple, competences: [K.exempleCompter],
+  reglages: { n: choix([1, 2]) },
+  niveaux: { cp: {}, ...pourClasses('ce1-ce2', { reglages: { pas: cases([1, 2]) } }) },
+  fiches: [...fichesPourClasses('ce1-ce2', { id: 'a', competence: K.exempleCompter, reglages: { pas: [1] } })],
+})

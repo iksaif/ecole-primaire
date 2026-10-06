@@ -6,6 +6,7 @@ import { CORPUS } from '../../data/exemple-corpus.ts'
 import type { Entree } from '../../data/exemple-corpus.ts'
 import type { Contraintes, ParamsGenerateur, Verdict } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import { tirerUniques } from '../../noyau/uniques.ts'
 import type { Rng } from '../../utils/hasard.ts'
 import type DEFINITION from './definition.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
@@ -48,7 +49,7 @@ function question(niveau: Classe, reglages: Reglages, rng: Rng): Question {
 }
 
 export const questions = ({ niveau, reglages, rng, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] =>
-  Array.from({ length: nb }, () => question(niveau, reglages, rng))
+  tirerUniques(nb, () => question(niveau, reglages, rng), { cle: q => q.mot })   // un mot au plus une fois : les leurres, eux, varient
 
 export const questionsFiche = (p: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): Question[] => questions({ ...p, nb: NB_FICHE })
 

@@ -40,7 +40,7 @@ export function useTitreDePage(titre: () => string): void {
 }
 
 /**
- * Tient `document.title`, l'adresse canonique et `noindex` à jour (une fois, au démarrage). Une page statique (scripts/statique/,
+ * Tient `document.title`, l'adresse canonique et `noindex` à jour (une fois, au démarrage). Une page statique (scripts/build/statique/,
  * `<html data-statique>`) a déjà son titre et son canonical, propres à la fiche : on n'y touche pas avant la première navigation.
  */
 export function installerTitres(router: Router, site: Site = SITE, urlSite: string = import.meta.env.VITE_SITE_URL || site.url): void {

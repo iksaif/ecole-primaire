@@ -1,7 +1,8 @@
 // definir() (src/noyau/definir.ts) : le format normalisé qu'il rend, les compétences dérivées du programme, l'héritage de
 // niveaux, et surtout les messages d'erreur d'une mauvaise déclaration (fail-fast). Node, sans Chrome.
 //   node tests/definir.test.mjs
-import { definir, choix, cases, herite } from '../src/noyau/definir.ts'
+import { definir, choix, cases, herite, pourClasses, fichesPourClasses } from '../src/noyau/definir.ts'
+import { plageDeClasses, classesJusqua } from '../src/data/classes.ts'
 import { K, D } from '../src/noyau/ids.ts'
 import { COMPETENCES, COMPETENCES_EXEMPLE, DOMAINES, DOMAINES_EXEMPLE } from '../src/data/programme.ts'
 import exemple from '../src/exercices/exemple/definition.ts'
@@ -66,9 +67,25 @@ try { definir({ ...base, domaine: D.nombresCalcul, autresDomaines: [D.exemple], 
 echoue('compétence fictive citée comme inconnue', { ...base, competences: ['exemple-fantome'], niveaux: { cp: {} } }, 'fictives')
 try { K.inconnue; verifier(false, 'K.inconnue devrait lever une erreur') } catch (e) { verifier(e.message.includes('K.inconnue'), 'K.inconnue : erreur claire') }
 
+console.log('Plages de classes')
+const egal = (a, b) => JSON.stringify(a) === JSON.stringify(b)
+verifier(egal(plageDeClasses('cp'), ['cp']) && egal(plageDeClasses('cp+'), ['cp', 'ce1', 'ce2', 'cm1', 'cm2']) && egal(plageDeClasses('-gs'), ['ps', 'ms', 'gs'])
+  && egal(plageDeClasses('ce1-cm1'), ['ce1', 'ce2', 'cm1']) && egal(plageDeClasses('ps-ps'), ['ps']) && egal(classesJusqua('ms'), ['ps', 'ms']), 'plageDeClasses : cp, cp+, -gs, ce1-cm1, ps-ps ; classesJusqua')
+for (const mauvaise of ['ce2-ce1', 'cp-cm3', 'x', '-', 'cp-ce1-ce2', '+', 'cm2+cp']) {
+  try { plageDeClasses(mauvaise); verifier(false, `plageDeClasses « ${mauvaise} » aurait dû échouer`) } catch (e) { verifier(e.message.includes(`« ${mauvaise} »`), `plageDeClasses « ${mauvaise} » : erreur franche`) }
+}
+const plages = definir({ ...base, niveaux: { cp: {}, ...pourClasses('ce1-ce2', { reglages: { pas: cases([1, 2]) } }) },
+  fiches: [...fichesPourClasses('ce1-ce2', { id: 'a', competence: K.exempleCompter, reglages: { pas: [1] } })] })
+verifier(egal(Object.keys(plages.niveaux), ['cp', 'ce1', 'ce2']) && egal(plages.niveaux.ce2.options.pas, [1, 2]) && egal(plages.fiches.map(x => `${x.niveau}/${x.id}`), ['ce1/a', 'ce2/a']),
+  'pourClasses et fichesPourClasses : un niveau et une fiche par classe de la plage')
+echoue('fichesPourClasses : réglage non proposé', { ...base, niveaux: pourClasses('ce1-ce2', { reglages: { pas: cases([1, 2]) } }), fiches: fichesPourClasses('ce1-ce2', { id: 'a', competence: K.exempleCompter, reglages: { pas: [5] } }) }, '« 5 » n\'est pas proposé')
+echoue('pourClasses : niveau sans compétence', { ...base, competences: [K.exempleRegle], niveaux: pourClasses('cp-ce1', {}) }, 'aucune compétence de l\'exercice n\'est au programme de cp')
+echoue('slug de fiche en double', { ...base, niveaux: { ce1: {} }, fiches: [{ ...f('a'), slug: 'une-fiche' }, { ...f('b'), slug: 'une-fiche' }] }, 'slug « une-fiche » déjà pris')
+echoue('slug de fiche invalide', { ...base, niveaux: { ce1: {} }, fiches: [{ ...f('a'), slug: 'Une Fiche' }] }, 'slug « Une Fiche » invalide')
+
 console.log('Constantes K et D')
 const ids = [...COMPETENCES, ...COMPETENCES_EXEMPLE].map(c => c.id).sort()
-verifier(JSON.stringify(Object.values(K).sort()) === JSON.stringify(ids), 'K contient toutes les compétences du programme (node scripts/ids.mjs sinon)')
+verifier(JSON.stringify(Object.values(K).sort()) === JSON.stringify(ids), 'K contient toutes les compétences du programme (node scripts/generer/ids.mjs sinon)')
 verifier(JSON.stringify(Object.values(D).sort()) === JSON.stringify([...DOMAINES, ...DOMAINES_EXEMPLE].map(x => x.id).sort()), 'D contient tous les domaines du programme')
 verifier(exemple.id === 'exemple', 'la définition de l\'exemple se charge')
 

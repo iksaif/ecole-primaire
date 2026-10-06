@@ -2,9 +2,9 @@
   <article class="carte" :data-ressource="ressource.id">
     <span class="icone" aria-hidden="true">{{ ressource.emoji }}</span>
     <component :is="`h${niveauTitre}`" class="titre">
-      <RouterLink :to="ressource.route" class="lien">{{ titre }}</RouterLink>
+      <RouterLink :to="ressource.route" class="lien" :lang="langueTitre">{{ titre }}</RouterLink>
     </component>
-    <p v-if="description" class="description">{{ description }}</p>
+    <p v-if="description" class="description" :lang="langueDescription">{{ description }}</p>
     <PastillesClasses :classes="ressource.classes" :choisies="classesChoisies" />
     <BadgesRessource :badges="ressource.badges" />
   </article>
@@ -15,7 +15,7 @@
 // classes choisies en évidence), badges en ligne / imprimable. `niveauTitre` : niveau du titre de la carte dans la page.
 import { computed } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
-import { texteDe } from '../textes.ts'
+import { texteDe, langueDifferente } from '../textes.ts'
 import type { Classe, RessourceDeContenu } from '../types.ts'
 import BadgesRessource from './BadgesRessource.vue'
 import PastillesClasses from './PastillesClasses.vue'
@@ -28,6 +28,9 @@ const props = withDefaults(defineProps<{
 const { langueAffichee } = useLangue()
 const titre = computed(() => texteDe(props.ressource.titre, langueAffichee.value))
 const description = computed(() => (props.ressource.description ? texteDe(props.ressource.description, langueAffichee.value) : null))
+// un texte qui n'existe pas dans la langue de la page (fiche prête en français sur une page bretonne) est marqué lang="fr"
+const langueTitre = computed(() => langueDifferente(props.ressource.titre, langueAffichee.value))
+const langueDescription = computed(() => (props.ressource.description ? langueDifferente(props.ressource.description, langueAffichee.value) : undefined))
 </script>
 
 <style scoped>

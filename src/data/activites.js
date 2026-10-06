@@ -11,7 +11,6 @@ import FRACTIONS from '../exercices/fractions/definition.js'
 import GEOMETRIE from '../exercices/geometrie/definition.js'
 import ORDONNER from '../exercices/ordonner/definition.js'
 import TABLES from '../exercices/tables/definition.js'
-import CALCUL_MENTAL from '../exercices/calcul-mental/definition.js'
 import PROBLEMES from '../exercices/problemes/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
@@ -84,7 +83,6 @@ export const ACTIVITES = [
   { fiche: true, to: '/maternelle/comparer', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '⚖️', titre: 'Comparer les quantités', desc: 'Quel groupe a le plus ?', niveaux: ['ps', 'ms', 'gs'] },
   { fiche: true, to: '/maternelle/ordonner', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📶', titre: 'Ranger les nombres', desc: 'Du plus petit au plus grand', niveaux: Object.keys(ORDONNER.niveaux) },
   { fiche: true, to: '/maths/numeration',    matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '💯', titre: 'Les nombres', desc: 'Jusqu\'à 1 000 (CE1) et 10 000 (CE2) : décomposer, comparer, ranger', niveaux: Object.keys(NUMERATION.niveaux) },
-  { fiche: true, to: '/maths/calcul-mental', matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🧮', titre: 'Calcul mental', desc: 'Additions, soustractions, doubles, moitiés, tables', niveaux: Object.keys(CALCUL_MENTAL.niveaux) },
   { fiche: true, to: '/maths/calcul-pose',   matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '📐', titre: 'Calcul posé', desc: 'Additions, soustractions et multiplications en colonnes', niveaux: Object.keys(CALCUL_POSE.niveaux) },
   { fiche: true, to: '/maths/tables',        matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '✖️', titre: 'Tables de multiplication', desc: 'Entraîne-toi sur toutes les tables', niveaux: Object.keys(TABLES.niveaux) },
   { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: Object.keys(FRACTIONS.niveaux) },
@@ -121,7 +119,6 @@ const BR = {
   '/maternelle/comparer': ["Keñveriañ ar c'hementadoù", 'Peseurt strollad en deus ar muiañ ?'],
   '/maternelle/ordonner': ['Renkañ an niveroù', "Eus ar bihanañ d'ar brasañ"],
   '/maths/numeration':    ['An niveroù', 'Betek 1 000 (CE1) ha 10 000 (CE2) : dispartiañ, keñveriañ, renkañ'],
-  '/maths/calcul-mental': ['Jediñ e penn', 'Sammadennoù, lamadennoù, doubl, hanter, taolennoù'],
   '/maths/calcul-pose':   ['Jedadurioù lakaet', 'Sammadennoù, lamadennoù ha liesadennoù e bannoù'], // br: à relire
   '/maths/tables':        ['Taolennoù liesañ', 'En em bleustr war an holl daolennoù'],
   '/maths/fractions':     ['An darnaouennoù', "An hanter, an trederenn, ar c'hard…"],
@@ -160,7 +157,6 @@ const COMPETENCES_ROUTES = {
   '/maternelle/lettres': Object.fromEntries(Object.entries(LETTRES.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/numeration': Object.fromEntries(Object.entries(NUMERATION.niveaux).map(([n, v]) => [n, v.competences])),
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
-  '/maths/calcul-mental': Object.fromEntries(Object.entries(CALCUL_MENTAL.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/calcul-pose': Object.fromEntries(Object.entries(CALCUL_POSE.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/tables': Object.fromEntries(Object.entries(TABLES.niveaux).map(([n, v]) => [n, v.competences])),
   '/maths/fractions': Object.fromEntries(Object.entries(FRACTIONS.niveaux).map(([n, v]) => [n, v.competences])),

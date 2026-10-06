@@ -1,4 +1,4 @@
-// Généré par `node scripts/ids.mjs` d'après src/data/programme.ts : ne pas modifier à la main.
+// Généré par `node scripts/generer/ids.mjs` d'après src/data/programme.ts : ne pas modifier à la main.
 // Des constantes plutôt que des chaînes : K.heureEntiere se complète dans l'éditeur, une faute de frappe ne compile pas
 // (et lève une erreur claire si le code tourne sans vérification de types : voir fort()).
 import type { CompetenceId, DomaineId } from './types.ts'
@@ -235,6 +235,6 @@ export const D = fort('D', {
   ...domainesFictifs,
 } as const satisfies Record<string, DomaineId>)
 
-// Complétude : ne compile plus si le programme a une compétence ou un domaine absent de K ou D (relancer scripts/ids.mjs)
+// Complétude : ne compile plus si le programme a une compétence ou un domaine absent de K ou D (relancer scripts/generer/ids.mjs)
 type Manquants = Exclude<CompetenceId, (typeof K)[keyof typeof K]> | Exclude<DomaineId, (typeof D)[keyof typeof D]>
 export const complet: [Manquants] extends [never] ? true : never = true

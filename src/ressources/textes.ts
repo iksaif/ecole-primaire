@@ -13,3 +13,13 @@ export function texteDe(libelle: Libelle, langue: Langue): string {
   const feuille = lireFeuille(LANGUES[langue].textes, libelle.cle) ?? lireFeuille(LANGUES[LANGUE_SOURCE].textes, libelle.cle)
   return texteDeFeuille(feuille, langue) ?? libelle.cle
 }
+
+/**
+ * La langue dans laquelle `texteDe` lit le libellé : celle demandée, ou le français quand la langue n'a pas ce texte (repli). Sert
+ * à marquer `lang="fr"` le texte français affiché dans une page d'une autre langue (lecteurs d'écran, césure) ; `undefined` si
+ * c'est déjà la langue de la page.
+ */
+export function langueDifferente(libelle: Libelle, langue: Langue): Langue | undefined {
+  const propre = 'texte' in libelle ? !!libelle.texte[langue] : lireFeuille(LANGUES[langue].textes, libelle.cle) !== undefined
+  return propre || langue === LANGUE_SOURCE ? undefined : LANGUE_SOURCE
+}

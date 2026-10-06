@@ -1,7 +1,7 @@
 <template>
   <div class="ligne" :data-ressource="ressource.id">
     <span class="emoji" aria-hidden="true">{{ ressource.emoji }}</span>
-    <RouterLink :to="ressource.route" class="titre">{{ titre }}</RouterLink>
+    <RouterLink :to="ressource.route" class="titre" :lang="langueTitre">{{ titre }}</RouterLink>
     <span class="genre">{{ t(cleGenre(genreDe(ressource))) }}</span>
     <span v-if="domaine" class="domaine">{{ nomDomaine(ressource.domaine, langueAffichee) }}</span>
     <PastillesClasses :classes="ressource.classes" :choisies="classesChoisies" />
@@ -17,7 +17,7 @@
 // Une ressource en ligne compacte (vue liste) : emoji, titre, genre, [domaine], classes en pastilles, badges, actions Ouvrir / Imprimer.
 import { computed } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
-import { texteDe } from '../textes.ts'
+import { texteDe, langueDifferente } from '../textes.ts'
 import type { Classe, RessourceDeContenu } from '../types.ts'
 import BadgesRessource from './BadgesRessource.vue'
 import PastillesClasses from './PastillesClasses.vue'
@@ -31,6 +31,8 @@ const props = defineProps<{
 }>()
 const { t, langueAffichee } = useLangue()
 const titre = computed(() => texteDe(props.ressource.titre, langueAffichee.value))
+// un titre qui n'existe pas dans la langue de la page (fiche prête en français sur une page bretonne) est marqué lang="fr"
+const langueTitre = computed(() => langueDifferente(props.ressource.titre, langueAffichee.value))
 const imprimer = computed(() => lienImprimer(props.ressource))
 </script>
 

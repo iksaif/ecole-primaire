@@ -7,12 +7,12 @@ import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { nextTick } from 'vue'
 import { NIVEAUX } from '../src/data/classes.ts'
-import { assembler } from '../scripts/fiches/assembler.ts'
-import { ecrireFiches, validerTout } from '../scripts/fiches/ecrire.ts'
-import { produire } from '../scripts/fiches/produire.ts'
-import { fichesDesRegistres } from '../scripts/fiches/registres.ts'
-import { dimensionsJpeg, nbPagesPdf } from '../scripts/fiches/rendu.ts'
-import { installerPolices } from '../scripts/fiches/polices.ts'
+import { assembler } from '../scripts/build/fiches/assembler.ts'
+import { ecrireFiches, validerTout } from '../scripts/build/fiches/ecrire.ts'
+import { produire } from '../scripts/build/fiches/produire.ts'
+import { fichesDesRegistres } from '../scripts/build/fiches/registres.ts'
+import { dimensionsJpeg, nbPagesPdf } from '../scripts/build/fiches/rendu.ts'
+import { installerPolices } from '../scripts/build/fiches/polices.ts'
 import { chargerEntree, chargerIndex, urlFiches } from '../src/telechargements/chargement.ts'
 import { CRITERES_VIDES, etiquetteClasses, filtrer, normaliser, parDomaine } from '../src/telechargements/recherche.ts'
 import { USAGES, VERSION_SCHEMA, usageDe } from '../src/telechargements/types.ts'
@@ -24,7 +24,7 @@ installerPolices()
 const tmp = mkdtempSync(join(tmpdir(), 'fiches-'))
 const racine = join(import.meta.dirname, '..')
 
-// ── Rendu simulé : même contrat que scripts/fiches/rendu.ts, sans navigateur ──
+// ── Rendu simulé : même contrat que scripts/build/fiches/rendu.ts, sans navigateur ──
 // (un vrai JPEG minimal : en-tête SOI + SOF0 de 794 × 1123, ce que lit dimensionsJpeg)
 const jpeg = (l, h) => Uint8Array.from([0xff, 0xd8, 0xff, 0xc0, 0, 17, 8, h >> 8, h & 255, l >> 8, l & 255, 3, 1, 0x22, 0, 2, 0x11, 1, 3, 0x11, 1, 0xff, 0xd9])
 const faussePage = { octets: jpeg(794, 1123), largeur: 794, hauteur: 1123 }
@@ -54,6 +54,20 @@ const encore = await fichesDesRegistres({ avecExemples: true })
 verifier(JSON.stringify(encore.map(f => f.documents.map(d => d.formats))) === JSON.stringify(fiches.map(f => f.documents.map(d => d.formats))), 'HTML identique d\'un appel à l\'autre (graines fixes)')
 verifier((await fichesDesRegistres({ avecExemples: true, prefixe: 'affiche-' })).every(f => f.meta.slug.startsWith('affiche-')), '--prefixe filtre par slug')
 verifier(fiches.filter(f => f.meta.genre === 'exercice').every(f => f.documents.every(d => d.formats[0].html.includes('class="corrige sur-page"'))), 'les fiches d\'exercice ont le corrigé sur une autre page')
+
+// calcul mental : les fiches « de calcul » publiées avant le report gardent leur adresse (src/noyau/slugs.ts), en français et en breton (-br)
+const HISTORIQUES = ['fiche-table-de-multiplication-2', 'fiche-table-de-multiplication-7', 'fiche-table-de-multiplication-10', 'fiche-tables-de-multiplication-2-a-5',
+  'fiche-tables-de-multiplication-6-a-9', 'fiche-toutes-les-tables-de-multiplication', 'fiche-tables-d-addition-cp', 'fiche-complements-a-10', 'fiche-complements-a-100',
+  'fiche-complements-dizaine-superieure', 'fiche-doubles-et-moities-cp', 'fiche-doubles-et-moities-ce1', 'fiche-additions-jusqu-a-20', 'fiche-additions-soustractions-ce1',
+  'fiche-ajouter-retirer-10', 'fiche-multiplier-par-10-et-100', 'fiche-ajouter-retirer-9-11', 'fiche-divisions-combien-de-fois', 'fiche-divisions-tables-cm1', 'fiche-calcul-mental-ce1']
+verifier(HISTORIQUES.every(h => slugs.includes(h) && slugs.includes(`${h}-br`)), `calcul mental : ${HISTORIQUES.length} fiches sous leur adresse historique, en français et en breton`)
+const sept = fiches.find(f => f.meta.slug === 'fiche-table-de-multiplication-7')
+verifier(sept?.meta.parent === 'exercices-calcul-mental-ce2' && sept.meta.competences.map(k => k.id).join() === 'tables-multiplication' && sept.meta.titre.fr.includes('7') && sept.meta.titre.br?.includes('7'),
+  'une fiche à adresse historique : son bilan pour parent, sa compétence, son titre dans les deux langues')
+const calculs7 = [...sept.documents[0].formats[0].html.matchAll(/<span class="calc">([^<]*)<\/span>/g)].map(m => m[1])
+verifier(calculs7.length >= 15 && calculs7.every(c => /×/.test(c) && /\b7\b/.test(c)), 'la fiche de la table de 7 ne pose que des multiplications par 7')
+const parDefaut = fiches.filter(f => f.meta.famille === 'calcul-mental' && f.meta.langues[0] === 'fr').map(f => f.meta.slug)
+verifier(parDefaut.includes('exercices-calcul-mental-ce1') && parDefaut.includes('exercices-calcul-mental-ce1-tables-multiplication'), 'les adresses par défaut (bilan, compétence) existent toujours')
 
 console.log('Assemblage et écriture')
 const rendues = await produire(fiches, rendu)
@@ -176,7 +190,7 @@ const attendre = async cond => { for (let i = 0; i < 50 && !cond(); i++) await n
 }
 
 console.log('Jamais d\'exemples en production')
-const commande = spawnSync(process.execPath, ['scripts/fiches/commande.ts', '--avec-exemples', '--outDir', join(tmp, 'prod')], { cwd: racine, encoding: 'utf8' })
+const commande = spawnSync(process.execPath, ['scripts/build/fiches/commande.ts', '--avec-exemples', '--outDir', join(tmp, 'prod')], { cwd: racine, encoding: 'utf8' })
 verifier(commande.status !== 0 && /production/.test(commande.stderr), 'la commande refuse --avec-exemples sans mode de développement')
 
 rmSync(tmp, { recursive: true, force: true })

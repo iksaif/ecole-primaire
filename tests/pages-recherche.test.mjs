@@ -56,7 +56,7 @@ console.log('Ouverture par les raccourcis')
     verifier(!await ouverte(page), '« / » dans une liste déroulante : n’ouvre pas')
   }
   await aller(page, '/parametres')
-  const saisie = page.locator('main input[type=text], main input[type=number], main textarea').first()
+  const saisie = page.locator('main input[type=text]:visible, main input[type=number]:visible, main textarea:visible').first()   // un champ visible : celui d'un <details> fermé ne prend pas le focus
   if (await saisie.count()) {
     await saisie.focus()
     await page.keyboard.press('/')

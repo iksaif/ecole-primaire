@@ -1,8 +1,8 @@
 <template>
   <!-- La feuille d'une fiche : /telechargements/<slug>. Fil d'Ariane, aperçu des pages, Télécharger / Imprimer, la même fiche dans les
-       autres langues, Personnaliser, compétences, fiches voisines. Dit la même chose que sa page statique (scripts/statique/). -->
+       autres langues, Personnaliser, compétences, fiches voisines. Dit la même chose que sa page statique (scripts/build/statique/). -->
   <div class="container">
-    <h1 v-if="!feuille.entree" class="titre-etat">{{ t('feuille.titre') }}</h1>
+    <h1 v-if="feuille.etat.etat === 'absent' || feuille.etat.etat === 'erreur'" class="titre-etat">{{ t('feuille.titre') }}</h1>
     <p v-if="feuille.etat.etat === 'chargement'" class="message" role="status">{{ t('feuille.chargement') }}</p>
 
     <div v-else-if="feuille.etat.etat === 'absent'" class="message" role="alert">

@@ -1,4 +1,4 @@
-// Généré par scripts/metriques-polices.mjs (mesuré dans Chrome) : ne pas modifier à la main.
+// Généré par scripts/generer/metriques-polices.mjs (mesuré dans Chrome) : ne pas modifier à la main.
 // Largeur de chaque caractère (en em) des polices livrées, en normal et en gras (« :700 »), et leurs proportions (hauteur
 // d'x, de majuscule, de hampe, de jambage). Lues par mesure.ts, sans canvas, donc par node.
 export const CARACTERES = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~àâäçéèêëîïôöùûüÿœæÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŒÆñÑ«»’‘“”–—…°€·"

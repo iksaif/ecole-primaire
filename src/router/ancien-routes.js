@@ -3,7 +3,6 @@
 export const routes = [
   { path: '/',                  component: () => import('../views/HomeView.vue') },
   { path: '/maths',             component: () => import('../views/MathsView.vue') },
-  { path: '/maths/calcul-mental', component: () => import('../views/maths/CalcuMentalView.vue') },
   { path: '/maths/calcul-pose',   component: () => import('../views/maths/CalcuPoseView.vue') },
   { path: '/maths/tables',        component: () => import('../views/maths/TablesView.vue') },
   { path: '/maths/numeration', component: () => import('../views/maths/NumerationView.vue') },

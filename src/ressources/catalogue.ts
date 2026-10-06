@@ -13,7 +13,7 @@
 //     domaine de la première compétence. La matière est celle du domaine (`programme.ts`). Une fiche sans domaine (hors
 //     programme : culture générale) n'entre pas au catalogue : elle n'a pas de place dans une page de domaine.
 //   - Compétences d'une fiche prête : l'index n'en porte pas ; on les retrouve par le slug dans les registres (le slug d'un
-//     exercice est `exercices-<id>-<classe>[-<fiche>]`, celui d'une affiche `affiche-<id>-<variante>`, suivis de `-<langue>`).
+//     exercice est `exercices-<id>-<classe>[-<fiche>]` ou celui, historique, que déclare la fiche (src/noyau/slugs.ts), celui d'une affiche `affiche-<id>-<variante>`, suivis de `-<langue>`).
 //     Une fiche inconnue des registres (écrite à la main) n'a pas de compétence.
 //   - Langues : celles du contenu (exercice de français : le français seul ; sinon les langues de ses textes ; affiche : ses
 //     langues ; fiche : celles de l'entrée), restreintes à celles du site (interface et langues régionales). Une ressource sans
@@ -36,6 +36,7 @@ import { lireFeuille } from '../langues/traduire.ts'
 import type { CleTexte } from '../langues/traduire.ts'
 import type { Site } from '../sites.ts'
 import { aUnJeu } from '../noyau/reglages.ts'
+import { slugBilan, slugFiche } from '../noyau/slugs.ts'
 import type { IndexFiches } from '../telechargements/types.ts'
 import type { Texte } from '../telechargements/types.ts'
 import { EMOJI_DOMAINE } from './emojis.ts'
@@ -117,8 +118,8 @@ function competencesParSlug(exercices: readonly EntreeRegistre[], affiches: read
   const table = new Map<string, readonly CompetenceId[]>()
   for (const { definition: d } of exercices) {
     for (const n of NIVEAUX.filter(c => d.niveaux[c])) {
-      table.set(`exercices-${d.id}-${n}`, d.niveaux[n]?.competences ?? [])
-      for (const f of d.fiches.filter(x => x.niveau === n)) table.set(`exercices-${d.id}-${n}-${f.id}`, [f.competence])
+      table.set(slugBilan(d.id, n), d.niveaux[n]?.competences ?? [])
+      for (const f of d.fiches.filter(x => x.niveau === n)) table.set(slugFiche(d.id, f), [f.competence])
     }
   }
   for (const { definition: d } of affiches) {

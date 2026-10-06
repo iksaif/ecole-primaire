@@ -333,7 +333,7 @@ console.log('\nMesure de texte')
   if (m.largeur('abc', 'Police Inconnue') !== m.largeur('abc', 'Andika')) p.push('police inconnue estimée comme Andika')
   if (!(m.largeur('ñ « c’h » 😀', 'Andika') > 0)) p.push('caractères hors de la table')
   if (!(m.metriques('Playwrite FR Trad').hampe > m.metriques('Andika').hampe)) p.push('proportions de l’attaché')
-  // écart avec le canvas, mesuré dans Chrome quand la table a été faite (scripts/metriques-polices.mjs) : Andika, 17,95 em pour
+  // écart avec le canvas, mesuré dans Chrome quand la table a été faite (scripts/generer/metriques-polices.mjs) : Andika, 17,95 em pour
   // 'Les nombres en lettres : quarante-sept' ; le canvas n'existe pas sous node, on vérifie à 1 % près en Andika
   const attendue = 17.95
   const w = m.largeur('Les nombres en lettres : quarante-sept', 'Andika')

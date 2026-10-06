@@ -130,7 +130,7 @@ console.log('Page de matière : cartes, liste, repli (exemples, développement)'
   verifier(await ressource.locator('.pastille.choisie').count() === 1 && (await ressource.locator('.pastille.choisie').textContent()).includes('CE1'), 'la classe choisie est en évidence')
   verifier(await ressource.locator('.badge.jeu').count() === 1 && await ressource.locator('.badge.imprimable').count() === 1, 'les deux badges (en ligne, imprimable) sur la même carte')
   verifier(await page.locator('[data-ressource="exercice:exemple"]').count() === 1, 'une ressource une seule fois')
-  verifier(await page.locator('.groupe h2').count() >= 1 && await page.locator('.groupe h3').count() === 2 && await page.locator('.groupe h4').count() > 0, 'titres en cascade : domaine, usage, carte')
+  verifier(await page.locator('.groupe h2').count() >= 1 && await page.locator('.groupe h3').count() >= 2 && await page.locator('.groupe h4').count() > 0, 'titres en cascade : domaine, usage, carte')
   await verifierAxe(page, 'maths en cartes (fr, 1280)', sansShell)
   // liste
   await page.getByRole('button', { name: /Liste/ }).click()
@@ -190,12 +190,21 @@ console.log('Page de matière : cartes, liste, repli (exemples, développement)'
 console.log('Production : état vide, domaines « à venir »')
 {
   const { ctx, page, erreurs } = await ouvrir()
-  for (const [route, domaine] of [['/maths', 'nombres-calcul'], ['/francais', 'lecture'], ['/monde', 'histoire']]) {
-    await aller(page, app(`${route}?classes=cp`))
+  // les maths ne sont plus vides : le calcul mental, premier exercice reporté, est au CP, au CE1, au CE2, au CM1 et au CM2 (voir plus bas)
+  for (const [route, domaine, classe] of [['/francais', 'lecture', 'cp'], ['/monde', 'histoire', 'cp']]) {
+    await aller(page, app(`${route}?classes=${classe}`))
     await page.waitForSelector('.vide')
     verifier(await page.locator('.carte, .ligne').count() === 0 && await page.locator('.a-venir [data-domaine]').count() > 0, `${route} : état vide expliqué et domaines du programme à venir`)
     verifier(await page.locator(`.a-venir [data-domaine="${domaine}"]`).count() === 1 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0, `${route} : « ${domaine} » à venir, aucun domaine inventé`)
   }
+  await aller(page, app('/maths?classes=cp'))
+  await page.waitForSelector('[data-ressource="exercice:calcul-mental"]')
+  verifier(await page.locator('[data-ressource="exercice:calcul-mental"] .badge.jeu').count() === 1 && await page.locator('[data-ressource="exercice:calcul-mental"] .badge.imprimable').count() === 1 && await page.locator('.vide').count() === 0,
+    '/maths en production : le calcul mental, en ligne et imprimable, dans « Nombres et calcul »')
+  await aller(page, app('/maths?classes=ms'))
+  await page.waitForSelector('.groupe[data-domaine="nombres-calcul"]')
+  verifier(await page.locator('[data-ressource="exercice:calcul-mental"]').count() === 0 && await page.locator('.groupe[data-domaine="nombres-calcul"]').evaluate(e => !e.open),
+    '/maths à la MS : le calcul mental est hors classe, le domaine reste là (replié)')
   await aller(page, app('/monde?classes=ps'))
   await page.waitForSelector('.vide')
   const cycle1 = await page.locator('.a-venir [data-domaine]').count()

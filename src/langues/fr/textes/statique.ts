@@ -1,4 +1,4 @@
-// Textes des pages statiques (français) : fiches, index A→Z, page introuvable, écrits dans le HTML au build (scripts/statique/).
+// Textes des pages statiques (français) : fiches, index A→Z, page introuvable, écrits dans le HTML au build (scripts/build/statique/).
 // Les titres et descriptions viennent du JSON de l'entrée, jamais d'ici. Source des clés : br/textes/statique.ts.
 export default {
   accueil: 'Accueil',

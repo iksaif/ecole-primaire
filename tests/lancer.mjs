@@ -69,9 +69,9 @@ async function preparer() {
     // le site de développement a aussi les fiches d'exemple : son catalogue (fiches voisines, jeu lié) en a besoin (tests/pages-fiches) ;
     // les pages statiques de OUT lisent les fiches de OUT : elles passent après, en même temps que celles de OUT_DEV
     await chrono('fiches + pages statiques', () => Promise.all([
-      node('scripts/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')
-        .then(() => node('scripts/statique/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')),
-      node('scripts/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT_DEV, '--avec-exemples'),
+      node('scripts/build/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')
+        .then(() => node('scripts/build/statique/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')),
+      node('scripts/build/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT_DEV, '--avec-exemples'),
     ]))
   }
   const servir = async (mode, dossier, port) => {
@@ -89,8 +89,8 @@ const pret = preparer()
 pret.catch(() => {})   // l'échec est rapporté plus bas, par le test qui l'attend ou par la fin du run
 
 // NODE : tests node de la base (sites, langues, nombres, définitions, noyau, exercices, affiches, réponses, instantanés, fiches).
-const NODE = ['sites', 'langues', 'nombres', 'contexte', 'definir', 'noyau', 'exercices', 'affiches-modele', 'reponses', 'instantanes', 'ressources', 'recherche',
-  'fiches', 'statique', 'programme-page', 'recents', 'fiches-pages']
+const NODE = ['sites', 'langues', 'nombres', 'uniques', 'contexte', 'definir', 'noyau', 'exercices', 'affiches-modele', 'reponses', 'instantanes', 'ressources', 'recherche',
+  'polices', 'fiches', 'statique', 'programme-page', 'recents', 'fiches-pages']
 // CHROME : pages dans Chrome, du plus long au plus court (durées : tableau de fin de run). Les tests de l'ancien code sont dans
 // tests/ancien/, hors de ces listes.
 const CHROME = ['pages-shell', 'accessibilite', 'pages-pages', 'pages-programme', 'pages-fiches', 'pages-recherche', 'memorises', 'dev-affiche', 'routes-langues',

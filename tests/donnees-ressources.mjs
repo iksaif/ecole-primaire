@@ -1,4 +1,4 @@
-// Jeux de données des tests du catalogue et de la recherche : les exemples (exercices et affiches, développement) et un petit
+// Jeux de données des tests du catalogue et de la recherche : les exemples (exercices et affiches, développement ; jamais les exercices réels) et un petit
 // index de fiches prêtes factices (les entrées « réelles » couvrent plusieurs domaines et classes).
 import { REGISTRE as EXERCICES } from '../src/exercices/index.ts'
 import { EXEMPLES as AFFICHES } from '../src/affiches/dev.ts'
@@ -37,5 +37,6 @@ export const FICHES = {
 export const SITE_FR = { languesInterface: ['fr'], languesRegionales: [] }
 export const SITE_BR = SITES.ecoleprimaire
 
-export const sources = (extra = {}) => ({ exercices: EXERCICES, affiches: AFFICHES, fiches: FICHES, site: SITE_BR, enDeveloppement: true, ...extra })
+// seulement les exemples : les exercices réels du registre (calcul mental…) ont leur propre test (tests/ressources.test.mjs, « registre réel »)
+export const sources = (extra = {}) => ({ exercices: EXERCICES.filter(e => e.exemple), affiches: AFFICHES, fiches: FICHES, site: SITE_BR, enDeveloppement: true, ...extra })
 export const catalogueDeTest = (extra = {}) => construireCatalogue(sources(extra))

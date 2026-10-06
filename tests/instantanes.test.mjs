@@ -2,7 +2,7 @@
 // Pour chaque exercice du registre, chaque niveau, 3 graines, chaque langue de contenu et chaque jeu de réglages
 // (défauts du niveau, tout au programme, fiches de definition.fiches) : sha1 du HTML normalisé de
 // fiche(questionsFiche(…, creerRng(graine))), comparé à tests/instantanes/<exercice>.json (format :
-// tests/outils-instantanes.mjs ; c'est aussi celui de scripts/capturer-fiches.mjs).
+// tests/outils-instantanes.mjs ; c'est aussi celui de scripts/dev/capturer-fiches.ts).
 //   npm run instantanes                          vérifier
 //   npm run instantanes -- heure/ce1             seulement les cas qui commencent ainsi
 //   npm run instantanes -- --maj [préfixe]       réécrire les empreintes (+ HTML complets dans /tmp/instantanes/)

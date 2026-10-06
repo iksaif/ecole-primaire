@@ -24,3 +24,36 @@ export const CM = CYCLE_3
 export const estMaternelle = (n: Classe): boolean => MATERNELLE.includes(n)
 // « en MS », « au CP »
 export const enClasse = (n: Classe): string => `${estMaternelle(n) ? 'en' : 'au'} ${n.toUpperCase()}`
+
+// ── Plages de classes ──
+// « cp+ » : du CP à la dernière ; « -gs » : de la première à la GS ; « ce1-cm1 » : de l'une à l'autre (bornes comprises) ; « cp » : une seule.
+// La notation est un type : « cp-cm3 » ne compile pas quand la plage est écrite en littéral ; un sens inverse (« ce2-ce1 ») ou un
+// texte qui n'est pas une plage lève une erreur franche à l'exécution.
+type Depuis<C extends Classe, L extends readonly Classe[] = typeof NIVEAUX> = L extends readonly [infer T extends Classe, ...infer R extends Classe[]]
+  ? (T extends C ? L[number] : Depuis<C, R>) : never
+type Jusqua<C extends Classe, L extends readonly Classe[] = typeof NIVEAUX> = L extends readonly [infer T extends Classe, ...infer R extends Classe[]]
+  ? (T extends C ? T : T | Jusqua<C, R>) : never
+
+/** Notation d'une plage de classes : `'cp'`, `'cp+'`, `'-gs'`, `'ce1-cm1'`. */
+export type NotationClasses = Classe | `${Classe}+` | `-${Classe}` | `${Classe}-${Classe}`
+
+/** Les classes d'une notation, pour le typage : `ClassesDe<'ce1-cm2'>` = `'ce1' | 'ce2' | 'cm1' | 'cm2'`. */
+export type ClassesDe<N extends NotationClasses> =
+  N extends `${infer A extends Classe}-${infer B extends Classe}` ? Extract<Depuis<A>, Jusqua<B>>
+  : N extends `${infer A extends Classe}+` ? Depuis<A>
+  : N extends `-${infer B extends Classe}` ? Jusqua<B>
+  : N extends Classe ? N : never
+
+/** Les classes jusqu'à `b` comprise (de la première à `b`). */
+export const classesJusqua = (b: Classe): Classe[] => NIVEAUX.slice(0, NIVEAUX.indexOf(b) + 1)
+
+/** Les classes d'une notation (`'cp+'`, `'-gs'`, `'ce1-cm1'`, `'cp'`), dans l'ordre. Erreur franche si la notation n'en est pas une. */
+export function plageDeClasses<const N extends NotationClasses>(notation: N): ClassesDe<N>[] {
+  const estClasse = (c: string): c is Classe => (NIVEAUX as readonly string[]).includes(c)
+  const [, debut = '', signe = '', fin = ''] = /^([^+-]*)([+-]?)([^+-]*)$/.exec(notation) ?? []
+  const a = debut || (signe === '-' ? NIVEAUX[0] : '')
+  const b = signe === '+' && !fin ? NIVEAUX[NIVEAUX.length - 1] : signe === '-' ? fin : signe === '' ? debut : ''
+  if (!estClasse(a) || !estClasse(b)) throw new Error(`plageDeClasses : « ${notation} » n'est pas une plage de classes (« cp », « cp+ », « -gs », « ce1-cm1 »)`)
+  if (NIVEAUX.indexOf(a) > NIVEAUX.indexOf(b)) throw new Error(`plageDeClasses : « ${notation} » va à l'envers (${a} vient après ${b})`)
+  return classesEntre(a, b) as ClassesDe<N>[]
+}

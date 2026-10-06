@@ -1,4 +1,4 @@
-// Le JEU et la FICHE des exemples d'exercice dans Chrome (/dev/exemple et /dev/exemple-corpus) : réglages, changement de
+// Le JEU et la FICHE des exemples d'exercice dans Chrome (/dev/exemple et /dev/exemple-corpus) et du calcul mental (exercice reporté) : réglages, changement de
 // niveau, bonne et mauvaise réponse, suite et résultats, rejouer, fiche reproductible (Jouer → Imprimer → Jouer → Imprimer =
 // même fiche ; « Nouvelle fiche » écrit la graine dans l'URL ; recharger la garde). Pas d'attente fixe : on attend un état de
 // la page, et l'horloge est pilotée (page.clock) pour le délai de 1,6 s qui suit une bonne réponse.
@@ -131,6 +131,55 @@ for (let i = 1; i <= 5; i++) {
 }
 await page.waitForSelector('.resultats-jeu')
 verifier(/\/\s*5/.test(await page.locator('.result-score').textContent()), 'résultats sur 5 questions')
+
+console.log('Calcul mental (exercice reporté) : jeu, minuteur et fiche')
+await ouvrir('/maths/calcul-mental')
+await cliquer('niveau', 'cp')
+await cliquer('nbQ', '5')
+await cliquer('temps', '0')
+verifier(JSON.stringify(await actifs('ops')) === '["+","−"]', 'CP : « + » et « − » cochés par défaut')
+verifier(await page.locator('[data-reglage="tables"]').count() === 0, 'CP : pas de réglage « tables » (l\'exercice n\'en propose qu\'au CE1 et au CE2)')
+await page.locator('.actions .btn-primary').click()
+await page.waitForSelector('.score-bar')
+// la réponse d'un calcul « 7 + 5 = ? » ou « 12 − 4 = ? » lue à l'écran (opérations par défaut)
+const calcul = () => page.locator('.exercise-question').textContent().then(t => {
+  const [, a, op, b] = /(\d+) ([+−]) (\d+) = \?/.exec(t ?? '') ?? []
+  return op === '+' ? +a + +b : +a - +b
+})
+await saisir((await calcul()) + 1)
+await page.waitForSelector('.feedback.erreur')
+verifier((await page.locator('.feedback.erreur').textContent()).includes('❌'), 'mauvaise réponse : la bonne est donnée')
+await page.clock.runFor(1500)   // après une erreur, la question suivante arrive seule
+await page.waitForFunction(() => document.querySelector('.score-bar span')?.textContent?.includes('2'))
+await saisir(await calcul())
+await page.waitForSelector('.feedback.ok')
+await page.clock.runFor(2000)
+await page.waitForFunction(() => document.querySelector('.score-bar span')?.textContent?.includes('3'))
+verifier(true, 'une bonne réponse passe seule à la question suivante')
+await page.locator('.btn-quitter').click()
+await page.waitForSelector('.cadre-exercice')
+console.log('Calcul mental : temps écoulé')
+await cliquer('temps', '10')
+await page.locator('.actions .btn-primary').click()
+await page.waitForSelector('.chronometre')
+await page.clock.runFor(11000)
+await page.waitForFunction(() => /Temps écoulé|Echu eo an amzer/.test(document.querySelector('.feedback')?.textContent ?? ''))
+verifier(true, 'temps écoulé : la question est comptée fausse, avec la bonne réponse')
+await page.clock.runFor(1500)
+await page.waitForFunction(() => document.querySelector('.score-bar span')?.textContent?.includes('2'))
+verifier(true, 'après un temps écoulé, la question suivante arrive seule')
+await page.locator('.btn-quitter').click()
+await page.waitForSelector('.cadre-exercice')
+console.log('Calcul mental : fiche reproductible')
+await page.goto('about:blank')
+await page.goto(appDev('/maths/calcul-mental?mode=imprimer&graine=12345'))
+await attendreApercu()
+const fiche = await apercu()
+verifier(/class="calc"/.test(fiche) && /<section class="corrige/.test(fiche), 'la fiche montre des calculs et un corrigé')
+await page.goto('about:blank')
+await page.goto(appDev('/maths/calcul-mental?mode=imprimer&graine=12345'))
+await attendreApercu()
+verifier(await apercu() === fiche, '?graine=12345 : toujours la même fiche')
 
 verifier(!erreurs.length, `aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
 await nav.close()

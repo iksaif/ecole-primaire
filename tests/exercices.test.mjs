@@ -14,6 +14,7 @@ import { traducteurExercice } from '../src/exercices/traducteur.ts'
 import { creerRng } from '../src/utils/hasard.js'
 import { COMPETENCES, NIVEAUX, SOURCES, contraintesDe, competenceDe, domaineDe } from '../src/data/programme.js'
 import { ACTIVITES } from '../src/data/activites.js'
+import { doublons } from '../src/noyau/uniques.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -111,6 +112,9 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
         for (const graine of GRAINES) {
           const qs = jeu ? g.questions({ niveau: n, reglages, rng: creerRng(graine), T, nb: 10 }) : []
           if (jeu && !qs.length) ecarts.push(`graine ${graine} : aucune question`)
+          // jamais deux fois la même question (src/noyau/uniques.ts) ; les exercices pas encore reportés n'y sont pas tenus
+          const duNoyau = !ANCIEN.some(e => e.definition === d)
+          if (duNoyau) ecarts.push(...doublons(qs).map(q => `graine ${graine} : question en double ${q.slice(0, 60)}`))
           if (jeu) ecarts.push(...g.ecartsAuProgramme(qs, k).map(e => `graine ${graine} : ${e}`))
           // verifier rend un booléen ou { ok, nuance } (lireVerdict)
           const juste = (q, rep) => lireVerdict(g.verifier(q, rep)).ok
@@ -121,6 +125,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
           else if (!ANCIEN.some(e => e.definition === d) && !ecarts.includes('mauvaiseReponse manquante (voir Generateur, types.ts)')) ecarts.push('mauvaiseReponse manquante (voir Generateur, types.ts)')
           const tirage = g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T })
           ecarts.push(...g.ecartsAuProgramme(tirage, k).map(e => `fiche, graine ${graine} : ${e}`))
+          if (duNoyau && Array.isArray(tirage)) ecarts.push(...doublons(tirage).map(q => `fiche, graine ${graine} : question en double ${q.slice(0, 60)}`))
           const html = f.fiche({ questions: tirage, reglages, T, langue })
           const encore = f.fiche({ questions: g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T }), reglages, T, langue })
           if (!/^<!DOCTYPE html><html lang="\w+">/.test(html)) fiches.push(`${l} ${graine} : pas de doctype ou de lang`)

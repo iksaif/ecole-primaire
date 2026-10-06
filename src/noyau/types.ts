@@ -65,6 +65,11 @@ export interface EcartCompetence { competence: CompetenceId, raison: string }
 export interface FicheExercice<R extends object = Reglages> {
   /** partie du slug publié (ne change pas) */
   id: string
+  /**
+   * Slug publié en français à la place de `exercices-<id>-<niveau>-<fiche>` : pour une fiche qui existait avant sous un autre
+   * nom (`fiche-complements-a-10`) et dont l'adresse ne doit pas changer. Unique parmi tous les exercices (le build le vérifie).
+   */
+  slug?: string
   competence: CompetenceId
   niveau: Classe
   /** réglages qui s'ajoutent à ceux du niveau */

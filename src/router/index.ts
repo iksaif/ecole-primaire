@@ -9,6 +9,7 @@ import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
 import { useContexte } from '../contexte/useContexte.ts'
 import { journaliser } from '../utils/journal.js'
 import { routesDeBase, routesDesExercices } from './routes.ts'
+import { VUES } from '../views/exercices.ts'
 import { idsParRoute } from '../ressources/recents.ts'
 import { enregistrerOuverture } from '../ressources/useRecents.ts'
 
@@ -28,7 +29,7 @@ if (import.meta.env.DEV || import.meta.env.VITE_AVEC_DEV) {   // expression écr
 // Une route par exercice du registre. Le registre est un chunk à part, attendu avant le premier affichage : tant qu'il reste
 // léger ce n'est rien ; s'il grossit, il faudra un index des routes seul (sans les générateurs).
 const { REGISTRE } = await import('../exercices/index.ts')
-routes.push(...routesDesExercices(REGISTRE, routes))
+routes.push(...routesDesExercices(REGISTRE, routes, VUES))
 
 // « Reprendre » (accueil) : l'arrivée sur la page d'un exercice du registre est mémorisée sur l'appareil (src/ressources/recents.ts)
 const idsExercices = idsParRoute(REGISTRE)

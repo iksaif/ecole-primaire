@@ -1,5 +1,5 @@
 // Instantanés de fiches : ce qui est commun au test node (tests/instantanes.test.mjs) et à la capture dans Chrome des
-// vues pas encore migrées (scripts/capturer-fiches.mjs). Même format, mêmes clés de cas :
+// vues pas encore migrées (scripts/dev/capturer-fiches.ts). Même format, mêmes clés de cas :
 //   tests/instantanes/<exercice>.json   { "heure/ce1/graine1/fr/defauts": "<sha1 du HTML normalisé>", … }
 // Une capture « avant » d'une vue ancienne devient ainsi directement l'instantané de référence de l'exercice migré.
 import { createHash } from 'node:crypto'

@@ -85,7 +85,7 @@ Pour un dessin riche, voir les affiches de `main`.
 **Mesure de texte** : `contexte.mesure.largeur(texte, police, gras?)` (en em) et `.metriques(police)` (hauteur d'x, de majuscule, de
 hampe, de jambage). Le dessin reste pur parce que la mesure lui est **injectée** (`genererAffiche(module, config, polices, mesure)`) :
 le navigateur donne le canvas (`mesureNavigateur`, exacte) ; node, le build et les tests donnent `mesureEstimee` : les largeurs des
-polices livrées, mesurées une fois dans Chrome (`node scripts/metriques-polices.mjs` refait la table `metriques.ts`). Elle ignore le
+polices livrées, mesurées une fois dans Chrome (`node scripts/generer/metriques-polices.mjs` refait la table `metriques.ts`). Elle ignore le
 crénage et les ligatures : sur les phrases d'essai, **écart de 0,1 % en Andika, 4 % en Luciole, 3 % en Playwrite FR Trad, 8 % en
 OpenDyslexic** ; une police inconnue est estimée comme Andika. Donc : un dessin qui ajuste un texte à une largeur garde une marge
 (10 %), et le document généré par node (PDF du build) peut différer de quelques pour cent de l'aperçu du navigateur ; sans

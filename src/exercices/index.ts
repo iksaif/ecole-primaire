@@ -8,6 +8,7 @@
 // Les vues n'importent pas ce registre (il entraînerait tous les générateurs) : chacune importe son dossier.
 import type { ModuleExercice } from '../noyau/types.ts'
 import { AVEC_DEV } from '../dev.ts'
+import { module as calculMental } from './calcul-mental/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -16,8 +17,9 @@ export type ModuleQuelconque = ModuleExercice<any, any, any, any>
 /** Une entrée du registre : un exercice ; `exemple: true` pour les exemples (jamais en production, jamais au catalogue public). */
 export type EntreeRegistre = ModuleQuelconque & { readonly exemple?: true }
 
-// Exercices réels de la base. Vide tant qu'aucun ancien exercice n'est reporté.
+// Exercices réels de la base (un exercice reporté de ancien.js y entre).
 const BASE: readonly EntreeRegistre[] = [
+  calculMental,
   // nouveau:registre
 ]
 

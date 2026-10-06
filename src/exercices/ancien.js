@@ -19,10 +19,6 @@ import ordonnerDefinition from './ordonner/definition.js'
 import * as ordonnerGenerateur from './ordonner/generateur.js'
 import * as ordonnerFiche from './ordonner/fiche.js'
 import { TEXTES as ordonnerTextes } from './ordonner/textes.js'
-import calculMentalDefinition from './calcul-mental/definition.js'
-import * as calculMentalGenerateur from './calcul-mental/generateur.js'
-import * as calculMentalFiche from './calcul-mental/fiche.js'
-import { TEXTES as calculMentalTextes } from './calcul-mental/textes.js'
 import problemesDefinition from './problemes/definition.js'
 import * as problemesGenerateur from './problemes/generateur.js'
 import * as problemesFiche from './problemes/fiche.js'
@@ -158,7 +154,6 @@ export const REGISTRE = [
   { definition: monnaieDefinition, generateur: monnaieGenerateur, fiche: monnaieFiche, textes: monnaieTextes },
   { definition: conjugaisonDefinition, generateur: conjugaisonGenerateur, fiche: conjugaisonFiche, textes: conjugaisonTextes },
   { definition: ordonnerDefinition, generateur: ordonnerGenerateur, fiche: ordonnerFiche, textes: ordonnerTextes },
-  { definition: calculMentalDefinition, generateur: calculMentalGenerateur, fiche: calculMentalFiche, textes: calculMentalTextes },
   { definition: problemesDefinition, generateur: problemesGenerateur, fiche: problemesFiche, textes: problemesTextes },
   { definition: calculPoseDefinition, generateur: calculPoseGenerateur, fiche: calculPoseFiche, textes: calculPoseTextes },
   { definition: compterDefinition, generateur: compterGenerateur, fiche: compterFiche, textes: compterTextes },

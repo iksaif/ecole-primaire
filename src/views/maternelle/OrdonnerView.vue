@@ -1,27 +1,25 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('ranger.titre') }}</h1>
 
-    <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')"
-        :libelle="n => `${n === 'ms' ? '🌱' : '🌳'} ${t('nombresDe', { niv: n.toUpperCase(), n: NOMBRE_MAX[n] })}`" />
-      <ChoixReglage :definition="DEFINITION" cle="sens" v-model="config.sens" :titre="t('petitGrand')"
-        :libelle="s => ({ croissant: '↗ ', decroissant: '↘ ', mix: '🔀 ' })[s] + t(s === 'mix' ? 'melange' : s)" />
-      <ChoixReglage :definition="DEFINITION" cle="taille" v-model="config.taille" :titre="t('combien')" />
-      <ChoixReglage :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
-    </ConfigExercice>
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="sens" v-model="config.sens" :titre="t('ranger.petitGrand')"
+        :libelle="s => `${ICONES_SENS[s]} ${t(`ranger.${s === 'mix' ? 'melange' : s}`)}`" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="taille" v-model="config.taille" :titre="t('ranger.combien')" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+    </CadreExercice>
 
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(q.sens === 'croissant' ? 'rangeCroissant' : 'rangeDecroissant')" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(q.sens === 'croissant' ? 'ranger.rangeCroissant' : 'ranger.rangeDecroissant')" />
 
       <OrdonnerClics v-model="ordre" :elements="q.nombres" :verrou="repondu" :etat="etat" @valider="valider">
-        <div class="fleche-hint">{{ q.sens === 'croissant' ? '→ ' + t('petitGrandMin') : '→ ' + t('grandPetitMin') }}</div>
+        <div class="fleche-hint">{{ q.sens === 'croissant' ? '→ ' + t('ranger.petitGrandMin') : '→ ' + t('ranger.grandPetitMin') }}</div>
       </OrdonnerClics>
 
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+      <RetourReponse :message="retour?.message" :etat="etat" />
     </QuestionJeu>
 
     <!-- Résultats : la maternelle garde les étoiles -->
@@ -30,53 +28,61 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Ranger les nombres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
-// src/exercices/ordonner/ (definition.js, generateur.js, fiche.js). Le rangement par clics : <OrdonnerClics>.
+// src/exercices/ranger/ (definition.ts, generateur.ts, fiche.ts). Le rangement par clics : <OrdonnerClics>.
 import { ref } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ConsigneParlee from '../../components/ConsigneParlee.vue'
-import OrdonnerClics from '../../components/OrdonnerClics.vue'
-import ResultatsEtoiles from '../../components/ResultatsEtoiles.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/ordonner/definition'
-import { INTERFACE, TEXTES } from '../../exercices/ordonner/textes'
-import { questions as genererQuestions, questionsFiche, verifier, NOMBRE_MAX } from '../../exercices/ordonner/generateur'
-import { fiche as ficheOrdonner } from '../../exercices/ordonner/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
+import OrdonnerClics from '../../noyau/OrdonnerClics.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import ResultatsEtoiles from '../../noyau/ResultatsEtoiles.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import DEFINITION from '../../exercices/ranger/definition.ts'
+import { CONTENU } from '../../exercices/ranger/textes.ts'
+import { questions as tirer, questionsFiche, verifier, NOMBRE_MAX } from '../../exercices/ranger/generateur.ts'
+import type { Question, Reponse } from '../../exercices/ranger/generateur.ts'
+import { fiche as ficheOrdonner } from '../../exercices/ranger/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
-const { config, langueContenu } = useReglages(DEFINITION, 'ordonner_config', { suivreClasse: true })
-const T = contenu(TEXTES, () => langueContenu.value).t
+const { t } = useLangue()
+// clé historique des réglages mémorisés : l'exercice s'appelle « ranger » (adresse des fiches publiées), pas « ordonner »
+const { config, langueContenu } = useReglages(DEFINITION, { cle: 'ordonner_config', suivreClasse: true })
+const T = traducteur(CONTENU, () => langueContenu.value)
+const ICONES_SENS: Readonly<Record<string, string>> = { croissant: '↗', decroissant: '↘', mix: '🔀' }
+const libelleNiveau = (n: string): string => `${n === 'ms' ? '🌱' : '🌳'} ${t('ranger.nombresDe', { niv: n.toUpperCase(), n: NOMBRE_MAX[n as keyof typeof NOMBRE_MAX] ?? 0 })}`
 
 // ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──
-const ordre = ref([])   // indices des nombres touchés, dans l'ordre des clics
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+const ordre = ref<number[]>([])   // indices des nombres touchés, dans l'ordre des clics
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => `❌ ${t('ordreCorrect', { ordre: q.bonne.join(' → ') })}`,
-  apresErreur: 'continuer',
+  messageErreur: q => `❌ ${t('ranger.ordreCorrect', { ordre: q.bonne.join(' → ') })}`,
+  apresErreur: 1400,
   delai: 1400,
   surQuestion: () => { ordre.value = [] },
 })
 const { phase, questions, q, bonnes, retour, repondu, etat } = jeu
 
 function valider() {
-  if (!repondu.value && ordre.value.length === q.value.nombres.length) jeu.repondre({ ordre: ordre.value.map(i => q.value.nombres[i]) })
+  const qu = q.value
+  if (!qu || repondu.value || ordre.value.length !== qu.nombres.length) return
+  jeu.repondre({ ordre: ordre.value.map(i => qu.nombres[i]) })
 }
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheOrdonner({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheOrdonner({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
 <style scoped>
 .consigne { font-size: 1.3rem; font-weight: 800; margin-bottom: 1.25rem; }
-.fleche-hint { font-size: .85rem; color: #aaa; margin-bottom: .5rem; }
+.fleche-hint { font-size: .85rem; color: var(--texte-doux); margin-bottom: .5rem; }
 </style>

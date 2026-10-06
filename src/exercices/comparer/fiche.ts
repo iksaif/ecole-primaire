@@ -1,7 +1,15 @@
-// Comparer les quantités — fiche imprimable (pure : lisible par node). Deux groupes par ligne, entourer celui qui a le
-// plus (avec corrigé).
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
+// Comparer les quantités — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node). Deux groupes par
+// ligne, entourer celui qui a le plus (avec corrigé) ; les objets sont ceux du jeu (src/dessins/collections.ts).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import { htmlCollection } from '../../dessins/collections.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import type { Question } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
@@ -12,15 +20,15 @@ const CSS = `
       .corr { columns: 3; font-size: 1.1rem; line-height: 2; }
     `
 
-export function fiche({ questions: qs, T, langue, police, cssPolices }) {
-  const groupe = (n, emoji) => `<div class="groupe">${`<span>${emoji}</span>`.repeat(n)}</div>`
+export function fiche({ questions: qs, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
+  const groupe = (n: number, emoji: string): string => `<div class="groupe">${htmlCollection(n, emoji)}</div>`
   const lignes = qs.map((q, i) => `<div class="ligne"><span class="num">${i + 1}.</span>
     ${groupe(q.gauche, q.emoji)}${groupe(q.droite, q.emoji)}</div>`).join('')
   const titre = T('titre')
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '700px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T('fConsigne')}</p>
+    <p class="consigne">${T('consigne')}</p>
     ${lignes}
     <section class="corrige"><h2>${T('corrige')} — ${titre}</h2>
       <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.reponse === 'gauche' ? `<b>${q.gauche}</b> · ${q.droite}` : `${q.gauche} · <b>${q.droite}</b>`}</div>`).join('')}</div></section>`,

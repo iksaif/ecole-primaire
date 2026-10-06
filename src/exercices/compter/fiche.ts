@@ -1,7 +1,15 @@
-// Compter les objets — fiche imprimable (pure : lisible par node). Collections à compter, nombre à écrire ou à entourer
-// (avec corrigé).
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
+// Compter les objets — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node). Collections à
+// compter, nombre à écrire ou à entourer (avec corrigé) ; les objets et les points sont ceux du jeu (src/dessins/collections.ts).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import { htmlCollection, htmlConstellation } from '../../dessins/collections.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import type { TirageFiche } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
@@ -16,22 +24,21 @@ const CSS = `
       .choix.ps { grid-template-columns: 1fr; gap: .5rem; } .pts { font-size: 1.1rem; letter-spacing: .15rem; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const qs = x.questions
   // PS : on entoure toujours la bonne constellation (jamais de chiffre à écrire)
   const ps = x.niveau === 'ps'
   const ecrire = !ps && x.reponse === 'ecrire'
-  const pointsDe = n => `<span class="pts">${'●'.repeat(n)}</span>`
   const cases = qs.map((q, i) => `<div class="item"><span class="num">${i + 1}</span>
-    <div class="objets">${`<span>${q.emoji}</span>`.repeat(q.nb)}</div>
+    <div class="objets">${htmlCollection(q.nb, q.emoji)}</div>
     ${ecrire ? '<div class="case"></div>'
-      : `<div class="choix${ps ? ' ps' : ''}">${[...q.choix].sort((a, b) => a - b).map(c => `<span>${ps ? pointsDe(c) : c}</span>`).join('')}</div>`}
+      : `<div class="choix${ps ? ' ps' : ''}">${[...q.choix].sort((a, b) => a - b).map(c => `<span>${ps ? htmlConstellation(c) : c}</span>`).join('')}</div>`}
   </div>`).join('')
   const titre = T('titre')
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '700px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T(ecrire ? 'fConsigneEcrire' : 'fConsigneEntourer')}</p>
+    <p class="consigne">${T(ecrire ? 'consigneEcrire' : 'consigneEntourer')}</p>
     <div class="grille">${cases}</div>
     <section class="corrige"><h2>${T('corrige')} — ${titre}</h2>
       <div class="corr">${qs.map((q, i) => `<div>${i + 1}. <b>${q.nb}</b></div>`).join('')}</div></section>`,

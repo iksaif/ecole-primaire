@@ -1,48 +1,47 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">⚖️ {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('comparer.titre') }}</h1>
 
-    <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')"
-        :libelle="n => `${ICONES[n]} ${n === 'ps' ? t('beaucoupPlus', { niv: 'PS' }) : t('jusqua', { niv: n.toUpperCase(), n: NOMBRE_MAX[n] })}`" />
-      <ChoixReglage :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
-    </ConfigExercice>
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+    </CadreExercice>
 
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(ps ? 'consignePS' : 'consigne')" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(ps ? 'comparer.consignePS' : 'comparer.consigne')" />
 
       <div class="groupes">
         <div v-for="(cote, k) in COTES" :key="cote" class="groupe-et-vs">
-          <div v-if="k === 1" class="vs">?</div>
-          <div class="groupe" :class="{ touchable: ps && !repondu, gagnant: repondu && q.reponse === cote,
-            perdant: repondu && q.reponse !== cote && q.reponse !== 'egal' }" @click="ps && repondre(cote)">
-            <div class="groupe-label">{{ k === 0 ? 'A' : 'B' }}</div>
-            <div class="groupe-objets">
-              <span v-for="i in q[cote]" :key="i" class="objet">{{ q.emoji }}</span>
-            </div>
+          <div v-if="k === 1" class="vs" aria-hidden="true">?</div>
+          <!-- PS : on touche le groupe (un bouton : clavier et lecteurs d'écran) ; sinon un simple cadre -->
+          <component :is="ps ? 'button' : 'div'" :type="ps ? 'button' : undefined" class="groupe"
+            :class="{ touchable: ps && !repondu, gagnant: repondu && q.reponse === cote, perdant: repondu && q.reponse !== cote && q.reponse !== 'egal' }"
+            :disabled="ps ? repondu : undefined" :aria-label="ps ? t('comparer.groupe', { g: lettre(k) }) : undefined"
+            @click="ps && repondre(cote)">
+            <span class="groupe-label">{{ lettre(k) }}</span>
+            <span class="groupe-objets" v-html="htmlCollection(q[cote], q.emoji, 'objet')"></span>
             <!-- le nombre seulement après la réponse : on compare sans compter d'abord -->
-            <div class="groupe-nb" :class="{ cache: !repondu }">{{ q[cote] }}</div>
-          </div>
+            <span class="groupe-nb" :class="{ cache: !repondu }">{{ q[cote] }}</span>
+          </component>
         </div>
       </div>
 
       <!-- Boutons réponse (PS : on touche le groupe) -->
       <div v-if="!ps" class="reponses">
-        <button class="rep-btn rep-a" :class="{ bonne: repondu && q.reponse === 'gauche' }" :disabled="repondu" @click="repondre('gauche')">
-          👈 {{ t('aPlus', { g: 'A' }) }}
+        <button type="button" class="rep-btn rep-a" :class="{ bonne: repondu && q.reponse === 'gauche' }" :disabled="repondu" @click="repondre('gauche')">
+          👈 {{ t('comparer.aPlus', { g: 'A' }) }}
         </button>
-        <button class="rep-btn rep-egal" :class="{ bonne: repondu && q.reponse === 'egal' }" :disabled="repondu" @click="repondre('egal')">
-          = {{ t('pareil') }}
+        <button type="button" class="rep-btn rep-egal" :class="{ bonne: repondu && q.reponse === 'egal' }" :disabled="repondu" @click="repondre('egal')">
+          = {{ t('comparer.pareil') }}
         </button>
-        <button class="rep-btn rep-b" :class="{ bonne: repondu && q.reponse === 'droite' }" :disabled="repondu" @click="repondre('droite')">
-          {{ t('aPlus', { g: 'B' }) }} 👉
+        <button type="button" class="rep-btn rep-b" :class="{ bonne: repondu && q.reponse === 'droite' }" :disabled="repondu" @click="repondre('droite')">
+          {{ t('comparer.aPlus', { g: 'B' }) }} 👉
         </button>
       </div>
 
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+      <RetourReponse :message="retour?.message" :etat="etat" />
     </QuestionJeu>
 
     <!-- Résultats : la maternelle garde les étoiles -->
@@ -51,48 +50,55 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Comparer les quantités : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
-// src/exercices/comparer/ (definition.js, generateur.js, fiche.js).
+// src/exercices/comparer/ (definition.ts, generateur.ts, fiche.ts) ; les objets : src/dessins/collections.ts.
 import { computed } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ConsigneParlee from '../../components/ConsigneParlee.vue'
-import ResultatsEtoiles from '../../components/ResultatsEtoiles.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/comparer/definition'
-import { INTERFACE, TEXTES } from '../../exercices/comparer/textes'
-import { questions as genererQuestions, questionsFiche, verifier, NOMBRE_MAX } from '../../exercices/comparer/generateur'
-import { fiche as ficheComparer } from '../../exercices/comparer/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import ResultatsEtoiles from '../../noyau/ResultatsEtoiles.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import DEFINITION from '../../exercices/comparer/definition.ts'
+import { CONTENU } from '../../exercices/comparer/textes.ts'
+import { questions as tirer, questionsFiche, verifier, NOMBRE_MAX } from '../../exercices/comparer/generateur.ts'
+import type { Choix, Question, Reponse } from '../../exercices/comparer/generateur.ts'
+import { fiche as ficheComparer } from '../../exercices/comparer/fiche.ts'
+import { htmlCollection } from '../../dessins/collections.ts'
 
-const { t } = useI18n(INTERFACE)
+const { t } = useLangue()
 // niveau : celui de la barre du haut s'il est de maternelle ; PS : on touche le groupe qui a le plus
-const { config, langueContenu } = useReglages(DEFINITION, 'comparer_config', { suivreClasse: true })
-const T = contenu(TEXTES, () => langueContenu.value).t
-const ICONES = { ps: '🐣', ms: '🌱', gs: '🌳' }
-const COTES = ['gauche', 'droite']
+const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true })
+const T = traducteur(CONTENU, () => langueContenu.value)
+const ICONES: Readonly<Record<string, string>> = { ps: '🐣', ms: '🌱', gs: '🌳' }
+const COTES = ['gauche', 'droite'] as const
+const lettre = (k: number): string => (k === 0 ? 'A' : 'B')
 const ps = computed(() => config.value.niveau === 'ps')
+const libelleNiveau = (n: string): string => `${ICONES[n] ?? ''} ${n === 'ps' ? t('comparer.beaucoupPlus', { niv: n.toUpperCase() })
+  : t('comparer.jusqua', { niv: n.toUpperCase(), n: NOMBRE_MAX[n as keyof typeof NOMBRE_MAX] ?? 0 })}`
 
 // ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => `❌ ${q.reponse === 'egal' ? t('memeNombre')
-    : q.reponse === 'gauche' ? `${t('aPlus', { g: 'A' })} : ${q.gauche} > ${q.droite}` : `${t('aPlus', { g: 'B' })} : ${q.droite} > ${q.gauche}`}`,
-  apresErreur: 'continuer',
+  messageErreur: q => `❌ ${q.reponse === 'egal' ? t('comparer.memeNombre')
+    : q.reponse === 'gauche' ? `${t('comparer.aPlus', { g: 'A' })} : ${q.gauche} > ${q.droite}` : `${t('comparer.aPlus', { g: 'B' })} : ${q.droite} > ${q.gauche}`}`,
+  apresErreur: 1200,
   delai: 1200,
 })
 const { phase, questions, q, bonnes, retour, repondu, etat } = jeu
-const repondre = choix => jeu.repondre({ choix })
+const repondre = (choix: Choix) => jeu.repondre({ choix })
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheComparer({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheComparer({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
@@ -103,16 +109,17 @@ const { mode, fiche, nouvelle } = useFicheExercice({
 .groupe-et-vs { display: contents; }
 
 .groupe {
+  display: block; font: inherit; color: inherit; text-align: center;
   background: var(--gris-bg); border-radius: 16px; padding: 1rem; min-width: 140px; flex: 1; max-width: 220px;
   border: 4px solid var(--gris-brd); transition: border-color .2s, background .2s;
 }
 .groupe.gagnant { border-color: var(--vert); background: #f0faf0; }
 .groupe.perdant { border-color: var(--rouge); background: #fef5f5; opacity: .7; }
 
-.groupe-label { font-size: 1.6rem; font-weight: 900; color: var(--bleu); margin-bottom: .5rem; }
+.groupe-label { display: block; font-size: 1.6rem; font-weight: 900; color: var(--bleu-fort); margin-bottom: .5rem; }
 .groupe-objets { display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem; min-height: 3.5rem; align-items: center; }
-.objet { font-size: 2rem; }
-.groupe-nb { font-size: 2rem; font-weight: 900; margin-top: .5rem; color: var(--texte); }
+.groupe-objets :deep(.objet) { font-size: 2rem; }
+.groupe-nb { display: block; font-size: 2rem; font-weight: 900; margin-top: .5rem; color: var(--texte); }
 .groupe-nb.cache { visibility: hidden; }
 .groupe.touchable { cursor: pointer; border-color: var(--bleu); }
 .groupe.touchable:hover { background: #eaf2fd; transform: scale(1.02); }
@@ -126,8 +133,12 @@ const { mode, fiche, nouvelle } = useFicheExercice({
 }
 .rep-btn:hover:not(:disabled) { transform: scale(1.04); }
 .rep-btn:disabled { cursor: default; }
-.rep-a    { border-color: var(--bleu); color: var(--bleu); }
+.rep-a    { border-color: var(--bleu); color: var(--bleu-fort); }
 .rep-b    { border-color: var(--violet); color: var(--violet); }
-.rep-egal { border-color: var(--orange); color: var(--orange); }
+.rep-egal { border-color: var(--orange); color: var(--texte); }
 .rep-btn.bonne { background: var(--vert); border-color: var(--vert); color: white; }
+
+@media (max-width: 520px) {
+  .reponses { grid-template-columns: 1fr; }
+}
 </style>

@@ -1,48 +1,51 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 {{ t('titre', { n: fmt(plageMax) }) }}</h1>
+    <h1 class="section-heading">🔢 {{ t('numeration.titrePlage', { n: fmt(plageMax) }) }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types"
-        :titre="t('exercices')" :libelle="ty => t(`type_${ty}`)" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="plage" v-model="config.plage"
-        :titre="t('nombresJusqua')" :libelle="fmt" />
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
-      <ChoixReglage v-else :definition="DEFINITION" cle="nbFiche" v-model="config.nbFiche" :titre="t('nbQuestions')" />
-    </ConfigExercice>
+      <template #default="{ mode: modeCourant }">
+        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
+        <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types"
+          :titre="t('communs.exercices')" :libelle="ty => t(`numeration.type_${ty}`)" />
+        <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="plage" v-model="config.plage"
+          :titre="t('numeration.nombresJusqua')" :libelle="fmt" />
+        <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+        <ChoixReglage v-else :definition="DEFINITION" cle="nbFiche" v-model="config.nbFiche" :titre="t('communs.nbQuestions')" />
+      </template>
+    </CadreExercice>
 
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="consigne">{{ q.consigne }}</div>
 
-      <div v-if="q.svg" class="visuel" v-html="q.svg"></div>
+      <div v-if="q.kind === 'nombre' && q.svg" class="visuel" v-html="q.svg"></div>
       <div v-if="q.type === 'representation'" class="legende">
-        <template v-if="q.milliers">{{ t('legendeMillier') }} &nbsp;·&nbsp; </template>{{ t('legende') }}
+        <template v-if="q.kind === 'nombre' && q.milliers">{{ t('numeration.legendeMillier') }} &nbsp;·&nbsp; </template>{{ t('numeration.legende') }}
       </div>
 
       <div v-if="q.texte" class="exercise-question" :class="{ 'question-lettres': q.texteLong }">{{ q.texte }}</div>
 
       <!-- Réponse : un nombre -->
       <SaisieReponse v-if="q.kind === 'nombre'" v-model="reponse" type="nombre" class="exercise-input" :etat="etat"
-        placeholder="?" :disabled="repondu" focus @entree="entree" />
+        placeholder="?" :disabled="repondu" focus aria-describedby="numeration-retour" @entree="entree" />
 
       <!-- Réponse : centaines / dizaines / unités -->
       <div v-else-if="q.kind === 'cdu'" class="cdu-row">
         <label v-for="(champ, ci) in q.champs" :key="champ" class="cdu-champ">
           <SaisieReponse :ref="el => setCduRef(el, ci)" v-model="cdu[champ]" type="texte" class="cdu-input"
             :etat="cduEtats[champ] ?? ''" inputmode="numeric" maxlength="1" :disabled="repondu" :focus="ci === 0"
+            :libelle="T(LIBELLES_CDU[champ])" aria-describedby="numeration-retour"
             @input="onCduInput(ci)" @entree="entree" />
-          <span class="cdu-label">{{ t(LIBELLES_CDU[champ]) }}</span>
+          <span class="cdu-label" aria-hidden="true">{{ T(LIBELLES_CDU[champ]) }}</span>
         </label>
       </div>
 
       <!-- Réponse : choix (QCM, comparaison) -->
       <div v-else-if="q.kind === 'choix'" :class="{ 'choix-signes': q.type === 'comparer', 'choix-lettres': q.type === 'chiffresLettres' }">
-        <ChoixReponses :options="q.choix.map(c => ({ label: c }))" :bonne="q.choix.indexOf(q.reponse)" :repondu="repondu"
-          @choisir="i => jeu.repondre({ choix: q.choix[i] }, { donne: q.choix[i] })" />
+        <ChoixReponses :options="q.choix.map(c => ({ label: c }))" :bonne="q.choix.indexOf(q.reponse)" :repondu="repondu" :titre="q.consigne"
+          @choisir="choisir" />
       </div>
 
       <!-- Réponse : ranger dans l'ordre (clics successifs) -->
@@ -54,22 +57,22 @@
           </span>
         </div>
         <div class="ordre-choix">
-          <button v-for="n in q.nombres" :key="n" class="choix-btn"
+          <button v-for="n in q.nombres" :key="n" type="button" class="choix-btn"
             :disabled="repondu || ordre.includes(n)" @click="ajouterOrdre(n)">{{ fmt(n) }}</button>
         </div>
         <div style="text-align:center;margin-top:.5rem;">
-          <button class="btn btn-ghost" :disabled="repondu || !ordre.length" @click="ordre.pop()">{{ t('annuler') }}</button>
+          <button type="button" class="btn btn-ghost" :disabled="repondu || !ordre.length" @click="ordre.pop()">{{ t('communs.annuler') }}</button>
         </div>
       </div>
 
-      <div class="feedback" :class="feedbackClass">{{ feedback }}</div>
+      <RetourReponse id="numeration-retour" :message="feedback" :etat="feedbackClass" />
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
-          <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
-          <button v-if="q.kind !== 'choix'" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('numeration.passer') }}</button>
+          <button v-if="q.kind !== 'choix'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
         </template>
-        <button v-else-if="!retour.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+        <button v-else-if="!retour?.ok" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
       </div>
     </QuestionJeu>
 
@@ -83,51 +86,55 @@
   </div>
 </template>
 
-<script setup>
-// Les nombres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type
-// de question) et fiche : src/exercices/numeration/.
+<script setup lang="ts">
+// Les nombres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question)
+// et fiche : src/exercices/numeration/ ; le matériel et la droite graduée : src/dessins/.
 import { ref, computed, nextTick } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import ChoixReponses from '../../components/ChoixReponses.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import SaisieReponse from '../../components/SaisieReponse.vue'
-import TableauCorrection from '../../components/TableauCorrection.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/numeration/definition'
-import { INTERFACE, TEXTES } from '../../exercices/numeration/textes'
-import { questions as genererQuestions, questionsFiche, verifier, fmt, LIBELLES_CDU, libCdu } from '../../exercices/numeration/generateur'
-import { fiche as ficheNumeration } from '../../exercices/numeration/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import SaisieReponse from '../../noyau/SaisieReponse.vue'
+import TableauCorrection from '../../noyau/TableauCorrection.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import DEFINITION from '../../exercices/numeration/definition.ts'
+import { CONTENU } from '../../exercices/numeration/textes.ts'
+import { questions as tirer, questionsFiche, verifier, fmt, LIBELLES_CDU, libCdu } from '../../exercices/numeration/generateur.ts'
+import type { Champ, Question, Reponse } from '../../exercices/numeration/generateur.ts'
+import { fiche as ficheNumeration } from '../../exercices/numeration/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
-// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; maths :
-// le contenu (nombres en lettres, fiche) suit la langue de l'interface
-const { config, langueContenu } = useReglages(DEFINITION, 'numeration_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
+const { t } = useLangue()
+// Réglages mémorisés, ajustés au changement de niveau ; maths : le contenu (nombres en lettres, fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION)
+// T : les textes du contenu (CONTENU, textes.ts : consignes, noms des unités), dans la langue du contenu
+const T = traducteur(CONTENU, () => langueContenu.value)
 
-const plageMax = computed(() => DEFINITION.niveaux[config.value.niveau].options.plage.at(-1))
+const plageMax = computed(() => DEFINITION.niveaux[config.value.niveau]?.options?.plage?.at(-1) ?? 100)
 
 // ── Jeu ──
-const reponse = ref('')
-const cdu = ref({ milliers: '', centaines: '', dizaines: '', unites: '' })
-const cduEtats = ref({})
-const ordre = ref([])
+const VIDE: Record<Champ, string> = { milliers: '', centaines: '', dizaines: '', unites: '' }
+const reponse = ref<string | number>('')
+const cdu = ref<Record<Champ, string>>({ ...VIDE })
+const cduEtats = ref<Partial<Record<Champ, string>>>({})
+const ordre = ref<number[]>([])
 const avis = ref('')          // « clique sur tous les nombres » : message, sans compter de réponse
-const cduRefs = []
+const cduRefs: ({ focus: () => void } | null)[] = []
 
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
-  messageErreur: (q, rep) => (rep ? t('laBonne', { r: q.attendu }) : ''),
+  messageErreur: (q, rep) => (rep ? t('numeration.laBonne', { r: q.attendu }) : ''),
   delai: 900,
   // champs vidés ; le focus : SaisieReponse (attribut focus)
   surQuestion: () => {
     reponse.value = ''
-    cdu.value = { milliers: '', centaines: '', dizaines: '', unites: '' }
+    cdu.value = { ...VIDE }
     cduEtats.value = {}
     ordre.value = []
     avis.value = ''
@@ -138,18 +145,27 @@ const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin }
 const feedback = computed(() => retour.value?.message ?? avis.value)
 const feedbackClass = computed(() => etat.value || '')
 
-function setCduRef(el, ci) { if (el) cduRefs[ci] = el }
+function setCduRef(el: unknown, ci: number) { if (el) cduRefs[ci] = el as { focus: () => void } }
 // un chiffre par case, puis la case suivante
-function onCduInput(ci) {
+function onCduInput(ci: number) {
   nextTick(() => {
-    const champ = q.value.champs[ci]
+    const qu = q.value
+    if (qu?.kind !== 'cdu') return
+    const champ = qu.champs[ci]
     const v = String(cdu.value[champ] ?? '').replace(/\D/g, '').slice(-1)
     cdu.value[champ] = v
-    if (v && ci + 1 < q.value.champs.length) cduRefs[ci + 1]?.focus()
+    if (v && ci + 1 < qu.champs.length) cduRefs[ci + 1]?.focus()
   })
 }
 
-function ajouterOrdre(n) {
+// une proposition choisie (QCM, comparaison)
+function choisir(i: number) {
+  const qu = q.value
+  if (qu?.kind !== 'choix') return
+  jeu.repondre({ choix: qu.choix[i] }, { donne: qu.choix[i] })
+}
+
+function ajouterOrdre(n: number) {
   if (repondu.value || ordre.value.includes(n)) return
   ordre.value.push(n)
   avis.value = ''
@@ -157,12 +173,13 @@ function ajouterOrdre(n) {
 
 function entree() {
   if (!repondu.value) valider()
-  else if (!retour.value.ok) jeu.suivante()
+  else if (!retour.value?.ok) jeu.suivante()
 }
 
 function valider() {
   if (repondu.value) return
   const qu = q.value
+  if (!qu) return
   if (qu.kind === 'nombre') {
     const val = String(reponse.value).trim()
     if (val === '') return
@@ -172,7 +189,7 @@ function valider() {
     cduEtats.value = Object.fromEntries(qu.champs.map(ch => [ch, +cdu.value[ch] === qu.reponse[ch] ? 'ok' : 'erreur']))
     jeu.repondre({ cdu: { ...cdu.value } }, { donne: qu.champs.map(ch => libCdu(T, +cdu.value[ch], ch)).join(' ') })
   } else if (qu.kind === 'ordre') {
-    if (ordre.value.length < qu.nombres.length) { avis.value = t('cliqueTous'); return }
+    if (ordre.value.length < qu.nombres.length) { avis.value = t('numeration.cliqueTous'); return }
     jeu.repondre({ ordre: [...ordre.value] }, { donne: ordre.value.map(fmt).join(' < ') })
   }
 }
@@ -180,11 +197,11 @@ function valider() {
 // passer : la question compte comme une erreur, et on enchaîne aussitôt
 function passer() {
   if (repondu.value) return
-  jeu.passer({ donne: t('passe') })
+  jeu.passer({ donne: t('numeration.passe') })
   jeu.suivante()
 }
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   mettreEnPage: (questions, police) => ficheNumeration({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),

@@ -1,15 +1,14 @@
-// @ts-check
 // Droite graduée de Numération : 11 graduations (extrémités notées), flèche sur une graduation. Dessin partagé :
-// src/impression/dessins/droite.js.
-import { positionsGraduations, svgDroite } from '../../impression/dessins/droite.js'
+// src/dessins/droite.ts.
+import { positionsGraduations, svgDroite } from '../../dessins/droite.ts'
 
 /**
- * @param {number} debut nombre de la première graduation
- * @param {number} pas écart entre deux graduations
- * @param {number} k rang de la graduation montrée par la flèche (1 à 9)
- * @param {(n: number) => string} fmt écriture des nombres
+ * @param debut nombre de la première graduation
+ * @param pas écart entre deux graduations
+ * @param k rang de la graduation montrée par la flèche (1 à 9)
+ * @param fmt écriture des nombres
  */
-export function svgDroiteNombres(debut, pas, k, fmt) {
+export function svgDroiteNombres(debut: number, pas: number, k: number, fmt: (n: number) => string): string {
   const x0 = 50, ecart = 50
   const xs = positionsGraduations(x0, 10 * ecart, 10)
   return svgDroite({

@@ -2,11 +2,11 @@
 //   const { t, langue, langues } = useLangue()
 //   t('nav.accueil')                       → texte dans la langue courante (clé typée)
 //   t('reglages.remise.fait', { n: 3 })    → paramètres et pluriel typés
-// `t` lit la langue courante : un gabarit ou un computed qui l'appelle se met à jour au changement de langue.
+// `t` lit la langue affichée : un gabarit ou un computed qui l'appelle se met à jour au changement de langue.
 import { computed } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
 import { SITE } from '../sites.ts'
-import { langue } from './etat.ts'
+import { langue, langueAffichee } from './etat.ts'
 import { LANGUES } from './registre.ts'
 import type { Langue } from './registre.ts'
 import { traduire, traduireListe } from './traduire.ts'
@@ -14,8 +14,10 @@ import type { CatalogueSource, CleTexte, CleListe } from './traduire.ts'
 import type { ArgsParams, FeuilleA, LangueDef } from './types.ts'
 
 export interface UtilisationLangue {
-  /** langue de l'interface (modifiable : `langue.value = 'br'`) */
+  /** réglage de langue de l'interface (modifiable : `langue.value = 'br'`) */
   langue: Ref<Langue>
+  /** langue réellement affichée : le réglage, sauf si le contexte en impose une (mode « langue régionale seule ») */
+  langueAffichee: ComputedRef<Langue>
   /** définition de la langue courante */
   def: ComputedRef<LangueDef<Langue>>
   /** langues d'interface proposées par le site */
@@ -29,9 +31,10 @@ const langues: readonly LangueDef<Langue>[] = SITE.languesInterface.map(c => LAN
 export function useLangue(): UtilisationLangue {
   return {
     langue,
-    def: computed(() => LANGUES[langue.value]),
+    langueAffichee,
+    def: computed(() => LANGUES[langueAffichee.value]),
     langues,
-    t: (cle, ...args) => traduire(langue.value, cle, ...args),
-    liste: cle => traduireListe(langue.value, cle),
+    t: (cle, ...args) => traduire(langueAffichee.value, cle, ...args),
+    liste: cle => traduireListe(langueAffichee.value, cle),
   }
 }

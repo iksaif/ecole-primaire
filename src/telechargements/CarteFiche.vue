@@ -23,7 +23,7 @@ import { etiquetteClasses, langueDuTexte, texteDe } from './recherche.ts'
 import type { EntreeIndex } from './types.ts'
 
 const props = defineProps<{ entree: EntreeIndex }>()
-const { t, langue } = useLangue()
+const { t, langueAffichee: langue } = useLangue()
 // langue de la fiche, nommée dans la langue de l'interface ; rien pour une fiche en français seul
 const langues = computed(() => (props.entree.langues.length === 1 && props.entree.langues[0] === 'fr' ? []
   : props.entree.langues.map(l => (estLangue(l) ? nomDeLangue(l, langue.value) : l))))

@@ -14,8 +14,17 @@ export const langue: Ref<Langue> = ref(SITE.langueInterface)
   const lue = chargerValeur<string>('langue_interface', SITE.langueInterface)
   if (estLangue(lue) && SITE.languesInterface.includes(lue)) langue.value = lue
 }
-watch(langue, v => {
-  sauvegarder('langue_interface', v)
+watch(langue, v => sauvegarder('langue_interface', v), { immediate: true })
+
+/**
+ * Langue imposée à l'interface par le contexte (mode « langue régionale seule », src/contexte/) : elle prend le pas sur
+ * `langue` sans la modifier ni la mémoriser. `null` : le réglage de l'utilisateur décide.
+ */
+export const langueImposee: Ref<Langue | null> = ref(null)
+
+/** Langue réellement affichée : l'imposée, sinon le réglage. C'est elle que lisent `t`, le contenu et l'attribut `lang`. */
+export const langueAffichee: ComputedRef<Langue> = computed(() => langueImposee.value ?? langue.value)
+watch(langueAffichee, v => {
   if (typeof document !== 'undefined') document.documentElement.lang = LANGUES[v].bcp47
 }, { immediate: true })
 

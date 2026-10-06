@@ -104,15 +104,16 @@ server {
         expires max;
         try_files \$uri =404;
     }
-    # fiches PDF, aperçus et pages statiques
+    # fiches PDF, aperçus et pages statiques ; une adresse sans fichier (index A→Z, page inconnue) est celle de l'app,
+    # qui affiche sa page « introuvable » (adresses propres, plan 13)
     location /telechargements/ {
         expires 1d;
-        try_files \$uri \$uri/ =404;
+        try_files \$uri \$uri/index.html /index.html;
     }
-    # l'app utilise un routage par # : seules les vraies pages existent
+    # l'app : adresses propres (mode history), toute adresse qui n'est pas un fichier est servie par index.html (jamais en cache)
     location / {
         expires -1;
-        try_files \$uri \$uri/ =404;
+        try_files \$uri \$uri/index.html /index.html;
     }
 }
 EOF

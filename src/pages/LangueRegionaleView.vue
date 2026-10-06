@@ -49,7 +49,7 @@ import { useLangue } from '../langues/useLangue.ts'
 import { useLangueRegionale } from '../langues/useLangueRegionale.ts'
 import Drapeau from '../shell/Drapeau.vue'
 
-const { t, langue } = useLangue()
+const { t, langueAffichee: langue } = useLangue()
 const { def, donnees } = useLangueRegionale()
 const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
 

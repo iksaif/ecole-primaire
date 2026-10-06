@@ -20,7 +20,7 @@
 //     par année (CP, CE1, CE2, CM1, CM2) et, au cycle 1, par âge.
 //   - Exemples de réussite du cycle 3 en français (Éduscol, CM1, CM2, 6e), publiés à part : cherchés le 2026-10-04 pour
 //     les homophones et les homonymes seulement (SOURCES.exemplesCM1…), pas relus en entier.
-//   - « Le monde » (matière `autres`, comme dans activites.js) : textes parus après les BO ci-dessus, lus en entier le
+//   - « Le monde » (matière `monde` ; `autres` dans l'ancien activites.js) : textes parus après les BO ci-dessus, lus en entier le
 //     2026-10-06 (PDF de chaque annexe sur education.gouv.fr ; pages du PDF de l'annexe) :
 //       · Cycle 1, « Découvrir le monde du vivant, de la matière et des objets » : BO n° 19 du 7 mai 2026 (déjà cité).
 //       · Cycles 2 et 3, sciences et technologie : arrêté du 5-6-2026 (NOR MENE2611650A), BO n° 24 du 11 juin 2026,
@@ -63,6 +63,14 @@ import { AVEC_DEV } from '../dev.ts'
 export { NIVEAUX, CYCLE_DE }
 export type { Classe as Niveau, Cycle }
 
+/**
+ * Les matières, dans l'ordre d'affichage. `monde` : sciences, histoire-géographie, EMC (ancien `autres`). `regionale` : apprendre
+ * la langue régionale ; le référentiel n'a pas (encore) de domaine de cette matière : les ressources n'y entreront qu'avec des
+ * domaines déclarés ici (voir src/ressources/README.md).
+ */
+export const MATIERES = ['maths', 'francais', 'monde', 'regionale'] as const
+export type Matiere = (typeof MATIERES)[number]
+
 // Les entrées fictives des exemples (DOMAINES_EXEMPLE, COMPETENCES_EXEMPLE) comptent dans les types : K et D les exposent
 export type DomaineId = (typeof DOMAINES)[number]['id'] | (typeof DOMAINES_EXEMPLE)[number]['id']
 export type CompetenceId = (typeof COMPETENCES)[number]['id'] | (typeof COMPETENCES_EXEMPLE)[number]['id']
@@ -88,7 +96,7 @@ export type ParCycle<T> = Partial<Record<Cycle, T>>
 export interface Domaine {
   id: string
   court: string
-  matiere: 'maths' | 'francais' | 'autres'
+  matiere: Matiere
   cycles: readonly Cycle[]
   /** nom officiel du domaine, par cycle */
   officiel: ParCycle<string>
@@ -341,52 +349,52 @@ export const DOMAINES = [
   {
     // domaine du BO n° 19 (2026), hors mathématiques au cycle 1 ; au cycle 2, l'heure et les durées sont dans
     // « Grandeurs et mesures » et le calendrier relève de l'histoire-géographie (voir « Le monde » plus bas)
-    id: 'temps-espace', court: 'Se repérer dans le temps et l’espace', matiere: 'autres', cycles: [1],
+    id: 'temps-espace', court: 'Se repérer dans le temps et l’espace', matiere: 'monde', cycles: [1],
     officiel: { 1: 'Se repérer dans le temps et l’espace' },
     source: { 1: src('bo19', 23, 'Se repérer dans le temps et l’espace') },
     lien: { 1: PARENTS[1] },
   },
-  // Le monde (matière `autres`) : sciences et technologie, histoire-géographie, EMC (voir l'en-tête). Au cycle 1, le
+  // Le monde (matière `monde`) : sciences et technologie, histoire-géographie, EMC (voir l'en-tête). Au cycle 1, le
   // temps et l'espace sont dans `temps-espace` ci-dessus ; au cycle 2, le calendrier et les repères d'espace relèvent
   // de l'histoire-géographie (domaines `histoire` et `geographie`).
   {
-    id: 'vivant', court: 'Les êtres vivants', matiere: 'autres', cycles: [1, 2, 3],
+    id: 'vivant', court: 'Les êtres vivants', matiere: 'monde', cycles: [1, 2, 3],
     officiel: { 1: 'Découvrir le monde du vivant', 2: 'Les êtres vivants dans leur environnement', 3: 'Les êtres vivants dans leur environnement' },
     source: { 1: src('bo19', 30, 'Découvrir le monde du vivant'), 2: src('c2sciences', 5, 'Les êtres vivants dans leur environnement'), 3: src('c3sciences', 9, 'Les êtres vivants dans leur environnement') },
     lien: parCycle([1, 2, 3], c => PARENTS[c]),
   },
   {
-    id: 'corps-sante', court: 'Le corps humain et la santé', matiere: 'autres', cycles: [1, 2, 3],
+    id: 'corps-sante', court: 'Le corps humain et la santé', matiere: 'monde', cycles: [1, 2, 3],
     officiel: { 1: 'Découvrir le corps humain et la santé', 2: 'Le corps humain et la santé', 3: 'Le corps humain et la santé' },
     source: { 1: src('bo19', 31, 'Découvrir le corps humain et la santé'), 2: src('c2sciences', 8, 'Le corps humain et la santé'), 3: src('c3sciences', 14, 'Le corps humain et la santé') },
     lien: parCycle([1, 2, 3], c => PARENTS[c]),
   },
   {
-    id: 'matiere', court: 'La matière', matiere: 'autres', cycles: [1, 2, 3],
+    id: 'matiere', court: 'La matière', matiere: 'monde', cycles: [1, 2, 3],
     officiel: { 1: 'Découvrir les états de la matière et les mélanges', 2: 'La matière, les mesures, l’électricité', 3: 'La matière, les mouvements et les signaux' },
     source: { 1: src('bo19', 33, 'Découvrir les états de la matière et les mélanges'), 2: src('c2sciences', 3, 'La matière, les mesures, l’électricité'), 3: src('c3sciences', 3, 'La matière, les mouvements et les signaux') },
     lien: parCycle([1, 2, 3], c => PARENTS[c]),
   },
   {
-    id: 'objets-techniques', court: 'Objets et technologie', matiere: 'autres', cycles: [1, 2, 3],
+    id: 'objets-techniques', court: 'Objets et technologie', matiere: 'monde', cycles: [1, 2, 3],
     officiel: { 1: 'Découvrir les objets et les matériaux', 2: 'Les objets techniques au cœur de la société', 3: 'Les objets techniques au cœur de la société' },
     source: { 1: src('bo19', 32, 'Découvrir les objets et les matériaux'), 2: src('c2sciences', 10, 'Les objets techniques au cœur de la société'), 3: src('c3sciences', 16, 'Les objets techniques au cœur de la société') },
     lien: parCycle([1, 2, 3], c => PARENTS[c]),
   },
   {
-    id: 'histoire', court: 'Histoire', matiere: 'autres', cycles: [2, 3],
+    id: 'histoire', court: 'Histoire', matiere: 'monde', cycles: [2, 3],
     officiel: { 2: 'Histoire', 3: 'Histoire' },
     source: { 2: src('c2histgeo', 3, 'Histoire (cours préparatoire, thème 1)'), 3: src('c3histgeo', 4, 'Histoire (cours moyen première année)') },
     lien: parCycle([2, 3], c => PARENTS[c]),
   },
   {
-    id: 'geographie', court: 'Géographie', matiere: 'autres', cycles: [2, 3],
+    id: 'geographie', court: 'Géographie', matiere: 'monde', cycles: [2, 3],
     officiel: { 2: 'Géographie', 3: 'Géographie' },
     source: { 2: src('c2histgeo', 6, 'Géographie (cours préparatoire : des clés pour se repérer)'), 3: src('c3histgeo', 11, 'Géographie (cours moyen première année)') },
     lien: parCycle([2, 3], c => PARENTS[c]),
   },
   {
-    id: 'emc', court: 'Enseignement moral et civique', matiere: 'autres', cycles: [2, 3],
+    id: 'emc', court: 'Enseignement moral et civique', matiere: 'monde', cycles: [2, 3],
     officiel: { 2: 'Enseignement moral et civique', 3: 'Enseignement moral et civique' },
     source: { 2: src('emc', 7, 'CP : Se reconnaitre comme individu et élève'), 3: src('emc', 11, 'CM1 : Faire société') },
     lien: parCycle([2, 3], c => PARENTS[c]),
@@ -690,7 +698,7 @@ export const COMPETENCES = [
     src('c3francais', 19, 'CM2 : passé simple, plus-que-parfait d’être, avoir, 1er et 2e groupes et des 8 irréguliers')),
   c('complements', 'grammaire', 'Compléments du verbe (COD, COI) et compléments circonstanciels', ['cm1', 'cm2'],
     src('c3francais', 17, 'CM1 : COD/COI dans des phrases prototypiques, groupes circonstanciels sans les distinguer ; CM2 p. 19 : CC de temps, lieu, cause ; attribut du sujet')),
-  // ── Le monde (matière `autres`) : cycle 1 (BO n° 19), cycles 2 et 3 (sciences BO n° 24 de 2026, histoire-géographie
+  // ── Le monde (matière `monde`) : cycle 1 (BO n° 19), cycles 2 et 3 (sciences BO n° 24 de 2026, histoire-géographie
   // BO n° 22 de 2026, EMC BO n° 24 de 2024) ; m() ajoute la note « application à la rentrée 2027 » pour CE1, CE2 et CM2 ──
   c('environnement-proche', 'temps-espace', 'Reconnaître l’école, le quartier ou le village et ses lieux (mairie, commerces, jardin)', ['ps', 'ms', 'gs'],
     src('bo19', 29, 'Avant 4 ans : explorer les lieux de l’école et leur associer des éléments caractéristiques ; 4 ans : caractériser l’environnement extérieur proche ; 5 ans : reconnaitre les espaces proches de l’école et leurs usages, observer l’habitat')),

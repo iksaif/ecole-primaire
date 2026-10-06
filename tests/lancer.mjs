@@ -64,8 +64,8 @@ if (!process.env.TEST_URL) {
 
 // La base : tests node (sites, langues, définitions, noyau, exercices, affiches, réponses, instantanés, fiches) puis pages dans
 // Chrome (pages de la base, jeu et fiche des exemples). Les tests de l'ancien code sont dans tests/ancien/, hors de cette liste.
-const fichiers = ['sites', 'langues', 'definir', 'noyau', 'exercices', 'affiches-modele', 'reponses', 'instantanes', 'production',
-  'fiches', 'base', 'fiches-fumee', 'jeu-dev', 'dev-affiche', 'composants', 'accessibilite']
+const fichiers = ['sites', 'langues', 'contexte', 'definir', 'noyau', 'exercices', 'affiches-modele', 'reponses', 'instantanes', 'ressources', 'recherche', 'production',
+  'fiches', 'base', 'navigation', 'fiches-fumee', 'jeu-dev', 'dev-affiche', 'composants', 'accessibilite']
 // chaque fichier finit par process.exit(nbEchecs() ? 1 : 0) : on ne lit que son code de sortie (exception, échec
 // d'une vérification ou signal comptent comme un échec)
 const lancer = f => new Promise(ok => {

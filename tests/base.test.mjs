@@ -6,8 +6,9 @@ import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE } 
 
 const URL_SKOOLIK = process.env.TEST_URL_SKOOLIK && process.env.TEST_URL_SKOOLIK.replace(/\/?$/, '/')
 // route → marque `data-page` de la page (attend la page demandée, pas la précédente)
-const PAGES = { '/': 'accueil', '/langue-regionale': 'langue-regionale', '/parametres': 'reglages', '/about': 'apropos', '/nouveautes': 'nouveautes' }
+const PAGES = { '/': 'accueil', '/brezhoneg': 'langue-regionale', '/parametres': 'reglages', '/about': 'apropos', '/nouveautes': 'nouveautes' }
 const attendre = (page, route) => page.waitForSelector(`[data-page="${PAGES[route]}"]`, { timeout: 10000 })
+const adresse = (base, route) => `${base}${route.replace(/^\//, '')}`
 const nav = await lancerNavigateur()
 
 // langue de l'interface (attribut lang de <html>) et texte du logo
@@ -24,14 +25,17 @@ for (const langue of ['fr', 'br']) {
   // le signal de statistiques anonymes part vers /journal, qui n'existe que derrière nginx : son 404 hors production est attendu
   page.on('console', m => { if (m.type() === 'error' && !/\/journal\?/.test(m.location().url ?? '')) erreurs.push(m.text().slice(0, 200)) })
   for (const route of Object.keys(PAGES)) {
-    await page.goto(`${URL_SITE}#${route}`)
+    await page.goto(adresse(URL_SITE, route))
     await attendre(page, route)
     const h = await page.locator('h1').first().textContent()
     verifier(!!h?.trim() && !erreurs.length, `${route} : titre « ${h?.trim().slice(0, 40)} », sans erreur${erreurs.length ? ` (${erreurs[0]})` : ''}`)
   }
-  await page.goto(`${URL_SITE}#/ancienne-route/maths`)
+  // une adresse inconnue : page « introuvable » avec un lien vers l'accueil
+  await page.goto(adresse(URL_SITE, '/ancienne-route/maths'))
+  await page.waitForSelector('[data-page="introuvable"]', { timeout: 10000 })
+  await page.locator('[data-page="introuvable"] a').click()
   await attendre(page, '/')
-  verifier(new URL(page.url()).hash === '#/', 'une ancienne adresse ramène à l’accueil')
+  verifier(new URL(page.url()).pathname === new URL(URL_SITE).pathname, 'une adresse inconnue : page introuvable, et un lien vers l’accueil')
   await ctx.close()
 }
 
@@ -45,12 +49,12 @@ console.log('ecoleprimaire')
   verifier(e.lang.startsWith('fr') && e.interface === '"fr"', 'interface française par défaut')
   verifier(!e.menu.some(m => /Brezhoneg/i.test(m)), 'aucune langue régionale dans le menu par défaut')
   // activer la langue régionale dans les réglages : le menu s’enrichit
-  await page.goto(`${URL_SITE}#/parametres`)
+  await page.goto(adresse(URL_SITE, '/parametres'))
   await attendre(page, '/parametres')
   await page.getByRole('button', { name: /Brezhoneg/ }).last().click()
   verifier((await etat(page)).menu.some(m => /Brezhoneg/i.test(m)), 'langue régionale activable dans les réglages')
-  await page.goto(`${URL_SITE}#/langue-regionale`)
-  await attendre(page, '/langue-regionale')
+  await page.goto(adresse(URL_SITE, '/brezhoneg'))
+  await attendre(page, '/brezhoneg')
   verifier(await page.locator('.lettre').count() === 25, 'page de la langue régionale : 25 lettres de l’alphabet breton')
   // changer la langue d’interface avec les drapeaux
   await page.locator('.nav-langue button').nth(1).click()
@@ -73,8 +77,8 @@ if (URL_SKOOLIK) {
   await page.locator('[role=dialog] .btn-primary').click()
   await page.locator('.nav-langue button').nth(1).click()
   verifier((await etat(page)).lang.startsWith('fr'), 'le français est disponible')
-  await page.goto(`${URL_SKOOLIK}#/langue-regionale`)
-  await attendre(page, '/langue-regionale')
+  await page.goto(adresse(URL_SKOOLIK, '/brezhoneg'))
+  await attendre(page, '/brezhoneg')
   verifier(await page.locator('.lettre').count() === 25, 'page de la langue régionale avec les données du breton')
   verifier(!erreurs.length, `sans erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
   await ctx.close()

@@ -1,51 +1,54 @@
-// Routeur de la base : les pages qui existent vraiment. Les exercices, affiches et impressions de l'ancien monde sont
-// déconnectés (leur ancienne table : ancien-routes.js) et reviennent un par un avec leurs reports.
-import { createRouter, createWebHashHistory } from 'vue-router'
+// Routeur : adresses propres (mode `history`, base = `import.meta.env.BASE_URL` : `/` sur les VPS, `/ecole-primaire/` sur
+// GitHub Pages). La table est dans routes.ts ; les titres dans titres.ts ; le focus dans focus.ts ; le contexte (classes,
+// langue…) dans src/contexte/. Le serveur renvoie toute adresse inconnue vers index.html (deploy/setup-nginx.sh).
+// Les anciennes adresses `/#/chemin` sont réécrites en `/chemin` avant le démarrage par le script d'index.html.
+import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { SITE } from '../sites.ts'
+import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
 import { journaliser } from '../utils/journal.js'
+import { routesDeBase, routesDesExercices } from './routes.ts'
 
-const routes: RouteRecordRaw[] = [
-  { path: '/', component: () => import('../pages/AccueilView.vue') },
-  { path: '/langue-regionale', component: () => import('../pages/LangueRegionaleView.vue') },
-  { path: '/parametres', component: () => import('../pages/ReglagesView.vue') },
-  { path: '/about', component: () => import('../pages/AProposView.vue') },
-  { path: '/nouveautes', component: () => import('../pages/NouveautesView.vue') },
-  // nouveau:routes
-  // fiches PDF toutes prêtes : lues dans fiches/index.json et fiches/<slug>.json (src/telechargements/README.md)
-  { path: '/telechargements', component: () => import('../views/Telechargements.vue') },
-  { path: '/telechargements/:slug', component: () => import('../views/TelechargementsFiche.vue') },
-]
+const routes: RouteRecordRaw[] = routesDeBase(SITE.languesRegionales)
 
 // Pages de développement (liste : src/views/dev/DevView.vue) : ajoutées seulement par `npm run dev`, absentes du build
 if (import.meta.env.DEV || import.meta.env.VITE_AVEC_DEV) {   // expression écrite ici (src/dev.ts) : Vite la remplace avant le graphe de modules, la branche et ses pages /dev disparaissent
   routes.push(
-    { path: '/dev', component: () => import('../views/dev/DevView.vue') },
-    { path: '/dev/exemple', component: () => import('../views/dev/ExempleView.vue') },
-    { path: '/dev/exemple-corpus', component: () => import('../views/dev/ExempleCorpusView.vue') },
-    { path: '/dev/affiches', component: () => import('../views/dev/AfficheDevView.vue') },
-    { path: '/dev/composants', component: () => import('../views/dev/ComposantsView.vue') },
+    { path: '/dev', component: () => import('../views/dev/DevView.vue'), meta: { titre: 'nav.dev' } },
+    { path: '/dev/exemple', component: () => import('../views/dev/ExempleView.vue'), meta: { titre: 'nav.dev' } },
+    { path: '/dev/exemple-corpus', component: () => import('../views/dev/ExempleCorpusView.vue'), meta: { titre: 'nav.dev' } },
+    { path: '/dev/affiches', component: () => import('../views/dev/AfficheDevView.vue'), meta: { titre: 'nav.dev' } },
+    { path: '/dev/composants', component: () => import('../views/dev/ComposantsView.vue'), meta: { titre: 'nav.dev' } },
   )
 }
 
-// Une adresse inconnue (ancienne route d'un exercice, lien externe) ramène à l'accueil
-routes.push({ path: '/:chemin(.*)*', redirect: '/' })
+// Une route par exercice du registre. Le registre est un chunk à part, attendu avant le premier affichage : tant qu'il reste
+// léger ce n'est rien ; s'il grossit, il faudra un index des routes seul (sans les générateurs).
+const { REGISTRE } = await import('../exercices/index.ts')
+routes.push(...routesDesExercices(REGISTRE, routes))
 
-// L'app ne vit qu'à la racine du site : chargée ailleurs, on la renvoie à la racine en gardant la route
-const BASE = import.meta.env.BASE_URL
-if (typeof location !== 'undefined' && location.pathname !== BASE && location.pathname !== `${BASE}index.html`) {
-  location.replace(`${BASE}${location.search}${location.hash}`)
-}
+// Une adresse inconnue (ancienne route, lien externe) : page « introuvable » avec un lien vers l'accueil. Toujours en dernier.
+routes.push({ path: '/:chemin(.*)*', component: () => import('../pages/IntrouvableView.vue'), meta: { titre: 'routeur.titre.introuvable' } })
 
 const router = createRouter({
-  // base explicite : les liens restent /…/#/route quelle que soit l'adresse de chargement
-  history: createWebHashHistory(BASE),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  scrollBehavior: () => ({ top: 0 }),
+  // un changement de contexte ou de filtre (même page) ne ramène pas en haut
+  scrollBehavior: (to, from, enregistree) => enregistree ?? (to.path === from.path ? false : { top: 0 }),
+})
+
+// Une adresse qui porte son propre contexte (`?classes=cm1`) le garde d'une page à l'autre tant qu'on suit des liens du site :
+// les liens internes n'ont pas à le répéter. Un changement sur la même page (replace) est voulu tel quel : on n'y touche pas.
+router.beforeEach((to, from) => {
+  if (to.path !== from.path && sansContexte(to.query) && !sansContexte(from.query)) {
+    return { path: to.path, query: { ...to.query, ...extraireParamsContexte(from.query) }, hash: to.hash }
+  }
 })
 
 // page vue (sans le détail des réglages) : langue de l'interface, langue régionale, classe filtrée
 const lu = (cle: string): string | undefined => localStorage.getItem(`ep_${cle}`)?.replace(/"/g, '')
-router.afterEach(to => {
+router.afterEach((to, from) => {
+  if (to.path === from.path) return
   journaliser('vue', { r: to.path, m: to.query.mode, l: lu('langue_interface'), g: lu('langue_regionale'), c: lu('classe') })
 })
 

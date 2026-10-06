@@ -4,11 +4,11 @@
 //
 // Les identifiants viennent du programme : une classe, un domaine ou une compétence inconnus ne compilent pas.
 import type { Classe } from '../data/classes.ts'
-import type { CompetenceId, DomaineId, Source } from '../data/programme.ts'
+import type { CompetenceId, DomaineId, Matiere, Source } from '../data/programme.ts'
 import type { ValeurReglage } from '../noyau/types.ts'
 import type { Format } from '../utils/page.ts'
 
-export type { Classe, CompetenceId, DomaineId, Source, ValeurReglage, Format }
+export type { Classe, CompetenceId, DomaineId, Matiere, Source, ValeurReglage, Format }
 
 /** Numéro du schéma. Il monte à chaque changement incompatible ; la page refuse un index d'une autre version. */
 export const VERSION_SCHEMA = 1
@@ -71,7 +71,7 @@ export interface LienProgramme {
 export interface DomaineDeFiche {
   id: DomaineId | null
   nom: Texte
-  matiere: 'maths' | 'francais' | 'autres'
+  matiere: Matiere
   /** position dans la liste (les maths, puis le français, puis le reste) */
   rang: number
   programme: LienProgramme[]

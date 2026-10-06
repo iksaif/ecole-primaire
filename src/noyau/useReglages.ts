@@ -15,7 +15,7 @@
 import { ref, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import { chargerReglages, chargerValeur, sauvegarder } from '../utils/index.js'
-import { langue } from '../langues/etat.ts'
+import { langueAffichee } from '../langues/etat.ts'
 import { reglagesDuNiveau, reglagesApresNiveau, reglagesDeTousNiveaux, langueContenuDe } from './reglages.ts'
 import type { Config, DefinitionExercice } from './types.ts'
 
@@ -38,6 +38,6 @@ export function useReglages<R extends object>(
     const classe = chargerValeur('classe', '')
     if ((definition.niveaux as Record<string, unknown>)[classe]) config.value = { ...config.value, niveau: classe as Config<R>['niveau'] }
   }
-  const langueContenu = computed(() => langueContenuDe(definition as DefinitionExercice, langue.value))
+  const langueContenu = computed(() => langueContenuDe(definition as DefinitionExercice, langueAffichee.value))
   return { config, langueContenu }
 }

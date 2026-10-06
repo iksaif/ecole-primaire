@@ -27,7 +27,7 @@
 // Compteurs (min) :
 //   couverture       % des couples compétence × classe des domaines de maths et de français (src/data/programme.ts) qui ont
 //                    au moins une ressource (exercice, fiche ou affiche ; src/impression/couverture.js, comme `npm run couverture`)
-//   couvertureMonde  même pourcentage pour « le monde » (matière `autres` : sciences, histoire-géographie, EMC, temps et
+//   couvertureMonde  même pourcentage pour « le monde » (matière `monde` : sciences, histoire-géographie, EMC, temps et
 //                    espace du cycle 1). Séparé le 2026-10-06, à l'ajout des programmes du Monde (168 cases sans ressource) :
 //                    seuil à 0 tant qu'aucune ressource n'existe, il monte avec les premières. Le quiz de culture générale
 //                    n'est rattaché à aucune compétence.
@@ -66,7 +66,7 @@ const charger = async module => {
 }
 
 // Couverture par matière : « maths et français » (les matières à programme chiffré, déjà couvertes par des exercices) et
-// « le monde » (matière `autres` : sciences, histoire-géographie, EMC, temps et espace du cycle 1), dont les ressources
+// « le monde » (matière `monde` : sciences, histoire-géographie, EMC, temps et espace du cycle 1), dont les ressources
 // arrivent après les compétences. Les deux dans un seul pourcentage feraient baisser le compteur de maths et français
 // à chaque compétence du Monde ajoutée sans ressource, sans que rien n'ait régressé.
 async function couvertureDes(matieres) {
@@ -84,7 +84,7 @@ async function couvertureDes(matieres) {
   return { valeur: Math.floor(1000 * couvertes / cases) / 10, detail: `${couvertes} / ${cases} cases` }
 }
 const couverture = () => couvertureDes(['maths', 'francais'])
-const couvertureMonde = () => couvertureDes(['autres'])
+const couvertureMonde = () => couvertureDes(['monde'])
 
 async function exercicesMigres() {
   const { ACTIVITES } = await charger('/src/data/activites.js')

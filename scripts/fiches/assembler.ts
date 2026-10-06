@@ -1,7 +1,7 @@
 // Des fiches rendues aux données publiées : l'index et une entrée par fiche. Pur (aucune entrée-sortie, aucun navigateur) :
 // testé par tests/fiches-ecriture.test.mjs avec de fausses fiches rendues.
 import { NIVEAUX } from '../../src/data/classes.ts'
-import { DOMAINES, DOMAINES_EXEMPLE, domaineDe, lienProgramme, nomOfficiel } from '../../src/data/programme.ts'
+import { DOMAINES, DOMAINES_EXEMPLE, MATIERES, domaineDe, lienProgramme, nomOfficiel } from '../../src/data/programme.ts'
 import { CODES, LANGUES, LANGUE_SOURCE } from '../../src/langues/registre.ts'
 import { traduire } from '../../src/langues/traduire.ts'
 import { texteDeRecherche } from '../../src/telechargements/recherche.ts'
@@ -13,8 +13,7 @@ const NB_VOISINES = 8
 const HORS_PROGRAMME: Texte = { fr: 'Culture générale', br: 'Sevenadur hollek' }   // br: à relire
 
 // matières dans l'ordre d'affichage : les maths, puis le français, puis le reste ; exemples en dernier
-const ORDRE_MATIERES = ['maths', 'francais', 'autres']
-const DOMAINES_TRIES = [...[...DOMAINES].sort((a, b) => ORDRE_MATIERES.indexOf(a.matiere) - ORDRE_MATIERES.indexOf(b.matiere)), ...DOMAINES_EXEMPLE]
+const DOMAINES_TRIES = [...[...DOMAINES].sort((a, b) => MATIERES.indexOf(a.matiere) - MATIERES.indexOf(b.matiere)), ...DOMAINES_EXEMPLE]
 const rangDomaine = (id: DomaineId | null): number => (id === null ? DOMAINES_TRIES.length : DOMAINES_TRIES.findIndex(d => d.id === id))
 
 /** Liens du programme officiel d'un domaine pour des classes : un lien par adresse (un cycle, ou deux cycles voisins). */
@@ -32,7 +31,7 @@ function liensProgramme(domaine: DomaineId, classes: readonly Classe[]): LienPro
 }
 
 function domaineDeFiche(id: DomaineId | null, classes: readonly Classe[]): DomaineDeFiche {
-  if (id === null) return { id, nom: HORS_PROGRAMME, matiere: 'autres', rang: rangDomaine(null), programme: [] }
+  if (id === null) return { id, nom: HORS_PROGRAMME, matiere: 'monde', rang: rangDomaine(null), programme: [] }
   const d = domaineDe(id)
   if (!d) throw new Error(`domaine « ${id} » inconnu de programme.ts`)
   // noms dans les autres langues : section `domaines` du catalogue typé (absente pour le domaine fictif des exemples)

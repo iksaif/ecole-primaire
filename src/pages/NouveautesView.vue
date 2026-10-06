@@ -16,7 +16,7 @@ import { useLangue } from '../langues/useLangue.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { echapper } from '../utils/html.js'
 
-const { t, langue } = useLangue()
+const { t, langueAffichee: langue } = useLangue()
 
 const enLigne = (s: string): string => echapper(s)
   .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')

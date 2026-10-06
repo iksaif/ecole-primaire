@@ -40,7 +40,7 @@ function manifesteDuSite(env, base) {
 
 // public/fiches/ n'appartient qu'au serveur de dev : `npm run fiches:dev` y écrit les JSON des fiches (exemples compris). Vite copie
 // public/ tel quel dans le build : on retire fiches/ de la sortie, pour qu'aucun exemple ne parte en production. Les vraies fiches
-// sont écrites après le build par `node scripts/fiches/commande.ts` (script `build`), jamais par la copie de public/.
+// sont écrites après le build par `node scripts/build/fiches/commande.ts` (script `build`), jamais par la copie de public/.
 function sansFichesDeDev() {
   let sortie = ''
   return {

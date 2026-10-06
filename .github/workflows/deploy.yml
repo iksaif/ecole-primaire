@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 # Le site est hébergé sur https://ecoleprimaire.app (et https://skoolik.app) : GitHub Pages
 # ne sert plus qu'une redirection, qui conserve le chemin et la route (#/…) des anciens liens.
-# Déploiement du vrai site : scripts/deploy-vps.sh (voir README).
+# Déploiement du vrai site : scripts/deploiement/deploy-vps.sh (voir README).
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 22.18   # >= 22.18 : node retire seul les types des .ts (pas de compilation)
 
-      - run: node scripts/redirection-gh-pages.mjs dist-gh-pages
+      - run: node scripts/deploiement/redirection-gh-pages.mjs dist-gh-pages
 
       - uses: actions/upload-pages-artifact@v3
         with:

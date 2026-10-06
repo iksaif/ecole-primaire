@@ -1,0 +1,18 @@
+{
+  "max": {
+    "brEnDur": 68,
+    "importsBr": 50,
+    "niveauxEnTexte": 41,
+    "vuesLongues": 1,
+    "mathRandomVues": 2,
+    "attentesFixes": 2,
+    "erreursDeType": 0,
+    "importeursAncienSocle": 83,
+    "ancienMondeNonReporte": 161
+  },
+  "min": {
+    "couverture": 55.8,
+    "exercicesMigres": 22,
+    "couvertureMonde": 0
+  }
+}

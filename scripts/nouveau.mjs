@@ -9,9 +9,11 @@
 //   src/data/<id>.ts                          modèle corpus : le corpus
 //   src/views/<matiere>/<Id>View.vue          copie de la vue du modèle (src/views/dev/)
 //   src/langues/{fr,br}/textes/<id>.ts        textes de l'INTERFACE de l'exercice (section `<id>` du catalogue, fr et br)
-// et il INSCRIT, aux repères « // nouveau:… » : l'exercice dans le registre (src/exercices/index.ts), la section de textes dans
-// src/langues/{fr,br}/textes/index.ts, la route dans src/router/index.ts. Tout est calculé avant d'écrire : si un repère manque,
-// rien n'est écrit. Pas d'autre registre : le catalogue, le build des fiches et les tests lisent src/exercices/index.ts.
+// et il INSCRIT, aux repères « // nouveau:… » : l'exercice dans le registre typé (src/exercices/index.ts), sa vue dans la table des
+// vues (src/views/exercices.ts : la route de l'exercice y mène), la section de textes dans src/langues/{fr,br}/textes/index.ts. Tout est
+// calculé avant d'écrire : si un repère manque, rien n'est écrit. Pas d'autre registre : le catalogue (/maths…), le build des fiches
+// (PDF), la recherche, le routeur et les tests lisent src/exercices/index.ts. Les textes bretons copiés du modèle sont marqués
+// « br: à relire » : à traduire (`npm run i18n` les compte).
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, rmSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -64,6 +66,29 @@ const vue = `src/views/${matiere}/${nomVue}.vue`
 const textesFr = `src/langues/fr/textes/${nom}.ts`, textesBr = `src/langues/br/textes/${nom}.ts`
 for (const f of [vue, textesFr, textesBr]) if (existsSync(chemin(f))) echec(`${f} existe déjà`)
 
+
+// Les niveaux du modèle, et ce qu'ils règlent (simple : suites de nombres, pas propres à chaque classe ; corpus : aucun réglage de niveau)
+const NIVEAUX_MODELE = modeleNom === 'simple'
+  ? { cp: 'pas: cases([1, 2, 10])', ce1: 'pas: cases([2, 5, 10, 100])', ce2: 'pas: cases([2, 5, 10, 100, 1000])' }
+  : { ce1: null, ce2: null, cm1: null }
+const gardes = Object.keys(NIVEAUX_MODELE).filter(n => competences.some(k => competenceDe(k).niveaux.includes(n)))
+if (!gardes.length) echec(`aucune des compétences données n'est au programme d'un niveau du modèle « ${modeleNom} » (${Object.keys(NIVEAUX_MODELE).join(', ')}) : choisir d'autres compétences, ou écrire la définition à la main d'après src/exercices/${modele.dossier}/definition.ts`)
+function reecrireNiveaux(t) {
+  const premiere = k => `K.${camel(competences.find(c => competenceDe(c).niveaux.includes(gardes[0])) ?? k)}`
+  const niveaux = gardes.map(n => (modeleNom === 'simple'
+    ? `    ${n}: { reglages: { exercices: cases(['complete', 'regle']), sens: cases(['monte', 'descend']), ${NIVEAUX_MODELE[n]} } },`
+    : `    ${n}: {},`)).join('\n')
+  if (modeleNom === 'simple') {
+    t = t.replace(/ {2}\/\/ Réglages qui changent avec le niveau[\s\S]*?\n {2}niveaux: \{[\s\S]*?\n {2}\},\n/, `  // Réglages qui changent avec le niveau (le type de \`config\` s'en déduit). Un niveau par classe où une compétence est au programme.\n  niveaux: {\n${niveaux}\n  },\n`)
+    t = t.replace(/ {2}fiches: \[[\s\S]*?\n {2}\],\n/, `  fiches: [\n    { id: 'dizaines', competence: ${premiere()}, niveau: '${gardes[0]}', reglages: { exercices: ['complete'], pas: [10] } },\n  ],\n`)
+  } else {
+    t = t.replace(/(?: {2}\/\/ `pourClasses[^\n]*\n)? {2}niveaux: [^\n]*\n/, `  niveaux: { ${gardes.map(n => `${n}: {}`).join(', ')} },\n`)
+    t = t.replace(', pourClasses }', ' }')
+    t = t.replace(/ {2}fiches: \[[\s\S]*?\n {2}\],\n/, `  fiches: [\n    { id: 'themes', competence: ${premiere()}, niveau: '${gardes[0]}', reglages: { themes: ['sentiments'] } },\n  ],\n`)
+  }
+  return t.replace(', herite }', ' }')   // plus d'héritage entre niveaux dans le squelette
+}
+
 // ── Les fichiers copiés ──
 const sortie = new Map()   // chemin relatif → contenu
 const lire = f => readFileSync(chemin(f), 'utf8')
@@ -87,16 +112,15 @@ for (const f of readdirSync(chemin('src/exercices', modele.dossier)).filter(n =>
       t = remplacer(t, `route: '/dev/${id}'`, `route: '${route}'`)
     }
     t = remplacer(t, 'D.exemple', `D.${camel(domaine)}`)
-    // les compétences fictives deviennent les vraies : la liste de l'exercice ; une fiche (au CE1) prend une compétence du CE1 ;
-    // la compétence « hors programme » du CP, une compétence qui n'y est pas ; à défaut, la première (à corriger à la main)
+    // les compétences fictives deviennent les vraies (liste de l'exercice, et celle des fiches)
     const reelles = competences.map(k => `K.${camel(k)}`)
-    const au = (niveau, oui = true) => competences.findIndex(k => competenceDe(k).niveaux.includes(niveau) === oui)
-    const pris = i => reelles[i < 0 ? 0 : i]
     t = t.replace(/competences: \[[^\]]*\]/, `competences: [${reelles.join(', ')}]`)
-    t = t.replace(/(fiches: \[[\s\S]*)$/, bloc => bloc.replace(/K\.exemple\w+/g, pris(au('ce1'))))
-    t = t.replace(/horsProgramme: \[\{ competence: K\.exemple\w+/, `horsProgramme: [{ competence: ${pris(au('cp', false))}`)
     modele.fictives.forEach((fic, i) => { t = t.replaceAll(fic, reelles[i] ?? reelles[0]) })
-    t = t.replace(/\/\/ Programme :[\s\S]*?\n(?=import)/, '// Programme : les compétences de src/data/programme.ts (K.…) et le domaine (D.…) de l\'exercice. À ADAPTER aux niveaux : un niveau\n// sans compétence au programme est refusé par `definir`.\n')
+    // les niveaux : ceux du modèle où une compétence donnée est au programme (un niveau sans compétence est refusé par `definir`),
+    // chacun avec ses réglages ; une fiche par compétence sur le premier niveau qui la porte
+    t = reecrireNiveaux(t)
+    t = t.replace(/Chaque niveau garde celles qui sont à son programme : ici le CP[^\n]*\n {2}\/\/ qu'une[^\n]*\n/, 'Chaque niveau garde celles qui sont à son programme.\n  // `sauf: [K.…]` écarte une compétence d\'un niveau.\n')
+    t = t.replace(/\/\/ Programme :[\s\S]*?\n(?=import)/, '// Programme : les compétences de src/data/programme.ts (K.…) et le domaine (D.…) de l\'exercice ; les niveaux ci-dessous sont ceux où\n// elles sont au programme (à compléter : les autres classes, les bonus, les écarts assumés : voir ../exemple/definition.ts).\n')
   }
   if (modeleNom === 'corpus') t = t.replaceAll('data/exemple-corpus.ts', `data/${id}.ts`)
   sortie.set(`src/exercices/${id}/${f}`, t)
@@ -125,7 +149,7 @@ function inserer(f, repere, ajout, avant = true) {
 }
 inserer('src/exercices/index.ts', '// nouveau:imports', `import { module as ${nom} } from './${id}/index.ts'\n`)
 inserer('src/exercices/index.ts', '  // nouveau:registre', `  ${nom},\n`)
-inserer('src/router/index.ts', '  // nouveau:routes', `  { path: '${route}', component: () => import('../views/${matiere}/${nomVue}.vue') },\n`)
+inserer('src/views/exercices.ts', '  // nouveau:vues', `  '${route}': () => import('./${matiere}/${nomVue}.vue'),\n`)
 for (const l of CODES) {
   const f = `src/langues/${l}/textes/index.ts`
   inserer(f, "import { AVEC_DEV }", `import ${nom} from './${nom}.ts'\n`)
@@ -147,9 +171,9 @@ try {
 
 console.log(`✓ exercice « ${id} » créé : ${route}
   src/exercices/${id}/   ${vue}   textes ${textesFr} et ${textesBr}
-  inscrit dans src/exercices/index.ts, src/router/index.ts et les index de src/langues/{fr,br}/textes/
+  inscrit dans src/exercices/index.ts, src/views/exercices.ts et les index de src/langues/{fr,br}/textes/
 Ensuite :
   1. adapter définition, générateur, fiche et textes (les commentaires du modèle expliquent chaque choix) ;
-  2. npm run types && npm run lint && npm run i18n && node tests/exercices.test.mjs ;
+  2. npm run types && npm run lint && npm run i18n && node tests/exercices.test.mjs ;   (l'exercice apparaît sur /${matiere} et sur ${route}, avec ses fiches dans les PDF)
   3. npm run instantanes -- --maj ${id}   (les instantanés de l'exercice, une fois la fiche stable) ;
   4. traduire le breton des textes (marqué « br: à relire »).`)

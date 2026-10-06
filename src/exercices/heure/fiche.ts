@@ -1,9 +1,16 @@
-// Lire l'heure — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche().
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; police et cssPolices : usePoliceFiche() dans l'app (Andika par défaut)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
-import { svgHorloge } from './horloge.js'
-import { ecrit, ecritDuree, hm } from './generateur.js'
+// Lire l'heure — fiche imprimable : la mise en page du tirage de `questionsFiche`. Pure (lisible par node) ; les horloges sont dessinées
+// par horloge.ts, le même dessin que dans le jeu. Une seule mise en page pour toutes les fiches de l'exercice (bilan, par compétence).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type DEFINITION from './definition.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type { CONTENU } from './textes.ts'
+import { svgHorloge } from './horloge.ts'
+import { aideMinutesPossible, ecrit, ecritDuree, hm } from './generateur.ts'
+import type { Tirage } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       h2 { font-size: 1.05rem; margin: 1rem 0 .3rem; }
@@ -18,8 +25,9 @@ const CSS = `
       table.emploi { border-collapse: collapse; margin: .3cm 0; }
       table.emploi td, table.emploi th { border: 1px solid #555; padding: .15cm .4cm; text-align: left; }`
 
-export function fiche({ questions: x, reglages, T, langue, police, cssPolices }) {
-  const opt = { aideMinutes: reglages.aideMinutes, taille: '3.8cm', impression: true, libelle: T('horloge') }
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Tirage, Cle>): string {
+  // les minutes autour du cadran : pas au CP, qui ne lit que les heures entières
+  const opt = { aideMinutes: reglages.aideMinutes && aideMinutesPossible(x.niveau), taille: '3.8cm', impression: true, libelle: T('horloge') }
   const cellLire = x.aLire.map((t, i) => `<div class="cell">
       <div class="num">${i + 1}.</div>${svgHorloge(t.h, t.m, opt)}
       <div class="rep">${x.sansMinutes ? '______ h' : '______ h ______'}</div></div>`).join('')
@@ -33,14 +41,14 @@ export function fiche({ questions: x, reglages, T, langue, police, cssPolices })
     : []
   if (x.journee) {
     extra += `<h2>${T('ficheJourneeTitre')}</h2><p class="consigne">${T('ficheJourneeConsigne')}</p>
-      ${x.journee.map((l, i) => `<div class="ligne">${i + 1}. ${ecrit(l.h, l.m)} ${T('moments')[l.moment].suffixe} &nbsp;→&nbsp; ${x.sansMinutes ? '________ h' : '________ h ________'}</div>`).join('')}`
+      ${x.journee.map((l, i) => `<div class="ligne">${i + 1}. ${ecrit(l.h, l.m)} ${T(`moments.${l.moment}.suffixe`)} &nbsp;→&nbsp; ${x.sansMinutes ? '________ h' : '________ h ________'}</div>`).join('')}`
     corrige.push(`<p><b>${T('corrigeJournee')} :</b> ${x.journee.map((l, i) => `${i + 1}. ${ecrit(l.h24, l.m)}`).join(' — ')}</p>`)
   }
   if (x.durees) {
     extra += `<h2>${T('ficheDureesTitre')}</h2>
-      ${x.durees.map((d, i) => `<div class="ligne">${i + 1}. ${d.sous === 'apres'
-        ? T('ficheDureeApres', { debut: d.ecritDebut, duree: d.ecritDuree })
-        : T('ficheDureeCombien', { act: d.act, debut: d.ecritDebut, fin: d.ecritFin })}</div>`).join('')}`
+      ${x.durees.map((d, i) => `<div class="ligne">${i + 1}. ${d.act
+        ? T(`ficheDureeCombien.${d.act.genre}`, { nom: d.act.nom, debut: d.ecritDebut, fin: d.ecritFin })
+        : T('ficheDureeApres', { debut: d.ecritDebut, duree: d.ecritDuree })}</div>`).join('')}`
     corrige.push(`<p><b>${T('corrigeDurees')} :</b> ${x.durees.map((d, i) => `${i + 1}. ${d.attendu}`).join(' — ')}</p>`)
   }
   if (x.conversions) {
@@ -53,8 +61,8 @@ export function fiche({ questions: x, reglages, T, langue, police, cssPolices })
     extra += `<h2>${T('ficheEmploiTitre')}</h2>
       <table class="emploi"><tr><th>${T('debut')}</th><th>${T('fin')}</th><th>${T('activite')}</th></tr>
       ${lignes.map(l => `<tr><td>${hm(l.debut)}</td><td>${hm(l.fin)}</td><td>${l.nom}</td></tr>`).join('')}</table>
-      <div class="ligne">1. ${T('emploiDebutQ', { nom: a.nom })} ________________</div>
-      <div class="ligne">2. ${T('emploiDureeQ', { nom: b.nom })} ________________</div>
+      <div class="ligne">1. ${T('emploiDebutQ', { nom: a.phrase })} ________________</div>
+      <div class="ligne">2. ${T('emploiDureeQ', { nom: b.phrase })} ________________</div>
       <div class="ligne">3. ${T('emploiQuoiQ', { ecrit: hm(c.debut + 10) })} ________________</div>`
     corrige.push(`<p><b>${T('ficheEmploiTitre')} :</b> 1. ${hm(a.debut)} — 2. ${ecritDuree(b.fin - b.debut)} — 3. ${c.nom}</p>`)
   }

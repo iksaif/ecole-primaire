@@ -1,0 +1,53 @@
+// Textes de l'interface — lire l'heure (français) : la page et le jeu. Source des clés : br/textes/heure.ts doit avoir exactement les
+// mêmes. Les énoncés, l'heure dite en lettres et la fiche sont dans le catalogue de contenu de l'exercice :
+// src/exercices/heure/textes.ts (« Quelle heure est-il ? », début, fin, activité, rappel : là aussi). Mots communs : section `communs`.
+export default {
+  titre: "Lire l'heure",
+  description: 'Heures, demies, quarts sur une horloge',
+  precision: 'Précision',
+  aideCp: 'Au CP : les heures pile seulement, de 1 h à 12 h.',
+  aideCe1: "Au CE1 : heures pile, demi-heures et quarts d'heure. Les 5 minutes sont un bonus.",
+  reponseLire: "Réponse (lire l'heure)",
+  propositions4: '4 propositions',
+  jEcris: "J'écris l'heure",
+  aide: 'Aide',
+  afficherMinutes: 'Afficher les minutes autour du cadran',
+  nbHorloges: 'Horloges par exercice',
+  legH: 'petite aiguille = heures',
+  legM: 'grande aiguille = minutes',
+  placeAiguilles: 'Place les aiguilles pour afficher',
+  glisser: 'Fais glisser les aiguilles avec le doigt, ou utilise les boutons.',
+  petiteAiguille: 'Petite aiguille (heures)',
+  grandeAiguille: 'Grande aiguille (minutes)',
+  // noms accessibles des boutons de réglage et des horloges à choisir (lecteurs d'écran)
+  reculerHeure: "Reculer la petite aiguille d'une heure",
+  avancerHeure: "Avancer la petite aiguille d'une heure",
+  reculerMinutes: 'Reculer la grande aiguille de {n} min',
+  avancerMinutes: 'Avancer la grande aiguille de {n} min',
+  choixHorloge: 'Horloge {n}',
+  ecrisNumerique: '(écris-la comme sur une horloge numérique)',
+  maintenant: 'Maintenant',
+  plusTard: 'Plus tard',
+  complete: 'Complète',
+  lisEmploi: "Lis l'emploi du temps.",
+  heures: 'Heures',
+  minutes: 'Minutes',
+  passer: 'Passer ⏭',
+  passe: '(passé)',
+  // exercices et précisions (réglages)
+  exercices: {
+    lire: "Lire l'heure",
+    placer: 'Placer les aiguilles',
+    journee: 'Matin / après-midi',
+    duree: 'Durées',
+    conversion: 'h et min',
+    emploi: 'Emploi du temps',
+  },
+  precisions: {
+    heure: 'Heures pile',
+    demi: 'Demi-heures',
+    quart: "Quarts d'heure",
+    cinq: '5 minutes',
+    minute: 'À la minute près',
+  },
+} as const

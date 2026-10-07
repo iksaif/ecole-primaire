@@ -30,6 +30,8 @@ export default {
   composantsConsigne: 'Consigne parlée',
   composantsConsigneFr: 'Compte les billes dans la boîte.',
   composantsConsigneBr: 'Kontit ar billoù er voest.',
+  assistantTitre: 'Visite guidée de l’accueil',
+  assistantDescription: 'rouvre l’assistant de la première visite sur l’accueil, même s’il a déjà été vu (rien n’est effacé)',
   couvertureTitre: 'Couverture du programme',
   couvertureDescription: 'chaque compétence du programme × chaque classe : ce qui la couvre dans la base (exercices, affiches, fiches), ce qui attend un report, les trous',
   couvertureIntro: 'Une case par compétence et par classe où elle est au programme (src/data/programme.ts). Survoler une case : les ressources qui la couvrent.',

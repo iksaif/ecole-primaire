@@ -22,13 +22,15 @@ export function trouverChrome() {
 }
 export const lancerNavigateur = () => chromium.launch({ executablePath: trouverChrome() })
 
-// Contexte de navigateur avec langue d'interface et sans l'avis de traduction ; graine de hasard optionnelle
-export async function contexte(navigateur, { langue = 'fr', regionale, graine, viewport = { width: 1100, height: 900 } } = {}) {
+// Contexte de navigateur avec langue d'interface, sans l'avis de traduction ni la visite guidée de la première visite
+// (`assistant: true` pour la garder : tests/assistant.test.mjs) ; graine de hasard optionnelle
+export async function contexte(navigateur, { langue = 'fr', regionale, graine, viewport = { width: 1100, height: 900 }, assistant = false } = {}) {
   const ctx = await navigateur.newContext({ viewport })
-  await ctx.addInitScript(([l, r, g]) => {
+  await ctx.addInitScript(([l, r, g, a]) => {
     try {
       localStorage.setItem('ep_langue_interface', JSON.stringify(l))
       localStorage.setItem('ep_avis_traduction_vu', 'true')
+      if (!a) localStorage.setItem('ep_assistant_vu', 'true')
       if (r !== undefined) localStorage.setItem('ep_langue_regionale', JSON.stringify(r))
     } catch {}
     if (g != null) {
@@ -36,7 +38,7 @@ export async function contexte(navigateur, { langue = 'fr', regionale, graine, v
       Math.random = () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
       window.__reset = () => { s = g }
     }
-  }, [langue, regionale, graine])
+  }, [langue, regionale, graine, assistant])
   return ctx
 }
 

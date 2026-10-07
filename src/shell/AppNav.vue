@@ -1,11 +1,12 @@
 <template>
   <!-- barre de navigation : logo · rubriques · recherche · langue · classe · profil · réglages. Le profil enfant n'a que le logo,
-       la classe (verrouillée) et le profil ; au téléphone (≤ 640 px) : logo, recherche, classe, ☰ (le menu porte le reste). -->
+       la classe (verrouillée) et le profil ; au téléphone (≤ 640 px) : logo, recherche, classe, ☰ (le menu porte le reste).
+       `data-repere` : les éléments que la visite guidée montre (src/shell/assistant.ts). -->
   <header class="nav" :class="{ enfant, regional: modeRegionalSeul }">
     <RouterLink to="/" class="logo" :aria-label="t('shell.logoTitre', { nom: SITE.nom })">{{ SITE.emoji }} {{ SITE.nom }}</RouterLink>
     <nav v-if="!enfant" class="rubriques" :aria-label="t('shell.barre.rubriques')">
       <ul class="nav-links">
-        <li v-for="r in liens" :key="r.id"><LienRubrique :rubrique="r" /></li>
+        <li v-for="r in liens" :key="r.id" :data-repere="r.id === 'programme' ? 'programme' : undefined"><LienRubrique :rubrique="r" /></li>
         <!-- entrée de développement : l'emoji seul (le nom est dans l'étiquette) pour ne pas allonger la barre -->
         <li v-if="AVEC_DEV"><RouterLink to="/dev" :class="{ 'router-link-active': route.path.startsWith('/dev') }" :aria-label="t('shell.barre.dev')" :title="t('shell.barre.dev')">{{ EMOJI_BARRE.dev }}</RouterLink></li>
       </ul>
@@ -16,11 +17,11 @@
         <span aria-hidden="true">←</span> <Drapeau langue="fr" aria-hidden="true" /><span class="retour-long" aria-hidden="true">{{ tf('shell.langue.retour') }}</span><span class="retour-court" aria-hidden="true">{{ tf('shell.langue.retourCourt') }}</span>
       </button>
       <BoutonRecherche v-if="!enfant" class="cache-regional" />
-      <SelecteurLangue v-if="!enfant" class="grand-ecran" />
-      <SelecteurClasse />
-      <PastilleProfil :class="{ 'grand-ecran': !enfant }" />
+      <SelecteurLangue v-if="!enfant" class="grand-ecran" data-repere="langue" />
+      <SelecteurClasse data-repere="classe" />
+      <PastilleProfil :class="{ 'grand-ecran': !enfant }" data-repere="profil" />
       <RouterLink v-if="!enfant" to="/parametres" class="nbtn grand-ecran" :aria-label="t('shell.barre.reglages')" :title="t('shell.barre.reglages')">{{ EMOJI_BARRE.reglages }}</RouterLink>
-      <MenuMobile v-if="!enfant" :rubriques="liens" />
+      <MenuMobile v-if="!enfant" :rubriques="liens" data-repere="menu" />
     </div>
   </header>
 </template>

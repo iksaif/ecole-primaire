@@ -33,6 +33,8 @@ export default {
   composantsConsigne: 'Kemenn lavaret', // br: à relire
   composantsConsigneFr: 'Compte les billes dans la boîte.',   // français voulu : lu avec la voix française, même dans l'interface en breton
   composantsConsigneBr: 'Kontit ar billoù er voest.', // br: à relire
+  assistantTitre: 'Gweladenn heñchet an degemer', // br: à relire
+  assistantDescription: 'addigeriñ skoazeller ar weladenn gentañ war an degemer, ha pa vefe bet gwelet dija (netra n’eo diverket)', // br: à relire
   couvertureTitre: 'Golo ar programm', // br: à relire
   couvertureDescription: 'pep barregezh eus ar programm × pep klas : ar pezh a c’holo anezhi en diazez, ar pezh a c’hortoz bezañ dizougen, an toulloù', // br: à relire
   couvertureIntro: 'Ur gaslig evit pep barregezh ha pep klas ma’z eo er programm (src/data/programme.ts). Tremen war ur gaslig : an danvezioù a c’holo anezhi.', // br: à relire

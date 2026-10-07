@@ -17,6 +17,10 @@
       <ul class="about-list">
         <li v-for="ligne in liste('apropos.commentListe')" :key="ligne">{{ ligne }}</li>
       </ul>
+      <p class="about-para revoir">
+        {{ t('assistant.revoir.aide') }}
+        <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)">{{ t('assistant.revoir.bouton') }}</button>
+      </p>
 
       <h2 class="about-h2">🔤 {{ t('apropos.polices') }}</h2>
       <p class="about-para">{{ t('apropos.policesTexte') }}</p>
@@ -36,13 +40,16 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { SITE } from '../sites.ts'
 import IconeMatiere from '../shell/IconeMatiere.vue'
+import { revoirAssistant } from '../shell/assistant.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { LANGUES, CODES, LANGUE_SOURCE } from '../langues/registre.ts'
 import { contenu } from '../langues/traduire.ts'
 
 const { t, liste } = useLangue()
+const router = useRouter()
 const contenuSource = contenu(LANGUE_SOURCE)
 // langues proposées par le site dont la traduction reste à relire
 const nonRelues = CODES.filter(c => SITE.languesInterface.includes(c) && !LANGUES[c].traductionRelue).map(c => LANGUES[c])
@@ -62,6 +69,7 @@ const erreur = computed(() => coupe(t('apropos.contribuerErreur', { contact: MAR
 .avis-fr { background: #f4f6fb; border-radius: 8px; padding: .6rem .9rem; font-size: .9rem; margin-top: 1rem; }
 .about-box { max-width: 720px; margin: 0 auto; background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem 2rem 2.5rem; }
 .titre { margin-top: 1.5rem; }
+.revoir { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: .8rem; }
 .disclaimer { display: flex; align-items: flex-start; gap: 1rem; background: #fff8e1; border: 2px solid var(--orange); border-radius: 10px; padding: 1rem 1.25rem; font-size: .95rem; line-height: 1.5; }
 .disclaimer-icon { font-size: 1.8rem; flex-shrink: 0; }
 .about-h2 { font-size: 1.1rem; font-weight: 800; margin: 1.5rem 0 .5rem; color: var(--bleu); }

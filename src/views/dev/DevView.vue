@@ -36,7 +36,8 @@ import { REGISTRE } from '../../exercices/index.ts'
 import { ref, computed, onMounted } from 'vue'
 import type { ModuleAffiche } from '../../affiches/types.ts'
 
-type CleDev = Extract<CleTexte, `dev.${string}`>
+// clés sans paramètre (celles de la page de couverture qui en ont ne sont pas listées ici)
+type CleDev = Exclude<Extract<CleTexte, `dev.${string}`>, 'dev.couvertureBase' | 'dev.couvertureAvecAncien' | 'dev.couvertureAReporter'>
 
 const { t, langue } = useLangue()
 interface Exemple { titre: string, to: string, description: string, fichiers: string }
@@ -61,6 +62,7 @@ const EXEMPLES = computed<Exemple[]>(() => [
 // pages de développement qui ne sont pas des exemples d'un registre
 const PAGES: { titre: CleDev, to: string, description: CleDev, fichiers: string }[] = [
   { titre: 'dev.composantsTitre', to: '/dev/composants', description: 'dev.composantsDescription', fichiers: 'src/noyau/ et src/views/dev/ComposantsView.vue' },
+  { titre: 'dev.couvertureTitre', to: '/dev/couverture', description: 'dev.couvertureDescription', fichiers: 'src/views/dev/CouvertureDevView.vue (programme : src/data/programme.ts)' },
 ]
 const DOCS: { fichier: string, description: CleDev }[] = [
   { fichier: 'src/exercices/README.md', description: 'dev.docExercice' },

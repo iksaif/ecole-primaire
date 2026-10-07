@@ -30,7 +30,8 @@ const definition = definirAffiche({
   hTitre: 14,
   // dans la langue régionale, les nombres de cette langue (18, 20/40/60/80 en breton : src/langues/<langue>/nombres.ts)
   autresDomaines: [D.regionaleMots],
-  competences: [K.nombresEnLettres, K.nombresLangueRegionale],
+  // la comptine jusqu'à 10 (unités) et les nombres au-delà de 10 dans la langue régionale
+  competences: [K.nombresEnLettres, K.nombresJusqua10LangueRegionale, K.nombresLangueRegionale],
   reglages: {
     sections: cases(SECTIONS, { defaut: [...CINQ.slice(0, 4)] }),
     miseEnPage: choix(['affiches', 'fiche']),
@@ -53,11 +54,15 @@ const definition = definirAffiche({
   },
   // une variante par fiche toute prête (slugs de `main`) ; écriture en lettres : jusqu'à 50 au CP, 100 dès le CE1
   variantes: {
+    // petites séries, plus lisibles que le tableau de 0 à 100 : les unités (0 → 9), 10 → 20 (`dizaine-1`), les dizaines (10 → 100)
+    unites: { classes: ['cp', 'ce1'], slug: 'nombres-en-lettres-unites', reglages: { sections: une('unites') }, sauf: [K.nombresLangueRegionale] },
+    dizaines: { classes: ['ce1', 'ce2'], slug: 'nombres-en-lettres-dizaines-10-100', reglages: { sections: une('dizaines') }, horsProgramme: HORS_CE2_REGIONALE },
     cent: { classes: ['ce1', 'ce2'], slug: 'nombres-en-lettres-0-100', reglages: { sections: une('cent') }, horsProgramme: HORS_CE2_REGIONALE },
     'unites-milliers': { classes: ['ce2'], slug: 'nombres-en-lettres-dizaines-centaines', reglages: { sections: une(...CINQ) } },
     ...Object.fromEntries(DIZAINES.map((d, i) => [`dizaine-${i + 1}`, {
       classes: i < 4 ? ['cp', 'ce1'] as const : ['ce1', 'ce2'] as const, slug: `nombres-en-lettres-${(i + 1) * 10}-${(i + 2) * 10}`, reglages: { sections: une(d) },
-      ...(i < 4 ? {} : { horsProgramme: HORS_CE2_REGIONALE }),
+      // au-delà de 10 : pas la comptine jusqu'à 10
+      ...(i < 4 ? { sauf: [K.nombresJusqua10LangueRegionale] } : { horsProgramme: HORS_CE2_REGIONALE }),
     }])),
   },
 })

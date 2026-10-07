@@ -27,12 +27,12 @@
               {{ T(`axe.${axe.id}.${valeur}`) }}</button>
           </div>
         </div>
-        <p class="axe-classes">{{ T(cleVariante(config.variante, 'court')) }} · {{ definition.variantes[config.variante]?.classes.map(n => n.toUpperCase()).join(' · ') }}</p>
+        <p class="axe-classes">{{ T(cleVariante(config.variante, 'court')) }} · {{ texteClasses(definition.variantes[config.variante]?.classes ?? []) }}</p>
       </template>
       <div v-else class="btn-group" role="group" :aria-labelledby="`${idBase}-version`">
         <button type="button" v-for="(v, id) in definition.variantes" :key="id" class="level-btn" :data-valeur="id"
           :class="{ active: config.variante === id }" :aria-pressed="config.variante === id" @click="config = reglagesApresVariante(definition, config, id)">
-          {{ T(cleVariante(id, 'court')) }} <small>· {{ v.classes.map(n => n.toUpperCase()).join(' · ') }}</small></button>
+          {{ T(cleVariante(id, 'court')) }} <small>· {{ texteClasses(v.classes) }}</small></button>
       </div>
     </section>
 
@@ -120,6 +120,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, useId } from 'vue'
+import { texteClasses } from '../data/classes.ts'
 import ApercuImpression from '../noyau/ApercuImpression.vue'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
 import ChoixReglage from '../noyau/ChoixReglage.vue'

@@ -5,8 +5,8 @@
 import { contenu } from '../../../src/langues/traduire.ts'
 import { LANGUES } from '../../../src/langues/registre.ts'
 import type { Langue } from '../../../src/langues/registre.ts'
-import { NIVEAUX } from '../../../src/data/classes.ts'
-import { etiquetteClasses, langueDuTexte, texteDe } from '../../../src/telechargements/recherche.ts'
+import { texteClasses } from '../../../src/data/classes.ts'
+import { langueDuTexte, texteDe } from '../../../src/telechargements/recherche.ts'
 import type { Entree } from '../../../src/telechargements/types.ts'
 import { DOSSIER_FICHES } from '../../../src/telechargements/types.ts'
 import { absolue, adresseFiche, alternativesDe, langueDePage, siteDeReference } from './adresses.ts'
@@ -88,7 +88,7 @@ function corps(ctx: ContexteStatique, e: Entree, langue: Langue, titre: string):
       ${pdfs}
     </ul>
     <dl>
-      <dt>${echapper(t('statique.classes'))}</dt><dd>${echapper(etiquetteClasses(e.niveaux, NIVEAUX))}</dd>
+      <dt>${echapper(t('statique.classes'))}</dt><dd>${echapper(texteClasses(e.niveaux))}</dd>
       ${domaine ? `<dt>${echapper(t('statique.domaine'))}</dt><dd>${echapper(texteDe(domaine.nom, langue))}</dd>` : ''}
     </dl>
     ${competences ? `<h2>${echapper(t('statique.competences'))}</h2>\n    <ul>\n      ${competences}\n    </ul>` : ''}

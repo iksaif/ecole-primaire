@@ -1,7 +1,7 @@
 <template>
   <div class="copier">
     <button type="button" class="gros-bouton" @click="copier"><span aria-hidden="true">{{ EMOJI_ACCUEIL.copier }}</span> {{ t('accueil.copier') }}</button>
-    <p class="aide">{{ t('accueil.copierAide', { classes: classesEnTexte(contexte.classes) }) }}</p>
+    <p class="aide">{{ t('accueil.copierAide', { classes: texteClasses(contexte.classes) }) }}</p>
     <p class="etat" role="status" aria-live="polite">{{ message }}<template v-if="lien"> <code>{{ lien }}</code></template></p>
   </div>
 </template>
@@ -12,7 +12,8 @@
 import { ref } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI_ACCUEIL, classesEnTexte } from '../ressources/composants/presentation.ts'
+import { texteClasses } from '../data/classes.ts'
+import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
 
 const { t } = useLangue()
 const { contexte, lienFamilles } = useContexte()
@@ -22,7 +23,7 @@ async function copier(): Promise<void> {
   const adresse = lienFamilles()
   try {
     await navigator.clipboard.writeText(adresse)
-    message.value = t('accueil.copie', { classes: classesEnTexte(contexte.value.classes) })
+    message.value = t('accueil.copie', { classes: texteClasses(contexte.value.classes) })
     lien.value = ''
   } catch {
     message.value = t('accueil.copieEchec')

@@ -1,7 +1,7 @@
 <template>
   <section class="a-venir" aria-labelledby="a-venir-titre">
     <h2 id="a-venir-titre"><span aria-hidden="true">{{ EMOJI_ACCUEIL.aVenir }}</span> {{ t('matiere.aVenirTitre') }}</h2>
-    <p class="texte">{{ t('matiere.aVenirTexte', { classes: classesEnTexte(classes) }) }}</p>
+    <p class="texte">{{ t('matiere.aVenirTexte', { classes: texteClasses(classes) }) }}</p>
     <ul class="domaines">
       <li v-for="d in domaines" :key="d" class="domaine" :data-domaine="d">
         <span class="emoji" aria-hidden="true">{{ EMOJI_DOMAINE[d] }}</span>
@@ -19,7 +19,8 @@
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
 import type { Classe, DomaineId } from '../ressources/types.ts'
-import { EMOJI_ACCUEIL, classesEnTexte, cyclesDuDomaine, nomDomaine } from '../ressources/composants/presentation.ts'
+import { texteClasses } from '../data/classes.ts'
+import { EMOJI_ACCUEIL, cyclesDuDomaine, nomDomaine } from '../ressources/composants/presentation.ts'
 
 defineProps<{ domaines: readonly DomaineId[], classes: readonly Classe[] }>()
 const { t, langueAffichee } = useLangue()

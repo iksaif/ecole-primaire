@@ -2,7 +2,7 @@
 // pures des pages (pli des domaines, matières, présentation des ressources).
 import { LIMITE_RECENTS, ajouterRecent, anciennete, idsParRoute, lireRecents, retenirExistants } from '../src/ressources/recents.ts'
 import { avecPli, estOuvert, lirePlis } from '../src/ressources/composants/pli.ts'
-import { classesEnTexte, cyclesDuDomaine, genreDe, lienImprimer, majuscule, nomDomaine } from '../src/ressources/composants/presentation.ts'
+import { cyclesDuDomaine, genreDe, lienImprimer, majuscule, nomDomaine } from '../src/ressources/composants/presentation.ts'
 import { MATIERES_PAGE, cheminFiches, cheminMatiere, matiereDeLaRoute } from '../src/pages/matieres.ts'
 import { REGIONALES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
@@ -52,7 +52,7 @@ console.log('Matières et présentation')
 verifier(MATIERES_PAGE.join() === 'maths,francais,monde', 'matières à page /<matière>')
 verifier(matiereDeLaRoute('/maths') === 'maths' && matiereDeLaRoute('/monde') === 'monde' && matiereDeLaRoute('/brezhoneg') === null && matiereDeLaRoute('/maths/fiches') === null, 'matière lue de la route')
 verifier(cheminMatiere('francais') === '/francais' && cheminFiches('monde') === '/monde/fiches', 'adresses de la matière et de ses fiches prêtes')
-verifier(classesEnTexte(['ce1', 'ce2']) === 'CE1 + CE2' && majuscule('brezhoneg') === 'Brezhoneg', 'classes en texte, majuscule')
+verifier(majuscule('brezhoneg') === 'Brezhoneg', 'majuscule')
 verifier(nomDomaine('nombres-calcul', 'fr') === 'Nombres et calcul' && nomDomaine('nombres-calcul', REGIONALES[0]) !== '' , 'nom de domaine (catalogue de la langue)')
 verifier(cyclesDuDomaine('nombres-calcul', ['ce1']).join() === '2' && cyclesDuDomaine('nombres-calcul', []).length >= 3, 'cycles du domaine pour les classes choisies')
 const base = { badges: { jeu: true, imprimable: true }, route: '/maths/heure' }

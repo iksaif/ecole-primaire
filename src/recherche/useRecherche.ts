@@ -6,6 +6,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
+import { texteClasses } from '../data/classes.ts'
 import { AVEC_DEV } from '../dev.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { ressourcesCompetences } from '../ressources/catalogue.ts'
@@ -34,7 +35,7 @@ export function useRecherche() {
     ? construireIndexRecherche(catalogue.value, ressourcesCompetences(AVEC_DEV), pagesDuSite(router.getRoutes()), langueAffichee.value)
     : []))
   const classes = computed(() => contexte.value.classes)
-  const classesTexte = computed(() => classes.value.map(c => c.toUpperCase()).join(', '))
+  const classesTexte = computed(() => texteClasses(classes.value))
   const trouves = computed(() => chercher(index.value, requete.value, { classes: classes.value, toutesLesClasses: toutesLesClasses.value }))
   const groupes = computed(() => groupesAffiches(trouves.value.groupes))
   const lignes = computed(() => aplatir(groupes.value))

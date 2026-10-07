@@ -50,14 +50,5 @@ export function parDomaine(index: IndexFiches, entrees: readonly EntreeIndex[]):
     .filter(g => g.entrees.length)
 }
 
-/** Libellé d'un ensemble de classes : « CE1 », « GS · CP », « CE1 → CM2 » (au-delà de deux classes qui se suivent). */
-export function etiquetteClasses(classes: readonly Classe[], ordre: readonly Classe[]): string {
-  const rangs = classes.map(c => ordre.indexOf(c)).sort((a, b) => a - b)
-  const suivies = rangs.every((r, i) => i === 0 || r === rangs[i - 1] + 1)
-  const nom = (r: number) => ordre[r].toUpperCase()
-  if (rangs.length > 2 && suivies) return `${nom(rangs[0])} → ${nom(rangs[rangs.length - 1])}`
-  return rangs.map(nom).join(' · ')
-}
-
 /** La langue dans laquelle `texteDe` rend le texte (attribut `lang`) : celle demandée si le texte l'a, sinon le français. */
 export const langueDuTexte = (t: Texte, langue: string): string => (t[langue] ? langue : 'fr')

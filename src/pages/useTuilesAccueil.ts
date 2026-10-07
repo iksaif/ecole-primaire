@@ -7,7 +7,8 @@ import type { Langue } from '../langues/registre.ts'
 import { contenu } from '../langues/traduire.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { cheminRegional } from '../router/chemins.ts'
-import { EMOJI_MATIERE, classesEnTexte, majuscule } from '../ressources/composants/presentation.ts'
+import { texteClasses } from '../data/classes.ts'
+import { EMOJI_MATIERE, majuscule } from '../ressources/composants/presentation.ts'
 import { filtrerParClasses, filtrerParMode } from '../ressources/filtres.ts'
 import { useRessources } from '../ressources/useRessources.ts'
 import { MATIERES_PAGE, cheminMatiere } from './matieres.ts'
@@ -22,7 +23,7 @@ export function useTuilesAccueil() {
   const { contexte } = useContexte()
   const { catalogue } = useRessources()
   const classes = computed(() => contexte.value.classes)
-  const classesTexte = computed(() => classesEnTexte(classes.value))
+  const classesTexte = computed(() => texteClasses(classes.value))
   const visibles = computed(() => filtrerParMode(catalogue.value, contexte.value.mode, contexte.value.regionale))
   const compte = (m: MatierePage): number => filtrerParClasses(visibles.value.filter(r => r.matiere === m), classes.value).length
   /** le nom dans la langue régionale active, à côté du nom affiché (« Matematik » sous « Maths ») ; rien si c'est la langue affichée */

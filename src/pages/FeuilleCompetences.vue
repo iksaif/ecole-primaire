@@ -6,7 +6,7 @@
     <ul>
       <li v-for="k in feuille.entree.competences" :key="k.id">
         <RouterLink :to="`/competence/${k.id}`" lang="fr"><strong>{{ k.libelle }}</strong></RouterLink>
-        <span v-if="feuille.domaine" class="domaine"> · {{ feuille.domaine.id ? EMOJI_DOMAINE[feuille.domaine.id] : '' }} {{ texteDe(feuille.domaine.nom, langueAffichee) }} · {{ k.niveaux.map(c => c.toUpperCase()).join(', ') }}</span>
+        <span v-if="feuille.domaine" class="domaine"> · {{ feuille.domaine.id ? EMOJI_DOMAINE[feuille.domaine.id] : '' }} {{ texteDe(feuille.domaine.nom, langueAffichee) }} · {{ texteClasses(k.niveaux) }}</span>
         <template v-if="k.source"> · <a :href="k.source.url" target="_blank" rel="noopener" :aria-label="`${t('feuille.programmePage', { page: k.source.page })} ${t('feuille.nouvelOnglet')}`">{{ t('feuille.programmeOfficiel') }} ↗</a></template>
       </li>
     </ul>
@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { useId } from 'vue'
+import { texteClasses } from '../data/classes.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
 import { texteDe } from '../telechargements/recherche.ts'

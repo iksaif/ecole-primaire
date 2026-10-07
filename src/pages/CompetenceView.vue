@@ -21,7 +21,7 @@
       <ul v-if="voisines.length" class="liste">
         <li v-for="k in voisines" :key="k.id">
           <RouterLink :to="adresseCompetence(k.id, null, reportes)" :lang="LANGUE_SOURCE"><span aria-hidden="true">{{ EMOJI.competence }}</span> {{ k.libelle }}</RouterLink>
-          <span class="niveaux"> · {{ k.niveaux.map(n => n.toUpperCase()).join(', ') }}</span>
+          <span class="niveaux"> · {{ texteClasses(k.niveaux) }}</span>
         </li>
       </ul>
       <p v-else class="vide">{{ t('competence.voisines.aucune') }}</p>
@@ -41,6 +41,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import { extraireParamsContexte } from '../contexte/url.ts'
+import { texteClasses } from '../data/classes.ts'
 import { competenceDe, domaineDe } from '../data/programme.ts'
 import type { CompetenceId } from '../data/programme.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'

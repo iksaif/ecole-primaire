@@ -3,7 +3,7 @@
 import type { RouteLocationRaw } from 'vue-router'
 import type { Vue } from '../../contexte/types.ts'
 import { domaineDe } from '../../data/programme.ts'
-import { CYCLE_DE } from '../../data/classes.ts'
+import { CYCLE_DE, estMaternelle } from '../../data/classes.ts'
 import { LANGUES, LANGUE_SOURCE } from '../../langues/registre.ts'
 import { lireFeuille } from '../../langues/traduire.ts'
 import type { Classe, DomaineId, Langue, Matiere, RessourceDeContenu, Usage } from '../types.ts'
@@ -15,8 +15,11 @@ export const EMOJI_USAGE: Readonly<Record<Usage, string>> = { apprendre: '📘',
 export const EMOJI_VUE: Readonly<Record<Vue, string>> = { cartes: '▦', liste: '☰' }
 export const EMOJI_ACCUEIL = { programme: '📚', fiches: '📄', reprendre: '▶️', copier: '🔗', classe: '🎒', aVenir: '🚧' } as const
 
-/** « CE1 + CE2 » */
-export const classesEnTexte = (classes: readonly Classe[]): string => classes.map(c => c.toUpperCase()).join(' + ')
+/**
+ * L'école d'une classe, qui choisit l'article quand on lit une plage en entier (`ressource.plage`) : « de la PS » (maternelle),
+ * « du CP » (élémentaire). Plages : texteClasses et morceauxDeClasses (data/classes.ts).
+ */
+export const ecoleDe = (c: Classe): 'maternelle' | 'elementaire' => (estMaternelle(c) ? 'maternelle' : 'elementaire')
 
 export const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
 

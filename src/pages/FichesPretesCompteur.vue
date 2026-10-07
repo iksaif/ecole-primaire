@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { texteClasses } from '../data/classes.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import type { PageFiches } from '../telechargements/useFichesPage.ts'
 
@@ -12,7 +13,7 @@ const props = defineProps<{ page: PageFiches }>()
 const { t } = useLangue()
 const texte = computed(() => (props.page.toutes
   ? t('fichesPretes.compteurToutes', { n: props.page.resultats.length })
-  : t('fichesPretes.compteurClasses', { n: props.page.resultats.length, classes: props.page.selection.map(c => c.toUpperCase()).join(', ') })))
+  : t('fichesPretes.compteurClasses', { n: props.page.resultats.length, classes: texteClasses(props.page.selection) })))
 </script>
 
 <style scoped>

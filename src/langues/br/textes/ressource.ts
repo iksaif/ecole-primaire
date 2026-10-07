@@ -8,6 +8,12 @@ export default {
   imprimable: 'da voullañ', // br: à relire
   classes: 'Klasoù', // br: à relire
   classeChoisie: '(klas dibabet)', // br: à relire
+  plage: {
+    phrase: '{debut} {fin}',
+    debut: { maternelle: 'eus ar {classe}', elementaire: 'eus ar {classe}' }, // br: à relire
+    fin: { maternelle: 'betek ar {classe}', elementaire: 'betek ar {classe}' }, // br: à relire
+  },
+  plageChoisie: { one: '(en o zouez ar c\'hlas dibabet : {classes})', other: '(en o zouez ar c\'hlasoù dibabet : {classes})' }, // br: à relire
   ouvrir: 'Digeriñ', // br: à relire
   imprimer: 'Moullañ', // br: à relire
   ouvrirTitre: 'Digeriñ : {titre}', // br: à relire

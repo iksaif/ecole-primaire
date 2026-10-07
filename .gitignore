@@ -38,3 +38,6 @@ couverture.html
 
 # Brouillons et plans temporaires (maquettes, études) : jamais versionnés, jamais poussés
 brouillons/
+
+# worktrees des agents (Claude Code)
+.claude/worktrees/

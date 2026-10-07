@@ -13,7 +13,7 @@ export default {
   donnees3: "Ma lakait un alc'hwez API Mistral (dre zibab), e vez kaset ar goulennoù war-eeun eus ho merdeer da Mistral AI.",
   donnees4: "Evel pep servijer web, an herberc'hier a vir kazetennoù teknikel (chomlec'h IP, pajenn goulennet) e-pad ur mare bevennet, evit surentez ar servij.",
   donnees5: "Evit gouzout peseurt pajennoù ha fichennoù a zo talvoudus, al lec'hienn a gas d'hor servijer ur sinal dizanv : pajenn gweladennet, fichenn moullet hag he arventennoù, yezh. N'eo liammet ouzh toupin, anaouder pe chomlec'h IP ebet, ha ne vez ket kaset ma c'houlenn ho merdeer chom hep bezañ heuliet (« Do Not Track »).", // br: à relire
-  contenus: 'Danvez',
+  contenus: "Endalc'had", // br: à relire
   contenusLicence: 'Dindan an aotre-implijout', // br: à relire
   contenusLicenceSuite: " emañ ar fichennoù hag an afichoù da voullañ : gallout a rit o moullañ, o luc'heilañ, o skignañ hag o azasaat, en ur venegiñ ar vammenn, hep implij kenwerzhel hag en ur rannañ ho stummoù dindan an hevelep aotre-implijout.", // br: à relire
   contenusTextes: 'Dindan an aotre-implijout', // br: à relire

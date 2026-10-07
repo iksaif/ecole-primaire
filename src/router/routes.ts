@@ -55,11 +55,11 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     // les affiches au format « définition » (src/affiches/) : une page, le formulaire générique (?affiche=<id>&variante=<v>)
     { path: '/imprimer/affiches', component: () => import('../pages/AfficheView.vue'), meta: { titre: 'routeur.titre.affiche' } },
     // anciennes adresses des affiches (liens externes, favoris, anciennes pages statiques) ; ?preset=<slug> : la variante de ce slug
-    { path: '/imprimer/alphabet', component: aVenir, beforeEnter: to => versAffiche('alphabet', to.query) },
-    { path: '/imprimer/nombres', component: aVenir, beforeEnter: to => versAffiche('nombres', to.query) },
-    { path: '/imprimer/calcul', component: aVenir, beforeEnter: to => versAffiche('tables', to.query) },
+    { path: '/imprimer/alphabet', component: aVenir, beforeEnter: to => versAffiche('alphabet', to.query), meta: { titre: 'routeur.titre.affiche' } },
+    { path: '/imprimer/nombres', component: aVenir, beforeEnter: to => versAffiche('nombres', to.query), meta: { titre: 'routeur.titre.affiche' } },
+    { path: '/imprimer/calcul', component: aVenir, beforeEnter: to => versAffiche('tables', to.query), meta: { titre: 'routeur.titre.affiche' } },
     // anciennes pages de l'app (production avant la base saine) : la page qui les remplace (anciennesAdresses.ts)
-    { path: '/imprimer/ecriture', component: aVenir, beforeEnter: to => versEcriture(to.query) },
+    { path: '/imprimer/ecriture', component: aVenir, beforeEnter: to => versEcriture(to.query), meta: { titre: 'routeur.titre.affiche' } },
     { path: '/imprimer', redirect: { path: '/telechargements' } },
     { path: '/lecture', redirect: to => ({ path: '/francais/lecture', query: to.query }) },
     { path: '/autres', redirect: to => ({ path: '/monde/quiz', query: to.query }) },

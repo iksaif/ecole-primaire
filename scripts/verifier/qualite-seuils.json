@@ -1,14 +1,14 @@
 {
   "max": {
     "brEnDur": 39,
-    "importsBr": 26,
+    "importsBr": 25,
     "niveauxEnTexte": 18,
     "vuesLongues": 1,
     "mathRandomVues": 2,
     "attentesFixes": 2,
     "erreursDeType": 0,
-    "importeursAncienSocle": 43,
-    "ancienMondeNonReporte": 118
+    "importeursAncienSocle": 40,
+    "ancienMondeNonReporte": 117
   },
   "min": {
     "couverture": 56.7,

@@ -2,7 +2,6 @@
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
 import { CLASSES, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
-import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import DICTEE from '../exercices/dictee/definition.js'
 
@@ -56,7 +55,6 @@ export const ACTIVITES = [
   { fiche: true, to: '/lecture', matiere: 'francais', domaine: 'lecture', rubrique: 'Lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
   { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: Object.keys(DICTEE.niveaux) },
   { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: Object.keys(GRAMMAIRE.niveaux) },
-  { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: Object.keys(CONJUGAISON.niveaux) },
 
 
   // ── Culture générale ──
@@ -69,7 +67,6 @@ const BR = {
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
   '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],
   '/francais/grammaire':   ['Yezhadur', 'Frazenn, natur ar gerioù, sujed, kenglotadurioù (e galleg)'],
-  '/francais/conjugaison': ['Displegañ', 'Displeg ar verboù (e galleg)'],
   '/lecture': ['Lenn ha silabennoù', 'Silabennoù, adsevel gerioù ha testennoù (e galleg)'],
   '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
 }
@@ -83,7 +80,6 @@ const COMPETENCES_ROUTES = {
   '/francais/dictee': Object.fromEntries(Object.entries(DICTEE.niveaux).map(([n, v]) => [n, v.competences])),
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
   '/francais/grammaire': Object.fromEntries(Object.entries(GRAMMAIRE.niveaux).map(([n, v]) => [n, v.competences])),
-  '/francais/conjugaison': Object.fromEntries(Object.entries(CONJUGAISON.niveaux).map(([n, v]) => [n, v.competences])),
   // compréhension : le mode « Lecture de textes » n'a pas encore de questions
   '/lecture': ['decodage'],
 }

@@ -3,10 +3,6 @@
 // le même fichier se lit dans l'app (Vite), par node (build, scripts) et dans les tests, sans import.meta.glob
 // (que node ne connaît pas). Un dossier de src/exercices/ absent d'ici fait échouer tests/exercices.test.mjs.
 // Les vues n'importent pas ce registre (il entraînerait tous les générateurs) : chacune importe son dossier.
-import conjugaisonDefinition from './conjugaison/definition.js'
-import * as conjugaisonGenerateur from './conjugaison/generateur.js'
-import * as conjugaisonFiche from './conjugaison/fiche.js'
-import { TEXTES as conjugaisonTextes } from './conjugaison/textes.js'
 import grammaireDefinition from './grammaire/definition.js'
 import * as grammaireGenerateur from './grammaire/generateur.js'
 import * as grammaireFiche from './grammaire/fiche.js'
@@ -78,7 +74,6 @@ import { TEXTES as dicteeTextes } from './dictee/textes.js'
 
 /** @type {ModuleExercice[]} */
 export const REGISTRE = [
-  { definition: conjugaisonDefinition, generateur: conjugaisonGenerateur, fiche: conjugaisonFiche, textes: conjugaisonTextes },
   { definition: grammaireDefinition, generateur: grammaireGenerateur, fiche: grammaireFiche, textes: grammaireTextes },
   { definition: dicteeDefinition, generateur: dicteeGenerateur, fiche: dicteeFiche, textes: dicteeTextes },
 ]

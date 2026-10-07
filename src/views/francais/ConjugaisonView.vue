@@ -1,43 +1,48 @@
 <template>
   <div class="container">
-    <h1>✍️ {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('conjugaison.titre') }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       :desactive="!nbPaires" @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="verbes" v-model="config.verbes" :titre="t('verbeAConjuguer')">
-        <template #valeur="{ valeur }">{{ verbeDe(valeur).inf }} <span class="verbe-groupe">{{ t(cleGroupe(valeur)) }}</span></template>
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="verbes" v-model="config.verbes" :titre="t('conjugaison.verbeAConjuguer')">
+        <template #valeur="{ valeur }">{{ infinitif(valeur) }} <span class="verbe-groupe">{{ nomGroupe(valeur) }}</span></template>
       </ChoixReglage>
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="temps" v-model="config.temps" :titre="t('temps')"
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="temps" v-model="config.temps" :titre="t('conjugaison.temps')"
         :libelle="nomTemps" />
 
-      <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('mode')"
-        :libelle="m => t(m)" :icone="m => (m === 'lacunes' ? '✏️' : '📝')" :description="m => t(m + 'Desc')" />
-    </ConfigExercice>
+      <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('conjugaison.mode')"
+        :libelle="m => t(`conjugaison.modes.${m}`)" :icone="m => (m === 'lacunes' ? '✏️' : '📝')" :description="m => t(`conjugaison.modesDesc.${m}`)" />
+      <ChoixReglage v-if="mode === 'imprimer'" :definition="DEFINITION" :niveau="config.niveau" cle="fiche" v-model="config.fiche" :titre="t('conjugaison.ficheFormat')"
+        :libelle="f => t(`conjugaison.ficheFormats.${f}`)" />
+    </CadreExercice>
 
     <!-- Exercice : un tableau, une question par ligne, dans l'ordre -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="conj-header">
-        <span class="conj-verb">{{ verbeDe(q.verbe).inf }}</span>
+        <span class="conj-verb">{{ infinitif(q.verbe) }}</span>
         <span class="conj-temps">{{ nomTemps(q.temps) }}</span>
       </div>
 
+      <!-- une ligne à remplir à la fois : les lignes faites montrent la bonne forme, les suivantes attendent (retour du 2026-10-07) -->
       <div class="conj-table">
-        <div v-for="(l, i) in questions" :key="l.cle" class="conj-row" :class="etat(i) && `row-${etat(i)}`">
+        <div v-for="(l, i) in questions" :key="l.cle" class="conj-row" :class="[etat(i) && `row-${etat(i)}`, { avenir: i > index }]">
           <span class="pronom">{{ l.pronom }}</span>
-          <!-- lacunes : le radical (ou l'auxiliaire) est donné, l'élève écrit la fin -->
-          <span v-if="l.lacunes && l.debut" class="radical">{{ l.debut }}</span>
-          <SaisieReponse v-model="saisies[i]" class="conj-input" :class="{ 'conj-input-full': !l.lacunes }" :etat="etat(i)"
-            :disabled="i !== index || repondu" :focus="i === index" :placeholder="i < index ? '' : l.lacunes ? '…' : l.pronom + ' …'"
-            @entree="validerLigne" />
+          <template v-if="i === index && !etat(i)">
+            <!-- lacunes : le radical (ou l'auxiliaire) est donné, l'élève écrit la fin ; sans radical (être, avoir, irréguliers), toute la forme -->
+            <span v-if="l.lacunes && l.debut" class="radical">{{ l.debut }}</span>
+            <SaisieReponse v-model="saisie" class="conj-input" :class="{ 'conj-input-full': !l.lacunes || !l.debut }" :etat="etat(i)"
+              focus placeholder="…" @entree="valider" />
+          </template>
+          <span v-else-if="i <= index" class="forme-donnee">{{ l.lacunes ? l.debut : '' }}<b>{{ l.lacunes ? l.trou : l.forme }}</b></span>
           <span class="row-feedback">{{ retourLigne(i) }}</span>
         </div>
       </div>
 
       <div class="btn-group actions">
-        <button v-if="!repondu" class="btn btn-primary" @click="validerTout">{{ t('valider') }}</button>
-        <button v-else-if="!retour.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('voirResultats') }}</button>
+        <button v-if="!repondu" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+        <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -45,7 +50,7 @@
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <div class="conj-correction">
-        <div class="config-section-title">{{ t('correction') }}</div>
+        <div class="config-section-title">{{ t('conjugaison.correction') }}</div>
         <div v-for="(h, i) in historique" :key="i" class="correction-row">
           <span class="pronom">{{ h.question.pronom }}</span>
           <span class="correction-forme" :class="h.ok ? 'corr-ok' : 'corr-err'">{{ h.question.forme }}</span>
@@ -55,82 +60,69 @@
   </div>
 </template>
 
-<script setup>
-// Conjugaison : la vue ne fait que les réglages et le rendu d'un tableau. Niveaux, générateur et fiche :
-// src/exercices/conjugaison/ (definition.js, generateur.js, fiche.js) ; formes : src/data/conjugaison.js.
-// Exercice de français : la fiche est toujours en français, l'interface suit la langue choisie.
-import { ref, computed, watch } from 'vue'
-import { estVide } from '../../utils/reponses'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import SaisieReponse from '../../components/SaisieReponse.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu, etatDe } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/conjugaison/definition'
-import { INTERFACE, TEXTES } from '../../exercices/conjugaison/textes'
-import { questions as genererQuestions, questionsFiche, verifier, paires, cleGroupe, cleTemps }
-  from '../../exercices/conjugaison/generateur'
-import { fiche as ficheConjugaison } from '../../exercices/conjugaison/fiche'
-import { verbeDe } from '../../data/conjugaison.js'
+<script setup lang="ts">
+// Conjugaison : la vue ne fait que les réglages et le rendu d'un tableau. Niveaux, générateur et fiche : src/exercices/conjugaison/
+// (definition.ts, generateur.ts, fiche.ts) ; formes : src/data/conjugaison.js. Exercice de français : la fiche est toujours en français,
+// l'interface suit la langue choisie.
+import { ref, computed } from 'vue'
+import { estVide } from '../../utils/reponses.ts'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import SaisieReponse from '../../noyau/SaisieReponse.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import { useJeu, etatDe } from '../../noyau/useJeu.ts'
+import DEFINITION from '../../exercices/conjugaison/definition.ts'
+import { CONTENU } from '../../exercices/conjugaison/textes.ts'
+import { questions as tirer, questionsFiche, verifier, paires, groupeDe, infinitif } from '../../exercices/conjugaison/generateur.ts'
+import type { Question, Reponse, Temps } from '../../exercices/conjugaison/generateur.ts'
+import { fiche as ficheConjugaison } from '../../exercices/conjugaison/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
-// Réglages mémorisés ; changer de niveau coche tout ce qui est au programme de ce niveau (ses défauts), le mode reste
-// s'il est au programme (politique commune : src/composables/useReglages.js). Contenu (fiche) : toujours en français.
-const { config, langueContenu } = useReglages(DEFINITION, 'conjugaison_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
-const nomTemps = temps => t(cleTemps(temps))
+const { t } = useLangue()
+// Réglages mémorisés ; changer de niveau coche tout ce qui est au programme de ce niveau (ses défauts), le mode reste s'il est au
+// programme (politique commune : src/noyau/useReglages.ts). Contenu (fiche) : toujours en français.
+const { config, langueContenu } = useReglages(DEFINITION)
+const T = traducteur(CONTENU, () => langueContenu.value)
+const nomTemps = (temps: Temps): string => t(`conjugaison.nomTemps.${temps}`)
+const nomGroupe = (verbe: string): string => t(`conjugaison.groupe.${groupeDe(verbe)}`)
 const nbPaires = computed(() => paires(config.value.niveau, config.value).length)
 
-// ── Jeu : les six lignes d'un tableau sont les questions de la partie, sur un seul écran (mode série) ──
-const saisies = ref([])
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng }),
+// ── Jeu : les six lignes d'un tableau, une à la fois (une question par ligne) ──
+const saisie = ref<string | number>('')
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  delai: 700,
-  // une réponse passe aussitôt à la ligne suivante ; la dernière : résultats après 700 ms, ou bouton après une erreur
-  serie: true,
+  surQuestion: () => { saisie.value = '' },
+  delai: 900,
 })
-const { phase, questions, q, index, bonnes, historique, retour, repondu, cleFin } = jeu
-watch(questions, qs => { saisies.value = qs.map(() => '') })
+const { phase, questions, q, index, bonnes, historique, repondu, cleFin } = jeu
 
 // état d'une ligne déjà validée : ok, presque (accents oubliés : comptée fausse, en orange), erreur
-const etat = i => etatDe(historique.value[i])
-function retourLigne(i) {
+const etat = (i: number): string => etatDe(historique.value[i])
+function retourLigne(i: number): string {
   const h = historique.value[i]
   if (!h) return ''
-  return h.ok ? '✅' : h.nuance === 'accents' ? `⚠️ ${t('accents', { forme: h.question.forme })}` : `❌ ${h.question.forme}`
+  return h.ok ? '✅' : h.nuance === 'accents' ? `⚠️ ${t('conjugaison.accents', { forme: h.question.forme })}` : `❌ ${h.question.forme}`
+}
+function valider(): void {
+  if (repondu.value) { jeu.suivante(); return }
+  const texte = String(saisie.value)
+  if (!estVide(texte)) jeu.repondre({ texte }, { donne: texte })
 }
 
-// Ligne courante (useJeu passe ensuite à la suivante) ; vide : seulement avec « Valider » (comptée fausse)
-function repondreLigne(vide = false) {
-  const qu = q.value, i = index.value
-  const rep = { texte: saisies.value[i] ?? '' }
-  if (!vide && estVide(rep.texte)) return false
-  const ok = jeu.repondre(rep, { donne: rep.texte })
-  // erreur ou accents oubliés : la bonne graphie reste dans le champ
-  if (!ok) saisies.value[i] = qu.attendu
-  return true
-}
-function validerLigne() { if (!repondu.value) repondreLigne() }
-// Valider : toutes les lignes qui restent, vides comprises (comptées fausses)
-function validerTout() {
-  while (!repondu.value && q.value) repondreLigne(true)
-}
-
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng }),
-  mettreEnPage: (questions, police) => ficheConjugaison({ questions, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheConjugaison({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
 <style scoped>
-.container { max-width: 640px; margin: 0 auto; padding: 1rem; }
-h1 { color: var(--bleu); margin-bottom: 1rem; }
 .verbe-groupe { font-size: .7rem; color: #888; font-weight: 400; }
 .level-btn.active .verbe-groupe { color: rgba(255, 255, 255, .85); }
 
@@ -156,6 +148,8 @@ h1 { color: var(--bleu); margin-bottom: 1rem; }
 .conj-input.presque { border-color: var(--orange); background: #fff8ec; color: #9a5b00; }
 .conj-input.erreur  { border-color: var(--rouge); background: #fff5f5; color: var(--rouge); }
 .conj-input:disabled { opacity: 1; }
+.conj-row.avenir .pronom { color: #b5b5b5; }
+.forme-donnee { font-size: 1rem; color: #333; }
 .row-feedback { font-size: .85rem; font-weight: 600; min-width: 7rem; }
 .actions { justify-content: center; margin-top: 1.25rem; }
 

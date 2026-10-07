@@ -5,7 +5,6 @@
 // n'importe que des données pures.
 import { ACTIVITES } from '../data/activites.js'
 import { classesEntre } from '../data/classes.js'
-import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
@@ -55,18 +54,6 @@ const LISTE = [
       const fiches = GRAMMAIRE.fiches.filter(f => f.id === id)
       return F(id, titre, fiches[0].competence, seul, { classes: fiches.map(f => f.niveau) })
     }) },
-  { id: 'conjugaison', route: '/francais/conjugaison', groupe: 'francais', titre: { fr: 'Conjugaison', br: 'Displegañ' },
-    // classes et fiches : celles de la définition (src/exercices/conjugaison/definition.js) ; par temps, avec les
-    // verbes du niveau (décision de l'utilisateur) ; au CP, le présent seul : le bilan suffit
-    classes: Object.keys(CONJUGAISON.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['^Présent$', '^Imparfait$', '^Futur$', '^Passé composé$', '^Passé simple$', '^Plus-que-parfait$'],
-    fiches: [['present', 'le présent', '^Présent$'], ['imparfait', "l'imparfait", '^Imparfait$'], ['futur', 'le futur', '^Futur$'],
-      ['passe-compose', 'le passé composé', '^Passé composé$'], ['passe-simple', 'le passé simple', '^Passé simple$'],
-      ['plus-que-parfait', 'le plus-que-parfait', '^Plus-que-parfait$']]
-      .map(([id, titre, re]) => {
-        const fiches = CONJUGAISON.fiches.filter(f => f.id === id)
-        return F(id, titre, fiches[0].competence, [re], { classes: fiches.map(f => f.niveau) })
-      }) },
   // ── Culture générale ──
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
     classes: [C('cp-cm2', null)] },

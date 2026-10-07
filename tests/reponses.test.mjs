@@ -1,6 +1,6 @@
 // Réponses écrites (src/utils/reponses.js) : test unitaire node, sans Chrome.
 //   node tests/reponses.test.mjs
-import { comparerReponse, normaliserSaisie, sansAccents, estVide, verdictSaisie } from '../src/utils/reponses.js'
+import { comparerReponse, normaliserSaisie, sansAccents, estVide, verdictSaisie } from '../src/utils/reponses.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 console.log('Normalisation')

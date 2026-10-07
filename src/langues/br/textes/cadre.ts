@@ -45,6 +45,15 @@ export default {
   erreurPoliceTropGrosse: "Re vras eo ar restr (3 Mo d'ar muiañ)",
   erreurPoliceNonMemorisee: "Karget eo an nodrezh evit an dro-mañ, met ne c'haller ket e virout (leun eo memor ar merdeer)", // br: à relire
   langueContenu: 'Yezh ar poelladenn hag ar fichenn', // br: à relire
+  // l'aperçu avant impression (ApercuImpression.vue)
+  apercu: {
+    titre: 'Rakwel', paysage: 'gweledva', portrait: 'poltred', imprimer: '🖨️ Moullañ', // br: à relire (gweledva = paysage)
+    titreCadre: 'Rakwel a-raok moullañ',
+    // br: à relire — les libellés exacts de la fenêtre d'impression dépendent de la langue du navigateur
+    conseil: 'Alioù : er prenestr moullañ, dibab ar ment gwir (100 %) ha na azasait ket ouzh ar bajenn.',
+  },
+  // « Signaler une erreur » (SignalerErreur.vue)
+  signaler: { lien: '💬 Kemenn ur fazi', titre: 'Kemenn ur fazi war ar bajenn-mañ (digeriñ a ra ho posterioù)' }, // br: à relire
   // la clé Mistral, facultative (CleMistral.vue)
   mistral: {
     titre: "Alc'hwez API Mistral",

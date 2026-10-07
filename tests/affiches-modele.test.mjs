@@ -105,7 +105,8 @@ for (const module of MODULES) {
     for (const id of v.competences) {
       const k = competenceDe(id)
       if (!k) pbs.push(`${vid} : compétence ${id} inconnue de programme.ts`)
-      else for (const n of v.classes) if (!k.niveaux.includes(n)) pbs.push(`${vid} : ${id} n'est pas au programme du ${n}`)
+      // une compétence déclarée hors programme (avec sa raison) est permise, comme pour les exercices
+      else if (!(v.horsProgramme ?? []).some(h => h.competence === id)) for (const n of v.classes) if (!k.niveaux.includes(n)) pbs.push(`${vid} : ${id} n'est pas au programme du ${n}`)
     }
     // les valeurs par défaut sont au programme
     const defauts = reglagesDe(d, { variante: vid })

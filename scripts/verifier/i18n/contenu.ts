@@ -7,7 +7,7 @@ import { pathToFileURL } from 'node:url'
 import { chemin } from '../../lib/racine.ts'
 import { feuilles } from './arbre.ts'
 import type { Arbre, Bilan } from './arbre.ts'
-import { AUTRE } from './ancien.ts'
+import { AUTRE } from './arbre.ts'
 import { ligneSection, ligneTexte } from './relecture.ts'
 
 /** Ce que la relecture lit d'un `catalogue(…)` : le texte source et les traductions par langue. */

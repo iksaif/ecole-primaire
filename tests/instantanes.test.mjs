@@ -12,7 +12,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { REGISTRE } from '../src/exercices/index.ts'
 import { traducteurExercice } from '../src/exercices/traducteur.ts'
-import { creerRng } from '../src/utils/hasard.js'
+import { creerRng } from '../src/utils/hasard.ts'
 import {
   casDe, empreinte, normaliser, fichierInstantanes, lireInstantanes, ecrireInstantanes, ecrireHtml, fichierHtml, DOSSIER_HTML,
 } from './outils-instantanes.mjs'

@@ -120,7 +120,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, useId } from 'vue'
-import ApercuImpression from '../components/ApercuImpression.vue'
+import ApercuImpression from '../noyau/ApercuImpression.vue'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
 import ChoixReglage from '../noyau/ChoixReglage.vue'
 import GroupeReglages from './GroupeReglages.vue'

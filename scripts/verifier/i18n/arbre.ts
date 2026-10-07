@@ -1,4 +1,5 @@
 // Lire un catalogue de textes comme une liste de « feuilles » (clé pointée → texte), et l'afficher dans la relecture.
+import { CODES, LANGUE_SOURCE } from '../../../src/langues/registre.ts'
 // Une feuille est un texte, une liste de textes ou un pluriel (objet avec `other`) : en dessous, c'est un sous-arbre.
 export interface Arbre { [cle: string]: unknown }
 
@@ -29,3 +30,6 @@ export interface Bilan {
   problemes: number
   lignes: string[]
 }
+
+/** La langue comparée au français (la première autre langue du registre). */
+export const AUTRE = CODES.find(c => c !== LANGUE_SOURCE) ?? LANGUE_SOURCE

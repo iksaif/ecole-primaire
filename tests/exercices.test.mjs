@@ -10,9 +10,8 @@ import { REGISTRE } from '../src/exercices/index.ts'
 import { toutAuProgramme, estBonus, raisonHorsProgramme, jeuxDeReglages, langueContenuDe, lireVerdict, aUnJeu } from '../src/noyau/reglages.ts'
 // noyau i18n (traduire : pluriels, interpolation, catalogue commun) : imports avec extension, lisible par node
 import { traducteurExercice } from '../src/exercices/traducteur.ts'
-import { creerRng } from '../src/utils/hasard.js'
-import { COMPETENCES, NIVEAUX, SOURCES, contraintesDe, competenceDe, domaineDe } from '../src/data/programme.js'
-import { ACTIVITES } from '../src/data/activites.js'
+import { creerRng } from '../src/utils/hasard.ts'
+import { COMPETENCES, NIVEAUX, SOURCES, contraintesDe, competenceDe, domaineDe } from '../src/data/programme.ts'
 import { doublons } from '../src/noyau/uniques.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -87,9 +86,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
       if (Array.isArray(vals)) for (const v of vals) if (niv.options?.[cle] && !niv.options[cle].includes(v)) pbs.push(`fiche ${fi.id}-${fi.niveau} : ${cle}=${v} hors des options`)
     }
   }
-  const activite = ACTIVITES.find(a => a.to === d.route)
-  if (estExemple(d)) { if (activite) pbs.push(`${d.route} (exemple) ne doit pas être au catalogue`) }
-  else if (!/^\/[\w-]+(\/[\w-]+)*$/.test(d.route)) pbs.push(`route ${d.route} invalide`)
+  if (!estExemple(d) && !/^\/[\w-]+(\/[\w-]+)*$/.test(d.route)) pbs.push(`route ${d.route} invalide`)
   // jeu en ligne : `jeu: false` = fiche seule (ni questions ni verifier) ; sinon les deux sont là
   const jeu = aUnJeu(d)
   if (jeu !== ('questions' in g && 'verifier' in g)) pbs.push(jeu ? 'jeu en ligne : questions et verifier attendus' : 'fiche seule (jeu: false) : ni questions ni verifier')

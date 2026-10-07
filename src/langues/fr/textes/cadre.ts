@@ -43,6 +43,14 @@ export default {
   erreurPoliceTropGrosse: 'Fichier trop gros (3 Mo maximum)',
   erreurPoliceNonMemorisee: 'Police chargée pour cette session, mais impossible de la mémoriser (stockage du navigateur plein)',
   langueContenu: 'Langue de l’exercice et de la fiche',
+  // l'aperçu avant impression (ApercuImpression.vue)
+  apercu: {
+    titre: 'Aperçu', paysage: 'paysage', portrait: 'portrait', imprimer: '🖨️ Imprimer',
+    titreCadre: 'Aperçu avant impression',
+    conseil: 'Conseil : dans la fenêtre d’impression, choisis « Taille réelle / 100 % » et désactive « Ajuster à la page ».',
+  },
+  // « Signaler une erreur » (SignalerErreur.vue)
+  signaler: { lien: '💬 Signaler une erreur', titre: 'Signaler une erreur sur cette page (ouvre votre messagerie)' },
   // la clé Mistral, facultative (CleMistral.vue)
   mistral: {
     titre: 'Clé API Mistral',

@@ -9,7 +9,7 @@ import { LANGUE_SOURCE } from '../../../src/langues/registre.ts'
 import { chemin } from '../../lib/racine.ts'
 import { feuilles } from './arbre.ts'
 import type { Arbre, Bilan } from './arbre.ts'
-import { AUTRE } from './ancien.ts'
+import { AUTRE } from './arbre.ts'
 import { ligneSection, ligneTexte } from './relecture.ts'
 
 const dossierTextes = (l: string): string => chemin('src/langues', l, 'textes')

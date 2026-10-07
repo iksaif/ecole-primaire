@@ -1,43 +1,30 @@
-// Compteurs qui demandent de charger des modules de l'app (Vite sans navigateur) ou de lancer un autre contrôle.
+// Compteurs qui demandent de charger des modules de l'app ou de lancer un autre contrôle.
 // Compteurs (min : ne peuvent que monter) :
 //   couverture       % des couples compétence × classe des domaines de maths et de français (src/data/programme.ts) qui ont
-//                    au moins une ressource (exercice, fiche ou affiche ; src/impression/couverture.js, comme `npm run couverture`)
+//                    au moins une ressource (exercice, fiche ou affiche des registres ; src/ressources/couverture.ts, comme `npm run couverture`)
 //   couvertureMonde  même pourcentage pour « le monde » (matière `monde` : sciences, histoire-géographie, EMC, temps et
-//                    espace du cycle 1). Séparé le 2026-10-06, à l'ajout des programmes du Monde (168 cases sans ressource) :
-//                    seuil à 0 tant qu'aucune ressource n'existe, il monte avec les premières. Le quiz de culture générale
-//                    n'est rattaché à aucune compétence.
-//   exercicesMigres  exercices interactifs du catalogue (activites.js, `fiche: true`, sous /maths, /francais,
-//                    /maternelle) passés au modèle src/exercices/ (dans le registre) : avancement de la phase 2
+//                    espace du cycle 1). Séparé le 2026-10-06, à l'ajout des programmes du Monde : seuil à 0 au départ, il monte
+//                    avec les ressources.
 // Compteur (max) :
 //   erreursDeType    erreurs de `npm run types` (vue-tsc strict ; seuls les .ts, .vue et .d.ts comptent, pas les .js) : toujours 0
 //
-// La couverture et exercicesMigres lisent l'ANCIEN monde (activites.js, impression/couverture.js) : ils
-// disparaîtront, ou seront réécrits sur src/ressources/, avec le dernier exercice ancien (le catalogue neuf ne compte aujourd'hui
-// que les exercices déjà reportés : il ne mesure pas encore la couverture du site).
+// Retiré le 2026-10-07 : `exercicesMigres` (exercices de l'ancien catalogue passés au modèle de la base) : la migration est finie
+// (26 sur 26) et l'ancien catalogue (data/activites.js) est supprimé. La couverture lit désormais les registres de la base.
 import { spawnSync } from 'node:child_process'
 import { join } from 'node:path'
-import { chargeurVite } from '../../lib/vite.ts'
 import { racine } from '../../lib/racine.ts'
 import type { Compteur } from './compteur.ts'
 
-interface Programme {
-  COMPETENCES: { id: string, domaine: string, niveaux: string[] }[]
-  domaineDe: (id: string) => { matiere: string } | undefined
-}
-interface Couverture { ressourcesDe: (competence: string, niveau: string) => Record<string, unknown[]> }
-interface Activites { ACTIVITES: { fiche?: boolean, to: string }[] }
-interface Base { REGISTRE: { definition: { route: string }, exemple?: true }[] }
+import { COMPETENCES, domaineDe } from '../../../src/data/programme.ts'
+import { ressourcesDe } from '../../../src/ressources/couverture.ts'
 
-/** Un seul serveur Vite pour tous les compteurs qui en ont besoin ; fermé par `fermerChargeur` à la fin du contrôle. */
-const vite = chargeurVite()
-export const fermerChargeur = vite.fermer
+/** Rien à fermer : les modules de l'app se lisent directement (node exécute le TypeScript). Gardé pour qualite.ts. */
+export const fermerChargeur = async (): Promise<void> => {}
 
 // Couverture par matière : « maths et français » (les matières à programme chiffré, déjà couvertes par des exercices) et
 // « le monde », dont les ressources arrivent après les compétences. Les deux dans un seul pourcentage feraient baisser le
 // compteur de maths et français à chaque compétence du Monde ajoutée sans ressource, sans que rien n'ait régressé.
-async function couvertureDes(matieres: string[]) {
-  const { COMPETENCES, domaineDe } = await vite.charger<Programme>('/src/data/programme.ts')
-  const { ressourcesDe } = await vite.charger<Couverture>('/src/impression/couverture.js')
+function couvertureDes(matieres: string[]) {
   let cases = 0, couvertes = 0
   for (const k of COMPETENCES) {
     if (!matieres.includes(domaineDe(k.domaine)?.matiere ?? '')) continue
@@ -48,18 +35,6 @@ async function couvertureDes(matieres: string[]) {
   }
   // arrondi vers le bas au dixième : le seuil enregistré ne dépasse jamais la valeur réelle
   return { valeur: Math.floor(1000 * couvertes / cases) / 10, detail: `${couvertes} / ${cases} cases` }
-}
-
-const exercicesMigres: Compteur = async () => {
-  const { ACTIVITES } = await vite.charger<Activites>('/src/data/activites.js')
-  const { REGISTRE: BASE } = await vite.charger<Base>('/src/exercices/index.ts')
-  // les exercices reportés dans la base (registre typé) ne sont plus au catalogue de l'ancien monde (activites.js) : on les compte des deux côtés
-  const reportes = BASE.filter(e => !e.exemple).map(e => e.definition.route)
-  const exercices = [...ACTIVITES.filter(a => a.fiche && /^\/(maths|francais|maternelle)\//.test(a.to)).map(a => a.to), ...reportes]
-  const migres = new Set(reportes)
-  const restants = exercices.filter(r => !migres.has(r))
-  const n = exercices.length - restants.length
-  return { valeur: n, detail: `${n} / ${exercices.length} exercices au format définition (${reportes.length} dans la base)` }
 }
 
 // erreurs de type dans le TypeScript (verifier/types.mjs : vue-tsc strict, sans les .js) ; le détail : `npm run types`
@@ -73,5 +48,4 @@ export const compteursApp: Record<string, Compteur> = {
   erreursDeType,
   couverture: () => couvertureDes(['maths', 'francais']),
   couvertureMonde: () => couvertureDes(['monde']),
-  exercicesMigres,
 }

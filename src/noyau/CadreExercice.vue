@@ -51,8 +51,8 @@
 
 <script setup lang="ts">
 import { computed, ref, useId, nextTick } from 'vue'
-import ApercuImpression from '../components/ApercuImpression.vue'
-import SignalerErreur from '../components/SignalerErreur.vue'
+import ApercuImpression from './ApercuImpression.vue'
+import SignalerErreur from './SignalerErreur.vue'
 import OptionsFiche from './OptionsFiche.vue'
 import ChoixLangueContenu from './ChoixLangueContenu.vue'
 import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige } from './optionsFiche.ts'

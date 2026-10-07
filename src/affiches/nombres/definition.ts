@@ -11,6 +11,12 @@ import { DIZAINES, SECTIONS } from './sections.ts'
 
 const une = (...ids: (typeof SECTIONS)[number][]) => cases(SECTIONS, { defaut: ids })
 const CINQ = ['unites', 'onze', 'dizaines', 'centaines', 'milliers'] as const
+// les variantes CE1-CE2 : les nombres de la langue régionale sont au programme du CE1 ; le référentiel ne s'engage pas au-delà
+// (décision du 2026-10-07), mais l'affiche sert au CE1 des classes bilingues : la compétence est gardée, hors programme au CE2
+const HORS_CE2_REGIONALE = [{
+  competence: K.nombresLangueRegionale,
+  raison: 'Au programme du CE1 dans la langue régionale ; le référentiel ne va pas au-delà du CE1 : au CE2, l’affiche sert à la classe bilingue qui la garde au mur.',
+}]
 
 const definition = definirAffiche({
   id: 'nombres',
@@ -47,10 +53,11 @@ const definition = definirAffiche({
   },
   // une variante par fiche toute prête (slugs de `main`) ; écriture en lettres : jusqu'à 50 au CP, 100 dès le CE1
   variantes: {
-    cent: { classes: ['ce1', 'ce2'], slug: 'nombres-en-lettres-0-100', reglages: { sections: une('cent') } },
+    cent: { classes: ['ce1', 'ce2'], slug: 'nombres-en-lettres-0-100', reglages: { sections: une('cent') }, horsProgramme: HORS_CE2_REGIONALE },
     'unites-milliers': { classes: ['ce2'], slug: 'nombres-en-lettres-dizaines-centaines', reglages: { sections: une(...CINQ) } },
     ...Object.fromEntries(DIZAINES.map((d, i) => [`dizaine-${i + 1}`, {
       classes: i < 4 ? ['cp', 'ce1'] as const : ['ce1', 'ce2'] as const, slug: `nombres-en-lettres-${(i + 1) * 10}-${(i + 2) * 10}`, reglages: { sections: une(d) },
+      ...(i < 4 ? {} : { horsProgramme: HORS_CE2_REGIONALE }),
     }])),
   },
 })

@@ -19,6 +19,5 @@ export const COMPTEURS: Record<string, Compteur> = {
   attentesFixes: t.attentesFixes,
   couverture: a.couverture,
   couvertureMonde: a.couvertureMonde,
-  exercicesMigres: a.exercicesMigres,
   textesRepetes: compteursRepetes.textesRepetes,
 }

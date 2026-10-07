@@ -3,6 +3,7 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/ressource.ts'
 
 export default {
+  plusieursDomaines: 'Meur a dachenn', // br: à relire
   enLigne: 'enlinenn', // br: à relire
   imprimable: 'da voullañ', // br: à relire
   classes: 'Klasoù', // br: à relire

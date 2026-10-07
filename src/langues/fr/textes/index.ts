@@ -48,6 +48,9 @@ import orthographe from './orthographe.ts'
 import vocabulaire from './vocabulaire.ts'
 import conjugaison from './conjugaison.ts'
 import dictee from './dictee.ts'
+import ecriture from './ecriture.ts'
+import lecture from './lecture.ts'
+import quiz from './quiz.ts'
 import grammaire from './grammaire.ts'
 import { AVEC_DEV } from '../../../dev.ts'
 
@@ -55,4 +58,4 @@ import { AVEC_DEV } from '../../../dev.ts'
 // aucun code ne les lit (les exemples n'y sont pas).
 const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev }
 
-export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, ...sectionsDev } as const
+export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, ecriture, lecture, quiz, ...sectionsDev } as const

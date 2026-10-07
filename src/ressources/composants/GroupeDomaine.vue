@@ -1,7 +1,7 @@
 <template>
   <details :id="`domaine-${groupe.domaine}`" class="groupe" :open="ouvert" :data-domaine="groupe.domaine" @toggle="suivre">
     <summary>
-      <h2><span aria-hidden="true">{{ EMOJI_DOMAINE[groupe.domaine] }}</span> {{ nomDomaine(groupe.domaine, langueAffichee) }}</h2>
+      <h2><span aria-hidden="true">{{ emojiGroupe(groupe.domaine, EMOJI_DOMAINE) }}</span> {{ nomGroupe(groupe.domaine, langueAffichee) }}</h2>
       <span v-if="groupe.ressources.length" class="compte">{{ t('ressource.ressources', { n: groupe.ressources.length }) }}</span>
       <span v-if="groupe.horsClasse" class="hors">{{ t('ressource.horsClasse', { n: classes.length, classes: classesEnTexte(classes), total: groupe.horsClasse }) }}</span>
     </summary>
@@ -32,7 +32,7 @@ import type { GroupeDomaine } from '../filtres.ts'
 import type { Classe } from '../types.ts'
 import CarteRessource from './CarteRessource.vue'
 import LigneRessource from './LigneRessource.vue'
-import { EMOJI_USAGE, classesEnTexte, nomDomaine } from './presentation.ts'
+import { EMOJI_USAGE, classesEnTexte, emojiGroupe, nomGroupe } from './presentation.ts'
 import { usePlis } from './usePlis.ts'
 
 const props = defineProps<{ groupe: GroupeDomaine, classes: readonly Classe[], vue: Vue }>()

@@ -27,7 +27,7 @@
         <li>🐞 {{ erreur[0] }}<a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a>{{ erreur[1] }}
           (<a :href="`${SITE.depot}/issues/new`" target="_blank" rel="noopener">{{ t('apropos.issue') }}</a>)</li>
         <li>💡 {{ t('apropos.contribuerProposer') }}</li>
-        <li>🏴 {{ t('apropos.contribuerRelire') }}</li>
+        <li><IconeMatiere matiere="regionale" /> {{ t('apropos.contribuerRelire') }}</li>
         <li>👩‍🏫 {{ t('apropos.contribuerEnseignant') }}</li>
       </ul>
     </div>
@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { SITE } from '../sites.ts'
+import IconeMatiere from '../shell/IconeMatiere.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { LANGUES, CODES, LANGUE_SOURCE } from '../langues/registre.ts'
 import { contenu } from '../langues/traduire.ts'

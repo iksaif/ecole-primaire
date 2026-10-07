@@ -1,3 +1,4 @@
+import type { Classe } from '../data/classes.ts'
 // Types du système de langues : définition d'une langue, catalogues de textes typés, clés et paramètres dérivés du français.
 // Purs (aucune dépendance) : lisibles par node, sans compilation.
 
@@ -85,6 +86,29 @@ export interface DonneesRegionales {
   listes: readonly ListeDeMots[]
   /** À qui s'adresse la langue (« l'école bilingue ou Diwan »), dans chaque langue d'interface */
   ecoles: Readonly<Record<string, string>>
+  /** Fiches d'écriture publiées pour la langue (src/exercices/ecriture/publiees.ts) */
+  fichesEcriture: FichesEcritureRegionales
+}
+/**
+ * Les fiches d'écriture toutes prêtes d'une langue régionale : l'alphabet, une fiche par lettre, et des listes de mots. Les slugs
+ * en découlent (`fiche-ecriture-<motLettre>-<lettre>`, `fiche-ecriture-<slug>-<nom>`) : ils sont publiés, ils ne changent pas.
+ */
+export interface FichesEcritureRegionales {
+  /** mot « lettre » dans la langue : slug des fiches d'une lettre (`fiche-ecriture-lizherenn-a`) */
+  motLettre: string
+  /** titre imprimé d'une fiche d'une lettre (« Al lizherenn » → « Al lizherenn A a ») */
+  titreLettre: string
+  listes: readonly {
+    slug: string
+    /** listes de `listes` mises bout à bout (les deux séries de jours) */
+    listes: readonly string[]
+    court: string
+    titre: string
+    resume: string
+    classes: readonly Classe[]
+    /** lignes à copier seul (défaut 0) */
+    copie?: 0 | 1 | 2 | 3
+  }[]
 }
 export interface ListeDeMots { id: string, libelle: Readonly<Record<string, string>>, titre: string, mots: readonly string[] }
 

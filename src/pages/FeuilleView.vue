@@ -47,7 +47,6 @@ import FeuilleEntete from './FeuilleEntete.vue'
 import FeuilleLiens from './FeuilleLiens.vue'
 import FeuilleVoisines from './FeuilleVoisines.vue'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
-import { EMOJI_MATIERE } from '../ressources/composants/presentation.ts'
 import FilAriane from '../shell/FilAriane.vue'
 
 const { t, langueAffichee } = useLangue()
@@ -61,7 +60,7 @@ const maillons = computed(() => {
   const matiere = feuille.matiere
   return [
     { texte: t('feuille.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
-    ...(matiere ? [{ texte: nomMatiere.value, vers: cheminMatiere(matiere) ?? undefined, emoji: EMOJI_MATIERE[matiere] }] : []),
+    ...(matiere ? [{ texte: nomMatiere.value, vers: cheminMatiere(matiere) ?? undefined, matiere }] : []),
     { texte: t('feuille.fichesPretes'), vers: (matiere ? cheminFiches(matiere) : null) ?? '/telechargements', emoji: EMOJI_BARRE.fichesPretes },
     { texte: texteDe(e.titre, langueAffichee.value), langue: langueDuTexte(e.titre, langueAffichee.value) },
   ]

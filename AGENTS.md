@@ -123,8 +123,9 @@ Branche `base-saine` (plan 11, `plans/11-base-saine.md`) : tout ce qui est nouve
 - **Les slugs publiés ne changent pas** (`/telechargements/<slug>/`, sitemap, liens externes).
 - Vie privée : aucune requête vers un autre site, pas de cookie, pas d'identifiant. Le seul signal est
   `src/utils/journal.js`, anonyme et sans IP. **Seule exception, facultative et explicite (décision du
-  2026-10-06)** : la Dictée peut demander des phrases à Mistral (api.mistral.ai) avec la clé que l'utilisateur
-  saisit lui-même ; sans clé, rien ne sort du navigateur (un test doit le vérifier).
+  2026-10-06)** : la Dictée (des phrases) et la Lecture (des histoires) peuvent demander un texte à Mistral (api.mistral.ai)
+  avec la clé que l'utilisateur saisit lui-même (`src/noyau/mistral.ts`, `CleMistral.vue`) ; sans clé, rien ne sort du navigateur
+  (`tests/vie-privee.test.mjs` le vérifie pour chacun).
 - Polices : seulement celles livrées (OFL / CC BY). Belle Allure et Écolier ne sont pas redistribuables.
 - `brouillons/` : plans temporaires, maquettes et études (ignoré par git : jamais commité ni poussé ; ex. `brouillons/iconographie/`).
 - `plans/` et `AGENTS.md` sont versionnés depuis le 2026-10-07 (reprise du travail sur plusieurs machines : voir `REPRISE.md`). Ne pas commiter

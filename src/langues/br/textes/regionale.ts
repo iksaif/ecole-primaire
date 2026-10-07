@@ -3,6 +3,8 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/regionale.ts'
 
 export default {
+  aussiTitre: 'E {nom} ivez', // br: à relire
+  aussiTexte: "Poelladennoù ha skritelloù an danvezioù all a zo e {nom} : digeriñ a reont e {nom}.", // br: à relire
   inactif: 'Ar bajenn-mañ n\'eo ket oberiant er mod « Galleg hepken ».', // br: à relire
   inactifAide: 'Gweredekait ar yezh evit gwelet he skritelloù hag he fichennoù.', // br: à relire
   activer: 'Gweredekaat : galleg + {nom}', // br: à relire

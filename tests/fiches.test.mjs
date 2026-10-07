@@ -53,7 +53,10 @@ verifier(ex && new Set(ex.documents.map(d => d.graine)).size === ex.documents.le
 const encore = await fichesDesRegistres({ avecExemples: true })
 verifier(JSON.stringify(encore.map(f => f.documents.map(d => d.formats))) === JSON.stringify(fiches.map(f => f.documents.map(d => d.formats))), 'HTML identique d\'un appel à l\'autre (graines fixes)')
 verifier((await fichesDesRegistres({ avecExemples: true, prefixe: 'affiche-' })).every(f => f.meta.slug.startsWith('affiche-')), '--prefixe filtre par slug')
-verifier(fiches.filter(f => f.meta.genre === 'exercice').every(f => f.documents.every(d => d.formats[0].html.includes('class="corrige sur-page"'))), 'les fiches d\'exercice ont le corrigé sur une autre page')
+// une fiche sans rien à corriger (écriture, lecture à voix haute : `corrige` de la définition) n'a pas de section.corrige
+const htmlExercices = fiches.filter(f => f.meta.genre === 'exercice').flatMap(f => f.documents.map(d => d.formats[0].html))
+const avecCorrige = htmlExercices.filter(h => h.includes('<section class="corrige'))
+verifier(avecCorrige.length > 0 && avecCorrige.every(h => h.includes('class="corrige sur-page"')), 'les fiches d\'exercice qui ont un corrigé l\'ont sur une autre page')
 
 // calcul mental : les fiches « de calcul » publiées avant le report gardent leur adresse (src/noyau/slugs.ts), en français et en breton (-br)
 const HISTORIQUES = ['fiche-table-de-multiplication-2', 'fiche-table-de-multiplication-7', 'fiche-table-de-multiplication-10', 'fiche-tables-de-multiplication-2-a-5',

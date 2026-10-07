@@ -44,4 +44,14 @@ export default {
   noteCursif: 'ha nodrezhoù-skol all (rummad Script › Scolaire)',
   erreurPoliceTropGrosse: "Re vras eo ar restr (3 Mo d'ar muiañ)",
   erreurPoliceNonMemorisee: "Karget eo an nodrezh evit an dro-mañ, met ne c'haller ket e virout (leun eo memor ar merdeer)", // br: à relire
+  langueContenu: 'Yezh ar poelladenn hag ar fichenn', // br: à relire
+  // la clé Mistral, facultative (CleMistral.vue)
+  mistral: {
+    titre: "Alc'hwez API Mistral",
+    ok: "✓ Alc'hwez kefluniet",
+    saisie: "Da alc'hwez Mistral", // br: à relire
+    enregistrer: 'Enrollañ', // br: à relire
+    effacer: "Diverkañ an alc'hwez", // br: à relire
+    confidentialite: "An alc'hwez a chom war an ardivink-mañ. Ne vez kaset nemet da Mistral (api.mistral.ai), evit skrivañ frazennoù hepken ; hep alc'hwez, netra ne zeu er-maez eus ar merdeer.", // br: à relire
+  },
 } satisfies Traductions<typeof fr>

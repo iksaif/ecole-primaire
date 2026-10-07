@@ -1,7 +1,7 @@
 <template>
   <nav v-if="groupes.length > 1" class="saut" :aria-label="t('matiere.domaines')">
     <button v-for="g in groupes" :key="g.domaine" type="button" class="pastille" @click="aller(g.domaine)">
-      <span aria-hidden="true">{{ EMOJI_DOMAINE[g.domaine] }}</span> {{ nomDomaine(g.domaine, langueAffichee) }}
+      <span aria-hidden="true">{{ emojiGroupe(g.domaine, EMOJI_DOMAINE) }}</span> {{ nomGroupe(g.domaine, langueAffichee) }}
     </button>
   </nav>
 </template>
@@ -13,15 +13,14 @@ import { nextTick } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
 import type { GroupeDomaine } from '../ressources/filtres.ts'
-import type { DomaineId } from '../ressources/types.ts'
-import { nomDomaine } from '../ressources/composants/presentation.ts'
+import { emojiGroupe, nomGroupe } from '../ressources/composants/presentation.ts'
 import { usePlis } from '../ressources/composants/usePlis.ts'
 
 defineProps<{ groupes: readonly GroupeDomaine[] }>()
 const { t, langueAffichee } = useLangue()
 const plis = usePlis()
 
-async function aller(domaine: DomaineId): Promise<void> {
+async function aller(domaine: GroupeDomaine['domaine']): Promise<void> {
   plis.definir(domaine, true)
   await nextTick()
   const bloc = document.getElementById(`domaine-${domaine}`)

@@ -37,6 +37,7 @@ import type { CleTexte } from '../langues/traduire.ts'
 import type { Site } from '../sites.ts'
 import { aUnJeu } from '../noyau/reglages.ts'
 import { slugBilan, slugFiche } from '../noyau/slugs.ts'
+import { competencesDeFiche } from '../noyau/definir.ts'
 import type { IndexFiches } from '../telechargements/types.ts'
 import type { Texte } from '../telechargements/types.ts'
 import { EMOJI_DOMAINE } from './emojis.ts'
@@ -118,8 +119,8 @@ function competencesParSlug(exercices: readonly EntreeRegistre[], affiches: read
   const table = new Map<string, readonly CompetenceId[]>()
   for (const { definition: d } of exercices) {
     for (const n of NIVEAUX.filter(c => d.niveaux[c])) {
-      table.set(slugBilan(d.id, n), d.niveaux[n]?.competences ?? [])
-      for (const f of d.fiches.filter(x => x.niveau === n)) table.set(slugFiche(d.id, f), [f.competence])
+      if (d.bilanParClasse !== false) table.set(slugBilan(d.id, n), d.niveaux[n]?.competences ?? [])
+      for (const f of d.fiches.filter(x => x.niveau === n)) table.set(slugFiche(d.id, f), competencesDeFiche(d, f))
     }
   }
   for (const { definition: d } of affiches) {

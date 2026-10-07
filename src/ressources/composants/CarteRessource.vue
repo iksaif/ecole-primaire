@@ -2,7 +2,7 @@
   <article class="carte" :data-ressource="ressource.id">
     <span class="icone" aria-hidden="true">{{ ressource.emoji }}</span>
     <component :is="`h${niveauTitre}`" class="titre">
-      <RouterLink :to="ressource.route" class="lien" :lang="langueTitre">{{ titre }}</RouterLink>
+      <RouterLink :to="lien" class="lien" :lang="langueTitre">{{ titre }}</RouterLink>
     </component>
     <p v-if="description" class="description" :lang="langueDescription">{{ description }}</p>
     <PastillesClasses :classes="ressource.classes" :choisies="classesChoisies" />
@@ -16,7 +16,7 @@
 import { computed } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
 import { texteDe, langueDifferente } from '../textes.ts'
-import type { Classe, RessourceDeContenu } from '../types.ts'
+import type { Classe, Langue, RessourceDeContenu } from '../types.ts'
 import BadgesRessource from './BadgesRessource.vue'
 import PastillesClasses from './PastillesClasses.vue'
 
@@ -24,9 +24,18 @@ const props = withDefaults(defineProps<{
   ressource: RessourceDeContenu
   classesChoisies: readonly Classe[]
   niveauTitre?: 2 | 3 | 4 | 5
-}>(), { niveauTitre: 4 })
+  /** ouvrir la ressource dans cette langue de contenu (page de la langue régionale : « aussi en breton ») */
+  langueContenu?: Langue
+}>(), { niveauTitre: 4, langueContenu: undefined })
 const { langueAffichee } = useLangue()
 const titre = computed(() => texteDe(props.ressource.titre, langueAffichee.value))
+// la langue passe par l'adresse : `contenu=` pour un exercice (langueContenu.ts), `langues=` pour une affiche (lireLien)
+const lien = computed(() => {
+  const { route, type } = props.ressource
+  if (!props.langueContenu) return route
+  const param = type === 'affiche' ? 'langues' : 'contenu'
+  return `${route}${route.includes('?') ? '&' : '?'}${param}=${props.langueContenu}`
+})
 const description = computed(() => (props.ressource.description ? texteDe(props.ressource.description, langueAffichee.value) : null))
 // un texte qui n'existe pas dans la langue de la page (fiche prête en français sur une page bretonne) est marqué lang="fr"
 const langueTitre = computed(() => langueDifferente(props.ressource.titre, langueAffichee.value))

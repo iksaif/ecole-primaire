@@ -6,6 +6,7 @@
 // (src/composables, src/components/ConfigExercice…, JavaScript). Le registre src/exercices/index.js lit les deux
 // formats : une définition du noyau a exactement la structure `reglages` / `options` / `bonus` / `horsProgramme`
 // de l'ancien format, mais typée.
+import type { Mesure } from '../affiches/types.ts'
 import type { Classe } from '../data/classes.ts'
 import type { CompetenceId, DomaineId, Contraintes } from '../data/programme.ts'
 import type { Rng } from '../utils/hasard.ts'
@@ -72,7 +73,18 @@ export interface FicheExercice<R extends object = Reglages> {
   slug?: string
   competence: CompetenceId
   niveau: Classe
-  /** réglages qui s'ajoutent à ceux du niveau */
+  /**
+   * Classes du catalogue quand une même fiche sert plusieurs classes (« GS · CP · CE1 » : une fiche d'écriture) ; `niveau`, une de
+   * ces classes, donne ses réglages. Ses compétences sont alors celles de l'exercice au programme de ces classes (competencesDeFiche).
+   * Défaut : `[niveau]`.
+   */
+  classes?: readonly Classe[]
+  /**
+   * Langues de contenu dans lesquelles la fiche existe (une fiche de l'alphabet breton : `['br']`) ; défaut : toutes celles de
+   * l'exercice. Avec une seule langue, le `slug` est publié tel quel, sans suffixe de langue.
+   */
+  langues?: readonly string[]
+  /** réglages qui s'ajoutent à ceux du niveau (un réglage sans choix, texte ou nombre libre, doit garder le type de son défaut) */
   reglages: Partial<R>
 }
 
@@ -93,6 +105,18 @@ export interface DefinitionExercice<R extends object = Reglages> {
    */
   jeu?: boolean
   niveauDefaut: Classe
+  /**
+   * `false` : la fiche ne tire rien au hasard (une fiche d'écriture : le modèle, puis les lignes) : un seul exemplaire par fiche
+   * publiée, pas de « Nouvelle fiche ». Défaut : `true`.
+   */
+  aleatoire?: boolean
+  /** `false` : pas de fiche « bilan » par classe (`exercices-<id>-<classe>`), seulement les fiches de `fiches`. Défaut : `true`. */
+  bilanParClasse?: boolean
+  /**
+   * `false` : la fiche n'a rien à corriger (une fiche d'écriture) : pas de `<section class="corrige">` ; une fonction des réglages quand
+   * cela dépend d'eux (Lecture : rien à corriger pour la lecture à voix haute). Défaut : `true`.
+   */
+  corrige?: boolean | ((reglages: Readonly<Record<string, unknown>>) => boolean)
   /** réglages communs à tous les niveaux (défauts) */
   reglages?: Partial<R>
   /** valeurs proposées pour un réglage commun à choix (ex. `nbQ: [5, 10, 15]`) */
@@ -124,6 +148,11 @@ export interface ParamsGenerateur<R extends object = Reglages, Cle extends strin
   T: Traducteur<Cle>
   /** nombre de questions voulu, quand l'exercice le laisse choisir (réglage nbQ) ; ignoré par un exercice à partie fixe */
   nb?: number
+  /**
+   * langue du contenu, pour un exercice dont les données ne sont pas des textes du catalogue (la banque de questions du quiz : une
+   * question non traduite n'existe qu'en français). Défaut : le français. Les autres passent par T.
+   */
+  langue?: string
 }
 
 /**
@@ -169,6 +198,13 @@ export interface ParamsFiche<R extends object = Reglages, F = unknown, Cle exten
   /** familles CSS du texte et @font-face à embarquer (usePoliceFiche) */
   police?: string
   cssPolices?: string
+  /** fiche à plusieurs écritures : la famille de chaque type (`script`, `attache`) ; `cssPolices` embarque leurs @font-face */
+  polices?: Readonly<Record<string, string>>
+  /**
+   * mesure du texte, pour une fiche qui ajuste le texte à la place (taille par la hauteur d'x, coupure des lignes) : canvas dans le
+   * navigateur (mesureNavigateur), largeurs tabulées au build (mesureEstimee). La même que celle des affiches.
+   */
+  mesure?: Mesure
 }
 
 /**

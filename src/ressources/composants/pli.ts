@@ -2,6 +2,7 @@
 // Un domaine est proposé ouvert s'il a des ressources pour les classes choisies, replié sinon ; ce que le lecteur a ouvert ou
 // refermé lui-même l'emporte (et reste vrai quand il change de classe).
 import type { DomaineId } from '../types.ts'
+import type { PLUSIEURS_DOMAINES } from '../filtres.ts'
 
 export type Plis = Readonly<Partial<Record<string, boolean>>>
 
@@ -12,6 +13,6 @@ export function lirePlis(brut: unknown): Plis {
 }
 
 /** Le domaine est-il ouvert ? Le choix du lecteur d'abord, sinon : ouvert quand il n'est pas replié par défaut. */
-export const estOuvert = (domaine: DomaineId, replieParDefaut: boolean, plis: Plis): boolean => plis[domaine] ?? !replieParDefaut
+export const estOuvert = (domaine: DomaineId | typeof PLUSIEURS_DOMAINES, replieParDefaut: boolean, plis: Plis): boolean => plis[domaine] ?? !replieParDefaut
 
-export const avecPli = (plis: Plis, domaine: DomaineId, ouvert: boolean): Plis => ({ ...plis, [domaine]: ouvert })
+export const avecPli = (plis: Plis, domaine: DomaineId | typeof PLUSIEURS_DOMAINES, ouvert: boolean): Plis => ({ ...plis, [domaine]: ouvert })

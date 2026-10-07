@@ -105,7 +105,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
         const langue = langueContenuDe(d, l)
         const T = traducteurExercice(textes, langue)
         for (const graine of GRAINES) {
-          const qs = jeu ? g.questions({ niveau: n, reglages, rng: creerRng(graine), T, nb: 10 }) : []
+          const qs = jeu ? g.questions({ niveau: n, reglages, rng: creerRng(graine), T, nb: 10, langue }) : []
           if (jeu && !qs.length) ecarts.push(`graine ${graine} : aucune question`)
           // jamais deux fois la même question (src/noyau/uniques.ts) ; les exercices pas encore reportés n'y sont pas tenus
           ecarts.push(...doublons(qs).map(q => `graine ${graine} : question en double ${q.slice(0, 60)}`))
@@ -116,15 +116,19 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
           if (g.bonneReponse) for (const q of qs) if (!juste(q, g.bonneReponse(q))) ecarts.push(`graine ${graine} : la bonne réponse est refusée (${q.cle})`)
           // et une fausse est refusée (un verifier toujours vrai ne se verrait pas autrement) ; exigée des exercices du noyau
           if (g.mauvaiseReponse) { for (const q of qs) if (juste(q, g.mauvaiseReponse(q))) ecarts.push(`graine ${graine} : une mauvaise réponse est acceptée (${q.texte ?? q.cle})`) }
-          else if (!ecarts.includes('mauvaiseReponse manquante (voir Generateur, types.ts)')) ecarts.push('mauvaiseReponse manquante (voir Generateur, types.ts)')
-          const tirage = g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T })
+          else if (jeu && !ecarts.includes('mauvaiseReponse manquante (voir Generateur, types.ts)')) ecarts.push('mauvaiseReponse manquante (voir Generateur, types.ts)')
+          const tirage = g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T, langue })
           ecarts.push(...g.ecartsAuProgramme(tirage, k).map(e => `fiche, graine ${graine} : ${e}`))
           if (Array.isArray(tirage)) ecarts.push(...doublons(tirage).map(q => `fiche, graine ${graine} : question en double ${q.slice(0, 60)}`))
           const html = f.fiche({ questions: tirage, reglages, T, langue })
-          const encore = f.fiche({ questions: g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T }), reglages, T, langue })
+          const encore = f.fiche({ questions: g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T, langue }), reglages, T, langue })
           if (!/^<!DOCTYPE html><html lang="\w+">/.test(html)) fiches.push(`${l} ${graine} : pas de doctype ou de lang`)
-          if (!/<p class="entete">/.test(html)) fiches.push(`${l} ${graine} : pas de .entete`)
-          if (!/<section class="corrige">[\s\S]*<\/section>/.test(html)) fiches.push(`${l} ${graine} : pas de section.corrige`)
+          // la ligne Prénom / Date porte la classe .entete (l'option « Prénom et date » la retire) ; le corrigé, sauf `corrige: false`
+          if (!/class="entete"/.test(html)) fiches.push(`${l} ${graine} : pas de .entete`)
+          const corrige = /<section class="corrige">[\s\S]*<\/section>/.test(html)
+          const attendu = typeof d.corrige === 'function' ? d.corrige(reglages) : d.corrige !== false
+          if (attendu && !corrige) fiches.push(`${l} ${graine} : pas de section.corrige`)
+          if (!attendu && corrige) fiches.push(`${l} ${graine} : section.corrige alors que la définition n'en attend pas`)
           if (/undefined|NaN|\[object Object\]/.test(html)) fiches.push(`${l} ${graine} : ${html.match(/undefined|NaN|\[object Object\]/)[0]} dans la fiche`)
           if (html !== encore) fiches.push(`${l} ${graine} : même graine, fiche différente`)
           if (g.ecartsFiche) fiches.push(...g.ecartsFiche(html, k).map(e => `${l} ${graine} : ${e}`))

@@ -15,42 +15,38 @@ registre `ancien.js` est supprimé, l'affiche de conjugaison est reportée. Ce p
 Le formulaire de l'affiche de conjugaison choisit le verbe, puis la série de temps : les variantes déclarent leurs `axes` (nouveau dans
 le modèle d'affiche, `src/affiches/definir.ts`), et le formulaire montre une rangée de boutons par axe.
 
-## Reste à reporter
+## Fait ensuite (2026-10-07, suite)
 
-### 1. Fiches d'écriture (Seyès) — `src/impression/ecriture.js`, `views/imprimer/EcritureView.vue`, `impression/catalogue.js`
+| Élément | Où | Instantané / vérification | Remarques |
+|---|---|---|---|
+| Écriture (Seyès) | `src/exercices/ecriture/`, `src/views/francais/EcritureView.vue` | 63/63 fiches publiées, mêmes slugs ; dans Chrome (polices chargées), HTML identique à l'ancien code (seul le balisage de l'en-tête change : `.bandeau` + `.entete`) | « fiche seule », sans hasard. Le build (node, `mesureEstimee`) pose 1 ou 2 copies de plus ou de moins sur 4 fiches (jours, mois, mois et nombres bretons) ; aucun texte ne sort du lignage (au pire à 0,5 mm du bord, mesuré dans Chrome) |
+| Lecture | `src/exercices/lecture/`, `src/views/francais/LectureView.vue` | `tests/instantanes/lecture.json` (nouveau : l'ancienne fiche tirait avec Math.random) | syllabes, mots à reconstituer (OrdonnerClics), lecture à voix haute ; 5 découpages corrigés (é-co-le, nu-a-ge, i-ma-ge, ca-mion, pi-ra-nha) ; CE2 : décodage hors programme (raison donnée) ; textes Mistral facultatifs (test de vie privée) |
+| Quiz | `src/exercices/quiz/`, `src/views/monde/QuizView.vue` | `tests/instantanes/quiz.json` (nouveau) | thèmes par classe d'après le programme (`definition.ts`) ; banques `questions/fr.ts`, `br.ts` ; rangé dans « Plusieurs domaines » sur la page du Monde |
 
-Exercice « fiche seule » (`jeu: false`, décision du 2026-10-06). **Aujourd'hui, la base ne publie plus aucune des ~59 fiches d'écriture**
-(26 lettres, 4 alphabets, chiffres, jours, mois, nombres ; en breton : alphabet, 3 listes, 25 lettres) : le build ne lit que les
-registres. Trois manques du modèle d'exercice à régler d'abord :
+Évolutions du modèle d'exercice faites pour ces reports (`src/noyau/types.ts`, `definir.ts`) :
+- fiche publiée pour plusieurs classes (`fiches[].classes`) et dans une seule langue (`fiches[].langues`, slug tel quel) ; compétences
+  d'une telle fiche : `competencesDeFiche` ;
+- réglages libres (texte) dans une fiche publiée, vérifiés par le type de leur défaut ;
+- `aleatoire: false` (un exemplaire, pas de graine), `bilanParClasse: false`, `corrige` (booléen ou fonction des réglages) ;
+- `ParamsFiche.mesure` (la mesure des affiches) et `ParamsFiche.polices` (script et attaché) ; `ParamsGenerateur.langue` (banque du quiz) ;
+- « Personnaliser » d'une fiche publiée : `?fiche=<id>&niveau=<classe>` ouvre l'exercice réglé comme elle (useReglages) ;
+- langue du contenu au choix (`src/noyau/langueContenu.ts`, `ChoixLangueContenu` dans le cadre ; `?contenu=br`) ;
+- Mistral mis en commun (`src/noyau/mistral.ts`, `CleMistral.vue`) pour la Dictée et la Lecture.
 
-1. **Une fiche publiée pour plusieurs classes** (« GS · CP · CE1 ») : une fiche de `definition.fiches` n'a qu'un `niveau`. Proposition :
-   `classes?: readonly Classe[]` sur une fiche (métadonnées du catalogue), le niveau restant celui des réglages.
-2. **Des fiches d'une seule langue de contenu** (les 29 fiches bretonnes n'existent pas en français ; les fiches françaises de mots n'ont
-   pas de version bretonne) : `langues?: readonly Langue[]` sur une fiche, que le build respecte au lieu de décliner chaque langue.
-3. **La mesure de texte dans la fiche** (taille de police par la hauteur d'x ou de majuscule, coupure des lignes) : passer à `fiche()` la
-   mesure des affiches (`src/affiches/mesure.ts` : `mesureNavigateur` dans l'app, `mesureEstimee` au build), comme `ContexteDessin.mesure`.
+## Reste
 
-Ensuite : `src/exercices/ecriture/` (définition : styles, contenu lettres / mots / texte, interligne, sauter, repasser, copie, couleur ;
-`fiches` = les entrées de `catalogue.js` avec leurs slugs), vue « fiche seule » (`CadreExercice fiche-seule`), textes typés fr/br (les
-`style_*`, titre, prénom, date). Capturer les fiches « avant » avec `scripts/dev/capturer-fiches.ts` (route `/imprimer/ecriture`,
-fichier `--reglages`) pour que le report retrouve les mêmes PDF.
-
-### 2. Affiches « Ce que je sais faire » — `impression/affiches/resume.js`, `impression/affiches/catalogue.js`
+### 1. Affiches « Ce que je sais faire » — `impression/affiches/resume.js`, `impression/affiches/catalogue.js`
 
 Cachées (`RESUMES_VISIBLES = false`, en attente de l'avis d'enseignants). À reporter seulement quand elles seront publiées : le modèle
 d'affiche publie toutes ses variantes (il faudrait sinon une affiche « non publiée »). Phrases : `src/data/savoirs.js`.
 
-### 3. Lecture et Quiz (hors compteur)
+### 2. Retirer l'ancien monde
 
-`views/LectureView.vue` (syllabes, reconstitution de mots, textes ; contenu dans `src/i18n/*/contenu/`) et `views/AutresView.vue`
-(quiz de culture générale, « Le Monde »). Ni l'un ni l'autre n'a de définition ; la Lecture n'a pas de questions de compréhension
-(TODO). Reporter comme les autres exercices (`npm run nouveau`), en écrivant d'abord les instantanés avec `capturer-fiches`.
-
-### 4. Ensuite seulement
-
-- `src/exercices/traducteur.ts` : sert encore aux textes d'affiches dans le build (`texteMulti`, `scripts/build/fiches/registres.ts`) ;
-  à retirer quand ces textes seront lus par `traducteurAffiche`.
-- L'ancien monde déconnecté (`src/views/`, `src/components/`, `src/composables/`, `src/i18n/`, `data/activites.js`,
-  `impression/catalogue.js`, `impression/couverture.js`, `impression/exercices.js`, `router/ancien-routes.js`) : il ne sert plus qu'au
-  rapport `npm run couverture`, au compteur `couverture` de `npm run qualite` et aux vues Lecture, Quiz, Écriture pas encore reportées.
-  Une fois celles-ci reportées : réécrire le compteur sur `src/ressources/` (comme `/dev/couverture`), puis supprimer.
+Plus aucun exercice ni affiche publiée n'en dépend. Ce qui le retient encore :
+- `src/components/ApercuImpression.vue` et `SignalerErreur.vue` (lus par `CadreExercice` et `FormulaireAffiche`) : à déplacer dans le noyau ;
+- un import de `src/i18n/index.js` et `src/exercices/traducteur.ts` (textes d'affiches du build, `texteMulti`) : à lire par `traducteurAffiche` ;
+- le rapport `npm run couverture` et les compteurs `couverture`, `ancienMondeNonReporte`, `importeursAncienSocle` de `npm run qualite` :
+  à réécrire sur `src/ressources/` (comme `/dev/couverture`) ;
+- `src/data/languesRegionales.js` (ancienne vue de la langue régionale) et `src/data/activites.js`.
+Ensuite : supprimer `src/views/` (ancien), `src/components/`, `src/composables/`, `src/i18n/`, `impression/catalogue.js`, `couverture.js`,
+`exercices.js`, `router/ancien-routes.js`.

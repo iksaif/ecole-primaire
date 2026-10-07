@@ -1,6 +1,7 @@
-// Contenu — quiz de culture générale (AutresView), questions en français, par thème.
-// Les questions bretonnes sont dans src/i18n/br/contenu/quiz.js (même ordre ; une question non traduite y est absente).
-// « bonne » doit figurer dans « choix ».
+// Quiz — la banque de questions en français, par thème. Les questions bretonnes sont dans br.ts (même ordre ; une question non traduite
+// y est absente). « bonne » doit figurer dans « choix » (tests/quiz : vérifié) ; « info » : ce qu'on apprend après une erreur.
+import type { Banque } from './types.ts'
+
 export default {
   'geo-france': [
     { q: 'Quelle est la capitale de la France ?', bonne: 'Paris', choix: ['Paris','Lyon','Marseille','Bordeaux'] },
@@ -89,4 +90,4 @@ export default {
     { q: 'De quoi se nourrissent les koalas ?', bonne: 'De feuilles d\'eucalyptus', choix: ['De feuilles d\'eucalyptus','De bambous','De fruits tropicaux','D\'herbe'] },
     { q: 'Quel est le plus grand oiseau du monde ?', bonne: 'L\'autruche', choix: ['L\'autruche','L\'albatros','L\'aigle','Le condor'] },
   ],
-}
+} satisfies Banque

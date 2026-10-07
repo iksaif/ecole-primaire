@@ -65,6 +65,12 @@ export interface SpecExercice<C extends SpecReglages, N extends Partial<Record<C
   contenu?: 'fr' | 'interface'
   /** `false` : exercice « fiche seule » (pas de jeu en ligne : ni `questions` ni `verifier`, pas d'onglet « Jouer »). Défaut : `true` */
   jeu?: boolean
+  /** `false` : la fiche ne tire rien au hasard : un seul exemplaire par fiche publiée. Défaut : `true` */
+  aleatoire?: boolean
+  /** `false` : pas de fiche « bilan » par classe, seulement celles de `fiches`. Défaut : `true` */
+  bilanParClasse?: boolean
+  /** `false` : la fiche n'a rien à corriger (pas de section.corrige) ; ou une fonction des réglages. Défaut : `true` */
+  corrige?: boolean | ((reglages: Readonly<Record<string, unknown>>) => boolean)
   /** toutes les compétences de l'exercice (K.…) : chaque niveau garde celles qui sont à son programme */
   competences: readonly CompetenceId[]
   /** domaines, autres que `domaine`, dont l'exercice travaille aussi des compétences (déclaration explicite : ex. orthographe → grammaire) */
@@ -144,17 +150,50 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
     }
     if (!niv) erreur(`${ou} : niveau absent de l'exercice`)
     else if (!niv.competences.includes(f.competence)) erreur(`${ou} : « ${f.competence} » n'est pas une compétence de ${f.niveau} (${niv.competences.join(', ')})`)
+    verifierClassesEtLangues(f, ou, niveaux, erreur)
     for (const [cle, v] of Object.entries(f.reglages)) {
       if (v === undefined) continue
       const offertes = niv?.options?.[cle] ?? options[cle]
-      if (!offertes) erreur(`${ou} : réglage « ${cle} » sans choix déclaré`)
-      for (const x of Array.isArray(v) ? v : [v]) if (!offertes?.includes(x)) erreur(`${ou} : ${cle} = « ${x} » n'est pas proposé (${JSON.stringify(offertes)})`)
+      if (offertes) {
+        for (const x of Array.isArray(v) ? v : [v]) if (!offertes.includes(x)) erreur(`${ou} : ${cle} = « ${x} » n'est pas proposé (${JSON.stringify(offertes)})`)
+        continue
+      }
+      // un réglage sans choix (texte ou nombre libre) : il doit exister, et garder le type de son défaut
+      const defaut = niv?.reglages[cle] ?? reglages[cle]
+      if (defaut === undefined) erreur(`${ou} : réglage « ${cle} » inconnu`)
+      else if (typeof v !== typeof defaut) erreur(`${ou} : ${cle} doit être de type ${typeof defaut}, comme son défaut`)
     }
   }
 
   // les types de ReglagesDe décrivent ce que les contrôles ci-dessus viennent de vérifier : un seul point de conversion
   return {
     id: spec.id, route: spec.route, domaine: spec.domaine, emoji: spec.emoji, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, niveauDefaut,
+    aleatoire: spec.aleatoire ?? true, bilanParClasse: spec.bilanParClasse ?? true, corrige: spec.corrige ?? true,
     reglages, options, niveaux, fiches,
   } as unknown as DefinitionTypee<ReglagesDe<C, N>>
+}
+
+const FORME_LANGUE = /^[a-z]{2,3}$/
+
+/** Les classes d'une fiche pour plusieurs classes (des niveaux de l'exercice, dont le sien) et ses langues (des codes de langue). */
+function verifierClassesEtLangues(f: FicheExercice, ou: string, niveaux: DefinitionExercice['niveaux'], erreur: (m: string) => never): void {
+  if (f.classes !== undefined) {
+    if (!f.classes.length) erreur(`${ou} : classes vides (sans \`classes\`, la fiche est pour son seul niveau)`)
+    if (!f.classes.includes(f.niveau)) erreur(`${ou} : classes ${f.classes.join(', ')} sans son niveau ${f.niveau}`)
+    for (const c of f.classes) if (!niveaux[c]) erreur(`${ou} : classe ${c} absente des niveaux de l'exercice`)
+  }
+  if (f.langues !== undefined) {
+    if (!f.langues.length) erreur(`${ou} : langues vides`)
+    for (const l of f.langues) if (!FORME_LANGUE.test(l)) erreur(`${ou} : langue « ${l} » invalide (un code : fr, br)`)
+  }
+}
+
+/**
+ * Les compétences d'une fiche publiée : la sienne ; pour une fiche de plusieurs classes, toutes celles de l'exercice au programme
+ * d'au moins une de ses classes (une fiche d'écriture « GS · CP · CE1 » : le geste d'écriture de GS, la cursive et la copie).
+ */
+export function competencesDeFiche(definition: DefinitionExercice, fiche: FicheExercice): CompetenceId[] {
+  if (!fiche.classes) return [fiche.competence]
+  const toutes = fiche.classes.flatMap(c => definition.niveaux[c]?.competences ?? [])
+  return [...new Set([fiche.competence, ...toutes])]
 }

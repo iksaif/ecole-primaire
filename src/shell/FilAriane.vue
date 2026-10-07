@@ -1,18 +1,21 @@
 <template>
   <!-- Fil d'Ariane : des liens, puis la page courante (sans lien, aria-current). Un maillon sans `vers` est du texte ;
-       `emoji` est décoratif (comme la maquette : 🏠 Accueil › 🔢 Maths › 📄 Fiches toutes prêtes). -->
+       `emoji` est décoratif (comme la maquette : 🏠 Accueil › 🔢 Maths › 📄 Fiches toutes prêtes) ; `matiere` : l'icône de la matière à
+       la place (le drapeau dessiné pour la langue régionale). -->
   <nav class="fil" :aria-label="etiquette">
     <ol>
       <li v-for="(m, i) in maillons" :key="i">
-        <RouterLink v-if="m.vers" :to="m.vers"><span v-if="m.emoji" class="emoji" aria-hidden="true">{{ m.emoji }}</span>{{ m.texte }}</RouterLink>
-        <span v-else class="courant" :aria-current="i === maillons.length - 1 ? 'page' : undefined" :lang="m.langue"><span v-if="m.emoji" class="emoji" aria-hidden="true">{{ m.emoji }}</span>{{ m.texte }}</span>
+        <RouterLink v-if="m.vers" :to="m.vers"><IconeMatiere v-if="m.matiere" :matiere="m.matiere" /><span v-else-if="m.emoji" class="emoji" aria-hidden="true">{{ m.emoji }}</span>{{ m.texte }}</RouterLink>
+        <span v-else class="courant" :aria-current="i === maillons.length - 1 ? 'page' : undefined" :lang="m.langue"><IconeMatiere v-if="m.matiere" :matiere="m.matiere" /><span v-else-if="m.emoji" class="emoji" aria-hidden="true">{{ m.emoji }}</span>{{ m.texte }}</span>
       </li>
     </ol>
   </nav>
 </template>
 
 <script setup lang="ts">
-export interface Maillon { texte: string, vers?: string, langue?: string, emoji?: string }
+import IconeMatiere from './IconeMatiere.vue'
+import type { Matiere } from '../ressources/types.ts'
+export interface Maillon { texte: string, vers?: string, langue?: string, emoji?: string, matiere?: Matiere }
 defineProps<{ maillons: readonly Maillon[], etiquette: string }>()
 </script>
 

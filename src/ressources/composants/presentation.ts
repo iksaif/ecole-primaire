@@ -8,7 +8,8 @@ import { LANGUES, LANGUE_SOURCE } from '../../langues/registre.ts'
 import { lireFeuille } from '../../langues/traduire.ts'
 import type { Classe, DomaineId, Langue, Matiere, RessourceDeContenu, Usage } from '../types.ts'
 
-export const EMOJI_MATIERE: Readonly<Record<Matiere, string>> = { maths: '🔢', francais: '📝', monde: '🌍', regionale: '🏴' }
+// langue régionale : 🗣️ quand il faut du texte ; les pages montrent son drapeau dessiné (IconeMatiere : le Gwenn-ha-du n'existe pas en emoji)
+export const EMOJI_MATIERE: Readonly<Record<Matiere, string>> = { maths: '🔢', francais: '📝', monde: '🌍', regionale: '🗣️' }
 export const EMOJI_BADGE = { jeu: '🎮', imprimable: '🖨️' } as const
 export const EMOJI_USAGE: Readonly<Record<Usage, string>> = { apprendre: '📘', sentrainer: '✏️' }
 export const EMOJI_VUE: Readonly<Record<Vue, string>> = { cartes: '▦', liste: '☰' }
@@ -25,6 +26,15 @@ export const genreDe = (r: RessourceDeContenu): Genre => (r.type === 'exercice' 
 export const cleGenre = (g: Genre): `ressource.genre.${Genre}` => `ressource.genre.${g}`
 
 /** Le nom d'un domaine dans une langue d'interface (catalogue `domaines`), à défaut son nom court du programme. */
+/** Le titre d'un groupe de la page d'une matière : le nom du domaine, ou « Plusieurs domaines » (filtres.ts, PLUSIEURS_DOMAINES). */
+export function nomGroupe(id: string, langue: Langue): string {
+  if (id !== 'plusieurs-domaines') return nomDomaine(id as DomaineId, langue)
+  const feuille = lireFeuille(LANGUES[langue].textes, 'ressource.plusieursDomaines') ?? lireFeuille(LANGUES[LANGUE_SOURCE].textes, 'ressource.plusieursDomaines')
+  return typeof feuille === 'string' ? feuille : id
+}
+/** L'emoji d'un groupe : celui du domaine, ou 🧭 pour « Plusieurs domaines ». */
+export const emojiGroupe = (id: string, emojis: Readonly<Record<string, string>>): string => (id === 'plusieurs-domaines' ? '🧭' : emojis[id] ?? '')
+
 export function nomDomaine(id: DomaineId, langue: Langue): string {
   const feuille = lireFeuille(LANGUES[langue].textes, `domaines.${id}`) ?? lireFeuille(LANGUES[LANGUE_SOURCE].textes, `domaines.${id}`)
   return typeof feuille === 'string' ? feuille : domaineDe(id)?.court ?? id

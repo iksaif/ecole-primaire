@@ -1,7 +1,7 @@
 <template>
   <div v-if="matiere" class="container" :data-page="regionale ? 'langue-regionale' : matiere" :lang="regionale && actif ? bcp47 : undefined">
     <FilAriane :maillons="maillons" :etiquette="t('matiere.fil')" />
-    <h1 class="titre"><span aria-hidden="true">{{ EMOJI_MATIERE[matiere] }}</span> <span :lang="regionale ? bcp47 : undefined">{{ nom }}</span></h1>
+    <h1 class="titre"><IconeMatiere :matiere="matiere" :langue="code ?? undefined" /> <span :lang="regionale ? bcp47 : undefined">{{ nom }}</span></h1>
 
     <EtatVide v-if="regionale && !actif" :emoji="EMOJI_BARRE.verrou" :titre="t('regionale.inactif')" :texte="t('regionale.inactifAide')">
       <button type="button" class="gros-bouton" @click="activer">{{ t('regionale.activer', { nom: nomDans }) }}</button>
@@ -27,6 +27,8 @@
       <EtatVide v-else-if="!avecRessources.length" :emoji="EMOJI_ACCUEIL.aVenir" :titre="t(regionale ? 'regionale.videTitre' : 'matiere.videTitre')"
         :texte="regionale ? t('regionale.videTexte', { nom: nomDans }) : t('matiere.videTexte')" />
       <GroupeDomaine v-for="g in avecRessources" :key="g.domaine" :groupe="g" :classes="classes" :vue="vue" />
+      <!-- langue régionale : aussi ce qui existe dans la langue, dans les autres matières -->
+      <AussiEnLangue v-if="regionale && code && pret" :langue="code" :classes="classesVisees" :vue="vue" />
 
       <MatiereAVenir v-if="pret && aVenir.length" :domaines="aVenir" :classes="classesVisees" />
     </template>
@@ -46,15 +48,19 @@ import { useContexte } from '../contexte/useContexte.ts'
 import { CLASSES } from '../data/classes.ts'
 import { LANGUES } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { filtrerParMode, grouperParDomaine } from '../ressources/filtres.ts'
+import { PLUSIEURS_DOMAINES, filtrerParMode, grouperParDomaine } from '../ressources/filtres.ts'
+import type { DomaineId } from '../ressources/types.ts'
 import { useRessources } from '../ressources/useRessources.ts'
 import FilAriane from '../shell/FilAriane.vue'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
 import EtatVide from '../ressources/composants/EtatVide.vue'
 import GroupeDomaine from '../ressources/composants/GroupeDomaine.vue'
-import { EMOJI_ACCUEIL, EMOJI_MATIERE, majuscule } from '../ressources/composants/presentation.ts'
+import { EMOJI_ACCUEIL, majuscule } from '../ressources/composants/presentation.ts'
+import IconeMatiere from '../shell/IconeMatiere.vue'
+import type { Matiere } from '../ressources/types.ts'
 import { NOM_COURT, cheminFiches, langueRegionaleDeLaRoute, matiereDeLaRoute } from './matieres.ts'
 import MatiereAVenir from './MatiereAVenir.vue'
+import AussiEnLangue from './AussiEnLangue.vue'
 import MatiereBarre from './MatiereBarre.vue'
 import MatiereEnfant from './MatiereEnfant.vue'
 import MondeIntro from './MondeIntro.vue'
@@ -69,7 +75,7 @@ const vue = computed(() => contexte.value.vue)
 
 const code = computed(() => langueRegionaleDeLaRoute(route.path))
 const pageMatiere = computed(() => matiereDeLaRoute(route.path))
-const matiere = computed(() => (code.value ? 'regionale' : pageMatiere.value))
+const matiere = computed<Matiere | null>(() => (code.value ? 'regionale' : pageMatiere.value))
 const regionale = computed(() => matiere.value === 'regionale')
 const actif = computed(() => !!code.value && contexte.value.mode !== 'fr' && contexte.value.regionale === code.value)
 const bcp47 = computed(() => (code.value ? LANGUES[code.value].bcp47 : ''))
@@ -77,7 +83,7 @@ const nomDans = computed(() => (code.value ? LANGUES[code.value].nom[langueAffic
 const nom = computed(() => (code.value ? majuscule(LANGUES[code.value].nomLocal) : pageMatiere.value ? t(NOM_COURT[pageMatiere.value]) : ''))
 const maillons = computed(() => [
   { texte: t('matiere.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
-  { texte: nom.value, emoji: matiere.value ? EMOJI_MATIERE[matiere.value] : undefined },
+  { texte: nom.value, matiere: matiere.value ?? undefined },
 ])
 const classes = computed(() => contexte.value.classes)
 const classesVisees = computed(() => (toutes.value ? CLASSES.map(c => c.id) : classes.value))
@@ -89,7 +95,7 @@ const groupes = computed(() => (matiere.value
   : []))
 // un domaine sans aucune ressource (pour aucune classe) est « à venir » ; avec des ressources d'autres classes seulement, il reste un groupe replié
 const avecRessources = computed(() => groupes.value.filter(g => g.ressources.length + g.horsClasse > 0))
-const aVenir = computed(() => groupes.value.filter(g => !g.ressources.length && !g.horsClasse).map(g => g.domaine))
+const aVenir = computed(() => groupes.value.filter(g => !g.ressources.length && !g.horsClasse).map(g => g.domaine).filter((d): d is DomaineId => d !== PLUSIEURS_DOMAINES))
 const total = computed(() => avecRessources.value.reduce((n, g) => n + g.ressources.length, 0))
 const activer = (): Promise<boolean> => choisirMode('bilingue', code.value ?? undefined)
 </script>

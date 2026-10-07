@@ -42,4 +42,14 @@ export default {
   // erreurs de l'ajout d'une police depuis un fichier (src/utils/impression.js)
   erreurPoliceTropGrosse: 'Fichier trop gros (3 Mo maximum)',
   erreurPoliceNonMemorisee: 'Police chargée pour cette session, mais impossible de la mémoriser (stockage du navigateur plein)',
+  langueContenu: 'Langue de l’exercice et de la fiche',
+  // la clé Mistral, facultative (CleMistral.vue)
+  mistral: {
+    titre: 'Clé API Mistral',
+    ok: '✓ Clé configurée',
+    saisie: 'Ta clé Mistral',
+    enregistrer: 'Enregistrer',
+    effacer: 'Effacer la clé',
+    confidentialite: 'La clé reste sur cet appareil. Elle n’est envoyée qu’à Mistral (api.mistral.ai), seulement pour écrire des phrases ; sans clé, rien ne sort du navigateur.',
+  },
 } as const

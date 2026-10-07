@@ -1,7 +1,8 @@
-// Contenu — quiz de culture générale (AutresView), questions en breton, par thème, dans l'ordre des questions
-// françaises (src/i18n/fr/contenu/quiz.js). Les questions absentes (noms propres, nuances délicates) ne sont
-// proposées qu'en français. « bonne » doit figurer dans « choix ». Traduction automatique : les passages
+// Quiz — la banque de questions en breton, par thème, dans l'ordre des questions françaises (fr.ts). Les questions absentes (noms propres,
+// nuances délicates) ne sont proposées qu'en français. « bonne » doit figurer dans « choix ». Traduction automatique : les passages
 // marqués « br: à relire » sont à faire vérifier par un brittophone.
+import type { Banque } from './types.ts'
+
 export default {
   'geo-france': [
     { q: "Pehini eo kêr-benn Bro-C'hall ?", bonne: 'Pariz', choix: ['Pariz', 'Lyon', 'Marseilh', 'Bourdel'] },
@@ -78,4 +79,4 @@ export default {
     { q: 'Pehini eo al loen pounnerañ war an douar ?', bonne: 'An olifant', choix: ['An olifant', 'Ar jirafenn', "Ar marc'h", 'An arzh'] },
     { q: "Peseurt stlejvil a c'hall cheñch liv ?", bonne: "Ar c'hameleon", choix: ["Ar c'hameleon", 'Ar glazard', 'Ar gekko', 'An iguana'] },
   ],
-}
+} satisfies Banque

@@ -14,7 +14,7 @@
     </section>
 
     <section v-if="regionale.proposees.length" class="bloc">
-      <h2>🏴 {{ t('reglages.langues.titre') }}</h2>
+      <h2><IconeMatiere matiere="regionale" :langue="regionale.proposees[0]?.code" /> {{ t('reglages.langues.titre') }}</h2>
       <p class="aide">{{ t('reglages.langues.aide') }}</p>
       <OptionsLangue />
     </section>
@@ -59,6 +59,7 @@ import { useLangueRegionale } from '../langues/useLangueRegionale.ts'
 import CadenasClasse from '../shell/CadenasClasse.vue'
 import ChoixClasses from '../shell/ChoixClasses.vue'
 import Drapeau from '../shell/Drapeau.vue'
+import IconeMatiere from '../shell/IconeMatiere.vue'
 import OptionsLangue from '../shell/OptionsLangue.vue'
 import OptionsProfil from '../shell/OptionsProfil.vue'
 

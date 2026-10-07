@@ -10,21 +10,19 @@
 - La « base saine » (plan 11) est **toute en TypeScript** : noyau d'exercices (`src/noyau/`), modèle d'affiches (`src/affiches/`),
   contexte/routeur/pages (plan 13 : `src/contexte/`, `src/router/`, `src/shell/`, `src/pages/`, `src/ressources/`, `src/recherche/`,
   `src/programme/`), fiches en JSON + PDF (`scripts/build/fiches/`), pages HTML statiques (`scripts/build/statique/`).
-- La **migration de l'ancien monde** est avancée : **17 exercices et 11 affiches** sont portés dans le modèle de la base.
-  Compteurs de `npm run qualite` : `ancienMondeNonReporte` 121, `importeursAncienSocle` 50, `couverture` 56,7 %.
+- La **migration de l'ancien monde** est faite pour tout ce qui est publié : **26 exercices et 11 affiches** dans le modèle de la base.
+  Compteurs de `npm run qualite` : `ancienMondeNonReporte` 99, `importeursAncienSocle` 30, `couverture` 57,8 %.
 
 ### Porté (modèle `definir` / `definirAffiche`, fiches sous leurs slugs historiques)
 - Exercices : calcul-mental, calcul-pose, tables, numération, suites, problèmes, heure, monnaie, longueurs, mesures, fractions,
-  formes, géométrie, motifs, compter, comparer, ranger (= « ordonner », id gardé pour le slug `exercices-ranger-*`), lettres, orthographe, vocabulaire, conjugaison, dictée, grammaire (tous ; `ancien.js` supprimé).
+  formes, géométrie, motifs, compter, comparer, ranger (= « ordonner », id gardé pour le slug `exercices-ranger-*`), lettres, orthographe, vocabulaire, conjugaison, dictée, grammaire, écriture (fiche seule, 63 fiches publiées), lecture, quiz (tous ; `ancien.js` supprimé).
 - Affiches : alphabet, nombres, numération (tableau), droite numérique, tables (× et +), monnaie (+ planches à découper),
   horloge (aiguilles colorées), formes et solides, conjugaison. Trois exemples de développement : `exemple`, `exemple-jours`, `exemple-riche`.
 
-### Reste à porter (voir `src/exercices/ancien.js`, `src/impression/`)
-- **Plus aucun exercice dans l'ancien monde.** Restent : la **fiche d'écriture** (Seyès, exercice « fiche seule » ; trois manques du
-  modèle à régler d'abord), les affiches **« Ce que je sais faire »** (cachées), **Lecture** et **Quiz** : voir `plans/14-migration-restante.md`.
-- Décisions déjà prises pour ces reports : la **dictée** peut appeler Mistral **seulement avec la clé saisie par l'utilisateur**, et un test doit
-  prouver que rien ne sort sans clé (garde générique déjà dans `tests/vie-privee.test.mjs`, à viser sur la vraie dictée) ;
-  le français est toujours en `fr` (`enLangue('fr', …)`).
+### Reste (voir `plans/14-migration-restante.md`)
+- Les affiches **« Ce que je sais faire »** (cachées : seulement quand elles seront publiées) et le **retrait de l'ancien monde** (deux
+  composants à déplacer, les compteurs de couverture à réécrire sur `src/ressources/`, puis supprimer `src/views/` ancien, `src/components/`,
+  `src/composables/`, `src/i18n/`…).
 - **Comment porter** : copier le modèle d'un report récent (`git show de94063 --stat` calcul-mental, `70db8c9` heure,
   `2b285f8` monnaie, `dbfdd31` tables, `fd1b429` numération, `da40463` alphabet, `a286573` monnaie affiche), `npm run nouveau`
   pour le squelette d'un exercice, instantanés identiques (`npm run instantanes`), slugs inchangés, `tirerUniques`, textes typés

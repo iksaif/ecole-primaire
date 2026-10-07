@@ -1,11 +1,10 @@
 // Catalogue de toutes les activités : sert aux pages d'accueil/matières et au filtre par classe.
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
-import { CLASSES, classesEntre } from './classes.js'
+import { CLASSES } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
 
 // classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
 export { CLASSES }
-const de = classesEntre
 
 export const MATIERES = [
   { id: 'imprimer', titre: '🖨️ Fiches à imprimer', br: '🖨️ Fichennoù da voullañ' },
@@ -33,7 +32,6 @@ export const DOMAINES_BR = {
 // `rubrique` regroupe les exercices dans les pages matières (titres plus fins que les domaines)
 export const ACTIVITES = [
   // ── À imprimer ── (genre : 'affiche' pour apprendre, 'fiche' pour s'entraîner)
-  { to: '/imprimer/ecriture', matiere: 'imprimer', domaine: 'ecriture', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
 
   // Affiches du programme : une carte par famille, dans son domaine, seulement sur la page « À imprimer » (`detail`)
   // « Ce que je sais faire » : une carte par domaine du programme qui a des affiches résumé
@@ -47,30 +45,23 @@ export const ACTIVITES = [
   // ── Maths ──
 
   // ── Français ──
-  { fiche: true, to: '/lecture', matiere: 'francais', domaine: 'lecture', rubrique: 'Lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
 
 
   // ── Culture générale ──
-  { fiche: true, to: '/autres', matiere: 'autres', icon: '🗺️', titre: 'Quiz culture générale', desc: 'Géographie, histoire, sciences, animaux', niveaux: de('cp', 'cm2') },
 ]
 
 // Traductions bretonnes des activités [titre, description] — à faire relire par un brittophone
 const BR = {
-  '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
-  '/lecture': ['Lenn ha silabennoù', 'Silabennoù, adsevel gerioù ha testennoù (e galleg)'],
-  '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
 }
 // Compétences de src/data/programme.js travaillées par chaque exercice ou générateur (rapport de couverture :
 // `npm run couverture`, page /programme), seulement aux niveaux de l'activité. Une liste vaut pour tous ses niveaux ;
 // un objet { classe: [...] } dit ce que l'exercice propose vraiment à chaque classe (options du niveau). Les affiches
 // ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
 const COMPETENCES_ROUTES = {
-  '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
   // compréhension : le mode « Lecture de textes » n'a pas encore de questions
-  '/lecture': ['decodage'],
 }
 for (const a of ACTIVITES) {
   const [chemin] = a.to.split('?')

@@ -1,0 +1,25 @@
+// Textes de l'interface — lecture (français) : la page et le jeu. Source des clés : br/textes/lecture.ts doit avoir exactement les mêmes.
+// La fiche est dans le catalogue de contenu de l'exercice : src/exercices/lecture/textes.ts.
+export default {
+  titre: 'Lecture',
+  description: 'Compter les syllabes, reconstituer des mots, lire à voix haute',
+  mode: 'Exercice',
+  syllabes: 'Syllabes',
+  syllabesDesc: "Compte les syllabes d'un mot",
+  mots: 'Reconstituer un mot',
+  motsDesc: 'Remets les syllabes dans le bon ordre',
+  texte: 'Lecture de textes',
+  texteDesc: 'Lis des phrases ou des histoires et écoute les mots',
+  nbQuestions: 'Nombre de questions',
+  cleApiOpt: '(facultatif — pour lire des histoires toujours nouvelles)',
+  cleAucune: 'Aucune clé — textes de la bibliothèque',
+  generation: "J'écris une histoire…",
+  combienSyllabes: 'Combien de syllabes dans ce mot ?',
+  consigneMots: 'Reconstitue le mot en touchant les syllabes dans le bon ordre :',
+  consigneTexte: "Lis ce texte à haute voix. Touche un mot pour l'écouter :",
+  ecouterTout: 'Écouter tout',
+  arreter: 'Arrêter',
+  jaiLu: "J'ai lu ! 👍",
+  erreurSyllabes: '« {mot} » a {n} syllabes : {syll}',
+  erreurOrdre: 'Le bon ordre était : {syll} → {mot}',
+} as const

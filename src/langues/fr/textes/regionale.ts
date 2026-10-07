@@ -1,5 +1,7 @@
 // Textes de l'interface — page de la langue régionale (français) : /brezhoneg, page de matière comme les autres.
 export default {
+  aussiTitre: 'Aussi en {nom}',
+  aussiTexte: 'Les exercices et les affiches des autres matières qui existent en {nom} : ils s’ouvrent en {nom}.',
   inactif: 'Cette page est inactive en mode « Français seul ».',
   inactifAide: 'Activez la langue pour voir ses affiches et ses fiches.',
   activer: 'Activer : français + {nom}',

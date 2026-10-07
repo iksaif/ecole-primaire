@@ -23,7 +23,9 @@ import { competenceDe, domaineDe } from '../../../src/data/programme.ts'
 import { POLICE_SCOLAIRE } from '../../../src/impression/document.ts'
 import { CSS_OPTIONS_FICHE } from '../../../src/noyau/optionsFiche.ts'
 import type { CompetenceVisee, Texte } from '../../../src/telechargements/types.ts'
-import type { Classe, CompetenceId, DefinitionExercice, ModuleExercice } from '../../../src/noyau/types.ts'
+import type { Classe, CompetenceId, DefinitionExercice, FicheExercice, ModuleExercice } from '../../../src/noyau/types.ts'
+import { competencesDeFiche } from '../../../src/noyau/definir.ts'
+import { mesureEstimee } from '../../../src/affiches/mesure.ts'
 import type { DefinitionAffiche, ModuleAffiche, TextesAffiche } from '../../../src/affiches/types.ts'
 import { cssPoliceScolaire } from './polices.ts'
 import type { DocumentSource, FicheSource, MetaFiche } from './types.ts'
@@ -147,30 +149,45 @@ export function avecOptionsParDefaut(html: string): string {
     .replace('<style>', `<style>${CSS_OPTIONS_FICHE}`)
 }
 
+/** Les polices des fiches à plusieurs écritures (fiches d'écriture) : celles des PDF publiés (décision du 2026-10-06). */
+const POLICES_PUBLIEES = { script: 'Andika', attache: 'Playwrite FR Trad' }
+
 /** HTML complet d'une fiche d'exercice : questions tirées avec la graine, mises en page avec Andika embarquée. */
 function htmlFicheExercice(module: ModuleExercice, niveau: Classe, reglagesFiche: Record<string, unknown>, langue: string, graine: number): string {
   const { definition, generateur, fiche, textes } = module
   const reglages = reglagesDuNiveau(definition, { niveau, ...reglagesFiche })
   const T = traducteurExercice(textes, langue)
-  const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T })
-  return avecOptionsParDefaut(fiche.fiche({ questions, reglages, T, langue, police: POLICE_SCOLAIRE, cssPolices: cssPoliceScolaire() }))
+  const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T, langue })
+  return avecOptionsParDefaut(fiche.fiche({
+    questions, reglages, T, langue, police: POLICE_SCOLAIRE, cssPolices: cssPoliceScolaire(), polices: POLICES_PUBLIEES, mesure: mesureEstimee,
+  }))
 }
 
-function fichesExercice(module: ModuleExercice): FicheSource[] {
+/** Le slug d'une fiche de `definition.fiches` dans une langue : publié tel quel pour une fiche d'une seule langue. */
+function slugDeFiche(def: DefinitionExercice, f: FicheExercice, langue: string): string {
+  if (f.slug && f.langues?.length === 1) return f.slug
+  return `${slugFiche(def.id, f)}${suffixeLangue(langue)}`
+}
+
+function fichesExercice(module: ModuleExercice, publiees: readonly string[]): FicheSource[] {
   const def: DefinitionExercice = module.definition
   const res: FicheSource[] = []
-  const langues = [...new Set(LANGUES.map(l => langueContenuDe(def, l)))]
+  // les langues de contenu de l'exercice que le site publie (comme pour les affiches)
+  const langues = [...new Set(LANGUES.map(l => langueContenuDe(def, l)))].filter(l => publiees.includes(l))
   const titre = texteMulti(module.textes, 'titre', def.id)
   for (const niveau of NIVEAUX.filter((n): n is Classe => !!def.niveaux[n])) {
     const niv = def.niveaux[niveau]!
     for (const langue of langues) {
+      const avecBilan = def.bilanParClasse !== false
       const slugDuBilan = `${slugBilan(def.id, niveau)}${suffixeLangue(langue)}`
-      const lignes = [{ fiche: null as null | (typeof def.fiches)[number], slug: slugDuBilan, ids: niv.competences }]
-      for (const f of def.fiches.filter(x => x.niveau === niveau)) {
-        lignes.push({ fiche: f, slug: `${slugFiche(def.id, f)}${suffixeLangue(langue)}`, ids: [f.competence] })
+      const lignes: { fiche: FicheExercice | null, slug: string, ids: readonly CompetenceId[] }[] = []
+      if (avecBilan) lignes.push({ fiche: null, slug: slugDuBilan, ids: niv.competences })
+      for (const f of def.fiches.filter(x => x.niveau === niveau && (!x.langues || x.langues.includes(langue)))) {
+        lignes.push({ fiche: f, slug: slugDeFiche(def, f, langue), ids: competencesDeFiche(def, f) })
       }
       for (const { fiche: f, slug, ids } of lignes) {
-        const nb = f ? NB_VARIANTES_COMPETENCE : NB_VARIANTES
+        // une fiche sans hasard (écriture) : un seul exemplaire
+        const nb = def.aleatoire === false ? 1 : f ? NB_VARIANTES_COMPETENCE : NB_VARIANTES
         const competences = competencesVisees(ids)
         const libelles = competences.map(k => k.libelle).join(' ; ')
         // une fiche peut avoir ses propres textes dans le catalogue de l'exercice (`fiche.<id>.titre|court|description`) ; sinon, d'après sa compétence
@@ -178,7 +195,7 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
         const documents: DocumentSource[] = Array.from({ length: nb }, (_, k) => {
           const graine = graineDe(slug) + k + 1
           return {
-            id: `fiche-${k + 1}`, titre: nb > 1 ? { fr: `Exemplaire ${k + 1}`, br: `Skouerenn ${k + 1}` } : null, graine,   // br: à relire
+            id: `fiche-${k + 1}`, titre: nb > 1 ? { fr: `Exemplaire ${k + 1}`, br: `Skouerenn ${k + 1}` } : null, graine: def.aleatoire === false ? null : graine,   // br: à relire
             formats: [{ format: 'A4', orientation: 'portrait', html: htmlFicheExercice(module, niveau, f?.reglages ?? {}, langue, graine) }],
           }
         })
@@ -188,9 +205,10 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
             titre: f ? texteMulti(module.textes, `fiche.${f.id}.titre`, `${titre.fr} — ${competences[0]?.libelle ?? f.id}`) : titre,
             titreCourt: f ? texteMulti(module.textes, `fiche.${f.id}.court`, competences[0]?.libelle ?? f.id) : titre,
             description, descriptionLongue: description,
-            niveaux: [niveau], domaine: def.domaine, genre: 'exercice', langues: [langue], famille: def.id,
-            parent: f ? slugDuBilan : null,
-            personnaliser: { route: def.route, requete: { mode: 'imprimer' } },
+            niveaux: [...(f?.classes ?? [niveau])], domaine: def.domaine, genre: 'exercice', langues: [langue], famille: def.id,
+            parent: f && avecBilan ? slugDuBilan : null,
+            // « Personnaliser » : l'exercice réglé comme cette fiche (useReglages lit `fiche` et `niveau`)
+            personnaliser: { route: def.route, requete: f ? { mode: 'imprimer', fiche: f.id, niveau } : { mode: 'imprimer' } },
             exemple: estExemple(def.domaine), competences,
             reglages: reglagesDuNiveau(def, { niveau, ...(f?.reglages ?? {}) }) as unknown as MetaFiche['reglages'],
           },
@@ -209,7 +227,7 @@ export async function fichesDesRegistres({ avecExemples = false, prefixe = '', s
   const exercices: ModuleExercice[] = EXERCICES.filter(e => avecExemples || !e.exemple)
   if (avecExemples) affiches.push(...(await import('../../../src/affiches/dev.ts')).EXEMPLES as ModuleAffiche[])
   const publiees = site ? languesDuSite(siteDe(site)) : LANGUES
-  const fiches = [...affiches.flatMap(m => fichesAffiche(m, publiees)), ...exercices.flatMap(fichesExercice)]
+  const fiches = [...affiches.flatMap(m => fichesAffiche(m, publiees)), ...exercices.flatMap(m => fichesExercice(m, publiees))]
   const vues = new Set<string>()
   for (const f of fiches) {
     if (vues.has(f.meta.slug)) throw new Error(`slug « ${f.meta.slug} » produit deux fois (registres)`)

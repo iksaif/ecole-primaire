@@ -1,6 +1,7 @@
 <!--
   Cadre commun des pages d'exercice du noyau :
     - onglets « Faire l'exercice » / « Imprimer une fiche » (le mode est porté par l'URL : useFicheExercice)
+    - la langue du contenu, quand une langue régionale est active (ChoixLangueContenu : langueContenu.ts, fourni par useReglages)
     - le formulaire de réglages (slot par défaut, reçoit { mode }) : un réglage propre à un mode
       s'écrit <div v-if="mode === 'jouer'">…</div>
     - en mode jeu : bouton Commencer ; en mode impression : le bloc « Sur la fiche » (prénom et date, corrigé,
@@ -29,6 +30,7 @@
     </div>
 
     <div :id="`${id}-panneau`" :role="ficheSeule ? undefined : 'tabpanel'" :aria-labelledby="ficheSeule ? undefined : `${id}-onglet-${modeCourant}`">
+      <ChoixLangueContenu />
       <slot :mode="modeCourant" />
 
       <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" />
@@ -52,6 +54,7 @@ import { computed, ref, useId, nextTick } from 'vue'
 import ApercuImpression from '../components/ApercuImpression.vue'
 import SignalerErreur from '../components/SignalerErreur.vue'
 import OptionsFiche from './OptionsFiche.vue'
+import ChoixLangueContenu from './ChoixLangueContenu.vue'
 import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige } from './optionsFiche.ts'
 import type { ModeExercice } from './useFicheExercice.ts'
 import { useLangue } from '../langues/useLangue.ts'

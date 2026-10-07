@@ -33,9 +33,6 @@ const LISTE = [
       F('soustraction', 'la soustraction posée', 'soustraction-posee', ['Opération › Soustraction'], { clics: ['Retenue › ^Mélangé$'], classes: classesFiche(CALCUL_POSE, 'soustraction') }),
     ] },
   // ── Français (contenu en français, consignes traduites) ──
-  // ── Culture générale ──
-  { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
-    classes: [C('cp-cm2', null)] },
 ]
 
 // domaine du programme : celui de l'activité de même route (activites.js) ; null hors programme (culture générale)

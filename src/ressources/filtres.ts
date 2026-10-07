@@ -30,9 +30,26 @@ export function filtrerParMode<T extends { readonly langues: readonly Langue[] }
   return ressources.filter(r => r.langues.some(l => utilisables.includes(l)))
 }
 
-/** Un domaine de la page d'une matière. */
+/**
+ * Le groupe des ressources qui touchent plusieurs domaines de la matière (le quiz du Monde : êtres vivants, matière, géographie,
+ * histoire…) : il passe avant les domaines du programme, et ces ressources ne sont pas rangées dans un domaine en particulier. Ce n'est
+ * pas un domaine du programme (src/data/programme.ts fait foi) : seulement une place sur la page.
+ */
+export const PLUSIEURS_DOMAINES = 'plusieurs-domaines'
+/** À partir de combien de domaines de la matière une ressource va dans ce groupe. */
+const SEUIL_PLUSIEURS = 3
+
+/** Les domaines (de la matière) que travaillent les compétences d'une ressource. */
+function domainesTravailles(r: RessourceDeContenu, matiere: Matiere): Set<string> {
+  const ids = r.competences.flatMap(k => competenceDe(k)?.domaine ?? [])
+  return new Set(ids.filter(id => DOMAINES_LISTE.find(d => d.id === id)?.matiere === matiere))
+}
+/** Une ressource de plusieurs domaines de la matière (au moins SEUIL_PLUSIEURS). */
+export const dePlusieursDomaines = (r: RessourceDeContenu, matiere: Matiere): boolean => domainesTravailles(r, matiere).size >= SEUIL_PLUSIEURS
+
+/** Un domaine de la page d'une matière (ou le groupe PLUSIEURS_DOMAINES). */
 export interface GroupeDomaine {
-  readonly domaine: DomaineId
+  readonly domaine: DomaineId | typeof PLUSIEURS_DOMAINES
   /** les ressources du domaine pour les classes choisies, dans l'ordre du catalogue */
   readonly ressources: readonly RessourceDeContenu[]
   /** `ressources` à apprendre (affiches, leçons) */
@@ -60,15 +77,19 @@ export function domainesDe(matiere: Matiere, classes: readonly Classe[]): readon
 export function grouperParDomaine(ressources: readonly RessourceDeContenu[], { matiere, classes }: { matiere: Matiere, classes: readonly Classe[] }): GroupeDomaine[] {
   const deLaMatiere = ressources.filter(r => r.matiere === matiere)
   const dansLaClasse = new Set(filtrerParClasses(deLaMatiere, classes))
-  return domainesDe(matiere, classes).map(d => {
-    const duDomaine = deLaMatiere.filter(r => r.domaine === d.id)
-    const choisies = duDomaine.filter(r => dansLaClasse.has(r))
+  const groupe = (domaine: GroupeDomaine['domaine'], liste: readonly RessourceDeContenu[]): GroupeDomaine => {
+    const choisies = liste.filter(r => dansLaClasse.has(r))
     return {
-      domaine: d.id as DomaineId, ressources: choisies,
+      domaine, ressources: choisies,
       apprendre: choisies.filter(r => r.usage === 'apprendre'), sentrainer: choisies.filter(r => r.usage === 'sentrainer'),
-      horsClasse: duDomaine.length - choisies.length, replie: choisies.length === 0,
+      horsClasse: liste.length - choisies.length, replie: choisies.length === 0,
     }
-  })
+  }
+  const transversales = deLaMatiere.filter(r => dePlusieursDomaines(r, matiere))
+  const parDomaine = domainesDe(matiere, classes).map(d => groupe(d.id as DomaineId, deLaMatiere.filter(r => r.domaine === d.id && !transversales.includes(r))))
+  // le groupe « plusieurs domaines » n'existe que s'il a des ressources pour les classes choisies (il n'est jamais « à venir » ni replié)
+  const plusieurs = groupe(PLUSIEURS_DOMAINES, transversales)
+  return plusieurs.ressources.length ? [plusieurs, ...parDomaine] : parDomaine
 }
 
 /** Les ressources du catalogue qui travaillent une compétence. */

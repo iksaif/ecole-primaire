@@ -12,9 +12,7 @@ export default {
   motsSeulsDesc: 'Ar skoliad a glev ar ger hag e skriv',
   phrases: 'Frazennoù',
   phrasesDesc: 'Ur ger en ur frazenn, ar skoliad a skriv ar frazenn',
-  cleApi: "Alc'hwez API Mistral",
   cleApiOpt: "(diret — evit krouiñ frazennoù liesseurt)",
-  cleOk: "✓ Alc'hwez kefluniet",
   cleAucune: "Alc'hwez ebet — frazennoù prientet",
   nbMots: 'Niver a c\'herioù',
   tous: 'An holl',
@@ -32,10 +30,6 @@ export default {
   pagesFiche: 'Pajennoù ar fichenn', // br: à relire
   pageListe: 'Gerioù da zeskiñ', // br: à relire
   pageDictee: 'Skrivadeg da ober gant un oadour', // br: à relire
-  cleSaisie: "Da alc'hwez Mistral", // br: à relire
-  cleEnregistrer: 'Enrollañ', // br: à relire
-  cleEffacer: "Diverkañ an alc'hwez", // br: à relire
-  cleConfidentialite: "An alc'hwez a chom war an ardivink-mañ. Ne vez kaset nemet da Mistral (api.mistral.ai), evit skrivañ frazennoù hepken ; hep alc'hwez, netra ne zeu er-maez eus ar merdeer.", // br: à relire
   passer: 'Tremen', // br: à relire
   passe: '(tremenet)', // br: à relire
   cat: {

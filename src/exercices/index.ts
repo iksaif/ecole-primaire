@@ -29,6 +29,9 @@ import { module as vocabulaire } from './vocabulaire/index.ts'
 import { module as conjugaison } from './conjugaison/index.ts'
 import { module as dictee } from './dictee/index.ts'
 import { module as grammaire } from './grammaire/index.ts'
+import { module as ecriture } from './ecriture/index.ts'
+import { module as lecture } from './lecture/index.ts'
+import { module as quiz } from './quiz/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -62,6 +65,9 @@ const BASE: readonly EntreeRegistre[] = [
   conjugaison,
   dictee,
   grammaire,
+  ecriture,
+  lecture,
+  quiz,
   // nouveau:registre
 ]
 

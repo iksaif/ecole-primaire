@@ -213,8 +213,9 @@ console.log('Page de matière : cartes, liste, repli (exemples, développement)'
 console.log('Production : état vide, domaines « à venir »')
 {
   const { ctx, page, erreurs } = await ouvrir()
-  // les maths ne sont plus vides : le calcul mental, premier exercice reporté, est au CP, au CE1, au CE2, au CM1 et au CM2 (voir plus bas)
-  for (const [route, domaine, classe] of [['/monde', 'histoire', 'cp']]) {
+  // les maths ne sont plus vides : le calcul mental, premier exercice reporté, est au CP, au CE1, au CE2, au CM1 et au CM2 (voir plus bas) ;
+  // Le Monde non plus à partir du CP (le quiz) : son état vide se voit en maternelle
+  for (const [route, domaine, classe] of [['/monde', 'vivant', 'gs']]) {
     await aller(page, app(`${route}?classes=${classe}`))
     await page.waitForSelector('.vide')
     verifier(await page.locator('.carte, .ligne').count() === 0 && await page.locator('.a-venir [data-domaine]').count() > 0, `${route} : état vide expliqué et domaines du programme à venir`)
@@ -241,10 +242,11 @@ console.log('Production : état vide, domaines « à venir »')
   await aller(page, app('/monde?classes=ps'))
   await page.waitForSelector('.vide')
   const cycle1 = await page.locator('.a-venir [data-domaine]').count()
+  // au CM2, le quiz est là (« plusieurs domaines ») et les domaines du programme restent à venir
   await aller(page, app('/monde?classes=cm2'))
-  await page.waitForSelector('.vide')
+  await page.waitForSelector('.a-venir')
   verifier(await page.locator('.a-venir [data-domaine="vivant"]').count() === 1 && cycle1 > 0, 'les domaines suivent le cycle de la classe')
-  verifier(await page.locator('#quiz-titre').count() === 1 && (await textes(page, '.monde .absent'))[0].includes('pas encore'), 'Le Monde : le quiz hors programme, état honnête')
+  verifier(await page.locator('[data-ressource="exercice:quiz"]').count() >= 1, 'Le Monde : le quiz est une carte du catalogue, dans « Plusieurs domaines »')
   verifier(!erreurs.length, `aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
   for (const largeur of [1280, 360]) for (const langue of LANGUES_TEST) {
     const o = await ouvrir({ largeur, langue })

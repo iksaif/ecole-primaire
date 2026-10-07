@@ -28,7 +28,7 @@ const retenu = cle => cle.startsWith(prefixe)
 // HTML d'un cas : exactement ce que la vue met dans l'aperçu (avant les options prénom/corrigé du cadre)
 function htmlDe({ generateur, fiche, textes }, { niveau, reglages, graine, langue }) {
   const T = traducteurExercice(textes, langue)
-  const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T })
+  const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T, langue })
   return fiche.fiche({ questions, reglages, T, langue })
 }
 

@@ -1,6 +1,7 @@
 // Textes de l'interface — cartes, lignes et groupes de ressources (français) : src/ressources/composants/.
 // Source des clés : br/textes/ressource.ts doit avoir exactement les mêmes.
 export default {
+  plusieursDomaines: 'Plusieurs domaines',
   enLigne: 'en ligne',
   imprimable: 'imprimable',
   classes: 'Classes',

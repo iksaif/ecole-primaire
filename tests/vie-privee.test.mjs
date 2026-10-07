@@ -55,7 +55,11 @@ async function visiter([site, base]) {
 
 // La Dictée en mode « phrases » : sans clé, rien ne sort ; avec une clé saisie, seule api.mistral.ai est jointe (réponse simulée :
 // aucune requête ne sort vraiment du test)
-async function dictee(base) {
+/**
+ * Un exercice qui peut appeler Mistral (src/noyau/mistral.ts) : sans clé, aucune requête vers un autre site ; avec une clé, seulement
+ * api.mistral.ai (réponse simulée : rien ne sort vraiment). `lancer` ouvre la partie qui demande un texte.
+ */
+async function exerciceMistral(base, { nom, route, lancer }) {
   const essai = async avecCle => {
     const ctx = await contexte(nav)
     if (avecCle) await ctx.addInitScript(() => localStorage.setItem('ep_mistral_key', 'cle-de-test'))
@@ -67,25 +71,43 @@ async function dictee(base) {
     await ctx.route('https://api.mistral.ai/**', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ choices: [{ message: { content: 'Le chat dort.' } }] }) }))
     const page = await ctx.newPage()
     const erreurs = surveiller(page)
-    await page.goto(`${base}francais/dictee`)
-    await page.locator('[data-reglage="mode"] [data-valeur="phrases"]').click()
-    await page.getByRole('button', { name: /Commencer/ }).click()
-    await page.locator('.dictee-input').waitFor()
+    await page.goto(`${base}${route}`)
+    await lancer(page)
     await page.waitForLoadState('networkidle')
     await ctx.close()
     return { hotes: [...hotes], erreurs }
   }
   const sans = await essai(false)
   const avec = await essai(true)
-  console.log('Dictée, phrases générées (Mistral)')
+  console.log(nom)
   verifier(!sans.hotes.length, `sans clé : aucune requête vers un autre site${sans.hotes.length ? ` : ${sans.hotes}` : ''}`)
   verifier(avec.hotes.length === 1 && avec.hotes[0] === 'api.mistral.ai', `avec une clé : seulement api.mistral.ai (${avec.hotes.join(', ') || 'aucune'})`)
   verifier(!sans.erreurs.length && !avec.erreurs.length, 'aucune erreur JavaScript')
 }
 
+const dictee = base => exerciceMistral(base, {
+  nom: 'Dictée, phrases générées (Mistral)', route: 'francais/dictee',
+  lancer: async page => {
+    await page.locator('[data-reglage="mode"] [data-valeur="phrases"]').click()
+    await page.getByRole('button', { name: /Commencer/ }).click()
+    await page.locator('.dictee-input').waitFor()
+  },
+})
+
+const lecture = base => exerciceMistral(base, {
+  nom: 'Lecture, textes générés (Mistral)', route: 'francais/lecture',
+  lancer: async page => {
+    await page.locator('[data-reglage="niveau"] [data-valeur="cp"]').click()
+    await page.locator('[data-reglage="mode"] [data-valeur="texte"]').click()
+    await page.getByRole('button', { name: /Commencer/ }).click()
+    await page.locator('.texte').waitFor()
+  },
+})
+
 console.log('Vie privée')
 await Promise.all(SITES.map(visiter))
 await dictee(URL_SITE)
+await lecture(URL_SITE)
 await nav.close()
 
 // code de sortie lu par tests/lancer.mjs

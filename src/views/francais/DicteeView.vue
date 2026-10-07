@@ -11,18 +11,8 @@
         :libelle="m => t(m === 'mots' ? 'dictee.motsSeuls' : 'dictee.phrases')" :icone="m => (m === 'mots' ? '🔤' : '💬')"
         :description="m => t(m === 'mots' ? 'dictee.motsSeulsDesc' : 'dictee.phrasesDesc')" />
 
-      <!-- phrases générées par Mistral : facultatif, avec la clé que l'utilisateur saisit lui-même (mistral.ts) -->
-      <div v-if="mode === 'jouer' && config.mode === 'phrases'" class="config-section">
-        <div class="config-section-title">{{ t('dictee.cleApi') }} <span class="cle-opt">{{ t('dictee.cleApiOpt') }}</span></div>
-        <p class="api-etat" :class="{ aucune: !cleSaisie }">{{ cleSaisie ? t('dictee.cleOk') : t('dictee.cleAucune') }}</p>
-        <form class="api-row" @submit.prevent="enregistrerCle">
-          <label class="sr-only" for="cle-mistral">{{ t('dictee.cleSaisie') }}</label>
-          <input id="cle-mistral" v-model="champCle" type="password" autocomplete="off" :placeholder="t('dictee.cleSaisie')">
-          <button type="submit" class="btn btn-ghost" :disabled="!champCle.trim()">{{ t('dictee.cleEnregistrer') }}</button>
-          <button v-if="cleSaisie" type="button" class="btn btn-ghost" @click="effacerCle">{{ t('dictee.cleEffacer') }}</button>
-        </form>
-        <p class="api-aide">{{ t('dictee.cleConfidentialite') }}</p>
-      </div>
+      <!-- phrases générées par Mistral : facultatif, avec la clé que l'utilisateur saisit lui-même (src/noyau/mistral.ts) -->
+      <CleMistral v-if="mode === 'jouer' && config.mode === 'phrases'" :utilite="t('dictee.cleApiOpt')" :sans-cle="t('dictee.cleAucune')" />
 
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('dictee.nbMots')" :libelle="n => (n === 0 ? t('dictee.tous') : String(n))" />
 
@@ -113,7 +103,8 @@ import { CONTENU } from '../../exercices/dictee/textes.ts'
 import { questions as tirer, questionsFiche, verifier } from '../../exercices/dictee/generateur.ts'
 import type { Question, Reponse } from '../../exercices/dictee/generateur.ts'
 import { fiche as ficheDictee, cleCategorie } from '../../exercices/dictee/fiche.ts'
-import { cleMistral, enregistrerCleMistral, phraseGeneree } from '../../exercices/dictee/mistral.ts'
+import { phraseGeneree } from '../../exercices/dictee/mistral.ts'
+import CleMistral from '../../noyau/CleMistral.vue'
 
 const { t } = useLangue()
 const { config, langueContenu } = useReglages(DEFINITION)
@@ -126,10 +117,6 @@ const etiquetteNiveau = computed(() => (config.value.niveau.startsWith('cm') ? '
 const nomCategorie = (cat: string): string => t(`dictee.cat.${cleCategorie(cat)}` as 'dictee.cat.pronoms')
 
 // ── Clé Mistral : saisie ici, gardée sur l'appareil, jamais affichée ──
-const cleSaisie = ref(!!cleMistral())
-const champCle = ref('')
-function enregistrerCle(): void { enregistrerCleMistral(champCle.value); champCle.value = ''; cleSaisie.value = !!cleMistral() }
-function effacerCle(): void { enregistrerCleMistral(''); cleSaisie.value = false }
 
 // ── Voix (toujours en français : la dictée est en français) ──
 const { enLecture, parler, arreter } = useTTS()
@@ -216,13 +203,6 @@ const { mode, fiche, nouvelle } = useFicheExercice({
 </script>
 
 <style scoped>
-.cle-opt { font-weight: 400; color: #aaa; font-size: .85em; }
-.api-row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-.api-etat { font-size: .85rem; font-weight: 700; color: var(--vert-texte); margin: 0 0 .4rem; }
-.api-etat.aucune { color: var(--texte-doux); }
-.api-row input { flex: 1; min-width: 12rem; padding: .4rem .6rem; border: 2px solid var(--gris-brd); border-radius: 8px; font: inherit; }
-.api-aide { font-size: .8rem; color: var(--texte-doux); margin: .4rem 0 0; }
-.api-row .btn { font-size: .85rem; }
 
 .slider-row { display: flex; align-items: center; gap: .75rem; }
 .slider-row input[type=range] { flex: 1; }

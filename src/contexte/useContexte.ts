@@ -183,6 +183,14 @@ export function classeVerrouillee(): Classe | null {
   return etat?.utilisation.verrouillee.value ? etat.utilisation.contexte.value.classes[0] ?? null : null
 }
 
+/**
+ * La langue régionale active selon le mode de la barre du haut (« Fr + Br », « breton seul »), ou `null` : mode français, ou contexte non
+ * installé (tests node : `undefined`). Réactive (lue dans un computed, elle le met à jour).
+ */
+export function regionaleActive(): Langue | null | undefined {
+  return etat ? etat.utilisation.contexte.value.regionale : undefined
+}
+
 /** Le contexte partagé. `installerContexte(router)` doit avoir été appelé (main.ts). */
 export function useContexte(): UtilisationContexte {
   if (!etat) throw new Error('useContexte : installerContexte(router) n’a pas été appelé')

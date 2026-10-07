@@ -8,6 +8,7 @@ import { existsSync } from 'node:fs'
 import { availableParallelism } from 'node:os'
 import { chromium } from 'playwright-core'
 import type { Browser, Page } from 'playwright-core'
+import { avecMetadonnees } from './metadonnees.ts'
 import type { DocumentRendu, DocumentSource } from './types.ts'
 
 /** Chrome installé : CHROME_PATH, sinon les emplacements usuels. */
@@ -78,7 +79,7 @@ export async function ouvrirRendu({ travailleurs = Math.min(availableParallelism
       await page.evaluate(() => document.fonts.ready)
       await page.emulateMedia({ media: 'print' })
       // `format` : le papier des fiches qui ne déclarent pas de @page ; un @page de la feuille l'emporte (preferCSSPageSize)
-      const pdf = await page.pdf({ format, landscape: orientation === 'landscape', preferCSSPageSize: true, printBackground: true })
+      const pdf = await avecMetadonnees(await page.pdf({ format, landscape: orientation === 'landscape', preferCSSPageSize: true, printBackground: true }), html)
       await page.emulateMedia({ media: 'screen' })
       const feuilles = page.locator('.page')
       const nbFeuilles = await feuilles.count()

@@ -7,7 +7,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default [
-  { ignores: ['dist*/**', 'node_modules/**', 'public/**', 'plans/**', 'couverture.html', 'i18n-relecture.html'] },
+  { ignores: ['dist*/**', 'node_modules/**', 'public/**', 'plans/**', 'brouillons/**', 'couverture.html', 'i18n-relecture.html'] },
   js.configs.recommended,
   ...vue.configs['flat/essential'],
   // TypeScript : seul l'analyseur change (les .ts et les <script lang="ts">) ; les types sont vérifiés par `npm run types`

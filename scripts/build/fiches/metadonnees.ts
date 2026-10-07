@@ -1,5 +1,5 @@
 // Mention de licence et de crédits dans les propriétés d'un PDF produit par Chrome (qui n'écrit que le titre) : Sujet, Mots-clés, Auteur.
-// La licence des fiches est celle de LICENCE-CONTENU.md ; les images gardent la leur (docs/iconographie/GUIDE.md, § Attribution).
+// La licence des fiches est celle de LICENCE-CONTENU.md ; les images gardent la leur (guide d'iconographie : brouillon hors du dépôt, `brouillons/iconographie/`).
 // Les crédits d'images suivent le CONTENU de la fiche : une balise d'image porte `data-image="openmoji"` ou `data-image="arasaac"` (src/images/),
 // jamais un crédit figé : une fiche sans pictogramme ARASAAC ne doit pas en citer. Tant qu'aucune image n'en porte, seule la licence est écrite.
 import { PDFDocument } from '@cantoo/pdf-lib'

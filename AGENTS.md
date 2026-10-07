@@ -126,6 +126,7 @@ Branche `base-saine` (plan 11, `plans/11-base-saine.md`) : tout ce qui est nouve
   2026-10-06)** : la Dictée peut demander des phrases à Mistral (api.mistral.ai) avec la clé que l'utilisateur
   saisit lui-même ; sans clé, rien ne sort du navigateur (un test doit le vérifier).
 - Polices : seulement celles livrées (OFL / CC BY). Belle Allure et Écolier ne sont pas redistribuables.
+- `brouillons/` : plans temporaires, maquettes et études (ignoré par git : jamais commité ni poussé ; ex. `brouillons/iconographie/`).
 - `plans/` et `AGENTS.md` sont versionnés depuis le 2026-10-07 (reprise du travail sur plusieurs machines : voir `REPRISE.md`). Ne pas commiter
   `i18n-relecture.html` ni `couverture.html` (générés), ni rien qui contienne un identifiant, un hôte réel ou une clé (`.deploy.env`).
 - Commits : auteur `Corentin Chary <corentin.chary@gmail.com>`, signés. Si la signature échoue, ne pas la

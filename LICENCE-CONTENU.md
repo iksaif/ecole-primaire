@@ -14,7 +14,7 @@ Vous pouvez les imprimer, les photocopier, les distribuer en classe ou à la mai
 Pour une simple utilisation en classe ou à la maison, il n'y a rien à faire : imprimez.
 
 Ce choix est volontairement uniforme : il vaut pour toutes les fiches, même celles qui n'ont pas besoin de cette restriction, afin que la règle reste
-simple. Il pourra être assoupli plus tard (voir `docs/iconographie/LICENCE-FICHES.md`). Une fiche déjà téléchargée reste utilisable aux conditions de la licence
+simple. Il pourra être assoupli plus tard (étude de travail, hors du dépôt). Une fiche déjà téléchargée reste utilisable aux conditions de la licence
 sous laquelle vous l'avez obtenue.
 
 ## Les autres contenus : CC BY-SA 4.0

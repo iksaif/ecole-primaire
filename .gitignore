@@ -35,3 +35,6 @@ dist-*/
 
 i18n-relecture.html
 couverture.html
+
+# Brouillons et plans temporaires (maquettes, études) : jamais versionnés, jamais poussés
+brouillons/

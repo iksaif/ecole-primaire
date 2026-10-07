@@ -7,6 +7,7 @@
 
 - [ ] **Passage au profil « enfant »** : depuis une page quelconque, basculer vers « enfant » devrait ramener à l'accueil (tout change : classe verrouillée, pages simplifiées), sauf là où le changement de profil se fait naturellement (accueil, page des réglages, page d'une matière ?) — à préciser
 - [ ] **Page d'une matière en version enfant** (ex. `/maths`) : aujourd'hui trop de détails pour un enfant (domaines, compétences, affiches, fiches) ; une vue « enfant » avec seulement les exercices de sa classe, en grandes cartes
+- [ ] **Mode « immersion » pendant un exercice en ligne** : une fois la partie lancée, l'interface s'efface (barre de navigation, pied de page, titre de la page, réglages) pour laisser toute la place à la question ; une sortie toujours visible et facile (« Quitter » / ✕, Échap) ramène à la page normale. À regarder : `QuestionJeu` (barre de score déjà présente), le shell (`src/shell/`), téléphone (plein écran), accessibilité (focus, annonce du changement), l'écran de résultats (retour à l'interface ou non)
 - [ ] **Redirections du report d'Orthographe** : `exercices-orthographe-cp-cm2` (réglage « CP → CM2 » supprimé) → `exercices-orthographe-ce2-homophones` ; nouvelles pages de bilan `exercices-orthographe-cm1` et `-cm2` (le modèle publie un bilan par classe ; questions identiques au CE2)
 
 ## Demandes du 2026-10-05

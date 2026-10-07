@@ -33,10 +33,5 @@ public/fiches/
 dist-*/
 .deploy.env
 
-# Liste de travail locale
-/TODO.md
-# (TODO.md à la racine est un lien vers docs/TODO.md, qui est versionné)
-plans/
 i18n-relecture.html
 couverture.html
-AGENTS.md

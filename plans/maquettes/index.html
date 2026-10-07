@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquettes de structure — plan 12</title>
+<style>
+/* ═══ Charte (reprise de src/style.css) ═══ */
+:root {
+  --bleu:#4a90e2; --bleu-fort:#2f70c0; --texte-doux:#6b6b6b;
+  --vert-texte:#2e7d32; --rouge-texte:#c0392b; --orange-texte:#8f5500;
+  --vert:#5cb85c; --rouge:#e74c3c; --orange:#f39c12; --violet:#9b59b6; --jaune:#f1c40f; --rose:#e91e8c;
+  --gris-bg:#f8f9fa; --gris-brd:#dee2e6; --texte:#2c3e50; --radius:12px; --shadow:0 4px 12px rgba(0,0,0,.1);
+  --c1:#e91e8c; --c2:#2f70c0; --c3:#7d3c98;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris-bg);color:var(--texte);min-height:100vh;line-height:1.4}
+a{color:var(--bleu-fort)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:where(a,button,summary,select,input,[tabindex]):focus-visible{outline:3px solid var(--bleu-fort);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+[hidden]{display:none!important}
+
+/* ═══ Barre de démonstration (hors maquette) ═══ */
+#demo{background:#1f2937;color:#e5e7eb;font-size:.8rem;padding:.5rem .75rem;display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:center;position:relative;z-index:50}
+#demo b{color:#fff;font-weight:700}
+#demo .grp{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}
+#demo .grp>span{color:#9ca3af;margin-right:.1rem}
+#demo button,#demo select{background:#374151;border:1px solid #4b5563;color:#f3f4f6;border-radius:6px;padding:.15rem .5rem;font-size:.8rem}
+#demo button[aria-pressed="true"]{background:#fbbf24;border-color:#fbbf24;color:#111827;font-weight:700}
+#demo :focus-visible{outline-color:#fbbf24}
+.phone-on body{background:#d1d5db}
+
+/* ═══ Cadre « appareil » ═══ */
+.device{position:relative;background:var(--gris-bg)}
+.phone .device{box-sizing:content-box;width:360px;height:720px;border:8px solid #1f2937;border-radius:30px;overflow:hidden;margin:1rem auto}
+.scroller{height:100%}
+.phone .scroller{overflow-y:auto;overflow-x:hidden}
+.viewport{container-type:inline-size;container-name:vp;min-height:100%;display:flex;flex-direction:column}
+main{flex:1}
+.container{max-width:1100px;margin:0 auto;padding:1.5rem 1.25rem;width:100%}
+@container vp (max-width:700px){.container{padding:1rem 16px}}
+
+/* ═══ Éléments communs ═══ */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border-radius:8px;border:none;font-size:1rem;font-weight:700;text-decoration:none;transition:opacity .15s,transform .1s;background:var(--gris-bg);color:var(--texte);border:2px solid var(--gris-brd)}
+.btn:hover{opacity:.88}.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--bleu-fort);color:#fff;border-color:var(--bleu-fort)}
+.btn-success{background:var(--vert-texte);color:#fff;border-color:var(--vert-texte)}
+.btn-sm{padding:.3rem .8rem;font-size:.88rem}
+.level-btn{padding:.4rem 1rem;border-radius:20px;border:2px solid var(--gris-brd);background:#fff;font-weight:700;font-size:.85rem;transition:border-color .15s,background .15s,color .15s;white-space:nowrap}
+.level-btn:hover{border-color:var(--bleu);color:var(--bleu-fort)}
+.level-btn.active{background:var(--bleu-fort);border-color:var(--bleu-fort);color:#fff}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:1.25rem}
+h1{font-size:1.9rem;font-weight:900;line-height:1.2;margin-bottom:.35rem}
+h2{font-size:1.3rem;font-weight:800}
+h3{font-size:1rem;font-weight:800}
+.lead{color:#555;font-size:1.05rem}
+.muted{color:var(--texte-doux)}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.crumbs{font-size:.85rem;color:var(--texte-doux);margin-bottom:.8rem}
+.crumbs a{color:var(--bleu-fort)}
+.crumbs span[aria-hidden]{margin:0 .3rem}
+
+/* pastilles de classes */
+.pills{display:inline-flex;flex-wrap:wrap;gap:3px}
+.cl{font-size:.7rem;font-weight:800;padding:.08rem .45rem;border-radius:20px;background:#eef1f4;color:#555;border:1px solid transparent;white-space:nowrap}
+.cl.sel{background:var(--bleu-fort);color:#fff}
+.badge{font-size:.72rem;font-weight:700;padding:.1rem .5rem;border-radius:20px;white-space:nowrap}
+.b-print{background:#fff3e0;color:var(--orange-texte)}
+.b-online{background:#e8f6e8;color:var(--vert-texte)}
+.b-lang{background:#eef1f4;color:#444}
+.br{border-bottom:1px dotted #8a8a8a;cursor:help}
+.br-sub{display:inline;margin-left:.35em;font-size:.72em;font-weight:600;opacity:.8;line-height:1.1}
+.tile .br-sub,.kid-tile .br-sub{display:block;margin:0}
+.flag{display:inline-block;vertical-align:middle;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
+
+/* ═══ Navigation ═══ */
+.nav{background:#fff;box-shadow:var(--shadow);padding:.55rem 1.25rem;display:flex;align-items:center;gap:.5rem 1rem;position:sticky;top:0;z-index:30}
+.logo{font-size:1.4rem;font-weight:800;text-decoration:none;color:var(--bleu-fort);white-space:nowrap}
+.nav-links{display:flex;gap:.3rem}
+.nav-links a{text-decoration:none;padding:.35rem .8rem;border-radius:20px;font-weight:700;font-size:.92rem;color:var(--texte);white-space:nowrap;line-height:1.15}
+.nav-links a:hover{background:var(--gris-bg)}
+.nav-links a.active{background:var(--bleu-fort);color:#fff}
+.nav-links a .br-sub{display:inline;margin-left:.3rem}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.4rem}
+.nbtn{display:inline-flex;align-items:center;gap:.35rem;background:var(--gris-bg);border:2px solid transparent;border-radius:20px;padding:.3rem .7rem;font-size:.88rem;font-weight:700;text-decoration:none;color:var(--texte);white-space:nowrap}
+.nbtn:hover{border-color:var(--gris-brd)}
+.nbtn[aria-expanded="true"]{border-color:var(--bleu);background:#fff}
+.nbtn kbd{font:inherit;font-size:.7rem;border:1px solid var(--gris-brd);background:#fff;border-radius:4px;padding:0 .3rem;color:var(--texte-doux)}
+.nbtn.classe{background:#e8f6e8;border-color:var(--vert)}
+.nbtn.locked{background:#fff8e1;border-color:#f5c27a}
+.dd{position:relative}
+.dd-panel{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border-radius:var(--radius);box-shadow:0 8px 28px rgba(0,0,0,.2);padding:.75rem;min-width:270px;z-index:40;border:1px solid var(--gris-brd)}
+.dd-panel h3{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--texte-doux);margin-bottom:.4rem}
+.opt{display:flex;gap:.6rem;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--gris-brd);border-radius:10px;padding:.5rem .65rem;margin-bottom:.4rem}
+.opt:hover{border-color:var(--bleu)}
+.opt[aria-pressed="true"]{border-color:var(--bleu-fort);background:#eef5fd}
+.opt strong{display:block;font-size:.92rem}
+.opt small{display:block;color:var(--texte-doux);font-size:.78rem;line-height:1.25}
+.opt .ico{font-size:1.2rem;line-height:1.2;min-width:2.4rem}
+.dd-panel .foot{font-size:.76rem;color:var(--texte-doux);margin-top:.3rem}
+.wide{display:revert}.narrow{display:none}
+.nav-links.wide{display:flex}
+@container vp (max-width:1440px){.nav-links a{padding:.3rem .6rem}.nbtn .lbl,.nbtn kbd{display:none}.nav{padding:.55rem 1rem;gap:.5rem .7rem}}
+@container vp (max-width:760px){
+  .wide,.nav-links.wide{display:none!important}.narrow{display:inline-flex}
+  .nav{padding:.45rem 16px;gap:.4rem}.logo{font-size:1.15rem}
+  .nav-right{gap:.25rem;min-width:0}
+  .nbtn{padding:.3rem .55rem}.nbtn.classe .ic1{display:none}.logo{font-size:1.02rem}.nav{gap:.25rem}
+  .dd-panel{position:fixed;left:8px;right:8px;top:auto;min-width:0}
+  .menu-panel.narrow{display:block}
+  .nav.brseul [data-a="search"]{display:none}
+}
+.phone .dd-panel{position:absolute}
+.menu-panel{position:absolute;left:0;right:0;top:100%;background:#fff;box-shadow:0 12px 24px rgba(0,0,0,.2);padding:.75rem 16px 1rem;border-top:1px solid var(--gris-brd);max-height:80vh;overflow:auto}
+.menu-panel a.big{display:flex;align-items:center;gap:.6rem;padding:.65rem .5rem;font-weight:800;text-decoration:none;color:var(--texte);border-bottom:1px solid var(--gris-bg);font-size:1.05rem}
+.menu-panel h3{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--texte-doux);margin:.8rem 0 .3rem}
+.seg{display:flex;flex-wrap:wrap;gap:.3rem}
+
+/* ═══ Accueil ═══ */
+.hero{text-align:center;padding:1.2rem 0 1.4rem}
+.hero h1{color:var(--bleu-fort);margin-bottom:.4rem}
+.ctx{display:inline-flex;align-items:center;gap:.5rem .9rem;flex-wrap:wrap;justify-content:center;background:#fff;box-shadow:var(--shadow);border-radius:var(--radius);padding:.6rem .9rem;margin-top:1rem}
+.ctx .lab{font-weight:800;font-size:.9rem;color:#555}
+.puce{border:2px solid var(--gris-brd);background:#fff;border-radius:999px;padding:.25rem .7rem;font-weight:800;font-size:.88rem;transition:all .15s}
+.puce:hover{border-color:var(--vert)}
+.puce[aria-pressed="true"]{background:var(--vert-texte);border-color:var(--vert-texte);color:#fff}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.1rem;margin:1.2rem 0}
+.tile{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:1.3rem 1rem;text-decoration:none;color:var(--texte);display:flex;flex-direction:column;align-items:center;gap:.5rem;text-align:center;border-top:5px solid var(--bleu);transition:transform .15s,box-shadow .15s}
+.tile:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.tile .ic{font-size:2.5rem;line-height:1}
+.tile .tt{font-weight:800;font-size:1.15rem}
+.tile .dd2{font-size:.85rem;color:#555}
+.tile.monde{border-color:var(--violet)}.tile.maths{border-color:var(--bleu)}.tile.francais{border-color:var(--vert)}.tile.brezhoneg{border-color:var(--orange)}.tile.prog{border-color:var(--violet)}.tile.fiches{border-color:var(--rose)}
+.h-sec{font-size:1.15rem;font-weight:800;margin:1.6rem 0 .6rem;display:flex;align-items:center;gap:.5rem}
+.reprendre{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem}
+.rep{display:flex;gap:.7rem;align-items:center;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:.7rem .9rem;text-decoration:none;color:var(--texte);border-left:5px solid var(--orange)}
+.rep:hover{transform:translateY(-2px)}
+.rep .ic{font-size:1.7rem}
+.rep strong{display:block;font-size:.95rem}.rep small{color:var(--texte-doux);font-size:.8rem}
+.kid-title{font-size:2.6rem;text-align:center;color:var(--bleu-fort);font-weight:900;margin:.6rem 0 1rem}
+.kid-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem}
+.kid-tile{background:#fff;border-radius:28px;box-shadow:var(--shadow);padding:1.6rem 1rem;text-align:center;text-decoration:none;color:var(--texte);border-bottom:10px solid var(--bleu);display:flex;flex-direction:column;gap:.4rem;align-items:center;font-weight:900;font-size:1.5rem;transition:transform .15s}
+.kid-tile:hover{transform:scale(1.04)}
+.kid-tile .ic{font-size:4.5rem;line-height:1.1}
+.kid-tile.francais{border-color:var(--vert)}.kid-tile.monde{border-color:var(--violet)}.kid-tile.brezhoneg{border-color:var(--orange)}
+.kid-tile.small{font-size:1.1rem;padding:1rem .6rem}.kid-tile.small .ic{font-size:3rem}
+.optional{font-size:.85rem;color:var(--texte-doux);margin-top:1rem;text-align:center}
+.linkbtn{background:none;border:none;color:var(--bleu-fort);text-decoration:underline;padding:0;font-weight:600}
+
+/* ═══ Page de matière ═══ */
+.encart{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;background:#fff7e6;border:2px solid #f5c27a;border-radius:var(--radius);padding:.9rem 1.1rem;margin:1rem 0 1.2rem}
+.encart .ic{font-size:2rem}
+.encart p{flex:1;min-width:220px}
+.vsel{margin-left:auto;display:inline-flex;border:2px solid var(--gris-brd);border-radius:20px;overflow:hidden;background:#fff}.vsel button{border:none;background:#fff;padding:.3rem .8rem;font-weight:700;font-size:.85rem}.vsel button[aria-pressed="true"]{background:var(--bleu-fort);color:#fff}
+.ctxbar{display:flex;flex-wrap:wrap;gap:.5rem .8rem;align-items:center;margin:.4rem 0 .8rem;font-size:.9rem}
+.jump{display:flex;gap:.4rem;flex-wrap:wrap;margin:.8rem 0}
+.dom{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin:1.1rem 0;overflow:hidden;border-top:5px solid var(--bleu);scroll-margin-top:70px}
+.dom>h2{padding:.8rem 1.1rem .2rem}
+.reslist{list-style:none}
+.res{display:grid;grid-template-columns:1fr auto;gap:.15rem .6rem;padding:.55rem 0;border-bottom:1px solid var(--gris-bg);align-items:center}
+.res:last-child{border-bottom:none}
+.res a.t{font-weight:700;text-decoration:none;color:var(--texte);display:flex;gap:.45rem;align-items:center}
+.res a.t:hover{color:var(--bleu-fort);text-decoration:underline}
+.res .badges{display:flex;gap:.25rem;justify-content:flex-end}
+.res .pills{grid-column:1/-1}
+.empty{color:var(--texte-doux);font-size:.9rem;padding:.4rem 0;font-style:italic}
+
+/* ═══ Fiches toutes prêtes ═══ */
+.filters{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:1rem 1.1rem;display:grid;gap:.8rem}
+.frow{display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center}
+.frow>.lab{font-weight:800;font-size:.8rem;text-transform:uppercase;color:var(--texte-doux);min-width:4.5rem}
+.search{flex:1;min-width:200px;border:2px solid var(--gris-brd);border-radius:8px;padding:.5rem .8rem}
+.search:focus{border-color:var(--bleu)}
+select.sel{border:2px solid var(--gris-brd);border-radius:20px;padding:.3rem .7rem;background:#fff;font-weight:700;font-size:.88rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-top:1rem}
+@container vp (max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:.7rem}}
+.fcard{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);text-decoration:none;color:var(--texte);display:flex;flex-direction:column;overflow:hidden;transition:transform .15s}
+.fcard:hover{transform:translateY(-3px)}
+.fcard .mini{background:#eef2f7;padding:.7rem .7rem 0;display:flex;justify-content:center;height:170px;overflow:hidden}
+.fcard .mini svg{height:100%;width:auto;box-shadow:0 2px 8px rgba(0,0,0,.2);background:#fff}
+.fcard .info{padding:.7rem .8rem .8rem;display:flex;flex-direction:column;gap:.35rem;flex:1}
+.fcard strong{font-size:.92rem;line-height:1.25}
+.fcard .meta{font-size:.78rem;color:var(--texte-doux);margin-top:auto}
+
+/* cartes de ressources, domaines repliables, listes */
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.8rem;margin-top:.4rem}
+@container vp (max-width:520px){.rgrid{grid-template-columns:1fr 1fr;gap:.6rem}}
+@container vp (max-width:400px){.rgrid{grid-template-columns:1fr}}
+.rcard{background:#fff;border:2px solid var(--gris-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:.9rem .8rem;text-decoration:none;color:var(--texte);display:flex;flex-direction:column;align-items:center;text-align:center;gap:.35rem;border-top:5px solid var(--bleu);transition:transform .15s,box-shadow .15s}
+.rcard:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.rc-ic{font-size:2.6rem;line-height:1.1}
+.rcard strong{font-size:.98rem;line-height:1.25}
+.rc-d{font-size:.82rem;color:#555;line-height:1.3}
+.rcard .badges{display:flex;gap:.25rem;flex-wrap:wrap;justify-content:center;margin-top:auto}
+.rcard .pills{justify-content:center}
+details.dom{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin:.8rem 0;border-top:5px solid var(--bleu);scroll-margin-top:70px}
+details.dom.vide{border-top-color:var(--gris-brd);background:#fcfcfd}
+details.dom>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .8rem;padding:.8rem 1.1rem;cursor:pointer;list-style-position:inside}
+.dom-t{font-size:1.2rem;font-weight:800}
+.dom-n{font-size:.88rem;color:var(--texte-doux);margin-left:auto}
+details.dom.vide .dom-t{color:#555}
+.dom-body{padding:0 1.1rem 1rem}
+.sub h3{margin:.8rem 0 .2rem;color:var(--bleu-fort);font-size:.85rem;text-transform:uppercase;letter-spacing:.04em}
+.sub h3.sh{font-size:.95rem;text-transform:none}
+.note-hors{background:var(--gris-bg);border-radius:8px;padding:.4rem .7rem;font-size:.86rem;color:#555}
+.avenir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.8rem;margin-top:.6rem}
+.avenir{border:2px dashed var(--gris-brd);border-radius:var(--radius);padding:.9rem;text-align:center;display:flex;flex-direction:column;gap:.3rem;align-items:center;background:#fff;color:#555}
+.quiz{margin:1rem 0;border-top:5px solid var(--violet)}
+.level-btn.ok{background:#e8f6e8;border-color:var(--vert-texte);color:var(--vert-texte)}.level-btn.ko{background:#fdecea;border-color:var(--rouge-texte);color:var(--rouge-texte)}
+.hold{background:none;border:none;display:block;margin:.4rem auto;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:50%}
+.nbtn.retour{background:#fff8e1;border-color:#f5c27a}.nbtn .lbl3{display:none}
+@container vp (max-width:960px){.nbtn.retour .lbl2{display:none}.nbtn.retour .lbl3{display:inline}}
+.langs{margin-top:.5rem;font-size:.92rem}.lg{display:inline-flex;gap:.3rem;align-items:center;padding:.1rem .1rem}.lg.cur{font-weight:800;border-bottom:3px solid var(--bleu-fort)}
+.actions.two{display:grid;grid-template-columns:1fr 1fr}.actions.two .btn{justify-content:center}
+.ltab{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:.4rem}
+.ltab th,.ltab td{padding:.45rem .5rem;border-bottom:1px solid var(--gris-bg);text-align:left;vertical-align:middle}
+.ltab thead th{font-size:.75rem;text-transform:uppercase;color:#555;border-bottom:2px solid var(--gris-brd)}
+.sortb{background:none;border:none;font:inherit;font-weight:800;text-transform:uppercase;color:inherit;padding:0}
+.ltab a{color:var(--texte);text-decoration:none}.ltab a:hover strong{text-decoration:underline}
+.ltab td.c-act{white-space:nowrap;display:table-cell}.ltab td.c-act .btn{margin-left:.25rem}
+.ltab .btn-sm{padding:.2rem .6rem;font-size:.8rem}
+@container vp (max-width:760px){table.prog td:first-child,table.prog th:first-child{position:sticky;left:0;background:#fff;z-index:1;min-width:7.5rem;max-width:7.5rem;font-size:.78rem;box-shadow:2px 0 4px rgba(0,0,0,.08)}table.prog th:first-child{background:var(--gris-bg)}}
+a.refl{display:block;margin:.1rem auto 0;font-size:.68rem;font-weight:700;line-height:1.15;color:var(--bleu-fort);text-decoration:underline;max-width:5.2rem}
+.off a.refl{display:inline;max-width:none;font-size:.78rem}
+a.dot{color:var(--texte);text-decoration:none;font-size:1.3rem;display:inline-block;padding:.1rem .5rem;border-radius:8px}a.dot:hover{background:#e8f1fc;color:var(--bleu-fort)}
+@container vp (max-width:760px){
+  .ltab thead{display:none}.ltab,.ltab tbody{display:block}
+  .ltab tr{display:grid;grid-template-columns:1fr auto;gap:.15rem .5rem;padding:.5rem 0;border-bottom:1px solid var(--gris-bg)}
+  .ltab td{border:none;padding:0}.ltab td.c-type{display:none}.ltab td.c-cl{grid-column:1/2}.ltab td.c-b{grid-column:2/3;grid-row:1/2;justify-self:end}
+  .ltab td.c-act{grid-column:1/-1;white-space:normal}.ltab td.c-act .btn{margin:.2rem .25rem 0 0}
+}
+/* ═══ Feuille ═══ */
+.sheet{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.6rem;align-items:start}
+@container vp (max-width:820px){.sheet{grid-template-columns:1fr}}
+.preview{background:#e3e8ee;border-radius:var(--radius);padding:1rem;display:flex;flex-direction:column;align-items:center;gap:.7rem}
+.preview .pg{width:100%;display:flex;justify-content:center}
+.preview .pg svg{max-width:100%;max-height:480px;width:auto;height:auto;box-shadow:0 4px 16px rgba(0,0,0,.25);background:#fff}
+.pager{display:flex;align-items:center;gap:.8rem;font-weight:700}
+.pager button{width:2.4rem;height:2.4rem;border-radius:50%;border:2px solid var(--gris-brd);background:#fff;font-size:1rem}
+.pager button:disabled{opacity:.4;cursor:default}
+.panel{display:grid;gap:1rem}
+.box{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:1rem 1.1rem}
+.box h3{margin-bottom:.5rem}
+.actions{display:flex;flex-wrap:wrap;gap:.5rem}
+.comp{border-left:5px solid var(--violet)}
+.neigh{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.7rem}
+
+/* ═══ Personnaliser ═══ */
+.perso{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:1.4rem;align-items:start}
+@container vp (max-width:820px){.perso{grid-template-columns:1fr}}
+.perso .preview{position:sticky;top:76px}
+@container vp (max-width:820px){.perso .preview{position:static}}
+.stepper{display:inline-flex;align-items:center;gap:.5rem;font-weight:800}
+.stepper button{width:2.2rem;height:2.2rem;border-radius:50%;border:2px solid var(--gris-brd);background:#fff;font-weight:900}
+.check{display:flex;gap:.5rem;align-items:center;padding:.3rem 0;font-weight:600}
+.check input{width:1.2rem;height:1.2rem}
+.group-t{font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--texte-doux);margin-bottom:.5rem}
+
+/* ═══ Programme ═══ */
+table.prog{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);font-size:.9rem}
+.tblwrap{overflow-x:auto}
+table.prog th,table.prog td{padding:.5rem .6rem;border-bottom:1px solid var(--gris-brd);text-align:center}
+table.prog th{background:var(--gris-bg);font-size:.78rem;text-transform:uppercase;color:#555}
+table.prog th.sel{background:var(--bleu-fort);color:#fff}
+table.prog td.sel{background:#eef5fd}
+table.prog td:first-child,table.prog th:first-child{text-align:left}
+.comp-item{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:.9rem 1.1rem;margin-bottom:.8rem;border-left:5px solid var(--violet)}
+.comp-item h3{font-size:1rem;margin-bottom:.3rem}
+.comp-item ul{list-style:none;margin-top:.5rem;display:grid;gap:.25rem}
+.comp-item li a{font-weight:600;text-decoration:none}
+.comp-item li a:hover{text-decoration:underline}
+.off{font-size:.8rem;color:var(--texte-doux)}
+
+/* ═══ Brezhoneg ═══ */
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0}
+.alpha{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:.5rem}
+.letter{background:#fff;border-radius:10px;box-shadow:var(--shadow);text-align:center;padding:.5rem .2rem;font-weight:900;font-size:1.5rem;border-bottom:4px solid var(--orange)}
+.letter small{display:block;font-size:.7rem;font-weight:600;color:var(--texte-doux)}
+.words{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem}
+.word{background:#fff;border-radius:10px;box-shadow:var(--shadow);padding:.6rem .8rem;display:flex;justify-content:space-between;gap:.5rem;align-items:baseline}
+.word b{font-size:1.15rem}.word span{color:var(--texte-doux);font-size:.85rem}
+.banner{background:#fff8e1;border:2px dashed #f5c27a;border-radius:var(--radius);padding:.7rem 1rem;margin:.8rem 0;font-size:.9rem}
+
+/* ═══ Pied de page, notes, toast ═══ */
+.pied{display:flex;gap:.6rem 1.25rem;justify-content:center;flex-wrap:wrap;padding:1.5rem 1rem 1.5rem;font-size:.85rem;color:var(--texte-doux)}
+.pied a{color:var(--texte-doux)}
+.notes{max-width:1100px;margin:1rem auto 1.5rem;width:calc(100% - 2.5rem);background:#fffbe6;border:2px dashed #e0c040;border-radius:var(--radius);font-size:.9rem}
+@container vp (max-width:700px){.notes{width:calc(100% - 32px)}}
+.notes summary{padding:.6rem 1rem;font-weight:800;cursor:pointer;color:#6b5600}
+.notes .in{padding:0 1rem 1rem;display:grid;gap:.5rem}
+.notes h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:#6b5600}
+.notes ul{padding-left:1.2rem}
+.toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:#1f2937;color:#fff;padding:.6rem 1rem;border-radius:10px;z-index:100;font-size:.9rem;max-width:90vw;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.phone .toast{position:absolute;bottom:.8rem;width:90%;text-align:center}
+.skip{position:absolute;left:-999px;top:0;background:#fff;padding:.5rem 1rem;z-index:100}
+.skip:focus{left:0}
+
+/* ═══ Recherche ═══ */
+.ov{position:fixed;inset:0;background:rgba(20,30,50,.55);z-index:90;display:flex;justify-content:center;align-items:flex-start;padding:10vh 1rem 1rem}
+.phone .ov{position:absolute;padding:0;background:#fff}
+.sr{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.4);width:100%;max-width:660px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.phone .sr{max-width:none;max-height:none;height:100%;border-radius:0;box-shadow:none}
+.sr-head{display:flex;gap:.5rem;align-items:center;padding:.8rem 1rem;border-bottom:1px solid var(--gris-brd)}
+.sr-head input{flex:1;border:none;font-size:1.1rem;outline:none;min-width:0}
+.sr-head input:focus-visible{outline:none}
+.sr-head:focus-within{box-shadow:inset 0 -3px 0 var(--bleu-fort)}
+.sr-ctx{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;padding:.5rem 1rem;background:var(--gris-bg);font-size:.82rem;border-bottom:1px solid var(--gris-brd)}
+.sr-list{overflow:auto;flex:1;min-height:0;padding:.3rem .5rem .6rem;list-style:none}
+.sr-g{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--texte-doux);padding:.6rem .5rem .2rem}
+.sr-it a{display:flex;gap:.7rem;align-items:center;padding:.5rem .6rem;border-radius:10px;text-decoration:none;color:var(--texte)}
+.sr-it[aria-selected="true"] a{background:#e8f1fc;box-shadow:inset 3px 0 0 var(--bleu-fort)}
+.phone .sr-it .pills{display:none}
+.sr-it .ic{font-size:1.3rem;width:1.6rem;text-align:center}
+.sr-it strong{display:block;font-size:.95rem}
+.sr-it small{color:var(--texte-doux);font-size:.78rem}
+.sr-it mark{background:#fff3b0;color:inherit;border-radius:2px}
+.sr-foot{border-top:1px solid var(--gris-brd);padding:.4rem 1rem;font-size:.78rem;color:var(--texte-doux);display:flex;gap:1rem;flex-wrap:wrap}
+.sr .notes{margin:.5rem;width:auto;font-size:.82rem}
+.xbtn{background:var(--gris-bg);border:none;border-radius:50%;width:2rem;height:2rem;font-weight:900}
+</style>
+</head>
+<body>
+<div id="demo" role="region" aria-label="Commutateurs de démonstration (hors maquette)"></div>
+<div id="device" class="device">
+  <div class="scroller" id="scroller"><div class="viewport" id="app"></div></div>
+  <div class="ov" id="search" hidden></div>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   1. DONNÉES (inventées mais proches du programme)
+   ════════════════════════════════════════════════════════════════ */
+const CL = ['ps','ms','gs','cp','ce1','ce2','cm1','cm2'];
+const CYC = c => CL.indexOf(c) < 3 ? 1 : CL.indexOf(c) < 6 ? 2 : 3;
+const K = s => s.split(',').flatMap(p => { const [a,b] = p.split('-'); return b ? CL.slice(CL.indexOf(a), CL.indexOf(b)+1) : [a]; });
+
+const SITES = {
+  ecoleprimaire: { nom:'École Primaire', emoji:'📚', modeDefaut:'fr' },
+  skoolik:       { nom:'Skoolik',        emoji:'📚', modeDefaut:'fr+br' },
+};
+
+// domaines d'après src/data/programme.ts (DOMAINES : id, nom court, cycles) ; l'emoji est propre à la maquette
+const DOMS = {
+  maths: [['nombres-calcul','Nombres et calcul','🧮',[1,2,3]],['grandeurs-mesures','Grandeurs et mesures','📏',[1,2,3]],['espace-geometrie','Espace et géométrie','📐',[1,2,3]],['donnees','Données','📊',[2,3]],['proportionnalite','Proportionnalité','⚖️',[3]],['pensee-informatique','Pensée informatique','💻',[3]],['motifs','Motifs organisés','🔷',[1]]],
+  francais: [['lecture','Lecture','📖',[1,2,3]],['ecriture','Écriture','🖋️',[1,2,3]],['oral','Oral','🎤',[1,2,3]],['vocabulaire','Vocabulaire','💬',[2,3]],['grammaire','Grammaire et conjugaison','🧩',[2,3]],['culture-litteraire','Culture littéraire','🎭',[3]]],
+  // Le Monde : pas encore dans programme.ts, sauf « temps-espace » (cycle 1). Noms du cycle 2 et 3 à confirmer à la lecture des BO.
+  monde: [['temps-espace','Se repérer dans le temps et l’espace','🧭',[1]],['questionner-monde','Questionner le monde','🔎',[2]],['sciences','Sciences et technologie','🔬',[3]],['histoire','Histoire','🏛️',[3]],['geographie','Géographie','🗺️',[3]]],
+};
+const DOM_NOM = Object.fromEntries(Object.values(DOMS).flat().map(d => [d[0], d[1]]));
+const DOM_EMO = Object.fromEntries(Object.values(DOMS).flat().map(d => [d[0], d[2]]));
+const MATIERE = { maths:{ico:'🔢', fr:'Maths', br:'Matematik'}, francais:{ico:'📝', fr:'Français', br:'Galleg'}, monde:{ico:'🌍', fr:'Le Monde', br:'Ar Bed'} };
+
+// compétences : id → [domaine, libellé, classes, repère officiel]
+const COMP = {
+  'n-denombrer':['nombres-calcul','Dénombrer, comparer et ordonner des quantités jusqu’à 10, puis 30','ps-gs','BO 2026, cycle 1'],
+  'n-lire':['nombres-calcul','Lire, écrire, comparer et ordonner les nombres entiers','cp-cm2','BO 2024 et 2025, cycles 2 et 3'],
+  'n-tables':['nombres-calcul','Mémoriser les tables de multiplication','ce1-cm1','BO 2024, cycle 2 ; BO 2025, cycle 3'],
+  'n-mental':['nombres-calcul','Calculer mentalement des sommes et des différences','cp-ce2','BO 2024, cycle 2'],
+  'n-poser':['nombres-calcul','Poser et effectuer additions, soustractions et multiplications','ce1-cm2','BO 2024 et 2025'],
+  'n-fractions':['nombres-calcul','Utiliser des fractions simples, puis comparer des fractions','ce2-cm2','BO 2024 et 2025'],
+  'n-division':['nombres-calcul','Calculer un quotient et un reste (division euclidienne)','cm1-cm2','BO 2025, cycle 3'],
+  'g-heure':['grandeurs-mesures','Lire l’heure sur une horloge','cp-ce2','BO 2024, cycle 2'],
+  'g-durees':['grandeurs-mesures','Calculer des durées et des horaires','ce2-cm2','BO 2024 et 2025'],
+  'g-longueurs':['grandeurs-mesures','Mesurer, comparer et convertir des longueurs','ms-cm2','BO 2026 et 2024, 2025'],
+  'g-monnaie':['grandeurs-mesures','Utiliser la monnaie : l’euro et le centime','cp-ce2','BO 2024, cycle 2'],
+  'e-figures':['espace-geometrie','Reconnaître et nommer les figures planes usuelles','gs-ce2','BO 2026 et 2024'],
+  'e-solides':['espace-geometrie','Reconnaître et nommer les solides usuels','gs-ce1','BO 2026 et 2024'],
+  'e-quadrillage':['espace-geometrie','Se repérer et se déplacer sur un quadrillage','ce1-cm1','BO 2024 et 2025'],
+  'e-symetrie':['espace-geometrie','Reconnaître et construire des figures symétriques','ce2-cm2','BO 2024 et 2025'],
+  'e-angle':['espace-geometrie','Reconnaître l’angle droit et utiliser l’équerre','ce1-cm1','BO 2024 et 2025'],
+  'd-tableaux':['donnees','Lire et compléter un tableau de données','ce1-cm1','BO 2024 et 2025'],
+  'd-graphiques':['donnees','Lire et construire un graphique','ce2-cm2','BO 2024 et 2025'],
+  'p-propor':['proportionnalite','Reconnaître une situation de proportionnalité','cm1-cm2','BO 2025, cycle 3'],
+  'm-motifs':['motifs','Reconnaître, compléter et poursuivre une suite de motifs','ps-gs','BO 2026, cycle 1'],
+  'i-algo':['pensee-informatique','Écrire et exécuter un programme simple de déplacement','cm1-cm2','BO 2025, cycle 3'],
+  'f-oral':['oral','Jouer avec les syllabes et les rimes','ps-gs','BO 2026, cycle 1'],
+  'f-culture':['culture-litteraire','Reconnaître quelques genres littéraires','cm1-cm2','BO 2025, cycle 3'],
+  'f-sons':['lecture','Associer les lettres aux sons et lire des syllabes','gs-ce1','BO 2024, cycles 1 et 2'],
+  'f-ecriture':['ecriture','Écrire en cursive des lettres, des mots, des phrases','gs-ce1','BO 2024, cycle 2'],
+  'f-vocab':['vocabulaire','Comprendre et utiliser des mots de sens proche ou contraire','ce1-cm1','BO 2024 et 2025'],
+  'f-conj':['grammaire','Conjuguer les verbes courants au présent','ce1-cm1','BO 2024 et 2025'],
+  'f-accords':['grammaire','Accorder dans le groupe nominal','ce2-cm2','BO 2024 et 2025'],
+};
+Object.values(COMP).forEach(c => c[2] = K(c[2]));
+
+// ressources (page de matière) : [id, type, matière, domaine, titre, classes, compétence, en ligne ?, imprimable ?, icône, mots-clés]
+const RES = [
+  ['frise-100','affiche','maths','nombres-calcul','Frise numérique de 0 à 100','cp-ce1','n-lire',0,1,'🧮','nombres cent chiffres'],
+  ['tables-affiche','affiche','maths','nombres-calcul','Tables de multiplication','ce1-cm1','n-tables',0,1,'✖️','multiplier produit'],
+  ['numeration','lecon','maths','nombres-calcul','La numération décimale (unités, dizaines, centaines)','ce1-cm1','n-lire',0,1,'📘','dizaine centaine millier'],
+  ['fractions-lecon','lecon','maths','nombres-calcul','Les fractions simples : demi, tiers, quart','ce2-cm2','n-fractions',0,1,'🍕','moitié partage'],
+  ['denombrer','exercice','maths','nombres-calcul','Dénombrer jusqu’à 10','ms-gs','n-denombrer',1,1,'🍎','compter quantité'],
+  ['calcul-mental','exercice','maths','nombres-calcul','Calcul mental : additions et soustractions','cp-ce2','n-mental',1,0,'⚡','addition soustraction mental'],
+  ['compl10','exercice','maths','nombres-calcul','Compléments à 10 et à 100','cp-ce1','n-mental',1,1,'🔟','complément'],
+  ['tables-exo','exercice','maths','nombres-calcul','Tables de multiplication','ce1-cm1','n-tables',1,1,'✖️','multiplier produit'],
+  ['operations','generateur','maths','nombres-calcul','Fiche d’opérations posées','ce1-cm2','n-poser',0,1,'📝','addition soustraction multiplication poser'],
+  ['division','exercice','maths','nombres-calcul','Division euclidienne : quotient et reste','cm1-cm2','n-division',1,1,'➗','diviser reste'],
+  ['fractions-exo','exercice','maths','nombres-calcul','Comparer des fractions','cm1-cm2','n-fractions',1,1,'🍰','fraction comparer'],
+  ['heure-affiche','affiche','maths','grandeurs-mesures','L’horloge : lire l’heure','cp-ce2','g-heure',0,1,'🕐','horloge minute'],
+  ['longueurs-lecon','lecon','maths','grandeurs-mesures','Les unités de longueur : m, cm, mm, km','ce1-cm2','g-longueurs',0,1,'📏','mesure règle'],
+  ['comparer-long','exercice','maths','grandeurs-mesures','Comparer et ranger des longueurs','ms-cp','g-longueurs',1,0,'🪢','plus long plus court'],
+  ['heure-exo','exercice','maths','grandeurs-mesures','Lire l’heure','cp-ce2','g-heure',1,1,'🕐','horloge'],
+  ['durees','generateur','maths','grandeurs-mesures','Fiche de durées et d’horaires','ce2-cm2','g-durees',0,1,'⏳','temps durée'],
+  ['conversions','exercice','maths','grandeurs-mesures','Conversions de longueurs','ce2-cm2','g-longueurs',1,1,'🔁','mètre centimètre convertir'],
+  ['monnaie','exercice','maths','grandeurs-mesures','La monnaie : euros et centimes','cp-ce2','g-monnaie',1,1,'💶','euro pièce billet rendre'],
+  ['figures-affiche','affiche','maths','espace-geometrie','Les figures planes','cp-ce2','e-figures',0,1,'🔺','carré rond triangle rectangle'],
+  ['carre-lecon','lecon','maths','espace-geometrie','Le carré et le rectangle','ce1-ce2','e-figures',0,1,'⬜','côté angle droit'],
+  ['solides','exercice','maths','espace-geometrie','Reconnaître les solides','gs-ce1','e-solides',1,0,'🧊','cube boule pavé cylindre'],
+  ['quadrillage','generateur','maths','espace-geometrie','Quadrillage : se repérer et se déplacer','ce1-cm1','e-quadrillage',0,1,'🗺️','repérage coordonnées'],
+  ['angle-lecon','lecon','maths','espace-geometrie','L’angle droit et l’équerre','ce1-cm1','e-angle',0,1,'📐','équerre'],
+  ['symetrie','exercice','maths','espace-geometrie','Symétrie axiale','ce2-cm2','e-symetrie',1,1,'🦋','axe miroir'],
+  ['tableaux','exercice','maths','donnees','Lire un tableau','ce1-cm1','d-tableaux',1,1,'🗒️','tableau données'],
+  ['graphiques','generateur','maths','donnees','Fiche de graphiques à compléter','ce2-cm2','d-graphiques',0,1,'📊','diagramme barres'],
+  ['propor','exercice','maths','proportionnalite','Problèmes de proportionnalité','cm1-cm2','p-propor',1,1,'⚖️','proportion recette'],
+  ['motifs-exo','exercice','maths','motifs','Compléter une suite de motifs','ps-gs','m-motifs',1,1,'🔷','suite algorithme'],
+  ['programmer','exercice','maths','pensee-informatique','Programmer un déplacement','cm1-cm2','i-algo',1,1,'🤖','algorithme instruction robot'],
+  // français
+  ['rimes','exercice','francais','oral','Rimes et syllabes','ps-gs','f-oral',1,0,'🎵','rime syllabe oral'],
+  ['genres','affiche','francais','culture-litteraire','Les genres littéraires','cm1-cm2','f-culture',0,1,'🎭','conte poème roman théâtre'],
+  ['alphabet-affiche','affiche','francais','lecture','L’alphabet et ses sons','ps-cp','f-sons',0,1,'🔤','lettre abécédaire'],
+  ['syllabes','exercice','francais','lecture','Lire des syllabes','gs-cp','f-sons',1,1,'🧩','syllabe lecture'],
+  ['sons-lecon','lecon','francais','lecture','Les sons complexes : ou, on, an, in','cp-ce1','f-sons',0,1,'📘','sons'],
+  ['cursive','generateur','francais','ecriture','Écriture cursive : lignes à tracer','gs-ce1','f-ecriture',0,1,'✏️','écrire lettre cursif'],
+  ['copier','exercice','francais','ecriture','Copier un mot','cp','f-ecriture',1,0,'⌨️','copie'],
+  ['contraires','exercice','francais','vocabulaire','Les contraires','ce1-ce2','f-vocab',1,1,'↔️','contraire antonyme'],
+  ['familles-mots','affiche','francais','vocabulaire','Les familles de mots','ce2-cm1','f-vocab',0,1,'🌳','racine suffixe préfixe'],
+  ['verbe-lecon','lecon','francais','grammaire','Le verbe et son sujet','ce1-ce2','f-conj',0,1,'📗','verbe sujet'],
+  ['present','exercice','francais','grammaire','Conjuguer au présent (verbes en -er)','ce1-cm1','f-conj',1,1,'🕰️','conjugaison présent'],
+  ['dictee','generateur','francais','grammaire','Dictée : fiche à compléter','ce2-cm2','f-accords',0,1,'🎧','dictée orthographe'],
+  ['accords','exercice','francais','grammaire','Accords dans le groupe nominal','ce2-cm2','f-accords',1,1,'🔗','accord pluriel féminin'],
+].map(r => ({id:r[0],type:r[1],mat:r[2],dom:r[3],titre:r[4],cl:K(r[5]),c:r[6],online:!!r[7],print:!!r[8],ico:r[9],kw:r[10]}));
+
+const DESC = {
+  'frise-100':'Les nombres de 0 à 100 en un coup d’œil','tables-affiche':'Toutes les tables sur une feuille','numeration':'Unités, dizaines, centaines : le principe','fractions-lecon':'Partager en parts égales',
+  'denombrer':'Compter des objets jusqu’à 10','calcul-mental':'S’entraîner à calculer vite et juste','compl10':'Trouver ce qui manque pour faire 10 ou 100','tables-exo':'Réviser les tables, au chrono ou non',
+  'operations':'Additions, soustractions et multiplications à poser','division':'Trouver le quotient et le reste','fractions-exo':'Quelle fraction est la plus grande ?','heure-affiche':'Heures, demi-heures, quarts d’heure',
+  'longueurs-lecon':'Choisir et convertir les unités','comparer-long':'Plus long, plus court, aussi long','heure-exo':'Lire l’heure sur une horloge','durees':'Calculer une durée ou une heure d’arrivée',
+  'conversions':'m, cm, mm, km : convertir','monnaie':'Payer et rendre la monnaie','figures-affiche':'Carré, rond, triangle, rectangle…','carre-lecon':'Reconnaître côtés et angles','solides':'Cube, boule, pavé, cylindre',
+  'quadrillage':'Se déplacer case par case','angle-lecon':'Vérifier un angle droit à l’équerre','symetrie':'Trouver et compléter le symétrique','tableaux':'Lire les données d’un tableau','graphiques':'Diagrammes à lire et à compléter',
+  'propor':'Recettes, prix : doubler, tripler','motifs-exo':'Continuer une suite de formes et de couleurs','programmer':'Écrire des instructions pour un robot','alphabet-affiche':'Les lettres et les sons qu’elles font',
+  'syllabes':'Assembler des syllabes pour lire','sons-lecon':'Les sons formés de plusieurs lettres','cursive':'Tracer les lettres en cursive','copier':'Copier un mot sans erreur','contraires':'Trouver le mot de sens opposé',
+  'familles-mots':'Des mots formés sur la même racine','verbe-lecon':'Repérer le verbe et son sujet','present':'Conjuguer les verbes en -er','dictee':'Dictées à trous, prêtes à imprimer','accords':'Le nom, l’article et l’adjectif s’accordent',
+  'rimes':'Écouter, repérer et inventer des rimes','genres':'Conte, poème, roman, théâtre',
+};
+// fiches toutes prêtes : [id, titre, matière, domaine, classes, langues, usage, pages, dessin, compétence, formats ?]
+const FICHES = [
+  ['tables-de-multiplication-ce1','Tables de multiplication','maths','nombres-calcul','ce1','fr,br,fr+br','apprendre',1,'tables','n-tables',1],
+  ['tables-de-multiplication-ce2','Tables de multiplication','maths','nombres-calcul','ce2','fr,br,fr+br','apprendre',1,'tables','n-tables',1],
+  ['tables-a-completer-ce1','Tables à compléter','maths','nombres-calcul','ce1','fr','entrainer',2,'tables','n-tables',0],
+  ['tables-a-completer-ce2','Tables à compléter','maths','nombres-calcul','ce2-cm1','fr','entrainer',2,'tables','n-tables',0],
+  ['frise-numerique-100','Frise numérique de 0 à 100','maths','nombres-calcul','cp-ce1','fr,br,fr+br','apprendre',1,'frise','n-lire',1],
+  ['numeration-cm1','La numération jusqu’à 1 000 000','maths','nombres-calcul','cm1','fr','apprendre',2,'frise','n-lire',0],
+  ['calcul-mental-cp','Calcul mental : doubles et moitiés','maths','nombres-calcul','cp','fr','entrainer',2,'calc','n-mental',0],
+  ['additions-posees-ce1','Additions posées','maths','nombres-calcul','ce1','fr','entrainer',3,'calc','n-poser',0],
+  ['soustractions-posees-ce2','Soustractions posées','maths','nombres-calcul','ce2','fr','entrainer',3,'calc','n-poser',0],
+  ['multiplications-posees-cm1','Multiplications posées','maths','nombres-calcul','cm1','fr','entrainer',3,'calc','n-poser',0],
+  ['divisions-cm2','Divisions euclidiennes','maths','nombres-calcul','cm2','fr','entrainer',2,'calc','n-division',0],
+  ['fractions-ce2','Les fractions : demi, tiers, quart','maths','nombres-calcul','ce2','fr','apprendre',2,'formes','n-fractions',0],
+  ['fractions-cm1','Comparer des fractions','maths','nombres-calcul','cm1-cm2','fr','entrainer',2,'formes','n-fractions',0],
+  ['denombrer-jusqu-a-10','Dénombrer jusqu’à 10','maths','nombres-calcul','ms-gs','fr,br,fr+br','entrainer',2,'motifs','n-denombrer',0],
+  ['lire-l-heure-cp','Lire l’heure : heures pleines et demi-heures','maths','grandeurs-mesures','cp-ce1','fr,br,fr+br','entrainer',2,'horloge','g-heure',0],
+  ['lire-l-heure-ce2','Lire l’heure : minutes et quarts','maths','grandeurs-mesures','ce2','fr','entrainer',3,'horloge','g-heure',0],
+  ['monnaie-cp','La monnaie : pièces et billets','maths','grandeurs-mesures','cp-ce1','fr,br,fr+br','entrainer',2,'monnaie','g-monnaie',0],
+  ['monnaie-ce2','Rendre la monnaie','maths','grandeurs-mesures','ce2','fr','entrainer',2,'monnaie','g-monnaie',0],
+  ['longueurs-ce2','Mesurer des longueurs à la règle','maths','grandeurs-mesures','ce1-ce2','fr','entrainer',2,'grille','g-longueurs',0],
+  ['figures-planes','Affiche des figures planes','maths','espace-geometrie','cp-ce2','fr,br,fr+br','apprendre',1,'formes','e-figures',1],
+  ['solides-gs-cp','Les solides','maths','espace-geometrie','gs-cp','fr,br,fr+br','apprendre',1,'formes','e-solides',0],
+  ['quadrillage-ce1','Se déplacer sur un quadrillage','maths','espace-geometrie','ce1-ce2','fr','entrainer',2,'grille','e-quadrillage',0],
+  ['symetrie-ce2','Compléter une figure symétrique','maths','espace-geometrie','ce2-cm1','fr','entrainer',2,'grille','e-symetrie',0],
+  ['tableaux-ce2','Lire et compléter un tableau','maths','donnees','ce2-cm1','fr','entrainer',2,'tableau','d-tableaux',0],
+  ['graphiques-cm1','Construire un diagramme en barres','maths','donnees','cm1-cm2','fr','entrainer',2,'tableau','d-graphiques',0],
+  ['proportionnalite-cm2','Tableaux de proportionnalité','maths','proportionnalite','cm2','fr','entrainer',2,'tableau','p-propor',0],
+  ['suites-de-motifs-ms','Suites de motifs','maths','motifs','ms-gs','fr,br,fr+br','entrainer',2,'motifs','m-motifs',0],
+  // français (pour l’exemple de la matière)
+  ['sons-ou-on-cp','Les sons « ou » et « on »','francais','lecture','cp','fr','apprendre',2,'texte','f-sons',0],
+  ['cursive-ce1','Écriture cursive : les lettres rondes','francais','ecriture','cp-ce1','fr','entrainer',3,'texte','f-ecriture',0],
+  ['present-er-ce1','Conjuguer les verbes en -er au présent','francais','grammaire','ce1-ce2','fr','apprendre',2,'texte','f-conj',0],
+].map(f => ({id:f[0],titre:f[1],mat:f[2],dom:f[3],cl:K(f[4]),langs:f[5].split(','),usage:f[6],pages:f[7],kind:f[8],c:f[9],formats:!!f[10]}));
+const fiche = id => FICHES.find(f => f.id === id) || FICHES[0];
+const ficheTitre = f => `${f.titre} — ${f.cl.length > 1 ? f.cl[0].toUpperCase()+' à '+f.cl[f.cl.length-1].toUpperCase() : f.cl[0].toUpperCase()}`;
+
+const REPRENDRE = [
+  ['🕐','Lire l’heure','CE1 · hier','heure-exo'],
+  ['✖️','Tables de multiplication','CE1 · il y a 3 jours','tables-exo'],
+  ['🧩','Lire des syllabes','CP · il y a 5 jours','syllabes'],
+];
+const ONLINE_STUB = id => `#/stub?t=${encodeURIComponent((RES.find(r=>r.id===id)||{titre:id}).titre)}&k=exercice`;
+
+/* ════════════════════════════════════════════════════════════════
+   2. TEXTES : dictionnaire fr / br (breton = exemples de maquette)
+   ════════════════════════════════════════════════════════════════ */
+const D = {
+  accueil:['Accueil','Degemer'], maths:['Maths','Matematik'], francais:['Français','Galleg'], brezhoneg:['Brezhoneg','Brezhoneg'],
+  programme:['Programme','Programm'], chercher:['Rechercher','Klask'], langue:['Langue','Yezh'], classe:['Classe','Klas'],
+  reglages:['Réglages','Arventennoù'], bonjour:['Bonjour !','Demat !'], reprendre:['Reprendre','Kenderc’hel'],
+  apprendre:['Pour apprendre','Evit deskiñ'], entrainer:['Pour s’entraîner','Evit pleustriñ'],
+  fichesPretes:['Fiches toutes prêtes','Follennoù prest'], imprimable:['imprimable','da voullañ'], enligne:['en ligne','war-linenn'],
+  telecharger:['Télécharger','Pellgargañ'], imprimer:['Imprimer','Moullañ'], perso:['Personnaliser','Personelaat'],
+  faire:['Faire en ligne','Ober war-linenn'], toutes:['Toutes les classes','An holl glasoù'],
+  copier:['Copier le lien pour les familles','Eilañ al liamm evit ar familhoù'], ressources:['ressources','danvez'],
+  alphabet:['Alphabet','Lizherenneg'], nombres:['Nombres','Niverennoù'], jours:['Jours','Deizioù'], mois:['Mois','Mizioù'], mutations:['Mutations','Kemmadurioù'],
+  monde:['Le Monde','Ar Bed'], tous:['Tous','An holl'], retour:['Retour en français','Distro d’ar galleg'], quiz:['Quiz','Rañsoù'],
+  apprendreBr:['Apprendre le breton','Deskiñ ar brezhoneg'], pourLaClasse:['pour la classe','evit ar c’hlas'],
+};
+// ── LES EMOJIS, DÉFINIS UNE SEULE FOIS : toute étiquette d'une de ces catégories s'écrit avec ee(clé) / TE(clé) ──
+const EM = { tous:'🌐', apprendre:'📘', entrainer:'✏️', enligne:'🎮', imprimable:'🖨️', fichesPretes:'📄', programme:'📚', chercher:'🔍', classe:'🎒', langue:'🗣️',
+  maths:'🔢', francais:'📝', monde:'🌍', brezhoneg:'🏴', accueil:'🏠', telecharger:'⬇️', imprimer:'🖨️', perso:'🛠️', faire:'🎮', competence:'🎯', reglages:'⚙️',
+  verrou:'🔒', lien:'🔗', quiz:'❓', reprendre:'▶️', usage:'🏷️', domaine:'🗂️', exercice:'🎮', affiche:'🖼️', page:'🧭', ressources:'🧰',
+  enfant:'🧒', parent:'👨‍👩‍👧', enseignant:'🧑‍🏫' };
+const ee = k => k === 'brezhoneg' ? flagBR() : EM[k];
+const TE = k => `${ee(k)} ${T(k)}`;
+const TEp = k => `${EM[k]} ${Tp(k)}`;
+const sm = m => `${MATIERE[m].ico} ${subj(m)}`;
+const prof = p => `${EM[p]} ${profilLabel[p]}`;
+const T = k => { const e = D[k]; if (!e) return k; return S.mode === 'br' ? `<span class="br" title="Exemple de maquette : breton à relire">${e[1]}</span>` : e[0]; };
+const Tp = k => { const e = D[k]; return !e ? k : (S.mode === 'br' ? e[1] : e[0]); };            // texte brut (attributs)
+const subj = m => { const e = MATIERE[m]; return S.mode === 'fr' ? e.fr : S.mode === 'br' ? `<span class="br" title="Exemple de maquette : breton à relire">${e.br}</span>` : `${e.fr}<span class="br-sub br" title="Exemple de maquette : breton à relire">${e.br}</span>`; };
+const subjP = m => S.mode === 'br' ? MATIERE[m].br : MATIERE[m].fr;
+
+/* ════════════════════════════════════════════════════════════════
+   3. ÉTAT
+   ════════════════════════════════════════════════════════════════ */
+const DEF = { vue:null, refs:null, site:'ecoleprimaire', profil:'parent', mode:'fr', classes:['ce1'], phone:false, notes:true, unlocked:false, open:null, showAll:false };
+let S = { ...DEF };
+const SAVE = ['site','profil','mode','classes','phone','notes','vue','refs'];
+try { const j = JSON.parse(localStorage.getItem('maq12') || 'null'); if (j) S = { ...S, ...j }; } catch (e) {}
+const save = () => { try { localStorage.setItem('maq12', JSON.stringify(Object.fromEntries(SAVE.map(k => [k, S[k]])))); } catch (e) {} };
+
+const F = { l:'', u:'', d:'', q:'', toutes:false };          // filtres de « fiches toutes prêtes »
+const Sh = { id:'', fmt:'A4', or:'portrait', lang:'fr', page:0 };
+const P = { tables:[3,4,6], type:'calc', n:12, corrige:false, nom:true, seed:1, fmt:'A4', or:'portrait', lang:'fr' };
+const Pr = { mat:'maths', dom:'nombres-calcul', vue:'liste' };
+const SORT = { k:'titre', dir:1 };
+const B = { tab:'alphabet' };
+let gate = { err:false };
+
+function fixClasses() {
+  S.classes = CL.filter(c => S.classes.includes(c));
+  if (!S.classes.length) S.classes = ['ce1'];
+  if (S.profil !== 'enseignant') S.classes = [S.classes[0]];
+}
+const sel = c => S.classes.includes(c);
+const classeLabel = () => S.classes.length === 8 ? Tp('toutes') : S.classes.length > 2 ? `${S.classes.length} classes` : S.classes.map(c => c.toUpperCase()).join(' + ');
+const concerne = cl => cl.some(sel);
+const modeLabel = { 'fr':'Français', 'fr+br':'Français + Brezhoneg', 'br':'Brezhoneg' };
+const profilLabel = { enfant:'Enfant', parent:'Parent', enseignant:'Enseignant' };
+
+/* ════════════════════════════════════════════════════════════════
+   4. OUTILS DE RENDU
+   ════════════════════════════════════════════════════════════════ */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const $ = s => document.querySelector(s);
+
+const flagFR = () => `<svg class="flag" width="20" height="14" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#0055a4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#ef4135"/></svg>`;
+const flagBR = (w = 20) => `<svg class="flag" width="${w}" height="${Math.round(w*.7)}" viewBox="0 0 27 18" aria-hidden="true"><rect width="27" height="18" fill="#fff"/>${[0,2,4,6,8].map(i=>`<rect y="${i*2}" width="27" height="2" fill="#000"/>`).join('')}<rect width="10" height="10" fill="#fff"/>${[[2,2],[5,2],[8,2],[3.5,5],[6.5,5],[2,8],[5,8],[8,8]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r=".7" fill="#000"/>`).join('')}</svg>`;
+const flags = m => m === 'fr' ? flagFR() : m === 'br' ? flagBR() : flagFR() + flagBR();
+
+const pills = (cl, set = S.classes) => `<span class="pills" aria-label="Classes : ${cl.map(c=>c.toUpperCase()).join(', ')}">${cl.map(c => `<span class="cl${set.includes(c) ? ' sel' : ''}">${c.toUpperCase()}</span>`).join('')}</span>`;
+const badges = r => `${r.online ? `<span class="badge b-online">${TE('enligne')}</span>` : ''}${r.print ? `<span class="badge b-print">${TE('imprimable')}</span>` : ''}`;
+const crumbs = (items) => `<nav class="crumbs" aria-label="Fil d’Ariane">${items.map((it, i) => (i ? '<span aria-hidden="true">›</span>' : '') + (it[1] ? `<a href="${it[1]}">${it[0]}</a>` : `<span aria-current="page">${it[0]}</span>`)).join('')}</nav>`;
+const resHref = r => r.type === 'exercice' ? ONLINE_STUB(r.id) : r.type === 'generateur' ? '#/personnaliser' : `#/stub?t=${encodeURIComponent(r.titre)}&k=${r.type}`;
+const countFor = mat => mat === 'monde' ? 1 : RES.filter(r => r.mat === mat && concerne(r.cl)).length;
+const toast = (msg) => { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 2800); };
+const modeParam = () => S.mode.replace('+','%2B');
+
+/* ── pages dessinées en SVG (aperçus et miniatures) ── */
+function hash(n) { let x = Math.sin(n * 91.7) * 10000; return x - Math.floor(x); }
+function pageSVG(kind, titre, p = 0, land = false) {
+  const W = land ? 297 : 210, H = land ? 210 : 297; let b = '';
+  const bar = `<rect width="${W}" height="20" fill="#4a90e2"/><text x="10" y="13.5" font-size="8" font-weight="700" fill="#fff" font-family="Segoe UI,sans-serif">${esc(titre).slice(0,44)}</text>`;
+  const foot = `<text x="10" y="${H-6}" font-size="5" fill="#888" font-family="Segoe UI,sans-serif">Prénom : ..............................   Date : ........................</text>`;
+  if (kind === 'tables') {
+    const cw = (W - 30) / 3, ch = (H - 50) / 3;
+    for (let i = 0; i < 9; i++) { const t = i + 2, x = 10 + (i % 3) * (cw + 5), y = 28 + Math.floor(i / 3) * ch, col = ['#4a90e2','#5cb85c','#f39c12','#9b59b6','#e74c3c','#2f70c0','#2e7d32','#c77c00','#7d3c98'][i];
+      b += `<rect x="${x}" y="${y}" width="${cw}" height="9" rx="2" fill="${col}"/><text x="${x+4}" y="${y+6.6}" font-size="6" font-weight="700" fill="#fff" font-family="Segoe UI">Table de ${t}</text>`;
+      for (let j = 1; j <= 10; j++) b += `<text x="${x+4}" y="${y+16+(j-1)*((ch-18)/10)}" font-size="5.6" fill="#2c3e50" font-family="Segoe UI">${t} × ${j} = ${p ? '………' : t*j}</text>`; }
+  } else if (kind === 'horloge') {
+    const cols = land ? 4 : 2, rows = land ? 2 : 3, cw = (W - 20) / cols, ch = (H - 40) / rows;
+    for (let i = 0; i < cols * rows; i++) { const cx = 10 + cw * (i % cols) + cw / 2, cy = 24 + ch * Math.floor(i / cols) + ch / 2 - 4, r = Math.min(cw, ch) * .36;
+      const hh = Math.floor(hash(i + p * 7) * 12), mm = [0, 15, 30, 45][Math.floor(hash(i + 3) * 4)];
+      const ah = (hh % 12 + mm / 60) * Math.PI / 6, am = mm * Math.PI / 30;
+      b += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="#2c3e50" stroke-width="1.2"/>`;
+      for (let t = 0; t < 12; t++) { const a = t * Math.PI / 6; b += `<line x1="${cx+Math.sin(a)*r*.86}" y1="${cy-Math.cos(a)*r*.86}" x2="${cx+Math.sin(a)*r*.96}" y2="${cy-Math.cos(a)*r*.96}" stroke="#2c3e50" stroke-width=".9"/>`; }
+      b += `<line x1="${cx}" y1="${cy}" x2="${cx+Math.sin(ah)*r*.5}" y2="${cy-Math.cos(ah)*r*.5}" stroke="#e74c3c" stroke-width="1.8"/><line x1="${cx}" y1="${cy}" x2="${cx+Math.sin(am)*r*.78}" y2="${cy-Math.cos(am)*r*.78}" stroke="#2c3e50" stroke-width="1.2"/>`;
+      b += `<text x="${cx}" y="${cy+r+8}" font-size="5.5" text-anchor="middle" fill="#555" font-family="Segoe UI">Il est ….. h …..</text>`; }
+  } else if (kind === 'frise') {
+    const c = (W - 20) / 10;
+    for (let i = 0; i < 100; i++) { const x = 10 + (i % 10) * c, y = 30 + Math.floor(i / 10) * (c + 2); b += `<rect x="${x}" y="${y}" width="${c-1}" height="${c}" rx="1.5" fill="${p && i % 3 ? '#fff' : ['#e8f1fc','#e8f6e8','#fff3e0'][Math.floor(i/10)%3]}" stroke="#bcd"/><text x="${x+c/2}" y="${y+c*.65}" font-size="${c*.38}" text-anchor="middle" font-weight="700" fill="#2c3e50" font-family="Segoe UI">${i}</text>`; }
+  } else if (kind === 'formes') {
+    const names = ['cercle','carré','rectangle','triangle','losange','demi-cercle'], cw = (W - 20) / 3, ch = (H - 40) / 2.4;
+    names.forEach((n, i) => { const cx = 10 + cw * (i % 3) + cw / 2, cy = 40 + ch * Math.floor(i / 3), s = cw * .3, col = ['#4a90e2','#5cb85c','#f39c12','#e74c3c','#9b59b6','#2f70c0'][i];
+      const sh = [`<circle cx="${cx}" cy="${cy}" r="${s}"/>`,`<rect x="${cx-s}" y="${cy-s}" width="${2*s}" height="${2*s}"/>`,`<rect x="${cx-s*1.3}" y="${cy-s*.7}" width="${2.6*s}" height="${1.4*s}"/>`,`<polygon points="${cx},${cy-s} ${cx+s},${cy+s} ${cx-s},${cy+s}"/>`,`<polygon points="${cx},${cy-s*1.2} ${cx+s},${cy} ${cx},${cy+s*1.2} ${cx-s},${cy}"/>`,`<path d="M${cx-s},${cy} a${s},${s} 0 0 1 ${2*s},0z"/>`][i];
+      b += `<g fill="${col}" opacity=".85">${sh}</g><text x="${cx}" y="${cy+s*1.6+6}" font-size="6.5" font-weight="700" text-anchor="middle" fill="#2c3e50" font-family="Segoe UI">${p ? '………' : n}</text>`; });
+  } else if (kind === 'calc') {
+    const cols = land ? 4 : 3, rows = land ? 2 : 4, cw = (W - 20) / cols, ch = (H - 50) / rows;
+    for (let i = 0; i < cols * rows; i++) { const x = 10 + cw * (i % cols) + cw * .55, y = 36 + ch * Math.floor(i / cols), a = 100 + Math.floor(hash(i + p) * 800), c2 = 10 + Math.floor(hash(i + 9) * 89);
+      b += `<text x="${x}" y="${y}" font-size="9" text-anchor="end" font-family="Consolas,monospace" fill="#2c3e50">${a}</text><text x="${x}" y="${y+10}" font-size="9" text-anchor="end" font-family="Consolas,monospace" fill="#2c3e50">+ ${c2}</text><line x1="${x-28}" x2="${x+2}" y1="${y+13}" y2="${y+13}" stroke="#2c3e50"/>${p === 2 ? `<text x="${x}" y="${y+22}" font-size="9" text-anchor="end" font-family="Consolas,monospace" fill="#2e7d32" font-weight="700">${a+c2}</text>` : ''}`; }
+  } else if (kind === 'grille') {
+    const g = 8, x0 = 14, y0 = 30;
+    for (let i = 0; i <= Math.floor((W - 28) / g); i++) b += `<line x1="${x0+i*g}" x2="${x0+i*g}" y1="${y0}" y2="${H-16}" stroke="#9db9d8" stroke-width=".4"/>`;
+    for (let j = 0; j <= Math.floor((H - 46) / g); j++) b += `<line y1="${y0+j*g}" y2="${y0+j*g}" x1="${x0}" x2="${W-14}" stroke="#9db9d8" stroke-width=".4"/>`;
+    b += `<polyline points="${x0+g*3},${y0+g*3} ${x0+g*6},${y0+g*3} ${x0+g*6},${y0+g*7} ${x0+g*4},${y0+g*8}" fill="none" stroke="#e74c3c" stroke-width="1.6"/><line x1="${W/2}" x2="${W/2}" y1="${y0}" y2="${H-16}" stroke="#2c3e50" stroke-width=".9" stroke-dasharray="3 2"/>`;
+  } else if (kind === 'tableau') {
+    const rows = 5, cw = (W - 20) / 4;
+    for (let i = 0; i < rows; i++) for (let j = 0; j < 4; j++) b += `<rect x="${10+j*cw}" y="${30+i*14}" width="${cw}" height="14" fill="${i === 0 ? '#e8f1fc' : '#fff'}" stroke="#9db9d8"/>${i === 0 ? `<text x="${10+j*cw+cw/2}" y="${39.5+i*14}" font-size="6" text-anchor="middle" font-weight="700" fill="#2c3e50" font-family="Segoe UI">${['Fruit','Lundi','Mardi','Total'][j]}</text>` : (j === 0 ? `<text x="${14}" y="${39.5+i*14}" font-size="6" fill="#2c3e50" font-family="Segoe UI">${['','pommes','poires','bananes','kiwis'][i]}</text>` : (p ? '' : `<text x="${10+j*cw+cw/2}" y="${39.5+i*14}" font-size="6" text-anchor="middle" fill="#2c3e50" font-family="Segoe UI">${2+Math.floor(hash(i*4+j)*8)}</text>`))}`;
+    for (let k = 0; k < 6; k++) { const h = 20 + hash(k + 20) * 70; b += `<rect x="${24+k*26}" y="${H-30-h}" width="18" height="${h}" fill="${['#4a90e2','#5cb85c','#f39c12','#9b59b6','#e74c3c','#2f70c0'][k]}"/>`; }
+    b += `<line x1="16" x2="${W-14}" y1="${H-30}" y2="${H-30}" stroke="#2c3e50"/><line x1="16" x2="16" y1="${H-130}" y2="${H-30}" stroke="#2c3e50"/>`;
+  } else if (kind === 'motifs') {
+    for (let r = 0; r < 7; r++) for (let i = 0; i < 8; i++) { const x = 18 + i * ((W - 36) / 8), y = 40 + r * 32, k = i % (2 + r % 3), col = ['#4a90e2','#e74c3c','#5cb85c'][k % 3];
+      b += i === 7 ? `<rect x="${x-6}" y="${y-6}" width="12" height="12" rx="2" fill="none" stroke="#999" stroke-dasharray="2 1.5"/><text x="${x}" y="${y+3}" text-anchor="middle" font-size="9" fill="#999" font-family="Segoe UI">?</text>` : (k % 2 ? `<circle cx="${x}" cy="${y}" r="6" fill="${col}"/>` : `<rect x="${x-6}" y="${y-6}" width="12" height="12" fill="${col}"/>`); }
+  } else if (kind === 'monnaie') {
+    const coins = ['1 €','2 €','50 c','20 c','10 c','5 c','1 c','2 €'];
+    coins.forEach((c, i) => { const x = 35 + (i % 4) * ((W - 50) / 4), y = 55 + Math.floor(i / 4) * 45, r = 13 - (c.endsWith('c') ? 2 : 0);
+      b += `<circle cx="${x}" cy="${y}" r="${r}" fill="${c.endsWith('c') ? '#c97b4a' : '#e6c14a'}" stroke="#8a6d00"/><text x="${x}" y="${y+3}" font-size="7" text-anchor="middle" font-weight="700" fill="#4a3600" font-family="Segoe UI">${c}</text>`; });
+    for (let i = 0; i < 6; i++) b += `<rect x="12" y="${160+i*17}" width="${W-24}" height="11" rx="2" fill="#f1f3f5"/><text x="16" y="${168+i*17}" font-size="5.5" fill="#555" font-family="Segoe UI">J’ai ….. pièces de 2 € et ….. pièces de 50 c : cela fait …………</text>`;
+  } else { // texte
+    for (let i = 0; i < 14; i++) b += `<rect x="12" y="${34+i*16}" width="${(W-24)*(i % 5 === 4 ? .55 : .96)}" height="5" rx="2.5" fill="#dfe5ec"/>${i % 2 ? '' : `<line x1="12" x2="${W-12}" y1="${44+i*16}" y2="${44+i*16}" stroke="#f0a0a0" stroke-width=".4"/>`}`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Aperçu, page ${p+1}"><rect width="${W}" height="${H}" fill="#fff"/>${bar}${b}${foot}</svg>`;
+}
+const mini = f => pageSVG(f.kind, f.titre, 0, false);
+
+/* ════════════════════════════════════════════════════════════════
+   5. NOTES (besoin couvert + questions ouvertes), par écran
+   ════════════════════════════════════════════════════════════════ */
+const QA = '', QB = '', QC = '';   // questions tranchées par l’utilisateur : la page « compétence » est la cible des liens du tableau ; Le Monde est ajouté au programme (autre chantier) ; cartes/liste au choix
+const NOTES = {
+  'home-enfant': ['L’enfant qui ouvre le site seul sur la tablette : il doit atteindre un exercice en un ou deux gestes, sans lire. La classe est verrouillée (cadenas à ouvrir par un appui long de 2 s, sans calcul) pour qu’il ne se retrouve pas dans les exercices du CM2.',
+    ['« Reprendre » repose sur le stockage de l’appareil (pas de compte) : acceptable ?','Un appui long de 2 s est-il réalisable par un enfant de 6 ans, et ne l’est-il pas trop facilement ? (durée à ajuster à l’essai)']],
+  'home-parent': ['Le parent venu d’une recherche ou d’un conseil de l’enseignante : il veut voir ce qui existe pour SA classe, sans formulaire, et repartir avec un PDF ou lancer un exercice avec son enfant. Aucun écran bloquant : la classe par défaut est préremplie, un clic pour la changer.',
+    ['La tuile « Programme » est-elle utile au parent, ou du bruit ? (ici en second rang)','Quelle classe par défaut en l’absence de réglage ? CE1 ici, sans conviction.', QB]],
+  'home-enseignant': ['L’enseignant qui prépare sa semaine : plusieurs classes, entrée « Programme » dans la barre, et un lien à donner aux familles pour qu’elles arrivent sur le site déjà réglé sur la bonne classe et la bonne langue.',
+    ['Un QR code imprimable pour les cahiers de liaison, en plus du lien ?', QB]],
+  'maths': ['Pour celui qui personnalise ou qui veut simplement trouver un exercice : des cartes (titre, description, classes, badges 🎮 en ligne et 🖨️ imprimable sur la même carte), groupées par domaine du programme. Les domaines sans ressource pour la classe choisie restent visibles mais repliés, avec le nombre de ressources des autres classes. Les domaines affichés suivent le cycle de la classe : essayez PS, CP–CE2, CM1–CM2 et comparez. Le sélecteur ▦ Cartes / ☰ Liste (en haut à droite) est mémorisé et placé dans l’adresse (?vue=liste) ; sur téléphone, la liste est proposée par défaut.',
+    ['Faut-il aussi un tri « les plus utilisées » dans chaque domaine ?']],
+  'francais': ['Même modèle que Maths ; les domaines viennent du programme. Au cycle 1 il n’y a pas de vocabulaire ni de grammaire (seulement lecture, écriture, oral) ; la culture littéraire n’apparaît qu’au cycle 3.',
+    ['Au cycle 1, « Oral » a peu de ressources : acceptable, ou à regrouper avec « Lecture » ?']],
+  'monde': ['Pour ne pas sur-focaliser Maths et Français : une page « Le Monde » qui montre le petit quiz (hors programme : culture générale), puis annonce honnêtement ce qui viendra (Questionner le monde au cycle 2, sciences, histoire et géographie au cycle 3), sans ressource factice. Les programmes manquants sont en cours d’ajout dans programme.ts : les domaines passeront de « à venir » à de vraies ressources.',
+    ['Le quiz doit-il rester dans la barre quand il y aura de vraies ressources, ou migrer dans une section « Culture générale » ?']],
+  'fiches': ['Le parent qui ne veut pas se servir d’un formulaire : il filtre, il trouve la feuille, il télécharge. Cette page est aussi l’entrée « grand public » pour le référencement (une page statique par fiche, adresses stables).',
+    ['Pagination ou défilement continu quand il y aura 400 fiches ?','Le filtre « langue » ne sert que si le mode bilingue est actif : le masquer sinon (comme ici) ?']],
+  'fiche': ['Le parent qui arrive d’un moteur de recherche sur « tables de multiplication CE1 » : aperçu, Télécharger ou Imprimer (deux boutons). Le format et le sens n’apparaissent que s’il y en a plusieurs. La même fiche dans les autres langues est un simple lien. Les fiches voisines suivent les compétences et les domaines proches, pas la classe.',
+    ['Les « fiches voisines » doivent-elles aussi proposer des exercices en ligne de la compétence ?']],
+  'perso': ['Pour celui qui veut une fiche à sa mesure sans se perdre : peu de réglages, regroupés, l’aperçu qui bouge en direct, et Imprimer toujours à portée.',
+    ['Réglages avancés : repliés derrière « Plus d’options » (ici), ou toujours visibles ?','Le formulaire est-il un écran à part (ici) ou un volet à côté de la feuille ?']],
+  'programme': ['L’enseignant (et le parent curieux) : matière → domaine → compétences par classe. Chaque case du tableau est un lien vers la page de la compétence ; la bascule « 📖 Afficher les références » ajoute dans chaque case une étiquette distincte (« BO 41 · p. PDF 26 ») qui ouvre le texte officiel à la bonne page du PDF (activée par défaut pour l’enseignant). L’état du tableau (matière, domaine, vue, classes) est dans l’adresse : le bouton copie un lien qui rouvre exactement la même vue.',
+    ['Les étiquettes de références alourdissent le tableau à 8 classes : faut-il les limiter aux classes sélectionnées ?']],
+  'competence': ['Le point d’arrivée d’une case du programme : l’intitulé, les classes concernées, le lien vers le texte officiel (avec la page du PDF), puis TOUTES les ressources liées (exercices et générateurs, affiches et leçons, fiches toutes prêtes) et les compétences voisines.',
+    ['Afficher aussi les ressources hors de la classe ouverte (ici oui, en pastilles), ou les replier comme sur la page de matière ?']],
+  'recherche': ['Quand on sait ce qu’on cherche (« heure », « fractions ») : une palette ouverte par ⌘K, Ctrl+K ou /. Résultats groupés par type, filtrés par la classe courante (un clic pour élargir), tolérants aux accents, au clavier.',
+    ['Chercher aussi dans le texte des compétences officielles ou seulement dans les titres ?','Sur téléphone, plein écran avec clavier ouvert : la liste reste-t-elle assez haute ?']],
+  'brezhoneg': ['Page de la langue régionale, visible quand elle est active : alphabet, nombres, jours, mois, mutations. En mode « Brezhoneg seul », seuls l’interface et les noms de matière sont en breton (exemples de maquette, à relire) ; un bouton « ← Retour en français » reste toujours visible dans la barre.',
+    ['Le bouton audio (prononciation) : voulu, mais avec quelles voix ?']],
+  'stub': ['Cet écran n’est pas maquetté : il représente la page réelle (exercice en ligne, affiche, réglages…).',['Aucune question à ce stade.']],
+};
+
+/* ════════════════════════════════════════════════════════════════
+   6. NAVIGATION (barre, menus)
+   ════════════════════════════════════════════════════════════════ */
+const route = () => { const h = location.hash.replace(/^#\/?/, ''); const [path, q] = h.split('?'); return { path: path || '', params: new URLSearchParams(q || '') }; };
+const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+
+function navHTML(path) {
+  const kid = S.profil === 'enfant', open = S.open, brSeul = S.mode === 'br';
+  const link = (href, label, key, extra = '') => `<a href="${href}" class="${path === key || path.startsWith(key + '/') ? 'active' : ''}" ${path === key ? 'aria-current="page"' : ''}>${label}${extra}</a>`;
+  const showBr = S.mode !== 'fr';
+  const links = kid ? '' : `<nav class="nav-links wide" aria-label="Rubriques">${link('#/maths', sm('maths'), 'maths')}${link('#/francais', sm('francais'), 'francais')}${link('#/monde', sm('monde'), 'monde')}${showBr ? link('#/brezhoneg', TE('brezhoneg'), 'brezhoneg') : ''}${S.profil === 'enseignant' ? link('#/programme', TE('programme'), 'programme') : ''}</nav>`;
+  const search = `<button class="nbtn" data-a="search" aria-label="${Tp('chercher')} (${isMac ? '⌘K' : 'Ctrl+K'})" aria-haspopup="dialog">${EM.chercher}<span class="lbl wide">${T('chercher')}</span><kbd class="wide">${isMac ? '⌘K' : 'Ctrl K'}</kbd></button>`;
+  const retour = brSeul ? `<button class="nbtn retour" data-a="mode" data-v="fr" aria-label="${profilLabel ? 'Retour en français' : ''}">← ${flagFR()}<span class="lbl2"> Retour en français</span><span class="lbl3"> FR</span></button>` : '';
+  const langue = `<div class="dd wide"><button class="nbtn" data-a="open" data-v="langue" aria-expanded="${open === 'langue'}" aria-haspopup="true" aria-label="${Tp('langue')} : ${modeLabel[S.mode]}">${EM.langue} ${flags(S.mode)}<span class="lbl">${T('langue')}</span> ▾</button>${open === 'langue' ? `<div class="dd-panel" role="group" aria-label="${Tp('langue')}"><h3>${TE('langue')}</h3>${[['fr','Français','Interface, fiches et exercices en français'],['fr+br','Français + Brezhoneg','Les deux langues : titres, fiches, exercices'],['br','Brezhoneg','Interface et matières en breton (exemple de maquette)']].map(o => `<button class="opt" data-a="mode" data-v="${o[0]}" aria-pressed="${S.mode === o[0]}"><span class="ico">${flags(o[0])}</span><span><strong>${o[1]}</strong><small>${o[2]}</small></span></button>`).join('')}</div>` : ''}</div>`;
+  let classe;
+  if (kid && !S.unlocked) classe = `<div class="dd"><button class="nbtn locked" data-a="open" data-v="gate" aria-expanded="${open === 'gate'}" aria-label="Classe verrouillée : ${S.classes[0].toUpperCase()}. Ouvrir le cadenas">${EM.verrou} ${S.classes[0].toUpperCase()}</button>${open === 'gate' ? gateHTML() : ''}</div>`;
+  else classe = `<div class="dd"><button class="nbtn classe" data-a="open" data-v="classe" aria-expanded="${open === 'classe'}" aria-haspopup="true" aria-label="${Tp('classe')} : ${classeLabel()}"><span class="ic1" aria-hidden="true">${EM.classe}</span> <span>${classeLabel()}</span> <span aria-hidden="true">▾</span></button>${open === 'classe' ? classePanel() : ''}</div>`;
+  const profil = `<div class="dd wide"><button class="nbtn" data-a="open" data-v="profil" aria-expanded="${open === 'profil'}" aria-haspopup="true" aria-label="Profil : ${profilLabel[S.profil]}">${prof(S.profil)} ▾</button>${open === 'profil' ? `<div class="dd-panel" role="group" aria-label="Profil"><h3>Je suis… (facultatif)</h3>${profilOpts()}<p class="foot">Le profil ne change que la disposition et le nombre de classes. Rien n’est verrouillé.</p></div>` : ''}</div>`;
+  const reglages = `<a class="nbtn wide" href="#/stub?t=${encodeURIComponent('Réglages')}&k=reglages" aria-label="${Tp('reglages')}" title="${Tp('reglages')}">${EM.reglages}</a>`;
+  const menu = `<button class="nbtn narrow" data-a="open" data-v="menu" aria-expanded="${open === 'menu'}" aria-label="Menu" aria-haspopup="true">${open === 'menu' ? '✕' : '☰'}</button>`;
+  const menuPanel = open === 'menu' ? `<div class="menu-panel narrow" role="group" aria-label="Menu">
+    <a class="big" href="#/">${TE('accueil')}</a>${kid ? '' : `<button class="big" data-a="search" style="background:none;border:none;text-align:left;width:100%;display:flex;gap:.6rem;padding:.65rem .5rem;font-weight:800;font-size:1.05rem;border-bottom:1px solid var(--gris-bg)">${TE('chercher')}</button>`}${kid ? '' : `<a class="big" href="#/maths">${sm('maths')}</a><a class="big" href="#/francais">${sm('francais')}</a><a class="big" href="#/monde">${sm('monde')}</a>${showBr ? `<a class="big" href="#/brezhoneg">${TE('brezhoneg')}</a>` : ''}<a class="big" href="#/programme">${TE('programme')}</a><a class="big" href="#/maths/fiches">${TE('fichesPretes')}</a>`}
+    <h3>${TE('langue')}</h3><div class="seg">${['fr','fr+br','br'].map(m => `<button class="level-btn ${S.mode === m ? 'active' : ''}" data-a="mode" data-v="${m}" aria-pressed="${S.mode === m}">${flags(m)} ${modeLabel[m]}</button>`).join('')}</div>
+    <h3>Profil</h3><div class="seg">${['enfant','parent','enseignant'].map(p => `<button class="level-btn ${S.profil === p ? 'active' : ''}" data-a="profil" data-v="${p}" aria-pressed="${S.profil === p}">${prof(p)}</button>`).join('')}</div>
+    <h3>${TE('reglages')}</h3><a class="big" href="#/stub?t=Réglages&k=reglages">${TE('reglages')}</a></div>` : '';
+  return `<header class="nav ${brSeul ? 'brseul' : ''}"><a class="logo" href="#/" title="${Tp('accueil')}" aria-label="${SITES[S.site].nom} — ${Tp('accueil')}">${SITES[S.site].emoji} ${SITES[S.site].nom}</a>${links}<div class="nav-right">${retour}${kid ? '' : search}${kid ? '' : langue}${classe}${profil}${kid ? '' : reglages}${kid ? `<button class="nbtn narrow" data-a="open" data-v="menu" aria-label="Menu">☰</button>` : menu}</div>${menuPanel}</header>`;
+}
+const profilOpts = () => [['enfant','Une classe, verrouillée par un petit cadenas'],['parent','Une classe, programme et fiches toutes prêtes'],['enseignant','Plusieurs classes, entrée Programme, lien pour les familles']].map(p => `<button class="opt" data-a="profil" data-v="${p[0]}" aria-pressed="${S.profil === p[0]}"><span class="ico">${EM[p[0]]}</span><span><strong>${profilLabel[p[0]]}</strong><small>${p[1]}</small></span></button>`).join('');
+function classePanel() {
+  const multi = S.profil === 'enseignant';
+  return `<div class="dd-panel" style="min-width:350px" role="group" aria-label="Classes"><h3>${multi ? 'Mes classes (une ou plusieurs)' : 'Ma classe'}</h3>
+    ${[[1,'Maternelle'],[2,'Cycle 2'],[3,'Cycle 3']].map(([cy, n]) => `<div class="frow" style="margin-bottom:.4rem"><span class="lab" style="min-width:5.5rem;font-size:.72rem;font-weight:800;color:#6b6b6b;text-transform:uppercase">${n}</span>${CL.filter(c => CYC(c) === cy).map(c => `<button class="level-btn ${sel(c) ? 'active' : ''}" data-a="${multi ? 'toggleClasse' : 'setClasse'}" data-v="${c}" aria-pressed="${sel(c)}">${c.toUpperCase()}</button>`).join('')}</div>`).join('')}
+    ${multi ? `<div class="frow"><button class="btn btn-sm" data-a="allClasses">${T('toutes')}</button></div>` : ''}
+    <p class="foot">${multi ? 'Plusieurs classes : les listes montrent l’union, les pastilles choisies sont mises en évidence.' : 'Une seule classe. Elle est mémorisée sur cet appareil.'}</p></div>`;
+}
+function gateHTML() {
+  return `<div class="dd-panel" role="dialog" aria-label="Ouvrir le cadenas"><h3>${EM.verrou} Réservé aux grands</h3><p style="margin-bottom:.4rem">Pour changer de classe, un adulte maintient le bouton appuyé pendant 2 secondes.</p>
+  <button class="hold" data-hold="gate" aria-label="Maintenir appuyé 2 secondes pour ouvrir le cadenas"><svg viewBox="0 0 64 64" width="88" height="88" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#fff8e1" stroke="#dee2e6" stroke-width="6"/><circle class="ring" cx="32" cy="32" r="26" fill="none" stroke="#2e7d32" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" transform="rotate(-90 32 32)"/><text x="32" y="40" text-anchor="middle" font-size="24">🔒</text></svg></button>
+  <p class="foot" style="text-align:center">Maintenir appuyé (souris, doigt, ou barre d’espace)</p></div>`;
+}
+const footHTML = () => `<footer class="pied"><a href="#/maths/fiches">${TE('fichesPretes')}</a><a href="#/stub?t=Nouveautés&k=page">Nouveautés</a><a href="#/stub?t=À propos&k=page">À propos</a><a href="mailto:contact@skoolik.app">✉️ contact@skoolik.app</a><span>Gratuit, sans compte, sans publicité</span></footer>`;
+function notesHTML(key) {
+  const n = NOTES[key] || NOTES.stub; const qs = n[1].filter(Boolean);
+  return `<details class="notes" ${S.notes ? 'open' : ''} id="notes"><summary>📝 Notes de maquette : besoin couvert et questions ouvertes</summary><div class="in"><div><h4>Ce que cet écran répond</h4><p>${n[0]}</p></div><div><h4>Questions ouvertes</h4><ul>${(qs.length ? qs : ['Aucune question ouverte sur cet écran.']).map(q => `<li>${q}</li>`).join('')}</ul></div></div></details>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   7. ÉCRANS
+   ════════════════════════════════════════════════════════════════ */
+function homePage() {
+  const p = S.profil, brOn = S.mode !== 'fr';
+  const rep = REPRENDRE.map(r => `<a class="rep" href="${ONLINE_STUB(r[3])}"><span class="ic" aria-hidden="true">${r[0]}</span><span><strong>${r[1]}</strong><small>${r[2]}</small></span></a>`).join('');
+  if (p === 'enfant') {
+    return { key:'home-enfant', title:'Accueil', html:`<div class="container" data-page="accueil-enfant">
+      <h1 class="kid-title">${T('bonjour')}</h1>
+      <div class="kid-grid"><a class="kid-tile" href="#/maths"><span class="ic" aria-hidden="true">🔢</span>${subj('maths')}</a><a class="kid-tile francais" href="#/francais"><span class="ic" aria-hidden="true">📝</span>${subj('francais')}</a><a class="kid-tile monde" href="#/monde"><span class="ic" aria-hidden="true">🌍</span>${subj('monde')}</a>${brOn ? `<a class="kid-tile brezhoneg" href="#/brezhoneg"><span class="ic" aria-hidden="true">${flagBR(84)}</span>${T('brezhoneg')}</a>` : ''}</div>
+      <h2 class="h-sec" style="justify-content:center;margin-top:2rem">${TE('reprendre')}</h2>
+      <div class="kid-grid">${REPRENDRE.map(r => `<a class="kid-tile small" href="${ONLINE_STUB(r[3])}"><span class="ic" aria-hidden="true">${r[0]}</span>${r[1]}</a>`).join('')}</div>
+      <p class="optional">${S.unlocked ? 'Cadenas ouvert. <button class="linkbtn" data-a="relock">Refermer</button>' : 'La classe est verrouillée (🔒 en haut) : un adulte peut l’ouvrir.'}</p></div>` };
+  }
+  const cls = S.classes.map(c => c.toUpperCase()).join(' + ');
+  const ctx = p === 'enseignant'
+    ? `<div class="ctx" role="group" aria-label="Mes classes"><span class="lab">${EM.classe} Mes classes</span><span class="row" style="gap:.3rem">${CL.map(c => `<button class="puce" data-a="toggleClasse" data-v="${c}" aria-pressed="${sel(c)}">${c.toUpperCase()}</button>`).join('')}</span></div>`
+    : `<div class="ctx" role="group" aria-label="Ma classe"><span class="lab">${EM.classe} Ma classe</span><span class="row" style="gap:.3rem">${CL.map(c => `<button class="puce" data-a="setClasse" data-v="${c}" aria-pressed="${sel(c)}">${c.toUpperCase()}</button>`).join('')}</span></div>`;
+  const langCtx = `<div class="ctx" role="group" aria-label="${Tp('langue')}"><span class="lab">${EM.langue} ${flags(S.mode)} ${T('langue')}</span><span class="row" style="gap:.3rem">${['fr','fr+br','br'].map(m => `<button class="puce" data-a="mode" data-v="${m}" aria-pressed="${S.mode === m}">${modeLabel[m]}</button>`).join('')}</span></div>`;
+  const tile = (cls2, href, ic, title, desc) => `<a class="tile ${cls2}" href="${href}"><span class="ic" aria-hidden="true">${ic}</span><span class="tt">${title}</span><span class="dd2">${desc}</span></a>`;
+  const tiles = `<div class="tiles">
+    ${tile('maths','#/maths','🔢',subj('maths'),`${countFor('maths')} ${T('ressources')} · ${cls}`)}
+    ${tile('francais','#/francais','📝',subj('francais'),`${countFor('francais')} ${T('ressources')} · ${cls}`)}
+    ${tile('monde','#/monde','🌍',subj('monde'),'Le quiz, et ce qui arrive : sciences, histoire, géographie')}
+    ${brOn ? tile('brezhoneg','#/brezhoneg',flagBR(),T('brezhoneg'),'Alphabet, nombres, jours, mois') : ''}
+    ${tile('prog','#/programme','📚',T('programme'),p === 'enseignant' ? 'Classe × domaine → compétences → ressources' : `Ce qu’on apprend ${S.classes[0] === 'ps' || S.classes[0] === 'ms' || S.classes[0] === 'gs' ? 'en' : 'au'} ${cls}`)}
+    ${tile('fiches','#/maths/fiches','📄',T('fichesPretes'),'PDF à télécharger et imprimer, sans rien régler')}
+  </div>`;
+  const hero = p === 'enseignant'
+    ? `<header class="hero"><h1>Préparez vos classes</h1><p class="lead">Exercices en ligne et fiches à imprimer, par classe et par compétence du programme.</p>${ctx}<div class="row" style="justify-content:center;margin-top:.8rem"><button class="btn btn-primary" data-a="copylink">${EM.lien} ${T('copier')}</button></div><p class="optional" style="margin-top:.4rem">Les familles arrivent sur le site déjà réglé sur ${cls}${S.mode !== 'fr' ? ' et ' + modeLabel[S.mode] : ''}.</p>${S.site === 'skoolik' ? '' : langCtx.replace('class="ctx"', 'class="ctx" style="margin-top:.6rem"')}</header>`
+    : `<header class="hero"><h1>${S.site === 'skoolik' ? 'Demat ! Exercices et fiches pour l’école' : 'Des exercices et des fiches à imprimer pour l’école'}</h1><p class="lead">De la petite section au CM2, gratuit, sans compte.</p>${ctx}${langCtx.replace('class="ctx"', 'class="ctx" style="margin-top:.6rem"')}</header>`;
+  const optional = `<p class="optional">Vous êtes plutôt : ${['enfant','parent','enseignant'].map(x => `<button class="linkbtn" data-a="profil" data-v="${x}" ${S.profil === x ? 'aria-current="true" style="font-weight:800;text-decoration:none;color:var(--texte)"' : ''}>${EM[x]} ${profilLabel[x].toLowerCase()}</button>`).join(' · ')} ? (facultatif, ne change que la disposition)</p>`;
+  return { key: p === 'parent' ? 'home-parent' : 'home-enseignant', title:'Accueil', html:`<div class="container" data-page="accueil">${hero}${tiles}
+    <h2 class="h-sec">${TE('reprendre')}</h2><div class="reprendre">${rep}</div>${optional}</div>` };
+}
+
+const vueEff = () => S.vue || (S.phone ? 'liste' : 'cartes');
+const vueSel = () => `<div class="vsel" role="group" aria-label="Affichage de la liste">${[['cartes','▦','Cartes'],['liste','☰','Liste']].map(v => `<button data-a="vue" data-v="${v[0]}" aria-pressed="${vueEff() === v[0]}" title="${v[2]}"><span aria-hidden="true">${v[1]}</span> ${v[2]}</button>`).join('')}</div>`;
+const sortKey = { titre: r => norm(r.titre), type: r => r.type, classe: r => CL.indexOf(r.cl[0]), pages: r => r.pages || 0, domaine: r => norm(DOM_NOM[r.dom] || '') };
+const sorted = list => list.slice().sort((a, b) => { const x = sortKey[SORT.k](a), y = sortKey[SORT.k](b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.dir; });
+const th = (k, label) => `<th scope="col" aria-sort="${SORT.k === k ? (SORT.dir > 0 ? 'ascending' : 'descending') : 'none'}"><button class="sortb" data-a="sort" data-v="${k}">${label}<span aria-hidden="true"> ${SORT.k === k ? (SORT.dir > 0 ? '▲' : '▼') : '↕'}</span></button></th>`;
+const TYPE_NOM = { exercice:'exercice', generateur:'générateur', affiche:'affiche', lecon:'leçon' };
+function resTable(items) {
+  const rows = sorted(items).map(r => `<tr><td class="c-t"><a href="${resHref(r)}"><span aria-hidden="true">${r.ico}</span> <strong>${esc(r.titre)}</strong></a></td><td class="c-type">${r.type === 'affiche' || r.type === 'lecon' ? EM.apprendre : EM.entrainer} ${TYPE_NOM[r.type]}</td><td class="c-cl">${pills(r.cl)}</td><td class="c-b"><span class="badges">${badges(r)}</span></td><td class="c-act"><a class="btn btn-sm" href="${resHref(r)}">Ouvrir</a>${r.print ? `<button class="btn btn-sm" data-a="toast" data-v="Impression de « ${esc(r.titre)} » (maquette).">${EM.imprimer} Imprimer</button>` : ''}</td></tr>`).join('');
+  return `<div class="tblwrap"><table class="ltab"><thead><tr>${th('titre', 'Titre')}${th('type', 'Usage')}${th('classe', 'Classes')}<th scope="col">Formats</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+const DOMSTATE = {};                                  // clé « matière:domaine » → ouvert/fermé choisi par l'utilisateur (sinon règle par défaut)
+const cyclesSel = () => [...new Set(S.classes.map(CYC))];
+const domsDe = mat => DOMS[mat].filter(d => d[3].some(c => cyclesSel().includes(c)));
+const classesTxt = () => S.classes.length > 1 ? `des classes ${S.classes.map(c => c.toUpperCase()).join(' + ')}` : `de la classe ${S.classes[0].toUpperCase()}`;
+function resCard(r) {
+  return `<a class="rcard" href="${resHref(r)}"><span class="rc-ic" aria-hidden="true">${r.ico}</span><strong>${esc(r.titre)}</strong><span class="rc-d">${esc(DESC[r.id] || (COMP[r.c] || ['', ''])[1])}</span>${pills(r.cl)}<span class="badges">${badges(r)}</span></a>`;
+}
+function resBlocks(items) {
+  if (vueEff() === 'liste') return `<div class="sub">${resTable(items)}</div>`;
+  const app = items.filter(r => r.type === 'affiche' || r.type === 'lecon'), ent = items.filter(r => r.type === 'exercice' || r.type === 'generateur');
+  return `<div class="sub"><h3>${TE('apprendre')}</h3>${app.length ? `<div class="rgrid">${app.map(resCard).join('')}</div>` : '<p class="empty">Rien dans cette catégorie.</p>'}</div>
+          <div class="sub"><h3>${TE('entrainer')}</h3>${ent.length ? `<div class="rgrid">${ent.map(resCard).join('')}</div>` : '<p class="empty">Rien dans cette catégorie.</p>'}</div>`;
+}
+function subjectPage(mat) {
+  const m = MATIERE[mat], kid = S.profil === 'enfant';
+  const tot = RES.filter(r => r.mat === mat && concerne(r.cl)).length;
+  if (kid) {
+    const ex = RES.filter(r => r.mat === mat && r.online && (S.showAll || concerne(r.cl)));
+    return { key:mat, title:subjP(mat), html:`<div class="container" data-page="${mat}-enfant"><a class="btn" href="#/">⬅ ${TE('accueil')}</a><h1 class="kid-title">${m.ico} ${subj(mat)}</h1><div class="kid-grid">${ex.map(r => `<a class="kid-tile small" href="${ONLINE_STUB(r.id)}"><span class="ic" aria-hidden="true">${r.ico}</span>${esc(r.titre)}</a>`).join('')}</div>${ex.length ? '' : '<p class="empty">Pas encore d’exercice ici pour cette classe.</p>'}</div>` };
+  }
+  const doms = domsDe(mat);
+  const encart = `<aside class="encart" aria-label="${Tp('fichesPretes')}"><span class="ic" aria-hidden="true">${EM.fichesPretes}</span><p><strong>Des fiches toutes prêtes (PDF à télécharger) : c’est ici →</strong><br><span class="muted">Ci-dessous, personnalisez vos fiches et exercices.</span></p><a class="btn btn-primary" href="#/maths/fiches">${TE('fichesPretes')} →</a></aside>`;
+  const ctxbar = `<div class="ctxbar"><span>${EM.classe} Classe${S.classes.length > 1 ? 's' : ''} :</span>${S.classes.map(c => `<span class="cl sel">${c.toUpperCase()}</span>`).join('')}<span class="muted">· ${tot} ${tot > 1 ? T('ressources') : (S.mode === 'br' ? T('ressources') : 'ressource')}</span><button class="level-btn ${S.showAll ? 'active' : ''}" data-a="showAll" aria-pressed="${S.showAll}">${EM.tous} ${T('toutes')}</button>${vueSel()}</div>`;
+  const jump = `<nav class="jump" aria-label="Domaines">${doms.map(d => `<button class="level-btn" data-a="jump" data-v="${mat}:${d[0]}">${d[2]} ${d[1]}</button>`).join('')}</nav>`;
+  const sections = doms.map(d => {
+    const items = RES.filter(r => r.mat === mat && r.dom === d[0]), inC = items.filter(r => concerne(r.cl)), key = mat + ':' + d[0];
+    const open = key in DOMSTATE ? DOMSTATE[key] : inC.length > 0;
+    const shown = inC.length ? (S.showAll ? items : inC) : items;
+    const n = inC.length ? `${inC.length} ressource${inC.length > 1 ? 's' : ''}` : items.length ? `Hors ${S.classes.length > 1 ? 'des classes' : 'de la classe'} ${S.classes.map(c => c.toUpperCase()).join(' + ')} : ${items.length}` : 'Aucune ressource pour l’instant';
+    return `<details class="dom ${inC.length ? '' : 'vide'}" id="dom-${d[0]}" data-dk="${key}" ${open ? 'open' : ''}><summary><span class="dom-t">${d[2]} ${d[1]}</span><span class="dom-n">${n}</span></summary>
+      <div class="dom-body">${items.length ? (inC.length ? '' : `<p class="note-hors">Pas de ressource ${classesTxt()} dans ce domaine : voici celles des autres classes.</p>`) + resBlocks(shown) : '<p class="empty">Rien pour l’instant dans ce domaine.</p>'}</div></details>`;
+  }).join('');
+  const autres = DOMS[mat].filter(d => !doms.includes(d));
+  return { key:mat, title:subjP(mat), html:`<div class="container" data-page="${mat}">${crumbs([[TE('accueil'),'#/'],[sm(mat)]])}<h1>${m.ico} ${subj(mat)}</h1>${encart}${ctxbar}${jump}${sections}
+    ${autres.length ? `<p class="muted" style="font-size:.85rem;margin-top:.8rem">Domaines d’autres cycles, absents du programme ${classesTxt()} : ${autres.map(d => `${d[2]} ${d[1]} (cycle ${d[3].join(', ')})`).join(' · ')}.</p>` : ''}</div>` };
+}
+
+const QZ = { i:0, pick:null };
+const QUIZ = [['Quelle est la capitale de la France ?',['Lyon','Paris','Marseille'],1],['Combien de pattes a une araignée ?',['6','8','10'],1],['Quel océan borde la Bretagne ?',['L’océan Atlantique','L’océan Indien','L’océan Pacifique'],0]];
+function mondePage() {
+  const cyc = cyclesSel(), q = QUIZ[QZ.i % QUIZ.length];
+  const a = DOMS.monde.filter(d => d[3].some(c => cyc.includes(c))), b = DOMS.monde.filter(d => !a.includes(d));
+  const card = d => `<div class="avenir"><span class="rc-ic" aria-hidden="true">${d[2]}</span><strong>${d[1]}</strong><span class="rc-d">Cycle ${d[3].join(', ')}</span><span class="badge b-lang">🚧 à venir</span></div>`;
+  return { key:'monde', title:'Le Monde', html:`<div class="container" data-page="monde">${crumbs([[TE('accueil'),'#/'],[sm('monde')]])}<h1>🌍 ${subj('monde')}</h1>
+  <p class="lead">Le petit quiz pour s’amuser, et ce qui arrive ensuite.</p>
+  <section class="quiz card" aria-labelledby="qz"><div class="row" style="justify-content:space-between"><h2 id="qz">${TE('quiz')} : culture générale</h2><span class="badge b-lang" title="Ce quiz ne suit pas le programme officiel">hors programme : culture générale</span></div>
+    <p style="font-weight:800;font-size:1.15rem;margin:.8rem 0 .5rem" id="qz-q">${q[0]}</p>
+    <div class="row" role="group" aria-labelledby="qz-q">${q[1].map((r, i) => `<button class="level-btn ${QZ.pick === i ? (i === q[2] ? 'ok' : 'ko') : ''}" data-a="quizpick" data-v="${i}" ${QZ.pick !== null ? 'disabled' : ''}>${r}</button>`).join('')}</div>
+    <p role="status" style="margin-top:.6rem;font-weight:800;min-height:1.4em">${QZ.pick === null ? '' : QZ.pick === q[2] ? '<span style="color:var(--vert-texte)">Bravo !</span>' : `<span style="color:var(--rouge-texte)">Pas tout à fait : c’était « ${q[1][q[2]]} ».</span>`}</p>
+    ${QZ.pick !== null ? `<button class="btn btn-sm" data-a="quiznext">Question suivante →</button>` : ''}</section>
+  <h2 class="h-sec">🚧 À venir : le programme du monde</h2>
+  <p class="muted">Aucune ressource pour l’instant : ces domaines viendront avec le programme officiel. Pas de contenu factice en attendant.</p>
+  <div class="avenir-grid">${a.map(card).join('')}</div>
+  ${b.length ? `<details class="notes" style="background:#fff;border:1px dashed var(--gris-brd);margin:1rem 0;width:auto"><summary style="color:var(--texte-doux)">Autres cycles (${b.length})</summary><div class="avenir-grid" style="padding:0 1rem 1rem">${b.map(card).join('')}</div></details>` : ''}
+  </div>` };
+}
+
+function fichesVisibles() {
+  const q = norm(F.q).split(/\s+/).filter(Boolean);
+  return FICHES.filter(f => f.mat === 'maths' && (F.toutes || concerne(f.cl)) && (!F.l || f.langs.includes(F.l)) && (!F.u || f.usage === F.u) && (!F.d || f.dom === F.d) && q.every(t => norm(f.titre + ' ' + f.cl.join(' ') + ' ' + DOM_NOM[f.dom] + ' ' + (COMP[f.c] || [,''])[1]).includes(t)));
+}
+function ficheTable(list) {
+  const rows = sorted(list).map(f => `<tr><td class="c-t"><a href="#/fiche/${f.id}"><span aria-hidden="true">${EM.fichesPretes}</span> <strong>${esc(f.titre)}</strong></a></td><td class="c-type">${DOM_EMO[f.dom]} ${DOM_NOM[f.dom]}</td><td class="c-cl">${pills(f.cl)}</td><td class="c-b">${f.pages} p. ${f.langs.includes('br') && S.mode !== 'fr' ? flagFR() + flagBR() : ''}</td><td class="c-act"><a class="btn btn-sm" href="#/fiche/${f.id}">Ouvrir</a><button class="btn btn-sm" data-a="toast" data-v="Téléchargement (maquette).">${EM.telecharger} Télécharger</button></td></tr>`).join('');
+  return `<div class="tblwrap" style="margin-top:.8rem"><table class="ltab"><thead><tr>${th('titre', 'Titre')}${th('domaine', 'Domaine')}${th('classe', 'Classes')}${th('pages', 'Pages')}<th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function fichesPage() {
+  const list = fichesVisibles(), brOn = S.mode !== 'fr';
+  const cl = S.profil === 'enseignant' ? 'toggleClasse' : 'setClasse';
+  const chip = (a, v, cur, label) => `<button class="level-btn ${cur === v ? 'active' : ''}" data-a="${a}" data-v="${v}" aria-pressed="${cur === v}">${label}</button>`;
+  return { key:'fiches', title:'Fiches toutes prêtes de Maths', html:`<div class="container" data-page="fiches">${crumbs([[TE('accueil'),'#/'],[sm('maths'),'#/maths'],[TE('fichesPretes')]])}
+  <h1>${TE('fichesPretes')} — ${sm('maths')}</h1><p class="lead">PDF à télécharger et imprimer, sans rien régler. Pour modifier une fiche, ouvrez-la puis « Personnaliser ».</p>
+  <div class="filters" role="search" aria-label="Filtrer les fiches">
+    <div class="frow"><label class="lab" for="f-q">${TE("chercher")}</label><input id="f-q" class="search" type="search" placeholder="ex. heure, tables, symétrie" value="${esc(F.q)}" data-a="fq" autocomplete="off"></div>
+    <div class="frow" role="group" aria-label="Classes"><span class="lab">${TE("classe")}</span>${CL.map(c => `<button class="level-btn ${!F.toutes && sel(c) ? 'active' : ''}" data-a="${cl}" data-v="${c}" aria-pressed="${!F.toutes && sel(c)}">${c.toUpperCase()}</button>`).join('')}<button class="level-btn ${F.toutes ? 'active' : ''}" data-a="ftoutes" aria-pressed="${F.toutes}">${EM.tous} ${T('toutes')}</button></div>
+    <div class="frow" role="group" aria-label="Usage"><span class="lab">${EM.usage} Usage</span>${chip('fu','','' + F.u,TE('tous'))}${chip('fu','apprendre',F.u,TE('apprendre'))}${chip('fu','entrainer',F.u,TE('entrainer'))}</div>
+    <div class="frow"><label class="lab" for="f-d">${EM.domaine} Domaine</label><select id="f-d" class="sel" data-a="fd"><option value="">${EM.tous} Tous les domaines</option>${DOMS.maths.map(d => `<option value="${d[0]}" ${F.d === d[0] ? 'selected' : ''}>${d[2]} ${d[1]}</option>`).join('')}</select>
+      ${brOn ? `<span class="lab" style="margin-left:.6rem">${TE('langue')}</span>${chip('fl','','' + F.l,EM.tous + ' Toutes')}${chip('fl','fr',F.l,flagFR() + ' FR')}${chip('fl','br',F.l,flagBR() + ' BR')}${chip('fl','fr+br',F.l,'FR + BR')}` : ''}</div>
+  </div>
+  <div class="row" style="margin:.8rem 0 0"><p class="muted" role="status">${list.length} fiche${list.length > 1 ? 's' : ''}${F.toutes ? ', toutes classes' : ` pour ${classeLabel()}`}</p>${vueSel()}</div>
+  ${list.length && vueEff() === 'liste' ? ficheTable(list) : ''}
+  ${list.length && vueEff() !== 'liste' ? `<div class="grid">${list.map(f => `<a class="fcard" href="#/fiche/${f.id}"><div class="mini">${mini(f)}</div><div class="info"><strong>${esc(f.titre)}</strong>${pills(f.cl)}<span class="row" style="gap:.3rem">${f.langs.includes('br') && brOn ? `<span class="badge b-lang">${flagFR()} ${flagBR()}</span>` : ''}<span class="badge b-lang">${f.usage === 'apprendre' ? EM.apprendre + ' apprendre' : EM.entrainer + ' s’entraîner'}</span></span><span class="meta">PDF · ${f.pages} page${f.pages > 1 ? 's' : ''}</span></div></a>`).join('')}</div>` : ''}
+  ${!list.length ? `<p class="empty" style="padding:1.5rem 0">Aucune fiche avec ces filtres. <button class="linkbtn" data-a="freset">Tout réinitialiser</button></p>` : ''}
+  </div>` };
+}
+
+function fichePage(id, params) {
+  const f = fiche(id);
+  if (Sh.id !== f.id) Object.assign(Sh, { id:f.id, fmt:'A4', or:'portrait', page:0 });
+  Sh.lang = f.langs.includes(params.get('lang')) ? params.get('lang') : 'fr';
+  const land = Sh.or === 'paysage', comp = COMP[f.c];
+  const sameC = FICHES.filter(g => g.c === f.c && g.id !== f.id), sameD = FICHES.filter(g => g.dom === f.dom && g.c !== f.c && g.id !== f.id).slice(0, 4);
+  const dim = Sh.fmt === 'A3' ? [297, 420] : [210, 297], taille = f.formats ? (land ? `${dim[1]} × ${dim[0]} mm` : `${dim[0]} × ${dim[1]} mm`) : '';
+  const size = f.formats ? `${Sh.fmt} ${Sh.or}` : 'A4 portrait';
+  const langNom = { fr:[flagFR(), 'Français'], br:[flagBR(), 'Brezhoneg'], 'fr+br':[flagFR() + flagBR(), 'bilingue'] };
+  const autresLangues = f.langs.length > 1 ? `<p class="langs"><strong>Même fiche :</strong> ${f.langs.map(l => l === Sh.lang ? `<span class="lg cur" aria-current="true">${langNom[l][0]} ${langNom[l][1]}</span>` : `<a class="lg" href="#/fiche/${f.id}?lang=${l}">${langNom[l][0]} ${langNom[l][1]}</a>`).join(' · ')}</p>` : '';
+  const fc = g => `<a class="fcard" href="#/fiche/${g.id}"><div class="mini" style="height:120px">${mini(g)}</div><div class="info"><strong style="font-size:.84rem">${esc(g.titre)}</strong>${pills(g.cl)}</div></a>`;
+  return { key:'fiche', title:ficheTitre(f), html:`<div class="container" data-page="fiche">${crumbs([[TE('accueil'),'#/'],[sm(f.mat),'#/' + f.mat],[TE('fichesPretes'),'#/' + f.mat + '/fiches'],[esc(ficheTitre(f))]])}
+  <div class="sheet"><div class="preview" aria-label="Aperçu de la fiche"><div class="pg">${pageSVG(f.kind, f.titre, Sh.page, land)}</div>
+    <div class="pager"><button data-a="page" data-v="-1" aria-label="Page précédente" ${Sh.page === 0 ? 'disabled' : ''}>◀</button><span aria-live="polite">Page ${Sh.page + 1} / ${f.pages}</span><button data-a="page" data-v="1" aria-label="Page suivante" ${Sh.page >= f.pages - 1 ? 'disabled' : ''}>▶</button></div>
+    ${f.pages > 1 ? `<p class="muted" style="font-size:.82rem">${Sh.page === 0 ? 'Page 1 : l’énoncé' : Sh.page === f.pages - 1 ? `Page ${f.pages} : corrigé` : 'Page ' + (Sh.page + 1) + ' : suite des exercices'}</p>` : ''}
+    ${Sh.lang !== 'fr' ? `<p class="muted" style="font-size:.8rem">Aperçu en français (la version ${langNom[Sh.lang][1]} est générée à partir des mêmes données).</p>` : ''}</div>
+  <div class="panel"><div><h1>${esc(ficheTitre(f))}</h1><p class="row" style="margin-top:.4rem">${pills(f.cl)}<span class="badge b-print">${TE('imprimable')}</span><span class="muted" style="font-size:.85rem">${f.pages} page${f.pages > 1 ? 's' : ''} · PDF</span></p>${autresLangues}</div>
+    <div class="box">${f.formats ? `<div class="frow" role="group" aria-label="Format"><span class="lab">Format</span>${['A4','A3'].map(x => `<button class="level-btn ${Sh.fmt === x ? 'active' : ''}" data-a="shfmt" data-v="${x}" aria-pressed="${Sh.fmt === x}">${x}</button>`).join('')}</div><div class="frow" role="group" aria-label="Orientation" style="margin:.4rem 0 .7rem"><span class="lab">Sens</span>${['portrait','paysage'].map(x => `<button class="level-btn ${Sh.or === x ? 'active' : ''}" data-a="shor" data-v="${x}" aria-pressed="${Sh.or === x}">${x === 'portrait' ? '▯ portrait' : '▭ paysage'}</button>`).join('')}</div>` : `<p class="muted" style="font-size:.85rem;margin-bottom:.6rem">Une seule présentation : A4, portrait. Rien à choisir.</p>`}
+      <div class="actions two"><button class="btn btn-primary" data-a="toast" data-v="Téléchargement du PDF (${esc(size)}) : maquette, rien n’est envoyé.">${TE('telecharger')}</button><button class="btn" data-a="toast" data-v="Ouverture de la boîte d’impression du navigateur (maquette).">${TE('imprimer')}</button></div>
+      <p class="muted" style="font-size:.8rem;margin-top:.5rem">PDF ${size}${f.formats ? ', ' + taille : ''} · ${f.pages} page${f.pages > 1 ? 's' : ''}</p></div>
+    <div class="box"><div class="actions"><a class="btn" href="#/personnaliser">${TE('perso')}</a>${f.mat === 'maths' ? `<a class="btn" href="${ONLINE_STUB('tables-exo')}">${TE('faire')}</a>` : ''}</div><p class="muted" style="font-size:.82rem;margin-top:.5rem">« Personnaliser » ouvre le formulaire pour changer les nombres, le nombre de lignes, ajouter un corrigé.</p></div>
+    ${comp ? `<div class="box comp"><h3>${EM.competence} Compétence</h3><p><a href="#/competence/${f.c}?classe=${f.cl[0]}"><strong>${comp[1]}</strong></a></p><p class="off">${DOM_EMO[comp[0]]} ${DOM_NOM[comp[0]]} · ${comp[2].map(c => c.toUpperCase()).join(', ')}</p><p style="margin-top:.4rem"><a href="#/competence/${f.c}?classe=${f.cl[0]}">Toutes les ressources de cette compétence</a> · <a href="#/stub?t=${encodeURIComponent('Programme officiel : ' + comp[3])}&k=externe" title="Lien vers le BO (non actif dans la maquette)">${EM.programme} programme officiel ↗</a></p></div>` : ''}
+    <div class="box"><h3>Même compétence</h3>${sameC.length ? `<div class="neigh">${sameC.map(fc).join('')}</div>` : '<p class="empty">Aucune autre fiche pour cette compétence.</p>'}<h3 style="margin-top:1rem">Même domaine${comp ? ` : ${DOM_EMO[comp[0]]} ${DOM_NOM[comp[0]]}` : ''}</h3>${sameD.length ? `<div class="neigh">${sameD.map(fc).join('')}</div>` : '<p class="empty">Aucune autre fiche dans ce domaine.</p>'}</div>
+  </div></div></div>` };
+}
+
+/* génération pseudo-aléatoire pour le formulaire */
+function rng(seed) { let a = seed * 2654435761 >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function persoSVG() {
+  const land = P.or === 'paysage', W = land ? 297 : 210, H = land ? 210 : 297, r = rng(P.seed + P.tables.join('') .length * 7 + P.n);
+  const tb = P.tables.length ? P.tables : [2];
+  const qs = Array.from({ length: P.n }, () => { const a = tb[Math.floor(r() * tb.length)], b = 1 + Math.floor(r() * 10), t = P.type === 'mix' ? (r() < .5 ? 'calc' : 'trous') : P.type; return { a, b, t: t }; });
+  const cols = land ? 3 : 2, per = Math.ceil(P.n / cols), rowH = Math.min(18, (H - 70) / Math.max(per, 1));
+  let b = P.nom ? `<text x="10" y="32" font-size="6" fill="#555" font-family="Segoe UI">Prénom : ............................   Date : ........................</text>` : '';
+  qs.forEach((q, i) => { const x = 14 + Math.floor(i / per) * ((W - 20) / cols), y = 48 + (i % per) * rowH, p = q.a * q.b;
+    const ans = P.corrige ? `<tspan fill="#2e7d32" font-weight="700">${q.t === 'calc' ? p : q.b}</tspan>` : '……';
+    b += `<text x="${x}" y="${y}" font-size="8" font-family="Segoe UI" fill="#2c3e50"><tspan font-weight="700" fill="#2f70c0">${i+1}.</tspan>  ${q.t === 'calc' ? `${q.a} × ${q.b} = ${ans}` : `${q.a} × ${ans} = ${p}`}</text>`; });
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Aperçu de la fiche personnalisée"><rect width="${W}" height="${H}" fill="#fff"/><rect width="${W}" height="20" fill="#4a90e2"/><text x="10" y="13.5" font-size="8" font-weight="700" fill="#fff" font-family="Segoe UI">Tables de multiplication${P.corrige ? ' — corrigé' : ''}</text>${b}</svg>`;
+}
+function persoPage() {
+  const chip = (a, v, cur, label) => `<button class="level-btn ${String(cur) === String(v) ? 'active' : ''}" data-a="${a}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${label}</button>`;
+  return { key:'perso', title:'Personnaliser : tables de multiplication', html:`<div class="container" data-page="perso">${crumbs([[TE('accueil'),'#/'],[sm('maths'),'#/maths'],['Tables de multiplication']])}
+  <h1>✏️ ${T('perso')} : tables de multiplication</h1><p class="lead" style="margin-bottom:1rem">Choisissez, l’aperçu se met à jour. Rien à valider avant d’imprimer.</p>
+  <div class="perso"><div style="display:grid;gap:1rem">
+    <section class="box" aria-labelledby="g1"><div class="group-t" id="g1">1 · Le contenu</div>
+      <div class="frow" role="group" aria-label="Tables à travailler"><span class="lab">Tables</span>${[2,3,4,5,6,7,8,9,10].map(t => `<button class="level-btn ${P.tables.includes(t) ? 'active' : ''}" data-a="ptable" data-v="${t}" aria-pressed="${P.tables.includes(t)}">${t}</button>`).join('')}</div>
+      <div class="frow" style="margin-top:.7rem" role="group" aria-label="Type de calcul"><span class="lab">Calcul</span>${chip('ptype','calc',P.type,'3 × 4 = …')}${chip('ptype','trous',P.type,'3 × … = 12')}${chip('ptype','mix',P.type,'Mélange')}</div>
+      <div class="frow" style="margin-top:.7rem"><span class="lab">Lignes</span><span class="stepper"><button data-a="pn" data-v="-2" aria-label="Moins de lignes">−</button><output aria-live="polite">${P.n}</output><button data-a="pn" data-v="2" aria-label="Plus de lignes">+</button></span><button class="btn btn-sm" data-a="pseed">🎲 Autres calculs</button></div></section>
+    <section class="box" aria-labelledby="g2"><div class="group-t" id="g2">2 · La feuille</div>
+      <label class="check"><input type="checkbox" data-a="pnom" ${P.nom ? 'checked' : ''}> Ligne « Prénom et date »</label>
+      <label class="check"><input type="checkbox" data-a="pcorrige" ${P.corrige ? 'checked' : ''}> Avec le corrigé (réponses en vert)</label>
+      <div class="frow" style="margin-top:.5rem" role="group" aria-label="Orientation"><span class="lab">Sens</span>${chip('por','portrait',P.or,'▯ portrait')}${chip('por','paysage',P.or,'▭ paysage')}</div></section>
+    ${S.mode !== 'fr' ? `<section class="box" aria-labelledby="g3"><div class="group-t" id="g3">3 · La langue</div><div class="seg">${[['fr',flagFR()+' Français'],['br',flagBR()+' Brezhoneg'],['fr+br','FR + BR']].map(o => chip('plang', o[0], P.lang, o[1])).join('')}</div></section>` : ''}
+    <details class="box"><summary style="font-weight:800;cursor:pointer">Plus d’options</summary><p class="muted" style="margin-top:.5rem;font-size:.9rem">Police d’écriture, taille des chiffres, graine du hasard, interligne… (réglages avancés repliés par défaut).</p></details>
+  </div>
+  <div class="preview" style="gap:.8rem"><div class="pg">${persoSVG()}</div><div class="actions" style="justify-content:center"><button class="btn btn-primary" data-a="toast" data-v="Boîte d’impression du navigateur (maquette).">🖨️ ${T('imprimer')}</button><button class="btn" data-a="toast" data-v="PDF téléchargé (maquette).">⬇ ${T('telecharger')}</button></div></div></div></div>` };
+}
+
+const Pr0 = null;
+// Références officielles : « p. PDF » = page du PDF (convention de programme.ts), pas la page imprimée. Adresses factices dans la maquette.
+const refsEff = () => S.refs === null || S.refs === undefined ? S.profil === 'enseignant' : !!S.refs;
+const REFTXT = { 1:['BO 19','BO n° 19 du 7 mai 2026 — programme d’enseignement de l’école maternelle (cycle 1)'], 2:['BO 41','BO n° 41 du 31 octobre 2024 — programme du cycle 2'], 3:['BO 16','BO n° 16 du 17 avril 2025 — programme du cycle 3'] };
+function refOf(id, k) {
+  const cy = CYC(k), page = 12 + (Object.keys(COMP).indexOf(id) * 7 + cy * 11) % 120, t = REFTXT[cy];
+  return { cy, page, short: t[0], texte: t[1], label: `${t[0]} · p. PDF ${page}`, href: `#/stub?t=${encodeURIComponent(t[1] + ', p. PDF ' + page)}&k=externe`, url: `https://eduscol.example/${t[0].replace(' ', '').toLowerCase()}.pdf#page=${page}` };
+}
+const refLink = (id, k) => { const r = refOf(id, k); return `<a class="refl" href="${r.href}" title="${esc(r.texte)}, page ${r.page} du PDF (${r.url}) — lien factice dans la maquette" aria-label="Texte officiel, ${esc(r.short)}, page ${r.page} du PDF, classe ${k.toUpperCase()}">${r.label}</a>`; };
+const progCanon = () => `#/programme?mat=${Pr.mat}&dom=${Pr.dom}&vue=${Pr.vue}&refs=${refsEff() ? 1 : 0}&classes=${S.classes.join(',')}${S.classes.length > 1 ? '&profil=enseignant' : ''}`;
+const avenirCard = d => `<div class="avenir"><span class="rc-ic" aria-hidden="true">${d[2]}</span><strong>${d[1]}</strong><span class="rc-d">Cycle ${d[3].join(', ')}</span><span class="badge b-lang">🚧 à venir</span></div>`;
+function programmePage() {
+  if (!(Pr.mat in DOMS)) Pr.mat = 'maths';
+  if (!DOMS[Pr.mat].some(d => d[0] === Pr.dom)) Pr.dom = DOMS[Pr.mat][0][0];
+  const multi = S.profil === 'enseignant', tog = multi ? 'toggleClasse' : 'setClasse';
+  const comps = Object.entries(COMP).filter(([id, c]) => c[0] === Pr.dom);
+  const liste = comps.filter(([id, c]) => c[2].some(sel)).map(([id, c]) => { const rs = RES.filter(r => r.c === id), fs = FICHES.filter(f => f.c === id);
+    return `<article class="comp-item"><h3><a href="#/competence/${id}?classe=${(c[2].find(sel) || c[2][0])}">${EM.competence} ${c[1]}</a></h3><p class="off">${c[3]} · ${pills(c[2])}</p>${refsEff() ? `<p class="off" style="margin-top:.3rem">${c[2].filter(sel).map(k => `${k.toUpperCase()} : ${refLink(id, k)}`).join(' &nbsp; ')}</p>` : ''}${rs.length || fs.length ? `<ul>${rs.map(r => `<li><a href="${resHref(r)}">${r.ico} ${esc(r.titre)}</a> <span class="badges">${badges(r)}</span></li>`).join('')}${fs.map(f => `<li><a href="#/fiche/${f.id}">${EM.fichesPretes} ${esc(ficheTitre(f))}</a></li>`).join('')}</ul>` : '<p class="empty">Pas encore de ressource pour cette compétence.</p>'}</article>`; }).join('');
+  const tableau = `<div class="tblwrap"><table class="prog"><caption class="sr-only">Compétences par classe : chaque point mène à la page de la compétence</caption><thead><tr><th scope="col">Compétence</th>${CL.map(c => `<th scope="col" class="${sel(c) ? 'sel' : ''}">${c.toUpperCase()}</th>`).join('')}<th scope="col">${EM.ressources}</th></tr></thead><tbody>${comps.map(([id, c]) => `<tr><td><a href="#/competence/${id}">${c[1]}</a></td>${CL.map(k => `<td class="${sel(k) ? 'sel' : ''}">${c[2].includes(k) ? `<a class="dot" href="#/competence/${id}?classe=${k}" aria-label="${esc(c[1])}, ${k.toUpperCase()}">●</a>${refsEff() ? refLink(id, k) : ''}` : '<span aria-hidden="true" style="color:#ccc">·</span>'}</td>`).join('')}<td>${RES.filter(r => r.c === id).length + FICHES.filter(f => f.c === id).length}</td></tr>`).join('')}</tbody></table></div>`;
+  const mats = ['maths','francais','monde'];
+  const corps = Pr.mat === 'monde'
+    ? `<p class="muted">Pas encore de compétences ni de ressources : ces domaines viendront avec le programme officiel.</p><div class="avenir-grid">${DOMS.monde.filter(d => d[0] === Pr.dom || true).map(avenirCard).join('')}</div>`
+    : Pr.vue === 'liste' ? (liste || '<p class="empty">Aucune compétence de ce domaine pour la ou les classes choisies (essayez la vue Tableau).</p>') : tableau;
+  const adr = 'https://' + (S.site === 'skoolik' ? 'skoolik' : 'ecoleprimaire') + '.app/programme?' + progCanon().split('?')[1];
+  return { key:'programme', title:'Programme', html:`<div class="container" data-page="programme">${crumbs([[TE('accueil'),'#/'],[TE('programme')]])}<h1>${TE('programme')}</h1>
+  <p class="lead">${S.classes.map(c => c.toUpperCase()).join(' + ')} · ${MATIERE[Pr.mat].fr}. Chaque compétence mène à ses ressources.</p>
+  <div class="tabs" role="group" aria-label="Matière" style="margin-top:.4rem">${mats.map(m => `<button class="level-btn ${Pr.mat === m ? 'active' : ''}" data-a="prmat" data-v="${m}" aria-pressed="${Pr.mat === m}">${sm(m)}</button>`).join('')}</div>
+  <div class="ctxbar"><span>${EM.classe} Classe${multi ? 's' : ''} :</span>${CL.map(c => `<button class="puce" data-a="${tog}" data-v="${c}" aria-pressed="${sel(c)}">${c.toUpperCase()}</button>`).join('')}</div>
+  <div class="tabs" role="group" aria-label="Domaine">${DOMS[Pr.mat].map(d => `<button class="level-btn ${Pr.dom === d[0] ? 'active' : ''}" data-a="prdom" data-v="${d[0]}" aria-pressed="${Pr.dom === d[0]}">${d[2]} ${d[1]}</button>`).join('')}</div>
+  <div class="row" style="margin:.2rem 0 .8rem"><span class="muted">Vue :</span><button class="level-btn ${Pr.vue === 'liste' ? 'active' : ''}" data-a="prvue" data-v="liste" aria-pressed="${Pr.vue === 'liste'}">☰ Liste</button><button class="level-btn ${Pr.vue === 'tableau' ? 'active' : ''}" data-a="prvue" data-v="tableau" aria-pressed="${Pr.vue === 'tableau'}">▦ Tableau</button>
+    <button class="level-btn ${refsEff() ? 'active' : ''}" data-a="refs" aria-pressed="${refsEff()}" style="margin-left:.6rem">📖 ${refsEff() ? '✔ ' : ''}Afficher les références</button><button class="btn btn-sm" data-a="copyprog" style="margin-left:auto">${EM.lien} Copier le lien vers ce tableau</button></div>
+  ${corps}
+  <p class="off" style="margin-top:.8rem">Adresse de cette vue : <code style="word-break:break-all" id="adr">${esc(adr)}</code></p>
+  ${Pr.mat !== 'monde' ? `<p style="margin-top:.6rem"><a href="#/${Pr.mat}" style="font-weight:700">Page de la matière ${sm(Pr.mat)} →</a></p>` : ''}</div>` };
+}
+
+function competencePage(id, params) {
+  const c = COMP[id]; if (!c) return stubPage(new URLSearchParams('t=Compétence inconnue'));
+  const foc = CL.includes(params.get('classe')) ? [params.get('classe')] : [];
+  const dom = c[0], mat = Object.keys(DOMS).find(m => DOMS[m].some(d => d[0] === dom)) || 'maths';
+  const page = 18 + (Object.keys(COMP).indexOf(id) * 13) % 140;
+  const rs = RES.filter(r => r.c === id), ent = rs.filter(r => r.type === 'exercice' || r.type === 'generateur'), app = rs.filter(r => r.type === 'affiche' || r.type === 'lecon'), fs = FICHES.filter(f => f.c === id);
+  const voisines = Object.entries(COMP).filter(([k, v]) => v[0] === dom && k !== id);
+  const cardF = g => `<a class="fcard" href="#/fiche/${g.id}"><div class="mini" style="height:130px">${mini(g)}</div><div class="info"><strong style="font-size:.86rem">${esc(g.titre)}</strong>${pills(g.cl, foc.length ? foc : S.classes)}</div></a>`;
+  const rc = r => resCard(r).replace(/class="pills"/, 'class="pills"');
+  const pillsHere = pills(c[2], foc.length ? foc : S.classes);
+  return { key:'competence', title:c[1], html:`<div class="container" data-page="competence">${crumbs([[TE('accueil'),'#/'],[TE('programme'),`#/programme?mat=${mat}&dom=${dom}&vue=tableau&classes=${S.classes.join(',')}${S.classes.length > 1 ? '&profil=enseignant' : ''}`],[`${DOM_EMO[dom]} ${DOM_NOM[dom]}`],[esc(c[1])]])}
+  <h1>${EM.competence} ${esc(c[1])}</h1>
+  <p class="row" style="margin:.5rem 0 1rem"><span>${DOM_EMO[dom]} ${DOM_NOM[dom]}</span><span aria-hidden="true">·</span><span>${EM.classe} Classes concernées :</span>${c[2].map(k => `<a class="cl ${(foc.length ? foc : S.classes).includes(k) ? 'sel' : ''}" href="#/competence/${id}?classe=${k}" style="text-decoration:none">${k.toUpperCase()}</a>`).join(' ')}</p>
+  <div class="box comp" style="margin-bottom:1rem"><h3>${EM.programme} Programme officiel</h3>${[...new Set(c[2].map(CYC))].map(cy => { const k = (foc.length && CYC(foc[0]) === cy) ? foc[0] : c[2].find(x => CYC(x) === cy), r = refOf(id, k); return `<div style="margin:.4rem 0"><p><strong>${esc(r.texte)}</strong></p><p>${c[2].filter(x => CYC(x) === cy).map(x => x.toUpperCase()).join(', ')} · <a href="${r.href}" title="${r.url} (lien factice dans la maquette)">p. PDF ${r.page} ↗</a></p><p class="off">Extrait (maquette) : « …l’élève ${esc(c[1].charAt(0).toLowerCase() + c[1].slice(1))}… »</p></div>`; }).join('')}${foc.length ? `<p class="off">Vous consultez la compétence pour la classe ${foc[0].toUpperCase()}.</p>` : ''}</div>
+  <h2 class="h-sec">${EM.ressources} Toutes les ressources liées <span class="badge b-lang">${rs.length + fs.length}</span></h2>
+  <div class="sub"><h3 class="sh">${TE('enligne')} et ${TE('imprimable')} · exercices et générateurs</h3>${ent.length ? `<div class="rgrid">${ent.map(resCard).join('')}</div>` : '<p class="empty">Aucun exercice pour cette compétence.</p>'}</div>
+  <div class="sub"><h3 class="sh">${TE('apprendre')} · affiches et leçons</h3>${app.length ? `<div class="rgrid">${app.map(resCard).join('')}</div>` : '<p class="empty">Aucune affiche ni leçon pour cette compétence.</p>'}</div>
+  <div class="sub"><h3 class="sh">${TE('fichesPretes')}</h3>${fs.length ? `<div class="grid" style="margin-top:.4rem">${fs.map(cardF).join('')}</div>` : '<p class="empty">Aucune fiche toute prête pour cette compétence.</p>'}</div>
+  <h2 class="h-sec">Compétences voisines <span class="muted" style="font-weight:600;font-size:.9rem">(même domaine)</span></h2>
+  ${voisines.length ? `<div class="row" style="align-items:stretch">${voisines.map(([k, v]) => `<a class="card" style="text-decoration:none;color:var(--texte);flex:1 1 240px;border-left:5px solid var(--violet)" href="#/competence/${k}"><strong>${EM.competence} ${v[1]}</strong><br>${pills(v[2], foc.length ? foc : S.classes)}</a>`).join('')}</div>` : '<p class="empty">Pas d’autre compétence dans ce domaine.</p>'}</div>` };
+}
+
+function brezhonegPage() {
+  const tabs = [['alphabet','alphabet','🔤'],['nombres','nombres','🔢'],['jours','jours','📅'],['mois','mois','🗓️'],['mutations','mutations','🔁']];
+  const num = [['1','unan'],['2','daou'],['3','tri'],['4','pevar'],['5','pemp'],['6','c’hwec’h'],['7','seizh'],['8','eizh'],['9','nav'],['10','dek']];
+  const jours = [['lundi','Dilun'],['mardi','Dimeurzh'],['mercredi','Dimerc’her'],['jeudi','Diriaou'],['vendredi','Digwener'],['samedi','Disadorn'],['dimanche','Disul']];
+  const mois = [['janvier','Genver'],['février','C’hwevrer'],['mars','Meurzh'],['avril','Ebrel'],['mai','Mae'],['juin','Mezheven'],['juillet','Gouere'],['août','Eost'],['septembre','Gwengolo'],['octobre','Here'],['novembre','Du'],['décembre','Kerzu']];
+  const alpha = ['A','B','C','CH','C’H','D','E','F','G','H','I','J','K','L','M','N','O','P','R','S','T','U','V','W','Y','Z'];
+  const words = l => `<div class="words">${l.map(w => `<div class="word"><b lang="br">${w[1]}</b><span>${w[0]}</span></div>`).join('')}</div>`;
+  const body = { alphabet:`<div class="alpha" lang="br">${alpha.map(l => `<div class="letter">${l}<small>${l.toLowerCase()}</small></div>`).join('')}</div><p class="muted" style="margin-top:.6rem">26 lettres si l’on compte « ch » et « c’h » comme des lettres à part entière.</p>`,
+    nombres: words(num), jours: words(jours), mois: words(mois),
+    mutations:`<div class="box"><p><strong>Les mutations</strong> : le début d’un mot change après certains petits mots.</p><p style="margin-top:.5rem" lang="br">ar c’hazh (le chat) → <b>ur gazh</b> (un chat) · ti → <b>ma zi</b> (ma maison)</p><p class="muted" style="margin-top:.5rem">Exemples de maquette ; la vraie page suivra les règles du site (<code>regles.js</code>).</p></div>` }[B.tab];
+  const brOnly = S.mode === 'br';
+  return { key:'brezhoneg', title:'Brezhoneg', html:`<div class="container" data-page="brezhoneg">${crumbs([[TE('accueil'),'#/'],[`${flagBR()} Brezhoneg`]])}
+  <h1>${flagBR()} Brezhoneg</h1>${S.mode === 'fr' ? `<div class="banner"><strong>La langue régionale n’est pas active.</strong> Cette page n’apparaît pas dans la barre. <button class="linkbtn" data-a="mode" data-v="fr+br">Activer « Français + Brezhoneg »</button></div>` : ''}
+  <p class="lead">${S.mode === 'br' ? `<span class="br" title="Exemple de maquette : breton à relire">Deskit ar brezhoneg : al lizherenneg, an niverennoù, an deizioù hag ar mizioù.</span>` : 'Apprendre le breton : l’alphabet, les nombres, les jours et les mois.'}</p>
+  ${brOnly ? `<div class="banner">Mode « Brezhoneg seul » (maquette) : l’interface, les noms des matières et les libellés principaux sont en breton. Les titres des ressources restent en français tant qu’ils ne sont pas traduits. Tous les textes bretons de cette maquette sont des exemples <em>à relire</em>.</div>` : ''}
+  ${S.mode === 'fr+br' ? `<div class="banner">Mode « Français + Brezhoneg » : les matières et les fiches portent les deux langues. Les mots ci-dessous sont les mots vérifiés du site.</div>` : ''}
+  <div class="tabs" role="group" aria-label="Sujets">${tabs.map(t => `<button class="level-btn ${B.tab === t[0] ? 'active' : ''}" data-a="btab" data-v="${t[0]}" aria-pressed="${B.tab === t[0]}">${t[2]} ${T(t[1])}</button>`).join('')}</div>
+  ${body}
+  <h2 class="h-sec">${EM.programme} ${brOnly ? 'Matematik, Galleg…' : 'Matières bilingues'}</h2>
+  <div class="tiles" style="margin-top:0"><a class="tile maths" href="#/maths"><span class="ic">🔢</span><span class="tt">${subj('maths')}</span></a><a class="tile francais" href="#/francais"><span class="ic">📝</span><span class="tt">${subj('francais')}</span></a></div></div>` };
+}
+
+function stubPage(params) {
+  const t = params.get('t') || 'Écran', k = params.get('k') || 'page';
+  const msg = { exercice:'L’exercice en ligne s’ouvre ici (page réelle du site : questions, score, réglages).', affiche:'La feuille de l’affiche (aperçu, A4/A3, portrait/paysage) s’ouvre ici : même modèle que « Feuille d’une fiche ».', lecon:'La fiche de leçon s’ouvre ici : même modèle que « Feuille d’une fiche ».', externe:'Lien vers le programme officiel (BO, Éduscol), qui s’ouvre dans un autre onglet.', reglages:'Réglages avancés (langue de l’interface, polices, mémoire des réglages).' }[k] || 'Cette page existe dans le site réel ; elle n’est pas maquettée ici.';
+  return { key:'stub', title:t, html:`<div class="container" data-page="stub">${crumbs([[TE('accueil'),'#/'],[esc(t)]])}<div class="card" style="max-width:560px;margin:2rem auto;text-align:center"><p style="font-size:3rem" aria-hidden="true">🚧</p><h1 style="font-size:1.4rem">${esc(t)}</h1><p class="lead" style="margin:.6rem 0 1rem">${msg}</p><button class="btn" data-a="back">⬅ Retour</button></div></div>` };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   8. RENDU GLOBAL
+   ════════════════════════════════════════════════════════════════ */
+let first = true;
+function render() {
+  fixClasses();
+  const { path, params } = route();
+  let pg;
+  if (path === '') pg = homePage();
+  else if (path === 'maths' || path === 'francais') pg = subjectPage(path);
+  else if (path === 'maths/fiches' || path === 'francais/fiches') pg = fichesPage();
+  else if (path.startsWith('fiche/')) pg = fichePage(path.slice(6), params);
+  else if (path.startsWith('competence/')) pg = competencePage(path.slice(11), params);
+  else if (path === 'monde') pg = mondePage();
+  else if (path === 'personnaliser') pg = persoPage();
+  else if (path === 'programme') pg = programmePage();
+  else if (path === 'brezhoneg') pg = brezhonegPage();
+  else pg = stubPage(params);
+  const ae = document.activeElement, memo = ae && ae.closest('#app,#demo') ? { a: ae.dataset.a, v: ae.dataset.v, id: ae.id, ss: ae.selectionStart, in: !!ae.closest('#demo') } : null;
+  const navKey = path.startsWith('fiche/') ? 'maths/fiches' : path.startsWith('competence/') ? 'programme' : path;
+  $('#app').innerHTML = `<a class="skip" href="#main" data-a="skip">Aller au contenu</a>${navHTML(navKey)}<main id="main" tabindex="-1">${S.mode === 'br' ? '<div class="container" style="padding-bottom:0"><div class="banner" style="margin:0">Maquette : l’interface est en breton d’exemple (à relire) ; les titres des ressources et les textes longs restent en français tant qu’ils ne sont pas traduits.</div></div>' : ''}${pg.html}${notesHTML(pg.key)}</main>${footHTML()}`;
+  let canon = null;
+  if (path === 'programme') canon = progCanon();
+  else if (path === 'maths' || path === 'francais' || path === 'maths/fiches') canon = `#/${path}${S.vue ? '?vue=' + S.vue : ''}`;
+  if (canon && location.hash !== canon) history.replaceState(null, '', canon);
+  const sig = S.classes.join(); if (sig !== render.sig) { Object.keys(DOMSTATE).forEach(k => delete DOMSTATE[k]); render.sig = sig; }
+  document.title = `${pg.title} — ${SITES[S.site].nom} (maquette)`;
+  document.documentElement.classList.toggle('phone', S.phone);
+  document.documentElement.lang = S.mode === 'br' ? 'br' : 'fr';
+  renderDemo(path);
+  if (memo) {
+    let el = memo.id && document.getElementById(memo.id);
+    if (!el && memo.a) el = (memo.in ? $('#demo') : $('#app')).querySelector(`[data-a="${memo.a}"]${memo.v !== undefined ? `[data-v="${CSS.escape(memo.v)}"]` : ''}`);
+    if (el) { el.focus({ preventScroll: true }); if (memo.ss != null && el.setSelectionRange) try { el.setSelectionRange(memo.ss, memo.ss); } catch (e) {} }
+  }
+  if (S.open === 'gate') { const g = $('#gate-in'); if (g) g.focus(); }
+  if (!first && render.nav) { $('#scroller').scrollTop = 0; window.scrollTo(0, 0); render.nav = false; }
+  first = false; save();
+}
+
+function renderDemo(path) {
+  const seg = (a, cur, opts) => opts.map(o => `<button data-a="${a}" data-v="${o[0]}" aria-pressed="${cur === o[0]}">${o[1]}</button>`).join('');
+  const pages = [['','Accueil'],['maths','Maths'],['francais','Français'],['monde','Le Monde'],['maths/fiches','Fiches prêtes'],['fiche/tables-de-multiplication-ce1','Feuille'],['personnaliser','Personnaliser'],['programme','Programme'],['competence/n-tables?classe=ce1','Compétence'],['brezhoneg','Brezhoneg']];
+  $('#demo').innerHTML = `<b>Maquette · plan 12</b>
+  <span class="grp"><span>Site</span>${seg('site', S.site, [['ecoleprimaire','ecoleprimaire.app'],['skoolik','skoolik.app']])}</span>
+  <span class="grp"><span>Profil</span>${seg('profil', S.profil, [['enfant',prof('enfant')],['parent',prof('parent')],['enseignant',prof('enseignant')]])}</span>
+  <span class="grp"><span>Langue</span>${seg('mode', S.mode, [['fr','Français'],['fr+br','FR + BR'],['br','Brezhoneg']])}</span>
+  <span class="grp"><span>Classes</span>${CL.map(c => `<button data-a="${S.profil === 'enseignant' ? 'toggleClasse' : 'setClasse'}" data-v="${c}" aria-pressed="${sel(c)}">${c.toUpperCase()}</button>`).join('')}</span>
+  <span class="grp"><span>Écran</span><button data-a="phone" aria-pressed="${S.phone}">📱 Téléphone 360 px</button></span>
+  <span class="grp"><span>Aller à</span><select data-a="goto" aria-label="Aller à un écran">${pages.map(p => `<option value="${p[0]}" ${path === p[0].split('?')[0] ? 'selected' : ''}>${p[1]}</option>`).join('')}</select></span>
+  <span class="grp"><button data-a="notes" aria-pressed="${S.notes}">📝 Notes ouvertes</button><button data-a="reset">↺ Réinitialiser</button></span>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   9. ACTIONS (délégation d’événements)
+   ════════════════════════════════════════════════════════════════ */
+const ACT = {
+  vue: v => { S.vue = v; },
+  refs: () => { S.refs = !refsEff(); },
+  sort: v => { if (SORT.k === v) SORT.dir = -SORT.dir; else { SORT.k = v; SORT.dir = 1; } },
+  jump: v => { DOMSTATE[v] = true; render(); setTimeout(() => { const e = document.getElementById('dom-' + v.split(':')[1]); if (e) e.scrollIntoView({ behavior:'smooth', block:'start' }); }, 30); return 'noRender'; },
+  quizpick: v => { QZ.pick = +v; }, quiznext: () => { QZ.i++; QZ.pick = null; },
+  prmat: v => { Pr.mat = v; Pr.dom = DOMS[v][0][0]; },
+  copyprog: () => { const u = $('#adr').textContent; try { navigator.clipboard.writeText(u).catch(() => {}); } catch (e) {} toast('Lien copié : ' + u); return 'noRender'; },
+  site: v => { S.site = v; S.mode = SITES[v].modeDefaut; },
+  profil: v => { S.profil = v; S.open = null; S.unlocked = false; if (v === 'enseignant' && S.classes.length === 1) S.classes = ['ce1','ce2'].includes(S.classes[0]) ? ['ce1','ce2'] : S.classes; },
+  mode: v => { S.mode = v; S.open = null; },
+  setClasse: v => { S.classes = [v]; S.open = null; F.toutes = false; },
+  toggleClasse: v => { F.toutes = false; S.classes = S.classes.includes(v) ? S.classes.filter(c => c !== v) : [...S.classes, v]; if (!S.classes.length) S.classes = [v]; },
+  allClasses: () => { S.classes = [...CL]; },
+  phone: () => { S.phone = !S.phone; S.open = null; },
+  notes: () => { S.notes = !S.notes; },
+  reset: () => { S = { ...DEF }; Object.assign(F, { l:'', u:'', d:'', q:'', toutes:false }); location.hash = '#/'; },
+  open: v => { S.open = S.open === v ? null : v; gate.err = false; },
+  search: () => { openSearch(); return 'noRender'; },
+  showAll: () => { S.showAll = !S.showAll; },
+  relock: () => { S.unlocked = false; },
+  gate: (v, el, ev) => { ev.preventDefault(); if (($('#gate-in').value || '').trim() === '42') { S.unlocked = true; S.open = 'classe'; gate.err = false; } else gate.err = true; },
+  goto: v => { location.hash = '#/' + v; return 'noRender'; },
+  scrollto: v => { const e = document.getElementById(v); if (e) e.scrollIntoView({ behavior:'smooth', block:'start' }); return 'noRender'; },
+  toast: v => { toast(v); return 'noRender'; },
+  copylink: () => { const u = `https://${S.site === 'skoolik' ? 'skoolik' : 'ecoleprimaire'}.app/?classe=${S.classes.join(',')}&langue=${S.mode}`; try { navigator.clipboard.writeText(u).catch(() => {}); } catch (e) {} toast('Lien copié : ' + u); return 'noRender'; },
+  back: () => { history.length > 1 ? history.back() : (location.hash = '#/'); return 'noRender'; },
+  skip: (v, el, ev) => { ev.preventDefault(); $('#main').focus(); return 'noRender'; },
+  fq: (v, el) => { F.q = el.value; }, fd: (v, el) => { F.d = el.value; }, fu: v => { F.u = v; }, fl: v => { F.l = v; }, ftoutes: () => { F.toutes = !F.toutes; },
+  freset: () => { Object.assign(F, { l:'', u:'', d:'', q:'', toutes:true }); },
+  page: v => { Sh.page = Math.max(0, Sh.page + (+v)); const f = fiche(Sh.id); Sh.page = Math.min(Sh.page, f.pages - 1); },
+  shfmt: v => { Sh.fmt = v; }, shor: v => { Sh.or = v; }, shlang: v => { Sh.lang = v; },
+  progdom: v => { Pr.dom = v; },
+  ptable: v => { v = +v; P.tables = P.tables.includes(v) ? P.tables.filter(t => t !== v) : [...P.tables, v].sort((a, b) => a - b); if (!P.tables.length) P.tables = [v]; },
+  ptype: v => { P.type = v; }, pn: v => { P.n = Math.max(4, Math.min(24, P.n + (+v))); }, pseed: () => { P.seed++; },
+  pnom: (v, el) => { P.nom = el.checked; }, pcorrige: (v, el) => { P.corrige = el.checked; }, por: v => { P.or = v; }, plang: v => { P.lang = v; },
+  prdom: v => { Pr.dom = v; }, prvue: v => { Pr.vue = v; }, btab: v => { B.tab = v; },
+};
+document.addEventListener('click', e => {
+  const sm0 = e.target.closest('details[data-dk] > summary'); if (sm0) { const d = sm0.parentElement; DOMSTATE[d.dataset.dk] = !d.open; return; }
+  const el = e.target.closest('[data-a]'); const inDD = e.target.closest('.dd,.menu-panel,#demo');
+  if (!el || ['INPUT','SELECT','FORM'].includes(el.tagName)) { if (!inDD && S.open) { S.open = null; render(); } return; }
+  if (el.tagName === 'A' && el.dataset.a !== 'skip' && el.dataset.a !== 'progdom') return;
+  if (el.dataset.a === 'progdom') { Pr.dom = el.dataset.v; return; }
+  if (el.dataset.a === 'skip') { e.preventDefault(); $('#main').focus(); return; }
+  const f = ACT[el.dataset.a]; if (!f) return;
+  if (f(el.dataset.v, el, e) !== 'noRender') render();
+});
+document.addEventListener('change', e => { const el = e.target.closest('[data-a]'); if (!el || !['INPUT','SELECT'].includes(el.tagName)) return; const f = ACT[el.dataset.a]; if (f && f(el.dataset.v, el, e) !== 'noRender') render(); });
+document.addEventListener('input', e => { const el = e.target; if (el.dataset && el.dataset.a === 'fq') { F.q = el.value; render(); } });
+document.addEventListener('submit', e => { const el = e.target.closest('[data-a="gate"]'); if (el) { e.preventDefault(); ACT.gate(null, el, e); render(); } });
+window.addEventListener('hashchange', () => { applyParams(); closeSearch(); S.open = null; render.nav = true; render(); });
+document.addEventListener('toggle', e => { if (e.target.id === 'notes') { S.notes = e.target.open; save(); } }, true);
+
+document.addEventListener('keydown', e => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch(); return; }
+  if (e.key === '/' && !typing && !SR.open && !e.metaKey && !e.ctrlKey) { e.preventDefault(); openSearch(); return; }
+  if (e.key === 'Escape' && !SR.open && S.open) { const v = S.open; S.open = null; render(); const t = $(`[data-a="open"][data-v="${v === 'gate' ? 'gate' : v}"]`); if (t) t.focus(); }
+});
+
+let HOLD = null;
+function holdStart(el) {
+  if (HOLD) return; const ring = el.querySelector('.ring'), t0 = performance.now(); HOLD = { el, ring, raf: 0 };
+  const step = now => { if (!HOLD) return; const f = Math.min(1, (now - t0) / 2000); ring.style.strokeDashoffset = 163.4 * (1 - f);
+    if (f >= 1) { HOLD = null; S.unlocked = true; S.open = 'classe'; render(); toast('Cadenas ouvert : la classe peut changer.'); return; } HOLD.raf = requestAnimationFrame(step); };
+  HOLD.raf = requestAnimationFrame(step);
+}
+function holdStop() { if (!HOLD) return; cancelAnimationFrame(HOLD.raf); HOLD.ring.style.strokeDashoffset = 163.4; HOLD = null; }
+document.addEventListener('pointerdown', e => { const h = e.target.closest('[data-hold]'); if (h) { e.preventDefault(); holdStart(h); } });
+['pointerup', 'pointercancel'].forEach(t => document.addEventListener(t, holdStop));
+document.addEventListener('pointerout', e => { if (HOLD && !HOLD.el.contains(e.relatedTarget)) holdStop(); });
+document.addEventListener('contextmenu', e => { if (e.target.closest('[data-hold]')) e.preventDefault(); });
+document.addEventListener('keydown', e => { const h = e.target.closest && e.target.closest('[data-hold]'); if (h && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); if (!e.repeat) holdStart(h); } });
+document.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') holdStop(); });
+
+/* paramètres d’URL dans le hash (états de démonstration, ex. #/maths?profil=enseignant&classes=ce1,ce2&phone=1) */
+function applyParams() {
+  const { params } = route(); let touched = false;
+  if (params.has('site')) { S.site = params.get('site'); if (!params.has('mode')) S.mode = SITES[S.site].modeDefaut; touched = true; }
+  if (params.has('profil')) { S.profil = params.get('profil'); touched = true; }
+  if (params.has('mode')) { S.mode = params.get('mode').replace(' ', '+'); touched = true; }
+  if (params.has('classes')) { S.classes = params.get('classes').split(','); touched = true; }
+  if (params.has('phone')) { S.phone = params.get('phone') === '1'; touched = true; }
+  if (params.has('notes')) { S.notes = params.get('notes') === '1'; touched = true; }
+  if (params.has('unlocked')) { S.unlocked = params.get('unlocked') === '1'; touched = true; }
+  if (params.has('open')) { S.open = params.get('open'); touched = true; }
+  if (params.has('refs')) S.refs = params.get('refs') === '1';
+  if (params.has('tab')) B.tab = params.get('tab');
+  const pth = route().path;
+  if (pth === 'programme') { if (params.has('mat') && params.get('mat') in DOMS) Pr.mat = params.get('mat'); if (params.has('dom')) Pr.dom = params.get('dom'); if (['liste','tableau'].includes(params.get('vue'))) Pr.vue = params.get('vue'); }
+  else if (['liste','cartes'].includes(params.get('vue'))) S.vue = params.get('vue');
+  if (params.has('q') && params.has('search')) { openSearch(params.get('q'), params.get('all') === '1'); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   10. RECHERCHE
+   ════════════════════════════════════════════════════════════════ */
+const TYPES = [['exercice','Exercices et générateurs',EM.exercice],['affiche','Affiches et leçons',EM.affiche],['fiche','Fiches toutes prêtes',EM.fichesPretes],['competence','Compétences du programme',EM.competence],['page','Pages',EM.page]];
+const BR_KW = { maths:'matematik jedoù', francais:'galleg', };
+function buildIndex() {
+  const ix = [];
+  RES.forEach(r => ix.push({ type: r.type === 'exercice' || r.type === 'generateur' ? 'exercice' : 'affiche', titre: r.titre, sous: `${MATIERE[r.mat].fr} · ${DOM_NOM[r.dom]} · ${r.type === 'generateur' ? 'générateur de fiches' : r.type === 'lecon' ? 'fiche de leçon' : r.type}`, ico: r.ico, href: resHref(r), cl: r.cl, kw: r.kw + ' ' + BR_KW[r.mat] }));
+  FICHES.forEach(f => ix.push({ type:'fiche', titre: ficheTitre(f), sous: `PDF · ${f.pages} page${f.pages > 1 ? 's' : ''} · ${DOM_NOM[f.dom]}`, ico:EM.fichesPretes, href:`#/fiche/${f.id}`, cl: f.cl, kw: (COMP[f.c] || ['', ''])[1] }));
+  Object.entries(COMP).forEach(([id, c]) => ix.push({ type:'competence', titre: c[1], sous: `${DOM_NOM[c[0]]} · ${c[3]}`, ico:EM.competence, href:`#/competence/${id}`, cl: c[2], kw: '' }));
+  [['Accueil','#/',EM.accueil,'degemer'],['Maths','#/maths',EM.maths,'matematik'],['Français','#/francais',EM.francais,'galleg'],['Le Monde','#/monde',EM.monde,'ar bed sciences histoire géographie'],['Le Monde : quiz de culture générale','#/monde',EM.quiz,'quiz question rañsoù'],['Brezhoneg : alphabet, nombres, jours, mois','#/brezhoneg','🏴','breton lizherenneg niverennoù deizioù mizioù'],['Programme','#/programme',EM.programme,'programm competences'],['Fiches toutes prêtes de Maths','#/maths/fiches',EM.fichesPretes,'pdf télécharger follennoù'],['Réglages','#/stub?t=Réglages&k=reglages',EM.reglages,'arventennoù']].forEach(p => ix.push({ type:'page', titre:p[0], sous:'Page du site', ico:p[2], href:p[1], cl:null, kw:p[3] }));
+  ix.forEach(i => i.h = norm(i.titre + ' ' + i.sous + ' ' + i.kw));
+  return ix;
+}
+const INDEX = buildIndex();
+const SR = { open:false, q:'', all:false, idx:0, list:[], hidden:0, opener:null };
+function results() {
+  const toks = norm(SR.q).split(/\s+/).filter(Boolean);
+  const match = it => toks.every(t => it.h.includes(t));
+  const inCl = it => it.cl === null || it.cl.some(sel);
+  let base = toks.length ? INDEX.filter(match) : INDEX.filter(i => i.type === 'page' || (i.type === 'exercice' && ['heure-exo','tables-exo','syllabes'].some(id => i.href.includes(encodeURIComponent((RES.find(r => r.id === id) || {}).titre || '#')))));
+  SR.hidden = SR.all ? 0 : base.filter(i => !inCl(i)).length;
+  let items = SR.all ? base : base.filter(inCl);
+  const score = it => { const n = norm(it.titre); return n.startsWith(toks[0] || '') ? 0 : n.includes(toks[0] || '') ? 1 : 2; };
+  if (toks.length) items = items.slice().sort((a, b) => score(a) - score(b));
+  const groups = TYPES.map(t => ({ t, items: items.filter(i => i.type === t[0]) })).filter(g => g.items.length);
+  const flat = []; groups.forEach(g => g.items.slice(0, 5).forEach(i => flat.push(i)));
+  return { groups, flat };
+}
+const hi = (s, toks) => { let out = esc(s); toks.forEach(t => { if (!t) return; const n = norm(s); const i = n.indexOf(t); if (i >= 0) { const o = s.substring(i, i + t.length); out = esc(s.substring(0, i)) + '<mark>' + esc(o) + '</mark>' + esc(s.substring(i + t.length)); } }); return out; };
+function updateResults() {
+  const { groups, flat } = results(); SR.list = flat; SR.idx = Math.min(SR.idx, Math.max(0, flat.length - 1));
+  const toks = norm(SR.q).split(/\s+/).filter(Boolean); let n = 0;
+  $('#sr-list').innerHTML = groups.length ? groups.map(g => `<li role="presentation"><div class="sr-g" role="presentation">${g.t[2]} ${g.t[1]}${g.items.length > 5 ? ` · ${g.items.length}` : ''}</div><ul role="presentation" style="list-style:none">${g.items.slice(0, 5).map(it => { const i = n++; return `<li class="sr-it" role="option" id="sr-${i}" aria-selected="${i === SR.idx}" data-i="${i}"><a href="${it.href}" tabindex="-1"><span class="ic" aria-hidden="true">${it.ico}</span><span><strong>${hi(it.titre, toks)}</strong><small>${esc(it.sous)}</small></span>${it.cl ? `<span style="margin-left:auto">${pills(it.cl.slice(0, 8))}</span>` : ''}</a></li>`; }).join('')}</ul></li>`).join('') : `<li class="empty" style="padding:1.2rem 1rem" role="presentation">Aucun résultat pour « ${esc(SR.q)} »${SR.all ? '' : ` en ${classeLabel()}`}.</li>`;
+  $('#sr-ctx').innerHTML = `<span>🎒 Classe${S.classes.length > 1 ? 's' : ''} : <strong>${classeLabel()}</strong></span><button class="level-btn ${SR.all ? 'active' : ''}" data-sa="all" aria-pressed="${SR.all}">${EM.tous} ${Tp('toutes')}</button>${SR.hidden ? `<span class="muted" role="status">${SR.hidden} résultat${SR.hidden > 1 ? 's' : ''} masqué${SR.hidden > 1 ? 's' : ''} (autres classes)</span>` : ''}`;
+  const inp = $('#sr-in'); inp.setAttribute('aria-activedescendant', flat.length ? 'sr-' + SR.idx : '');
+}
+function openSearch(q = '', all = false) {
+  SR.open = true; SR.q = q; SR.all = all; SR.idx = 0; SR.opener = document.activeElement; S.open = null;
+  const ov = $('#search'); ov.hidden = false;
+  ov.innerHTML = `<div class="sr" role="dialog" aria-modal="true" aria-label="Recherche"><div class="sr-head"><span aria-hidden="true">${EM.chercher}</span><input id="sr-in" type="text" role="combobox" aria-expanded="true" aria-controls="sr-list" aria-autocomplete="list" placeholder="Chercher un exercice, une fiche, une compétence…" autocomplete="off" spellcheck="false" value="${esc(q)}" aria-label="Rechercher"><button class="xbtn" data-sa="close" aria-label="Fermer la recherche">✕</button></div>
+  <div class="sr-ctx" id="sr-ctx"></div><ul class="sr-list" id="sr-list" role="listbox" aria-label="Résultats"></ul>
+  <div class="sr-foot"><span>↑ ↓ pour choisir</span><span>↵ pour ouvrir</span><span>Échap pour fermer</span><span>Accents facultatifs</span></div>${notesHTML('recherche').replace('id="notes"', 'id="notes2"').replace(' open ', ' ')}</div>`;
+  updateResults(); $('#sr-in').focus();
+}
+function closeSearch() { if (!SR.open) return; SR.open = false; $('#search').hidden = true; $('#search').innerHTML = ''; if (SR.opener && document.contains(SR.opener)) SR.opener.focus(); }
+function go(i) { const it = SR.list[i]; if (!it) return; closeSearch(); if (location.hash === it.href) { render(); } else location.hash = it.href; }
+$('#search').addEventListener('click', e => {
+  if (e.target.id === 'search' || e.target.closest('[data-sa="close"]')) { closeSearch(); return; }
+  const a = e.target.closest('[data-sa="all"]'); if (a) { SR.all = !SR.all; SR.idx = 0; updateResults(); $('#sr-in').focus(); return; }
+  const it = e.target.closest('.sr-it'); if (it) { e.preventDefault(); go(+it.dataset.i); }
+});
+$('#search').addEventListener('mousemove', e => { const it = e.target.closest('.sr-it'); if (it && +it.dataset.i !== SR.idx) { SR.idx = +it.dataset.i; document.querySelectorAll('.sr-it').forEach(x => x.setAttribute('aria-selected', x === it)); $('#sr-in').setAttribute('aria-activedescendant', 'sr-' + SR.idx); } });
+$('#search').addEventListener('input', e => { if (e.target.id === 'sr-in') { SR.q = e.target.value; SR.idx = 0; updateResults(); } });
+$('#search').addEventListener('keydown', e => {
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeSearch(); return; }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); const n = SR.list.length; if (!n) return; SR.idx = (SR.idx + (e.key === 'ArrowDown' ? 1 : -1) + n) % n; updateResults(); const el = $('#sr-' + SR.idx); if (el) el.scrollIntoView({ block:'nearest' }); return; }
+  if (e.key === 'Enter' && e.target.id === 'sr-in') { e.preventDefault(); go(SR.idx); return; }
+  if (e.key === 'Tab') { const f = [...$('#search').querySelectorAll('input,button,summary')].filter(x => !x.disabled && x.offsetParent !== null); if (!f.length) return; const i = f.indexOf(document.activeElement); if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); } }
+});
+
+/* ════════════════════════════════════════════════════════════════
+   11. DÉMARRAGE
+   ════════════════════════════════════════════════════════════════ */
+window.__maq = { S, render, openSearch, get state() { return S; } };
+applyParams();
+render();
+</script>
+</body>
+</html>

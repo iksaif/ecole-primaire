@@ -2,7 +2,8 @@
 // (src/ressources/emojis.ts). Pur.
 import type { MatiereProgramme } from './etat.ts'
 
-export const EMOJI_MATIERE: Readonly<Record<MatiereProgramme, string>> = { maths: '🔢', francais: '📝', monde: '🌍' }
+// langue régionale : 🗣️ quand il faut du texte ; la barre montre son drapeau dessiné (IconeMatiere)
+export const EMOJI_MATIERE: Readonly<Record<MatiereProgramme, string>> = { maths: '🔢', francais: '📝', monde: '🌍', regionale: '🗣️' }
 
 export const EMOJI = {
   competence: '🎯',

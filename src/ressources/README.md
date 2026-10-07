@@ -17,9 +17,12 @@ Un exercice et son générateur de fiche sont **une** ressource (badges `jeu` + 
   compétence. Matière : celle du domaine. Une fiche sans domaine (hors programme) n'entre pas.
 - Langues : celles du contenu, restreintes à celles du site. Exemples : seulement avec `enDeveloppement`.
 - Les compétences d'une fiche prête se retrouvent par son slug dans les registres (l'index n'en porte pas).
-- **Matière « regionale »** : `programme.ts` n'a aucun domaine de langue régionale (les domaines du français sont ceux du
-  français). Le rattachement se fera en déclarant des domaines de matière `regionale` dans `programme.ts` (alphabet, nombres,
-  jours, mois, mutations) ; ressources et pages suivront sans autre changement. Rien n'y est rangé aujourd'hui.
+- **Matière « regionale »** : quatre domaines dans `programme.ts`, de la maternelle au CE1 (comprendre et parler, les mots du
+  quotidien, les sons et les lettres, comptines et contes ; sources : programme de langues vivantes 2026 et repères de l'académie de
+  Rennes). Une ressource y entre par ses **compétences** de ces domaines, quel que soit son domaine principal (`grouperParDomaine`,
+  `estDuDomaine`) : l'affiche de l'alphabet (lecture) est aussi dans « les sons et les lettres », parce qu'en breton elle montre
+  l'alphabet breton ; les classes comptées sont alors celles de la compétence. La page ne montre que ce qui existe dans la langue, et
+  l'ouvre dans la langue (`lienDansLaLangue`) ; le reste de ce qui existe dans la langue suit (« Les autres matières en breton »).
 
 ## API
 ```ts

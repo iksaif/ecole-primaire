@@ -40,9 +40,9 @@ export const donneesBr: DonneesRegionales = {
     motLettre: 'lizherenn',            // slug des fiches « une lettre » : fiche-ecriture-lizherenn-a…
     titreLettre: 'Al lizherenn',       // titre imprimé : « Al lizherenn A a »
     listes: [
-      { slug: 'jours-de-la-semaine', listes: ['jours', 'jours-di'], court: 'Jours', titre: 'les jours de la semaine', resume: 'les jours', classes: ['cp', 'ce1'] },
-      { slug: 'mois', listes: ['mois'], court: 'Mois', titre: "les mois de l'année", resume: 'les mois', classes: ['cp', 'ce1', 'ce2'] },
-      { slug: 'nombres', listes: ['nombres-10'], court: 'Nombres (1 à 10)', titre: 'les nombres de 1 à 10', resume: 'les nombres', classes: ['cp', 'ce1'], copie: 1 },
+      { slug: 'jours-de-la-semaine', listes: ['jours', 'jours-di'], court: 'Jours', titre: 'les jours de la semaine', resume: 'les jours', classes: ['cp', 'ce1'], competence: 'calendrier-langue-regionale' },
+      { slug: 'mois', listes: ['mois'], court: 'Mois', titre: "les mois de l'année", resume: 'les mois', classes: ['cp', 'ce1', 'ce2'], competence: 'calendrier-langue-regionale' },
+      { slug: 'nombres', listes: ['nombres-10'], court: 'Nombres (1 à 10)', titre: 'les nombres de 1 à 10', resume: 'les nombres', classes: ['cp', 'ce1'], copie: 1, competence: 'nombres-langue-regionale' },
     ],
   },
 }

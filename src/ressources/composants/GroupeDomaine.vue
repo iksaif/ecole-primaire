@@ -11,8 +11,8 @@
         <p v-if="!s.liste.length" class="rien">{{ t('ressource.rien') }}</p>
         <ul v-else :class="vue === 'liste' ? 'lignes' : 'cartes'">
           <li v-for="r in s.liste" :key="r.id">
-            <LigneRessource v-if="vue === 'liste'" :ressource="r" :classes-choisies="classes" />
-            <CarteRessource v-else :ressource="r" :classes-choisies="classes" />
+            <LigneRessource v-if="vue === 'liste'" :ressource="r" :classes-choisies="classes" :langue-contenu="langueContenu" />
+            <CarteRessource v-else :ressource="r" :classes-choisies="classes" :langue-contenu="langueContenu" />
           </li>
         </ul>
       </section>
@@ -29,13 +29,14 @@ import type { Vue } from '../../contexte/types.ts'
 import { useLangue } from '../../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../emojis.ts'
 import type { GroupeDomaine } from '../filtres.ts'
-import type { Classe } from '../types.ts'
+import type { Classe, Langue } from '../types.ts'
 import CarteRessource from './CarteRessource.vue'
 import LigneRessource from './LigneRessource.vue'
 import { EMOJI_USAGE, classesEnTexte, emojiGroupe, nomGroupe } from './presentation.ts'
 import { usePlis } from './usePlis.ts'
 
-const props = defineProps<{ groupe: GroupeDomaine, classes: readonly Classe[], vue: Vue }>()
+// langueContenu : ouvrir les ressources dans cette langue (domaines de la langue régionale)
+const props = defineProps<{ groupe: GroupeDomaine, classes: readonly Classe[], vue: Vue, langueContenu?: Langue }>()
 const { t, langueAffichee } = useLangue()
 const plis = usePlis()
 const ouvert = computed(() => plis.ouvert(props.groupe.domaine, props.groupe.replie))

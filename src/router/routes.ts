@@ -32,6 +32,10 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     ...regionales.map((l): RouteRecordRaw => ({
       path: cheminRegional(l), component: matiere, meta: { titreLibre: majuscule(LANGUES[l].nomLocal) },
     })),
+    // les fiches toutes prêtes de la langue régionale : celles dans la langue qui en travaillent une compétence (index : `matieres`)
+    ...regionales.map((l): RouteRecordRaw => ({
+      path: `${cheminRegional(l)}/fiches`, component: fiches, props: { matiere: 'regionale' }, meta: { titre: 'routeur.titre.fichesRegionale' },
+    })),
     // ancienne adresse de la page de la langue régionale
     { path: '/langue-regionale', redirect: to => ({ path: regionales[0] ? cheminRegional(regionales[0]) : '/', query: to.query, hash: to.hash }) },
     { path: '/maths/fiches', component: fiches, props: { matiere: 'maths' }, meta: { titre: 'routeur.titre.fichesMaths' } },

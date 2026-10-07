@@ -9,8 +9,11 @@ import type { DomaineId, Matiere } from '../data/programme.ts'
 import { domainesDe } from '../ressources/filtres.ts'
 import type { QueryBrute } from '../contexte/url.ts'
 
-/** Les matières du programme que la page propose (la langue régionale n'a pas de domaine au référentiel). */
-export const MATIERES_PROGRAMME = ['maths', 'francais', 'monde'] as const satisfies readonly Matiere[]
+/**
+ * Les matières du programme que la page propose. La langue régionale (ses domaines de la maternelle au CE1) n'est proposée que sur un
+ * site qui en a une (BarreProgramme) ; son nom est celui de la langue.
+ */
+export const MATIERES_PROGRAMME = ['maths', 'francais', 'monde', 'regionale'] as const satisfies readonly Matiere[]
 export type MatiereProgramme = (typeof MATIERES_PROGRAMME)[number]
 
 export const AFFICHAGES = ['tableau', 'liste'] as const

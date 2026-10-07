@@ -12,10 +12,10 @@
 
     <template v-else>
       <p v-if="regionale" class="intro">{{ t('regionale.intro', { nom: nomDans }) }}</p>
-      <aside v-if="pageMatiere" class="fiches-pretes">
+      <aside v-if="lienFiches" class="fiches-pretes">
         <span class="emoji" aria-hidden="true">{{ EMOJI_ACCUEIL.fiches }}</span>
         <p><strong>{{ t('matiere.fichesTitre') }}</strong><br>{{ t('matiere.fichesTexte') }}</p>
-        <RouterLink :to="cheminFiches(pageMatiere)" class="gros-bouton">{{ EMOJI_ACCUEIL.fiches }} {{ t('matiere.fichesBouton') }}</RouterLink>
+        <RouterLink :to="lienFiches" class="gros-bouton">{{ EMOJI_ACCUEIL.fiches }} {{ t('matiere.fichesBouton') }}</RouterLink>
       </aside>
 
       <MondeIntro v-if="matiere === 'monde'" />
@@ -26,7 +26,7 @@
       <p v-if="!pret" class="chargement" role="status">{{ t('matiere.chargement') }}</p>
       <EtatVide v-else-if="!avecRessources.length" :emoji="EMOJI_ACCUEIL.aVenir" :titre="t(regionale ? 'regionale.videTitre' : 'matiere.videTitre')"
         :texte="regionale ? t('regionale.videTexte', { nom: nomDans }) : t('matiere.videTexte')" />
-      <GroupeDomaine v-for="g in avecRessources" :key="g.domaine" :groupe="g" :classes="classes" :vue="vue" />
+      <GroupeDomaine v-for="g in avecRessources" :key="g.domaine" :groupe="g" :classes="classes" :vue="vue" :langue-contenu="code ?? undefined" />
       <!-- langue régionale : aussi ce qui existe dans la langue, dans les autres matières -->
       <AussiEnLangue v-if="regionale && code && pret" :langue="code" :classes="classesVisees" :vue="vue" />
 
@@ -59,6 +59,7 @@ import { EMOJI_ACCUEIL, majuscule } from '../ressources/composants/presentation.
 import IconeMatiere from '../shell/IconeMatiere.vue'
 import type { Matiere } from '../ressources/types.ts'
 import { NOM_COURT, cheminFiches, langueRegionaleDeLaRoute, matiereDeLaRoute } from './matieres.ts'
+import { cheminRegional } from '../router/chemins.ts'
 import MatiereAVenir from './MatiereAVenir.vue'
 import AussiEnLangue from './AussiEnLangue.vue'
 import MatiereBarre from './MatiereBarre.vue'
@@ -80,6 +81,11 @@ const regionale = computed(() => matiere.value === 'regionale')
 const actif = computed(() => !!code.value && contexte.value.mode !== 'fr' && contexte.value.regionale === code.value)
 const bcp47 = computed(() => (code.value ? LANGUES[code.value].bcp47 : ''))
 const nomDans = computed(() => (code.value ? LANGUES[code.value].nom[langueAffichee.value] : ''))
+// la sous-page des fiches toutes prêtes : /maths/fiches… ; pour la langue régionale, /brezhoneg/fiches
+const lienFiches = computed(() => {
+  if (pageMatiere.value) return cheminFiches(pageMatiere.value)
+  return code.value ? `${cheminRegional(code.value)}/fiches` : null
+})
 const nom = computed(() => (code.value ? majuscule(LANGUES[code.value].nomLocal) : pageMatiere.value ? t(NOM_COURT[pageMatiere.value]) : ''))
 const maillons = computed(() => [
   { texte: t('matiere.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
@@ -89,7 +95,8 @@ const classes = computed(() => contexte.value.classes)
 const classesVisees = computed(() => (toutes.value ? CLASSES.map(c => c.id) : classes.value))
 // la page de matière est celle des ressources qu'on personnalise (exercices, générateurs de fiches, affiches) : les fiches toutes prêtes
 // ont leur sous-page (/maths/fiches), et un exercice et son générateur de fiche ne font qu'une carte, à deux badges
-const personnalisables = computed(() => catalogue.value.filter(r => r.type !== 'fiche'))
+// sur la page de la langue régionale, seulement ce qui existe dans cette langue (et s'ouvre dans cette langue)
+const personnalisables = computed(() => catalogue.value.filter(r => r.type !== 'fiche' && (!code.value || r.langues.includes(code.value))))
 const groupes = computed(() => (matiere.value
   ? grouperParDomaine(filtrerParMode(personnalisables.value, contexte.value.mode, contexte.value.regionale), { matiere: matiere.value, classes: classesVisees.value })
   : []))

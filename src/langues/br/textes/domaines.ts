@@ -25,4 +25,8 @@ export default {
   histoire: 'Istor', // br: à relire
   geographie: 'Douaroniezh', // br: à relire
   emc: 'Deskadurezh moral ha keodedel', // br: à relire
+  'regionale-oral': 'Kompren ha komz', // br: à relire
+  'regionale-mots': 'Gerioù ar pemdez', // br: à relire
+  'regionale-sons': 'Ar sonioù hag al lizherennoù', // br: à relire
+  'regionale-culture': 'Rimadelloù, kanaouennoù ha kontadennoù', // br: à relire
 } satisfies Traductions<typeof fr>

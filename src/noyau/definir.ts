@@ -175,12 +175,16 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
 
 const FORME_LANGUE = /^[a-z]{2,3}$/
 
-/** Les classes d'une fiche pour plusieurs classes (des niveaux de l'exercice, dont le sien) et ses langues (des codes de langue). */
+/** Les classes d'une fiche pour plusieurs classes (des niveaux de l'exercice, dont le sien), ses compétences explicites et ses langues. */
 function verifierClassesEtLangues(f: FicheExercice, ou: string, niveaux: DefinitionExercice['niveaux'], erreur: (m: string) => never): void {
   if (f.classes !== undefined) {
     if (!f.classes.length) erreur(`${ou} : classes vides (sans \`classes\`, la fiche est pour son seul niveau)`)
     if (!f.classes.includes(f.niveau)) erreur(`${ou} : classes ${f.classes.join(', ')} sans son niveau ${f.niveau}`)
     for (const c of f.classes) if (!niveaux[c]) erreur(`${ou} : classe ${c} absente des niveaux de l'exercice`)
+  }
+  if (f.competences !== undefined) {
+    const auProgramme = (f.classes ?? [f.niveau]).flatMap(c => niveaux[c]?.competences ?? [])
+    for (const k of f.competences) if (!auProgramme.includes(k)) erreur(`${ou} : « ${k} » n'est une compétence d'aucune de ses classes`)
   }
   if (f.langues !== undefined) {
     if (!f.langues.length) erreur(`${ou} : langues vides`)
@@ -193,6 +197,7 @@ function verifierClassesEtLangues(f: FicheExercice, ou: string, niveaux: Definit
  * d'au moins une de ses classes (une fiche d'écriture « GS · CP · CE1 » : le geste d'écriture de GS, la cursive et la copie).
  */
 export function competencesDeFiche(definition: DefinitionExercice, fiche: FicheExercice): CompetenceId[] {
+  if (fiche.competences) return [...fiche.competences]
   if (!fiche.classes) return [fiche.competence]
   const toutes = fiche.classes.flatMap(c => definition.niveaux[c]?.competences ?? [])
   return [...new Set([fiche.competence, ...toutes])]

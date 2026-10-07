@@ -24,7 +24,6 @@ export const TEXTES: TextesAffiche = {
     'groupe.contenu': 'Le contenu', 'groupe.ecriture': 'L’écriture',
     'aide.mot': 'Vingt lettres au plus.',
     'aide.lettres': 'Les lettres proposées suivent la langue de la feuille.',
-    'police.script': 'Police du script', 'police.attache': 'Police de l’attaché',
     'prereglage.premieres-lettres': 'Les premières lettres', 'prereglage.mon-prenom': 'Mon prénom', 'prereglage.compter-jusqua-dix': 'Compter jusqu’à dix',
   },
   br: {
@@ -45,7 +44,6 @@ export const TEXTES: TextesAffiche = {
     'groupe.contenu': 'An danvez', 'groupe.ecriture': 'Ar skritur', // br: à relire
     'aide.mot': 'Ugent lizherenn d’ar muiañ.', // br: à relire
     'aide.lettres': 'Al lizherennoù a heuilh yezh ar skritell.', // br: à relire
-    'police.script': 'Nodrezh ar skript', 'police.attache': 'Nodrezh ar stag', // br: à relire
     'prereglage.premieres-lettres': 'Al lizherennoù kentañ', 'prereglage.mon-prenom': 'Va anv bihan', 'prereglage.compter-jusqua-dix': 'Kontañ betek dek', // br: à relire
   },
 }

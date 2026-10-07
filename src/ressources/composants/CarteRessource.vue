@@ -18,6 +18,7 @@ import { useLangue } from '../../langues/useLangue.ts'
 import { texteDe, langueDifferente } from '../textes.ts'
 import type { Classe, Langue, RessourceDeContenu } from '../types.ts'
 import BadgesRessource from './BadgesRessource.vue'
+import { lienDansLaLangue } from './presentation.ts'
 import PastillesClasses from './PastillesClasses.vue'
 
 const props = withDefaults(defineProps<{
@@ -29,13 +30,8 @@ const props = withDefaults(defineProps<{
 }>(), { niveauTitre: 4, langueContenu: undefined })
 const { langueAffichee } = useLangue()
 const titre = computed(() => texteDe(props.ressource.titre, langueAffichee.value))
-// la langue passe par l'adresse : `contenu=` pour un exercice (langueContenu.ts), `langues=` pour une affiche (lireLien)
-const lien = computed(() => {
-  const { route, type } = props.ressource
-  if (!props.langueContenu) return route
-  const param = type === 'affiche' ? 'langues' : 'contenu'
-  return `${route}${route.includes('?') ? '&' : '?'}${param}=${props.langueContenu}`
-})
+// ouverte dans la langue demandée (page de la langue régionale), sinon telle quelle
+const lien = computed(() => lienDansLaLangue(props.ressource, props.langueContenu))
 const description = computed(() => (props.ressource.description ? texteDe(props.ressource.description, langueAffichee.value) : null))
 // un texte qui n'existe pas dans la langue de la page (fiche prête en français sur une page bretonne) est marqué lang="fr"
 const langueTitre = computed(() => langueDifferente(props.ressource.titre, langueAffichee.value))

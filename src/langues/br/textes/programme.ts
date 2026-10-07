@@ -9,7 +9,7 @@ export default {
   adresse: 'Chomlec’h ar sell-mañ', // br: à relire
   chapeau: '{classes} · {matiere}. Pep barregezh a gas d’e frammoù.', // br: à relire
   fil: 'Roudenn', // br: à relire
-  matiere: { legende: 'Danvez', maths: 'Jedoniezh', francais: 'Galleg', monde: 'Ar bed' }, // br: à relire
+  matiere: { legende: 'Danvez', maths: 'Jedoniezh', francais: 'Galleg', monde: 'Ar bed', regionale: 'Yezh rannvroel' }, // br: à relire
   classes: { legende: 'Klasoù', verrouillee: 'Prennet eo ar c’hlas.' }, // br: à relire
   domaine: { legende: 'Domani', aucun: 'Domani ebet eus an danvez-mañ evit ar c’hlasoù dibabet.' }, // br: à relire
   affichage: { legende: 'Diskouez', tableau: 'Taolenn', liste: 'Roll' }, // br: à relire
@@ -56,5 +56,8 @@ export default {
     c2ancien2015: 'Programm kozh 2015', // br: à relire
     c2ancien2020: 'Programm kozh 2020', // br: à relire
     c1consolide: 'Éduscol · rummad 1', // br: à relire
+    lvc2: 'BO 12 (2026) · yezhoù bev', // br: à relire
+    bretonA1: 'Akademiezh Roazhon · brezhoneg A1', // br: à relire
+    bretonCP: 'Akademiezh Roazhon · CP divyezhek', // br: à relire
   },
 } satisfies Traductions<typeof fr>

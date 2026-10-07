@@ -51,3 +51,14 @@ export function cyclesDuDomaine(id: DomaineId, classes: readonly Classe[]): numb
 export function lienImprimer(r: RessourceDeContenu): RouteLocationRaw | null {
   return r.type === 'exercice' && r.badges.imprimable ? { path: r.route, query: { mode: 'imprimer' } } : null
 }
+
+/**
+ * L'adresse d'une ressource, ouverte dans une langue de contenu (page de la langue régionale) : `contenu=` pour un exercice
+ * (src/noyau/langueContenu.ts), `langues=` pour une affiche (lireLien) ; sans langue, son adresse telle quelle.
+ */
+export function lienDansLaLangue(ressource: Pick<RessourceDeContenu, 'route' | 'type'>, langue?: Langue): string {
+  if (!langue) return ressource.route
+  const param = ressource.type === 'affiche' ? 'langues' : 'contenu'
+  const separateur = ressource.route.includes('?') ? '&' : '?'
+  return `${ressource.route}${separateur}${param}=${langue}`
+}

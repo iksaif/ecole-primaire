@@ -25,6 +25,10 @@ export const EMOJI_DOMAINE: Readonly<Record<DomaineId, string>> = {
   histoire: '🏛️',
   geographie: '🗺️',
   emc: '🤝',
+  'regionale-oral': '💬',
+  'regionale-mots': '🖼️',
+  'regionale-sons': '🔡',
+  'regionale-culture': '🎶',
   exemple: '⭐',   // domaine fictif des exemples (développement)
 }
 

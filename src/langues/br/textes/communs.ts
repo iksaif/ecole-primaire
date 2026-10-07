@@ -4,6 +4,8 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/communs.ts'
 
 export default {
+  // les deux polices d'une affiche à polices par type (traducteurAffiche s'y rabat quand l'affiche n'a pas les siens)
+  police: { script: 'Nodrezh ar skript', attache: 'Nodrezh an a-stag' }, // br: à relire
   commencer: '▶ Kregiñ',
   valider: 'Gwiriañ ✔',
   suivant: "Da-heul ➜",

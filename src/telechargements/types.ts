@@ -100,6 +100,11 @@ export interface EntreeIndex {
   /** classes concernées, dans l'ordre de l'école (jamais du texte : la page en fait « CE1 », « GS · CP ») */
   niveaux: Classe[]
   domaine: DomaineId | null
+  /**
+   * les matières où la fiche se range : celle de son domaine, et la langue régionale quand la fiche est dans cette langue et en travaille
+   * une compétence (l'alphabet ou les jours en breton : aussi sur /brezhoneg/fiches)
+   */
+  matieres: Matiere[]
   genre: Genre
   /** dérivé de `genre` (usageDe) ; répété pour que le filtre n'ait pas à le recalculer */
   usage: Usage

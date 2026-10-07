@@ -36,7 +36,21 @@
 //     nous n'avons PAS relus : le référentiel retient le texte nouveau, et chaque compétence concernée le dit dans
 //     `interpretation`. Le BO n° 16 du 17 avril 2025 ne contient que le français et les mathématiques du cycle 3 : ni
 //     sciences, ni histoire-géographie, ni EMC.
-//   - Non relus : les livrets d'accompagnement ; les anciens programmes ci-dessus (2015, 2020, 2023).
+//   - La langue régionale (matière `regionale`), de la maternelle au CE1 seulement (décision du 2026-10-07 : au-delà, rien n'est
+//     engagé) ; textes lus en entier le 2026-10-07 :
+//       · Langues vivantes étrangères et régionales, cycle 2 : BO n° 12 du 19 mars 2026, annexe 1 (CP à la rentrée 2026, CE1 et
+//         CE2 en 2027). Il s'applique aux langues régionales et a une colonne « parcours renforcés / bilingues » (p. 2). Jusqu'au
+//         CE2, tout est oral : lire et écrire n'y commencent qu'au CE2.
+//       · « Cycle 1 bilingue / Cycle 2 — repères de progressivité linguistique, breton A1 », académie de Rennes (26/10/2024) : un
+//         document académique, pas un BO, qui reprend les tableaux des programmes et y ajoute les formulations, la grammaire et la
+//         phonologie du breton. C'est la seule source qui couvre la maternelle bilingue ; elle ne distingue pas PS, MS et GS.
+//       · Évaluation diagnostique d'entrée en CP bilingue (académie de Rennes, 03/05/2026) : ce qu'on attend à l'oral en fin de
+//         maternelle bilingue.
+//     Les quatre domaines (comprendre et parler, les mots du quotidien, les sons et les lettres, comptines et contes) regroupent
+//     les activités langagières et les thèmes de ces textes : c'est une interprétation, dite dans chaque domaine.
+//   - Non relus : les livrets d'accompagnement ; les anciens programmes ci-dessus (2015, 2020, 2023) ; le programme de langues
+//     régionales de 2007 (BO hors-série n° 9 du 27 septembre 2007, annexe 3 pour le breton), un PDF scanné, plus ancien que les
+//     textes ci-dessus.
 //
 // Le texte de ces PDF est dans docs/programmes/ (une section « Page N » par page du PDF, comme les `page` ci-dessous).
 //
@@ -65,8 +79,8 @@ export type { Classe as Niveau, Cycle }
 
 /**
  * Les matières, dans l'ordre d'affichage. `monde` : sciences, histoire-géographie, EMC (ancien `autres`). `regionale` : apprendre
- * la langue régionale ; le référentiel n'a pas (encore) de domaine de cette matière : les ressources n'y entreront qu'avec des
- * domaines déclarés ici (voir src/ressources/README.md).
+ * la langue régionale (de la maternelle au CE1) ; une ressource y entre par ses compétences de cette matière, quelle que soit la
+ * matière de son domaine principal (src/ressources/filtres.ts).
  */
 export const MATIERES = ['maths', 'francais', 'monde', 'regionale'] as const
 export type Matiere = (typeof MATIERES)[number]
@@ -276,6 +290,21 @@ export const SOURCES = {
     titre: 'Programme de l’école maternelle consolidé (Éduscol, d’après les BO n° 41 de 2024 et n° 19 de 2026)',
     url: 'https://eduscol.education.gouv.fr/sites/default/files/document/programme-cycle-1-consolide-127565.pdf',
   },
+  // Langue régionale (de la maternelle au CE1)
+  lvc2: {
+    titre: 'Programme de langues vivantes étrangères et régionales du cycle 2 (annexe 1, BO n° 12 du 19 mars 2026) ; pages du PDF de l’annexe',
+    url: 'https://www.education.gouv.fr/sites/default/files/document/Annexe%201%20%E2%80%93%20Programme%20de%20langues%20vivantes%20%C3%A9trang%C3%A8res%20et%20r%C3%A9gionales%20pour%20le%20cycle%202%20-481187.pdf',
+  },
+  bretonA1: {
+    titre: 'Breton, niveau A1 — « Cycle 1 bilingue / Cycle 2 », repères de progressivité linguistique (académie de Rennes, 26/10/2024)',
+    url: 'https://pedagogie.ac-rennes.fr/sites/pedagogie.ac-rennes.fr/IMG/pdf/breton_de_clinaisons_linguistiques_acad_a1.pdf',
+    page: 'https://pedagogie.ac-rennes.fr/spip.php?article7861',
+  },
+  bretonCP: {
+    titre: 'Breton A1 — CP parcours bilingue, évaluation diagnostique (académie de Rennes, 03/05/2026)',
+    url: 'https://pedagogie.ac-rennes.fr/sites/pedagogie.ac-rennes.fr/IMG/pdf/0_breton_cp_evaluation_diagnostique_a1_parcours_bilingue_v3.pdf',
+    page: 'https://pedagogie.ac-rennes.fr/spip.php?article7861',
+  },
 }
 
 // Pages destinées aux parents (education.gouv.fr) et ressources pour les enseignants (Éduscol).
@@ -398,6 +427,32 @@ export const DOMAINES = [
     officiel: { 2: 'Enseignement moral et civique', 3: 'Enseignement moral et civique' },
     source: { 2: src('emc', 7, 'CP : Se reconnaitre comme individu et élève'), 3: src('emc', 11, 'CM1 : Faire société') },
     lien: parCycle([2, 3], c => PARENTS[c]),
+  },
+  // La langue régionale (matière `regionale`), de la maternelle au CE1 : voir l'en-tête. Les noms officiels sont ceux des activités
+  // langagières des textes ; le regroupement en quatre domaines est le nôtre.
+  {
+    id: 'regionale-oral', court: 'Comprendre et parler', matiere: 'regionale', cycles: [1, 2],
+    officiel: { 1: 'Comprendre l’oral, prendre part à une conversation, s’exprimer oralement en continu (cycle 1 bilingue)', 2: 'Compréhension de l’oral ; expression orale en continu et en interaction' },
+    source: { 1: src('bretonA1', 1, 'Comprendre l’oral (consignes de classe, formules, se présenter) ; p. 3 : prendre part à une conversation ; p. 5 : s’exprimer oralement en continu'), 2: src('lvc2', 1, 'Compréhension de l’oral (CO), expression orale en continu (EOC) et en interaction (EOI), CP et CE1') },
+    lien: { 1: SOURCES.bretonA1.page, 2: SOURCES.lvc2.url },
+  },
+  {
+    id: 'regionale-mots', court: 'Les mots du quotidien', matiere: 'regionale', cycles: [1, 2],
+    officiel: { 1: 'Connaissances culturelles et lexicales (cycle 1 bilingue)', 2: 'Connaissances culturelles et lexicales : l’enfant et son univers quotidien' },
+    source: { 1: src('bretonA1', 8, 'Ressources et thématiques : l’enfant (corps, vêtements, famille, journée), la classe, l’alphabet, les nombres, les couleurs, le temps, les animaux, la maison'), 2: src('lvc2', 3, 'Au cycle 2, les thématiques s’articulent autour de l’enfant et de son univers quotidien (école, famille, loisirs, temps de l’enfant, lieux de sa vie quotidienne)') },
+    lien: { 1: SOURCES.bretonA1.page, 2: SOURCES.lvc2.url },
+  },
+  {
+    id: 'regionale-sons', court: 'Les sons et les lettres', matiere: 'regionale', cycles: [1, 2],
+    officiel: { 1: 'Phonologie ; l’alphabet (cycle 1 bilingue)', 2: 'Repères phonologiques' },
+    source: { 1: src('bretonA1', 10, 'L’alphabet : comptines, puis épeler des noms propres et des noms de lieux ; attention aux graphèmes c’h, añ, iñ'), 2: src('lvc2', 12, 'Repères phonologiques (EOC-CP) : réaliser les spécificités phonologiques essentielles de la langue apprise') },
+    lien: { 1: SOURCES.bretonA1.page, 2: SOURCES.lvc2.url },
+  },
+  {
+    id: 'regionale-culture', court: 'Comptines, chansons et contes', matiere: 'regionale', cycles: [1, 2],
+    officiel: { 1: 'Comptines, chansons ; contes et légendes, personnages (cycle 1 bilingue)', 2: 'Médiation : identifier les repères culturels' },
+    source: { 1: src('bretonA1', 14, 'Les comptines, les chansons ; la littérature de jeunesse, les contes et légendes, les personnages symboliques'), 2: src('lvc2', 29, 'Identifier les repères culturels (M-CP)') },
+    lien: { 1: SOURCES.bretonA1.page, 2: SOURCES.lvc2.url },
   },
   // Français (au cycle 1 : domaine « Le développement et la structuration du langage oral et écrit »)
   {
@@ -838,6 +893,21 @@ export const COMPETENCES = [
     src('emc', 10, 'CE2 : bien commun, intérêt général et intérêt particulier, institutions et associations au service du bien commun, éco-gestes ; le maire élu local, le président de la République élu ; CM1 p. 11 : civisme, sobriété numérique')),
   c('democratie-vote', 'emc', 'La démocratie : voter, élire, participer aux décisions ; droits et devoirs du citoyen', ['ce2', 'cm1', 'cm2'],
     src('emc', 11, 'CE2 p. 10 : organiser une élection de délégué, conseils d’élèves ; CM1 : signification de « démocratie » et suffrage direct ; CM2 p. 12-13 : citoyenneté et nationalité, droits civils et politiques, devoirs (respecter les lois, impôt, voter)')),
+  // La langue régionale, de la maternelle au CE1 : seulement les compétences que des activités du site travaillent déjà (le reste des
+  // domaines est « à venir »). Le cycle 1 bilingue n'est pas découpé par âge dans la source : les classes de maternelle retenues sont
+  // une interprétation.
+  c('alphabet-langue-regionale', 'regionale-sons', 'Connaître l’alphabet de la langue régionale et le nom de ses lettres, avec ses graphèmes propres (ch, c’h, añ, iñ en breton) ; épeler un nom familier', ['ms', 'gs', 'cp', 'ce1'],
+    src('bretonA1', 10, 'L’alphabet : travaillé grâce à des comptines, puis mis à l’épreuve en épelant des noms propres ou des noms de lieux ; attention à la spécificité de certains graphèmes (c’h, añ, iñ…) ; p. 5 : épeler des mots et des noms familiers, prononciation des lettres de l’alphabet'),
+    { interpretation: 'MS et GS : la source dit « cycle 1 bilingue » sans découper par âge ; l’alphabet y passe par les comptines, comme le nom des lettres en français à partir de 4 ans (bo41 p. 52)' }),
+  c('nombres-langue-regionale', 'regionale-mots', 'Dire et reconnaître les nombres dans la langue régionale (âge, prix, jeux), avec ses particularités (18, 20/40/60/80, 50/100 en breton)', ['ms', 'gs', 'cp', 'ce1'],
+    src('bretonA1', 10, 'Les nombres : associés à l’âge, au nombre de jours, à la monnaie, aux jeux ; attention aux spécificités de certains nombres (18, 20/40/60/80, 50/100, etc.) ; lvc2 p. 4 : au CP, reconnaitre des nombres connus, des prix'),
+    { interpretation: 'MS et GS : « cycle 1 bilingue » sans découpage par âge ; l’évaluation d’entrée en CP bilingue (bretonCP p. 11) demande de comprendre un prix (« Pemp euro eo »)' }),
+  c('calendrier-langue-regionale', 'regionale-mots', 'Les jours de la semaine, les mois et les saisons dans la langue régionale', ['ms', 'gs', 'cp', 'ce1'],
+    src('bretonA1', 4, 'Le temps, les grandes périodes de l’année : deiz, sizhun, miz, bloaz ; Dilun, dimeurzh… ; nevez-amzer, hañv, diskar-amzer, goañv ; p. 5 : Peseurt deiz eo hiziv ? ; lvc2 p. 4 : au CP, reconnaitre des jours de la semaine, des dates'),
+    { interpretation: 'MS et GS : la source dit « cycle 1 bilingue » sans découper par âge ; nous suivons le français, où les jours sont travaillés en MS et les mois et les saisons en GS (bo19 p. 24-25)' }),
+  c('meteo-langue-regionale', 'regionale-oral', 'Demander et dire le temps qu’il fait dans la langue régionale (« Penaos eo an amzer ? — Glav a ra. » en breton)', ['gs', 'cp', 'ce1'],
+    src('bretonCP', 11, 'Évaluation d’entrée en CP bilingue, exercice 3, case 4 : « Penaos eo an amzer ? — Glav a ra. » (Quel temps fait-il ? — Il pleut.) ; bretonA1 p. 11 : les repères temporels, le climat et la météo, évoqués lors des rituels ; lvc2 p. 7 : au CE1, comprendre les expressions indiquant le temps qu’il fait'),
+    { interpretation: 'GS : l’évaluation d’entrée en CP bilingue (novembre du CP) demande ce que l’élève sait en sortant de la maternelle bilingue' }),
   c('droits-libertes-egalite', 'emc', 'Les droits, les libertés et l’égalité : droits de l’enfant, discriminations, liberté d’expression', ['cp', 'cm1', 'cm2'],
     src('emc', 13, 'CM2 : libertés et droits fondamentaux (Déclaration des droits de l’homme et du citoyen, droits de l’enfant), lutte contre les discriminations et les préjugés ; CP p. 8 : droits de l’enfant, égalité filles-garçons ; CM1 p. 11 : égalité en droit, dignité')),
 ] as const satisfies readonly Competence[]

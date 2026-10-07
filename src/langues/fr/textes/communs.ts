@@ -2,6 +2,8 @@
 // réglages, mots des fiches (prénom, date, corrigé). Ne contient que ce que lit le noyau (src/noyau/) et les exercices ;
 // un texte propre à un exercice va dans sa section (ex. `exemple`). `T('corrige')` d'une fiche lit aussi cette section.
 export default {
+  // les deux polices d'une affiche à polices par type (traducteurAffiche s'y rabat quand l'affiche n'a pas les siens)
+  police: { script: 'Police du script', attache: 'Police de l’attaché' },
   commencer: '▶ Commencer',
   valider: 'Valider ✔',
   suivant: 'Suivant ➜',

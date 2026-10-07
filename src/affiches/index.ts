@@ -13,6 +13,9 @@ import { module as tables } from './tables/index.ts'
 import { module as formes } from './formes/index.ts'
 import { module as horloge } from './horloge/index.ts'
 import { module as conjugaison } from './conjugaison/index.ts'
+import { module as jours } from './jours/index.ts'
+import { module as mois } from './mois/index.ts'
+import { module as meteo } from './meteo/index.ts'
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'
@@ -27,6 +30,9 @@ export const REGISTRE: ModuleAffiche<Reglages>[] = [
   formes,
   horloge,
   conjugaison,
+  jours,
+  mois,
+  meteo,
   // nouveau:registre
 ]
 

@@ -18,6 +18,7 @@ export default {
     fichesMaths: 'Fichennoù jedoniezh prest', // br: à relire
     fichesFrancais: 'Fichennoù galleg prest', // br: à relire
     fichesMonde: 'Fichennoù diwar-benn ar bed prest', // br: à relire
+    fichesRegionale: 'Fichennoù prest ar yezh rannvroel', // br: à relire
     fiche: 'Fichenn da voullañ', // br: à relire
     programme: 'Ar programm', // br: à relire
     competence: 'Barregezh ar programm', // br: à relire

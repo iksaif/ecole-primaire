@@ -108,6 +108,8 @@ export interface FichesEcritureRegionales {
     classes: readonly Classe[]
     /** lignes à copier seul (défaut 0) */
     copie?: 0 | 1 | 2 | 3
+    /** la compétence de la langue régionale du thème de la liste (src/data/programme.ts) : les jours et les mois, les nombres */
+    competence: 'calendrier-langue-regionale' | 'nombres-langue-regionale'
   }[]
 }
 export interface ListeDeMots { id: string, libelle: Readonly<Record<string, string>>, titre: string, mots: readonly string[] }

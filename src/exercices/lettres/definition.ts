@@ -18,7 +18,9 @@ export default definir({
   domaine: D.lecture,
   emoji: '🔡',
   niveauDefaut: 'gs',
-  competences: [K.nomLettres],
+  // dans la langue régionale, l'alphabet de cette langue (T('alphabet'), textes.ts)
+  autresDomaines: [D.regionaleSons],
+  competences: [K.nomLettres, K.alphabetLangueRegionale],
 
   reglages: {
     mode: choix(['reconnaitre', 'majuscule'], { defaut: 'reconnaitre' }),

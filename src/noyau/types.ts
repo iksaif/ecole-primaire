@@ -84,6 +84,12 @@ export interface FicheExercice<R extends object = Reglages> {
    * l'exercice. Avec une seule langue, le `slug` est publié tel quel, sans suffixe de langue.
    */
   langues?: readonly string[]
+  /**
+   * Compétences du catalogue de la fiche, à la place de celles que lui donnent ses classes (competencesDeFiche) : quand l'exercice
+   * travaille selon la fiche des compétences différentes (une fiche d'écriture en breton : l'alphabet de la langue régionale ; en
+   * français : non). Chacune doit être une compétence de l'exercice au programme d'une de ses classes.
+   */
+  competences?: readonly CompetenceId[]
   /** réglages qui s'ajoutent à ceux du niveau (un réglage sans choix, texte ou nombre libre, doit garder le type de son défaut) */
   reglages: Partial<R>
 }

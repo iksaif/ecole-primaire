@@ -32,7 +32,7 @@
         <h2 :id="idEncart">{{ t('fichesPretes.personnaliserTitre') }}</h2>
         <p>{{ t('fichesPretes.personnaliserTexte') }}</p>
         <p class="liens">
-          <RouterLink v-if="cheminMatiere(matiere)" class="btn btn-primary" :to="cheminMatiere(matiere) ?? '/'">{{ t('fichesPretes.personnaliser') }}</RouterLink>
+          <RouterLink v-if="pageDeLaMatiere" class="btn btn-primary" :to="pageDeLaMatiere">{{ t('fichesPretes.personnaliser') }}</RouterLink>
           <RouterLink class="btn btn-ghost" to="/telechargements">{{ t('fichesPretes.toutesLesFiches') }}</RouterLink>
         </p>
       </aside>
@@ -42,6 +42,10 @@
 
 <script setup lang="ts">
 import { computed, useId } from 'vue'
+import { useRoute } from 'vue-router'
+import { SITE } from '../sites.ts'
+import { LANGUES } from '../langues/registre.ts'
+import { majuscule } from '../ressources/composants/presentation.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { cheminMatiere } from '../telechargements/pages.ts'
 import type { Matiere } from '../telechargements/types.ts'
@@ -53,7 +57,6 @@ import FilAriane from '../shell/FilAriane.vue'
 import FichesPretesFiltres from './FichesPretesFiltres.vue'
 import FichesPretesTable from './FichesPretesTable.vue'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
-import { EMOJI_MATIERE } from '../ressources/composants/presentation.ts'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
 
 const props = defineProps<{ matiere: Matiere }>()
@@ -62,10 +65,15 @@ const page = useFichesPage(() => props.matiere)
 const idEncart = useId()
 const vue = computed(() => page.contexte.vue)
 
-const nomMatiere = computed(() => t(`fichesPretes.matieres.${props.matiere}`))
+// la langue régionale porte le nom de la langue (« Brezhoneg »)
+const regionale = SITE.languesRegionales[0]
+const nomMatiere = computed(() => (props.matiere === 'regionale' && regionale ? majuscule(LANGUES[regionale].nomLocal) : t(`fichesPretes.matieres.${props.matiere}`)))
+// la page de la matière : /maths… ; pour la langue régionale, l'adresse de cette page sans « /fiches » (/brezhoneg)
+const route = useRoute()
+const pageDeLaMatiere = computed(() => cheminMatiere(props.matiere) ?? (props.matiere === 'regionale' ? route.path.replace(/\/fiches$/, '') : null))
 const maillons = computed(() => [
   { texte: t('fichesPretes.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
-  ...(cheminMatiere(props.matiere) ? [{ texte: nomMatiere.value, vers: cheminMatiere(props.matiere) ?? '/', emoji: EMOJI_MATIERE[props.matiere] }] : [{ texte: nomMatiere.value, emoji: EMOJI_MATIERE[props.matiere] }]),
+  { texte: nomMatiere.value, vers: pageDeLaMatiere.value ?? undefined, matiere: props.matiere },
   { texte: t('fichesPretes.fichesPretes'), emoji: EMOJI_BARRE.fichesPretes },
 ])
 </script>

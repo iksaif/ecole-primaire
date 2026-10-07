@@ -74,11 +74,33 @@ export function domainesDe(matiere: Matiere, classes: readonly Classe[]): readon
  * dans le groupe de son domaine ; pour les classes choisies (`ressources`) ou hors classe (comptée dans `horsClasse`). Chaque
  * ressource de la matière et d'un domaine listé est donc comptée une fois : `ressources.length + horsClasse`.
  */
+/**
+ * Une ressource est-elle dans ce domaine ? Celui de son domaine principal ; pour la langue régionale, celui de chacune de ses compétences
+ * de cette matière : l'alphabet (domaine principal : lecture) entre aussi dans « les sons et les lettres » du breton, parce qu'en breton
+ * il montre l'alphabet breton.
+ */
+function estDuDomaine(r: RessourceDeContenu, domaine: Domaine): boolean {
+  if (r.domaine === domaine.id) return true
+  return domaine.matiere === 'regionale' && r.competences.some(k => competenceDe(k)?.domaine === domaine.id)
+}
+
 export function grouperParDomaine(ressources: readonly RessourceDeContenu[], { matiere, classes }: { matiere: Matiere, classes: readonly Classe[] }): GroupeDomaine[] {
-  const deLaMatiere = ressources.filter(r => r.matiere === matiere)
+  const domaines = domainesDe(matiere, classes)
+  const deLaMatiere = ressources.filter(r => r.matiere === matiere || domaines.some(d => estDuDomaine(r, d)))
   const dansLaClasse = new Set(filtrerParClasses(deLaMatiere, classes))
+  /**
+   * Pour les classes choisies ? Ses classes à elle ; dans un domaine de la langue régionale, les classes de ses compétences de ce domaine
+   * (l'affiche des nombres va jusqu'au CE2, mais les nombres en breton s'arrêtent au CE1 dans le référentiel).
+   */
+  const pourLesClasses = (r: RessourceDeContenu, domaine: GroupeDomaine['domaine']): boolean => {
+    if (!dansLaClasse.has(r)) return false
+    const d = DOMAINES_LISTE.find(x => x.id === domaine)
+    if (d?.matiere !== 'regionale' || !classes.length) return true
+    const niveaux = r.competences.flatMap(k => (competenceDe(k)?.domaine === d.id ? competenceDe(k)?.niveaux ?? [] : []))
+    return niveaux.some(n => classes.includes(n))
+  }
   const groupe = (domaine: GroupeDomaine['domaine'], liste: readonly RessourceDeContenu[]): GroupeDomaine => {
-    const choisies = liste.filter(r => dansLaClasse.has(r))
+    const choisies = liste.filter(r => pourLesClasses(r, domaine))
     return {
       domaine, ressources: choisies,
       apprendre: choisies.filter(r => r.usage === 'apprendre'), sentrainer: choisies.filter(r => r.usage === 'sentrainer'),
@@ -86,7 +108,7 @@ export function grouperParDomaine(ressources: readonly RessourceDeContenu[], { m
     }
   }
   const transversales = deLaMatiere.filter(r => dePlusieursDomaines(r, matiere))
-  const parDomaine = domainesDe(matiere, classes).map(d => groupe(d.id as DomaineId, deLaMatiere.filter(r => r.domaine === d.id && !transversales.includes(r))))
+  const parDomaine = domaines.map(d => groupe(d.id as DomaineId, deLaMatiere.filter(r => estDuDomaine(r, d) && !transversales.includes(r))))
   // le groupe « plusieurs domaines » n'existe que s'il a des ressources pour les classes choisies (il n'est jamais « à venir » ni replié)
   const plusieurs = groupe(PLUSIEURS_DOMAINES, transversales)
   return plusieurs.ressources.length ? [plusieurs, ...parDomaine] : parDomaine

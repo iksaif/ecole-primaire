@@ -1,8 +1,9 @@
 <template>
   <div class="barre-programme">
     <div class="groupe" role="group" :aria-label="t('programme.matiere.legende')">
-      <button v-for="m in MATIERES_PROGRAMME" :key="m" type="button" class="choix" :aria-pressed="etat.matiere === m" @click="emit('matiere', m)">
-        <span aria-hidden="true">{{ EMOJI_MATIERE[m] }}</span> {{ t(`programme.matiere.${m}`) }}
+      <button v-for="m in matieres" :key="m" type="button" class="choix" :aria-pressed="etat.matiere === m" @click="emit('matiere', m)">
+        <IconeMatiere v-if="m === 'regionale'" matiere="regionale" />
+        <span v-else aria-hidden="true">{{ EMOJI_MATIERE[m] }}</span> {{ nomMatiere(m) }}
       </button>
     </div>
     <ChoixClassesProgramme />
@@ -42,8 +43,16 @@ import { EMOJI, EMOJI_MATIERE } from './emojis.ts'
 import { AFFICHAGES, MATIERES_PROGRAMME } from './etat.ts'
 import type { Affichage, EtatProgramme, MatiereProgramme } from './etat.ts'
 import { nomDuDomaine } from './noms.ts'
+import IconeMatiere from '../shell/IconeMatiere.vue'
+import { SITE } from '../sites.ts'
+import { LANGUES } from '../langues/registre.ts'
+import { majuscule } from '../ressources/composants/presentation.ts'
 
 const props = defineProps<{ etat: EtatProgramme, affichage: Affichage, domaines: readonly string[], lien: () => string }>()
+// la langue régionale seulement sur un site qui en a une ; elle porte le nom de la langue (« Brezhoneg »)
+const regionale = SITE.languesRegionales[0]
+const matieres = MATIERES_PROGRAMME.filter(m => m !== 'regionale' || regionale)
+const nomMatiere = (m: MatiereProgramme): string => (m === 'regionale' && regionale ? majuscule(LANGUES[regionale].nomLocal) : t(`programme.matiere.${m}`))
 const emit = defineEmits<{ matiere: [MatiereProgramme], domaine: [string], affichage: [Affichage] }>()
 const { t, langueAffichee } = useLangue()
 const { contexte, basculerRefs } = useContexte()

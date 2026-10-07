@@ -28,7 +28,8 @@
 .option[aria-pressed="true"] { border-color: var(--bleu-fort); background: #eef5fd; }
 .option strong { display: block; font-size: .92rem; }
 .option small { display: block; color: var(--texte-doux); font-size: .78rem; line-height: 1.25; }
-.option .icone { font-size: 1.2rem; line-height: 1.2; min-width: 2.4rem; display: inline-flex; gap: 2px; }
+/* l'icône ne rétrécit pas (deux drapeaux pour « Français + Brezhoneg ») et a la largeur de deux drapeaux : les textes restent alignés */
+.option .icone { font-size: 1.2rem; line-height: 1.2; flex: none; min-width: 3.8rem; display: inline-flex; gap: 2px; }
 
 @media (max-width: 640px) {
   .nbtn { min-height: 44px; min-width: 44px; padding: .3rem .6rem; }

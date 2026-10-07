@@ -6,7 +6,7 @@ export default {
   adresse: 'Adresse de cette vue',
   chapeau: '{classes} · {matiere}. Chaque compétence mène à ses ressources.',
   fil: 'Fil d’Ariane',
-  matiere: { legende: 'Matière', maths: 'Mathématiques', francais: 'Français', monde: 'Le monde' },
+  matiere: { legende: 'Matière', maths: 'Mathématiques', francais: 'Français', monde: 'Le monde', regionale: 'Langue régionale' },
   classes: { legende: 'Classes', verrouillee: 'La classe est verrouillée.' },
   domaine: { legende: 'Domaine', aucun: 'Aucun domaine de cette matière pour les classes choisies.' },
   affichage: { legende: 'Présentation', tableau: 'Tableau', liste: 'Liste' },
@@ -54,5 +54,8 @@ export default {
     c2ancien2015: 'Ancien programme 2015',
     c2ancien2020: 'Ancien programme 2020',
     c1consolide: 'Éduscol · cycle 1',
+    lvc2: 'BO 12 (2026) · langues vivantes',
+    bretonA1: 'Académie de Rennes · breton A1',
+    bretonCP: 'Académie de Rennes · CP bilingue',
   },
 } as const

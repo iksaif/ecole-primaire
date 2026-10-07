@@ -33,6 +33,13 @@ export function matiereDe(e: Pick<EntreeIndex, 'domaine'>, index: Pick<IndexFich
   return index.filtres.domaines.find(d => d.id === e.domaine)?.matiere ?? 'monde'
 }
 
+/** Les matières d'une entrée (un index plus ancien n'a pas `matieres` : celle de son domaine). */
+export const matieresDe = (e: Pick<EntreeIndex, 'domaine' | 'matieres'>, index: Pick<IndexFiches, 'filtres'>): readonly Matiere[] =>
+  e.matieres ?? [matiereDe(e, index)]
+
+/** Les fiches de la langue régionale sont dans cette langue (seule ou avec le français) : pas l'affiche de la météo en français seul. */
+const estDansLaLangue = (e: Pick<EntreeIndex, 'langues'>, regionale: Langue | null): boolean => !!regionale && e.langues.includes(regionale)
+
 /** Une fiche se lit dans une des langues de l'entrée : celle du mode doit en faire partie (mode français : fiches françaises seulement). */
 export function dansLeMode(e: Pick<EntreeIndex, 'langues'>, mode: Mode, regionale: Langue | null): boolean {
   const utilisables: readonly string[] = languesUtilisables(mode, regionale)
@@ -51,7 +58,8 @@ export function filtrerFiches(index: IndexFiches, matiere: Matiere | null, c: Cr
   const mots = normaliser(c.texte).split(/\s+/).filter(Boolean)
   return index.entrees.filter(e =>
     e.parent === null
-    && (matiere === null || matiereDe(e, index) === matiere)
+    && (matiere === null || matieresDe(e, index).includes(matiere))
+    && (matiere !== 'regionale' || estDansLaLangue(e, contexte.regionale))
     && dansLeMode(e, contexte.mode, contexte.regionale)
     && (!c.classes.length || e.niveaux.some(n => c.classes.includes(n)))
     && (!c.usage || e.usage === c.usage)

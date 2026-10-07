@@ -176,7 +176,9 @@ const m = grouperParDomaine(C, { matiere: 'maths', classes: ['cp'] }).find(g => 
 verifier(m.ressources.length === 2 && m.horsClasse === 2 && !m.replie, 'maths CP : deux ressources (une fiche, une fiche marquée exemple), deux hors classe annoncées')
 const mCm = grouperParDomaine(C, { matiere: 'maths', classes: ['cm2'] }).find(g => g.domaine === 'nombres-calcul')
 verifier(mCm.ressources.length === 0 && mCm.horsClasse === 4 && mCm.replie, 'maths CM2 : domaine replié, 4 hors classe (pas masqué)')
-verifier(grouperParDomaine(C, { matiere: 'regionale', classes: [] }).length === 0 && domainesDe('monde', ['ps']).some(d => d.id === 'vivant'), 'matière régionale : aucun domaine au programme ; le monde au cycle 1')
+const domainesRegionaux = ids => ids.map(d => d.id).filter(id => id.startsWith('regionale-')).length
+verifier(domainesRegionaux(domainesDe('regionale', ['cp'])) === 4 && domainesRegionaux(domainesDe('regionale', ['cm1'])) === 0 && domainesDe('monde', ['ps']).some(d => d.id === 'vivant'),
+  'matière régionale : quatre domaines aux cycles 1 et 2, aucun au cycle 3 (rien d\'engagé après le CE1) ; le monde au cycle 1')
 const avant = JSON.stringify(C); grouperParDomaine(C, { matiere: 'maths', classes: ['cp'] }); filtrerParClasses(C, ['cp'])
 verifier(JSON.stringify(C) === avant, 'les arguments ne sont pas modifiés')
 

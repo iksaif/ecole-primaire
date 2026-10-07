@@ -29,7 +29,8 @@ console.log('État de la page ↔ adresse')
     if (!egal(lireEtatProgramme(ecrireEtatProgramme(e), [classe]), e)) tous = false
   }
   verifier(tous, 'aller-retour sur toutes les matières, classes, domaines et présentations')
-  verifier(lireEtatProgramme({ matiere: 'regionale' }, ['ce1']).matiere === 'maths', 'une matière inconnue (ou régionale, sans domaine) : maths')
+  verifier(lireEtatProgramme({ matiere: 'inconnue' }, ['ce1']).matiere === 'maths' && lireEtatProgramme({ matiere: 'regionale' }, ['ce1']).domaine === 'regionale-oral',
+    'une matière inconnue : maths ; la langue régionale a ses domaines (de la maternelle au CE1)')
   verifier(lireEtatProgramme({ matiere: 'francais', domaine: 'nombres-calcul' }, ['ce1']).domaine === 'lecture', 'un domaine d’une autre matière : le premier de la matière')
   verifier(lireEtatProgramme({ domaine: 'donnees' }, ['ps']).domaine === 'nombres-calcul', 'un domaine absent des cycles de la classe : le premier')
   verifier(lireEtatProgramme({ affichage: 'x', matiere: ['monde', 'maths'] }, ['cm1']).affichage === null && lireEtatProgramme({ matiere: ['monde', 'maths'] }, ['cm1']).matiere === 'monde', 'valeurs invalides ou multiples : sans exception')

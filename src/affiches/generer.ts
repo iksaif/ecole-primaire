@@ -35,7 +35,20 @@ export function genererAffiche<R extends object>({ definition, rendu, textes }: 
   return cadreAffiche({
     ...m, format: r.format, orientation: r.orientation, polices: { script: unique ?? POLICE_BASE },
     titreDocument: r.titre || Tde(r.langue)(cleVariante(r.variante, 'titre')),
-    pages: pages.map(p => (typeof p === 'string' ? { titre, corps: p } : { titre: p.titre === undefined ? titre : (p.titre ?? undefined), corps: p.corps })),
+    pages: pages.map(p => {
+      const titrePage = typeof p === 'string' || p.titre === undefined ? titre : (p.titre ?? undefined)
+      const corps = typeof p === 'string' ? p : p.corps
+      // le titre tient sur une ligne : sa taille baisse quand il est trop long (deux langues sur la feuille, titre de l'élève)
+      return { titre: titrePage, corps, ratioTitre: titrePage ? ratioQuiTient(titrePage, m.W, m.hTitre, mesure) : undefined }
+    }),
     css: `h1 { font-family: ${POLICE_SCOLAIRE}; }\n  ${rendu.css}`,
   })
+}
+
+/** La taille du titre (en part de sa hauteur) : 0,62 d'ordinaire, moins s'il faut pour tenir dans 95 % de la largeur (en gras, police de base). */
+function ratioQuiTient(titre: string, largeur: number, hTitre: number, mesure: Mesure): number {
+  const RATIO = 0.62
+  const enCorps = mesure.largeur(titre, POLICE_BASE, true)   // largeur pour un corps de 1
+  if (!enCorps) return RATIO
+  return Math.min(RATIO, (largeur * 0.95) / enCorps / hTitre)
 }

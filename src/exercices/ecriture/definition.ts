@@ -6,7 +6,7 @@
 // données de la langue. Les fiches publiées (publiees.ts) servent souvent plusieurs classes (« GS · CP · CE1 ») et n'existent que
 // dans leur langue : `classes` et `langues` des fiches.
 import { definir, cases, choix } from '../../noyau/definir.ts'
-import type { FicheExercice } from '../../noyau/types.ts'
+import type { Classe, CompetenceId, FicheExercice } from '../../noyau/types.ts'
 import { K, D } from '../../noyau/ids.ts'
 import { CONTENUS, INTERLIGNES, NB_LIGNES, TOUS_STYLES, TOUTES_LETTRES } from './donnees.ts'
 import type { ReglagesEcriture } from './donnees.ts'
@@ -15,10 +15,20 @@ import { FICHES_PUBLIEES } from './publiees.ts'
 /** Le lignage proposé d'abord dans une classe (en mm d'interligne). */
 const lignage = (defaut: (typeof INTERLIGNES)[number]) => ({ reglages: { interligne: choix(INTERLIGNES, { defaut }) } })
 
-// la compétence principale d'une fiche publiée : celle de sa première classe (le geste d'écriture en GS, la cursive ensuite)
+/** Les compétences d'écriture d'une fiche pour ses classes : le geste d'écriture en GS, la cursive et la copie du CP au CE2. */
+function competencesEcriture(classes: readonly Classe[]): CompetenceId[] {
+  const enMaternelle = classes.includes('gs')
+  const enElementaire = classes.some(c => c === 'cp' || c === 'ce1' || c === 'ce2')
+  return [...(enMaternelle ? [K.gesteEcritureMaternelle] : []), ...(enElementaire ? [K.cursive, K.copie] : [])]
+}
+
+// une fiche publiée : sa compétence principale est celle de sa première classe (le geste d'écriture en GS, la cursive ensuite) ; une
+// fiche régionale travaille en plus une compétence de la langue (son alphabet, ses jours et mois, ses nombres), qu'une fiche
+// française ne travaille pas : d'où des compétences explicites
 const fiches: FicheExercice<ReglagesEcriture>[] = FICHES_PUBLIEES.map(f => ({
   id: f.id, slug: f.slug, niveau: f.classes[0], classes: f.classes, langues: [f.langue],
   competence: f.classes[0] === 'gs' ? K.gesteEcritureMaternelle : K.cursive,
+  competences: [...competencesEcriture(f.classes), ...(f.competenceRegionale ? [f.competenceRegionale] : [])],
   reglages: f.reglages,
 }))
 
@@ -31,7 +41,9 @@ export default definir({
   aleatoire: false,
   bilanParClasse: false,
   corrige: false,
-  competences: [K.gesteEcritureMaternelle, K.cursive, K.copie],
+  // dans la langue régionale, les fiches de son alphabet, de ses jours et mois, de ses nombres (publiees.ts)
+  autresDomaines: [D.regionaleSons, D.regionaleMots],
+  competences: [K.gesteEcritureMaternelle, K.cursive, K.copie, K.alphabetLangueRegionale, K.nombresLangueRegionale, K.calendrierLangueRegionale],
   niveauDefaut: 'cp',
   reglages: {
     styles: cases(TOUS_STYLES, { defaut: ['attache-min'] }),

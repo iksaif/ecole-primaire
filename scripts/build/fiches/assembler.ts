@@ -1,12 +1,12 @@
 // Des fiches rendues aux données publiées : l'index et une entrée par fiche. Pur (aucune entrée-sortie, aucun navigateur) :
 // testé par tests/fiches-ecriture.test.mjs avec de fausses fiches rendues.
 import { NIVEAUX } from '../../../src/data/classes.ts'
-import { DOMAINES, DOMAINES_EXEMPLE, MATIERES, domaineDe, lienProgramme, nomOfficiel } from '../../../src/data/programme.ts'
-import { CODES, LANGUES, LANGUE_SOURCE } from '../../../src/langues/registre.ts'
+import { DOMAINES, DOMAINES_EXEMPLE, MATIERES, competenceDe, domaineDe, lienProgramme, nomOfficiel } from '../../../src/data/programme.ts'
+import { CODES, LANGUES, LANGUE_SOURCE, estLangue, estRegionale } from '../../../src/langues/registre.ts'
 import { traduire } from '../../../src/langues/traduire.ts'
 import { texteDeRecherche } from '../../../src/telechargements/recherche.ts'
 import { USAGES, VERSION_SCHEMA, usageDe } from '../../../src/telechargements/types.ts'
-import type { Classe, DomaineDeFiche, DomaineId, Entree, EntreeIndex, IndexFiches, LienProgramme, Texte } from '../../../src/telechargements/types.ts'
+import type { Classe, DomaineDeFiche, DomaineId, Entree, EntreeIndex, IndexFiches, LienProgramme, Matiere, Texte } from '../../../src/telechargements/types.ts'
 import type { FicheRendue } from './types.ts'
 
 const NB_VOISINES = 8
@@ -41,6 +41,16 @@ function domaineDeFiche(id: DomaineId | null, classes: readonly Classe[]): Domai
   return { id, nom: { [LANGUE_SOURCE]: d.court, ...autres } as Texte, matiere: d.matiere, rang: rangDomaine(id), programme: liensProgramme(id, classes) }
 }
 
+/**
+ * Les matières d'une fiche : celle de son domaine, et la langue régionale quand la fiche est dans une langue régionale et travaille une
+ * compétence de cette matière (src/data/programme.ts).
+ */
+function matieresDe(principale: Matiere, competences: readonly string[], langues: readonly string[]): Matiere[] {
+  const dansUneLangueRegionale = langues.some(l => estLangue(l) && estRegionale(l))
+  const travailleLaLangue = competences.some(k => domaineDe(competenceDe(k)?.domaine ?? '')?.matiere === 'regionale')
+  return dansUneLangueRegionale && travailleLaLangue && principale !== 'regionale' ? [principale, 'regionale'] : [principale]
+}
+
 /** Entrées voisines : celles du même bilan, sinon la même famille (autres classes), puis le même domaine et usage. */
 function voisinesDe(e: EntreeIndex, famille: Map<string, string>, tous: readonly EntreeIndex[]): string[] {
   const autres = tous.filter(x => x.slug !== e.slug && x.langues.join() === e.langues.join())
@@ -54,7 +64,7 @@ function voisinesDe(e: EntreeIndex, famille: Map<string, string>, tous: readonly
 /** Ce que l'index garde d'une entrée (liste explicite : un champ de plus dans EntreeIndex ne compile pas sans être ajouté ici). */
 const enEntreeIndex = (e: Entree): EntreeIndex => ({
   slug: e.slug, titre: e.titre, titreCourt: e.titreCourt, description: e.description, niveaux: e.niveaux, domaine: e.domaine,
-  genre: e.genre, usage: e.usage, langues: e.langues, nbPages: e.nbPages, nbVariantes: e.nbVariantes, taillePdf: e.taillePdf,
+  matieres: e.matieres, genre: e.genre, usage: e.usage, langues: e.langues, nbPages: e.nbPages, nbVariantes: e.nbVariantes, taillePdf: e.taillePdf,
   miniature: e.miniature, parent: e.parent, personnaliser: e.personnaliser, exemple: e.exemple, recherche: e.recherche,
 })
 
@@ -67,6 +77,7 @@ export function assembler(rendues: readonly FicheRendue[], { site, genereLe }: {
     const { famille, ...publie } = meta
     const entree: Entree = {
       ...publie,
+      matieres: matieresDe(domaine.matiere, meta.competences.map(k => k.id), meta.langues),
       usage: usageDe(meta.genre),
       nbPages: premier.nbPages, nbVariantes: r.variantes.length, taillePdf: premier.taille, miniature: r.miniature,
       variantes: r.variantes, voisines: [],

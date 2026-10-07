@@ -28,7 +28,8 @@ const definition = definirAffiche({
   // la carte du catalogue (l'emoji de l'ancienne entrée « Affiche de l'alphabet », src/data/activites.js)
   emoji: '🔤',
   // la cursive est une compétence d'écriture, les accents une compétence de vocabulaire (programme.ts)
-  autresDomaines: [D.ecriture, D.vocabulaire],
+  // l'alphabet de la langue régionale (dans cette langue, la même affiche montre son alphabet : src/langues/<langue>/donnees.ts)
+  autresDomaines: [D.ecriture, D.vocabulaire, D.regionaleSons],
   // une ou plusieurs langues sur la feuille ; l'alphabet de chaque langue est le sien (src/langues/<langue>/donnees.ts)
   langues: CODES,
   bilingue: true,
@@ -39,7 +40,7 @@ const definition = definirAffiche({
   // le mot illustré et le titre sont en script ; l'attaché a sa police, avec son lignage facultatif
   police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
   // chaque variante garde celles qui sont au programme de TOUTES ses classes
-  competences: [K.nomLettres, K.cursive, K.accentsLettres],
+  competences: [K.nomLettres, K.cursive, K.accentsLettres, K.alphabetLangueRegionale],
   reglages: {
     serie: choix(SERIES),
     disposition: choix(DISPOSITIONS),

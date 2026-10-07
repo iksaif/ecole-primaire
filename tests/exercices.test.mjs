@@ -53,7 +53,9 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
       const k = competenceDe(id)
       if (!k) pbs.push(`${n} : compétence ${id} inconnue de programme.js`)
       else if (!k.niveaux.includes(n) && !declarees.includes(id)) pbs.push(`${n} : ${id} n'est pas au programme (ni déclarée horsProgramme)`)
-      // même matière suffit : Orthographe (vocabulaire) travaille aussi les accords (grammaire)
+      // même matière suffit : Orthographe (vocabulaire) travaille aussi les accords (grammaire) ; une compétence de la langue régionale
+      // (son alphabet, ses nombres) est permise à un exercice dont le contenu suit la langue : dans cette langue, il la travaille
+      else if (k && domaineDe(k.domaine)?.matiere === 'regionale') { if (d.contenu === 'fr') pbs.push(`${n} : ${id} (langue régionale) pour un exercice toujours en français`) }
       else if (k && domaineDe(k.domaine)?.matiere !== domaineDe(d.domaine)?.matiere) pbs.push(`${n} : ${id} est du domaine ${k.domaine}`)
     }
     for (const h of niv.horsProgramme ?? []) {

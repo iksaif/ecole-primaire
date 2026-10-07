@@ -12,16 +12,18 @@
 </template>
 
 <script setup lang="ts">
-// Page de la langue régionale : après ses activités propres, celles des autres matières qui existent dans cette langue (l'heure, les
-// nombres, l'écriture…), rangées par matière ; chacune s'ouvre dans la langue (CarteRessource `langue-contenu`).
+// Page de la langue régionale : après ses domaines (ce qui travaille une compétence de la langue), les autres matières qui existent dans
+// cette langue (en classe bilingue, les maths et le monde s'apprennent aussi dans la langue), rangées par matière ; chacune s'ouvre dans
+// la langue (CarteRessource `langue-contenu`).
 import { computed, useId } from 'vue'
 import type { Vue } from '../contexte/types.ts'
 import { LANGUES } from '../langues/registre.ts'
 import type { Langue } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { filtrerParClasses } from '../ressources/filtres.ts'
+import { competenceDe, domaineDe } from '../data/programme.ts'
 import { useRessources } from '../ressources/useRessources.ts'
-import type { Classe } from '../ressources/types.ts'
+import type { Classe, RessourceDeContenu } from '../ressources/types.ts'
 import CarteRessource from '../ressources/composants/CarteRessource.vue'
 import IconeMatiere from '../shell/IconeMatiere.vue'
 import { MATIERES_PAGE, NOM_COURT } from './matieres.ts'
@@ -31,10 +33,13 @@ const { t, langueAffichee } = useLangue()
 const { catalogue } = useRessources()
 const id = useId()
 const nom = computed(() => LANGUES[props.langue].nom[langueAffichee.value])
+/** Déjà rangée dans un domaine de la langue régionale (elle en travaille une compétence) : pas répétée ici. */
+const travailleLaLangue = (r: RessourceDeContenu): boolean =>
+  r.competences.some(k => domaineDe(competenceDe(k)?.domaine ?? '')?.matiere === 'regionale')
 
 // les ressources personnalisables (pas les fiches toutes prêtes) des pages de matière, dans la langue, pour les classes choisies
 const groupes = computed(() => {
-  const dansLaLangue = catalogue.value.filter(r => r.type !== 'fiche' && r.langues.includes(props.langue))
+  const dansLaLangue = catalogue.value.filter(r => r.type !== 'fiche' && r.langues.includes(props.langue) && !travailleLaLangue(r))
   const choisies = filtrerParClasses(dansLaLangue, props.classes)
   return MATIERES_PAGE.map(matiere => ({ matiere, ressources: choisies.filter(r => r.matiere === matiere) })).filter(g => g.ressources.length)
 })

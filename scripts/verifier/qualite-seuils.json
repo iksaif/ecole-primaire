@@ -8,11 +8,12 @@
     "attentesFixes": 2,
     "erreursDeType": 0,
     "importeursAncienSocle": 28,
-    "ancienMondeNonReporte": 93
+    "ancienMondeNonReporte": 93,
+    "textesRepetes": 145
   },
   "min": {
     "couverture": 57.8,
     "exercicesMigres": 26,
-    "couvertureMonde": 23.2
+    "couvertureMonde": 25.5
   }
 }

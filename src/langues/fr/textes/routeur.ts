@@ -16,6 +16,7 @@ export default {
     fichesMaths: 'Fiches de mathématiques toutes prêtes',
     fichesFrancais: 'Fiches de français toutes prêtes',
     fichesMonde: 'Fiches sur le monde toutes prêtes',
+    fichesRegionale: 'Fiches toutes prêtes de la langue régionale',
     fiche: 'Fiche à imprimer',
     programme: 'Le programme',
     competence: 'Compétence du programme',

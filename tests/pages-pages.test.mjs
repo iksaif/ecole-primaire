@@ -214,13 +214,11 @@ console.log('Production : état vide, domaines « à venir »')
 {
   const { ctx, page, erreurs } = await ouvrir()
   // les maths ne sont plus vides : le calcul mental, premier exercice reporté, est au CP, au CE1, au CE2, au CM1 et au CM2 (voir plus bas) ;
-  // Le Monde non plus à partir du CP (le quiz) : son état vide se voit en maternelle
-  for (const [route, domaine, classe] of [['/monde', 'vivant', 'gs']]) {
-    await aller(page, app(`${route}?classes=${classe}`))
-    await page.waitForSelector('.vide')
-    verifier(await page.locator('.carte, .ligne').count() === 0 && await page.locator('.a-venir [data-domaine]').count() > 0, `${route} : état vide expliqué et domaines du programme à venir`)
-    verifier(await page.locator(`.a-venir [data-domaine="${domaine}"]`).count() === 1 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0, `${route} : « ${domaine} » à venir, aucun domaine inventé`)
-  }
+  // Le Monde non plus : le quiz à partir du CP, les affiches des jours et des mois en maternelle (« Se repérer dans le temps et l'espace »)
+  await aller(page, app('/monde?classes=gs'))
+  await page.waitForSelector('[data-ressource="affiche:jours"]')
+  verifier(await page.locator('.groupe[data-domaine="temps-espace"] [data-ressource="affiche:jours"]').count() === 1 && await page.locator('.a-venir [data-domaine="vivant"]').count() === 1 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0,
+    '/monde en GS : les jours dans « Se repérer dans le temps et l’espace », « vivant » à venir, aucun domaine inventé')
   // le français n'est plus vide en maternelle et au CP : l'affiche de l'alphabet (première affiche reportée) est en lecture
   await aller(page, app('/francais?classes=cp'))
   await page.waitForSelector('[data-ressource="affiche:alphabet"]')
@@ -240,7 +238,7 @@ console.log('Production : état vide, domaines « à venir »')
   verifier(await page.locator('[data-ressource="exercice:calcul-mental"]').count() === 0 && await page.locator('[data-ressource="exercice:compter"]').count() === 1,
     '/maths à la MS : le calcul mental est hors classe, les exercices de maternelle (compter) sont là')
   await aller(page, app('/monde?classes=ps'))
-  await page.waitForSelector('.vide')
+  await page.waitForSelector('.a-venir')
   const cycle1 = await page.locator('.a-venir [data-domaine]').count()
   // au CM2, le quiz est là (« plusieurs domaines ») et les domaines du programme restent à venir
   await aller(page, app('/monde?classes=cm2'))
@@ -271,9 +269,10 @@ console.log('Page de la langue régionale')
   verifier(await page.evaluate(() => localStorage.getItem('ep_mode')) === '"bilingue"', 'le bouton active français + langue')
   verifier(await page.locator('[data-page="langue-regionale"]').getAttribute('lang') !== null, 'attribut lang de la langue')
   verifier(await page.locator('.lettre, .mot, .nombres').count() === 0, 'plus d’alphabet, de nombres ni de mots en pleine page (ce seront des affiches et des fiches)')
-  verifier(await page.locator('.fiches-pretes').count() === 0, 'pas d’encart « fiches toutes prêtes » : la langue n’a pas de sous-page de fiches')
-  await page.locator('.vide h2').waitFor()
-  verifier(/affiches et les fiches arrivent/.test(await page.locator('.vide h2').textContent()), 'le programme de la langue n’a pas de domaine : état honnête « les affiches et fiches arrivent »')
+  verifier((await page.locator('.fiches-pretes a').getAttribute('href') ?? '').endsWith('/brezhoneg/fiches'), 'encart « fiches toutes prêtes » vers la sous-page de la langue (/brezhoneg/fiches)')
+  await page.locator('[data-domaine="regionale-oral"]').first().waitFor()
+  verifier(await page.locator('[data-domaine="regionale-oral"]').count() >= 1 && await page.locator('.a-venir [data-domaine="regionale-culture"]').count() === 1,
+    'la langue a ses domaines (programme de langues vivantes, repères de Rennes) : « comprendre et parler » présent, « comptines » à venir')
   verifier(await page.locator('.barre .toutes').count() === 1, 'comme une matière : barre de classe et « Toutes les classes »')
   await verifierAxe(page, 'brezhoneg actif (fr, 1280)', sansShell)
   await page.goto(app('/brezhoneg?mode=reg')); await pret(page)

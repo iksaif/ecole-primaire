@@ -27,6 +27,8 @@ import { D, K } from '../src/noyau/ids.ts'
 import { creerRng } from '../src/utils/hasard.ts'
 import { empreinte, racine, lireInstantanes, ecrireInstantanes, fichierInstantanes } from './outils-instantanes.mjs'
 import { verifier, nbEchecs } from './outils.mjs'
+import { lireFeuille } from '../src/langues/traduire.ts'
+import { LANGUES } from '../src/langues/registre.ts'
 
 const MODULES = [...REGISTRE, ...EXEMPLES]
 const module_riche = EXEMPLES.find(m => m.definition.id === 'exemple-riche')
@@ -110,14 +112,16 @@ for (const module of MODULES) {
     for (const cle of Object.keys(optionsDe(d, v))) {
       if (v.horsProgramme?.some(h => 'reglage' in h && h.reglage === cle && h.option === defauts[cle]) || v.bonus?.[cle]?.includes(defauts[cle])) pbs.push(`${vid} : ${cle} par défaut hors programme`)
     }
-    // textes : chaque clé existe dans chaque langue (sinon la lecture retombe sur le français ou sur la clé elle-même)
+    // textes : chaque clé existe dans chaque langue, dans l'affiche ou dans les mots communs (`communs` des textes d'interface, où
+    // traducteurAffiche se rabat) ; sinon la lecture retombe sur le français ou sur la clé elle-même
+    const present = (c, langue) => c in (textes[langue] ?? {}) || typeof lireFeuille(LANGUES[langue].textes, `communs.${c}`) === 'string'
     for (const langue of d.langues) {
       const cles = ['titre', cleVariante(vid, 'court'), cleVariante(vid, 'titre'), cleVariante(vid, 'description'),
         ...Object.entries(optionsDe(d, v)).flatMap(([c, valeurs]) => [cleReglage(c), ...valeurs.map(x => cleValeur(c, x))]),
         ...Object.keys(champsDe(d, v)).map(cleReglage), ...Object.keys(d.prereglages).map(clePrereglage),
         ...(d.formulaire.groupes ?? []).map(g => cleGroupe(g.id)),
         ...(d.police.mode === 'parType' ? d.police.types.map(clePolice) : [])]
-      for (const c of cles) if (!(c in (textes[langue] ?? {}))) pbs.push(`texte « ${c} » manquant en ${langue}`)
+      for (const c of cles) if (!present(c, langue)) pbs.push(`texte « ${c} » manquant en ${langue}`)
     }
   }
   controler(pbs, 'définition valide, compétences au programme des classes, textes présents')
@@ -199,7 +203,9 @@ for (const module of MODULES) {
   const choisies = Object.fromEntries(types.map((t, i) => [t, `Police${i}`]))
   const html = genererAffiche(module, { polices: choisies }).html
   if (d.police.mode === 'unique' && !html.includes("font-family: 'Police0'")) fpbs.push('police unique non appliquée')
-  if (d.police.mode === 'parType') for (const t of types) if (!html.includes(`'${choisies[t]}'`)) fpbs.push(`police ${t} non appliquée`)
+  // par type : seulement les types que les réglages par défaut montrent (l'attaché des jours n'apparaît qu'avec « script et attaché »)
+  const visibles = typesDePoliceVisibles(d, reglagesDe(d, { polices: choisies }))
+  if (d.police.mode === 'parType') for (const t of visibles) if (!html.includes(`'${choisies[t]}'`)) fpbs.push(`police ${t} non appliquée`)
   controler(dpbs, 'dessin déterministe, au moins une page, nombre de pages cohérent, @page au bon format, graine seulement si hasard')
   controler(hpbs, 'rien ne dépasse de la zone, marge du cadre (chaque page × variante × réglage × format × orientation × langues)')
   controler(fpbs, 'titre échappé et dans la police de base, polices choisies appliquées')

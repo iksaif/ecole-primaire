@@ -3,6 +3,7 @@ import type { Compteur } from './compteur.ts'
 import { compteursApp } from './app.ts'
 import { compteursImports } from './imports.ts'
 import { compteursTexte } from './texte.ts'
+import { compteursRepetes } from './repetes.ts'
 
 const t = compteursTexte, i = compteursImports, a = compteursApp
 
@@ -19,4 +20,5 @@ export const COMPTEURS: Record<string, Compteur> = {
   couverture: a.couverture,
   couvertureMonde: a.couvertureMonde,
   exercicesMigres: a.exercicesMigres,
+  textesRepetes: compteursRepetes.textesRepetes,
 }

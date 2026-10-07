@@ -17,6 +17,9 @@ les colonnes. Chaque fichier a une section « Page N » par page du PDF : ce son
 | `c2histgeo.md`, `c3histgeo.md` | Programmes d'histoire-géographie des cycles 2 et 3 (annexes 3 et 4 de l'arrêté du 22 avril 2026, BO n° 22 du 28 mai 2026) : même calendrier d'application |
 | `emc.md` | Programme d'enseignement moral et civique du CP à la terminale (annexe de l'arrêté du 29 mai 2024, BO n° 24 du 13 juin 2024) ; seul le primaire est utilisé |
 | `exemplesCM1.md`, `exemplesCM2.md`, `exemples6e.md` | Exemples de réussite en français (Éduscol, 2025) |
+| `lvc2.md` | Programme de langues vivantes étrangères et régionales du cycle 2 (annexe 1, BO n° 12 du 19 mars 2026) : CP à la rentrée 2026, CE1 et CE2 en 2027 ; colonne « parcours bilingues » |
+| `bretonA1.md` | Breton A1, « Cycle 1 bilingue / Cycle 2 », repères de progressivité linguistique (académie de Rennes, 26/10/2024) : document académique, pas un BO ; seule source sur la maternelle bilingue |
+| `bretonCP.md` | Breton A1, évaluation diagnostique d'entrée en CP bilingue (académie de Rennes, 03/05/2026) : le texte seulement (illustrations TES/Canopé non reprises) |
 
 Les adresses des PDF sont dans `SOURCES` (`src/data/programme.ts`) et en tête de chaque fichier. Ce sont des textes
 officiels publiés par le ministère de l'Éducation nationale ; ils sont repris ici tels quels, pour référence.

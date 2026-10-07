@@ -22,4 +22,8 @@ export default {
   histoire: 'Histoire',
   geographie: 'Géographie',
   emc: 'Enseignement moral et civique',
+  'regionale-oral': 'Comprendre et parler',
+  'regionale-mots': 'Les mots du quotidien',
+  'regionale-sons': 'Les sons et les lettres',
+  'regionale-culture': 'Comptines, chansons et contes',
 } as const

@@ -22,7 +22,9 @@ const definition = definirAffiche({
   formats: ['A4', 'A3'],
   marge: 10,
   hTitre: 14,
-  competences: [K.nombresEnLettres],
+  // dans la langue régionale, les nombres de cette langue (18, 20/40/60/80 en breton : src/langues/<langue>/nombres.ts)
+  autresDomaines: [D.regionaleMots],
+  competences: [K.nombresEnLettres, K.nombresLangueRegionale],
   reglages: {
     sections: cases(SECTIONS, { defaut: [...CINQ.slice(0, 4)] }),
     miseEnPage: choix(['affiches', 'fiche']),

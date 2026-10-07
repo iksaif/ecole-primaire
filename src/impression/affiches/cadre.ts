@@ -26,17 +26,18 @@ export const pageAffiche = ({ marge, hTitre, titre, corps, style = '', ratioTitr
   `<div class="contenu" style="inset:${marge}mm${style}">${titre
     ? `<h1 style="height:${hTitre}mm;font-size:${hTitre * ratioTitre}mm">${echapper(titre)}</h1>` : ''}${corps}</div>`
 
-// Le document complet. corps : une page sous le titre ; pages : [{ titre, corps, style }] pour plusieurs pages.
+// Le document complet. corps : une page sous le titre ; pages : [{ titre, corps, style, ratioTitre }] pour plusieurs pages (ratioTitre :
+// la taille du titre de cette page, en part de sa hauteur ; défaut : celui du document).
 // titreDocument : titre du fichier (par défaut, celui de l'affiche).
 // centrer : contenu centré horizontalement et titre centré dans sa hauteur (affiches du programme, tables).
 // polices = { script } : police du texte (déjà chargée).
 export function cadreAffiche({ titre, titreDocument = titre, format, orientation, marge, hTitre, corps, pages,
   css = '', polices, centrer = true, ratioTitre = 0.62 }: {
   titre?: string, titreDocument?: string, format: string, orientation: string, marge: number, hTitre: number,
-  corps?: string, pages?: { titre?: string, corps: string, style?: string }[], css?: string,
+  corps?: string, pages?: { titre?: string, corps: string, style?: string, ratioTitre?: number }[], css?: string,
   polices?: { script?: string }, centrer?: boolean, ratioTitre?: number
 }): { html: string, nbPages: number, format: string, orientation: string } {
-  const liste = (pages ?? [{ titre, corps: corps ?? '' }]).map(p => pageAffiche({ marge, hTitre, ratioTitre, ...p }))
+  const liste = (pages ?? [{ titre, corps: corps ?? '' }]).map(p => pageAffiche({ marge, hTitre, ...p, ratioTitre: p.ratioTitre ?? ratioTitre }))
   const html = documentImpression({
     titre: titreDocument ?? '', format, orientation, pages: liste,
     css: `${polices?.script ? `body { font-family: '${polices.script}', Arial, sans-serif; }\n  ` : ''}.contenu { position: absolute; display: flex; flex-direction: column; }

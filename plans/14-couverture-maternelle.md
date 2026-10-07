@@ -132,7 +132,9 @@ lots C et D, une journée chacun ; lot F, une journée ; E et G, une demi-journ�
 3. **Monde en breton** : les affiches du lot A en bilingue (vocabulaire du corps, des sens, des saisons : à vérifier dans le Meurgorf
    avant publication, sinon `// br: à relire`). *Reco* : oui, c'est ce qui manque le plus sur skoolik en maternelle.
 4. **Variante MS-GS de l'affiche des unités** (lot D4) : 0 à 5 en MS, 0 à 10 en GS ? avec ou sans le mot écrit ?
-5. **Compléter `programme.ts`** avant de coder (relevés des plans 10, toujours ouverts) : le rang (MS, GS), les habiletés phonologiques
-   au-delà des syllabes (GS), le libellé de `son-lettres`, l'oral de cycle 1 (`categories-mots` est seule). *Reco* : oui pour le rang
-   et la phonologie, avec la source exacte (BO n° 41 et n° 19, `docs/programmes/`).
+5. ~~**Compléter `programme.ts`**~~ fait le 2026-10-07 : `rang-maternelle` (MS ≤ 6, GS ≤ 10 ; BO 41 p. 64-65), `phonemes-maternelle`
+   (GS : rimes, assonances, phonèmes ; c1consolide p. 15), `son-lettres` dès la MS (BO 41 p. 52 : quelques lettres ; libellé précisé :
+   lettres qu'on peut prolonger en GS), `vocabulaire-maternelle` (PS-GS, corpus de mots ; BO 41 p. 47 : sert les affiches du lot A et
+   les imagiers). Nouvelles cases vides à couvrir : rang (lot D, « le premier, le dernier » sur une file d'animaux), phonèmes et son des
+   lettres en MS (lot F), vocabulaire (lots A et B).
 6. **Fiches en PS** : *reco* : seulement du matériel à découper et du graphisme, pas de fiche « à remplir ».

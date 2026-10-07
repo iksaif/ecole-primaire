@@ -9,13 +9,14 @@ export const TEXTES: TextesAffiche = {
     'titre.fiche': 'Les nombres',
     'section.deA': 'De {de} à {a}',
     'section.unites': 'Les unités',
+    'section.jusqua10': 'De 0 à 10',
     'section.dizaines': 'Les dizaines',
     'section.centaines': 'Les centaines',
     'section.milliers': 'Les milliers',
     'section.cent': 'Les nombres de 0 à 100',
-    'variante.unites.court': 'Unités (0 à 9)',
-    'variante.unites.titre': 'Les nombres de 0 à 9 en lettres',
-    'variante.unites.description': 'Affiche des unités : les nombres de 0 à 9 en chiffres, en lettres et en points, en français, en breton (brezhoneg : unan, daou, tri… nav) ou les deux. Une petite série facile à lire au mur.',
+    'variante.unites.court': 'Unités (0 à 10)',
+    'variante.unites.titre': 'Les nombres de 0 à 10 en lettres',
+    'variante.unites.description': 'Affiche des unités : les nombres de 0 à 10 en chiffres, en lettres et en points, en français, en breton (brezhoneg : unan, daou, tri… dek) ou les deux. Une petite série facile à lire au mur.',
     'variante.dizaines.court': 'Dizaines (10 à 100)',
     'variante.dizaines.titre': 'Les dizaines en lettres, de 10 à 100',
     'variante.dizaines.description': 'Affiche des dizaines : 10, 20, 30… 100 en chiffres, en lettres et en barres de dix, en français, en breton (brezhoneg, qui compte par vingt : ugent, daou-ugent, tri-ugent, pevar-ugent) ou les deux.',
@@ -62,6 +63,7 @@ export const TEXTES: TextesAffiche = {
     'reglage.representation': 'Représentation (points, barres, plaques)',
     'reglage.rectifiee': 'Orthographe rectifiée (français)',
     'valeur.sections.unites': 'Unités (0 → 9)',
+    'valeur.sections.jusqua10': 'De 0 à 10',
     'valeur.sections.onze': '10 → 20',
     'valeur.sections.dizaines': 'Dizaines (10 → 100)',
     'valeur.sections.centaines': 'Centaines (100 → 1000)',
@@ -89,13 +91,14 @@ export const TEXTES: TextesAffiche = {
     'titre.fiche': 'An niveroù', // br: à relire
     'section.deA': 'Eus {de} da {a}', // br: à relire
     'section.unites': 'Unanennoù', // br: à relire
+    'section.jusqua10': 'Eus 0 da 10', // br: à relire
     'section.dizaines': 'Degadoù', // br: à relire
     'section.centaines': 'Kantadoù', // br: à relire
     'section.milliers': 'Miliadoù', // br: à relire
     'section.cent': 'An niveroù eus 0 da 100', // br: à relire
-    'variante.unites.court': 'Unanennoù (0 da 9)', // br: à relire
-    'variante.unites.titre': 'An niveroù eus 0 da 9 e lizherennoù', // br: à relire
-    'variante.unites.description': 'Skritell an unanennoù : an niveroù eus 0 da 9 e sifroù, e lizherennoù hag e poentoù, e galleg, e brezhoneg pe an daou. Ur steudad vihan aes da lenn war ar voger.', // br: à relire
+    'variante.unites.court': 'Unanennoù (0 da 10)', // br: à relire
+    'variante.unites.titre': 'An niveroù eus 0 da 10 e lizherennoù', // br: à relire
+    'variante.unites.description': 'Skritell an unanennoù : an niveroù eus 0 da 10 e sifroù, e lizherennoù hag e poentoù, e galleg, e brezhoneg pe an daou. Ur steudad vihan aes da lenn war ar voger.', // br: à relire
     'variante.dizaines.court': 'Degadoù (10 da 100)', // br: à relire
     'variante.dizaines.titre': 'An degadoù e lizherennoù, eus 10 da 100', // br: à relire
     'variante.dizaines.description': 'Skritell an degadoù : 10, 20, 30… 100 e sifroù, e lizherennoù hag e barrennoù dek, e galleg, e brezhoneg (a gont dre ugent : ugent, daou-ugent, tri-ugent, pevar-ugent) pe an daou.', // br: à relire
@@ -142,6 +145,7 @@ export const TEXTES: TextesAffiche = {
     'reglage.representation': 'Skeudenn (kubioù, barrennoù, plakennoù)', // br: à relire
     'reglage.rectifiee': 'Reizhskrivadur reizhet (galleg)', // br: à relire
     'valeur.sections.unites': 'Unanennoù (0 → 9)', // br: à relire
+    'valeur.sections.jusqua10': 'Eus 0 da 10', // br: à relire
     'valeur.sections.onze': '10 → 20', // br: à relire
     'valeur.sections.dizaines': 'Degadoù (10 → 100)', // br: à relire
     'valeur.sections.centaines': 'Kantadoù (100 → 1000)', // br: à relire

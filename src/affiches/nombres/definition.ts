@@ -55,7 +55,7 @@ const definition = definirAffiche({
   // une variante par fiche toute prête (slugs de `main`) ; écriture en lettres : jusqu'à 50 au CP, 100 dès le CE1
   variantes: {
     // petites séries, plus lisibles que le tableau de 0 à 100 : les unités (0 → 9), 10 → 20 (`dizaine-1`), les dizaines (10 → 100)
-    unites: { classes: ['cp', 'ce1'], slug: 'nombres-en-lettres-unites', reglages: { sections: une('unites') }, sauf: [K.nombresLangueRegionale] },
+    unites: { classes: ['cp', 'ce1'], slug: 'nombres-en-lettres-unites', reglages: { sections: une('jusqua10') }, sauf: [K.nombresLangueRegionale] },
     dizaines: { classes: ['ce1', 'ce2'], slug: 'nombres-en-lettres-dizaines-10-100', reglages: { sections: une('dizaines') }, horsProgramme: HORS_CE2_REGIONALE },
     cent: { classes: ['ce1', 'ce2'], slug: 'nombres-en-lettres-0-100', reglages: { sections: une('cent') }, horsProgramme: HORS_CE2_REGIONALE },
     'unites-milliers': { classes: ['ce2'], slug: 'nombres-en-lettres-dizaines-centaines', reglages: { sections: une(...CINQ) } },

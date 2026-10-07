@@ -45,6 +45,12 @@
     </section>
 
     <section class="bloc">
+      <h2>🧭 {{ t('assistant.revoir.titre') }}</h2>
+      <p class="aide">{{ t('assistant.revoir.aide') }}</p>
+      <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)">{{ t('assistant.revoir.bouton') }}</button>
+    </section>
+
+    <section class="bloc">
       <h2>🗑️ {{ t('reglages.remise.titre') }}</h2>
       <p class="aide">{{ t('reglages.remise.aide') }}</p>
       <button class="btn btn-danger" @click="toutReinitialiser">{{ t('reglages.remise.bouton') }}</button>
@@ -59,6 +65,7 @@
 // Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police,
 // voix et vitesse de la lecture à voix haute (ReglageVoix, mémorisés par useTTS).
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
 import ReglageVoix from '../noyau/ReglageVoix.vue'
@@ -70,8 +77,10 @@ import Drapeau from '../shell/Drapeau.vue'
 import IconeMatiere from '../shell/IconeMatiere.vue'
 import OptionsLangue from '../shell/OptionsLangue.vue'
 import OptionsProfil from '../shell/OptionsProfil.vue'
+import { revoirAssistant } from '../shell/assistant.ts'
 
 const { t, langue, langues } = useLangue()
+const router = useRouter()
 const regionale = useLangueRegionale()
 const { verrouillee, deverrouillerClasse } = useContexte()
 const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)

@@ -13,6 +13,11 @@
         <router-link :to="e.to">{{ t(e.titre) }}</router-link> — {{ t(e.description) }}
         <div class="fichiers">{{ e.fichiers }}</div>
       </li>
+      <!-- la visite guidée de la première visite, rouverte même si elle a déjà été vue -->
+      <li>
+        <button type="button" class="lien" @click="revoirAssistant(router)">{{ t('dev.assistantTitre') }}</button> — {{ t('dev.assistantDescription') }}
+        <div class="fichiers">src/shell/AssistantAccueil.vue, src/shell/assistant.ts</div>
+      </li>
     </ul>
 
     <h2>{{ t('dev.documentation') }}</h2>
@@ -34,7 +39,11 @@ import { competenceDe } from '../../data/programme.ts'
 import type { CleTexte } from '../../langues/traduire.ts'
 import { REGISTRE } from '../../exercices/index.ts'
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import type { ModuleAffiche } from '../../affiches/types.ts'
+import { revoirAssistant } from '../../shell/assistant.ts'
+
+const router = useRouter()
 
 // clés sans paramètre (celles de la page de couverture qui en ont ne sont pas listées ici)
 type CleDev = Exclude<Extract<CleTexte, `dev.${string}`>, 'dev.couvertureBase'>
@@ -74,5 +83,6 @@ const DOCS: { fichier: string, description: CleDev }[] = [
 .intro { color: var(--texte-doux); margin: -.5rem 0 1rem; }
 h2 { font-size: 1.1rem; margin: 1.5rem 0 .5rem; }
 .liste { padding-left: 1.2rem; line-height: 1.7; }
+.lien { border: none; background: none; padding: 0; font: inherit; color: var(--bleu-fort); text-decoration: underline; cursor: pointer; }
 .fichiers { font-size: .8rem; color: var(--texte-doux); font-family: monospace; }
 </style>

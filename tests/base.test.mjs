@@ -10,6 +10,12 @@ const PAGES = { '/': 'accueil', '/brezhoneg': 'langue-regionale', '/parametres':
 const attendre = (page, route) => page.waitForSelector(`[data-page="${PAGES[route]}"]`, { timeout: 10000 })
 const adresse = (base, route) => `${base}${route.replace(/^\//, '')}`
 const nav = await lancerNavigateur()
+/** Un appareil neuf (rien de mémorisé), sauf la visite guidée de la première visite, déjà vue (tests/assistant.test.mjs la teste). */
+async function appareilNeuf() {
+  const ctx = await nav.newContext()
+  await ctx.addInitScript(() => { try { localStorage.setItem('ep_assistant_vu', 'true') } catch {} })
+  return ctx
+}
 
 // langue de l'interface (attribut lang de <html>) et texte du logo
 const etat = page => page.evaluate(() => ({
@@ -41,7 +47,7 @@ for (const langue of ['fr', 'br']) {
 
 console.log('ecoleprimaire')
 {
-  const ctx = await nav.newContext()
+  const ctx = await appareilNeuf()
   const page = await ctx.newPage()
   await page.goto(URL_SITE)
   await page.waitForSelector('.nav')
@@ -68,7 +74,7 @@ console.log('ecoleprimaire')
 
 if (URL_SKOOLIK) {
   console.log('skoolik')
-  const ctx = await nav.newContext()
+  const ctx = await appareilNeuf()
   const page = await ctx.newPage()
   const erreurs = surveiller(page)
   await page.goto(URL_SKOOLIK)

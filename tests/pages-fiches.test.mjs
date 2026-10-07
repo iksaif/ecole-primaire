@@ -3,7 +3,7 @@
 // plusieurs, même fiche dans une autre langue, voisines sans filtre de classe, jeu lié), états absent / vide, axe à 360 et 1280 px.
 // Besoin : un site construit avec les fiches d'exemple (tests/lancer.mjs le fait ; en développement : `npm run fiches:dev`).
 //   TEST_URL=http://localhost:5173/ecole-primaire/ node tests/pages-fiches.test.mjs
-import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, appDev } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, appDev, titreQui } from './outils.mjs'
 import { verifierAxe } from './outils-axe.mjs'
 
 const nav = await lancerNavigateur()
@@ -24,6 +24,7 @@ console.log('Liste d\'une matière')
   await page.goto(app('/maths/fiches?classes=ce1'))
   await cartes(page).first().waitFor({ timeout: 10000 })
   verifier(await page.locator('h1').count() === 1 && /Fiches toutes prêtes — Maths/.test(await page.locator('h1').textContent()), 'un seul h1, avec la matière')
+  await titreQui(page, /^Fiches de mathématiques/).catch(() => {})
   verifier((await page.title()).startsWith('Fiches de mathématiques'), 'titre du document')
   const n = await cartes(page).count()
   verifier(/CE1/.test(await page.getByRole('status').filter({ hasText: /fiche/ }).first().textContent()), `compteur annoncé (${n} fiche(s) pour CE1)`)
@@ -97,6 +98,7 @@ console.log('Feuille ouverte à froid')
   await page.goto(app(`/telechargements/${SLUG}`))
   await pret(page)
   await page.locator('.apercu img').waitFor()
+  await titreQui(page, /^Suites de nombres/).catch(() => {})
   verifier(/Suites de nombres/.test(await page.locator('h1').textContent()) && (await page.title()).startsWith('Suites de nombres'), 'titre et titre du document')
   const fil = await page.locator('nav.fil li').allTextContents()
   verifier(fil.length === 4 && /Accueil/.test(fil[0]) && /Maths/.test(fil[1]) && /Fiches toutes prêtes/.test(fil[2]) && /Suites de nombres/.test(fil[3]), `fil d'Ariane : Accueil › Matière › Fiches toutes prêtes › titre (${fil.join(' › ')})`)

@@ -21,6 +21,7 @@
     "fiches:dev": "node scripts/build/fiches/commande.ts --mode developpement --avec-exemples --outDir public",
     "preview": "vite preview",
     "test": "node tests/lancer.mjs",
+    "test:complet": "node tests/lancer.mjs --complet",
     "instantanes": "node tests/instantanes.test.mjs",
     "i18n": "node scripts/verifier/i18n.ts",
     "i18n:relecture": "node scripts/verifier/i18n.ts --relecture",

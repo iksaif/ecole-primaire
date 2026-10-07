@@ -4,7 +4,7 @@
 // pied de page. La barre et le pied de page sont seuls analysés par axe (le contenu des pages a ses propres tests).
 //   TEST_URL=http://localhost:5173/ecole-primaire/ node tests/pages-shell.test.mjs
 import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app } from './outils.mjs'
-import { verifierAxe } from './outils-axe.mjs'
+import { verifierAxe, attendreFinDesTransitions } from './outils-axe.mjs'
 
 const URL_SKOOLIK = process.env.TEST_URL_SKOOLIK && process.env.TEST_URL_SKOOLIK.replace(/\/?$/, '/')
 const ENVELOPPE = { inclure: [['header.nav'], ['footer.pied']] }
@@ -65,6 +65,7 @@ console.log('Profils : entrées de la barre et nombre de classes')
   const { ctx, page } = await ouvrir({ largeur: 1280, route: '/maths' })
   const rubriques = () => page.locator('nav.rubriques a').allTextContents().then(l => l.map(t => t.trim()))
   verifier(!(await rubriques()).some(t => /Programme/.test(t)), 'parent : pas de « Programme » dans la barre')
+  await page.waitForSelector('nav.rubriques a.router-link-active')   // le lien actif suit la route : on n'en compte les liens qu'une fois posé
   verifier(await page.locator('nav.rubriques a.router-link-active').count() === 1, 'parent : un seul lien allumé (Maths) sur /maths')
   verifier((await page.locator('nav.rubriques a.router-link-active').textContent()).includes('Maths'), 'le lien actif est « Maths »')
   // parent : plusieurs classes possibles (plusieurs enfants) ; on part de CE1
@@ -119,6 +120,7 @@ console.log('Cadenas de la classe (enfant)')
   await page.locator('header.nav .nbtn.verrou').click()
   const appui = page.locator('.cadenas .appui')
   await appui.waitFor()
+  await attendreFinDesTransitions(page)   // la boîte se mesure une fois posée : en pleine animation d'entrée, la souris manquait le bouton (sous charge)
   const boite = await appui.boundingBox()
   verifier(!!boite && boite.width >= 44 && boite.height >= 44, 'le bouton de maintien fait au moins 44 px')
   const centre = { x: boite.x + boite.width / 2, y: boite.y + boite.height / 2 }
@@ -203,6 +205,7 @@ console.log('Modes de langue')
   await page.getByRole('button', { name: /^Langue :/ }).click()
   await page.getByRole('button', { name: /^Brezhoneg/ }).click()
   await page.waitForFunction(() => document.documentElement.lang.startsWith('br'))
+  await page.waitForFunction(t => document.title !== t, titreFr)   // le titre suit la langue après le rendu
   verifier(await page.title() !== titreFr, `langue régionale seule : titre en breton (« ${await page.title()} »)`)
   verifier((await onglets()).some(t => /Brezhoneg/i.test(t)), 'langue régionale seule : onglet Brezhoneg')
   const retour = page.locator('.nbtn.retour')
@@ -210,6 +213,7 @@ console.log('Modes de langue')
   await retour.click()
   await page.waitForFunction(() => document.documentElement.lang.startsWith('fr'))
   verifier(await page.locator('.nbtn.retour').count() === 0, '« Retour en français » : le mode français revient, le bouton disparaît')
+  await page.waitForFunction(t => document.title === t, titreFr)
   verifier(await page.title() === titreFr, 'retour : le titre est de nouveau en français')
   await ctx.close()
 }

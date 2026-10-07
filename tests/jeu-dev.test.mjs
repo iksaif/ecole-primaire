@@ -296,8 +296,11 @@ await page.waitForSelector('.feedback.ok')
 verifier(true, 'comparer : le bon signe est juste')
 await page.locator('.btn-quitter').click()
 await page.waitForSelector('.cadre-exercice')
+// « droite » d'abord, puis on décoche « comparer » : décocher le dernier type coché est refusé (il en faut toujours un), donc l'ordre
+// inverse laissait les DEUX cochés et la question tirée était parfois une comparaison, sans dessin (le .visuel svg n'arrivait jamais)
+await cliquer('types', 'droite')
 await cliquer('types', 'comparer')
-await cliquer('types', 'droite')   // il reste « droite graduée » : le dessin et la flèche
+verifier(JSON.stringify(await actifs('types')) === '["droite"]', 'il reste « droite graduée » seule : le dessin et la flèche')
 await page.locator('.actions .btn-primary').click()
 await page.waitForSelector('.visuel svg')
 verifier(await page.locator('.visuel svg polygon').count() === 1, 'droite graduée : une flèche sur la droite')

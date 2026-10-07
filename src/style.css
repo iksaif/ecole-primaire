@@ -102,13 +102,15 @@ body {
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity .15s, transform .1s;
+  transition: filter .15s, transform .1s;
 }
-.btn:hover   { opacity: .88; }
+/* survol : on assombrit (le contraste du texte blanc monte) au lieu d'éclaircir par l'opacité (il tombait sous 4,5:1 : color-contrast d'axe
+   quand la souris restait sur le bouton après un clic au même endroit) */
+.btn:hover   { filter: brightness(.92); }
 .btn:active  { transform: scale(.97); }
 .btn-primary { background: var(--bleu-fort); color: white; }
 .btn-success { background: var(--vert);   color: white; }
-.btn-danger  { background: var(--rouge);  color: white; }
+.btn-danger  { background: var(--rouge-texte);  color: white; }   /* --rouge (#e74c3c) n'atteint que 3,8:1 avec du blanc */
 .btn-warning { background: var(--orange); color: white; }
 .btn-ghost   { background: var(--gris-bg); color: var(--texte); border: 2px solid var(--gris-brd); }
 

@@ -2,7 +2,7 @@
 // <main> et focus à chaque changement de page, retour / avance du navigateur, contexte porté par l'adresse (prioritaire sur le réglage
 // mémorisé, sans le modifier, reporté de page en page). Le build de skoolik (TEST_URL_SKOOLIK) sert aux titres en breton.
 //   TEST_URL=http://localhost:5173/ecole-primaire/ node tests/navigation.test.mjs
-import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE } from './outils.mjs'
+import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, URL_SITE, titreQui } from './outils.mjs'
 
 const URL_SKOOLIK = process.env.TEST_URL_SKOOLIK && process.env.TEST_URL_SKOOLIK.replace(/\/?$/, '/')
 const BASE = new URL(URL_SITE).pathname
@@ -25,7 +25,7 @@ console.log('Adresses ouvertes à froid')
   for (const route of ROUTES) {
     await page.goto(adresse(URL_SITE, route))
     await pret(page)
-    const titre = await page.title()
+    const titre = await titreQui(page, / — École Primaire$/)
     titres.set(route, titre)
     const h1 = (await page.locator('main h1').first().textContent())?.trim()
     verifier(ou(page) === route && !!h1 && titre.endsWith(' — École Primaire'), `${route} : page affichée à froid, titre « ${titre} »`)
@@ -115,7 +115,7 @@ console.log('Contexte dans l’adresse')
   // mode=reg : interface dans la langue régionale (si le site la propose), sans toucher au réglage mémorisé de la langue
   await page.goto(adresse(URL_SITE, '/maths?mode=reg'))
   await pret(page)
-  verifier(await page.evaluate(() => document.documentElement.lang) === 'br' && (await page.title()).startsWith('Jedoniezh'), 'mode=reg : interface en breton (titre compris)')
+  verifier(await page.evaluate(() => document.documentElement.lang) === 'br' && (await titreQui(page, /^Jedoniezh/).catch(() => '')).startsWith('Jedoniezh'), 'mode=reg : interface en breton (titre compris)')
   verifier(await stocke(page, 'langue_interface') === '"fr"', 'mode=reg : le réglage de langue de l’interface n’est pas modifié')
   await page.goto(adresse(URL_SITE, '/maths'))
   await pret(page)
@@ -132,7 +132,7 @@ if (URL_SKOOLIK) {
   const erreurs = surveiller(page)
   await page.goto(adresse(URL_SKOOLIK, '/maths'))
   await page.waitForSelector('main#contenu h1')
-  const t = await page.title()
+  const t = await titreQui(page, /^Jedoniezh.* — Skoolik$/).catch(() => page.title())
   verifier(t.startsWith('Jedoniezh') && t.endsWith(' — Skoolik'), `titre en breton : « ${t} »`)
   await page.goto(`${URL_SKOOLIK}#/brezhoneg`)
   await page.waitForSelector('[data-page="langue-regionale"]')

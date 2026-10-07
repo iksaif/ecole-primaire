@@ -19,7 +19,7 @@ fichier, son mode d'emploi et son contrat. Tout nouveau module est en TypeScript
 
 | Script | À quoi il sert | Qui l'appelle | Quand |
 |---|---|---|---|
-| `build/fiches/commande.ts` | fiches PDF, vignettes et JSON (`fiches/index.json`), via Chrome sans interface | `npm run fiches`, `fiches:dev`, `build`, `build:<site>` ; `tests/lancer.mjs`, `tests/fiches.test.mjs` | à chaque build du site (après `vite build`) |
+| `build/fiches/commande.ts` | fiches PDF, vignettes et JSON (`fiches/index.json`), via Chrome sans interface | `npm run fiches`, `fiches:dev`, `build`, `build:<site>` ; `tests/lancer.mjs`, `tests/fiches.test.mjs` | à chaque build du site (après `vite build`) ; `--echantillon` : tests rapides seulement (exemples, première fiche de chaque famille et langue, fiches nommées par les tests), jamais en production |
 | `build/statique/commande.ts` | pages HTML statiques des fiches, sitemap, `robots.txt`, `404.html` (à partir des JSON des fiches) | `npm run statique`, `build`, `build:<site>` ; `tests/lancer.mjs`, `tests/statique.test.mjs` | à chaque build, après `fiches` |
 | `verifier/types.mjs` | `vue-tsc` strict, sans les erreurs situées dans des `.js` | `npm run types`, CI, compteur `erreursDeType` de `qualite` | avant chaque commit |
 | `verifier/qualite.ts` + `qualite/` | compteurs à seuil (`qualite-seuils.json`) : `'br'` en dur, ancien socle, types, couverture… | `npm run qualite`, CI | avant chaque commit ; `-- --enregistrer` resserre les seuils quand un compteur s'améliore |

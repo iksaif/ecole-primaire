@@ -213,7 +213,7 @@ const { mode, fiche, nouvelle } = useFicheExercice({
   text-align: center; font-size: 1.15rem; font-weight: 700; color: #555; margin: .5rem 0;
 }
 .visuel { text-align: center; margin: 1rem 0; overflow-x: auto; }
-.legende { text-align: center; font-size: .9rem; color: #777; margin-bottom: .5rem; }
+.legende { text-align: center; font-size: .9rem; color: #666; margin-bottom: .5rem; }
 .question-lettres { font-size: 1.8rem; letter-spacing: 0; line-height: 1.3; }
 
 .cdu-row { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }

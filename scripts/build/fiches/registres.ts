@@ -44,6 +44,36 @@ export interface OptionsRegistres {
   site?: string
   /** ne garder que les fiches dont le slug commence ainsi (test, mise au point) */
   prefixe?: string
+  /** n'en garder qu'un échantillon représentatif (`echantillonner`) : build de test rapide, jamais la production */
+  echantillon?: boolean
+}
+
+/**
+ * Fiches que des tests nomment explicitement (tests/*.test.mjs) : toujours dans l'échantillon.
+ * Les exemples y sont déjà tous ; ces deux-là servent de garde-fou si un exemple change de nature.
+ */
+export const FICHES_NOMMEES: readonly string[] = ['exercices-exemple-ce1', 'affiche-exemple-jusqua6', 'affiche-alphabet-a4-paysage']
+
+/**
+ * Un échantillon représentatif des fiches (build de test rapide, tests/lancer.mjs sans `--complet`) :
+ *   - toutes les fiches d'exemple (`exemple: true`) ;
+ *   - pour chaque famille (exercice ou affiche du registre), la première fiche de chaque genre et de chaque langue ;
+ *   - les fiches de `FICHES_NOMMEES` ;
+ *   - le parent de toute fiche gardée (une fiche par compétence ne va pas sans son bilan : l'index reste cohérent).
+ * L'ordre des registres est conservé ; l'assemblage recalcule les voisines sur les seules fiches gardées.
+ */
+export function echantillonner(fiches: readonly FicheSource[], nommees: readonly string[] = FICHES_NOMMEES): FicheSource[] {
+  const gardees = new Set<string>()
+  const vues = new Set<string>()
+  for (const f of fiches) {
+    const cle = `${f.meta.famille}|${f.meta.genre}|${f.meta.langues.join()}`
+    const premiere = !vues.has(cle)
+    vues.add(cle)
+    if (premiere || f.meta.exemple || nommees.includes(f.meta.slug)) gardees.add(f.meta.slug)
+  }
+  const parSlug = new Map(fiches.map(f => [f.meta.slug, f] as const))
+  for (const slug of [...gardees]) { const p = parSlug.get(slug)?.meta.parent; if (p) gardees.add(p) }
+  return fiches.filter(f => gardees.has(f.meta.slug))
 }
 
 /** Graine stable d'un texte : les PDF sont identiques d'un build à l'autre. */
@@ -175,7 +205,7 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
 }
 
 /** Les fiches à produire, dans l'ordre des registres (affiches d'abord). */
-export async function fichesDesRegistres({ avecExemples = false, avecAnciens = false, prefixe = '', site }: OptionsRegistres = {}): Promise<FicheSource[]> {
+export async function fichesDesRegistres({ avecExemples = false, avecAnciens = false, prefixe = '', site, echantillon = false }: OptionsRegistres = {}): Promise<FicheSource[]> {
   const affiches: ModuleAffiche[] = [...AFFICHES as ModuleAffiche[]]
   // le registre ; les exemples (`exemple: true`) seulement avec `avecExemples`, jamais en production
   const exercices: ModuleExercice[] = EXERCICES.filter(e => avecExemples || !e.exemple)
@@ -188,5 +218,6 @@ export async function fichesDesRegistres({ avecExemples = false, avecAnciens = f
     if (vues.has(f.meta.slug)) throw new Error(`slug « ${f.meta.slug} » produit deux fois (registres)`)
     vues.add(f.meta.slug)
   }
-  return fiches.filter(f => f.meta.slug.startsWith(prefixe))
+  const gardees = fiches.filter(f => f.meta.slug.startsWith(prefixe))
+  return echantillon ? echantillonner(gardees) : gardees
 }

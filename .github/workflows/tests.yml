@@ -2,6 +2,7 @@ name: Tests
 
 # Lint, types, compteurs de qualité et tests (build de test + Chrome sans interface) sur chaque push et pull request
 # vers main. Mêmes commandes qu'en local : npm run lint, npm run types, npm run qualite, npm test (voir AGENTS.md).
+# Le niveau complet (npm run test:complet) tourne chaque nuit et à la demande, dans un job à part.
 
 on:
   push:
@@ -9,12 +10,19 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      complet:
+        description: "Lancer aussi le niveau complet (npm run test:complet)"
+        type: boolean
+        default: true
+  schedule:
+    - cron: '17 3 * * *'   # chaque nuit : le niveau complet
 
 permissions:
   contents: read
 
 concurrency:
-  group: tests-${{ github.ref }}
+  group: tests-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
@@ -44,5 +52,26 @@ jobs:
       - name: Chrome
         run: google-chrome --version
 
+      # niveau rapide : un échantillon des fiches et des routes (tests/lancer.mjs, en-tête)
       - name: Tests
+        if: github.event_name != 'schedule'
         run: npm test
+
+  # niveau complet : PDF et pages statiques de toutes les fiches, accessibilité de toutes les routes. Pas à chaque push :
+  # chaque nuit et à la demande (workflow_dispatch), dans un job séparé qui ne ralentit pas la CI normale.
+  complet:
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.complet)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.18
+          cache: npm
+
+      - run: npm ci
+
+      - name: Tests complets
+        run: npm run test:complet

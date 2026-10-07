@@ -1,6 +1,14 @@
 // Lance les tests : construit les sites (sans les PDF d'exercices), les sert, exécute les tests EN PARALLÈLE (sorties
 // regroupées par test, dans l'ordre de la liste), puis affiche les durées, les plus longues d'abord.
-//   npm test                 tests node de la base + Chrome (pages de la base, jeu et fiche des exemples)
+//   npm test                 niveau RAPIDE (≤ 1 min) : tests node de la base + Chrome (pages de la base, jeu et fiche des exemples) ;
+//                            PDF et pages statiques d'un ÉCHANTILLON de fiches (`--echantillon` de scripts/build/fiches/commande.ts :
+//                            les exemples, la première fiche de chaque famille et langue, celles que des tests nomment),
+//                            accessibilité d'un échantillon de routes (liste nommée en tête de tests/accessibilite.test.mjs)
+//   npm run test:complet     niveau COMPLET (`--complet`, ou TEST_COMPLET=1 dans l'environnement) : mêmes tests, mais PDF et pages
+//                            statiques de TOUTES les fiches et accessibilité de toutes les routes. À lancer avant une mise en ligne,
+//                            après un report d'exercice ou d'affiche, et chaque nuit en CI (.github/workflows/tests.yml). Les tests
+//                            lisent `TEST_COMPLET` (tests/outils.mjs : `complet`) pour choisir leur périmètre.
+//                            Les tests node (instantanés, fiches-debordement…) n'ont qu'un niveau : ils sont toujours complets.
 //   TEST_URL=https://ecoleprimaire.app/ node tests/lancer.mjs --sans-build   tester la production
 //
 // RÈGLE DE DÉPENDANCES (deux listes à tenir à jour plus bas : NODE et CHROME ; un test nouveau va dans l'une des deux)
@@ -18,18 +26,21 @@
 // Les deux premiers sont ce qui part en ligne : tests/production.test.mjs y cherche les exemples (il ne doit y en avoir aucun).
 // Pas de cache de build : l'ensemble coûte quelques secondes (durée affichée en fin de run) ; un cache périmé donnerait un faux vert.
 import { execFile, spawn } from 'node:child_process'
-import { existsSync, mkdirSync, writeFileSync, rmSync, readdirSync } from 'node:fs'
+import { existsSync, mkdirSync, writeFileSync, rmSync, readdirSync, cpSync } from 'node:fs'
 import { preview } from 'vite'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 const sansBuild = process.argv.includes('--sans-build')
+// niveau complet : `--complet` ou TEST_COMPLET=1 ; les tests le lisent dans l'environnement (tests/outils.mjs : `complet`)
+const complet = process.argv.includes('--complet') || ['1', 'true'].includes(process.env.TEST_COMPLET ?? '')
+process.env.TEST_COMPLET = complet ? '1' : ''
 const OUT = 'dist-test'
 const OUT_SKOOLIK = 'dist-test-skoolik'
 const OUT_DEV = 'dist-test-dev'
 const FUITE = '__fuite_test__.json'
-const CONCURRENCE = 4
+const CONCURRENCE = 5
 const debutTotal = Date.now()
 
 // un script node (stdout masqué : ses lignes de progression noieraient la sortie) : promesse, pour en lancer plusieurs ensemble
@@ -67,12 +78,16 @@ async function preparer() {
       if (!dossierExistait && !readdirSync(dossierFiches).length) rmSync(dossierFiches, { recursive: true, force: true })
     }
     // le site de développement a aussi les fiches d'exemple : son catalogue (fiches voisines, jeu lié) en a besoin (tests/pages-fiches) ;
-    // les pages statiques de OUT lisent les fiches de OUT : elles passent après, en même temps que celles de OUT_DEV
-    await chrono('fiches + pages statiques', () => Promise.all([
-      node('scripts/build/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')
-        .then(() => node('scripts/build/statique/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')),
-      node('scripts/build/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT_DEV, '--avec-exemples'),
-    ]))
+    // les pages statiques de OUT lisent les fiches de OUT
+    // (niveau rapide : un échantillon des fiches ; les pages statiques suivent l'index écrit)
+    const echantillon = complet ? [] : ['--echantillon']
+    // (même mode et mêmes exemples pour OUT et OUT_DEV : les fiches ne sont produites qu'une fois, puis copiées)
+    await chrono(`fiches + pages statiques (${complet ? 'toutes' : 'échantillon'})`, async () => {
+      await node('scripts/build/fiches/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples', ...echantillon)
+      rmSync(join(racine, OUT_DEV, 'fiches'), { recursive: true, force: true })
+      cpSync(join(racine, OUT, 'fiches'), join(racine, OUT_DEV, 'fiches'), { recursive: true })
+      await node('scripts/build/statique/commande.ts', '--mode', 'ecoleprimaire', '--outDir', OUT, '--avec-exemples')
+    })
   }
   const servir = async (mode, dossier, port) => {
     const s = await preview({ root: racine, mode, build: { outDir: dossier }, preview: { port, strictPort: true }, logLevel: 'warn' })
@@ -126,7 +141,7 @@ for (const f of fichiers) {
 }
 for (const s of serveurs) await new Promise(ok => s.httpServer.close(ok))
 // durées, les plus longues d'abord (pour régler l'ordre de CHROME) ; sans effet sur le code de sortie
-console.log(`\nDurées (${((Date.now() - debutTotal) / 1000).toFixed(0)} s au total) :`)
+console.log(`\nDurées (niveau ${complet ? 'complet' : 'rapide'}, ${((Date.now() - debutTotal) / 1000).toFixed(0)} s au total) :`)
 for (const [nom, ms] of phases) console.log(`  ${(ms / 1000).toFixed(1).padStart(5)} s  [préparation] ${nom}`)
 for (const r of [...resultats.values()].sort((a, b) => b.duree - a.duree)) console.log(`  ${(r.duree / 1000).toFixed(1).padStart(5)} s  ${r.f}`)
 console.log(echoues.length ? `\n✗ Des tests ont échoué : ${echoues.join(', ')}` : '\n✓ Tous les tests passent')

@@ -6,6 +6,7 @@
 //   --avec-exemples ajoute les exercices et affiches d'exemple (jamais en production)
 //   --avec-anciens  ajoute les exercices de l'ancien registre (comparaison, reports)
 //   --prefixe       seulement les fiches dont le slug commence ainsi (mise au point)
+//   --echantillon   seulement un échantillon représentatif (build de test rapide ; `echantillonner`) : jamais en production
 //   --travailleurs  onglets de Chrome en parallèle (défaut : un par cœur, 8 au plus)
 // Variable : CHROME_PATH (chemin de Chrome). Format des données : src/telechargements/README.md.
 import { parseArgs } from 'node:util'
@@ -25,6 +26,7 @@ const { values } = parseArgs({
     'avec-exemples': { type: 'boolean', default: false },
     'avec-anciens': { type: 'boolean', default: false },
     prefixe: { type: 'string', default: '' },
+    echantillon: { type: 'boolean', default: false },
     travailleurs: { type: 'string' },
   },
 })
@@ -32,8 +34,10 @@ const { values } = parseArgs({
 const outDir = resolve(racine, values.outDir)
 if (values.mode === 'production' && values['avec-exemples']) throw new Error('--avec-exemples : jamais dans un build de production (donner un --mode de développement)')
 
+if (values.mode === 'production' && values.echantillon) throw new Error('--echantillon : jamais dans un build de production (donner un --mode de test)')
+
 installerPolices()
-const fiches = await fichesDesRegistres({ avecExemples: values['avec-exemples'], avecAnciens: values['avec-anciens'], prefixe: values.prefixe, site: values.mode })
+const fiches = await fichesDesRegistres({ avecExemples: values['avec-exemples'], avecAnciens: values['avec-anciens'], prefixe: values.prefixe, echantillon: values.echantillon, site: values.mode })
 console.log(`Fiches (${values.mode}) → ${values.outDir}/fiches/ : ${fiches.length} à produire`)
 
 const debut = performance.now()

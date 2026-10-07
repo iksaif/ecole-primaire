@@ -1,6 +1,10 @@
 // Outils communs aux tests : navigateur, URL du site testé, petites assertions.
 import { chromium } from 'playwright-core'
 import { existsSync } from 'node:fs'
+import { AsyncLocalStorage } from 'node:async_hooks'
+
+// Niveau de test : rapide (défaut, `npm test`) ou complet (`npm run test:complet`, TEST_COMPLET=1 : voir tests/lancer.mjs)
+export const complet = ['1', 'true'].includes(process.env.TEST_COMPLET ?? '')
 
 // URL du site testé (servi par tests/lancer.mjs, ou TEST_URL=https://ecoleprimaire.app/ pour la production)
 export const URL_SITE = (process.env.TEST_URL || 'http://localhost:4190/').replace(/\/?$/, '/')
@@ -37,16 +41,36 @@ export async function contexte(navigateur, { langue = 'fr', regionale, graine, v
 }
 
 // Collecte des erreurs JavaScript d'une page
+/**
+ * Le titre du document une fois qu'il correspond à `motif` (RegExp) : le titre se pose après le rendu de la page (et après un
+ * changement de langue), pas en même temps que le premier élément visible ; le lire avant est un faux échec sous charge.
+ */
+export async function titreQui(page, motif, timeout = 10000) {
+  await page.waitForFunction(([source, drapeaux]) => new RegExp(source, drapeaux).test(document.title), [motif.source, motif.flags], { timeout })
+  return page.title()
+}
+
 export function surveiller(page) {
   const erreurs = []
   page.on('pageerror', e => erreurs.push(String(e).slice(0, 200)))
   return erreurs
 }
 
+// Sortie des vérifications : la console, ou le tampon du groupe en cours (`enTampon`) pour que des tâches menées EN PARALLÈLE
+// n'entremêlent pas leurs lignes (chaque groupe est imprimé d'un bloc, dans l'ordre voulu).
+const tampon = new AsyncLocalStorage()
+export const ecrire = ligne => { const t = tampon.getStore(); if (t) t.push(ligne); else console.log(ligne) }
+/** Exécute `f` en capturant ce que `verifier` et `ecrire` écrivent ; rend les lignes (à imprimer d'un bloc par l'appelant). */
+export async function enTampon(f) {
+  const lignes = []
+  await tampon.run(lignes, f)
+  return lignes
+}
+
 let echecs = 0
 export function verifier(condition, message) {
-  if (condition) console.log(`  ✓ ${message}`)
-  else { echecs++; console.log(`  ✗ ${message}`) }
+  if (condition) ecrire(`  ✓ ${message}`)
+  else { echecs++; ecrire(`  ✗ ${message}`) }
 }
 export const nbEchecs = () => echecs
 

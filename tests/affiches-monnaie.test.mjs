@@ -51,9 +51,9 @@ console.log('Planche à découper : taille réelle et réduite')
 // largeurs et hauteurs réelles (mm) de toutes les pièces et de tous les billets
 const reelles = [...VALEURS_PIECES, ...VALEURS_BILLETS].map(v => tailleReelle(v))
 for (const variante of ['planche-euros', 'planche-centimes']) {
-  for (const [format, orientation, echelle] of [['A4', 'landscape', 100], ['A4', 'portrait', 100], ['A3', 'landscape', 100], ['A4', 'landscape', 75], ['A4', 'portrait', 50]]) {
-    const cas = `${variante} ${format} ${orientation} ${echelle} %`
-    await charger(genererAffiche(module, reglagesDe(module.definition, { variante, format, orientation, echelle })).html)
+  for (const [format, orientation, tp, tb] of [['A4', 'landscape', 100, 100], ['A4', 'portrait', 100, 100], ['A3', 'landscape', 100, 100], ['A4', 'landscape', 75, 75], ['A4', 'portrait', 50, 50], ['A4', 'landscape', 50, 100], ['A4', 'portrait', 100, 75]]) {
+    const cas = `${variante} ${format} ${orientation} pièces ${tp} % billets ${tb} %`
+    await charger(genererAffiche(module, reglagesDe(module.definition, { variante, format, orientation, taillePieces: tp, tailleBillets: tb })).html)
     // le SVG de la page est à l'échelle 1 (largeur en mm = largeur du viewBox : 1 unité = 1 mm) et chaque pièce ou billet y est dessiné
     // à ses millimètres × l'échelle (largeur et hauteur du <svg> imbriqué, sans unité). (La boîte à l'écran d'un <svg> imbriqué est celle de
     // son contenu, un peu plus petite que sa taille nominale : on lit donc les attributs, et on contrôle l'échelle sur le SVG de la page.)
@@ -70,14 +70,13 @@ for (const variante of ['planche-euros', 'planche-centimes']) {
     }))
     const tailles = lu.flatMap(l => l.articles)
     verifier(lu.every(l => l.echelle && Math.abs(l.mm - 1) < 0.01), `${cas} : le SVG de chaque page est à l'échelle 1 (1 unité = 1 mm)`)
-    const k = echelle / 100
-    const faux = tailles.filter(([w, h]) => !reelles.some(t => Math.abs(t.w * k - w) < 0.01 && Math.abs(t.h * k - h) < 0.01))
-    verifier(tailles.length > 0 && !faux.length, `${cas} : ${tailles.length} pièces et billets, tous à ${echelle === 100 ? 'leur taille réelle' : `${echelle} % de leur taille réelle`}${faux.length ? ` (faux : ${faux[0].map(x => x.toFixed(1)).join(' × ')} mm)` : ''}`)
-    verifier(lu.every(l => (echelle === 100 ? /Taille réelle/ : new RegExp(`${echelle} %`)).test(l.consigne)), `${cas} : la consigne dit la taille`)
+    const faux = tailles.filter(([w, h]) => ![tp, tb].some(e => reelles.some(t => Math.abs(t.w * e / 100 - w) < 0.01 && Math.abs(t.h * e / 100 - h) < 0.01)))
+    verifier(tailles.length > 0 && !faux.length, `${cas} : ${tailles.length} pièces et billets, tous à la taille réelle ou à ${tp} % (pièces) / ${tb} % (billets)${faux.length ? ` (faux : ${faux[0].map(x => x.toFixed(1)).join(' × ')} mm)` : ''}`)
+    verifier(lu.every(l => (tp !== tb ? new RegExp(`Pièces à ${tp} % et billets à ${tb} %`) : tp === 100 ? /Taille réelle/ : new RegExp(`${tp} %`)).test(l.consigne)), `${cas} : la consigne dit la taille`)
   }
 }
 // des pages qui ne se chevauchent pas : une pièce ou un billet n'en couvre jamais un autre
-await charger(genererAffiche(module, reglagesDe(module.definition, { variante: 'planche-centimes', echelle: 75 })).html)
+await charger(genererAffiche(module, reglagesDe(module.definition, { variante: 'planche-centimes', taillePieces: 75, tailleBillets: 75 })).html)
 const chevauche = await page.evaluate(() => {
   const pbs = []
   for (const feuille of document.querySelectorAll('.page')) {

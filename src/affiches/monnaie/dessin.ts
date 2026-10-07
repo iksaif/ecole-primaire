@@ -7,7 +7,7 @@
 import { echapper } from '../../utils/html.js'
 import { VALEURS_BILLETS, VALEURS_PIECES, billet, piece, tailleReelle } from '../../dessins/argent.ts'
 import type { ValeurBillet, ValeurPiece } from '../../dessins/argent.ts'
-import { ECHELLES, H_CONSIGNE, disposerPlanche } from './planche.ts'
+import { ECHELLES, EXEMPLAIRES, GENRES, H_CONSIGNE, disposerPlanche } from './planche.ts'
 import type { PagePlanche } from './planche.ts'
 import type { Page, Rendu, Zone } from '../types.ts'
 import type { Reglages } from './definition.ts'
@@ -60,8 +60,7 @@ const TRAIT = 'stroke="#555" stroke-width=".2"'
 function traitsDeCoupe(page: PagePlanche, W: number): string {
   const ys = [...new Set(page.bandes.flatMap(b => [b.y, mm(b.y + b.h)]))]
   const horizontaux = ys.map(y => `<line x1="0" y1="${y}" x2="${W}" y2="${y}" ${TRAIT}/>`)
-  const verticaux = page.bandes.flatMap(b => Array.from({ length: b.n + 1 }, (_, i) => {
-    const x = mm(b.x0 + i * b.largeurCase)
+  const verticaux = page.bandes.flatMap(b => b.xs.map(x => {
     return `<line x1="${x}" y1="${b.y}" x2="${x}" y2="${mm(b.y + b.h)}" ${TRAIT}/>`
   }))
   return [...horizontaux, ...verticaux].join('')
@@ -69,13 +68,18 @@ function traitsDeCoupe(page: PagePlanche, W: number): string {
 const mm = (n: number): number => Math.round(n * 1000) / 1000
 
 const planche = (r: Reglages, { W, H }: Zone, T: (cle: string, params?: Record<string, unknown>) => string): Page[] => {
-  const echelle = ECHELLES.find(e => e === r.echelle) ?? 100
+  const tp = ECHELLES.find(e => e === r.taillePieces) ?? 100
+  const tb = ECHELLES.find(e => e === r.tailleBillets) ?? 100
   const hs = H - H_CONSIGNE
-  const pages = disposerPlanche({ centimes: r.centimes, echelle, W, H: hs })
-  const taille = echelle === 100 ? T('planche.taille100') : T('planche.tailleReduite', { n: echelle })
+  const exemplaires = EXEMPLAIRES.find(e => e === r.exemplaires) ?? 0
+  const genres = GENRES.find(g => g === r.genres) ?? 'tout'
+  const pages = disposerPlanche({ centimes: r.centimes, taillePieces: tp, tailleBillets: tb, exemplaires, valeurs: r.valeurs, genres, W, H: hs })
+  // la consigne dit la taille : une seule phrase quand pièces et billets ont la même, sinon les deux
+  const taille = tp !== tb ? T('planche.tailles', { pieces: tp, billets: tb }) : tp === 100 ? T('planche.taille100') : T('planche.tailleReduite', { n: tp })
   return pages.map((page, i) => {
-    const argent = page.poses.map(({ v, genre, boite }) => `<g transform="translate(${boite.x} ${boite.y})">${
-      genre === 'piece' ? piece(v as ValeurPiece, { echelle: echelle / 100 }) : billet(v as ValeurBillet, { echelle: echelle / 100 })}</g>`).join('')
+    // un billet tourné de 90° : sa boîte est « debout » ; on le tourne autour de son coin haut gauche puis on le ramène dans la boîte
+    const argent = page.poses.map(({ v, genre, boite, tourne }) => `<g transform="translate(${tourne ? boite.x + boite.w : boite.x} ${boite.y})${tourne ? ' rotate(90)' : ''}">${
+      genre === 'piece' ? piece(v as ValeurPiece, { echelle: tp / 100 }) : billet(v as ValeurBillet, { echelle: tb / 100 })}</g>`).join('')
     const corps = `<svg width="${W}mm" height="${hs}mm" viewBox="0 0 ${W} ${hs}">${traitsDeCoupe(page, W)}${argent}</svg>`
       + `<p class="consigne" style="height:${H_CONSIGNE}mm">${echapper(`${T('planche.consigne')} ${taille}`)}</p>`
     return { corps, titre: `${T('planche.titre')}${pages.length > 1 ? ` (${i + 1}/${pages.length})` : ''}` }

@@ -34,9 +34,21 @@ export const TEXTES: TextesAffiche = {
     'planche.consigne': 'Coupe d\'abord les bandes (traits horizontaux), puis chaque bande (traits verticaux).',
     'planche.taille100': 'Taille réelle.',
     'planche.tailleReduite': 'Taille réduite : {n} % de la taille réelle.',
-    'reglage.echelle': 'Taille des pièces et des billets',
-    'valeur.echelle.100': '100 % (taille réelle)', 'valeur.echelle.75': '75 %', 'valeur.echelle.50': '50 %',
-    'aide.echelle': 'À 100 %, pièces et billets ont leur taille réelle. Plus petits, il y en a davantage sur chaque page.',
+    'planche.tailles': 'Pièces à {pieces} % et billets à {billets} % de la taille réelle.',
+    'reglage.taillePieces': 'Taille des pièces',
+    'valeur.taillePieces.100': '100 % (taille réelle)', 'valeur.taillePieces.75': '75 %', 'valeur.taillePieces.50': '50 %',
+    'aide.taillePieces': 'À 100 %, les pièces ont leur taille réelle. Plus petites, il y en a davantage sur chaque page.',
+    'reglage.tailleBillets': 'Taille des billets',
+    'valeur.tailleBillets.100': '100 % (taille réelle)', 'valeur.tailleBillets.75': '75 %', 'valeur.tailleBillets.50': '50 %',
+    'aide.tailleBillets': 'À 100 %, les billets ont leur taille réelle. Plus petits, il y en a davantage sur chaque page.',
+    'reglage.genres': 'Pièces et billets',
+    'valeur.genres.tout': 'Les deux', 'valeur.genres.billets': 'Billets seulement', 'valeur.genres.pieces': 'Pièces seulement',
+    'reglage.valeurs': 'Valeurs à imprimer',
+    'valeur.valeurs.1': '1 c', 'valeur.valeurs.2': '2 c', 'valeur.valeurs.5': '5 c', 'valeur.valeurs.10': '10 c', 'valeur.valeurs.20': '20 c', 'valeur.valeurs.50': '50 c', 'valeur.valeurs.100': '1 €', 'valeur.valeurs.200': '2 €', 'valeur.valeurs.500': '5 €', 'valeur.valeurs.1000': '10 €', 'valeur.valeurs.2000': '20 €', 'valeur.valeurs.5000': '50 €', 'valeur.valeurs.10000': '100 €',
+    'aide.valeurs': 'Décoche les valeurs dont tu n\'as pas besoin : il y a plus de place pour les autres.',
+    'reglage.exemplaires': 'Exemplaires de chaque valeur',
+    'valeur.exemplaires.0': 'Une rangée pleine', 'valeur.exemplaires.1': '1', 'valeur.exemplaires.2': '2', 'valeur.exemplaires.3': '3', 'valeur.exemplaires.5': '5', 'valeur.exemplaires.10': '10',
+    'aide.exemplaires': '« Une rangée pleine » : autant d\'exemplaires que de pièces ou de billets côte à côte sur une ligne.',
   },
   br: {
     titre: 'Pezhioù moneiz ha bilhedoù an euro', // br: à relire
@@ -66,8 +78,20 @@ export const TEXTES: TextesAffiche = {
     'planche.consigne': 'Troc\'h an dalennoù da gentañ (linennoù a-led), goude pep talenn (linennoù a-sav).', // br: à relire
     'planche.taille100': 'Ment gwir.', // br: à relire
     'planche.tailleReduite': 'Ment bihanaet : {n} % eus ar ment gwir.', // br: à relire
-    'reglage.echelle': 'Ment ar pezhioù hag ar bilhedoù', // br: à relire
-    'valeur.echelle.100': '100 % (ment gwir)', 'valeur.echelle.75': '75 %', 'valeur.echelle.50': '50 %', // br: à relire
-    'aide.echelle': 'Da 100 % emañ ar pezhioù hag ar bilhedoù e-ment gwir. Pa vezont bihanoc\'h ez eus muioc\'h war pep pajenn.', // br: à relire
+    'planche.tailles': 'Pezhioù da {pieces} % ha bilhedoù da {billets} % eus ar ment gwir.', // br: à relire
+    'reglage.taillePieces': 'Ment ar pezhioù', // br: à relire
+    'valeur.taillePieces.100': '100 % (ment gwir)', 'valeur.taillePieces.75': '75 %', 'valeur.taillePieces.50': '50 %', // br: à relire
+    'aide.taillePieces': 'Da 100 % emañ ar pezhioù e-ment gwir. Pa vezont bihanoc\'h ez eus muioc\'h war pep pajenn.', // br: à relire
+    'reglage.tailleBillets': 'Ment ar bilhedoù', // br: à relire
+    'valeur.tailleBillets.100': '100 % (ment gwir)', 'valeur.tailleBillets.75': '75 %', 'valeur.tailleBillets.50': '50 %', // br: à relire
+    'aide.tailleBillets': 'Da 100 % emañ ar bilhedoù e-ment gwir. Pa vezont bihanoc\'h ez eus muioc\'h war pep pajenn.', // br: à relire
+    'reglage.genres': 'Pezhioù ha bilhedoù', // br: à relire
+    'valeur.genres.tout': 'An daou', 'valeur.genres.billets': 'Bilhedoù hepken', 'valeur.genres.pieces': 'Pezhioù hepken', // br: à relire
+    'reglage.valeurs': 'Talvoudoù da voullañ', // br: à relire
+    'valeur.valeurs.1': '1 c', 'valeur.valeurs.2': '2 c', 'valeur.valeurs.5': '5 c', 'valeur.valeurs.10': '10 c', 'valeur.valeurs.20': '20 c', 'valeur.valeurs.50': '50 c', 'valeur.valeurs.100': '1 €', 'valeur.valeurs.200': '2 €', 'valeur.valeurs.500': '5 €', 'valeur.valeurs.1000': '10 €', 'valeur.valeurs.2000': '20 €', 'valeur.valeurs.5000': '50 €', 'valeur.valeurs.10000': '100 €', // br: à relire
+    'aide.valeurs': 'Diwiriañ an talvoudoù n\'ho peus ket ezhomm : muioc\'h a blas a chom evit an re all.', // br: à relire
+    'reglage.exemplaires': 'Skouerennoù eus pep talvoudegezh', // br: à relire
+    'valeur.exemplaires.0': 'Ur renkad leun', 'valeur.exemplaires.1': '1', 'valeur.exemplaires.2': '2', 'valeur.exemplaires.3': '3', 'valeur.exemplaires.5': '5', 'valeur.exemplaires.10': '10', // br: à relire
+    'aide.exemplaires': '« Ur renkad leun » : kement a skouerennoù hag a bezhioù pe a vilhedoù unan e-kichen egile war ul linenn.', // br: à relire
   },
 }

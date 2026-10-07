@@ -4,11 +4,20 @@
 // bandes alignées avec traits et repères de coupe (planche.ts).
 // Programme (src/data/programme.ts) : CP, montants entiers d'euros ≤ 100 € ; CE1 et CE2, euros et centimes.
 // Les slugs publiés (`affiche-monnaie-euros`, `affiche-monnaie-centimes`) sont ceux de `main` : une variante par fiche.
-import { definirAffiche, choix } from '../definir.ts'
+import { definirAffiche, choix, cases } from '../definir.ts'
 import { D, K } from '../../noyau/ids.ts'
 import { CODES } from '../../langues/registre.ts'
 import type { ReglagesDeAffiche } from '../types.ts'
-import { ECHELLES } from './planche.ts'
+import { ECHELLES, EXEMPLAIRES, GENRES, LOTS } from './planche.ts'
+
+// les réglages de la planche : tailles, genres, valeurs (celles de la planche, toutes cochées) et exemplaires
+const optionsPlanche = (centimes: boolean) => ({
+  taillePieces: choix(ECHELLES),
+  tailleBillets: choix(ECHELLES),
+  genres: choix(GENRES),
+  valeurs: cases([...LOTS[centimes ? 'centimes' : 'euros'].pieces, ...LOTS[centimes ? 'centimes' : 'euros'].billets] as number[]),
+  exemplaires: choix(EXEMPLAIRES),
+})
 
 const definition = definirAffiche({
   id: 'monnaie',
@@ -24,9 +33,11 @@ const definition = definirAffiche({
     euros: { classes: ['cp'], reglages: { centimes: false, planche: false } },
     // les centimes sont la compétence de l'affiche ; les euros entiers, déjà vus au CP, n'y sont plus travaillés
     centimes: { classes: ['ce1', 'ce2'], sauf: [K.monnaieEuros], reglages: { centimes: true, planche: false } },
-    // la planche : la taille au choix (100 % : la taille réelle ; plus petit : plus de pièces et de billets par page)
-    'planche-euros': { classes: ['cp'], reglages: { centimes: false, planche: true, echelle: choix(ECHELLES) } },
-    'planche-centimes': { classes: ['ce1', 'ce2'], sauf: [K.monnaieEuros], reglages: { centimes: true, planche: true, echelle: choix(ECHELLES) } },
+    // la planche : la taille des pièces et celle des billets au choix, séparément (100 % : la taille réelle ; plus petit : plus de pièces
+    // ou de billets par page : des pièces petites et des billets à taille réelle, par exemple)
+    // + pièces et/ou billets, quelles valeurs, combien d'exemplaires de chacune (0 : une rangée pleine)
+    'planche-euros': { classes: ['cp'], reglages: { centimes: false, planche: true, ...optionsPlanche(false) } },
+    'planche-centimes': { classes: ['ce1', 'ce2'], sauf: [K.monnaieEuros], reglages: { centimes: true, planche: true, ...optionsPlanche(true) } },
   },
 })
 

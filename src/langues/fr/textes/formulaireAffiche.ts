@@ -1,6 +1,8 @@
 // Textes de l'interface — formulaire d'une affiche (FormulaireAffiche du noyau), français.
 export default {
   version: 'Version',
+  copierLien: 'Copier le lien',
+  lienCopie: 'Lien copié ✓',
   versionAide: 'Choisissez une fiche toute prête : elle règle tout le reste, que vous pouvez ensuite modifier.',
   personnaliser: 'Personnaliser',
   personnaliserAide: 'Ajustez cette version : contenu, langues, feuille, polices.',

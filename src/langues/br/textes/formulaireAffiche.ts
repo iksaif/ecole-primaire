@@ -4,6 +4,8 @@ import type fr from '../../fr/textes/formulaireAffiche.ts'
 
 export default {
   version: 'Stumm', // br: à relire
+  copierLien: 'Eilañ al liamm', // br: à relire
+  lienCopie: 'Liamm eilet ✓', // br: à relire
   versionAide: 'Dibabit ur follenn kaset da benn : reiñ a ra an holl arventennoù all, hag e c\'hallit cheñch anezho goude-se.', // br: à relire
   personnaliser: 'Personelaat', // br: à relire
   personnaliserAide: 'Reizhit ar stumm-mañ : danvez, yezhoù, follenn, nodrezhioù.', // br: à relire

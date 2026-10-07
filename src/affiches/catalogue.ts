@@ -46,11 +46,32 @@ export const lienDe = (d: DefinitionAffiche, variante: string, langue: string, l
  * paramètres de l'adresse (chaîne ou liste, comme ceux du routeur). `variante` ; `langues` (liste séparée par des virgules) ou
  * `langue` ; le reste est ignoré. Les valeurs ne sont pas validées ici : reglagesDe le fait.
  */
-export function lireLien(query: Record<string, unknown>): { variante?: string, langues?: string[] } {
+export function lireLien(query: Record<string, unknown>): { variante?: string, langues?: string[], format?: string, orientation?: string } {
   const texte = (v: unknown): string | undefined => (typeof v === 'string' && v ? v : Array.isArray(v) && typeof v[0] === 'string' && v[0] ? v[0] : undefined)
   const variante = texte(query.variante)
   const langues = (texte(query.langues) ?? texte(query.langue))?.split(',').filter(Boolean)
-  return { ...(variante ? { variante } : {}), ...(langues?.length ? { langues } : {}) }
+  // format et sens : relus tels quels ; reglagesDe garde seulement ceux que l'affiche permet
+  const format = texte(query.format)
+  const orientation = texte(query.orientation)
+  return {
+    ...(variante ? { variante } : {}), ...(langues?.length ? { langues } : {}),
+    ...(format ? { format } : {}), ...(orientation ? { orientation } : {}),
+  }
+}
+
+/**
+ * L'adresse (paramètres) qui rouvre le formulaire sur ces réglages : l'affiche, la variante, et ce qui s'écarte des défauts de la
+ * variante parmi les langues, le format et le sens. Les autres réglages ne passent pas encore par l'adresse (ils restent mémorisés).
+ */
+export function queryDeReglages(definition: DefinitionAffiche, config: Readonly<Record<string, unknown>>): Record<string, string> {
+  const variante = String(config.variante)
+  const defaut = reglagesDe(definition, { variante }) as Record<string, unknown>
+  const query: Record<string, string> = { affiche: definition.id, variante }
+  const langues = (config.langues as readonly string[] | undefined) ?? []
+  if (langues.join() !== ((defaut.langues as readonly string[] | undefined) ?? []).join()) query.langues = langues.join(',')
+  if (config.format !== defaut.format) query.format = String(config.format)
+  if (config.orientation !== defaut.orientation) query.orientation = String(config.orientation)
+  return query
 }
 
 /** Les entrées de catalogue d'une affiche : une par variante et par ensemble de langues. */

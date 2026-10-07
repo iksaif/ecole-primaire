@@ -143,6 +143,8 @@ const props = withDefaults(defineProps<{
   // réglages donnés par le lien : ils l'emportent sur ceux mémorisés
   depart?: Record<string, unknown>
 }>(), { depart: () => ({}) })
+// chaque changement de réglages : la page qui porte le formulaire peut écrire l'adresse (lien partageable)
+const emit = defineEmits<{ reglages: [config: Readonly<Record<string, unknown>>] }>()
 const { t, langue: langueInterface } = useLangue()
 const definition = props.module.definition
 const choix = commeExercice(definition)
@@ -169,7 +171,7 @@ function choisirSurAxe(axe: string, valeur: string): void {
   const id = (memePlace ?? premiere)?.[0]
   if (id) config.value = reglagesApresVariante(definition, config.value, id)
 }
-watch(config, v => sauvegarder(CLE, v), { deep: true })
+watch(config, v => { sauvegarder(CLE, v); emit('reglages', v) }, { deep: true, immediate: true })
 // les réglages à choix, lus et écrits par clé (leurs clés dépendent de l'affiche)
 const valeur = (cle: string): ValeurReglage => (config.value as Reglages)[cle]
 const changer = (cle: string, v: ValeurReglage): void => { (config.value as Reglages)[cle] = v }

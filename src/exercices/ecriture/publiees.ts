@@ -20,8 +20,8 @@ export interface FichePubliee {
   /** langue de contenu de la fiche (une seule : la fiche n'existe pas dans les autres) */
   langue: string
   reglages: ReglagesEcriture
-  /** la compétence de la langue régionale que travaille une fiche régionale (son alphabet, ses jours et mois, ses nombres) */
-  competenceRegionale?: CompetenceId
+  /** les compétences de la langue régionale que travaille une fiche régionale (son alphabet, ses jours, ses mois, ses nombres) */
+  competencesRegionales?: readonly CompetenceId[]
   titre: string
   court: string
   description: string
@@ -39,6 +39,8 @@ const NOMS_STYLES: Readonly<Record<Style, string>> = {
 }
 const GS_CE1: readonly Classe[] = ['gs', 'cp', 'ce1']
 const majuscule = (l: string): string => l[0].toUpperCase() + l.slice(1)
+// écrire l'alphabet ou une lettre de la langue régionale : reconnaître ses lettres, et ses graphèmes propres (épeler, au CP et au CE1)
+const ALPHABET_REGIONAL: readonly CompetenceId[] = [K.alphabetLangueRegionale, K.epelerLangueRegionale]
 
 // ── Français ──
 
@@ -101,7 +103,7 @@ function fichesRegionales(code: (typeof REGIONALES)[number]): FichePubliee[] {
   const motsDe = (ids: readonly string[]): string[] => ids.flatMap(id => donnees.listes.find(l => l.id === id)?.mots ?? [])
 
   const alphabet: FichePubliee = {
-    id: `${code}-alphabet`, slug: `fiche-ecriture-alphabet-${nom}`, classes: GS_CE1, langue: code, competenceRegionale: K.alphabetLangueRegionale,
+    id: `${code}-alphabet`, slug: `fiche-ecriture-alphabet-${nom}`, classes: GS_CE1, langue: code, competencesRegionales: ALPHABET_REGIONAL,
     reglages: { ...BASE, styles: ['attache-maj', 'attache-min'], lettres: [...donnees.alphabet], repasser: 1, copie: 0, titre: `${donnees.titreAlphabet} — l'alphabet ${nom}` },
     titre: `Fiche d'écriture : l'alphabet ${nom} (${nomAlphabet}) en attaché`,
     court: `Alphabet ${nom}`,
@@ -114,7 +116,7 @@ function fichesRegionales(code: (typeof REGIONALES)[number]): FichePubliee[] {
     // le titre de la liste quand il nomme déjà la langue (« Les nombres de 1 à 10 en breton »), sinon complété
     const titreImprime = titreListe.includes(nom) ? titreListe : `${titreListe} — ${liste.resume} en ${nom}`
     return {
-      id: `${code}-${liste.slug}`, slug: `fiche-ecriture-${liste.slug}-${nom}`, classes: liste.classes, langue: code, competenceRegionale: liste.competence,
+      id: `${code}-${liste.slug}`, slug: `fiche-ecriture-${liste.slug}-${nom}`, classes: liste.classes, langue: code, competencesRegionales: [liste.competence],
       reglages: { ...BASE, contenu: 'mots', styles: ['attache-min'], repasser: 1, copie: liste.copie ?? 0, mots: mots.join('\n'), titre: titreImprime },
       titre: `Fiche d'écriture : ${liste.titre} en ${nom}`,
       court: `${liste.court} en ${nom}`,
@@ -125,7 +127,7 @@ function fichesRegionales(code: (typeof REGIONALES)[number]): FichePubliee[] {
   // une fiche par lettre, digrammes compris (c'h → slug « c-h »)
   const parLettre: FichePubliee[] = donnees.alphabet.map(l => ({
     id: `${code}-lettre-${l.replace("'", '-')}`, slug: `fiche-ecriture-${motLettre}-${l.replace("'", '-')}`, classes: GS_CE1, langue: code,
-    competenceRegionale: K.alphabetLangueRegionale,
+    competencesRegionales: ALPHABET_REGIONAL,
     reglages: { ...BASE, sauter: true, repasser: 1, styles: [...TOUS_STYLES], lettres: [l], titre: `${titreLettre} ${majuscule(l)} ${l}` },
     titre: `Fiche d'écriture : la lettre ${majuscule(l)} de l'alphabet ${nom}`,
     court: `${majuscule(motLettre)} ${majuscule(l)}`,

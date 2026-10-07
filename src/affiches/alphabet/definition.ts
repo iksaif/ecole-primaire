@@ -40,7 +40,7 @@ const definition = definirAffiche({
   // le mot illustré et le titre sont en script ; l'attaché a sa police, avec son lignage facultatif
   police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
   // chaque variante garde celles qui sont au programme de TOUTES ses classes
-  competences: [K.nomLettres, K.cursive, K.accentsLettres, K.alphabetLangueRegionale],
+  competences: [K.nomLettres, K.cursive, K.accentsLettres, K.alphabetLangueRegionale, K.epelerLangueRegionale],
   reglages: {
     serie: choix(SERIES),
     disposition: choix(DISPOSITIONS),

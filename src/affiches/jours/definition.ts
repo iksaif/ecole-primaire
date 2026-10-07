@@ -1,6 +1,6 @@
 // Les jours de la semaine : une affiche pour le mur de la classe, en français, en breton, ou les deux sur la même feuille (classe
 // bilingue). Programme (src/data/programme.ts) : nommer les jours en MS (jours-mois), la semaine au CP (calendrier-mesure-temps), et
-// les jours dans la langue régionale (calendrier-langue-regionale). Deux variantes, l'écriture de la classe : en script en maternelle,
+// les jours dans la langue régionale (jours-langue-regionale). Deux variantes, l'écriture de la classe : en script en maternelle,
 // en script et en attaché au CP.
 import { definirAffiche, choix } from '../definir.ts'
 import { D, K } from '../../noyau/ids.ts'
@@ -18,7 +18,7 @@ const definition = definirAffiche({
   formats: ['A4', 'A3'],
   police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
   // chaque variante garde celles qui sont au programme de toutes ses classes
-  competences: [K.joursMois, K.calendrierMesureTemps, K.calendrierLangueRegionale],
+  competences: [K.joursMois, K.calendrierMesureTemps, K.joursLangueRegionale],
   reglages: {
     attache: choix([false, true]),
   },

@@ -28,7 +28,7 @@ function competencesEcriture(classes: readonly Classe[]): CompetenceId[] {
 const fiches: FicheExercice<ReglagesEcriture>[] = FICHES_PUBLIEES.map(f => ({
   id: f.id, slug: f.slug, niveau: f.classes[0], classes: f.classes, langues: [f.langue],
   competence: f.classes[0] === 'gs' ? K.gesteEcritureMaternelle : K.cursive,
-  competences: [...competencesEcriture(f.classes), ...(f.competenceRegionale ? [f.competenceRegionale] : [])],
+  competences: [...competencesEcriture(f.classes), ...(f.competencesRegionales ?? [])],
   reglages: f.reglages,
 }))
 
@@ -43,7 +43,8 @@ export default definir({
   corrige: false,
   // dans la langue régionale, les fiches de son alphabet, de ses jours et mois, de ses nombres (publiees.ts)
   autresDomaines: [D.regionaleSons, D.regionaleMots],
-  competences: [K.gesteEcritureMaternelle, K.cursive, K.copie, K.alphabetLangueRegionale, K.nombresLangueRegionale, K.calendrierLangueRegionale],
+  competences: [K.gesteEcritureMaternelle, K.cursive, K.copie, K.alphabetLangueRegionale, K.epelerLangueRegionale, K.nombresJusqua10LangueRegionale,
+    K.joursLangueRegionale, K.moisSaisonsLangueRegionale],
   niveauDefaut: 'cp',
   reglages: {
     styles: cases(TOUS_STYLES, { defaut: ['attache-min'] }),

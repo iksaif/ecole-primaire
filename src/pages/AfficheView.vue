@@ -1,8 +1,21 @@
 <!--
-  La page d'une affiche au format « définition » (src/affiches/) : `/imprimer/affiches?affiche=<id>&variante=<v>&langues=fr,br&format=A3&orientation=landscape`.
-  Le formulaire générique est le même pour toutes les affiches du registre ; ce que porte l'adresse (variante, langues, format, sens)
-  l'emporte sur les réglages mémorisés (lien « Personnaliser » d'une fiche toute prête). Sans `affiche` (ou inconnue) : la première du
-  registre. L'adresse suit le formulaire (variante, langues, format, sens) : elle se partage telle quelle (« Copier le lien »).
+  La page d'une affiche au format « définition » (src/affiches/). Le formulaire générique est le même pour toutes les affiches du
+  registre. Sans `affiche` (ou inconnue) : la première du registre.
+
+  L'adresse suit le formulaire : elle se partage telle quelle (« Copier le lien ») et, ouverte ailleurs, redonne la même affiche.
+  Elle porte l'affiche, la variante, puis seulement ce qui s'écarte des défauts de la variante, une clé par réglage, dans cet ordre :
+    /imprimer/affiches?affiche=nombres&variante=cent&langues=fr,br&format=A3&orientation=landscape
+                      &sections=cent,perso&de=41&a=47&pas=2&police=Luciole&titre=Notre+classe
+    - `affiche`, `variante` : toujours ;
+    - `langues` : langues de la feuille, séparées par des virgules (`langue` est aussi lu) ; `format` (A4, A3) ; `orientation` (portrait, landscape) ;
+    - un réglage de la définition sous son nom : choix unique `cle=valeur` (true/false, nombre ou texte), choix multiple
+      `cle=a,b,c`, champ texte ou nombre `cle=…` (catalogue.ts : `CLES_DE_LA_FEUILLE`, aucun réglage ne porte ces noms) ;
+    - `police` (mode unique) ou `police.script`, `police.attache` (mode par type) : seulement une police LIVRÉE (Andika, Luciole,
+      OpenDyslexic, Playwrite FR Trad) ; une police de l'ordinateur ou ajoutée depuis un fichier ne passe pas (défaut chez l'autre) ;
+    - `titre` : titre personnalisé ; `graine` : affiche à hasard seulement.
+  Écrite par queryDeReglages, relue par lireLien (catalogue.ts) et validée par reglagesDe : une valeur invalide est ignorée. Ce
+  que porte l'adresse l'emporte sur les réglages mémorisés ; avec une variante (lien partagé, « Personnaliser » d'une fiche toute
+  prête), seules les polices mémorisées sont gardées, pour les types que l'adresse ne fixe pas.
 -->
 <template>
   <div class="container" data-page="affiche">
@@ -31,7 +44,7 @@ const { t, langue } = useLangue()
 const route = useRoute()
 const courant = computed(() => REGISTRE.find(a => a.definition.id === route.query.affiche) ?? REGISTRE[0])
 const router = useRouter()
-const depart = computed(() => lireLien(route.query))
+const depart = computed(() => lireLien(route.query, courant.value?.definition))
 
 // L'adresse suit le formulaire. Une adresse écrite par le formulaire ne le recrée pas (il garde ses autres réglages) ; une adresse venue
 // d'ailleurs (lien « Personnaliser », retour en arrière) le recrée sur ces réglages.

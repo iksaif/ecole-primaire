@@ -2,9 +2,10 @@
 // Données pures, sérialisables (aucune fonction) : le build en écrit l'index et un fichier JSON par entrée (plan 11), et
 // l'app les lit. Chaque site ne publie que les entrées dont toutes les langues sont les siennes (catalogueDe).
 import type { Site } from '../sites.ts'
-import type { Classe, CompetenceId, DomaineId } from '../noyau/types.ts'
+import type { Classe, CompetenceId, DomaineId, ValeurOption } from '../noyau/types.ts'
+import { defautsDe } from '../noyau/politique.ts'
 import { genererAffiche } from './generer.ts'
-import { ensemblesDeLangues, reglagesDe } from './outils.ts'
+import { champsDe, ensemblesDeLangues, optionsDe, POLICES_LIVREES, reglagesDe, typesDePolice, varianteDe } from './outils.ts'
 import { cleVariante, traducteurAffiche } from './textes.ts'
 import type { DefinitionAffiche, ModuleAffiche } from './types.ts'
 
@@ -41,27 +42,114 @@ export const slugDe = (d: DefinitionAffiche, variante: string, langues: readonly
 export const lienDe = (d: DefinitionAffiche, variante: string, langue: string, langues: readonly string[] = [langue]): string =>
   `${d.route}?affiche=${d.id}&variante=${variante}${langues.join() === 'fr' ? '' : `&langues=${langues.join(',')}`}`
 
-/**
- * Les réglages que porte un lien « Personnaliser » : l'inverse de lienDe, pour le formulaire (`depart`). `query` : les
- * paramètres de l'adresse (chaîne ou liste, comme ceux du routeur). `variante` ; `langues` (liste séparée par des virgules) ou
- * `langue` ; le reste est ignoré. Les valeurs ne sont pas validées ici : reglagesDe le fait.
- */
-export function lireLien(query: Record<string, unknown>): { variante?: string, langues?: string[], format?: string, orientation?: string } {
-  const texte = (v: unknown): string | undefined => (typeof v === 'string' && v ? v : Array.isArray(v) && typeof v[0] === 'string' && v[0] ? v[0] : undefined)
-  const variante = texte(query.variante)
-  const langues = (texte(query.langues) ?? texte(query.langue))?.split(',').filter(Boolean)
-  // format et sens : relus tels quels ; reglagesDe garde seulement ceux que l'affiche permet
-  const format = texte(query.format)
-  const orientation = texte(query.orientation)
-  return {
-    ...(variante ? { variante } : {}), ...(langues?.length ? { langues } : {}),
-    ...(format ? { format } : {}), ...(orientation ? { orientation } : {}),
-  }
+// ── L'adresse d'une affiche réglée (format documenté en tête de src/pages/AfficheView.vue) ──
+
+/** Les clés de l'adresse qui ne sont pas des réglages de la définition : aucun réglage ne peut porter l'un de ces noms (le test le vérifie). */
+export const CLES_DE_LA_FEUILLE: readonly string[] = ['affiche', 'variante', 'langues', 'langue', 'format', 'orientation', 'police', 'titre', 'graine']
+
+/** La clé d'adresse d'un type de police : `police` en mode unique, `police.<type>` (script, attaché) sinon. */
+export function clePoliceDansAdresse(type: string): string {
+  if (type === 'unique') return 'police'
+  return `police.${type}`
 }
 
 /**
- * L'adresse (paramètres) qui rouvre le formulaire sur ces réglages : l'affiche, la variante, et ce qui s'écarte des défauts de la
- * variante parmi les langues, le format et le sens. Les autres réglages ne passent pas encore par l'adresse (ils restent mémorisés).
+ * Un paramètre de l'adresse en texte (vide compris) : le routeur donne une chaîne, une liste (paramètre répété : le premier
+ * compte) ou null (`?cle` sans valeur) ; tout le reste donne undefined.
+ */
+function texteBrut(v: unknown): string | undefined {
+  const premier = Array.isArray(v) ? v[0] : v
+  if (typeof premier !== 'string') return undefined
+  return premier
+}
+
+/** Un paramètre de l'adresse en texte non vide. */
+function texteNonVide(v: unknown): string | undefined {
+  const texte = texteBrut(v)
+  if (!texte) return undefined
+  return texte
+}
+
+/** Une valeur de réglage dans l'adresse : une liste (choix multiple) devient `a,b,c`, le reste son texte. */
+function versAdresse(valeur: unknown): string {
+  if (Array.isArray(valeur)) return valeur.map(String).join(',')
+  return String(valeur)
+}
+
+/**
+ * Une valeur lue dans l'adresse ramenée à l'une des valeurs proposées (`true` → true, `5` → 5) : celle qui s'écrit pareil ; aucune :
+ * undefined (reglagesDe reprend alors le défaut). Un choix multiple garde les morceaux reconnus.
+ */
+function depuisAdresse(texte: string, valeurs: readonly ValeurOption[], multiple: boolean): ValeurOption | ValeurOption[] | undefined {
+  const reconnue = (morceau: string): ValeurOption | undefined => valeurs.find(v => String(v) === morceau)
+  if (!multiple) return reconnue(texte)
+  const choisies = texte.split(',').map(reconnue).filter(v => v !== undefined)
+  if (!choisies.length) return undefined
+  return choisies
+}
+
+/** Une graine lue dans l'adresse : un entier positif écrit en chiffres, sinon undefined. */
+function graineLue(texte: string | undefined): number | undefined {
+  if (!texte || !/^\d{1,9}$/.test(texte)) return undefined
+  const graine = Number(texte)
+  if (graine < 1) return undefined
+  return graine
+}
+
+/**
+ * Les réglages que porte une adresse : l'inverse de queryDeReglages et de lienDe, pour le formulaire (`depart`). `query` : les
+ * paramètres de l'adresse (chaîne ou liste, comme ceux du routeur). Sans `definition` : seulement la variante, les langues
+ * (`langues`, liste séparée par des virgules, ou `langue`), le format et le sens. Avec elle : aussi les réglages à choix, les champs
+ * libres, les polices livrées, le titre et la graine. Lu avec méfiance : une valeur inconnue est ignorée (reglagesDe valide le
+ * reste et reprend les défauts), jamais d'exception.
+ */
+export function lireLien(query: Record<string, unknown>, definition?: DefinitionAffiche): Record<string, unknown> {
+  const lus: Record<string, unknown> = {}
+  const variante = texteNonVide(query.variante)
+  if (variante) lus.variante = variante
+  const langues = (texteNonVide(query.langues) ?? texteNonVide(query.langue))?.split(',').filter(Boolean)
+  if (langues?.length) lus.langues = langues
+  // format et sens : relus tels quels ; reglagesDe garde seulement ceux que l'affiche permet
+  const format = texteNonVide(query.format)
+  if (format) lus.format = format
+  const orientation = texteNonVide(query.orientation)
+  if (orientation) lus.orientation = orientation
+  if (!definition) return lus
+
+  // réglages à choix : parmi les valeurs déclarées de la variante (reglagesDe restreint ensuite à celles proposées)
+  const v = varianteDe(definition, variante)
+  const defauts = defautsDe(definition.reglages, v)
+  for (const [cle, valeurs] of Object.entries(optionsDe(definition, v))) {
+    const texte = texteBrut(query[cle])
+    if (texte === undefined) continue
+    const valeur = depuisAdresse(texte, valeurs, Array.isArray(defauts[cle]))
+    if (valeur !== undefined) lus[cle] = valeur
+  }
+  // champs libres : le texte tel quel (reglagesDe limite sa longueur, ramène un nombre à ses bornes, refuse ce qui n'en est pas un)
+  for (const cle of Object.keys(champsDe(definition, v))) {
+    const texte = texteBrut(query[cle])
+    if (texte !== undefined) lus[cle] = texte
+  }
+  // polices : seulement celles livrées avec le site (une police de l'ordinateur ou d'un fichier n'existerait pas chez un autre)
+  const polices: Record<string, string> = {}
+  for (const type of typesDePolice(definition)) {
+    const nom = texteNonVide(query[clePoliceDansAdresse(type)])
+    if (nom && POLICES_LIVREES.includes(nom)) polices[type] = nom
+  }
+  if (Object.keys(polices).length) lus.polices = polices
+  const titre = texteNonVide(query.titre)
+  if (titre) lus.titre = titre
+  // graine : seulement pour une affiche à hasard (sinon elle ne change rien et n'est jamais écrite)
+  const graine = graineLue(texteNonVide(query.graine))
+  if (definition.hasard && graine) lus.graine = graine
+  return lus
+}
+
+/**
+ * L'adresse (paramètres) qui rouvre le formulaire, à froid, sur ces réglages : l'affiche, la variante, puis ce qui s'écarte des
+ * défauts de la variante, une clé par réglage, dans un ordre fixe : langues, format, sens, réglages de la définition (à choix et
+ * champs libres, dans leur ordre), polices, titre, graine. Une police qui n'est pas livrée (ajoutée depuis un fichier, ou de
+ * l'ordinateur) ne passe pas : l'adresse ouverte ailleurs prend la police par défaut.
  */
 export function queryDeReglages(definition: DefinitionAffiche, config: Readonly<Record<string, unknown>>): Record<string, string> {
   const variante = String(config.variante)
@@ -71,6 +159,25 @@ export function queryDeReglages(definition: DefinitionAffiche, config: Readonly<
   if (langues.join() !== ((defaut.langues as readonly string[] | undefined) ?? []).join()) query.langues = langues.join(',')
   if (config.format !== defaut.format) query.format = String(config.format)
   if (config.orientation !== defaut.orientation) query.orientation = String(config.orientation)
+
+  // les défauts des réglages dépendent de la feuille (valeurs proposées selon la langue…) : on compare à ceux de CETTE feuille,
+  // ceux que reglagesDe donnera à la relecture si la clé est absente
+  const base = reglagesDe(definition, { variante, langues, format: config.format, orientation: config.orientation }) as Record<string, unknown>
+  const v = varianteDe(definition, variante)
+  const reglables = new Set([...Object.keys(optionsDe(definition, v)), ...Object.keys(champsDe(definition, v))])
+  for (const cle of Object.keys(base)) {
+    if (!reglables.has(cle) || !(cle in config)) continue
+    if (JSON.stringify(config[cle]) !== JSON.stringify(base[cle])) query[cle] = versAdresse(config[cle])
+  }
+  const polices = (config.polices ?? {}) as Readonly<Record<string, unknown>>
+  const policesDefaut = base.polices as Readonly<Record<string, string>>
+  for (const type of typesDePolice(definition)) {
+    const nom = polices[type]
+    if (typeof nom !== 'string' || nom === policesDefaut[type] || !POLICES_LIVREES.includes(nom)) continue
+    query[clePoliceDansAdresse(type)] = nom
+  }
+  if (typeof config.titre === 'string' && config.titre) query.titre = config.titre
+  if (definition.hasard && config.graine !== base.graine) query.graine = String(config.graine)
   return query
 }
 

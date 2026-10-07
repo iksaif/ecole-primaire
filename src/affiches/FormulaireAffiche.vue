@@ -152,8 +152,14 @@ const choix = commeExercice(definition)
 // réglages mémorisés par affiche, ramenés à des valeurs valides (reglagesDe)
 const CLE = `affiche_${definition.id.replaceAll('-', '_')}`
 const memorises = reglagesDe(definition, chargerReglages(CLE, reglagesDe(definition)))
-// un lien vers une variante (fiche toute prête) ouvre CETTE fiche, avec ses réglages : seules les polices choisies sont gardées
-const config = ref(reglagesDe(definition, props.depart.variante ? { polices: memorises.polices, ...props.depart } : { ...memorises, ...props.depart }))
+// un lien vers une variante (fiche toute prête, adresse partagée) ouvre CETTE fiche, avec ses réglages : seules les polices
+// mémorisées sont gardées, pour les types que le lien ne fixe pas
+const config = ref(reglagesDe(definition, reglagesDuDepart()))
+function reglagesDuDepart(): Record<string, unknown> {
+  if (!props.depart.variante) return { ...memorises, ...props.depart }
+  const policesDuLien = (props.depart.polices ?? {}) as Readonly<Record<string, unknown>>
+  return { ...props.depart, polices: { ...memorises.polices, ...policesDuLien } }
+}
 
 // ── Axes des variantes (definition.variantes[…].axes) : les valeurs de chaque axe, dans l'ordre des variantes ──
 const axes = computed(() => {

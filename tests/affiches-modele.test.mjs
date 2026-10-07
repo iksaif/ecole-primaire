@@ -10,13 +10,14 @@ import { REGISTRE } from '../src/affiches/index.ts'
 import { EXEMPLES } from '../src/affiches/dev.ts'
 import {
   reglagesDe, jeuxDeReglages, reglagesApresVariante, optionsDe, champsDe, groupesDuFormulaire, visible, evaluer, reglagesDeCondition, typesDePolice,
-  typesDePoliceVisibles, valeurDeChamp, valeursProposees, appliquerPrereglage, prereglageActif,
+  typesDePoliceVisibles, valeurDeChamp, valeursProposees, appliquerPrereglage, prereglageActif, POLICES_LIVREES,
 } from '../src/affiches/outils.ts'
 import { definirAffiche, choix, cases, texte, nombre } from '../src/affiches/definir.ts'
 import { mesureEstimee } from '../src/affiches/mesure.ts'
 import * as riche from '../src/affiches/exemple-riche/definition.ts'
 import { genererAffiche } from '../src/affiches/generer.ts'
-import { entreesDe, catalogueDe, lireLien } from '../src/affiches/catalogue.ts'
+import { entreesDe, catalogueDe, lireLien, queryDeReglages, CLES_DE_LA_FEUILLE } from '../src/affiches/catalogue.ts'
+import { PROPORTIONS } from '../src/affiches/metriques.ts'
 import { cleVariante, cleReglage, cleValeur, cleGroupe, clePolice, clePrereglage } from '../src/affiches/textes.ts'
 import { SITES } from '../src/sites.ts'
 import { mesuresAffiche } from '../src/impression/affiches/cadre.ts'
@@ -240,6 +241,56 @@ for (const module of MODULES) {
   const soloFr = catalogueDe([module], { languesInterface: ['fr'], languesRegionales: [] })
   if (soloFr.some(e => e.langues.join() !== 'fr') || soloFr.length !== vids.length) epbs.push(`un site français seul : ${soloFr.length} entrées (langues ${soloFr.map(e => e.langues)})`)
   controler(epbs, `catalogue dérivé : ${entrees.length} entrée(s), sérialisable, filtré par site`)
+}
+
+// ── Adresse d'une affiche réglée : réglages → adresse → réglages (une adresse copiée, ouverte à froid, redonne la même affiche) ──
+console.log('\nAdresse')
+controler(Object.keys(PROPORTIONS).filter(p => !POLICES_LIVREES.includes(p)).concat(POLICES_LIVREES.filter(p => !(p in PROPORTIONS))).map(p => `${p} : livrée d'un côté seulement`),
+  'polices livrées (adresse) = polices de la table des métriques')
+for (const module of MODULES) {
+  const d = module.definition
+  const apbs = []
+  for (const [vid, v] of Object.entries(d.variantes)) {
+    const reglables = [...Object.keys(optionsDe(d, v)), ...Object.keys(champsDe(d, v))]
+    for (const cle of reglables) if (CLES_DE_LA_FEUILLE.includes(cle)) apbs.push(`le réglage « ${cle} » porte le nom d'une clé de la feuille`)
+    const jeux = jeuxDeReglages(d, vid, { horsProgramme: true })
+    const defauts = jeux.defauts
+    // en plus des jeux habituels : chaque choix multiple avec toutes ses valeurs puis les deux dernières (jeuxDeReglages n'en
+    // essaie qu'une, qui n'est pas une liste), une autre police livrée pour chaque type, puis tous les jeux à la fois
+    for (const cle of Object.keys(optionsDe(d, v)).filter(c => Array.isArray(defauts[c]))) {
+      const valeurs = valeursProposees(d, cle, defauts)
+      jeux[`${cle}=toutes`] = reglagesDe(d, { ...defauts, [cle]: valeurs })
+      jeux[`${cle}=deux`] = reglagesDe(d, { ...defauts, [cle]: valeurs.slice(-2) })
+    }
+    for (const type of typesDePolice(d)) jeux[`police.${type}=Luciole`] = reglagesDe(d, { ...defauts, polices: { ...defauts.polices, [type]: 'Luciole' } })
+    jeux.tout = reglagesDe(d, Object.assign({}, ...Object.values(jeux)))
+    for (const [nom, config] of Object.entries(jeux)) {
+      // comme dans la barre d'adresse : encodée, puis décodée
+      const adresse = new URLSearchParams(queryDeReglages(d, config)).toString()
+      const relus = reglagesDe(d, lireLien(Object.fromEntries(new URLSearchParams(adresse)), d))
+      if (JSON.stringify(relus) !== JSON.stringify(config)) apbs.push(`${vid}/${nom} : ?${adresse} rouvre d'autres réglages`)
+      else if (genererAffiche(module, relus).html !== genererAffiche(module, config).html) apbs.push(`${vid}/${nom} : ?${adresse} rouvre une autre affiche`)
+    }
+    // les défauts : l'affiche et la variante seulement ; une police qui n'est pas livrée ne passe pas
+    const cles = Object.keys(queryDeReglages(d, defauts)).join()
+    if (cles !== 'affiche,variante') apbs.push(`${vid} : les défauts écrivent ${cles}`)
+    for (const type of typesDePolice(d)) {
+      const perso = reglagesDe(d, { ...defauts, polices: { ...defauts.polices, [type]: 'Ma Police' } })
+      if (Object.values(queryDeReglages(d, perso)).includes('Ma Police')) apbs.push(`${vid} : une police non livrée passe par l'adresse`)
+    }
+    // une adresse abîmée : jamais d'exception, les défauts de la variante (un champ texte accepte tout texte : il n'est pas abîmé ici)
+    const abimables = reglables.filter(cle => champsDe(d, v)[cle]?.sorte !== 'texte')
+    const abimee = {
+      affiche: d.id, variante: vid, langues: 'zz,', format: 'A9', orientation: '', police: 'Comic Sans', 'police.script': '<b>',
+      'police.attache': ['x'], titre: ['', 'y'], graine: '-4', ...Object.fromEntries(abimables.map(c => [c, ',,n’importe quoi,'])),
+    }
+    try {
+      if (JSON.stringify(reglagesDe(d, lireLien(abimee, d))) !== JSON.stringify(defauts)) apbs.push(`${vid} : une adresse abîmée ne reprend pas les défauts`)
+    } catch (e) {
+      apbs.push(`${vid} : une adresse abîmée lève ${e.message}`)
+    }
+  }
+  controler(apbs, `${d.id} : adresse ↔ réglages, aller-retour exact (jeux de réglages, polices livrées seulement, adresse abîmée)`)
 }
 
 // ── Conditions « visible si » ──

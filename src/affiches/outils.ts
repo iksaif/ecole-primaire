@@ -9,6 +9,12 @@ import type { Champ, Condition, ConfigAffiche, DefinitionAffiche, Orientation, T
 export const ORIENTATIONS: readonly Orientation[] = ['portrait', 'landscape']
 /** La police de base : celle du titre et de l'interface, et le défaut du contenu. */
 export const POLICE_BASE = 'Andika'
+/**
+ * Les polices livrées avec le site (OFL, CC BY) : les seules qu'une adresse partagée transmet (une police de l'ordinateur ou
+ * ajoutée depuis un fichier n'existerait pas chez un autre). Les mêmes que POLICES_INCLUSES de src/utils/impression.js, qui
+ * importe les fichiers et ne se lit pas sous node ; le test les compare à la table des métriques (metriques.ts).
+ */
+export const POLICES_LIVREES: readonly string[] = [POLICE_BASE, 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']
 /** Le titre personnalisé est limité (il tient sur une ligne). */
 export const LONGUEUR_TITRE = 80
 export const GRAINE_DEFAUT = 1

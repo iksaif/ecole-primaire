@@ -20,4 +20,4 @@ Pages HTML statiques par fiche (`scripts/build/statique/`) avec `og:*`, canonica
 4. Vérifier les aperçus (Facebook Sharing Debugger, opengraph.xyz).
 
 **À faire de ton côté** : te connecter à Search Console et à Bing avec ton compte et fournir les codes TXT. Effort : 1 heure, plus le temps d'indexation.
-`lastmod` du sitemap et `deploy/nginx/*.conf` périmés : voir `REPRISE.md`, « Avant de déployer ».
+`lastmod` du sitemap et `deploy/nginx/*.conf` périmés : voir le plan 11, « Avant de déployer ».

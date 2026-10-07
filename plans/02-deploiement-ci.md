@@ -1,7 +1,7 @@
 # Plan 02 — Déploiement automatique sur le VPS depuis GitHub Actions
 
 **But** : un push sur `main` met à jour ecoleprimaire.app et skoolik.app, sans lancer `scripts/deploiement/deploy-vps.sh` à la main.
-**À ne faire qu'après la fusion de `base-saine` dans `main`** : le workflow se déclenche sur `main` (voir `REPRISE.md`, « Avant de déployer »).
+**À ne faire qu'après la fusion de `base-saine` dans `main`** : le workflow se déclenche sur `main` (voir le plan 11, « Avant de déployer »).
 
 ## État actuel (2026-10-07)
 

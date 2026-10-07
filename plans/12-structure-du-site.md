@@ -72,5 +72,5 @@ document par page, contrastes du logo, du lien actif et du pied de page, débord
 ## Suite
 
 Les maquettes cliquables sont dans `plans/maquettes/` (référence de comportement et d'aspect ; données et breton inventés). La structure est implémentée
-(`src/contexte/`, `src/ressources/`, `src/router/`, `src/shell/`, `src/pages/`, `src/recherche/`, `src/programme/` : voir leurs README et `REPRISE.md`).
-Reste à faire avant la mise en ligne : les redirections des anciennes adresses et `deploy/setup-nginx.sh` (par l'utilisateur), voir `REPRISE.md`, « Avant de déployer ».
+(`src/contexte/`, `src/ressources/`, `src/router/`, `src/shell/`, `src/pages/`, `src/recherche/`, `src/programme/` : voir leurs README).
+Reste à faire avant la mise en ligne : les redirections des anciennes adresses et `deploy/setup-nginx.sh` (par l'utilisateur), voir le plan 11, « Avant de déployer ».

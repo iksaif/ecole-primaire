@@ -128,12 +128,21 @@ Branche `base-saine` (plan 11, `plans/11-base-saine.md`) : tout ce qui est nouve
   (`tests/vie-privee.test.mjs` le vérifie pour chacun).
 - Polices : seulement celles livrées (OFL / CC BY). Belle Allure et Écolier ne sont pas redistribuables.
 - `brouillons/` : plans temporaires, maquettes et études (ignoré par git : jamais commité ni poussé ; ex. `brouillons/iconographie/`).
-- `plans/` et `AGENTS.md` sont versionnés depuis le 2026-10-07 (reprise du travail sur plusieurs machines : voir `REPRISE.md`). Ne pas commiter
+- `plans/` et `AGENTS.md` sont versionnés depuis le 2026-10-07 (reprise du travail sur plusieurs machines). Ne pas commiter
   `i18n-relecture.html` ni `couverture.html` (générés), ni rien qui contienne un identifiant, un hôte réel ou une clé (`.deploy.env`).
+- **Hors dépôt, à recréer ou copier sur une autre machine** : `.deploy.env` (voir `.deploy.env.example`), `polices-locales/` (Belle Allure et Écolier, usage local seulement :
+  licences dans `docs/TODO.md`), `brouillons/`, la clé Mistral (saisie dans l'app) et la mémoire locale de Claude (`~/.claude/projects/…/memory`).
 - Commits : auteur `Corentin Chary <corentin.chary@gmail.com>`, signés. Si la signature échoue, ne pas la
   contourner : demander à l'utilisateur.
 - Plusieurs agents peuvent travailler en même temps : ne toucher qu'aux fichiers de sa tâche, ne pas lancer
-  `npm test` si un autre agent le fait, ne pas commiter sauf demande explicite.
+  `npm test` si un autre agent le fait, ne pas commiter sauf demande explicite. Quand on commite : **limité aux chemins** de sa tâche
+  (`git commit -m … -- chemins`), jamais `git stash`, `reset`, `checkout` ni `clean` ; relire les fichiers partagés (registres, `index.ts` des textes,
+  `tests/lancer.mjs`) juste avant de les modifier. Un seul `npm test` à la fois (ports 4190 à 4192) : verrou
+  `until mkdir /tmp/npm-test.lock 2>/dev/null; do sleep 5; done; npm test; rmdir /tmp/npm-test.lock`.
+- Pièges connus : les instantanés d'affiches sont dans `tests/instantanes/affiches.json` (`node tests/affiches-modele.test.mjs --maj` pour accepter un écart
+  voulu, après l'avoir regardé) ; une boîte de texte SVG dépasse de la page par la hauteur de la police sans que les lettres sortent, et
+  `tests/fiches-debordement.test.mjs` ne mesure que l'horizontale pour le texte SVG ; sous charge, des tests Chrome échouent par course (titres lus trop tôt…) :
+  les relancer seuls avant de chercher un bug.
 - Les demandes reçues en cours de tâche vont d'abord dans `docs/TODO.md` (versionné ; `TODO.md` à la racine est un lien vers lui).
 - SSH vers le serveur : jamais de sonde `nc` sur le port 22 (fail2ban). `sudo` sur le serveur : c'est
   l'utilisateur qui le lance.

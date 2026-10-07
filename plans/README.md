@@ -12,7 +12,7 @@ son historique est dans git (`git log -- plans/`).
 | [09 Programme](09-domaines-programme.md) | décisions de contenu (français) et sources, trous CE2-CM2 | relecture par un·e enseignant·e |
 | [10 Méthode qualité](10-qualite-methode.md) | principes, décisions ; Fluent/Weblate, `@playwright/test`, passes de lisibilité | Weblate : quand un relecteur est trouvé |
 | 10 Couverture : [PS](10-couverture-ps.md) · [MS](10-couverture-ms.md) · [GS](10-couverture-gs.md) · [CP](10-couverture-cp.md) · [CE1](10-couverture-ce1.md) | les compétences sans ressource (`npm run couverture`) et leurs propositions | décisions de chaque plan |
-| [11 Base saine](11-base-saine.md) | règles jusqu'à la fusion ; validation de l'utilisateur | valider, puis fusionner et déployer (`REPRISE.md`) |
+| [11 Base saine](11-base-saine.md) | règles jusqu'à la fusion ; validation de l'utilisateur | valider, puis fusionner et déployer (plan 11, « Avant de déployer ») |
 | [12 Structure du site](12-structure-du-site.md) | décisions de structure (implémentées) ; redirections avant la mise en ligne | — |
 | [Critique des lettres](critique-lettres-2026-10-07.md) | fiche, son des lettres, ouverture à la MS | — |
 
@@ -27,5 +27,5 @@ son historique est dans git (`git log -- plans/`).
 - **04 Licence** : faite (code AGPL-3.0 ; fiches CC BY-NC-SA 4.0, textes et données CC BY-SA 4.0, images : leur licence ; voir `LICENCE-CONTENU.md`).
 - **08 Tests, nouveautés, retours** : faits (`tests/`, CI, page « Nouveautés », bouton « Signaler une erreur »).
 - **13 Implémentation de la structure** et **consignes aux agents** : faits (`src/contexte/`, `src/ressources/`, `src/router/`, `src/shell/`, `src/pages/`, `src/recherche/`, `src/programme/`).
-- **14 Migration restante** : terminée, l'ancien monde est supprimé (`REPRISE.md`).
+- **14 Migration restante** : terminée, l'ancien monde est supprimé (commit `c088a7b`).
 - **tests-sauvegardes/** : les scripts de test rapatriés dans `tests/`.

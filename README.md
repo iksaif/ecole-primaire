@@ -19,7 +19,8 @@
   <img src="https://img.shields.io/badge/publicit%C3%A9-aucune-2ea44f" alt="Aucune publicité">
   <img src="https://img.shields.io/badge/compte-pas%20besoin-2ea44f" alt="Pas de compte">
   <a href="LICENSE"><img src="https://img.shields.io/badge/code-AGPL--3.0-blue" alt="Code : AGPL-3.0"></a>
-  <a href="LICENCE-CONTENU.md"><img src="https://img.shields.io/badge/contenu-CC%20BY--SA%204.0-lightgrey" alt="Contenu : CC BY-SA 4.0"></a>
+  <a href="LICENCE-CONTENU.md"><img src="https://img.shields.io/badge/fiches-CC%20BY--NC--SA%204.0-lightgrey" alt="Fiches : CC BY-NC-SA 4.0"></a>
+  <a href="LICENCE-CONTENU.md"><img src="https://img.shields.io/badge/textes-CC%20BY--SA%204.0-lightgrey" alt="Textes et données : CC BY-SA 4.0"></a>
   <br>
   <img src="https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white" alt="Vue 3">
   <img src="https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white" alt="Vite">
@@ -188,9 +189,11 @@ choix de la police des fiches), ou ajoutez le fichier depuis ce choix ; il reste
 - **Le code** est sous [GNU AGPL 3.0](LICENSE) (ou version ultérieure) : vous pouvez le reprendre, le
   modifier et héberger votre propre version, à condition de publier vos modifications sous la même licence,
   même si le site n'est utilisé qu'en ligne.
-- **Le contenu** (fiches, PDF, textes, listes de mots, traductions bretonnes) est sous
-  [CC BY-SA 4.0](LICENCE-CONTENU.md) : imprimez, photocopiez, distribuez et adaptez librement, en citant la
-  source.
+- **Les fiches et les PDF** sont sous [CC BY-NC-SA 4.0](LICENCE-CONTENU.md) : imprimez, photocopiez, distribuez et
+  adaptez, en citant la source, sans usage commercial et en partageant vos versions sous la même licence.
+- **Les textes et données sources** (lecture, dictée, listes de mots, traductions bretonnes) sont sous
+  [CC BY-SA 4.0](LICENCE-CONTENU.md) : réutilisables, y compris dans un cadre commercial, en citant la source.
+- **Les images** (emojis, pictogrammes) gardent la licence de leur auteur (détail dans [`LICENCE-CONTENU.md`](LICENCE-CONTENU.md)).
 
 On a choisi ces licences pour que le site et ses améliorations restent libres et gratuits pour tout le
 monde, en particulier les traductions dans les langues régionales.

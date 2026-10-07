@@ -12,7 +12,10 @@ export default {
     donnees5: "Evit gouzout peseurt pajennoù ha fichennoù a zo talvoudus, al lec'hienn a gas d'hor servijer ur sinal dizanv : pajenn gweladennet, fichenn moullet hag he arventennoù, yezh. N'eo liammet ouzh toupin, anaouder pe chomlec'h IP ebet, ha ne vez ket kaset ma c'houlenn ho merdeer chom hep bezañ heuliet (« Do Not Track »).", // br: à relire
     contenus: 'Danvez',
     contenusLicence: 'Dindan an aotre-implijout', // br: à relire
-    contenusLicenceSuite: " emañ ar fichennoù, ar skritelloù hag an testennoù : gallout a rit o moullañ, o luc'heilañ, o skignañ hag o azasaat en un doare frank, en ur venegiñ ar vammenn.", // br: à relire
+    contenusLicenceSuite: " emañ ar fichennoù hag an afichoù da voullañ : gallout a rit o moullañ, o luc'heilañ, o skignañ hag o azasaat, en ur venegiñ ar vammenn, hep implij kenwerzhel hag en ur rannañ ho stummoù dindan an hevelep aotre-implijout.", // br: à relire
+    contenusTextes: 'Dindan an aotre-implijout', // br: à relire
+    contenusTextesSuite: " emañ an testennoù hag an titouroù mammenn (lenn, skrivadenn, rolloù gerioù, troidigezhioù) : gallout a rit o adimplijout, ivez evit un implij kenwerzhel, en ur venegiñ ar vammenn hag en ur rannañ ho stummoù dindan an hevelep aotre-implijout.", // br: à relire
+    contenusImages: "Ar skeudennoù (fromoù, pictogramoù) a zalc'h aotre-implijout o aozer ; munudoù e", // br: à relire
     codeSource: "Ar c'hod mammenn a zo war", codeLicence: ', dindan an aotre-implijout', // br: à relire
     polices: 'Nodrezhoù :',
     responsabilite: 'Atebegezh',

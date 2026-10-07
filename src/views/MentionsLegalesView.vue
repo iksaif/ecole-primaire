@@ -19,7 +19,9 @@
       </ul>
 
       <h2>{{ t('contenus') }}</h2>
-      <p>{{ t('contenusLicence') }} <a :href="`${DEPOT}/blob/main/LICENCE-CONTENU.md`" target="_blank" rel="noopener">CC BY-SA 4.0</a>{{ t('contenusLicenceSuite') }}</p>
+      <p>{{ t('contenusLicence') }} <a :href="`${DEPOT}/blob/main/LICENCE-CONTENU.md`" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>{{ t('contenusLicenceSuite') }}</p>
+      <p>{{ t('contenusTextes') }} <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener">CC BY-SA 4.0</a>{{ t('contenusTextesSuite') }}</p>
+      <p>{{ t('contenusImages') }} <a :href="`${DEPOT}/blob/main/LICENCE-CONTENU.md`" target="_blank" rel="noopener">LICENCE-CONTENU.md</a>.</p>
       <p>{{ t('codeSource') }} <a :href="DEPOT" target="_blank" rel="noopener">GitHub</a>{{ t('codeLicence') }}
         <a :href="`${DEPOT}/blob/main/LICENSE`" target="_blank" rel="noopener">AGPL 3.0</a>.</p>
       <p>{{ t('polices') }}

@@ -77,8 +77,16 @@ vers un autre site que le nôtre.
 ## À propos de l'IA
 
 Le code a été écrit en grande partie avec l'aide d'un assistant de programmation (Claude). On s'en est
-servi comme d'un outil de développement : écrire du code, des tests, chercher des sources. Le site
-publié, lui, n'utilise pas d'IA : les exercices sont générés par du code classique, dans votre navigateur.
+servi comme d'un outil de développement : écrire du code, des tests, chercher des sources.
+
+Seuls, on n'aurait jamais eu le temps de faire tout ça. Bien sûr, ce serait mieux si tout était fait par des
+humains. Mais on y a vu une occasion : se servir de l'IA une fois, pour écrire le code, et obtenir ensuite
+des exercices et des fiches réglables à volonté, qui ne demandent presque aucune ressource pour être
+produits : du code classique, libre, qui tourne dans votre navigateur. Pas d'IA à chaque fiche, et autant
+que possible, rien d'imposé sur les fiches : pas de filigrane, pas de publicité, pas de marque.
+
+Le site publié n'utilise donc pas d'IA, sauf si vous le demandez : la Dictée et la Lecture peuvent générer
+des phrases avec votre propre clé Mistral (voir « Vie privée »).
 
 Ce qui a demandé de la vigilance :
 

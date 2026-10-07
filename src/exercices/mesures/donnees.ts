@@ -1,9 +1,10 @@
-// @ts-check
-// Les mesures — données par niveau (objets, conversions proposées, balances, brocs…). Les exercices proposés viennent
-// de la définition (options du niveau) ; ici, ce que chaque exercice tire. Le CE1 et le CE2 ont la même forme.
+// Les mesures — données par niveau (objets, conversions proposées, balances, brocs…). Les exercices proposés viennent de la définition
+// (réglage `exercices` du niveau) ; ici, ce que chaque exercice tire. Le CE1 et le CE2 ont la même forme.
+import type { Classe } from '../../noyau/types.ts'
+import type { DonneesNiveau, ObjetUnite } from './types.ts'
 
-// objetsUnite : la phrase (catalogue de contenu, `phrases[id]`) se lit « texte valeur … » (« Une pomme pèse 150 … »).
-const OBJETS_UNITE_CE1 = [
+// objetsUnite : la phrase (catalogue de contenu, `phrases.<id>`) se lit « texte valeur … » (« Une pomme pèse 150 … »).
+const OBJETS_UNITE_CE1: readonly ObjetUnite[] = [
   { id: 'crayon', valeur: 15, unite: 'cm' },
   { id: 'gomme', valeur: 4, unite: 'cm' },
   { id: 'cahier', valeur: 17, unite: 'cm' },
@@ -30,7 +31,7 @@ const OBJETS_UNITE_CE1 = [
 ]
 // CE1 : pas encore de contenances (litre : CE2)
 const OBJETS_UNITE_CE1_SANS_L = OBJETS_UNITE_CE1.filter(o => o.unite !== 'L')
-const OBJETS_CONTENANCE_CE1 = [
+const OBJETS_CONTENANCE_CE1: readonly ObjetUnite[] = [
   { id: 'bouteille', valeur: 1, unite: 'L' },
   { id: 'seau', valeur: 10, unite: 'L' },
   { id: 'baignoire', valeur: 150, unite: 'L' },
@@ -39,8 +40,7 @@ const OBJETS_CONTENANCE_CE1 = [
   { id: 'piscineGonflable', valeur: 500, unite: 'L' },
 ]
 
-
-export const DONNEES = {
+export const DONNEES: Readonly<Partial<Record<Classe, DonneesNiveau>>> = {
   ce1: {
     // programme du CE1 : longueurs (m, cm, km) et masses (g, kg) ; les contenances commencent au CE2
     regle: { max: 20, segMin: 2, segMax: 15, px: 32, mm: false },  // en cm entiers
@@ -95,5 +95,4 @@ export const DONNEES = {
   },
 }
 
-
-export const JOURS_MOIS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+export const JOURS_MOIS: readonly number[] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

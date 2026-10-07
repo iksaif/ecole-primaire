@@ -1,24 +1,24 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">📏 {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('mesures.titre') }}</h1>
 
-    <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
-        :titre="t('exercices')" :libelle="e => t(`ex_${e}`)" />
-      <ChoixReglage v-if="mode === 'jouer' && config.exercices.includes('regle')" :definition="DEFINITION" cle="decale"
-        v-model="config.decale" :titre="t('segmentsRegle')" :libelle="d => t(d ? 'pasToujours0' : 'commencent0')" />
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
-      <template v-if="mode === 'imprimer'">
-        <ChoixReglage v-if="config.exercices.includes('regle')" :definition="DEFINITION" cle="nbSegments"
-          v-model="config.nbSegments" :titre="t('nbSegments')" />
-        <p class="rappel-100">⚠️ {{ t('rappel100') }}</p>
+      <template #default="{ mode: modeCourant }">
+        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
+        <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
+          :titre="t('communs.exercices')" :libelle="e => t(`mesures.exercices.${e}`)" />
+        <ChoixReglage v-if="modeCourant === 'jouer' && config.exercices.includes('regle')" :definition="DEFINITION" cle="decale"
+          v-model="config.decale" :titre="t('mesures.segmentsRegle')" :libelle="d => t(d ? 'mesures.pasToujours0' : 'mesures.commencent0')" />
+        <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+        <template v-if="modeCourant === 'imprimer'">
+          <ChoixReglage v-if="config.exercices.includes('regle')" :definition="DEFINITION" cle="nbSegments"
+            v-model="config.nbSegments" :titre="t('mesures.nbSegments')" />
+          <p class="rappel-100">⚠️ {{ t('mesures.rappel100') }}</p>
+        </template>
       </template>
-    </ConfigExercice>
+    </CadreExercice>
 
-    <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="consigne">{{ q.consigne }}</div>
 
@@ -33,21 +33,20 @@
         <span v-if="q.unite" class="unite-label">{{ q.unite }}</span>
       </div>
       <!-- Choix -->
-      <ChoixReponses v-else :options="options" :bonne="bonne" :repondu="repondu" @choisir="choisir" />
+      <ChoixReponses v-else :options="options" :bonne="bonne" :repondu="repondu" :titre="q.consigne" @choisir="choisir" />
 
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
-      <div v-if="repondu && !retour.ok && q.explication" class="explication">💡 {{ q.explication }}</div>
+      <RetourReponse :message="retour?.message" :etat="etat" />
+      <div v-if="repondu && retour && !retour.ok && q.explication" class="explication">💡 {{ q.explication }}</div>
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
-          <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
-          <button v-if="q.mode === 'nombre'" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('mesures.passer') }}</button>
+          <button v-if="q.mode === 'nombre'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
         </template>
-        <button v-else class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+        <button v-else type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
       </div>
     </QuestionJeu>
 
-    <!-- Résultats -->
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <TableauCorrection :historique="historique" />
@@ -55,40 +54,42 @@
   </div>
 </template>
 
-<script setup>
-// Les mesures : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de
-// question) et fiche : src/exercices/mesures/.
+<script setup lang="ts">
+// Les mesures : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question) et
+// fiche : src/exercices/mesures/.
 import { ref, computed } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import ChoixReponses from '../../components/ChoixReponses.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import SaisieReponse from '../../components/SaisieReponse.vue'
-import TableauCorrection from '../../components/TableauCorrection.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/mesures/definition'
-import { INTERFACE, TEXTES } from '../../exercices/mesures/textes'
-import { questions as genererQuestions, questionsFiche, verifier } from '../../exercices/mesures/generateur'
-import { fiche as ficheMesures } from '../../exercices/mesures/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import SaisieReponse from '../../noyau/SaisieReponse.vue'
+import TableauCorrection from '../../noyau/TableauCorrection.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import DEFINITION from '../../exercices/mesures/definition.ts'
+import { CONTENU } from '../../exercices/mesures/textes.ts'
+import { questions as tirer, questionsFiche, verifier } from '../../exercices/mesures/generateur.ts'
+import type { Question, Reponse } from '../../exercices/mesures/generateur.ts'
+import { fiche as ficheMesures } from '../../exercices/mesures/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
-// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; maths :
-// le contenu (énoncés, fiche) suit la langue de l'interface
-const { config, langueContenu } = useReglages(DEFINITION, 'mesures_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
+const { t } = useLangue()
+// Réglages mémorisés, ajustés au changement de niveau (useReglages) ; le contenu (énoncés, fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION)
+const T = traducteur(CONTENU, () => langueContenu.value)
 
 // ── Jeu ──
-const reponse = ref('')
+const reponse = ref<string | number>('')
 
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
   // une question passée n'a pas de ❌ : on enchaîne aussitôt
-  messageErreur: (q, rep) => `${rep ? '❌ ' : ''}${t('bonneReponse')} : ${q.attendu}`,
+  messageErreur: (q, rep) => `${rep ? '❌ ' : ''}${t('communs.bonneReponse')} : ${q.attendu}`,
   delai: 900,
   // champ vidé ; le focus : SaisieReponse (attribut focus)
   surQuestion: () => { reponse.value = '' },
@@ -96,32 +97,33 @@ const jeu = useJeu({
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 
 const options = computed(() => (q.value?.choix ?? []).map(label => ({ label })))
-const bonne = computed(() => (q.value?.choix ?? []).indexOf(q.value?.reponse))
+const bonne = computed(() => (q.value?.choix ?? []).indexOf(String(q.value?.reponse)))
 
-function valider() {
+function valider(): void {
   const qu = q.value
-  if (repondu.value || qu.mode !== 'nombre') return
+  if (!qu || repondu.value || qu.mode !== 'nombre') return
   const v = String(reponse.value ?? '').trim().replace(',', '.')
   if (v === '') return
   jeu.repondre({ texte: v }, { donne: qu.unite ? `${v} ${qu.unite}` : v })
 }
 
-function choisir(i) {
-  const choix = q.value.choix[i]
+function choisir(i: number): void {
+  const choix = q.value?.choix?.[i]
+  if (choix === undefined) return
   jeu.repondre({ choix }, { donne: choix })
 }
 
 // passer : la question compte comme une erreur, et on enchaîne aussitôt
-function passer() {
+function passer(): void {
   if (repondu.value) return
-  jeu.passer({ donne: t('passe') })
+  jeu.passer({ donne: t('mesures.passe') })
   jeu.suivante()
 }
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheMesures({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheMesures({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 

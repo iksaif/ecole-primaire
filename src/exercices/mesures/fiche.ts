@@ -1,10 +1,15 @@
-// Les mesures — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche().
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; police et cssPolices : usePoliceFiche() dans l'app (Andika par défaut)
+// Les mesures — fiche imprimable : la mise en page du tirage de `questionsFiche`. Pure (lisible par node).
 // Les segments sont dessinés à la taille réelle (1 cm = 1 cm à 100 %) : la fiche demande d'imprimer sans ajustement.
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
-import { segmentReel, regleTemoin } from './dessins.js'
-import { cmmm } from './longueurs.js'
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import { segmentReel, regleTemoin } from './dessins.ts'
+import { cmmm } from './longueurs.ts'
+import type { Tirage } from './generateur.ts'
+import type { Question, Reglages, TypeQuestion } from './types.ts'
+import type { CONTENU } from './textes.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       @page { size: A4; margin: 1.2cm; }
@@ -29,25 +34,25 @@ const CSS = `
 const TROU = '<span class="trou"></span>'
 const LETTRES = 'ABCDEFGH'
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
-  const sections = []
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<Reglages, Tirage, Cle>): string {
+  const sections: string[] = []
   // corrigé : une ligne par partie, réponses dans l'ordre de la fiche
-  const corrige = []
-  const ligneCorrige = (titre, rep) => corrige.push(`<p><b>${titre} :</b> ${rep}</p>`)
-  const numeros = l => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
-  const lettres = l => l.map((r, i) => `${LETTRES[i]} : ${r}`).join(' — ')
+  const corrige: string[] = []
+  const ligneCorrige = (titre: string, rep: string): void => { corrige.push(`<p><b>${titre} :</b> ${rep}</p>`) }
+  const numeros = (l: readonly string[]): string => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
+  const lettres = (l: readonly string[]): string => l.map((r, i) => `${LETTRES[i]} : ${r}`).join(' — ')
 
-  const questionImprimee = qi => {
+  const questionImprimee = (qi: Question): string => {
     let h = '<div class="q">'
     if (['conversion', 'unite', 'comparer'].includes(qi.type) || (qi.type === 'calendrier' && qi.affiche)) {
-      h += `<div class="affiche">${qi.affiche.replace('?', TROU).replace('…', TROU)}</div>`
+      h += `<div class="affiche">${(qi.affiche ?? '').replace('?', TROU).replace('…', TROU)}</div>`
     } else {
       h += `<div class="consigne">${qi.consigne}</div>`
       if (qi.svg) h += `<div class="illus">${qi.svg}</div>`
       if (qi.affiche) h += `<div class="affiche">${qi.affiche}</div>`
       if (qi.mode === 'nombre') h += `<div class="affiche">${T('ficheReponse')} : ${TROU} ${qi.unite || ''}</div>`
-      else if (qi.type === 'calendrier' && qi.choix.length > 3) h += `<div class="affiche">${T('ficheReponse')} : ${TROU}${TROU}</div>`
-      else h += `<div class="choix">${T('ficheEntoure')} : ${qi.choix.map(c => `<span>${c}</span>`).join('')}</div>`
+      else if (qi.type === 'calendrier' && (qi.choix?.length ?? 0) > 3) h += `<div class="affiche">${T('ficheReponse')} : ${TROU}${TROU}</div>`
+      else h += `<div class="choix">${T('ficheEntoure')} : ${(qi.choix ?? []).map(c => `<span>${c}</span>`).join('')}</div>`
     }
     return h + '</div>'
   }
@@ -71,7 +76,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }) {
   }
 
   // titre sur la fiche, puis titre court dans le corrigé (par défaut le même)
-  const TITRES = {
+  const TITRES: Readonly<Partial<Record<TypeQuestion, readonly [string] | readonly [string, string]>>> = {
     conversion: [T('ficheConversion')],
     unite: [`🤔 ${T('ficheUnite')} : ${x.unites.slice(0, -1).join(', ')} ${T('ou')} ${x.unites[x.unites.length - 1]}`, `🤔 ${T('ficheUnite')}`],
     comparer: [T('ficheComparer')],
@@ -80,7 +85,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }) {
     calendrier: [T('ficheCalendrier')],
   }
   for (const { type, questions } of x.blocs) {
-    const [titre, titreCorrige = titre] = TITRES[type]
+    const [titre, titreCorrige = titre] = TITRES[type] ?? ['']
     const grille = ['masse', 'contenance'].includes(type) ? 'grille2' : 'grille'
     sections.push(`<h2>${titre}</h2><div class="${grille}">${questions.map(questionImprimee).join('')}</div>`)
     ligneCorrige(titreCorrige, numeros(questions.map(q => q.attendu)))

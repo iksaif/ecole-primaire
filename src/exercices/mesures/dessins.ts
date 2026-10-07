@@ -1,14 +1,16 @@
-// @ts-check
 // Les mesures — dessins SVG (purs : des chaînes, utilisées à l'écran et sur la fiche) : règle graduée, balance à deux
 // plateaux, broc gradué, bouteilles, segment à la taille réelle. `aria` : texte alternatif, dans la langue du contenu.
 const SVG_FONT = 'font-family="Arial, sans-serif"'
 
+/** Ce qu'on pose sur un plateau : une masse marquée (en g), une boîte, ou un objet (emoji). */
+export type Item = { kind: 'masse', g: number } | { kind: 'boite', couleur: string, w: number, h: number } | { kind: 'emoji', e: string }
+
 /** Masse écrite : « 500 g », « 2 kg » */
-export const fmtMasse = g => g >= 1000 ? `${g / 1000} kg` : `${g} g`
+export const fmtMasse = (g: number): string => g >= 1000 ? `${g / 1000} kg` : `${g} g`
 
 // ── Écran ──
 
-export function svgRegle(max, s, e, S = 32, aria = '') {
+export function svgRegle(max: number, s: number, e: number, S = 32, aria = ''): string {
   const m = 18, W = max * S + 2 * m, H = 100, yR = 46
   let t = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${aria}">`
   t += `<rect x="2" y="${yR}" width="${W - 4}" height="50" rx="5" fill="#fdf1b8" stroke="#c9a227" stroke-width="1.5"/>`
@@ -29,20 +31,20 @@ export function svgRegle(max, s, e, S = 32, aria = '') {
   return t + '</svg>'
 }
 
-function dimMasse(g) {
+function dimMasse(g: number): [number, number] {
   if (g >= 1000) { const k = g / 1000; const w = k >= 5 ? 46 : k >= 2 ? 42 : 38; return [w, w] }
   if (g >= 100) return [34, 32]
   if (g >= 10) return [28, 26]
   return [24, 22]
 }
 
-function largeurItem(it) {
+function largeurItem(it: Item): number {
   if (it.kind === 'masse') return dimMasse(it.g)[0]
   if (it.kind === 'boite') return it.w
   return 50
 }
 
-function dessinItem(it) {
+function dessinItem(it: Item): string {
   if (it.kind === 'masse') {
     const [w, h] = dimMasse(it.g)
     const fs = w >= 34 ? 11 : 9
@@ -58,7 +60,7 @@ function dessinItem(it) {
 }
 
 // tilt : 0 = équilibre, 1 = plateau gauche en bas, -1 = plateau droit en bas
-export function svgBalance(tilt, gauche, droite, aria = '') {
+export function svgBalance(tilt: number, gauche: readonly Item[], droite: readonly Item[], aria = ''): string {
   const W = 380, H = 235, cx = 190, cy = 72, half = 120
   const a = tilt * 0.18
   const gx = cx - half * Math.cos(a), gy = cy + half * Math.sin(a)
@@ -66,7 +68,7 @@ export function svgBalance(tilt, gauche, droite, aria = '') {
   let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${aria}">`
   s += `<path d="M ${cx - 62} ${H - 6} L ${cx + 62} ${H - 6} L ${cx + 36} ${H - 26} L ${cx - 36} ${H - 26} Z" fill="#7f8c8d"/>`
   s += `<rect x="${cx - 6}" y="${cy}" width="12" height="${H - 26 - cy}" fill="#95a5a6"/>`
-  const plateau = (x, y, items) => {
+  const plateau = (x: number, y: number, items: readonly Item[]): string => {
     const yp = y + 78
     let p = `<line x1="${x}" y1="${y}" x2="${x - 62}" y2="${yp}" stroke="#7f8c8d" stroke-width="1.5"/>`
       + `<line x1="${x}" y1="${y}" x2="${x + 62}" y2="${yp}" stroke="#7f8c8d" stroke-width="1.5"/>`
@@ -88,9 +90,9 @@ export function svgBalance(tilt, gauche, droite, aria = '') {
 }
 
 
-export function svgBroc(max, k, u = 'L', aria = '') {
+export function svgBroc(max: number, k: number, u = 'L', aria = ''): string {
   const W = 230, H = 260, xg = 80, xd = 180, yb = 240, yMax = 60
-  const yv = v => yb - v * (yb - yMax) / max
+  const yv = (v: number): number => yb - v * (yb - yMax) / max
   let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${aria}">`
   s += `<rect x="${xg + 1}" y="${yv(k)}" width="${xd - xg - 2}" height="${yb - yv(k) - 1}" rx="6" fill="#74b9ff" opacity=".85"/>`
   s += `<line x1="${xg + 1}" y1="${yv(k)}" x2="${xd - 1}" y2="${yv(k)}" stroke="#2e86de" stroke-width="2"/>`
@@ -105,10 +107,10 @@ export function svgBroc(max, k, u = 'L', aria = '') {
 }
 
 
-export function svgBouteilles(n1, n2, aria = '') {
-  const items = [...Array(n2).fill(2), ...Array(n1).fill(1)]
+export function svgBouteilles(n1: number, n2: number, aria = ''): string {
+  const items: number[] = [...Array.from({ length: n2 }, () => 2), ...Array.from({ length: n1 }, () => 1)]
   const gap = 10, yb = 150
-  const larg = c => c === 2 ? 42 : 32
+  const larg = (c: number): number => c === 2 ? 42 : 32
   const totalB = items.reduce((acc, c) => acc + larg(c) + gap, 0)
   const W = Math.max(totalB + 130, 260), H = 165
   let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" role="img" aria-label="${aria}">`
@@ -135,7 +137,7 @@ export function svgBouteilles(n1, n2, aria = '') {
 
 // ── Fiche (taille réelle : 1 unité = 1 mm) ──
 
-export function segmentReel(L) {
+export function segmentReel(L: number): string {
   // viewBox en mm : 1 unité = 1 mm, largeur CSS en cm réels
   return `<svg width="${L}cm" height="0.8cm" viewBox="0 0 ${L * 10} 8" style="overflow:visible">`
     + `<line x1="0" y1="4" x2="${L * 10}" y2="4" stroke="#c0392b" stroke-width="0.7"/>`
@@ -143,7 +145,7 @@ export function segmentReel(L) {
     + `<line x1="${L * 10}" y1="1" x2="${L * 10}" y2="7" stroke="#c0392b" stroke-width="0.4"/></svg>`
 }
 
-export function regleTemoin() {
+export function regleTemoin(): string {
   let s = '<svg width="10cm" height="1.1cm" viewBox="0 0 100 11" style="overflow:visible">'
   s += '<line x1="0" y1="0.2" x2="100" y2="0.2" stroke="#000" stroke-width="0.4"/>'
   for (let mm = 0; mm <= 100; mm++) {

@@ -1,20 +1,18 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🍕 {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('fractions.titre') }}</h1>
 
-    <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types"
-        :titre="t('exercices')" :libelle="ty => t(`type_${ty}`)" />
+        :titre="t('communs.exercices')" :libelle="ty => t(`fractions.types.${ty}`)" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode"
-        :titre="t('fractions')" :libelle="m => t(`mode_${m}`)" />
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
-      <ChoixReglage v-else :definition="DEFINITION" cle="nbFiche" v-model="config.nbFiche" :titre="t('nbQuestions')" />
-    </ConfigExercice>
+        :titre="t('fractions.fractions')" :libelle="m => t(`fractions.modes.${m}`)" />
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+      <ChoixReglage v-else :definition="DEFINITION" cle="nbFiche" v-model="config.nbFiche" :titre="t('communs.nbQuestions')" />
+    </CadreExercice>
 
-    <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="consigne">
         {{ q.consigne }}
@@ -25,39 +23,39 @@
       </div>
 
       <!-- Forme (affichée ou à colorier) -->
-      <div v-if="q.forme" class="visuel">
-        <svg :viewBox="q.forme.viewBox" :width="q.forme.largeur" class="forme-svg"
+      <div v-if="forme" class="visuel">
+        <svg :viewBox="forme.viewBox" :width="forme.largeur" class="forme-svg" role="img" :aria-label="T(forme.type)"
              :class="{ cliquable: q.kind === 'parts' && !repondu }">
-          <path v-for="(part, i) in q.forme.parts" :key="i" :d="part"
+          <path v-for="(part, i) in forme.parts" :key="i" :d="part"
                 :fill="estColoriee(i) ? COULEUR : '#ffffff'" stroke="#2c3e50" stroke-width="2.5"
                 stroke-linejoin="round" @click="basculerPart(i)"/>
         </svg>
         <div v-if="q.kind === 'parts'" class="aide">
-          {{ t('aideColorier', { n: coloriees.length, total: q.forme.parts.length }) }}
+          {{ t('fractions.aideColorier', { n: coloriees.length, total: forme.parts.length }) }}
         </div>
-        <svg v-if="q.formeAide" :viewBox="q.formeAide.viewBox" :width="q.formeAide.largeur" class="forme-svg" style="display:block;margin:.5rem auto 0;">
-          <path v-for="(part, i) in q.formeAide.parts" :key="i" :d="part" fill="#ffffff" stroke="#2c3e50" stroke-width="2.5"/>
+        <svg v-if="formeAide" :viewBox="formeAide.viewBox" :width="formeAide.largeur" class="forme-svg" style="display:block;margin:.5rem auto 0;">
+          <path v-for="(part, i) in formeAide.parts" :key="i" :d="part" fill="#ffffff" stroke="#2c3e50" stroke-width="2.5"/>
         </svg>
       </div>
 
       <!-- Droite graduée : lecture -->
-      <div v-if="q.svg" class="visuel" v-html="q.svg"></div>
+      <div v-if="q.kind === 'choix' && q.svg" class="visuel" v-html="q.svg"></div>
 
       <!-- Droite graduée : placer en touchant une graduation (zones de touche : data-i) -->
       <div v-if="q.kind === 'placer'" class="visuel" v-html="droitePlacer" @click="cliqueDroite"></div>
 
       <!-- Jetons pour « la moitié de… » -->
-      <div v-if="q.jetons" class="visuel" v-html="q.jetons"></div>
+      <div v-if="q.kind === 'nombre' && q.jetons" class="visuel" v-html="q.jetons"></div>
 
-      <div v-if="q.fracAffichee" class="exercise-question">
+      <div v-if="q.kind === 'choix' && q.fracAffichee" class="exercise-question">
         <span class="frac frac-grande"><span>{{ q.fracAffichee.n }}</span><span>{{ q.fracAffichee.d }}</span></span>
       </div>
-      <div v-if="q.egalite" class="exercise-question">
+      <div v-if="q.kind === 'nombre' && q.egalite" class="exercise-question">
         <span class="frac frac-grande"><span>{{ q.egalite.gauche.n }}</span><span>{{ q.egalite.gauche.d }}</span></span>
         <span style="margin:0 .75rem;">=</span>
         <span class="frac frac-grande"><span>{{ q.egalite.droite.n }}</span><span>{{ q.egalite.droite.d }}</span></span>
       </div>
-      <div v-if="q.texte" class="exercise-question question-texte">{{ q.texte }}</div>
+      <div v-if="(q.kind === 'choix' || q.kind === 'nombre') && q.texte" class="exercise-question question-texte">{{ q.texte }}</div>
 
       <!-- Réponse : nombre -->
       <SaisieReponse v-if="q.kind === 'nombre'" v-model="reponse" type="nombre" class="exercise-input" :etat="etat"
@@ -65,8 +63,8 @@
 
       <!-- Réponse : QCM (fractions, lettres) -->
       <div v-else-if="q.kind === 'choix'" :class="{ 'choix-lettres': q.choixEn === 'lettres' }">
-        <ChoixReponses :options="q.choix.map(c => ({ c }))" :bonne="q.choix.findIndex(c => cle(c) === cle(q.reponse))" :repondu="repondu"
-          @choisir="choisirReponse">
+        <ChoixReponses :options="optionsChoix" :bonne="bonneChoix" :repondu="repondu"
+          :titre="q.consigne" @choisir="choisirReponse">
           <template #default="{ option }">
             <span v-if="q.choixEn === 'frac'" class="frac frac-moyenne"><span>{{ option.c.n }}</span><span>{{ option.c.d }}</span></span>
             <span v-else>{{ enLettres(T, option.c) }}</span>
@@ -74,19 +72,18 @@
         </ChoixReponses>
       </div>
 
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+      <RetourReponse :message="retour?.message" :etat="etat" />
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
-          <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
-          <button v-if="q.kind === 'parts'" class="btn btn-ghost" :disabled="!coloriees.length" @click="coloriees = []">{{ t('effacer') }}</button>
-          <button v-if="q.kind !== 'choix'" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('fractions.passer') }}</button>
+          <button v-if="q.kind === 'parts'" type="button" class="btn btn-ghost" :disabled="!coloriees.length" @click="coloriees = []">{{ t('fractions.effacer') }}</button>
+          <button v-if="q.kind !== 'choix'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
         </template>
-        <button v-else-if="!retour.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+        <button v-else-if="!dernierOk" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
       </div>
     </QuestionJeu>
 
-    <!-- Résultats -->
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <TableauCorrection :historique="historique">
@@ -96,108 +93,125 @@
   </div>
 </template>
 
-<script setup>
-// Les fractions : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type
-// de question), formes, droite graduée (dessin partagé) et fiche : src/exercices/fractions/.
+<script setup lang="ts">
+// Les fractions : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question),
+// formes, droite graduée (dessin partagé : src/dessins/droite.ts) et fiche : src/exercices/fractions/.
 import { ref, computed } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import ChoixReponses from '../../components/ChoixReponses.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import SaisieReponse from '../../components/SaisieReponse.vue'
-import TableauCorrection from '../../components/TableauCorrection.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/fractions/definition'
-import { INTERFACE, TEXTES } from '../../exercices/fractions/textes'
-import { questions as genererQuestions, questionsFiche, verifier, cle, tn, enLettres, ordinal } from '../../exercices/fractions/generateur'
-import { svgDroiteFraction } from '../../exercices/fractions/droite'
-import { fiche as ficheFractions } from '../../exercices/fractions/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import SaisieReponse from '../../noyau/SaisieReponse.vue'
+import TableauCorrection from '../../noyau/TableauCorrection.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import DEFINITION from '../../exercices/fractions/definition.ts'
+import { CONTENU } from '../../exercices/fractions/textes.ts'
+import { questions as tirer, questionsFiche, verifier, cle, enLettres, ordinal } from '../../exercices/fractions/generateur.ts'
+import type { Question, Reponse } from '../../exercices/fractions/generateur.ts'
+import type { QChoix } from '../../exercices/fractions/questions.ts'
+import { svgDroiteFraction } from '../../exercices/fractions/droite.ts'
+import { fiche as ficheFractions } from '../../exercices/fractions/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
-// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; maths :
-// le contenu (fractions en lettres, fiche) suit la langue de l'interface
-const { config, langueContenu } = useReglages(DEFINITION, 'fractions_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
+const { t } = useLangue()
+// Réglages mémorisés, ajustés au changement de niveau (useReglages) ; le contenu (fractions en lettres, fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION)
+const T = traducteur(CONTENU, () => langueContenu.value)
 
 const COULEUR = '#f39c12'
 
 // ── Jeu ──
-const reponse = ref('')
-const coloriees = ref([])
-const placement = ref(null)
+const reponse = ref<string | number>('')
+const coloriees = ref<number[]>([])
+const placement = ref<number | null>(null)
 
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
-  messageErreur: (q, rep) => (rep ? t('laBonne', { r: q.attendu }) : ''),
+  messageErreur: (q, rep) => (rep ? t('fractions.laBonne', { r: q.attendu }) : ''),
   delai: 900,
   // champs vidés ; le focus : SaisieReponse (attribut focus)
   surQuestion: () => { reponse.value = ''; coloriees.value = []; placement.value = null },
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
+const dernierOk = computed(() => !!retour.value?.ok)
 
-const estColoriee = i => (q.value.kind === 'parts' ? coloriees.value.includes(i) : q.value.colorees?.includes(i))
+// forme dessinée : propre au type de question (disque, rectangle, barre) ; `formeAide` : la barre partagée en parts de la fraction égale
+const forme = computed(() => (q.value && 'forme' in q.value ? q.value.forme ?? null : null))
+const formeAide = computed(() => (q.value?.kind === 'nombre' ? q.value.formeAide ?? null : null))
+// les propositions d'un QCM (le libellé est lu par les lecteurs d'écran ; l'affichage est celui du slot)
+const optionsChoix = computed(() => (q.value?.kind === 'choix' ? q.value.choix.map(c => ({ c, label: cle(c) })) : []))
+const bonneChoix = computed(() => (q.value?.kind === 'choix' ? q.value.choix.findIndex(c => cle(c) === cle((q.value as QChoix).reponse)) : -1))
+const estColoriee = (i: number): boolean => {
+  const qu = q.value
+  if (!qu) return false
+  return qu.kind === 'parts' ? coloriees.value.includes(i) : 'colorees' in qu && !!qu.colorees?.includes(i)
+}
 
-function basculerPart(i) {
-  if (q.value.kind !== 'parts' || repondu.value) return
+function basculerPart(i: number): void {
+  if (q.value?.kind !== 'parts' || repondu.value) return
   coloriees.value = coloriees.value.includes(i) ? coloriees.value.filter(x => x !== i) : [...coloriees.value, i]
 }
 
 // droite à placer : flèche bleue posée par l'élève, puis verte (juste) ou rouge ; la bonne graduation est rappelée en vert
 const droitePlacer = computed(() => {
-  if (q.value?.kind !== 'placer') return ''
-  const juste = q.value.reponse.n
+  const qu = q.value
+  if (qu?.kind !== 'placer') return ''
+  const juste = qu.reponse.n
   const fausse = repondu.value && placement.value !== juste
   const couleur = !repondu.value ? '#4a90e2' : fausse ? '#e74c3c' : '#5cb85c'
-  return svgDroiteFraction(q.value.droite, { fleche: placement.value, couleur, juste: fausse ? juste : null, zones: !repondu.value })
+  return svgDroiteFraction(qu.droite, { fleche: placement.value, couleur, juste: fausse ? juste : null, zones: !repondu.value })
 })
-function cliqueDroite(e) {
-  const i = e.target.dataset?.i
+function cliqueDroite(e: MouseEvent): void {
+  const i = (e.target as HTMLElement | null)?.dataset?.i
   if (i !== undefined && !repondu.value) placement.value = +i
 }
 
-function choisirReponse(i) {
-  const c = q.value.choix[i]
-  jeu.repondre({ choix: c }, { donne: q.value.choixEn === 'lettres' ? enLettres(T, c) : cle(c) })
-}
-
-function entree() {
-  if (!repondu.value) valider()
-  else if (!retour.value.ok) jeu.suivante()
-}
-
-function valider() {
-  if (repondu.value) return
+function choisirReponse(i: number): void {
   const qu = q.value
+  if (qu?.kind !== 'choix') return
+  const c = qu.choix[i]
+  jeu.repondre({ choix: c }, { donne: qu.choixEn === 'lettres' ? enLettres(T, c) : cle(c) })
+}
+
+function entree(): void {
+  if (!repondu.value) valider()
+  else if (!dernierOk.value) jeu.suivante()
+}
+
+function valider(): void {
+  const qu = q.value
+  if (!qu || repondu.value) return
   if (qu.kind === 'nombre') {
     const val = String(reponse.value).trim()
     if (val === '') return
     jeu.repondre({ texte: val }, { donne: val })
   } else if (qu.kind === 'placer') {
     if (placement.value === null) return
-    jeu.repondre({ graduation: placement.value }, { donne: t('graduation', { o: ordinal(T, placement.value) }) })
+    jeu.repondre({ graduation: placement.value }, { donne: t('fractions.graduation', { o: ordinal(T, placement.value) }) })
   } else if (qu.kind === 'parts') {
     if (!coloriees.value.length) return
     const n = coloriees.value.length
-    jeu.repondre({ parts: n }, { donne: tn(T, 'partsSur', n, { d: qu.reponse.d }) })
+    jeu.repondre({ parts: n }, { donne: T('partsSur', { n, d: qu.reponse.d }) })
   }
 }
 
 // passer : la question compte comme une erreur, et on enchaîne aussitôt
-function passer() {
+function passer(): void {
   if (repondu.value) return
-  jeu.passer({ donne: t('passe') })
+  jeu.passer({ donne: t('fractions.passe') })
   jeu.suivante()
 }
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheFractions({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheFractions({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 

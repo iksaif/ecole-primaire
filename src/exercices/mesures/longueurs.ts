@@ -1,13 +1,12 @@
-// @ts-check
 // Les mesures — questions sur les longueurs : règle graduée, unité adaptée, conversions, comparaisons.
-// Chaque générateur reçoit le contexte { rng, T, niv, reglages } (hasard et textes de l'exercice) et rend une question
-// { type, cle, consigne, svg?, affiche?, mode: 'nombre' | 'choix', unite | choix, reponse, attendu, texte, explication }.
-// L'ordre des tirages est celui de l'ancienne vue : même flux de hasard, mêmes fiches.
-import { svgRegle } from './dessins.js'
+// Chaque générateur reçoit le contexte { rng, T, niv, reglages } (hasard, textes de l'exercice, données du niveau) et rend une Question
+// (types.ts). L'ordre des tirages est celui de l'ancienne vue : même flux de hasard, mêmes fiches.
+import { svgRegle } from './dessins.ts'
+import type { Contexte, ObjetUnite, Question, TypeQuestion } from './types.ts'
 
-export const cmmm = mm => mm % 10 === 0 ? `${mm / 10} cm` : mm < 10 ? `${mm} mm` : `${Math.floor(mm / 10)} cm ${mm % 10} mm`
+export const cmmm = (mm: number): string => mm % 10 === 0 ? `${mm / 10} cm` : mm < 10 ? `${mm} mm` : `${Math.floor(mm / 10)} cm ${mm % 10} mm`
 
-export function genRegle({ rng, T, niv, reglages }) {
+export function genRegle({ rng, T, niv, reglages }: Contexte): Question {
   const { max, segMin, segMax, px, mm } = niv.regle
   const decale = reglages.decale && rng.vrai(0.7)
   if (mm) {
@@ -16,14 +15,14 @@ export function genRegle({ rng, T, niv, reglages }) {
     if (rng.vrai(0.25)) L = Math.round(L / 10) * 10
     const sCm = decale ? rng.entier(1, Math.floor((max * 10 - L) / 10)) : 0
     const eMm = sCm * 10 + L
+    const params = { s: sCm, e: cmmm(eMm), L: cmmm(L), mm: L }
     return {
       type: 'regle', cle: `regle-${sCm}-${L}`,
       consigne: T('regleMmQ'),
       svg: svgRegle(max, sCm, eMm / 10, px, T('ariaRegle')),
       mode: 'nombre', unite: 'mm', reponse: L, attendu: `${L} mm (${cmmm(L)})`,
-      texte: T('regleMmTexte', { s: sCm, e: cmmm(eMm) }),
-      explication: T('regleMmExpl', { s: sCm, e: cmmm(eMm), L: cmmm(L), mm: L }),
-      s: sCm * 10, e: eMm, max: max * 10,
+      texte: T('regleMmTexte', params),
+      explication: T(sCm === 0 ? 'regleMmExpl0' : 'regleMmExplDecale', params),
     }
   }
   // Depuis 0, on peut aller presque jusqu'au bout de la règle (assez de variété pour 15 questions)
@@ -36,33 +35,32 @@ export function genRegle({ rng, T, niv, reglages }) {
     svg: svgRegle(max, s, e, px, T('ariaRegle')),
     mode: 'nombre', unite: 'cm', reponse: L, attendu: `${L} cm`,
     texte: T('regleTexte', { s, e }),
-    explication: T('regleExpl', { s, e, L }),
-    s, e, max,
+    explication: T(s === 0 ? 'regleExpl0' : 'regleExplDecale', { s, e, L }),
   }
 }
 
-// o : { id, valeur, unite } ; phrase dans le catalogue de contenu (`phrases`)
-export function questionUnite({ T }, type, o, choix) {
-  const texte = T('phrases')[o.id]
+// o : { id, valeur, unite } ; phrase dans le catalogue de contenu (`phrases.<id>`)
+export function questionUnite({ T }: Pick<Contexte, 'T'>, type: TypeQuestion, o: ObjetUnite, choix: readonly string[]): Question {
+  const texte = T(`phrases.${o.id}`)
   return {
     type, cle: `${type}-u-${o.id}`,
     consigne: T('uniteQ'),
     affiche: `${texte} ${o.valeur} …`,
-    mode: 'choix', choix, reponse: o.unite, attendu: o.unite,
+    mode: 'choix', choix: [...choix], reponse: o.unite, attendu: o.unite,
     texte: `${texte} ${o.valeur} …`,
     explication: `${texte} ${o.valeur} ${o.unite}.`,
   }
 }
 
-export function genUnite(ctx) {
+export function genUnite(ctx: Contexte): Question {
   return questionUnite(ctx, 'unite', ctx.rng.choisir(ctx.niv.objetsUnite), ctx.niv.unites)
 }
 
-export function genConversion({ rng, T, niv }) {
+export function genConversion({ rng, T, niv }: Contexte): Question {
   const kind = rng.choisir(niv.conversions)
   const donc = T('donc')
-  const et = mot => T('et', { mot })   // « et » / « ha », « hag »
-  let affiche, reponse, unite, explication
+  const et = T('et')   // « et » / « ha »
+  let affiche: string, reponse: number, unite: string, explication: string
   if (kind === 'm-cm') {
     const a = rng.entier(1, 9)
     affiche = `${a} m = ? cm`; reponse = a * 100; unite = 'cm'
@@ -70,7 +68,7 @@ export function genConversion({ rng, T, niv }) {
   } else if (kind === 'mcm-cm') {
     const a = rng.entier(1, 5), b = rng.entier(1, 19) * 5
     affiche = `${a} m ${b} cm = ? cm`; reponse = a * 100 + b; unite = 'cm'
-    explication = `${a} m = ${a * 100} cm, ${et(a * 100)} ${a * 100} + ${b} = ${reponse} cm.`
+    explication = `${a} m = ${a * 100} cm, ${et} ${a * 100} + ${b} = ${reponse} cm.`
   } else if (kind === 'cm-m') {
     const a = rng.entier(1, 9)
     affiche = `${a * 100} cm = ? m`; reponse = a; unite = 'm'
@@ -86,7 +84,7 @@ export function genConversion({ rng, T, niv }) {
   } else if (kind === 'kmm-m') {
     const a = rng.entier(1, 5), b = rng.entier(1, 9) * 100
     affiche = `${a} km ${b} m = ? m`; reponse = a * 1000 + b; unite = 'm'
-    explication = `${a} km = ${a * 1000} m, ${et(a * 1000)} ${a * 1000} + ${b} = ${reponse} m.`
+    explication = `${a} km = ${a * 1000} m, ${et} ${a * 1000} + ${b} = ${reponse} m.`
   } else if (kind === 'kg-g') {
     const a = rng.entier(1, niv.kgMax)
     affiche = `${a} kg = ? g`; reponse = a * 1000; unite = 'g'
@@ -94,7 +92,7 @@ export function genConversion({ rng, T, niv }) {
   } else if (kind === 'kgg-g') {
     const a = rng.entier(1, 3), b = rng.entier(1, 9) * 100
     affiche = `${a} kg ${b} g = ? g`; reponse = a * 1000 + b; unite = 'g'
-    explication = `${a} kg = ${a * 1000} g, ${et(a * 1000)} ${a * 1000} + ${b} = ${reponse} g.`
+    explication = `${a} kg = ${a * 1000} g, ${et} ${a * 1000} + ${b} = ${reponse} g.`
   } else if (kind === 'g-kg') {
     const a = rng.entier(1, niv.kgMax)
     affiche = `${a * 1000} g = ? kg`; reponse = a; unite = 'kg'
@@ -106,7 +104,7 @@ export function genConversion({ rng, T, niv }) {
   } else if (kind === 'cmmm-mm') {
     const a = rng.entier(1, 15), b = rng.entier(1, 9)
     affiche = `${a} cm ${b} mm = ? mm`; reponse = a * 10 + b; unite = 'mm'
-    explication = `${a} cm = ${a * 10} mm, ${et(a * 10)} ${a * 10} + ${b} = ${reponse} mm.`
+    explication = `${a} cm = ${a * 10} mm, ${et} ${a * 10} + ${b} = ${reponse} mm.`
   } else if (kind === 'mm-cm') {
     const a = rng.entier(2, 20)
     affiche = `${a * 10} mm = ? cm`; reponse = a; unite = 'cm'
@@ -131,11 +129,11 @@ export function genConversion({ rng, T, niv }) {
   }
 }
 
-export function genComparer({ rng, T, niv }) {
+export function genComparer({ rng, T, niv }: Contexte): Question {
   const kind = rng.choisir(niv.comparaisons)
   const r = rng.entier(0, 2)   // 0 : égal, 1 : proche, 2 : piège
-  const signe = () => (rng.vrai(0.5) ? 1 : -1)
-  let A, vA, B, vB, u
+  const signe = (): number => (rng.vrai(0.5) ? 1 : -1)
+  let A: string, vA: number, B: string, vB: number, u: string
   if (kind === 'm-cm') {
     const a = rng.entier(1, 5); u = 'cm'
     A = `${a} m`; vA = a * 100
@@ -173,7 +171,7 @@ export function genComparer({ rng, T, niv }) {
     B = `${vB} dL`
   }
   const swap = rng.vrai(0.5)
-  const [G, vG, D, vD] = swap ? [B, vB, A, vA] : [A, vA, B, vB]
+  const [G, vG, D, vD] = swap ? [B, vB, A, vA] as const : [A, vA, B, vB] as const
   const sym = vG < vD ? '<' : vG > vD ? '>' : '='
   const affiche = `${G}  …  ${D}`
   return {
@@ -182,7 +180,5 @@ export function genComparer({ rng, T, niv }) {
     mode: 'choix', choix: ['<', '=', '>'], reponse: sym, attendu: `${G} ${sym} ${D}`,
     texte: `${G} … ${D}`,
     explication: T('comparerExpl', { A, vA, u, vG, sym, vD }),
-    vG, vD,
   }
 }
-

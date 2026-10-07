@@ -1,9 +1,17 @@
-// Les fractions — fiche imprimable (pure : lisible par node). Met en page les questions de questionsFiche().
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; police et cssPolices : usePoliceFiche() dans l'app (Andika par défaut)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
-import { formeEnSvg } from './formes.js'
-import { svgDroiteFraction } from './droite.js'
+// Les fractions — fiche imprimable : la mise en page des questions de `questionsFiche`. Pure (lisible par node). La droite graduée est
+// celle du jeu (droite.ts, src/dessins/droite.ts), les formes aussi (formes.ts).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import { formeEnSvg } from './formes.ts'
+import { svgDroiteFraction } from './droite.ts'
+import type { Fraction, Question } from './questions.ts'
+
+type Cle = CleContenu<typeof CONTENU>
+type T = (cle: Cle, params?: Record<string, unknown>) => string
 
 const CSS = `
       .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
@@ -21,36 +29,34 @@ const CSS = `
       .reponses { columns: 2; column-gap: 2rem; font-size: 1.05rem; line-height: 1.9; }
       .reponses li { break-inside: avoid; font-weight: 700; }`
 
-const fracHtml = f => `<span class="frac"><span>${f.n}</span><span>${f.d}</span></span>`
+const fracHtml = (f: Fraction): string => `<span class="frac"><span>${f.n}</span><span>${f.d}</span></span>`
 const fracVide = '<span class="frac-vide"><span class="vide"></span><span class="barre"></span><span class="vide"></span></span>'
 
-function questionPapier(qu, i, T) {
+function questionPapier(qu: Question, i: number, T: T): string {
   const num = `<span class="num">${i + 1}.</span>`
   switch (qu.type) {
     case 'identifier':
-      return `<div class="q">${num}<div class="forme">${formeEnSvg(qu.forme, qu.colorees)}</div><div>${T('pIdentifier')} ${fracVide}</div></div>`
+      return `<div class="q">${num}<div class="forme">${qu.forme ? formeEnSvg(qu.forme, qu.colorees) : ''}</div><div>${T('pIdentifier')} ${fracVide}</div></div>`
     case 'colorier':
       return `<div class="q">${num}<div class="forme">${formeEnSvg(qu.forme)}</div><div>${T('pColorie', { f: fracHtml(qu.reponse) })}</div></div>`
     case 'lettres':
-      return qu.choixEn === 'lettres'
+      return qu.kind === 'choix' && qu.choixEn === 'lettres'
         ? `<div class="q">${num}<div>${T('pEnLettres', { f: fracHtml(qu.reponse) })} <span class="ligne longue"></span></div></div>`
-        : `<div class="q">${num}<div>${T('pEnChiffres', { f: `<b>${qu.texte}</b>` })} ${fracVide}</div></div>`
+        : `<div class="q">${num}<div>${T('pEnChiffres', { f: `<b>${qu.kind === 'choix' ? qu.texte : ''}</b>` })} ${fracVide}</div></div>`
     case 'partDe':
       return `<div class="q">${num}<div>${T('pPartDe', { l: qu.libelle })} <span class="ligne"></span></div></div>`
     case 'egales':
       return qu.kind === 'nombre'
-        ? `<div class="q">${num}<div>${T('pComplete')} ${fracHtml(qu.egalite.gauche)} = <span class="frac-vide"><span class="vide"></span><span class="barre"></span><b>${qu.egalite.droite.d}</b></span></div></div>`
-        : `<div class="q">${num}<div>${T('pEntoure', { f: fracHtml(qu.fracConsigne) })} &nbsp; ${qu.choix.map(fracHtml).join(' &nbsp;&nbsp; ')}</div></div>`
+        ? `<div class="q">${num}<div>${T('pComplete')} ${qu.egalite ? fracHtml(qu.egalite.gauche) : ''} = <span class="frac-vide"><span class="vide"></span><span class="barre"></span><b>${qu.egalite?.droite.d}</b></span></div></div>`
+        : `<div class="q">${num}<div>${T('pEntoure', { f: qu.fracConsigne ? fracHtml(qu.fracConsigne) : '' })} &nbsp; ${qu.kind === 'choix' ? qu.choix.map(fracHtml).join(' &nbsp;&nbsp; ') : ''}</div></div>`
     case 'droite':
-      return `<div class="q">${num}<div style="width:100%">${T('pDroite')}<div>${svgDroiteFraction(qu.droite, { fleche: qu.reponse.n })}</div>${T('pReponse')} ${fracVide}</div></div>`
+      return `<div class="q">${num}<div style="width:100%">${T('pDroite')}<div>${qu.kind === 'choix' && qu.droite ? svgDroiteFraction(qu.droite, { fleche: qu.reponse.n }) : ''}</div>${T('pReponse')} ${fracVide}</div></div>`
     case 'placer':
       return `<div class="q">${num}<div style="width:100%">${T('pPlacer', { f: fracHtml(qu.reponse) })}<div>${svgDroiteFraction(qu.droite)}</div></div></div>`
-    default:
-      return ''
   }
 }
 
-export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }) {
+export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
   const titre = `${T('titre')} — ${reglages.niveau.toUpperCase()}`
   return documentFiche({
     titre, h1: titre, langue, police, cssPolices, css: CSS,

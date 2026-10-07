@@ -168,6 +168,30 @@ verifier(await nbPages() === pagesAvant && await actif('disposition') === 'grill
 await ouvrir('/imprimer/alphabet?preset=affiche-alphabet-cursive')
 verifier(page.url().includes('/imprimer/affiches') && page.url().includes('affiche=alphabet'), '/imprimer/alphabet redirige vers l’affiche')
 
+// L'adresse suit TOUS les réglages (sauf une police qui n'est pas livrée) : ouverte dans un navigateur neuf, elle redonne la même affiche
+console.log('Adresse partagée')
+await ouvrir('/imprimer/affiches?affiche=alphabet&variante=a4-paysage')
+await cliquer('serie', 'speciales')
+await cliquer('styles', 'attache-maj')
+await page.locator('.choix-police select').first().selectOption('Luciole')
+await page.locator('[data-reglage="titre"]').fill('Notre classe & « la nôtre »')
+await cliquer('format', 'A3')
+await page.waitForFunction(() => location.search.includes('titre=') && location.search.includes('format=A3'), null, { timeout: 4000 }).catch(() => {})
+const adresse = new URL(page.url())
+const attendus = { serie: 'speciales', 'police.script': 'Luciole', titre: 'Notre classe & « la nôtre »', format: 'A3' }
+const porte = Object.entries(attendus).every(([cle, v]) => adresse.searchParams.get(cle) === v) && adresse.searchParams.get('styles')?.split(',').length >= 1
+verifier(porte, `l'adresse porte les réglages, une clé chacun (${adresse.search})`)
+const docAvant = await doc()
+const neuf = await (await contexte(nav)).newPage()
+surveiller(neuf)
+await neuf.goto(page.url())
+await neuf.waitForSelector('iframe')
+await neuf.waitForLoadState('networkidle')
+await neuf.waitForFunction(() => document.querySelector('iframe')?.contentDocument?.documentElement?.innerHTML?.includes('Notre classe'), null, { timeout: 4000 }).catch(() => {})
+const docApres = await neuf.locator('iframe').evaluate(f => f.contentDocument?.documentElement?.innerHTML ?? '')
+verifier(docApres === docAvant && docAvant.includes('Notre classe &amp;'), 'l’adresse ouverte dans un navigateur neuf redonne la même affiche')
+verifier(neuf.url() === page.url(), 'et l’adresse ne change pas à l’ouverture')
+
 verifier(!erreurs.length, 'aucune erreur JavaScript')
 await nav.close()
 process.exit(nbEchecs() ? 1 : 0)

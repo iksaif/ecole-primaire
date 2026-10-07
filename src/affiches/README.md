@@ -108,8 +108,12 @@ chaque langue. Breton : chaque texte est marqué `// br: à relire`.
   `definition.formulaire` (ordre, titre, aide), réglages **conditionnels** (`visibleSi` : invisible = défaut, non proposé), **champs
   libres**, langues, polices, graine, **titre personnalisé** (commun à toutes les affiches, échappé, limité à 80 caractères, jamais
   déclaré dans une définition), format et orientation (**seulement s'il y en a plusieurs** de permis), aperçu. Lien :
-  `<route>?affiche=<id>&variante=<v>&langues=fr,br`, relu par `lireLien` (`catalogue.ts`, l'inverse de `lienDe` : le test vérifie
-  que chaque entrée du catalogue rouvre les mêmes réglages). Réglages mémorisés sous `affiche_<id>`.
+  `<route>?affiche=<id>&variante=<v>&langues=fr,br` (`lienDe`, « Personnaliser » d'une fiche toute prête). L'adresse de la page suit
+  ensuite **tous** les réglages qui s'écartent des défauts de la variante, une clé par réglage (`sections=cent,perso&de=41`,
+  `police.script=Luciole`, `titre=…`, `graine=…` ; seulement les polices livrées) : `queryDeReglages` l'écrit, `lireLien(query, definition)`
+  la relit avec méfiance (format détaillé en tête de `src/pages/AfficheView.vue`). Le test vérifie que chaque entrée du catalogue
+  rouvre les mêmes réglages, et l'aller-retour réglages → adresse → réglages pour chaque jeu de réglages. Un réglage ne peut pas
+  porter le nom d'une clé de la feuille (`CLES_DE_LA_FEUILLE`). Réglages mémorisés sous `affiche_<id>`.
 - **Langues** : `langues` = langues de contenu. `bilingue: false` (défaut) : une langue par feuille, une entrée de catalogue par
   langue (comme les jours de la semaine). `bilingue: true` : réglage « langues affichées » (une ou plusieurs sur la feuille) ; le catalogue
   publie chaque langue seule puis toutes ensemble (`-fr-br`). Un **site ne publie que les entrées dont toutes les langues

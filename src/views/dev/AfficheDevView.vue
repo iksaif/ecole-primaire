@@ -28,8 +28,8 @@ const modules = ref<ModuleAffiche[]>([...REGISTRE])
 // import dynamique, seulement en développement (AVEC_DEV) : le module d'exemples n'entre pas dans le build de production
 if (AVEC_DEV) import('../../affiches/dev.ts').then(m => { modules.value = [...REGISTRE, ...m.EXEMPLES] })
 const courant = computed(() => modules.value.find(a => a.definition.id === route.query.affiche) ?? modules.value[0])
-// le lien (?affiche=…&variante=…&langues=fr,br) ouvre le formulaire sur cette variante et ces langues
-const depart = computed(() => lireLien(route.query))
+// le lien (?affiche=…&variante=…&langues=fr,br, et les réglages : voir src/pages/AfficheView.vue) ouvre le formulaire sur ces réglages
+const depart = computed(() => lireLien(route.query, courant.value?.definition))
 </script>
 
 <style scoped>

@@ -1,14 +1,16 @@
-// La géométrie — questions sur quadrillage : symétrie (compléter), reproduction, repérage (colorier / lire une case).
-// Pur. Une case est une clé « colonne,ligne » ; l'ordre des tirages est celui de l'ancienne vue (mêmes fiches).
-import { avecChoix } from './donnees.js'
+// La géométrie — questions sur quadrillage : symétrie (compléter), reproduction, repérage (colorier / lire une case). Pur. Une case est
+// une clé « colonne,ligne » ; l'ordre des tirages est celui de l'ancienne vue (mêmes fiches).
+import type { Rng } from '../../noyau/types.ts'
+import { avecChoix } from './choix.ts'
+import type { Contexte, QReperageColorie, QReperageLire, QReproduction, QSymetrie } from './types.ts'
 
-export const LETTRES = 'ABCDEFGHIJKL'.split('')
-export const k = (c, r) => c + ',' + r
-export const dek = cle => cle.split(',').map(Number)
-export const nomCase = (c, r) => LETTRES[c] + (r + 1)
+export const LETTRES: readonly string[] = 'ABCDEFGHIJKL'.split('')
+export const k = (c: number, r: number): string => c + ',' + r
+export const dek = (cle: string): [number, number] => cle.split(',').map(Number) as [number, number]
+export const nomCase = (c: number, r: number): string => LETTRES[c] + (r + 1)
 
 // Figure connexe (cases voisines par un côté) de n cases dans une zone
-function figureConnexe(rng, n, dansZone, departs) {
+function figureConnexe(rng: Rng, n: number, dansZone: (c: number, r: number) => boolean, departs: string[]): string[] {
   const set = new Set([rng.choisir(departs)])
   const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]]
   let essais = 0
@@ -22,21 +24,21 @@ function figureConnexe(rng, n, dansZone, departs) {
 }
 
 /** Symétrie : compléter la figure de l'autre côté de l'axe. `horizontal` : axe horizontal (sinon vertical). */
-export function genSymetrie({ rng, T, niv }, horizontal) {
-  const p = niv.symetrie
+export function genSymetrie({ rng, T, niv }: Contexte, horizontal: boolean): QSymetrie {
+  const p = niv.symetrie!
   const axe = horizontal ? 'h' : 'v'
   // Axe horizontal : on tourne la grille (moitiés de même taille)
   const cols = axe === 'v' ? p.cols : p.rows
   const rows = axe === 'v' ? p.rows : p.cols
   const premier = rng.vrai(0.5)   // modèle à gauche / en haut
   const moitie = (axe === 'v' ? cols : rows) / 2
-  const dansZone = (c, r) => {
+  const dansZone = (c: number, r: number): boolean => {
     if (c < 0 || r < 0 || c >= cols || r >= rows) return false
     const pos = axe === 'v' ? c : r
     return premier ? pos < moitie : pos >= moitie
   }
   const bord = premier ? moitie - 1 : moitie
-  const departs = []
+  const departs: string[] = []
   const toucheAxe = rng.vrai(p.toucheAxe ?? 0.65)
   for (let c = 0; c < cols; c++) for (let r = 0; r < rows; r++) {
     if (!dansZone(c, r)) continue
@@ -57,10 +59,10 @@ export function genSymetrie({ rng, T, niv }, horizontal) {
 }
 
 /** Reproduction : recopier une figure sur un quadrillage (repère : la case la plus en haut, puis à gauche). */
-export function genReproduction({ rng, T, niv }) {
+export function genReproduction({ rng, T, niv }: Contexte): QReproduction {
   const p = niv.reproduction
-  const dansZone = (c, r) => c >= 0 && r >= 0 && c < p.cols && r < p.rows
-  const departs = []
+  const dansZone = (c: number, r: number): boolean => c >= 0 && r >= 0 && c < p.cols && r < p.rows
+  const departs: string[] = []
   for (let c = 1; c < p.cols - 1; c++) for (let r = 1; r < p.rows - 1; r++) departs.push(k(c, r))
   const modele = figureConnexe(rng, rng.entier(...p.nbCases), dansZone, departs)
   const repere = [...modele].sort((a, b) => {
@@ -76,7 +78,7 @@ export function genReproduction({ rng, T, niv }) {
 }
 
 /** Repérage : colorier la case « B3 » (sous = 'colorie') ou dire laquelle est coloriée (sous = 'lire', à choix). */
-export function genReperage({ rng, T, niv }) {
+export function genReperage({ rng, T, niv }: Contexte): QReperageColorie | QReperageLire {
   const { cols, rows } = niv.reperage
   const c = rng.entier(0, cols - 1), r = rng.entier(0, rows - 1)
   const nom = nomCase(c, r)
@@ -100,5 +102,5 @@ export function genReperage({ rng, T, niv }) {
   return avecChoix({
     type: 'reperage', sous: 'lire', cle: 'pos-lire-' + nom, cols, rows,
     cible: k(c, r), nom, texte: T('lireCaseQ'), consigne: T('lireCaseConsigne'), attendu: nom,
-  }, rng.melanger([nom, ...autres]), nom)
+  } as const, rng.melanger([nom, ...autres]), nom)
 }

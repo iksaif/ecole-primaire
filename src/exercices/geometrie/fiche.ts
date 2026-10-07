@@ -1,8 +1,12 @@
-// La géométrie — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche().
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; police et cssPolices : usePoliceFiche() dans l'app (Andika par défaut)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
-import { svgFigure, svgCercle, svgPatron, svgSolide, svgGrilleCm } from './dessins.js'
+// La géométrie — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node).
+//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate, section.corrige) ;
+//   police et cssPolices : usePoliceFiche() dans l'app (Andika par défaut)
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import { svgFigure, svgCercle, svgPatron, svgSolide, svgGrilleCm } from './dessins.ts'
+import type { Cle, TirageFiche } from './types.ts'
+import type DEFINITION from './definition.ts'
 
 const CSS = `
       @page { size: A4; margin: 1.2cm; }
@@ -21,14 +25,12 @@ const CSS = `
       svg { display: block; }
       .mini svg { display: inline-block; vertical-align: middle; margin: .1cm .4cm .1cm 0; }`
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   let corps = ''
   // corrigé : une ligne par partie, réponses dans l'ordre de la fiche
-  const corrige = []
-  const ligneCorrige = (titre, rep) => corrige.push(`<p><b>${titre} :</b> ${rep}</p>`)
-  const numeros = l => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
-  const nomFig = id => T('figures')[id]
-  const nomSol = id => T('solides')[id]
+  const corrige: string[] = []
+  const ligneCorrige = (titre: string, rep: string): void => { corrige.push(`<p><b>${titre} :</b> ${rep}</p>`) }
+  const numeros = (l: readonly string[]): string => l.map((r, i) => `${i + 1}. ${r}`).join(' — ')
 
   if (x.symetrie) {
     const qs = x.symetrie
@@ -55,13 +57,13 @@ export function fiche({ questions: x, T, langue, police, cssPolices }) {
     corps += `<h2>🔷 ${T('ficheFigures')}</h2><p class="consigne">${T('ficheFiguresConsigne')}</p><div class="bloc galerie">`
       + x.figures.map(f => `<div class="item">${svgFigure(f, true, 110)}<div class="ligne"></div></div>`).join('')
       + `</div>`
-    ligneCorrige(T('ficheFigures'), numeros(x.figures.map(f => nomFig(f.forme))))
+    ligneCorrige(T('ficheFigures'), numeros(x.figures.map(f => T(`figure.${f.forme}` as Cle))))
   }
   if (x.solides) {
     corps += `<h2>🧊 ${T('ficheSolides')}</h2><p class="consigne">${T('ficheSolidesConsigne')}</p><div class="bloc galerie">`
       + x.solides.map(s => `<div class="item">${svgSolide(s, 110)}<div class="ligne"></div></div>`).join('')
       + `</div>`
-    ligneCorrige(T('ficheSolides'), numeros(x.solides.map(nomSol)))
+    ligneCorrige(T('ficheSolides'), numeros(x.solides.map(s => T(`solide.${s}` as Cle))))
   }
   if (x.angles) {
     corps += `<h2>📐 ${T('ficheAngles')}</h2><p class="consigne">${T('ficheAnglesConsigne')}</p><div class="bloc galerie">`
@@ -70,9 +72,8 @@ export function fiche({ questions: x, T, langue, police, cssPolices }) {
   }
   if (x.proprietes) {
     corps += `<h2>📋 ${T('ficheVraiFauxTitre')}</h2><p class="consigne">${T('ficheVraiFauxConsigne')}</p>`
-      + x.proprietes.map((p, i) => `<p class="lignes">${i + 1}. ${T('proprietes')[p.id]} &nbsp; <b>${T('ficheVraiFaux')}</b></p>`).join('')
-    const [vrai, faux] = T('vraiFaux')
-    ligneCorrige(T('ficheVraiFauxTitre'), numeros(x.proprietes.map(p => (p.vrai ? vrai : faux))))
+      + x.proprietes.map((p, i) => `<p class="lignes">${i + 1}. ${T(`propriete.${p.id}` as Cle)} &nbsp; <b>${T('ficheVraiFaux')}</b></p>`).join('')
+    ligneCorrige(T('ficheVraiFauxTitre'), numeros(x.proprietes.map(p => (p.vrai ? T('vrai') : T('faux')))))
   }
   if (x.cercle) {
     corps += `<h2>⭕ ${T('ficheCercle')}</h2><div class="bloc duo">

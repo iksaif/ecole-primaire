@@ -1,8 +1,15 @@
-// Les motifs — fiche imprimable (pure : lisible par node). Frises à continuer (cases vides à dessiner ou à remplir de
-// gommettes) ; PS : entourer ce qui vient après.
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
-import { suite } from '../../utils/motifs.js'
+// Les motifs — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node). Frises à continuer (cases vides à
+// dessiner ou à remplir de gommettes) ; PS : entourer ce qui vient après.
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import { suite } from './motifs.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import type { TirageFiche } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
@@ -13,7 +20,7 @@ const CSS = `
       .corr { columns: 3; font-size: 1.3rem; line-height: 1.9; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const ps = x.niveau === 'ps'
   const lignes = x.questions.map((q, i) => {
     const vus = q.place >= q.motif.length ? q.motif : q.motif.map((e, j) => (j === q.place ? null : e))
@@ -31,7 +38,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }) {
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '720px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T(ps ? 'fConsignePS' : x.mode === 'trou' ? 'fConsigneTrou' : 'fConsigne')}</p>
+    <p class="consigne">${T(ps ? 'consignePS' : x.mode === 'trou' ? 'consigneTrou' : 'consigne')}</p>
     ${lignes}
     <section class="corrige"><h2>${T('corrige')} — ${titre}</h2><div class="corr">${corr}</div></section>`,
   })

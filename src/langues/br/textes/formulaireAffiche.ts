@@ -4,6 +4,9 @@ import type fr from '../../fr/textes/formulaireAffiche.ts'
 
 export default {
   version: 'Stumm', // br: à relire
+  versionAide: 'Dibabit ur follenn kaset da benn : reiñ a ra an holl arventennoù all, hag e c\'hallit cheñch anezho goude-se.', // br: à relire
+  personnaliser: 'Personelaat', // br: à relire
+  personnaliserAide: 'Reizhit ar stumm-mañ : danvez, yezhoù, follenn, nodrezhioù.', // br: à relire
   langue: 'Yezh ar skritell', // br: à relire
   langues: 'Yezhoù diskouezet', // br: à relire
   titre: 'Titl ar skritell', // br: à relire

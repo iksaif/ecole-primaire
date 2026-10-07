@@ -1,26 +1,27 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔁 {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('motifs.titre') }}</h1>
 
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" :libelle="n => t('niv_' + n)" />
-      <ChoixReglage :definition="DEFINITION" cle="mode" v-model="config.mode" :titre="t('exercice')"
-        :libelle="m => (m === 'apres' ? '➡️ ' + t('apres') : '🔍 ' + t('trou'))" />
-      <ChoixReglage :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
-    </ConfigExercice>
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('motifs.exercice')"
+        :libelle="m => (m === 'apres' ? '➡️ ' + t('motifs.apres') : '🔍 ' + t('motifs.trou'))" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+    </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(config.mode === 'trou' ? 'consigneTrou' : 'consigneApres')" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(config.mode === 'trou' ? 'motifs.consigneTrou' : 'motifs.consigneApres')" />
       <!-- la frise ; la case « ? » à la place attendue -->
       <div class="frise">
         <template v-for="(e, i) in frise" :key="i">
           <span v-if="i === q.place" class="perle vide" :class="{ trouvee: repondu }">{{ repondu ? q.elements[q.attendu] : '?' }}</span>
-          <span v-else class="perle">{{ q.elements[e] }}</span>
+          <span v-else class="perle">{{ e === null ? '' : q.elements[e] }}</span>
         </template>
       </div>
-      <ChoixReponses grand :options="q.options" :bonne="q.bonne" :repondu="repondu" @choisir="i => jeu.repondre({ choix: i })" />
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+      <ChoixReponses grand :titre="t(config.mode === 'trou' ? 'motifs.consigneTrou' : 'motifs.consigneApres')" :options="q.options" :bonne="q.bonne" :repondu="repondu"
+        @choisir="i => jeu.repondre({ choix: i })" />
+      <RetourReponse :message="retour?.message" :etat="etat" />
     </QuestionJeu>
 
     <!-- Résultats : la maternelle garde les étoiles -->
@@ -29,46 +30,52 @@
   </div>
 </template>
 
-<script setup>
-// Les motifs : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
-// src/exercices/motifs/ (definition.js, generateur.js, fiche.js) ; les motifs eux-mêmes : src/utils/motifs.js.
+<script setup lang="ts">
+// Les motifs : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/motifs/
+// (definition.ts, generateur.ts, fiche.ts) ; les motifs eux-mêmes (types par niveau, suites) : motifs.ts.
 import { computed } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ChoixReponses from '../../components/ChoixReponses.vue'
-import ConsigneParlee from '../../components/ConsigneParlee.vue'
-import ResultatsEtoiles from '../../components/ResultatsEtoiles.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/motifs/definition'
-import { INTERFACE, TEXTES } from '../../exercices/motifs/textes'
-import { questions as genererQuestions, questionsFiche, verifier } from '../../exercices/motifs/generateur'
-import { fiche as ficheMotifs } from '../../exercices/motifs/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import ResultatsEtoiles from '../../noyau/ResultatsEtoiles.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import DEFINITION from '../../exercices/motifs/definition.ts'
+import { CONTENU } from '../../exercices/motifs/textes.ts'
+import { questions as tirer, questionsFiche, verifier } from '../../exercices/motifs/generateur.ts'
+import type { Question, Reponse } from '../../exercices/motifs/generateur.ts'
+import { fiche as ficheMotifs } from '../../exercices/motifs/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
+const { t } = useLangue()
 // niveau : celui de la barre du haut s'il est de maternelle
-const { config, langueContenu } = useReglages(DEFINITION, 'motifs_config', { suivreClasse: true })
-const T = contenu(TEXTES, () => langueContenu.value).t
+const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true })
+// T : les textes du contenu (CONTENU, textes.ts : fiche), dans la langue du contenu
+const T = traducteur(CONTENU, () => langueContenu.value)
+
+const libelleNiveau = (n: string): string => t(`motifs.niveau.${n as 'ps' | 'ms' | 'gs'}`)
 
 // ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: () => t('regarde'),
-  apresErreur: 'continuer',
+  messageErreur: () => t('motifs.regarde'),
+  apresErreur: 1400,
   delai: 1400,
 })
 const { phase, questions, q, bonnes, retour, repondu, etat } = jeu
 // en mode « après », la frise montre aussi la case « ? » au bout
-const frise = computed(() => (q.value.place >= q.value.motif.length ? [...q.value.motif, null] : q.value.motif))
+const frise = computed<(number | null)[]>(() => (q.value ? (q.value.place >= q.value.motif.length ? [...q.value.motif, null] : q.value.motif) : []))
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheMotifs({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheMotifs({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 

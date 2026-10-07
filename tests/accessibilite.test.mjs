@@ -8,7 +8,7 @@
 import { lancerNavigateur, contexte, nbEchecs, appDev } from './outils.mjs'
 import { verifierAxe } from './outils-axe.mjs'
 
-const PAGES = ['/dev', '/dev/exemple', '/dev/exemple-corpus', '/dev/affiches', '/dev/composants', '/maths/calcul-mental', '/maths/heure', '/maths/monnaie', '/maths/numeration', '/maths/tables', '/maths/calcul-pose', '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner']
+const PAGES = ['/dev', '/dev/exemple', '/dev/exemple-corpus', '/dev/affiches', '/dev/composants', '/maths/calcul-mental', '/maths/heure', '/maths/monnaie', '/maths/numeration', '/maths/suites', '/maths/problemes', '/maths/tables', '/maths/calcul-pose', '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner', '/maternelle/formes', '/maternelle/motifs', '/maths/geometrie']
 const nav = await lancerNavigateur()
 
 const mesurer = verifierAxe
@@ -25,7 +25,7 @@ for (const largeur of [1280, 360]) {
       await page.waitForSelector('h1, h2')
       await mesurer(page, nom)
       // les exemples d'exercice : la fiche à imprimer, puis une question du jeu
-      if (route === '/dev/exemple' || route === '/dev/exemple-corpus' || route === '/maths/calcul-mental' || route === '/maths/heure' || route === '/maths/monnaie' || route === '/maths/numeration' || route === '/maths/tables' || route === '/maths/calcul-pose' || route.startsWith('/maternelle/')) {
+      if (route === '/dev/exemple' || route === '/dev/exemple-corpus' || route === '/maths/calcul-mental' || route === '/maths/heure' || route === '/maths/monnaie' || route === '/maths/numeration' || route === '/maths/suites' || route === '/maths/problemes' || route === '/maths/tables' || route === '/maths/calcul-pose' || route.startsWith('/maternelle/')) {
         await page.locator('.modes button').nth(1).click()
         await page.waitForSelector('iframe')
         await mesurer(page, `${nom} fiche`)

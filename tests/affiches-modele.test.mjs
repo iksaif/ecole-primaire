@@ -488,6 +488,74 @@ console.log('\nDéclaration')
   verifier(JSON.stringify(reglagesApresVariante(c, reglagesDe(c, { variante: 'x', l: ['b'] }), 'y').l) === '["a"]', 'au changement de variante, un choix multiple reprend les défauts')
 }
 
+// ── Figures et solides : le texte d'une carte reste à l'intérieur de sa carte, avec une marge franche (4 % de la largeur) ──
+console.log('\nFigures et solides')
+{
+  const module = REGISTRE.find(m => m.definition.id === 'formes')
+  const p = []
+  for (const variante of Object.keys(module.definition.variantes)) for (const format of ['A4', 'A3']) for (const langue of ['fr', 'br']) {
+    // toutes les propriétés cochées : le cas le plus chargé
+    const { html } = genererAffiche(module, { variante, format, langues: [langue], angles: true, cotes: true, paralleles: true, faces: true })
+    const cartes = [...html.matchAll(/<div class="carte" style="width:([\d.]+)mm;height:([\d.]+)mm;padding:0 ([\d.]+)mm">([\s\S]*?)<\/div>/g)]
+    if (!cartes.length) p.push(`${variante} ${format} ${langue} : aucune carte`)
+    for (const [, cw, ch, marge, contenu] of cartes) {
+      // en hauteur aussi : le dessin et les lignes de texte tiennent dans la carte, sans toucher la bordure
+      const hDessin = +contenu.match(/<svg width="[\d.]+mm" height="([\d.]+)mm"/)[1]
+      const hTexte = [...contenu.matchAll(/<(?:b|small) style="font-size:([\d.]+)mm">([\s\S]*?)<\/(?:b|small)>/g)].reduce((t, [, taille, texte]) => t + (texte ? texte.split('<br>').length * +taille * 1.2 : 0), 0)
+      if (hDessin + hTexte > +ch * 0.96) p.push(`${variante} ${format} ${langue} : dessin et texte (${(hDessin + hTexte).toFixed(1)} mm) trop hauts pour la carte (${ch} mm)`)
+      if (+marge < +cw * 0.04 - 0.001) p.push(`${variante} ${format} ${langue} : marge ${marge} mm < 4 % de ${cw} mm`)
+      const interieur = +cw - 2 * +marge
+      for (const [, taille, texte] of contenu.matchAll(/<(?:b|small) style="font-size:([\d.]+)mm">([\s\S]*?)<\/(?:b|small)>/g)) {
+        const gras = /<b /.test(contenu.slice(contenu.indexOf(texte) - 40, contenu.indexOf(texte)))
+        for (const ligne of texte.split('<br>')) {
+          const l = ligne.replaceAll('&#39;', "'").replaceAll('&amp;', '&').replaceAll('&quot;', '"')
+          const largeur = mesureEstimee.largeur(l, 'Andika', gras) * +taille
+          if (largeur > interieur + 0.01) p.push(`${variante} ${format} ${langue} : « ${l} » (${largeur.toFixed(1)} mm) dépasse la zone intérieure (${interieur.toFixed(1)} mm)`)
+        }
+      }
+    }
+  }
+  // propriétés (angles droits, côtés égaux, parallèles) : décochées par défaut en GS et au CP, cochées selon le programme plus haut ; cocher les ajoute
+  const marques = html => (html.match(/stroke="#d9480f"/g) ?? []).length
+  const texteAngles = html => /angles? droits?/i.test(html.replace(/<h1[\s\S]*?<\/h1>/, ''))
+  for (const v of ['plan-gs', 'plan-cycle2']) {
+    const defaut = genererAffiche(module, { variante: v }).html
+    const tout = genererAffiche(module, { variante: v, angles: true, cotes: true, paralleles: true }).html
+    if (texteAngles(defaut)) p.push(`${v} : des angles écrits par défaut`)
+    if (module.definition.variantes[v].reglages.angles !== false) p.push(`${v} : angles cochés par défaut`)
+    if (!texteAngles(tout) || marques(tout) <= marques(defaut)) p.push(`${v} : cocher les propriétés n'ajoute rien`)
+  }
+  for (const [v, attendu] of [['plan-ce1', ['angles']], ['plan-cm1', ['angles', 'cotes']], ['plan-cycle3', ['angles', 'cotes', 'paralleles']]]) {
+    const r = module.definition.variantes[v].reglages
+    for (const k of ['angles', 'cotes', 'paralleles']) if ((r[k] === true) !== attendu.includes(k)) p.push(`${v} : « ${k} » devrait être ${attendu.includes(k) ? 'coché' : 'décoché'} par défaut`)
+  }
+  controler(p, 'le texte de chaque carte (toutes variantes, A4 et A3, fr et br, propriétés cochées) reste dans la carte, à 4 % au moins du bord ; propriétés décochées au CP et en GS, cochées selon le programme')
+}
+
+// ── Horloge : une couleur par aiguille, distinctes, lisibles sur fond blanc (contraste ≥ 3:1) ; la légende les nomme ──
+console.log('\nHorloge')
+{
+  const module = REGISTRE.find(m => m.definition.id === 'horloge')
+  const luminance = hex => { const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2] }
+  const contraste = hex => 1.05 / (luminance(hex) + 0.05)
+  const p = []
+  for (const variante of Object.keys(module.definition.variantes)) for (const langue of ['fr', 'br']) {
+    const { html } = genererAffiche(module, { variante, langues: [langue] })
+    // les aiguilles : lignes à bouts ronds, épaisses ; une couleur pour la courte et une autre pour la longue
+    const aiguilles = [...html.matchAll(/<line x1="[\d.-]+" y1="[\d.-]+" x2="[\d.-]+" y2="[\d.-]+" stroke="(#[0-9a-f]{6})" stroke-width="([\d.]+)" stroke-linecap="round" opacity="1"\/>/g)].map(m => ({ couleur: m[1], epaisseur: +m[2] }))
+    const couleurs = [...new Set(aiguilles.map(a => a.couleur))]
+    if (couleurs.length !== 2) p.push(`${variante}/${langue} : ${couleurs.length} couleur(s) d'aiguille au lieu de 2`)
+    for (const c of couleurs) if (contraste(c) < 3) p.push(`${variante}/${langue} : ${c} contraste ${contraste(c).toFixed(1)}:1 < 3:1`)
+    // noir et blanc : la courte est plus épaisse que la longue (écart d'épaisseur conservé)
+    const [courte, longue] = couleurs.map(c => aiguilles.find(a => a.couleur === c).epaisseur)
+    if (!(Math.max(courte, longue) > Math.min(courte, longue))) p.push(`${variante}/${langue} : aiguilles de même épaisseur`)
+    const T = traducteurAffiche(module.textes, langue)
+    if (!html.includes(`color:${couleurs[0]}`) || !html.includes(`color:${couleurs[1]}`)) p.push(`${variante}/${langue} : la légende n'a pas la couleur des aiguilles`)
+    if (!T('legende.petite.a').includes(',')) p.push(`${variante}/${langue} : légende de l'aiguille courte absente`)
+  }
+  controler(p, 'horloge : deux couleurs d\'aiguille distinctes (contraste ≥ 3:1, épaisseurs différentes), reprises par la légende')
+}
+
 // ── Instantané : empreinte de chaque document ──
 console.log('\nInstantané')
 const fichier = fichierInstantanes('affiches')

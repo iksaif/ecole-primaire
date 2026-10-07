@@ -187,6 +187,7 @@ console.log('Modes de langue')
 {
   const { ctx, page } = await ouvrir({ largeur: 1280, route: '/maths' })
   const onglets = () => page.locator('nav.rubriques a').allTextContents().then(l => l.map(t => t.trim()))
+  await page.waitForFunction(() => /Mathématiques — /.test(document.title))   // le titre de la page, pas celui du site (posé avant)
   const titreFr = await page.title()
   verifier(!(await onglets()).some(t => /Brezhoneg/i.test(t)), 'français seul : pas d’onglet Brezhoneg')
   verifier(await page.locator('.nbtn.retour').count() === 0, 'français seul : pas de « Retour en français »')

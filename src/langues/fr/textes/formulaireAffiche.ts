@@ -1,6 +1,9 @@
 // Textes de l'interface — formulaire d'une affiche (FormulaireAffiche du noyau), français.
 export default {
   version: 'Version',
+  versionAide: 'Choisissez une fiche toute prête : elle règle tout le reste, que vous pouvez ensuite modifier.',
+  personnaliser: 'Personnaliser',
+  personnaliserAide: 'Ajustez cette version : contenu, langues, feuille, polices.',
   langue: 'Langue de l’affiche',
   langues: 'Langues affichées',
   titre: 'Titre de l’affiche',

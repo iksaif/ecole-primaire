@@ -1,15 +1,17 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔷 {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('formes.titre') }}</h1>
 
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <!-- PS : trier (même forme) ; MS : reconnaître (montre le…) ; GS : nommer, compter les côtés -->
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" :libelle="n => t('niv_' + n)" />
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode"
-        cartes :titre="t('exercice')" :libelle="m => t(m)" :icone="m => ICONES[m]" :description="m => t(DESCRIPTIONS[m])" />
-      <p v-if="mode === 'imprimer'" class="note-fiche">{{ t(config.niveau === 'ps' ? 'noteFichePS' : 'noteFiche') }}</p>
-    </ConfigExercice>
+      <template #default="{ mode: modeCourant }">
+        <!-- PS : trier (même forme) ; MS : reconnaître (montre le…) ; GS : nommer, compter les côtés -->
+        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+        <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode"
+          cartes :titre="t('formes.exercice')" :libelle="m => t(`formes.mode.${m}`)" :icone="m => ICONES[m]" :description="m => t(`formes.modeDesc.${m}`)" />
+        <p v-if="modeCourant === 'imprimer'" class="note-fiche">{{ t(config.niveau === 'ps' ? 'formes.noteFichePS' : 'formes.noteFiche') }}</p>
+      </template>
+    </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <ConsigneParlee :key="jeu.index.value" class="question-label" :texte="consigne" />
@@ -19,17 +21,24 @@
       <!-- Reconnaître / compter : on montre la forme -->
       <div v-else-if="config.mode !== 'trouver'" class="forme-display" v-html="q.svg"></div>
 
-      <ChoixReponses v-if="config.mode === 'reconnaitre'" grand :options="choix.options" :bonne="choix.bonne" :repondu="repondu" @choisir="repondre">
+      <ChoixReponses v-if="config.mode === 'reconnaitre'" grand :titre="consigne" :options="q.modes.reconnaitre.options" :bonne="q.modes.reconnaitre.bonne"
+        :repondu="repondu" @choisir="i => repondre(i)">
         <template #default="{ option }">
-          <span class="choix-forme"><span v-html="option.svg"></span><span class="choix-nom">{{ T(option.id) }}</span></span>
+          <span class="choix-forme"><span v-html="option.svg"></span><span class="choix-nom">{{ nomForme(T, option.id) }}</span></span>
         </template>
       </ChoixReponses>
-      <ChoixReponses v-else-if="config.mode === 'compter'" grand :options="choix.options" :bonne="choix.bonne" :repondu="repondu" @choisir="repondre" />
-      <ChoixReponses v-else images :options="choix.options" :bonne="choix.bonne" :repondu="repondu" :libelle="i => t('choixForme', { n: i + 1 })" @choisir="repondre">
+      <ChoixReponses v-else-if="config.mode === 'compter'" grand :titre="consigne" :options="q.modes.compter.options" :bonne="q.modes.compter.bonne"
+        :repondu="repondu" @choisir="i => repondre(i)" />
+      <ChoixReponses v-else-if="config.mode === 'trouver'" images :titre="consigne" :options="q.modes.trouver.options" :bonne="q.modes.trouver.bonne"
+        :repondu="repondu" :libelle="libelleForme" @choisir="i => repondre(i)">
+        <template #default="{ option }"><span class="svg-choix" v-html="option.svg"></span></template>
+      </ChoixReponses>
+      <ChoixReponses v-else images :titre="consigne" :options="q.modes.meme.options" :bonne="q.modes.meme.bonne"
+        :repondu="repondu" :libelle="libelleForme" @choisir="i => repondre(i)">
         <template #default="{ option }"><span class="svg-choix" v-html="option.svg"></span></template>
       </ChoixReponses>
 
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+      <RetourReponse :message="retour?.message" :etat="etat" />
     </QuestionJeu>
 
     <!-- Résultats : la maternelle garde les étoiles -->
@@ -38,58 +47,64 @@
   </div>
 </template>
 
-<script setup>
-// Les formes : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
-// src/exercices/formes/ (definition.js, generateur.js, fiche.js).
+<script setup lang="ts">
+// Les formes : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/formes/
+// (definition.ts, generateur.ts, fiche.ts) ; le dessin des formes : src/dessins/figures.ts.
 import { computed } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ChoixReponses from '../../components/ChoixReponses.vue'
-import ConsigneParlee from '../../components/ConsigneParlee.vue'
-import ResultatsEtoiles from '../../components/ResultatsEtoiles.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/formes/definition'
-import { INTERFACE, TEXTES } from '../../exercices/formes/textes'
-import { questions as genererQuestions, questionsFiche, verifier } from '../../exercices/formes/generateur'
-import { fiche as ficheFormes } from '../../exercices/formes/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import ResultatsEtoiles from '../../noyau/ResultatsEtoiles.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import DEFINITION from '../../exercices/formes/definition.ts'
+import { CONTENU } from '../../exercices/formes/textes.ts'
+import { questions as tirer, questionsFiche, verifier, nomForme } from '../../exercices/formes/generateur.ts'
+import type { ModeForme, Question, Reponse } from '../../exercices/formes/generateur.ts'
+import { fiche as ficheFormes } from '../../exercices/formes/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
+const { t } = useLangue()
 // niveau : celui de la barre du haut s'il est de maternelle
-const { config, langueContenu } = useReglages(DEFINITION, 'formes_config', { suivreClasse: true })
-const T = contenu(TEXTES, () => langueContenu.value).t
-const ICONES = { meme: '🧩', reconnaitre: '👁️', compter: '🔢', trouver: '🔍' }
-const DESCRIPTIONS = { meme: 'memeDesc', reconnaitre: 'reconnaitreDesc', compter: 'combienCotes', trouver: 'trouverDesc' }
+const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true })
+// T : les textes du contenu (CONTENU, textes.ts : nom des formes, couleurs, fiche), dans la langue du contenu
+const T = traducteur(CONTENU, () => langueContenu.value)
+const libelleNiveau = (n: string): string => t(`formes.niveau.${n as 'ps' | 'ms' | 'gs'}`)
+const ICONES: Readonly<Record<ModeForme, string>> = { meme: '🧩', reconnaitre: '👁️', compter: '🔢', trouver: '🔍' }
 
 // ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──
-const nomDe = id => T(id.normalize('NFD').replace(/[̀-ͯ]/g, ''))
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
   messageErreur: (q, rep) => {
-    const nom = nomDe(q.nom)
-    if (rep?.mode === 'compter') return t('erreurCotes', { nom, n: q.cotes })
-    if (rep?.mode === 'meme') return t('erreurMeme')
-    return t(rep?.mode === 'trouver' ? 'erreurForme' : 'erreurNom', { nom })
+    const nom = nomForme(T, q.id)
+    if (rep?.mode === 'compter') return q.cotes === 0 ? t('formes.erreurAucunCote', { nom }) : t('formes.erreurCotes', { nom, n: q.cotes })
+    if (rep?.mode === 'meme') return t('formes.erreurMeme')
+    return t(rep?.mode === 'trouver' ? 'formes.erreurForme' : 'formes.erreurNom', { nom })
   },
-  apresErreur: 'continuer',
+  apresErreur: 2200,
   delai: 1400,
-  delaiErreur: 2200,
 })
 const { phase, questions, q, bonnes, retour, repondu, etat } = jeu
-const choix = computed(() => q.value.modes[config.value.mode])
-const repondre = i => jeu.repondre({ mode: config.value.mode, choix: i })
-const consigne = computed(() => ({
-  meme: t('consigneMeme'), reconnaitre: t('commentSappelle'), compter: t('combienCotes'), trouver: `${t('montre')} ${nomDe(q.value.nom)}`,
-})[config.value.mode])
+const repondre = (i: number): void => { jeu.repondre({ mode: config.value.mode, choix: i }) }
+// nom accessible des formes à choisir (sans trahir la réponse)
+const libelleForme = (i: number): string => t('formes.choixForme', { n: i + 1 })
+const consigne = computed(() => {
+  const nom = q.value ? nomForme(T, q.value.id) : ''
+  return {
+    meme: t('formes.consigneMeme'), reconnaitre: t('formes.commentSappelle'), compter: t('formes.combienCotes'), trouver: t('formes.montre', { nom }),
+  }[config.value.mode]
+})
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheFormes({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheFormes({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 

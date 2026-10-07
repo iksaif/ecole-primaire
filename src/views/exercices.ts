@@ -13,5 +13,13 @@ export const VUES: Readonly<Record<string, VueExercice>> = {
   '/maternelle/ordonner': () => import('./maternelle/OrdonnerView.vue'),
   '/maths/tables': () => import('./maths/TablesView.vue'),
   '/maths/calcul-pose': () => import('./maths/CalcuPoseView.vue'),
+  '/maths/suites': () => import('./maths/SuitesView.vue'),
+  '/maternelle/longueurs': () => import('./maternelle/LongueursView.vue'),
+  '/maths/fractions': () => import('./maths/FractionsView.vue'),
+  '/maths/problemes': () => import('./maths/ProblemesView.vue'),
+  '/maths/mesures': () => import('./maths/MesuresView.vue'),
+  '/maternelle/formes': () => import('./maternelle/FormesView.vue'),
+  '/maternelle/motifs': () => import('./maternelle/MotifsView.vue'),
+  '/maths/geometrie': () => import('./maths/GeometrieView.vue'),
   // nouveau:vues
 }

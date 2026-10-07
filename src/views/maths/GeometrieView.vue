@@ -1,22 +1,24 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">📐 {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('geometrie.titre') }}</h1>
 
     <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
-        :titre="t('exercices')" :libelle="e => t(`ex_${e}`)" />
-      <ChoixReglage v-if="config.exercices.includes('symetrie')" :definition="DEFINITION" :niveau="config.niveau"
-        cle="axeHorizontal" v-model="config.axeHorizontal" :titre="t('optionsSym')" :libelle="h => t(h ? 'axeH' : 'axeV')" />
-      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbQuestions')" />
-    </ConfigExercice>
+      <template #default="{ mode: modeCourant }">
+        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
+        <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
+          :titre="t('communs.exercices')" :libelle="e => t(`geometrie.exercices.${e}`)" />
+        <ChoixReglage v-if="avecSymetrie" :definition="DEFINITION" :niveau="config.niveau"
+          cle="axeHorizontal" v-model="config.axeHorizontal" :titre="t('geometrie.optionsSym')" :libelle="h => t(h ? 'geometrie.axeH' : 'geometrie.axeV')" />
+        <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+      </template>
+    </CadreExercice>
 
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="geo-box">
-        <div class="consigne">{{ q.consigne ?? q.texte }}</div>
+        <div class="consigne">{{ consigne }}</div>
 
         <!-- Symétrie -->
         <div v-if="q.type === 'symetrie'" class="grilles">
@@ -33,7 +35,7 @@
         <!-- Reproduction -->
         <div v-else-if="q.type === 'reproduction'" class="grilles">
           <div class="grille-titre-wrap">
-            <div class="grille-titre">{{ t('modele') }}</div>
+            <div class="grille-titre">{{ t('geometrie.modele') }}</div>
             <div class="grille" :style="styleGrille(q.cols)">
               <template v-for="r in q.rows" :key="'m' + r">
                 <div v-for="c in q.cols" :key="r + '-' + c" class="case"
@@ -42,7 +44,7 @@
             </div>
           </div>
           <div class="grille-titre-wrap">
-            <div class="grille-titre">{{ t('aToi') }}</div>
+            <div class="grille-titre">{{ t('geometrie.aToi') }}</div>
             <div class="grille" :style="styleGrille(q.cols)">
               <template v-for="r in q.rows" :key="'a' + r">
                 <div v-for="c in q.cols" :key="r + '-' + c" class="case cliquable"
@@ -71,36 +73,36 @@
         <div v-else-if="dessin" class="dessin" v-html="dessin"></div>
 
         <div v-if="(q.type === 'figure' && q.sous === 'angle') || q.type === 'angles'" class="astuce">
-          💡 {{ t('astuceEquerre') }}
+          💡 {{ t('geometrie.astuceEquerre') }}
         </div>
 
         <!-- Angles droits : choix multiple de lettres -->
         <div v-if="q.type === 'angles'" class="choix-group">
-          <button v-for="l in [...q.lettres].sort()" :key="l" class="choix-btn" :class="classeLettre(l)"
+          <button v-for="l in [...q.lettres].sort()" :key="l" type="button" class="choix-btn" :class="classeLettre(l)"
             :disabled="repondu" @click="basculerLettre(l)">{{ l }}</button>
-          <button class="choix-btn" :class="classeLettre('aucun')"
-            :disabled="repondu" @click="basculerLettre('aucun')">{{ t('aucunBtn') }}</button>
+          <button type="button" class="choix-btn" :class="classeLettre('aucun')"
+            :disabled="repondu" @click="basculerLettre('aucun')">{{ t('geometrie.aucunBtn') }}</button>
         </div>
 
         <!-- Choix -->
-        <ChoixReponses v-if="q.options" :options="q.options" :bonne="q.bonne" :repondu="repondu"
+        <ChoixReponses v-if="'options' in q" :titre="consigne" :options="q.options" :bonne="q.bonne" :repondu="repondu"
           @choisir="choisir" />
 
-        <div class="feedback" :class="etat">{{ retour?.message }}</div>
+        <RetourReponse :message="retour?.message" :etat="etat" />
 
         <div v-if="corrige && !reussi" class="legende">
-          <span><i class="pastille juste"></i> {{ t('legJuste') }}</span>
-          <span><i class="pastille manquante"></i> {{ t('legOubliee') }}</span>
-          <span><i class="pastille entrop"></i> {{ t('legEnTrop') }}</span>
+          <span><i class="pastille juste"></i> {{ t('geometrie.legJuste') }}</span>
+          <span><i class="pastille manquante"></i> {{ t('geometrie.legOubliee') }}</span>
+          <span><i class="pastille entrop"></i> {{ t('geometrie.legEnTrop') }}</span>
         </div>
 
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
           <template v-if="!repondu">
-            <button class="btn btn-ghost" @click="passer">{{ t('passer') }}</button>
-            <button v-if="estGrille" class="btn btn-ghost" @click="effacer">{{ t('effacer') }}</button>
-            <button v-if="!q.options" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
+            <button type="button" class="btn btn-ghost" @click="passer">{{ t('geometrie.passer') }}</button>
+            <button v-if="estGrille" type="button" class="btn btn-ghost" @click="effacer">{{ t('geometrie.effacer') }}</button>
+            <button v-if="!('options' in q)" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
           </template>
-          <button v-else-if="!reussi" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+          <button v-else-if="!reussi" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
         </div>
       </div>
     </QuestionJeu>
@@ -113,38 +115,44 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // La géométrie : la vue ne fait que les réglages et le rendu d'une question (cases à colorier, figures, lettres).
-// Niveaux, générateur, dessins et fiche : src/exercices/geometrie/ (definition.js, generateur.js, dessins.js, fiche.js…).
+// Niveaux, générateur, dessins et fiche : src/exercices/geometrie/ (definition.ts, generateur.ts, dessins.ts, fiche.ts…) ; les figures et
+// les solides se dessinent avec src/dessins/.
 import { ref, computed } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import ChoixReponses from '../../components/ChoixReponses.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import TableauCorrection from '../../components/TableauCorrection.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/geometrie/definition'
-import { INTERFACE, TEXTES } from '../../exercices/geometrie/textes'
-import { questions as genererQuestions, questionsFiche, verifier, decrire, messageErreur } from '../../exercices/geometrie/generateur'
-import { LETTRES, k } from '../../exercices/geometrie/quadrillage'
-import { svgFigure, svgSolide, svgCercle, svgPatron } from '../../exercices/geometrie/dessins'
-import { fiche as ficheGeometrie } from '../../exercices/geometrie/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import TableauCorrection from '../../noyau/TableauCorrection.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import DEFINITION from '../../exercices/geometrie/definition.ts'
+import { CONTENU } from '../../exercices/geometrie/textes.ts'
+import { questions as tirer, questionsFiche, verifier, decrire, messageErreur } from '../../exercices/geometrie/generateur.ts'
+import type { Question, QSymetrie, Reponse } from '../../exercices/geometrie/generateur.ts'
+import { LETTRES, k } from '../../exercices/geometrie/quadrillage.ts'
+import { svgFigure, svgSolide, svgCercle, svgPatron } from '../../exercices/geometrie/dessins.ts'
+import { fiche as ficheGeometrie } from '../../exercices/geometrie/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
-// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; maths :
-// le contenu (questions, fiche) suit la langue de l'interface
-const { config, langueContenu } = useReglages(DEFINITION, 'geometrie_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
+const { t } = useLangue()
+// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/noyau/useReglages.ts) ; maths : le contenu (questions,
+// fiche) suit la langue de l'interface
+const { config, langueContenu } = useReglages(DEFINITION)
+const T = traducteur(CONTENU, () => langueContenu.value)
+
+const avecSymetrie = computed(() => (config.value.exercices as readonly string[]).includes('symetrie'))
 
 // ── Jeu ──
-const selection = ref({})   // cases (clés « colonne,ligne ») ou lettres cochées
+const selection = ref<Record<string, boolean>>({})   // cases (clés « colonne,ligne ») ou lettres cochées
 
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
   messageErreur: (q, rep) => messageErreur(q, rep, T),
   delai: 900,
@@ -153,12 +161,13 @@ const jeu = useJeu({
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 
 const reussi = computed(() => !!retour.value?.ok)
+const consigne = computed(() => (q.value ? ('consigne' in q.value ? q.value.consigne : q.value.texte) : ''))
 // correction case par case, une fois la réponse donnée
-const corrige = computed(() => repondu.value && estGrille.value && historique.value.at(-1)?.rep != null)
-const estGrille = computed(() => q.value && (q.value.type === 'symetrie' || q.value.type === 'reproduction'
+const estGrille = computed(() => !!q.value && (q.value.type === 'symetrie' || q.value.type === 'reproduction'
   || (q.value.type === 'reperage' && q.value.sous === 'colorie')))
-const modeleSet = computed(() => new Set(q.value?.modele || []))
-const cellulesSet = computed(() => new Set(q.value?.cellules || []))
+const corrige = computed(() => repondu.value && estGrille.value && historique.value.at(-1)?.rep != null)
+const modeleSet = computed(() => new Set(q.value && 'modele' in q.value ? q.value.modele : []))
+const cellulesSet = computed(() => new Set(q.value && 'cellules' in q.value ? q.value.cellules : []))
 const dessin = computed(() => {
   const x = q.value
   if (!x) return ''
@@ -170,14 +179,16 @@ const dessin = computed(() => {
   return ''
 })
 
-function classeLettre(l) {
+function classeLettre(l: string): string {
+  const x = q.value
   const sel = !!selection.value[l]
   if (!repondu.value) return sel ? 'actif' : ''
-  const att = q.value.droits.length ? q.value.droits.includes(l) : l === 'aucun'
+  if (x?.type !== 'angles') return ''
+  const att = x.droits.length ? x.droits.includes(l) : l === 'aucun'
   if (att) return sel ? 'bon' : 'manque'
   return sel ? 'faux' : ''
 }
-function basculerLettre(l) {
+function basculerLettre(l: string): void {
   if (repondu.value) return
   if (l === 'aucun') { selection.value = selection.value.aucun ? {} : { aucun: true }; return }
   const s = { ...selection.value }
@@ -186,16 +197,16 @@ function basculerLettre(l) {
   selection.value = s
 }
 
-function styleGrille(cols) {
+function styleGrille(cols: number): Record<string, string> {
   return { gridTemplateColumns: `repeat(${cols}, var(--cell))`, '--cell': `clamp(26px, calc((100vw - 4rem) / ${cols}), 40px)` }
 }
-function styleAxe(x) {
+function styleAxe(x: QSymetrie): Record<string, string> {
   const n = (x.axe === 'v' ? x.cols : x.rows) / 2
   const pos = `calc(${n} * (var(--cell) + 1px) - 1.5px)`
   return x.axe === 'v' ? { left: pos } : { top: pos }
 }
 
-function etatCase(cle) {
+function etatCase(cle: string): string {
   const sel = !!selection.value[cle]
   if (!corrige.value) return sel ? 'coloriee' : ''
   const att = cellulesSet.value.has(cle)
@@ -205,67 +216,71 @@ function etatCase(cle) {
   return ''
 }
 
-function cliquableSymetrie(c, r) {
+function cliquableSymetrie(c: number, r: number): boolean {
   const x = q.value
+  if (x?.type !== 'symetrie') return false
   const pos = x.axe === 'v' ? c : r
   const moitie = (x.axe === 'v' ? x.cols : x.rows) / 2
   return x.premier ? pos >= moitie : pos < moitie
 }
-function classeSymetrie(c, r) {
+function classeSymetrie(c: number, r: number): string | string[] {
   const cle = k(c, r)
   if (modeleSet.value.has(cle)) return 'modele'
   if (!cliquableSymetrie(c, r)) return 'inactive'
   return ['cliquable', etatCase(cle)]
 }
-function clicSymetrie(c, r) {
+function clicSymetrie(c: number, r: number): void {
   if (cliquableSymetrie(c, r)) basculer(k(c, r))
 }
 
-function classeReperage(c, r) {
+function classeReperage(c: number, r: number): string | string[] {
   const x = q.value, cle = k(c, r)
+  if (x?.type !== 'reperage') return ''
   if (x.sous === 'lire') return cle === x.cible ? 'modele' : ''
   return ['cliquable', etatCase(cle)]
 }
-function clicReperage(c, r) {
-  if (q.value.sous !== 'colorie' || repondu.value) return
+function clicReperage(c: number, r: number): void {
+  const x = q.value
+  if (x?.type !== 'reperage' || x.sous !== 'colorie' || repondu.value) return
   const cle = k(c, r)
   selection.value = selection.value[cle] ? {} : { [cle]: true }
 }
 
-function basculer(cle) {
+function basculer(cle: string): void {
   if (repondu.value) return
   const s = { ...selection.value }
   if (s[cle]) delete s[cle]; else s[cle] = true
   selection.value = s
 }
 
-function effacer() {
+function effacer(): void {
   if (!repondu.value) selection.value = {}
 }
 
-function repondre(rep) {
-  jeu.repondre(rep, { donne: decrire(q.value, rep, T) })
+function repondre(rep: Reponse): void {
+  if (q.value) jeu.repondre(rep, { donne: decrire(q.value, rep, T) })
 }
-const choisir = i => repondre({ choix: i })
+const choisir = (i: number): void => repondre({ choix: i })
 
-function valider() {
-  if (repondu.value || q.value.options) return
+function valider(): void {
+  const x = q.value
+  if (repondu.value || !x || 'options' in x) return
   const sel = Object.keys(selection.value)
   if (!sel.length) return
-  repondre(q.value.type === 'angles' ? { lettres: sel } : { selection: sel })
+  repondre(x.type === 'angles' ? { lettres: sel } : { selection: sel })
 }
 
 // passer : la question compte comme une erreur, et on enchaîne aussitôt
-function passer() {
+function passer(): void {
   if (repondu.value) return
-  jeu.passer({ donne: t('passe') })
+  jeu.passer({ donne: t('geometrie.passe') })
   jeu.suivante()
 }
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) : graine du lien, sinon tirée ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheGeometrie({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheGeometrie({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 

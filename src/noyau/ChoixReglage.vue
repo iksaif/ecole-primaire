@@ -117,6 +117,9 @@ function choisir(v: Valeur) {
 </script>
 
 <style scoped>
+/* le niveau est LE choix de départ : un bloc à part (comme la « version » d'une affiche), les autres réglages le personnalisent */
+.config-section[data-reglage="niveau"] { background: #eef5fd; border-left: 5px solid var(--bleu-fort); border-radius: var(--radius); padding: .9rem 1.1rem .7rem; margin-bottom: 1.6rem; }
+.config-section[data-reglage="niveau"] .config-section-title { color: var(--texte); }
 /* cartes : autant de colonnes que de valeurs (une seule sur petit écran au-delà de deux) */
 .sous-titre-reglage { margin: .6rem 0 .4rem; text-transform: none; font-weight: 600; color: var(--texte-doux); }
 .cartes-reglage { display: grid; grid-template-columns: repeat(var(--nb-cartes), 1fr); gap: .75rem; }

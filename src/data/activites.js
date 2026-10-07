@@ -2,11 +2,7 @@
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
 import { CLASSES, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
-import MESURES from '../exercices/mesures/definition.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
-import FRACTIONS from '../exercices/fractions/definition.js'
-import GEOMETRIE from '../exercices/geometrie/definition.js'
-import PROBLEMES from '../exercices/problemes/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
 import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
@@ -46,10 +42,6 @@ export const ACTIVITES = [
   { to: '/imprimer/ecriture', matiere: 'imprimer', domaine: 'ecriture', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
 
   // Affiches du programme : une carte par famille, dans son domaine, seulement sur la page « À imprimer » (`detail`)
-  { to: '/imprimer/affiches?affiche=horloge', matiere: 'imprimer', domaine: 'grandeurs-mesures', genre: 'affiche', detail: true, icon: '🕐', titre: "L'horloge", desc: 'Heures entières, demies et quarts, minutes', niveaux: de('cp', 'ce2'),
-    br: { titre: 'An horolaj', desc: 'Eurioù klok, hanterioù ha kardoù, munutennoù' } }, // br: à relire
-  { to: '/imprimer/affiches?affiche=formes', matiere: 'imprimer', domaine: 'espace-geometrie', genre: 'affiche', detail: true, icon: '🔷', titre: 'Figures et solides', desc: 'Formes planes, figures du cycle 3, solides', niveaux: de('gs', 'cm2'),
-    br: { titre: 'Stummoù ha solidennoù', desc: 'Stummoù plaen, stummoù ar c\'helc\'hiad 3, solidennoù' } }, // br: à relire
   { to: '/imprimer/affiches?affiche=conjugaison', matiere: 'imprimer', domaine: 'grammaire', genre: 'affiche', detail: true, icon: '✍️', titre: 'Affiches de conjugaison', desc: 'Être, avoir, 1er et 2e groupes, verbes irréguliers', niveaux: de('cp', 'cm2'),
     br: { titre: 'Skritelloù displegañ', desc: 'Bezañ, kaout, 1añ ha 2l strollad, verboù direizh' } }, // br: à relire
 
@@ -62,13 +54,6 @@ export const ACTIVITES = [
   })),
 
   // ── Maths ──
-  { fiche: true, to: '/maths/fractions',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Nombres et calcul', icon: '🍕', titre: 'Les fractions', desc: 'Un demi, un tiers, un quart…', niveaux: Object.keys(FRACTIONS.niveaux) },
-  { fiche: true, to: '/maths/problemes',     matiere: 'maths', domaine: 'nombres-calcul', rubrique: 'Résoudre des problèmes', icon: '🧩', titre: 'Problèmes', desc: 'Lire, comprendre et calculer', niveaux: Object.keys(PROBLEMES.niveaux) },
-  { fiche: true, to: '/maths/mesures',       matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Mesures', desc: 'Longueurs, masses, contenances, calendrier', niveaux: Object.keys(MESURES.niveaux) },
-  { fiche: true, to: '/maternelle/longueurs', matiere: 'maths', domaine: 'grandeurs-mesures', rubrique: 'Grandeurs et mesures', icon: '📏', titre: 'Plus long, plus court', desc: 'Comparer et ranger des crayons', niveaux: ['ps', 'ms', 'gs'] },
-  { fiche: true, to: '/maternelle/motifs',   matiere: 'maths', domaine: 'motifs', rubrique: 'Motifs', icon: '🔁', titre: 'Les motifs', desc: 'Continuer un collier qui se répète', niveaux: ['ps', 'ms', 'gs'] },
-  { fiche: true, to: '/maternelle/formes',   matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '🔷', titre: 'Les formes', desc: 'Trier, reconnaître puis nommer le disque, le carré, le triangle et le rectangle', niveaux: ['ps', 'ms', 'gs'] },
-  { fiche: true, to: '/maths/geometrie',     matiere: 'maths', domaine: 'espace-geometrie', rubrique: 'Espace et géométrie', icon: '📐', titre: 'Géométrie', desc: 'Symétrie, quadrillage, figures et solides', niveaux: Object.keys(GEOMETRIE.niveaux) },
 
   // ── Français ──
   { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'lecture', rubrique: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: Object.keys(LETTRES.niveaux) },
@@ -88,13 +73,6 @@ export const ACTIVITES = [
 const BR = {
   '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
-  '/maths/fractions':     ['An darnaouennoù', "An hanter, an trederenn, ar c'hard…"],
-  '/maths/problemes':     ['Kudennoù', 'Lenn, kompren ha jediñ'],
-  '/maths/mesures':       ['Muzulioù', "Hirderioù, pouezioù, endalc'hioù, deiziadur"],
-  '/maternelle/longueurs': ['Hiroc’h, berroc’h', 'Keñveriañ ha renkañ kreionoù'], // br: à relire
-  '/maternelle/motifs':   ['Ar patromoù', "Kenderc'hel ur c'holier a en em adlavar"], // br: à relire
-  '/maternelle/formes':   ['Ar stummoù', "Rummañ, anavezout hag envel ar bladenn, ar c'harrez, an tric'horn hag an hirgarrez"], // br: à relire
-  '/maths/geometrie':     ['Mentoniezh', 'Kemparzhded, karrezennoù, stummoù ha solidennoù'],
   '/maternelle/lettres':   ['Al lizherennoù', 'Anaout ha liammañ ar pennlizherennoù hag al lizherennoù bihan'],
   '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],
   '/francais/orthographe': ['Reizhskrivañ', 'Heñvelsonioù, kenglotadurioù, lizherennoù a vank (e galleg)'],
@@ -110,15 +88,8 @@ const BR = {
 // ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
-  '/maternelle/formes': ['formes-maternelle'],
-  '/maternelle/motifs': ['motifs-maternelle'],
-  '/maternelle/longueurs': ['comparer-longueurs-maternelle'],
   '/maternelle/lettres': Object.fromEntries(Object.entries(LETTRES.niveaux).map(([n, v]) => [n, v.competences])),
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
-  '/maths/fractions': Object.fromEntries(Object.entries(FRACTIONS.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/problemes': Object.fromEntries(Object.entries(PROBLEMES.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/mesures': Object.fromEntries(Object.entries(MESURES.niveaux).map(([n, v]) => [n, v.competences])),
-  '/maths/geometrie': Object.fromEntries(Object.entries(GEOMETRIE.niveaux).map(([n, v]) => [n, v.competences])),
   '/francais/dictee': Object.fromEntries(Object.entries(DICTEE.niveaux).map(([n, v]) => [n, v.competences])),
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
   '/francais/orthographe': Object.fromEntries(Object.entries(ORTHOGRAPHE.niveaux).map(([n, v]) => [n, v.competences])),

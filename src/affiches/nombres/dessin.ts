@@ -65,6 +65,8 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, _T, ctx) => {
     const t = d.taille
     const colonnes: Entree[][] = Array.from({ length: d.cols }, (_, c) => entrees.slice(c * d.parCol, (c + 1) * d.parCol) as Entree[])
     const hLigne = hDispo / d.parCol
+    // un grand tableau (0 à 100) : un trait plus marqué sous chaque dizaine (9, 19, 29…) pour lire par paquets de dix
+    const dizaines = entrees.filter(e => e.n !== undefined).length > 30
     const ligne = (e: Entree): string => {
       if (e.titre !== undefined) return `<div class="sous-titre" style="height:${hLigne}mm;font-size:${t * 1.05}mm">${echapper(e.titre)}</div>`
       const n = e.n ?? 0
@@ -72,7 +74,8 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, _T, ctx) => {
       const repr = type ? representation(type, n, hLigne * 0.72, d.reprW * 0.92) : ''
       const mots = ecrit(n).map((m, i) => `<span class="l${i}">${echapper(m)}</span>`).join('')
       // l'écart entre le nombre, son dessin et ses lettres suit le corps du texte (2 mm collait « 10 » à « dix » sur les grands corps)
-      return `<div class="ligne" style="height:${hLigne}mm;gap:${(t * 0.45).toFixed(2)}mm">
+      const finDizaine = dizaines && (n + 1) % 10 === 0
+      return `<div class="ligne${finDizaine ? ' dizaine' : ''}" style="height:${hLigne}mm;gap:${(t * 0.45).toFixed(2)}mm">
   <span class="chiffres" style="font-size:${t * 1.5}mm;width:${t * 1.5 * 2.6}mm">${n}</span>
   ${avecRepr ? `<span class="repr" style="width:${d.reprW}mm">${repr}</span>` : ''}
   <span class="mots" style="font-size:${t}mm">${mots}</span></div>`
@@ -95,6 +98,8 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, _T, ctx) => {
 export const css = `.legende { text-align: center; font-size: 4mm; flex: none; }
   .colonnes { display: flex; justify-content: center; }
   .ligne { display: flex; align-items: center; gap: 2mm; border-bottom: 0.25mm solid #e1e4ea; overflow: hidden; }
+  /* le trait plus marqué est une ombre : une bordure plus épaisse agrandirait la ligne (hauteur fixée) et couperait son contenu */
+  .ligne.dizaine { border-bottom-color: #8a94a8; box-shadow: 0 0.4mm 0 #8a94a8; }
   .chiffres { font-weight: 700; text-align: right; flex: none; color: #222; }
   .repr { flex: none; display: flex; align-items: center; justify-content: center; }
   .repr svg { display: block; }

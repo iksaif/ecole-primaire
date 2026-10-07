@@ -13,14 +13,20 @@
 -->
 <template>
   <div class="config-box large">
-    <div class="config-section" data-reglage="variante">
-      <div class="config-section-title" :id="`${idBase}-version`">{{ t('formulaireAffiche.version') }}</div>
+    <!-- 1. la version : une fiche toute prête (ses réglages de départ) ; 2. le reste : ce qu'on ajuste pour cette version -->
+    <section class="bloc bloc-version" data-reglage="variante" :aria-labelledby="`${idBase}-version`">
+      <h2 class="bloc-titre" :id="`${idBase}-version`"><span class="num" aria-hidden="true">1</span> {{ t('formulaireAffiche.version') }}</h2>
+      <p class="bloc-aide">{{ t('formulaireAffiche.versionAide') }}</p>
       <div class="btn-group" role="group" :aria-labelledby="`${idBase}-version`">
         <button type="button" v-for="(v, id) in definition.variantes" :key="id" class="level-btn" :data-valeur="id"
           :class="{ active: config.variante === id }" :aria-pressed="config.variante === id" @click="config = reglagesApresVariante(definition, config, id)">
           {{ T(cleVariante(id, 'court')) }} <small>· {{ v.classes.map(n => n.toUpperCase()).join(' · ') }}</small></button>
       </div>
-    </div>
+    </section>
+
+    <section class="bloc bloc-reglages" :aria-labelledby="`${idBase}-reglages`">
+    <h2 class="bloc-titre" :id="`${idBase}-reglages`"><span class="num" aria-hidden="true">2</span> {{ t('formulaireAffiche.personnaliser') }}</h2>
+    <p class="bloc-aide">{{ t('formulaireAffiche.personnaliserAide') }}</p>
 
     <GroupeReglages v-if="prereglages.length" id="prereglages" :titre="t('formulaireAffiche.prereglages')" :aide="aide('prereglages')">
       <div class="btn-group" data-reglage="prereglage">
@@ -94,6 +100,7 @@
         </div>
       </div>
     </div>
+    </section>
 
     <ApercuImpression :reglages="config" :html="resultat.html" :format="config.format" :orientation="config.orientation" :nb-pages="resultat.nbPages" />
   </div>
@@ -174,6 +181,12 @@ const resultat = computed(() => (polices.pret.value ? genererAffiche(props.modul
 
 <style scoped>
 .config-box.large { max-width: 960px; }
+/* deux blocs : la version (une fiche toute prête, sur fond teinté) puis tout ce qui la personnalise */
+.bloc-version { background: #eef5fd; border-left: 5px solid var(--bleu-fort); border-radius: var(--radius); padding: 1rem 1.1rem .6rem; margin-bottom: 1.5rem; }
+.bloc-reglages { border-top: 2px solid var(--gris-brd); padding-top: 1.1rem; margin-bottom: .5rem; }
+.bloc-titre { display: flex; align-items: center; gap: .55rem; font-size: 1.1rem; font-weight: 900; margin: 0 0 .15rem; }
+.bloc-titre .num { display: inline-flex; align-items: center; justify-content: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--bleu-fort); color: white; font-size: .95rem; }
+.bloc-aide { font-size: .88rem; color: var(--texte-doux); margin: 0 0 .8rem; }
 .config-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 1.5rem; }
 .level-btn small { font-weight: 400; }   /* sans opacité : sur le bouton actif (blanc sur bleu foncé) elle passerait sous 4,5:1 */
 .champ-titre { font: inherit; width: 100%; max-width: 32rem; padding: .45rem .6rem; border: 2px solid var(--gris-brd); border-radius: 8px; }

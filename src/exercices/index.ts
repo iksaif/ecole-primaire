@@ -17,6 +17,14 @@ import { module as comparer } from './comparer/index.ts'
 import { module as ranger } from './ranger/index.ts'
 import { module as tables } from './tables/index.ts'
 import { module as calculPose } from './calcul-pose/index.ts'
+import { module as suites } from './suites/index.ts'
+import { module as longueurs } from './longueurs/index.ts'
+import { module as fractions } from './fractions/index.ts'
+import { module as problemes } from './problemes/index.ts'
+import { module as mesures } from './mesures/index.ts'
+import { module as formes } from './formes/index.ts'
+import { module as geometrie } from './geometrie/index.ts'
+import { module as motifs } from './motifs/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -36,6 +44,14 @@ const BASE: readonly EntreeRegistre[] = [
   ranger,
   tables,
   calculPose,
+  suites,
+  longueurs,
+  fractions,
+  problemes,
+  mesures,
+  formes,
+  geometrie,
+  motifs,
   // nouveau:registre
 ]
 

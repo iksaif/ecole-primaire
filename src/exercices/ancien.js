@@ -7,38 +7,10 @@ import conjugaisonDefinition from './conjugaison/definition.js'
 import * as conjugaisonGenerateur from './conjugaison/generateur.js'
 import * as conjugaisonFiche from './conjugaison/fiche.js'
 import { TEXTES as conjugaisonTextes } from './conjugaison/textes.js'
-import problemesDefinition from './problemes/definition.js'
-import * as problemesGenerateur from './problemes/generateur.js'
-import * as problemesFiche from './problemes/fiche.js'
-import { TEXTES as problemesTextes } from './problemes/textes.js'
-import motifsDefinition from './motifs/definition.js'
-import * as motifsGenerateur from './motifs/generateur.js'
-import * as motifsFiche from './motifs/fiche.js'
-import { TEXTES as motifsTextes } from './motifs/textes.js'
-import longueursDefinition from './longueurs/definition.js'
-import * as longueursGenerateur from './longueurs/generateur.js'
-import * as longueursFiche from './longueurs/fiche.js'
-import { TEXTES as longueursTextes } from './longueurs/textes.js'
-import formesDefinition from './formes/definition.js'
-import * as formesGenerateur from './formes/generateur.js'
-import * as formesFiche from './formes/fiche.js'
-import { TEXTES as formesTextes } from './formes/textes.js'
-import mesuresDefinition from './mesures/definition.js'
-import * as mesuresGenerateur from './mesures/generateur.js'
-import * as mesuresFiche from './mesures/fiche.js'
-import { TEXTES as mesuresTextes } from './mesures/textes.js'
-import geometrieDefinition from './geometrie/definition.js'
-import * as geometrieGenerateur from './geometrie/generateur.js'
-import * as geometrieFiche from './geometrie/fiche.js'
-import { TEXTES as geometrieTextes } from './geometrie/textes.js'
 import grammaireDefinition from './grammaire/definition.js'
 import * as grammaireGenerateur from './grammaire/generateur.js'
 import * as grammaireFiche from './grammaire/fiche.js'
 import { TEXTES as grammaireTextes } from './grammaire/textes.js'
-import fractionsDefinition from './fractions/definition.js'
-import * as fractionsGenerateur from './fractions/generateur.js'
-import * as fractionsFiche from './fractions/fiche.js'
-import { TEXTES as fractionsTextes } from './fractions/textes.js'
 import vocabulaireDefinition from './vocabulaire/definition.js'
 import * as vocabulaireGenerateur from './vocabulaire/generateur.js'
 import * as vocabulaireFiche from './vocabulaire/fiche.js'
@@ -119,14 +91,7 @@ import { TEXTES as lettresTextes } from './lettres/textes.js'
 /** @type {ModuleExercice[]} */
 export const REGISTRE = [
   { definition: conjugaisonDefinition, generateur: conjugaisonGenerateur, fiche: conjugaisonFiche, textes: conjugaisonTextes },
-  { definition: problemesDefinition, generateur: problemesGenerateur, fiche: problemesFiche, textes: problemesTextes },
-  { definition: motifsDefinition, generateur: motifsGenerateur, fiche: motifsFiche, textes: motifsTextes },
-  { definition: longueursDefinition, generateur: longueursGenerateur, fiche: longueursFiche, textes: longueursTextes },
-  { definition: formesDefinition, generateur: formesGenerateur, fiche: formesFiche, textes: formesTextes },
-  { definition: mesuresDefinition, generateur: mesuresGenerateur, fiche: mesuresFiche, textes: mesuresTextes },
-  { definition: geometrieDefinition, generateur: geometrieGenerateur, fiche: geometrieFiche, textes: geometrieTextes },
   { definition: grammaireDefinition, generateur: grammaireGenerateur, fiche: grammaireFiche, textes: grammaireTextes },
-  { definition: fractionsDefinition, generateur: fractionsGenerateur, fiche: fractionsFiche, textes: fractionsTextes },
   { definition: vocabulaireDefinition, generateur: vocabulaireGenerateur, fiche: vocabulaireFiche, textes: vocabulaireTextes },
   { definition: orthographeDefinition, generateur: orthographeGenerateur, fiche: orthographeFiche, textes: orthographeTextes },
   { definition: dicteeDefinition, generateur: dicteeGenerateur, fiche: dicteeFiche, textes: dicteeTextes },

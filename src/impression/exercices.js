@@ -5,15 +5,11 @@
 // n'importe que des données pures.
 import { ACTIVITES } from '../data/activites.js'
 import { classesEntre } from '../data/classes.js'
-import MESURES from '../exercices/mesures/definition.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
 import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
 import LETTRES from '../exercices/lettres/definition.js'
-import FRACTIONS from '../exercices/fractions/definition.js'
-import GEOMETRIE from '../exercices/geometrie/definition.js'
-import PROBLEMES from '../exercices/problemes/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
 export const NB_VARIANTES = 4
@@ -40,48 +36,6 @@ const LISTE = [
     fiches: [
       F('addition', "l'addition posée", 'addition-posee', ['Opération › Addition'], { clics: ['Retenue › ^Mélangé$'], classes: classesFiche(CALCUL_POSE, 'addition') }),
       F('soustraction', 'la soustraction posée', 'soustraction-posee', ['Opération › Soustraction'], { clics: ['Retenue › ^Mélangé$'], classes: classesFiche(CALCUL_POSE, 'soustraction') }),
-    ] },
-  { id: 'problemes', route: '/maths/problemes', groupe: 'maths', titre: { fr: 'Problèmes', br: 'Kudennoù' },
-    classes: Object.keys(PROBLEMES.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Ajout', 'Comparaison', 'Parties et tout', 'Multiplication', 'Partage', 'Fois plus', 'Plusieurs étapes'],
-    fiches: [
-      F('additifs', "problèmes d'addition et de soustraction", 'problemes-additifs', ['Ajout', 'Comparaison', 'Parties et tout']),
-      F('multiplicatifs', 'problèmes de multiplication et de partage', 'problemes-multiplicatifs', ['Multiplication', 'Partage']),
-      F('etapes', 'problèmes en plusieurs étapes', 'problemes-etapes', ['Plusieurs étapes']),
-    ] },
-  { id: 'fractions', route: '/maths/fractions', groupe: 'maths', titre: { fr: 'Les fractions', br: 'An darnaouennoù' },
-    // classes et fiches : celles de la définition (src/exercices/fractions/definition.js)
-    classes: Object.keys(FRACTIONS.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Quelle fraction', 'Colorier', 'En lettres', 'La moitié de', 'Fractions égales', 'Lire sur la droite', 'Placer sur la droite'],
-    fiches: [
-      F('unitaires', 'un demi, un tiers, un quart…', 'fractions-unitaires', ['Quelle fraction', 'Colorier', 'En lettres'], { clics: ['Fractions › Un demi'] }),
-      F('moitie', 'la moitié de…', 'doubles-moities', ['La moitié de']),
-      F('fractions-1', 'les fractions jusqu’à 1 (2/3, 3/4…)', 'fractions-inferieures-1', ['Quelle fraction', 'Colorier', 'En lettres'], { clics: ['Fractions › Aussi'], classes: classesFiche(FRACTIONS, 'fractions-1') }),
-      F('egales', 'les fractions égales', 'fractions-egales', ['Fractions égales'], { classes: classesFiche(FRACTIONS, 'egales') }),
-      F('droite', 'les fractions sur la droite', 'fractions-mesure', ['Lire sur la droite', 'Placer sur la droite'], { classes: classesFiche(FRACTIONS, 'droite') }),
-    ] },
-  { id: 'mesures', route: '/maths/mesures', groupe: 'maths', titre: { fr: 'Mesures', br: 'Muzulioù' },
-    // classes et fiches : celles de la définition (src/exercices/mesures/definition.js)
-    classes: Object.keys(MESURES.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Mesurer à la règle', 'Unité adaptée', 'Conversions', 'Comparer', 'Masses', 'Contenances', 'Calendrier'],
-    fiches: [
-      F('longueurs', 'les longueurs', 'longueurs', ['Mesurer à la règle', 'Unité adaptée', 'Conversions', 'Comparer']),
-      F('masses', 'les masses', 'masses', ['Masses']),
-      F('contenances', 'les contenances', 'contenances', ['Contenances'], { classes: MESURES.fiches.filter(f => f.id === 'contenances').map(f => f.niveau) }),
-    ] },
-  { id: 'geometrie', route: '/maths/geometrie', groupe: 'maths', titre: { fr: 'Géométrie', br: 'Mentoniezh' },
-    // classes et fiches : celles de la définition (src/exercices/geometrie/definition.js)
-    classes: Object.keys(GEOMETRIE.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Symétrie', 'Reproduction', 'Repérage', 'Figures', 'Solides', 'Angles droits', 'Propriétés', 'Cercle', 'Patrons'],
-    fiches: [
-      F('reproduction', 'reproduire des figures', 'tracer-figures', ['Reproduction'], { classes: classesFiche(GEOMETRIE, 'reproduction') }),
-      F('reperage', 'se repérer sur un quadrillage', 'reperage-deplacements', ['Repérage'], { classes: classesFiche(GEOMETRIE, 'reperage') }),
-      F('figures', 'les figures planes', 'figures-planes', ['Figures'], { classes: ['ce1'] }),
-      F('figures', 'les figures planes et le cercle', 'figures-planes', ['Figures', 'Propriétés', 'Cercle'], { classes: ['ce2'] }),
-      F('solides', 'les solides', 'solides', ['Solides'], { classes: classesFiche(GEOMETRIE, 'solides') }),
-      F('symetrie', 'la symétrie', 'symetrie', ['Symétrie'], { classes: classesFiche(GEOMETRIE, 'symetrie') }),
-      F('angles', "l'angle droit", 'angle-droit', ['Angles droits'], { classes: classesFiche(GEOMETRIE, 'angles') }),
-      F('patrons', 'les patrons du cube', 'patrons', ['Patrons'], { classes: classesFiche(GEOMETRIE, 'patrons') }),
     ] },
   // ── Français (contenu en français, consignes traduites) ──
   { id: 'dictee', route: '/francais/dictee', groupe: 'francais', titre: { fr: 'Dictée', br: 'Skrivadeg' },
@@ -148,13 +102,6 @@ const LISTE = [
   { id: 'lettres', route: '/maternelle/lettres', groupe: 'maternelle', titre: { fr: 'Les lettres', br: 'Al lizherennoù' },
     // une seule fiche publiée (exercices-lettres-gs-cp), celle du niveau par défaut : les niveaux de la définition
     classes: [C(Object.keys(LETTRES.niveaux).join('-'), null)] },
-  { id: 'longueurs', route: '/maternelle/longueurs', groupe: 'maternelle', titre: { fr: 'Plus long, plus court', br: 'Hiroc’h, berroc’h' }, // br: à relire
-    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
-  { id: 'motifs', route: '/maternelle/motifs', groupe: 'maternelle', titre: { fr: 'Les motifs', br: 'Ar patromoù' }, // br: à relire
-    classes: [C('ps', '\\bPS\\b'), C('ms', '\\bMS\\b'), C('gs', '\\bGS\\b')] },
-  // ms-gs : slug publié avant les niveaux, garde le niveau par défaut (MS : disque, carré, triangle) ; puis PS et GS
-  { id: 'formes', route: '/maternelle/formes', groupe: 'maternelle', titre: { fr: 'Les formes', br: 'Ar stummoù' },
-    classes: [C('ps', '\\bPS\\b'), C('ms-gs', null), C('gs', '\\bGS\\b')] },
   // ── Culture générale ──
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
     classes: [C('cp-cm2', null)] },

@@ -111,7 +111,7 @@ console.log('Résultats groupés, filtre de classe')
   verifier(/résultat/.test(annonce), `le nombre de résultats est annoncé (« ${annonce} »)`)
 
   // une ressource qui n'existe qu'en CP–CE2 : masquée en CM2, montrée avec « toutes les classes »
-  await champ(page).fill('suites')
+  await champ(page).fill('suites exemple')
   await page.waitForFunction(() => /autres classes/.test(document.querySelector('[role=dialog] .contexte')?.textContent ?? '') || document.querySelector('[role=dialog] .vide'))
   verifier(/\d+ résultats? masqués? \(autres classes\)/.test(await page.locator(`${FENETRE} .contexte`).innerText()), 'libellé « 1 résultat masqué (autres classes) »')
   verifier(!(await titres(page)).includes('Suites de nombres'), 'filtrée par la classe : l’exercice de CP–CE2 est masqué en CM2')

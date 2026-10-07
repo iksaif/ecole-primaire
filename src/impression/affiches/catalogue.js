@@ -10,8 +10,7 @@ import { enClasse } from '../../data/classes.js'
 // Domaine du programme (id de DOMAINES, src/data/programme.js) de chaque famille d'affiches
 export const DOMAINES_AFFICHES = {
   alphabet: 'lecture',
-  horloge: 'grandeurs-mesures',
-  conjugaison: 'grammaire', formes: 'espace-geometrie',
+  conjugaison: 'grammaire',
   // resume : un domaine par affiche (config.domaine)
 }
 
@@ -29,28 +28,10 @@ export const choixTemps = temps => (!temps?.length ? 'cycle' : temps.includes('p
 export const TEMPS_DU_CHOIX = { cycle: null, present: TEMPS_PRESENT, cm2: TEMPS_CM2 }
 
 // ── Contenu des variantes ────────────────────────────────────────────────────
-// Figures et solides : ids des dessins (affiches/formes.js). Les listes suivent celles de programme.js par année.
-export const LOTS_FORMES = {
-  'plan-cycle2': { titre: 'Les formes planes', type: 'figures', liste: ['disque', 'carre', 'rectangle', 'triangle'] },
-  'plan-cm1': { titre: 'Les figures planes', type: 'figures', liste: ['carre', 'rectangle', 'losange', 'triangle', 'triangle-rectangle', 'isocele', 'equilateral', 'disque'] },
-  'plan-cycle3': { titre: 'Les figures planes', type: 'figures', liste: ['carre', 'rectangle', 'losange', 'triangle', 'triangle-rectangle', 'isocele', 'equilateral', 'trapeze', 'pentagone', 'hexagone', 'disque'] },
-  'solides-ce2': { titre: 'Les solides', type: 'solides', liste: ['cube', 'pave', 'boule', 'cylindre', 'cone', 'pyramide'] },
-  'solides-cm1': { titre: 'Les solides', type: 'solides', liste: ['cube', 'pave', 'prisme', 'pyramide', 'cylindre', 'cone', 'boule'] },
-}
-
 // ── Les affiches et leurs variantes (choix de la page /imprimer/affiches) ─────
-// horloge : precision = ce que l'affiche fait lire ('entiere' | 'quart' | 'minute', comme heure dans programme.js)
 export const AFFICHES_PROGRAMME = [
-  { id: 'horloge', label: "L'horloge", orientation: 'landscape', variantes: [
-    { id: 'heures', label: 'Les heures entières', niveaux: 'CP', precision: 'entiere' },
-    { id: 'quarts', label: 'Les demies et les quarts', niveaux: 'CE1', precision: 'quart' },
-    { id: 'minutes', label: 'Les heures et les minutes', niveaux: 'CE2', precision: 'minute' } ] },
   { id: 'conjugaison', label: 'Conjugaison', orientation: 'portrait', verbes: true },
   ...(RESUMES_VISIBLES ? [{ id: 'resume', label: 'Ce que je sais faire', orientation: 'portrait', domaines: true }] : []),
-  { id: 'formes', label: 'Figures et solides', orientation: 'portrait', variantes: [
-    { id: 'plan-cycle2', label: 'Formes planes', niveaux: 'GS · CP · CE1' }, { id: 'plan-cm1', label: 'Figures planes', niveaux: 'CM1' },
-    { id: 'plan-cycle3', label: 'Figures planes (+ trapèze, polygones)', niveaux: 'CM2' },
-    { id: 'solides-ce2', label: 'Solides', niveaux: 'CE1 · CE2' }, { id: 'solides-cm1', label: 'Solides (avec le prisme)', niveaux: 'CM1 · CM2' } ] },
 ]
 
 // Niveaux d'une affiche de conjugaison selon le verbe et les temps (programme.js, contraintes « conjugaison ») :
@@ -66,9 +47,7 @@ const lienAffiche = c => `/imprimer/affiches?affiche=${c.affiche}${c.variante ? 
 const COMPETENCES_GROUPE = { auxiliaire: ['conjugaison-present-etre-avoir', 'conjugaison-4-temps'], '1er groupe': ['conjugaison-4-temps'], '3e groupe': ['conjugaison-irreguliers'], '2e groupe': ['conjugaison-2e-groupe'] }
 export function competencesAffiche(c) {
   switch (c.affiche) {
-    case 'horloge': return { heures: ['heure-entiere'], quarts: ['heure-demi-quart'], minutes: ['heure-minutes'] }[c.variante] ?? []
     case 'conjugaison': return { present: ['conjugaison-present-etre-avoir'], cm2: ['conjugaison-passe-simple'] }[choixTemps(c.temps)] ?? COMPETENCES_GROUPE[VERBES[c.verbe]?.groupe] ?? []
-    case 'formes': return c.variante?.startsWith('solides') ? ['solides', 'solides-maternelle'] : ['figures-planes', 'formes-maternelle']
     default: return []
   }
 }
@@ -93,17 +72,10 @@ const conjugaison = (id, [suffixe, court, fin, description, temps]) => entree(`a
   { affiche: 'conjugaison', verbe: id, ...(temps ? { temps } : {}) })
 
 export const TELECHARGEMENTS_AFFICHES = [
-  entree('affiche-horloge-heures-entieres', 'Horloge : heures', "Affiche de l'horloge : lire les heures entières", "L'horloge à aiguilles pour lire et positionner les heures entières, avec des moments de la journée (programme du CP).", 'CP', { affiche: 'horloge', variante: 'heures' }),
-  entree('affiche-horloge-quarts-demies', 'Horloge : quarts et demies', "Affiche de l'horloge : et quart, et demie, moins le quart", "L'horloge à aiguilles pour lire les heures entières, les demi-heures et les quarts d'heure, avec les heures de l'après-midi (programme du CE1).", 'CE1', { affiche: 'horloge', variante: 'quarts' }),
-  entree('affiche-horloge-heures-minutes', 'Horloge : minutes', "Affiche de l'horloge : heures, minutes, quart et demie", "L'horloge avec les minutes, « et quart », « et demie » et « moins le quart », et l'affichage numérique 24 h (programme du CE2).", 'CE2', { affiche: 'horloge', variante: 'minutes' }),
   // chaque verbe : les 4 temps du cycle 2, puis passé simple et plus-que-parfait (CM2)
   ...Object.keys(VERBES).flatMap(v => [conjugaison(v, CONJUGAISONS[0]), conjugaison(v, CONJUGAISONS[1])]),
   // être et avoir au présent seul : le CP n'apprend que ce temps
   ...['etre', 'avoir'].map(v => conjugaison(v, CONJUGAISONS[2])),
-  entree('affiche-formes-planes-cycle-1-2', 'Formes planes', 'Affiche des formes planes : disque, carré, rectangle, triangle', 'Les quatre formes planes de référence du cycle 2, avec leurs côtés et leurs angles droits.', 'GS · CP · CE1', { affiche: 'formes', variante: 'plan-cycle2' }),
-  entree('affiche-figures-planes-cm1', 'Figures planes CM1', 'Affiche des figures planes du CM1', 'Carré, rectangle, losange, triangle rectangle, isocèle, équilatéral et disque, avec leurs propriétés (programme du CM1).', 'CM1', { affiche: 'formes', variante: 'plan-cm1' }),
-  entree('affiche-figures-planes-cycle-3', 'Figures planes CM2', 'Affiche des figures planes du cycle 3 (CM2)', 'Triangle rectangle, isocèle, équilatéral, losange, trapèze, pentagone, hexagone… avec leurs propriétés (programme du CM2).', 'CM2', { affiche: 'formes', variante: 'plan-cycle3' }),
-  entree('affiche-solides-ce2', 'Solides', 'Affiche des solides : cube, pavé, boule, cylindre, cône, pyramide', 'Les six solides du programme du CE1 et du CE2 avec le nombre et la nature de leurs faces, sommets et arêtes.', 'CE1 · CE2', { affiche: 'formes', variante: 'solides-ce2' }),
   // « Ce que je sais faire » : un domaine, un niveau
   ...(RESUMES_VISIBLES ? RESUMES : []).map(({ domaine, niveau }) => {
     const d = DOMAINES.find(x => x.id === domaine), N = niveau.toUpperCase()
@@ -112,5 +84,4 @@ export const TELECHARGEMENTS_AFFICHES = [
       `Affiche à cocher : tout ce qu'un élève de ${N} apprend en « ${d.court.toLowerCase()} », d'après le programme officiel, une case par compétence.`,
       N, { affiche: 'resume', domaine, niveau })
   }),
-  entree('affiche-solides-cm1', 'Solides et prisme', 'Affiche des solides avec le prisme droit', 'Cube, pavé, prisme droit, pyramide, cylindre, cône et boule (programme du CM1).', 'CM1 · CM2', { affiche: 'formes', variante: 'solides-cm1' }),
 ]

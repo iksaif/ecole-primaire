@@ -1,5 +1,30 @@
 # Nouveautés
 
+## 7 octobre 2026
+
+- **Un site tout neuf** : des adresses plus simples (`/maths`, `/francais`, `/monde`, `/brezhoneg`), une page par
+  matière rangée par domaine du programme, avec pour chaque domaine de quoi apprendre (affiches) et de quoi
+  s'entraîner (exercices, fiches). Une page **Programme** montre chaque compétence, classe par classe, et ce qui la
+  travaille. La recherche s'ouvre avec `Ctrl+K`.
+- **Une visite guidée** à la première visite : on dit si on est parent ou enseignant·e, on choisit sa ou ses classes,
+  et le site montre où sont les réglages. On peut la revoir depuis les réglages.
+- **Le mode enfant** : l'enfant ne voit que ses exercices et ses affiches, sans les réglages.
+- **Le breton a son programme, de la maternelle au CE1** : alphabet et épellation, nombres, jours, mois, date,
+  météo. La page Brezhoneg range tout par domaine et a ses fiches toutes prêtes.
+- **Nouvelles affiches** : les jours de la semaine, les mois de l'année et la météo, en français, en breton ou les
+  deux ; les nombres en lettres de 0 à 10 et les dizaines jusqu'à 100.
+- **Les affiches se partagent** : l'adresse garde la variante, les langues, le format (A4, A3) et l'orientation ;
+  un bouton copie le lien.
+- **Le Monde** : sciences, histoire, géographie, EMC ; le quiz de culture générale y est rangé à part.
+- **Langue du contenu au choix** : un exercice peut se faire en français ou en breton, quelle que soit la langue du
+  site.
+- **Des exercices revus** : une question ne revient jamais deux fois ; la question suivante arrive seule après une
+  réponse ; les lettres font entendre leur nom ; la conjugaison ajoute les verbes en -cer, -ger, -eler… au CM1.
+- **Synthèse vocale** : le site choisit la meilleure voix de l'appareil ; on peut changer la voix et la vitesse.
+- **Fiches toutes prêtes** : plus de 600 PDF, au format et dans l'orientation qu'on veut, avec un vrai choix de
+  police ; la licence et les crédits des images sont dans les propriétés du PDF.
+- Les classes s'écrivent en plages (« PS → CM2 ») ; les mentions légales ont leur page.
+
 ## 5 octobre 2026
 
 - **Police des fiches au choix** : sous « Sur la fiche », choisis la police des fiches à imprimer. Elle est

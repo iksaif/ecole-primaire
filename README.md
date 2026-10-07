@@ -5,7 +5,7 @@
 <h1 align="center">École Primaire · Skoolik</h1>
 
 <p align="center">
-  Des exercices et des fiches à imprimer pour l'école, de la MS au CM2, en français et en breton.<br>
+  Des exercices, des affiches et des fiches à imprimer pour l'école, de la PS au CM2, en français et en breton.<br>
   <a href="https://ecoleprimaire.app"><b>ecoleprimaire.app</b></a> · <a href="https://skoolik.app"><b>skoolik.app</b></a>
 </p>
 
@@ -13,7 +13,7 @@
   <a href="https://ecoleprimaire.app"><img src="https://img.shields.io/website?url=https%3A%2F%2Fecoleprimaire.app&label=ecoleprimaire.app&up_message=en%20ligne&down_message=hors%20ligne" alt="ecoleprimaire.app"></a>
   <a href="https://skoolik.app"><img src="https://img.shields.io/website?url=https%3A%2F%2Fskoolik.app&label=skoolik.app&up_message=en%20ligne&down_message=hors%20ligne" alt="skoolik.app"></a>
   <img src="https://img.shields.io/badge/langues-fran%C3%A7ais%20%C2%B7%20brezhoneg-0055a4" alt="Langues : français, breton">
-  <img src="https://img.shields.io/badge/classes-MS%20%E2%86%92%20CM2-f39c12" alt="Classes : MS à CM2">
+  <img src="https://img.shields.io/badge/classes-PS%20%E2%86%92%20CM2-f39c12" alt="Classes : PS à CM2">
   <br>
   <img src="https://img.shields.io/badge/cookies-0-2ea44f" alt="Aucun cookie">
   <img src="https://img.shields.io/badge/publicit%C3%A9-aucune-2ea44f" alt="Aucune publicité">
@@ -23,6 +23,7 @@
   <a href="LICENCE-CONTENU.md"><img src="https://img.shields.io/badge/textes-CC%20BY--SA%204.0-lightgrey" alt="Textes et données : CC BY-SA 4.0"></a>
   <br>
   <img src="https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white" alt="Vue 3">
+  <img src="https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white" alt="TypeScript">
   <img src="https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white" alt="Vite">
   <a href="https://github.com/iksaif/ecole-primaire/commits/main"><img src="https://img.shields.io/github/last-commit/iksaif/ecole-primaire?label=derni%C3%A8re%20mise%20%C3%A0%20jour" alt="Dernière mise à jour"></a>
   <a href="https://github.com/iksaif/ecole-primaire/issues"><img src="https://img.shields.io/github/issues/iksaif/ecole-primaire?label=retours" alt="Retours ouverts"></a>
@@ -33,26 +34,28 @@ On a commencé ça pour nos enfants, pour réviser à la maison, et c'est devenu
 - **https://ecoleprimaire.app** — en français
 - **https://skoolik.app** — la même chose en breton, pour les écoles bilingues et Diwan
 
-Il y a des exercices à faire à l'écran (calcul mental, tables, heure, monnaie, dictée, grammaire…)
-et des fiches à imprimer : écriture sur lignes Seyès en script et en attaché, affiches de l'alphabet,
-nombres en lettres en français et en breton, fiches de calcul avec corrigé. Chaque exercice peut aussi
-sortir en fiche papier.
+Il y a des exercices à faire à l'écran (calcul mental, tables, heure, monnaie, lecture, dictée, grammaire,
+conjugaison, quiz…), des affiches pour le mur de la classe (alphabet, nombres en lettres, jours, mois, météo,
+horloge, tables…) et des fiches à imprimer : écriture sur lignes Seyès en script et en attaché, fiches de calcul
+avec corrigé. Chaque exercice peut aussi sortir en fiche papier. Tout est rangé par matière, par domaine et par
+compétence du programme ; le breton a sa propre page, de la maternelle au CE1.
 
 <table>
   <tr>
     <td width="33%"><a href="https://ecoleprimaire.app"><img src="docs/captures/accueil.jpg" alt="Page d'accueil"></a></td>
-    <td width="33%"><a href="https://ecoleprimaire.app/#/maths/heure?mode=imprimer"><img src="docs/captures/impression.jpg" alt="Réglages d'une fiche à imprimer"></a></td>
+    <td width="33%"><a href="https://ecoleprimaire.app/maths/heure?mode=imprimer"><img src="docs/captures/impression.jpg" alt="Réglages d'une fiche à imprimer"></a></td>
     <td width="33%"><a href="https://ecoleprimaire.app/telechargements/"><img src="docs/captures/fiches.jpg" alt="Fiches PDF toutes prêtes"></a></td>
   </tr>
   <tr>
     <td align="center"><sub>Les exercices, par matière et par classe</sub></td>
     <td align="center"><sub>Chaque exercice se fait à l'écran ou s'imprime</sub></td>
-    <td align="center"><sub>Plus de 200 fiches PDF toutes prêtes</sub></td>
+    <td align="center"><sub>Plus de 600 fiches PDF toutes prêtes</sub></td>
   </tr>
 </table>
 
-On n'est pas enseignants. Les exercices suivent les programmes officiels (cycles 1 à 3, programmes 2024
-pour le cycle 2), mais si une règle ou une réponse vous paraît fausse, dites-le nous.
+On n'est pas enseignants. Les exercices suivent les programmes officiels en vigueur (BO de 2024 à 2026, cycles 1
+à 3, et pour le breton le programme de langues vivantes et les repères de l'académie de Rennes) : leur texte est
+dans `docs/programmes/`. Si une règle ou une réponse vous paraît fausse, dites-le nous.
 
 ## Vie privée
 
@@ -67,8 +70,8 @@ vers un autre site que le nôtre.
   suivi. `node scripts/deploiement/stats-vps.ts` en fait un résumé (pages vues, fiches imprimées, PDF téléchargés).
 - Le serveur ne fait que servir des fichiers statiques. Comme tout serveur web, il garde des journaux
   techniques (IP, page demandée) quelque temps.
-- Seule exception, facultative : si vous entrez votre propre clé API Mistral dans les Paramètres, la dictée
-  et la lecture peuvent générer des phrases. La requête part alors directement de votre navigateur vers
+- Seule exception, facultative : si vous entrez votre propre clé API Mistral dans les réglages de la Dictée
+  ou de la Lecture, ces exercices peuvent générer des phrases. La requête part alors directement de votre navigateur vers
   Mistral AI, avec votre clé. Sans clé, le site utilise ses phrases prédéfinies.
 
 ## À propos de l'IA
@@ -112,15 +115,14 @@ npm run lint              # ESLint, règles de correction seulement (pas de règ
 npm run qualite           # compteurs qui ne doivent pas régresser (scripts/verifier/qualite-seuils.json)
 npm run i18n              # vérifie que les traductions sont complètes
 npm run couverture        # couverture du programme (couverture.html) : domaine × classe × compétence
-                          # (l'ancien monde ; côté site, la page /programme lit le catalogue neuf, src/ressources/)
 ```
 
 Node 22 ou plus récent, et Google Chrome pour les tests. Les scripts (`scripts/`) sont rangés par rôle : voir `scripts/README.md`. La CI (`.github/workflows/tests.yml`) lance `lint`,
-`qualite` et `npm test` sur chaque push et pull request vers `main`.
+`types`, `qualite` et `npm test` sur chaque push et pull request vers `main`, et `npm run test:complet` chaque nuit.
 
 ### Organisation
 
-Base saine en TypeScript (plan 11, branche `base-saine`) ; l'ancien code est déconnecté, pas supprimé (`main` = production).
+Tout est en TypeScript. `AGENTS.md` décrit les règles du dépôt et où sont les choses.
 
 - `src/sites.ts` — les sites (`ecoleprimaire`, `skoolik`), choisis par le mode Vite : identité, langues d'interface
   proposées et par défaut, langue régionale par défaut et proposées, contact, dépôt. `index.html` en tire son titre.
@@ -128,16 +130,16 @@ Base saine en TypeScript (plan 11, branche `base-saine`) ; l'ancien code est dé
   (`fr/`, `br/` : `index.ts`, `regles.ts`, `nombres.ts`, `drapeau.ts`, `donnees.ts` pour une langue régionale,
   `textes/`). Textes typés : le français est la source, les autres langues ont exactement les mêmes clés
   (`satisfies Traductions<…>`). `useLangue()` donne `t('section.cle', params)` ; `useLangueRegionale()`.
-- `src/shell/`, `src/pages/`, `src/router/index.ts`, `src/main.ts` — en-tête, pied de page, pages de la base
-  (accueil, réglages, langue régionale, à propos, nouveautés) ; `/dev` et ses exemples en développement seulement.
-- `src/noyau/` — le socle d'un exercice ou d'une affiche (`definir`, jeu, réglages, fiche, composants) ;
-  `src/exercices/exemple/` et `src/affiches/exemple/` en sont les modèles.
 - `src/data/programme.ts` — les programmes officiels (domaines, compétences, contraintes de chaque classe, avec leurs
   sources) : il fait foi pour les niveaux.
-- Ancien monde, non branché : `src/views/` (vues d'exercices), `src/impression/` (générateurs et catalogues),
-  `src/components/`, `src/composables/`, `src/i18n/` (catalogues par composant), `src/data/activites.js`. Ils sont
-  reportés un par un ; `npm run qualite` compte ce qui reste (`ancienMondeNonReporte`). Leurs anciens tests sont dans
-  `tests/ancien/` (hors de `npm test`).
+- `src/noyau/` — le socle d'un exercice (`definir`, jeu, réglages, fiche, composants) ; `src/exercices/` — un dossier
+  par exercice (définition, générateur et fiche purs, textes), registre `index.ts` ; `src/views/` — une vue mince par
+  exercice ; `src/exercices/exemple/` est le modèle (`npm run nouveau`).
+- `src/affiches/` — un dossier par affiche (définition, dessin pur, textes), registre `index.ts`, formulaire générique.
+- `src/contexte/`, `src/router/`, `src/shell/`, `src/pages/` — classes, profil et mode de langue dans l'adresse ;
+  routes ; en-tête, pied de page, visite guidée ; pages (accueil, matières, programme, fiches toutes prêtes, réglages…).
+- `src/ressources/`, `src/telechargements/`, `src/recherche/`, `src/programme/` — le catalogue des ressources (rangé par
+  domaine et par compétence), les fiches toutes prêtes, la recherche, la page Programme.
 
 ### Fiches PDF toutes prêtes
 
@@ -155,7 +157,7 @@ de publier les PDF.
 ### Sites et déploiement
 
 Le même code donne les deux sites. Le mode Vite choisit le site (`.env.ecoleprimaire`, `.env.skoolik`,
-`src/site.js`) : nom, adresse, langue par défaut, et langues des fiches publiées.
+`src/sites.ts`) : nom, adresse, langues par défaut, et langues des fiches publiées.
 
 Le déploiement se fait par rsync sur un VPS :
 
@@ -166,7 +168,8 @@ scripts/deploiement/deploy-vps.sh                # construit et envoie les deux 
 scripts/deploiement/deploy-vps.sh skoolik        # un seul site
 ```
 
-`deploy/setup-nginx.sh` configure nginx et les certificats Let's Encrypt sur le serveur (à lancer avec sudo).
+`deploy/setup-nginx.sh` configure nginx (adresses propres, journal anonyme) et les certificats Let's Encrypt sur le
+serveur (à lancer avec sudo).
 
 GitHub Pages ne sert plus qu'une redirection vers https://ecoleprimaire.app, qui garde le chemin et la
 route (`scripts/deploiement/redirection-gh-pages.mjs`, publiée à chaque push sur `main`).
@@ -191,7 +194,7 @@ choix de la police des fiches), ou ajoutez le fichier depuis ce choix ; il reste
   même si le site n'est utilisé qu'en ligne.
 - **Les fiches et les PDF** sont sous [CC BY-NC-SA 4.0](LICENCE-CONTENU.md) : imprimez, photocopiez, distribuez et
   adaptez, en citant la source, sans usage commercial et en partageant vos versions sous la même licence.
-- **Les textes et données sources** (lecture, dictée, listes de mots, traductions bretonnes) sont sous
+- **Les textes et données sources** (lecture, dictée, listes de mots, quiz, traductions bretonnes) sont sous
   [CC BY-SA 4.0](LICENCE-CONTENU.md) : réutilisables, y compris dans un cadre commercial, en citant la source.
 - **Les images** (emojis, pictogrammes) gardent la licence de leur auteur (détail dans [`LICENCE-CONTENU.md`](LICENCE-CONTENU.md)).
 

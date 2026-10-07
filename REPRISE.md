@@ -15,16 +15,15 @@
 
 ### Porté (modèle `definir` / `definirAffiche`, fiches sous leurs slugs historiques)
 - Exercices : calcul-mental, calcul-pose, tables, numération, suites, problèmes, heure, monnaie, longueurs, mesures, fractions,
-  formes, géométrie, motifs, compter, comparer, ranger (= « ordonner », id gardé pour le slug `exercices-ranger-*`), lettres.
+  formes, géométrie, motifs, compter, comparer, ranger (= « ordonner », id gardé pour le slug `exercices-ranger-*`), lettres, orthographe.
 - Affiches : alphabet, nombres, numération (tableau), droite numérique, tables (× et +), monnaie (+ planches à découper),
   horloge (aiguilles colorées), formes et solides. Trois exemples de développement : `exemple`, `exemple-jours`, `exemple-riche`.
 
 ### Reste à porter (voir `src/exercices/ancien.js`, `src/impression/`)
-- Exercices **de français** : **vocabulaire, orthographe, grammaire, conjugaison, dictée**.
+- Exercices **de français** : **vocabulaire, grammaire, conjugaison, dictée**.
 - Affiches/fiches : **conjugaison** (`src/impression/affiches/conjugaison.js`), **resume** (`resume.js`), **écriture** (Seyès,
   `src/impression/ecriture.js` : exercice « fiche seule », `jeu: false`), `affichesProgramme.js`.
-- Décisions déjà prises pour ces reports : l'**orthographe perd son niveau « CP → CM2 »** (le slug `exercices-orthographe-cp-cm2`
-  disparaît ou redirige) ; la **dictée** peut appeler Mistral **seulement avec la clé saisie par l'utilisateur**, et un test doit
+- Décisions déjà prises pour ces reports : la **dictée** peut appeler Mistral **seulement avec la clé saisie par l'utilisateur**, et un test doit
   prouver que rien ne sort sans clé (garde générique déjà dans `tests/vie-privee.test.mjs`, à viser sur la vraie dictée) ;
   le français est toujours en `fr` (`enLangue('fr', …)`).
 - **Comment porter** : copier le modèle d'un report récent (`git show de94063 --stat` calcul-mental, `70db8c9` heure,

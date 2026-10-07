@@ -1,9 +1,15 @@
-// Orthographe — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche() : phrases à trous
-// (choix à entourer / mot à compléter) et corrigé.
-//   fiche({ questions, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; T et langue : toujours le français (exercice de français) ; police : usePoliceFiche() dans l'app
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
+// Orthographe — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node). Phrases à trous (choix à
+// entourer / mot à compléter) et corrigé ; toujours en français (exercice de français).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
 import { echapper as e } from '../../utils/html.js'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import type { Question, TirageFiche } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       h2 { font-size: 1rem; margin: 1.4rem 0 .4rem; background: #f0f3f7; padding: .3rem .6rem; border-radius: 6px; }
@@ -21,32 +27,31 @@ const CSS = `
 
 const TROU = '<span class="trou"></span>'
 
-const enonce = q => {
+const enonce = (q: Question): string => {
   if (q.mode === 'choix') {
-    const choix = q.choixFiche.map(c => `<span class="choix">${e(c)}</span>`).join('<span class="sep">/</span>')
+    const choix = (q.choixFiche ?? []).map(c => `<span class="choix">${e(c)}</span>`).join('<span class="sep">/</span>')
     return e(q.phrase).replace('___', `<span class="paire">${choix}</span>`)
   }
   // mot à compléter : le trou est dans le mot (« la___in ») ou on donne l'indice entre parenthèses
   const p = e(q.phrase).replace('___', TROU)
   return q.indice && !q.phrase.includes(q.indice) ? `${p} <span class="indice">(${e(q.indice)})</span>` : p
 }
-const solution = q => (q.mode === 'saisie' && q.indice && q.phrase.includes(q.indice)
+const solution = (q: Question): string => (q.mode === 'saisie' && q.indice && q.phrase.includes(q.indice)
   ? e(q.phrase).replace(e(q.indice), `<b>${e(q.attendu)}</b>`)
   : e(q.phrase).replace('___', `<b>${e(q.attendu)}</b>`))
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
-  const { niveau, tous, theme, questions: qs } = x
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  const { niveau, theme, questions: qs } = x
   const groupes = [
-    { mode: 'choix', consigne: T('fEntoure') },
-    { mode: 'saisie', consigne: T('fComplete') },
+    { mode: 'choix', consigne: T('entoure') },
+    { mode: 'saisie', consigne: T('complete') },
   ].map(g => ({ ...g, qs: qs.filter(q => q.mode === g.mode) })).filter(g => g.qs.length)
   let num = 0
   const corps = groupes.map(g => `<h2>${g.consigne}</h2>
     ${g.qs.map(q => `<div class="q"><span class="num">${++num}.</span><span>${enonce(q)}</span></div>`).join('')}`).join('')
   num = 0
   const corrige = groupes.map(g => g.qs.map(q => `<div class="corr"><span class="num">${++num}.</span> ${solution(q)}</div>`).join('')).join('')
-  // « CP → CM2 » : titre sans niveau (fiche publiée exercices-orthographe-cp-cm2)
-  const titre = `${T('titre')} — ${T('theme_' + theme)}${tous ? '' : ` — ${niveau.toUpperCase()}`}`
+  const titre = `${T('titre')} — ${T(`theme.${theme}`)} — ${niveau.toUpperCase()}`
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '700px',
     corps: `${ligneNomDate(langue)}

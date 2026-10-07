@@ -8,7 +8,6 @@ import { classesEntre } from '../data/classes.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
-import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
 export const NB_VARIANTES = 4
@@ -82,20 +81,6 @@ const LISTE = [
     ].map(([id, titre, seul]) => {
       const fiches = VOCABULAIRE.fiches.filter(f => f.id === id)
       return F(id, titre, fiches[0].competence, seul, { classes: fiches.map(f => f.niveau) })
-    }) },
-  { id: 'orthographe', route: '/francais/orthographe', groupe: 'francais', titre: { fr: 'Orthographe', br: 'Reizhskrivañ' },
-    // cp-cm2 : tous les niveaux, homophones (fiche publiée avant les niveaux : réglage `tous`, bouton « CP → CM2 ») ; puis
-    // une fiche « Accords » par niveau (le CM1 et le CM2 proposeraient les mêmes questions que le CE2 : pas de fiche) ;
-    // les classes sont celles de la définition (src/exercices/orthographe/definition.js)
-    classes: [C('cp-cm2', '^CP → CM2$'), ...Object.keys(ORTHOGRAPHE.niveaux).filter(n => !['cm1', 'cm2'].includes(n)).map(n => C(n, `^${n.toUpperCase()}$`))],
-    // le bilan d'une classe est la fiche « Accords » (thème par défaut)
-    choix: ['Accords', 'Lettres manquantes', 'Homophones'],
-    fiches: [
-      ['lettres-manquantes', 'les lettres manquantes', 'Lettres manquantes'],
-      ['homophones', 'les homophones (pour aller plus loin)', 'Homophones'],
-    ].map(([id, titre, seul]) => {
-      const fiches = ORTHOGRAPHE.fiches.filter(f => f.id === id)
-      return F(id, titre, fiches[0].competence, [seul], { classes: fiches.map(f => f.niveau) })
     }) },
   // ── Culture générale ──
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },

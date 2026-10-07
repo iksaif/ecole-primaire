@@ -5,7 +5,6 @@ import { CLASSES, classesEntre } from './classes.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
-import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
 import DICTEE from '../exercices/dictee/definition.js'
 
 // classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
@@ -57,7 +56,6 @@ export const ACTIVITES = [
   // ── Français ──
   { fiche: true, to: '/lecture', matiere: 'francais', domaine: 'lecture', rubrique: 'Lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
   { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: Object.keys(DICTEE.niveaux) },
-  { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: Object.keys(ORTHOGRAPHE.niveaux) },
   { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: Object.keys(GRAMMAIRE.niveaux) },
   { fiche: true, to: '/francais/conjugaison', matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '✍️', titre: 'Conjugaison', desc: 'Conjugue les verbes aux bons temps', niveaux: Object.keys(CONJUGAISON.niveaux) },
   { fiche: true, to: '/francais/vocabulaire', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Vocabulaire', icon: '📚', titre: 'Vocabulaire', desc: 'Ordre alphabétique, contraires, familles de mots', niveaux: Object.keys(VOCABULAIRE.niveaux) },
@@ -72,7 +70,6 @@ const BR = {
   '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
   '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],
-  '/francais/orthographe': ['Reizhskrivañ', 'Heñvelsonioù, kenglotadurioù, lizherennoù a vank (e galleg)'],
   '/francais/grammaire':   ['Yezhadur', 'Frazenn, natur ar gerioù, sujed, kenglotadurioù (e galleg)'],
   '/francais/conjugaison': ['Displegañ', 'Displeg ar verboù (e galleg)'],
   '/francais/vocabulaire': ['Geriaoueg', 'Urzh al lizherenneg, gerioù enep, familhoù gerioù (e galleg)'],
@@ -88,7 +85,6 @@ const COMPETENCES_ROUTES = {
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
   '/francais/dictee': Object.fromEntries(Object.entries(DICTEE.niveaux).map(([n, v]) => [n, v.competences])),
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
-  '/francais/orthographe': Object.fromEntries(Object.entries(ORTHOGRAPHE.niveaux).map(([n, v]) => [n, v.competences])),
   '/francais/grammaire': Object.fromEntries(Object.entries(GRAMMAIRE.niveaux).map(([n, v]) => [n, v.competences])),
   '/francais/conjugaison': Object.fromEntries(Object.entries(CONJUGAISON.niveaux).map(([n, v]) => [n, v.competences])),
   '/francais/vocabulaire': Object.fromEntries(Object.entries(VOCABULAIRE.niveaux).map(([n, v]) => [n, v.competences])),

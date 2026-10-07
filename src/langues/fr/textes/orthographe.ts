@@ -1,20 +1,17 @@
-// Textes de l'interface — OrthographeView (français).
-// Clés partagées avec src/i18n/br/views/francais/OrthographeView.js (vérifier avec `npm run i18n`).
+// Textes de l'interface — orthographe (français) : la page et le jeu. Source des clés : br/textes/orthographe.ts doit avoir exactement les mêmes.
+// La fiche (titre, thèmes, consignes) est dans le catalogue de contenu de l'exercice : src/exercices/orthographe/textes.ts ; les phrases dans
+// le corpus src/data/orthographe.js, qui nomme les explications ci-dessous (le mot français étudié entre guillemets).
 export default {
-    titre: 'Orthographe',
-    theme: 'Thème',
-    theme_homophones: 'Homophones',
-    theme_accords: 'Accords',
-    theme_lettres: 'Lettres manquantes',
-    ecrisReponse: 'Écris le mot…',
-    validerCourt: 'Valider',
-    suivantFleche: 'Suivant →',
-    accents: 'Attention aux accents : {r}',
-    aRetravailler: 'À retravailler :',
-    feedbackErr: '❌ La bonne réponse est « {r} »{exp}.',
-    fEntoure: 'Entoure le mot qui convient.',
-    fComplete: 'Complète le mot.',
-    // Explications des réponses (le mot français étudié entre guillemets)
+  titre: 'Orthographe',
+  description: 'Homophones, accords, lettres manquantes',
+  theme: 'Thème',
+  themes: { homophones: 'Homophones', accords: 'Accords', lettres: 'Lettres manquantes' },
+  ecrisReponse: 'Écris le mot…',
+  validerCourt: 'Valider',
+  accents: '⚠️ Attention aux accents : {r}',
+  aRetravailler: 'À retravailler :',
+  erreur: '❌ La bonne réponse est « {r} ».',
+  explications: {
     exp_a_avoir_il_a: '"a" = avoir (il a)',
     exp_a_preposition_de_lieu: '"à" = préposition de lieu',
     exp_a_avoir_papa_a: '"a" = avoir (papa a)',
@@ -59,4 +56,5 @@ export default {
     exp_un_masculin_boulanger: 'un → masculin → boulanger',
     exp_maisons_est_feminin_pluriel_jolies: 'maisons est féminin pluriel → jolies (+e, +s)',
     exp_robes_est_feminin_pluriel_vertes: 'robes est féminin pluriel → vertes (+e, +s)',
-  }
+  },
+} as const

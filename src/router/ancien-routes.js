@@ -7,7 +7,6 @@ export const routes = [
   { path: '/francais',            component: () => import('../views/FrancaisView.vue') },
   { path: '/francais/dictee',     component: () => import('../views/francais/DicteeView.vue') },
   { path: '/francais/conjugaison', component: () => import('../views/francais/ConjugaisonView.vue') },
-  { path: '/francais/orthographe', component: () => import('../views/francais/OrthographeView.vue') },
   { path: '/francais/grammaire', component: () => import('../views/francais/GrammaireView.vue') },
   { path: '/francais/vocabulaire', component: () => import('../views/francais/VocabulaireView.vue') },
   { path: '/lecture',             component: () => import('../views/LectureView.vue') },

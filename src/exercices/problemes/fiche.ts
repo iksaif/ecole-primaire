@@ -1,7 +1,11 @@
-// Problèmes — fiche imprimable (pure : lisible par node). Un cadre pour le calcul et une ligne pour la réponse, avec corrigé.
-//   fiche({ questions, reglages, T, langue, police, cssPolices }) → document HTML complet (documentFiche)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
-import { unite, avecUnite } from './generateur.js'
+// Problèmes — fiche imprimable : un cadre pour le calcul et une ligne pour la réponse, avec corrigé. Pure (lisible par node).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type DEFINITION from './definition.ts'
+import type { Cle } from './contexte.ts'
+import { unite, avecUnite } from './generateur.ts'
+import type { Question } from './generateur.ts'
 
 const CSS = `
       .infos { font-size: .85rem; color: #666; margin: 0 0 .3rem; }
@@ -14,9 +18,8 @@ const CSS = `
       .reponses { font-size: 1.1rem; line-height: 2; }
     `
 
-export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }) {
-  const niv = reglages.niveau.toUpperCase()
-  const blocs = qs.map((p, i) => `
+export function fiche({ questions, reglages, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
+  const blocs = questions.map((p, i) => `
     <div class="pb">
       <div class="enonce"><span class="num">${i + 1}.</span> ${p.enonce} <b>${p.question}</b></div>
       <div class="calcul">${T('pCalcul')}</div>
@@ -24,13 +27,13 @@ export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }
     </div>`).join('')
 
   const corrige = `<section class="corrige"><h2>${T('corrige')}</h2>
-    <ol class="reponses">${qs.map(p => `<li><b>${p.calcul}</b> → ${avecUnite(p, p.reponse)}</li>`).join('')}</ol></section>`
+    <ol class="reponses">${questions.map(p => `<li><b>${p.calcul}</b> → ${avecUnite(p, p.reponse)}</li>`).join('')}</ol></section>`
 
-  const titre = `${T('titre')} — ${niv}`
+  const titre = `${T('titre')} — ${reglages.niveau.toUpperCase()}`
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '720px', marge: '1.5cm',
     h1: titre,
-    corps: `<p class="infos">${T('pNbProblemes', { n: qs.length })}</p>
+    corps: `<p class="infos">${T('pNbProblemes', { n: questions.length })}</p>
     ${ligneNomDate(langue)}
     ${blocs}
     ${corrige}`,

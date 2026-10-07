@@ -1,112 +1,110 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🧩 {{ t('titre') }}</h1>
+    <h1 class="section-heading">🧩 {{ t('problemes.titre') }}</h1>
 
-    <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" police
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="categories" v-model="config.categories"
-        :titre="t('typesProblemes')" :libelle="c => t(`cat_${c}`)" />
+        :titre="t('problemes.typesProblemes')" :libelle="c => t(`problemes.cat_${c}`)" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="plage" v-model="config.plage"
-        :titre="t('nombres')" :libelle="p => t('jusqua', { n: PLAGES[p] })" />
-      <ChoixReglage :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('nbProblemes')" />
-    </ConfigExercice>
+        :titre="t('problemes.nombres')" :libelle="jusqua" />
+      <ChoixReglage :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('problemes.nbProblemes')" />
+    </CadreExercice>
 
-    <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="enonce">
         <p>{{ q.enonce }}</p>
         <p class="enonce-question">{{ q.question }}</p>
       </div>
-
-      <!-- pas de voix bretonne dans les navigateurs : bouton masqué en breton -->
-      <div v-if="langueContenu !== 'br'" style="text-align:center;margin-bottom:1rem;">
-        <button class="btn btn-ghost" @click="lireEnonce">{{ enLecture ? t('arreter') : t('lireEnonce') }}</button>
-      </div>
+      <!-- la voix : seulement dans une langue qui en a une (le bouton se masque sinon) -->
+      <ConsigneParlee class="lecture" :texte="`${q.enonce} ${q.question}`" :auto="false" />
 
       <div class="reponse-ligne">
-        <SaisieReponse v-model="reponse" type="nombre" class="exercise-input reponse-input" :etat="etat" placeholder="?"
-          :disabled="repondu" focus @entree="entree" />
+        <SaisieReponse v-model="saisie" type="nombre" class="exercise-input reponse-input" :etat="etat" placeholder="?"
+          :disabled="repondu" focus aria-describedby="probleme-retour" @entree="entree" />
         <span class="unite">{{ unite(q, q.reponse) }}</span>
       </div>
 
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
-      <div v-if="repondu && !retour.ok" class="calcul-correction">{{ q.calcul }}</div>
+      <RetourReponse id="probleme-retour" :message="retour?.message" :etat="etat" />
+      <div v-if="repondu && !retour?.ok" class="calcul-correction">{{ q.calcul }}</div>
 
-      <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-        <button class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('passer') }}</button>
-        <button v-if="!repondu" class="btn btn-primary" @click="valider">{{ t('valider') }}</button>
-        <button v-else-if="!retour.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('suivant') }}</button>
+      <div class="btn-group actions-question">
+        <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('problemes.passer') }}</button>
+        <button v-if="!repondu" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+        <button v-else-if="!retour?.ok" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
       </div>
     </QuestionJeu>
 
-    <!-- Résultats -->
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <TableauCorrection :historique="historique">
-        <template #attendu="{ entree }"><span style="font-weight:800;">{{ entree.question.calcul }}</span><br>→ {{ avecUnite(entree.question, entree.question.reponse) }}</template>
+        <template #attendu="{ entree: ligne }"><span class="attendu-calcul">{{ ligne.question.calcul }}</span><br>→ {{ avecUnite(ligne.question, ligne.question.reponse) }}</template>
       </TableauCorrection>
     </ResultatsJeu>
   </div>
 </template>
 
-<script setup>
-// Problèmes : la vue ne fait que les réglages et le rendu d'un problème. Niveaux, générateur et fiche :
-// src/exercices/problemes/ (definition.js, generateur.js, fiche.js).
+<script setup lang="ts">
+// Problèmes : la vue ne fait que les réglages et le rendu d'un problème. Niveaux, générateur, modèles d'énoncés et fiche :
+// src/exercices/problemes/ (definition.ts, generateur.ts, modeles-*.ts, fiche.ts) ; les textes : textes.ts.
 import { ref } from 'vue'
-import { useI18n, contenu } from '../../i18n'
-import { useTTS } from '../../composables/useTTS'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import SaisieReponse from '../../components/SaisieReponse.vue'
-import TableauCorrection from '../../components/TableauCorrection.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION from '../../exercices/problemes/definition'
-import { INTERFACE, TEXTES } from '../../exercices/problemes/textes'
-import { questions as genererQuestions, questionsFiche, verifier, unite, avecUnite, PLAGES } from '../../exercices/problemes/generateur'
-import { fiche as ficheProblemes } from '../../exercices/problemes/fiche'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import SaisieReponse from '../../noyau/SaisieReponse.vue'
+import TableauCorrection from '../../noyau/TableauCorrection.vue'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import DEFINITION from '../../exercices/problemes/definition.ts'
+import { CONTENU } from '../../exercices/problemes/textes.ts'
+import { PLAGES } from '../../exercices/problemes/donnees.ts'
+import type { Plage } from '../../exercices/problemes/donnees.ts'
+import { questions as tirer, questionsFiche, verifier, unite, avecUnite } from '../../exercices/problemes/generateur.ts'
+import type { Question, Reponse } from '../../exercices/problemes/generateur.ts'
+import { fiche as mettreEnPage } from '../../exercices/problemes/fiche.ts'
 
-const { t } = useI18n(INTERFACE)
+const { t } = useLangue()
+const { config, langueContenu } = useReglages(DEFINITION)
 // Maths : le contenu (énoncés, fiche) suit la langue de l'interface
-const { config, langueContenu } = useReglages(DEFINITION, 'problemes_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
+const T = traducteur(CONTENU, () => langueContenu.value)
 
-const { enLecture, lire, arreter } = useTTS()
-const reponse = ref('')
+// « Jusqu'à 100 » : le libellé d'une plage (la valeur du réglage est son identifiant)
+const jusqua = (p: unknown): string => t('problemes.jusqua', { n: PLAGES[p as Plage] })
 
-const jeu = useJeu({
-  generer: rng => genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng, T }),
+const saisie = ref<number | ''>('')
+const jeu = useJeu<Question, Reponse>({
+  generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: (q, rep) => (rep ? '❌ ' + t('laBonneReponse', { r: avecUnite(q, q.reponse) }) : ''),
+  messageErreur: (q, rep) => (rep ? `❌ ${t('problemes.laBonneReponse', { r: avecUnite(q, q.reponse) })}` : ''),
   delai: 1200,
-  surQuestion: () => { reponse.value = ''; arreter() },
+  surQuestion: () => { saisie.value = '' },
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 
-const lireEnonce = () => (enLecture.value ? arreter() : lire(`${q.value.enonce} ${q.value.question}`))
-
 function valider() {
-  const val = String(reponse.value).trim()
-  if (repondu.value || val === '') return
-  jeu.repondre({ texte: val }, { donne: avecUnite(q.value, +val) })
+  if (repondu.value || saisie.value === '') return
+  const val = String(saisie.value).trim()
+  jeu.repondre({ texte: val }, { donne: avecUnite(q.value!, Number(val)) })
 }
-const entree = () => (repondu.value ? !retour.value.ok && jeu.suivante() : valider())
+const entree = () => (repondu.value ? !retour.value?.ok && jeu.suivante() : valider())
 // passer : la question compte comme une erreur, et on enchaîne aussitôt
 function passer() {
   if (repondu.value) return
-  jeu.passer({ donne: t('passe') })
+  jeu.passer({ donne: t('problemes.passe') })
   jeu.suivante()
 }
 
-// ── Fiche imprimable (aperçu + impression gérés par ConfigExercice) ──
+// ── Fiche imprimable (aperçu et impression : CadreExercice) ──
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (questions, police) => ficheProblemes({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (questions, police) => mettreEnPage({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
@@ -117,14 +115,13 @@ const { mode, fiche, nouvelle } = useFicheExercice({
 }
 .enonce p + p { margin-top: .5rem; }
 .enonce-question { font-weight: 800; }
+.lecture { text-align: center; margin-bottom: 1rem; }
 .reponse-ligne { display: flex; align-items: center; justify-content: center; gap: .75rem; }
 .reponse-input { max-width: 10rem; }
 .unite { font-size: 1.5rem; font-weight: 700; }
-.calcul-correction {
-  text-align: center; font-size: 1.3rem; font-weight: 800; color: var(--bleu); margin: .25rem 0 .5rem;
-}
+.calcul-correction { text-align: center; font-size: 1.3rem; font-weight: 800; color: var(--bleu); margin: .25rem 0 .5rem; }
+.attendu-calcul { font-weight: 800; }
+.actions-question { justify-content: center; margin-top: 1rem; }
 .btn:disabled { opacity: .45; cursor: default; }
-@media (max-width: 520px) {
-  .enonce { font-size: 1.15rem; }
-}
+@media (max-width: 520px) { .enonce { font-size: 1.15rem; } }
 </style>

@@ -25,9 +25,7 @@
 
       <RetourReponse :message="retour?.message" :etat="etat" />
       <p v-if="repondu && q.explication" class="explication">{{ explication(q) }}</p>
-      <div v-if="repondu" class="actions">
-        <button type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
-      </div>
+      <div v-if="repondu" class="actions"><BoutonSuivant :jeu="jeu" /></div>
     </QuestionJeu>
 
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
@@ -54,6 +52,7 @@ import { echapper } from '../../utils/html.js'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
 import SaisieReponse from '../../noyau/SaisieReponse.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
@@ -73,7 +72,7 @@ const { config, langueContenu } = useReglages(DEFINITION)
 const T = traducteur(CONTENU, () => langueContenu.value)
 const ICONES: Readonly<Record<string, string>> = Object.fromEntries(THEMES.map(th => [th.id, th.icone]))
 
-// ── Jeu : on attend « Suivant » après chaque réponse (l'explication se lit) ──
+// ── Jeu : passage automatique ; après une erreur, le temps de lire la correction et l'explication ──
 const saisie = ref<string | number>('')
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
@@ -81,7 +80,7 @@ const jeu = useJeu<Question, Reponse>({
   messageErreur: q => t('orthographe.erreur', { r: q.attendu }),
   messageNuance: q => t('orthographe.accents', { r: q.attendu }),
   surQuestion: () => { saisie.value = '' },
-  delai: null,
+  apresErreur: 5000,
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 function validerSaisie(): void {

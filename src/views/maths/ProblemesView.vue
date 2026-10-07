@@ -32,7 +32,7 @@
       <div class="btn-group actions-question">
         <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('problemes.passer') }}</button>
         <button v-if="!repondu" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
-        <button v-else-if="!retour?.ok" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+        <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -55,6 +55,7 @@ import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import SaisieReponse from '../../noyau/SaisieReponse.vue'

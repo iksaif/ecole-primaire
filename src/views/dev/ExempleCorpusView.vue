@@ -15,7 +15,7 @@
       <ChoixReponses :options="q.options" :bonne="q.bonne" :repondu="repondu" @choisir="choisir" />
       <RetourReponse :message="retour?.message" :etat="etat" />
       <div class="btn-group">
-        <button v-if="repondu && !retour?.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+        <BoutonSuivant v-if="repondu" :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -33,6 +33,7 @@ import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'

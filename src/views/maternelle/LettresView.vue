@@ -31,7 +31,7 @@
         </ChoixReponses>
 
         <RetourReponse :message="retour?.message" :etat="etat" />
-        <button v-if="repondu" type="button" class="btn btn-primary suite" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+        <BoutonSuivant v-if="repondu" :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -50,6 +50,7 @@ import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
 import { useTTS } from '../../noyau/useTTS.ts'
 import { chargerPolicesEcran, FAMILLE_CURSIVE, FAMILLE_SCRIPT } from '../../noyau/policesEcran.ts'
@@ -74,12 +75,13 @@ const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true }
 const T = traducteur(CONTENU, () => langueContenu.value)
 const ICONES = { reconnaitre: '👂', majuscule: '🔠' } as const
 
-// ── Jeu : on attend « Suivant » après chaque réponse ──
+// ── Jeu : passage automatique après chaque réponse (le nom de la lettre est dit) ──
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
   messageErreur: q => t('lettres.cetait', { r: q.attendu }),
-  delai: null,
+  delai: 2000,
+  apresErreur: 3000,
 })
 const { phase, questions, q, bonnes, retour, repondu, etat, cleFin } = jeu
 // « Écoute et trouve » a besoin d'une voix dans la langue de l'interface ; sinon, la lettre est montrée dans l'autre écriture

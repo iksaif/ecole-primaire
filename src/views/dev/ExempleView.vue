@@ -29,7 +29,7 @@
       <RetourReponse id="exemple-retour" :message="retour?.message" :etat="etat" />
       <div class="btn-group">
         <button v-if="!repondu" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
-        <button v-else-if="!retour?.ok" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+        <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -50,6 +50,7 @@ import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import SaisieReponse from '../../noyau/SaisieReponse.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import ConsigneParlee from '../../noyau/ConsigneParlee.vue'

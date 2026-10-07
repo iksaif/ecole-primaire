@@ -163,7 +163,7 @@
           <button type="button" class="btn btn-ghost" @click="jeu.passer({ donne: t('heure.passe') })">{{ t('heure.passer') }}</button>
           <button v-if="!estChoix" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
         </template>
-        <button v-else-if="!dernierOk" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+        <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -191,6 +191,7 @@ import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
 import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import SaisieReponse from '../../noyau/SaisieReponse.vue'

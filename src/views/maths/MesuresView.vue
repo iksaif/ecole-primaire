@@ -43,7 +43,7 @@
           <button type="button" class="btn btn-ghost" @click="passer">{{ t('mesures.passer') }}</button>
           <button v-if="q.mode === 'nombre'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
         </template>
-        <button v-else type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+        <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -64,6 +64,7 @@ import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
 import SaisieReponse from '../../noyau/SaisieReponse.vue'

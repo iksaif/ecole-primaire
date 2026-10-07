@@ -7,8 +7,11 @@
 //     messageNuance: (q, nuance) => texte,    // retour quand le verdict porte une nuance (facultatif)
 //     surQuestion: q => …,                    // à chaque nouvelle question (vider les champs…)
 //     delai: 1600,                            // ms avant la question suivante, après une bonne réponse ; null : jamais
-//                                             // seule, on attend jeu.suivante (« Suivant » : l'élève lit l'explication)
-//     apresErreur: 'attendre',                // 'attendre' (bouton « Suivant » → jeu.suivante) | n ms avant la suite, seule
+//                                             // seule, on attend jeu.suivante
+//     apresErreur: 3000,                      // ms avant la suite après une erreur (le temps de lire la correction) ;
+//                                             // 'attendre' : on attend jeu.suivante
+// Passage automatique (demande du 2026-10-07) : après chaque réponse la partie passe seule à la suite ; `jeu.attente` ({ duree })
+// dit qu'un passage est prévu, et <BoutonSuivant> se remplit pendant ce temps (un clic passe tout de suite).
 //     serie: false,                           // true : toutes les questions sur un écran (lignes d'un tableau) ;
 //                                             // q => clé : les questions de même clé forment un écran
 //   })
@@ -58,7 +61,7 @@ export interface OptionsJeu<Q, Rep = unknown> {
   surQuestion?: ((q: Q) => void) | null
   /** ms avant la question suivante, après une bonne réponse ; null : jamais seule */
   delai?: number | null
-  /** après une erreur : 'attendre' le bouton « Suivant » (jeu.suivante), ou passer seule à la suite après n ms */
+  /** après une erreur : passer seule à la suite après n ms (défaut : DELAI_ERREUR), ou 'attendre' le bouton « Suivant » (jeu.suivante) */
   apresErreur?: 'attendre' | number
   /** true : toutes les questions sur un écran ; q => clé : les questions de même clé forment un écran */
   serie?: boolean | ((q: Q) => unknown)
@@ -74,13 +77,16 @@ export function cleFinDe(bonnes: number, total: number): CleFin {
 }
 const CONFETTIS: Partial<Record<CleFin, number>> = { resultat100: 50, resultat80: 25 }
 
+/** Délai par défaut avant la question suivante après une erreur : le temps de lire la bonne réponse. */
+export const DELAI_ERREUR = 3000
+
 // état d'un retour ou d'une entrée de l'historique : '' (pas encore répondu), 'ok', 'presque' (nuance), 'erreur'
 export const etatDe = (r: { ok: boolean, nuance?: string | null } | null | undefined): EtatJeu =>
   (!r ? '' : r.nuance ? 'presque' : r.ok ? 'ok' : 'erreur')
 
 export function useJeu<Q, Rep = unknown>({
   generer, verifier, messageErreur = null, messageNuance = null, surQuestion = null,
-  delai = 1600, apresErreur = 'attendre', serie = false,
+  delai = 1600, apresErreur = DELAI_ERREUR, serie = false,
 }: OptionsJeu<Q, Rep>) {
   const { liste } = useLangue()
   const phase = ref<PhaseJeu>('config')
@@ -103,7 +109,10 @@ export function useJeu<Q, Rep = unknown>({
     return questions.value.map((x, i) => i).filter(i => cleEcran(questions.value[i]) === k)
   })
   let minuteur: ReturnType<typeof setTimeout> | null = null
-  const arreter = () => { if (minuteur !== null) clearTimeout(minuteur); minuteur = null }
+  // passage automatique prévu (BoutonSuivant se remplit pendant `duree`), null sinon
+  const attente = ref<{ duree: number } | null>(null)
+  const arreter = () => { if (minuteur !== null) clearTimeout(minuteur); minuteur = null; attente.value = null }
+  const programmer = (duree: number) => { minuteur = setTimeout(suivante, duree); attente.value = { duree } }
 
   function nouvelleQuestion() {
     retour.value = null
@@ -130,8 +139,8 @@ export function useJeu<Q, Rep = unknown>({
     historique.value.push({ question: courante, rep, ok, nuance, ...infos })
     const suivanteDansEcran = cleEcran && questions.value[index.value + 1] && cleEcran(questions.value[index.value + 1]) === cleEcran(courante)
     if (suivanteDansEcran) suivante()
-    else if (ok) { if (delai !== null) minuteur = setTimeout(suivante, delai) }
-    else if (apresErreur !== 'attendre') minuteur = setTimeout(suivante, apresErreur)
+    else if (ok) { if (delai !== null) programmer(delai) }
+    else if (apresErreur !== 'attendre') programmer(apresErreur)
     return ok
   }
 
@@ -172,7 +181,7 @@ export function useJeu<Q, Rep = unknown>({
   onUnmounted(arreter)
 
   return {
-    phase, questions, index, q, ecran, bonnes, mauvaises, historique, retour, repondu, etat, cleFin,
+    phase, questions, index, q, ecran, bonnes, mauvaises, historique, retour, repondu, etat, cleFin, attente,
     demarrer, repondre, passer, suivante, recommencer: demarrer, quitter,
   }
 }

@@ -102,7 +102,7 @@
             <button v-if="estGrille" type="button" class="btn btn-ghost" @click="effacer">{{ t('geometrie.effacer') }}</button>
             <button v-if="!('options' in q)" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
           </template>
-          <button v-else-if="!reussi" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+          <BoutonSuivant v-else :jeu="jeu" />
         </div>
       </div>
     </QuestionJeu>
@@ -126,6 +126,7 @@ import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import TableauCorrection from '../../noyau/TableauCorrection.vue'

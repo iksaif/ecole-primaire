@@ -175,7 +175,7 @@
           <button type="button" class="btn btn-ghost" @click="passer">{{ t('monnaie.passer') }}</button>
           <button v-if="q.type !== 'comparer'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
         </template>
-        <button v-else-if="!dernierOk" type="button" class="btn btn-primary" @click="jeu.suivante">{{ t('communs.suivant') }}</button>
+        <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
 
@@ -195,6 +195,7 @@ import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import SaisieReponse from '../../noyau/SaisieReponse.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'

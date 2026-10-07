@@ -30,7 +30,7 @@ Les modules (générateurs, fiches, dessins d'affiches, `documentFiche`) sont pu
 - **Slug = nom du fichier JSON.** Un slug publié ne change pas. Lettres minuscules, chiffres et tirets. Un exercice :
   `exercices-<id>-<classe>[-<fiche>]`, une affiche : `affiche-<id>-<variante>` (ou le slug déclaré par la variante) ;
   une langue autre que le français ajoute `-<code>` (`-br`).
-- **Niveaux = tableau de classes** (`Classe`), jamais du texte ; la page fabrique « GS · CP » (`etiquetteClasses`).
+- **Niveaux = tableau de classes** (`Classe`), jamais du texte ; la page fabrique « GS · CP », « CE1 → CM2 » (`texteClasses`, `src/data/classes.ts`).
 - **Usage dérivé du genre** (`usageDe`) : `affiche` → « pour apprendre », `fiche` et `exercice` → « pour s'entraîner ».
 - **Textes multilingues** : `Texte = { fr, br?, … }`. Le français est toujours présent (repli). La langue de l'interface
   choisit ; la langue du **contenu** de la fiche est dans `langues`.

@@ -6,7 +6,9 @@ import { texteDe } from '../src/ressources/textes.ts'
 import { creerRessources } from '../src/ressources/useRessources.ts'
 import { EMOJI_DOMAINE } from '../src/ressources/emojis.ts'
 import { COMPETENCES, DOMAINES, MATIERES, competenceDe } from '../src/data/programme.ts'
-import { NIVEAUX, CYCLE_DE } from '../src/data/classes.ts'
+import { NIVEAUX, CYCLE_DE, estPlage, morceauxDeClasses, texteClasses } from '../src/data/classes.ts'
+import { ecoleDe } from '../src/ressources/composants/presentation.ts'
+import { traduire } from '../src/langues/traduire.ts'
 import { catalogueDeTest, sources, FICHES, SITE_FR, SITE_BR } from './donnees-ressources.mjs'
 import { REGISTRE as EXERCICES } from '../src/exercices/index.ts'
 import { REGISTRE as AFFICHES } from '../src/affiches/index.ts'
@@ -122,6 +124,24 @@ verifier(k0.route === `/competence/${COMPETENCES[0].id}` && k0.classes.join() ==
 verifier(comp.every(r => r.matiere === DOMAINES.find(d => d.id === r.domaine).matiere), 'matière dérivée du domaine')
 verifier(domaineDes(['exemple-compter'], null) === 'exemple' && domaineDes([], 'lecture') === 'lecture' && domaineDes([], null) === null, 'domaineDes : compétences, sinon domaine déclaré')
 verifier(domaineDes(['denombrer-6', COMPETENCES.find(k => k.domaine === 'lecture').id], 'lecture') === 'lecture' && domaineDes([COMPETENCES.find(k => k.domaine === 'lecture').id, 'denombrer-6'], null) === 'lecture', 'domaines mêlés : le déclaré, sinon celui de la première compétence')
+
+console.log('Classes en texte (plages)')
+verifier(texteClasses([...NIVEAUX]) === 'PS → CM2', 'toutes les classes : une plage « PS → CM2 »')
+verifier(texteClasses(['gs', 'ce1']) === 'GS · CE1' && texteClasses(['cp']) === 'CP' && texteClasses([]) === '', 'classes isolées : une liste ; une seule ; aucune')
+verifier(texteClasses(['ce1', 'ce2']) === 'CE1 · CE2', 'deux classes de suite restent deux classes')
+verifier(texteClasses(['cm1', 'cp', 'gs', 'ms']) === 'MS → CP · CM1', 'mélange plage + classe, dans l’ordre de l’école quel que soit l’ordre donné')
+verifier(texteClasses(['ce1', 'ce2', 'cm1', 'ce1']) === 'CE1 → CM1', 'doublons ignorés')
+verifier(texteClasses(['ps', 'ms', 'gs', 'ce1', 'ce2', 'cm1']) === 'PS → GS · CE1 → CM1', 'deux plages')
+const morceaux = morceauxDeClasses(['ps', 'ms', 'gs', 'cp', 'cm2'])
+verifier(morceaux.length === 2 && estPlage(morceaux[0]) && morceaux[0].classes.join() === 'ps,ms,gs,cp' && !estPlage(morceaux[1]) && morceaux[1].debut === 'cm2', 'morceaux : une plage (et ses classes) puis une classe seule')
+verifier(ecoleDe('ps') === 'maternelle' && ecoleDe('gs') === 'maternelle' && ecoleDe('cp') === 'elementaire', 'plage lue : l’article suit l’école de la classe (de la PS, du CP)')
+// comme plageLue de PastillesClasses.vue
+const lue = (m, l) => {
+  const debut = traduire(l, `ressource.plage.debut.${ecoleDe(m.debut)}`, { classe: m.debut.toUpperCase() })
+  const fin = traduire(l, `ressource.plage.fin.${ecoleDe(m.fin)}`, { classe: m.fin.toUpperCase() })
+  return traduire(l, 'ressource.plage.phrase', { debut, fin })
+}
+verifier(lue(morceaux[0], 'fr') === 'de la PS au CP' && lue(morceauxDeClasses(['ps', 'ms', 'gs'])[0], 'fr') === 'de la PS à la GS' && lue(morceauxDeClasses(['cp', 'ce1', 'ce2'])[0], 'fr') === 'du CP au CE2', 'plage lue en français : de la PS au CP, de la PS à la GS, du CP au CE2')
 
 console.log('Filtres : classes et mode')
 const dedans = filtrerParClasses(C, ['cp', 'ce1'])

@@ -6,6 +6,14 @@ export default {
   imprimable: 'imprimable',
   classes: 'Classes',
   classeChoisie: '(classe choisie)',
+  // une plage de classes lue en entier (PastillesClasses) : « de la PS » + « au CM2 » ; l'article suit la classe (la PS, le CP)
+  plage: {
+    phrase: '{debut} {fin}',
+    debut: { maternelle: 'de la {classe}', elementaire: 'du {classe}' },
+    fin: { maternelle: 'à la {classe}', elementaire: 'au {classe}' },
+  },
+  // une plage qui contient des classes choisies (elle est mise en évidence) : lesquelles
+  plageChoisie: { one: '(dont la classe choisie : {classes})', other: '(dont les classes choisies : {classes})' },
   ouvrir: 'Ouvrir',
   imprimer: 'Imprimer',
   ouvrirTitre: 'Ouvrir : {titre}',

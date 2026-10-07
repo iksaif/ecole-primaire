@@ -22,6 +22,7 @@
 import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
+import { texteClasses } from '../data/classes.ts'
 import FilAriane from '../shell/FilAriane.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
@@ -41,7 +42,7 @@ const maillons = computed(() => [
   { texte: t('programme.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
   { texte: t('programme.titre'), emoji: EMOJI.programme },
 ])
-const classesTexte = computed(() => contexte.value.classes.map(c => c.toUpperCase()).join(' + '))
+const classesTexte = computed(() => texteClasses(contexte.value.classes))
 </script>
 
 <style scoped>

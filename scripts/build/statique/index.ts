@@ -5,9 +5,9 @@ import { contenu } from '../../../src/langues/traduire.ts'
 import type { Langue } from '../../../src/langues/registre.ts'
 import { MATIERES } from '../../../src/data/programme.ts'
 import type { Matiere } from '../../../src/data/programme.ts'
-import { etiquetteClasses, langueDuTexte, texteDe } from '../../../src/telechargements/recherche.ts'
+import { langueDuTexte, texteDe } from '../../../src/telechargements/recherche.ts'
 import type { EntreeIndex } from '../../../src/telechargements/types.ts'
-import { NIVEAUX } from '../../../src/data/classes.ts'
+import { texteClasses } from '../../../src/data/classes.ts'
 import { ADRESSE_INDEX, absolue, adresseFiche } from './adresses.ts'
 import { echapper, meta, propriete } from './html.ts'
 import { habiller, STYLE_STATIQUE } from './modele.ts'
@@ -36,7 +36,7 @@ export function pageIndex(ctx: ContexteStatique): PageStatique {
     const nom = g.matiere ? t(`statique.matiere.${g.matiere}`) : t('statique.horsProgramme')
     const items = g.entrees.map(e => {
       const lang = langueDuTexte(e.titre, langue) === langue ? '' : ` lang="${langueDuTexte(e.titre, langue)}"`
-      return `<li><a href="${echapper(`${ctx.base}${adresseFiche(e.slug)}`)}"${lang}>${echapper(texteDe(e.titre, langue))}</a> (${echapper(etiquetteClasses(e.niveaux, NIVEAUX))})</li>`
+      return `<li><a href="${echapper(`${ctx.base}${adresseFiche(e.slug)}`)}"${lang}>${echapper(texteDe(e.titre, langue))}</a> (${echapper(texteClasses(e.niveaux))})</li>`
     }).join('\n        ')
     return `<h2>${echapper(nom)}</h2>\n      <ul>\n        ${items}\n      </ul>`
   })

@@ -57,3 +57,54 @@ export function plageDeClasses<const N extends NotationClasses>(notation: N): Cl
   if (NIVEAUX.indexOf(a) > NIVEAUX.indexOf(b)) throw new Error(`plageDeClasses : « ${notation} » va à l'envers (${a} vient après ${b})`)
   return classesEntre(a, b) as ClassesDe<N>[]
 }
+
+// ── Suites de classes en texte ──
+// Partout où le site écrit plusieurs classes (barre, chapeaux, compteurs, pastilles, pages statiques) : trois classes de suite
+// ou plus deviennent une plage « PS → CM2 », les autres restent listées, séparées par « · » (« GS · CE1 », « MS → CP · CM1 »).
+// Deux classes qui se suivent restent deux classes : « CE1 · CE2 » n'est pas plus long que « CE1 → CE2 » et se lit mieux.
+
+/** Un morceau d'une suite de classes : une plage (`classes` en a trois ou plus) ou une classe seule (`debut` = `fin`). */
+export interface MorceauClasses {
+  debut: Classe
+  fin: Classe
+  /** les classes du morceau, dans l'ordre de l'école */
+  classes: Classe[]
+}
+
+// à partir de combien de classes de suite on écrit une plage
+const PLAGE_MINIMUM = 3
+
+/** Les suites de classes consécutives, dans l'ordre de l'école : ['ce1', 'ps', 'ms', 'ms'] → [['ps', 'ms'], ['ce1']]. */
+function suitesConsecutives(classes: readonly Classe[]): Classe[][] {
+  const suites: Classe[][] = []
+  let rangPrecedent = -2
+  for (const [rang, c] of NIVEAUX.entries()) {
+    if (!classes.includes(c)) continue
+    const suiteEnCours = suites[suites.length - 1]
+    if (suiteEnCours && rang === rangPrecedent + 1) suiteEnCours.push(c)
+    else suites.push([c])
+    rangPrecedent = rang
+  }
+  return suites
+}
+
+/** Une suite consécutive en morceaux : une plage si elle est assez longue, sinon un morceau par classe. */
+function morceauxDUneSuite(suite: Classe[]): MorceauClasses[] {
+  if (suite.length >= PLAGE_MINIMUM) return [{ debut: suite[0], fin: suite[suite.length - 1], classes: suite }]
+  return suite.map(c => ({ debut: c, fin: c, classes: [c] }))
+}
+
+/** Les classes découpées en plages et classes seules, dans l'ordre de l'école (doublons et désordre tolérés). */
+export const morceauxDeClasses = (classes: readonly Classe[]): MorceauClasses[] => suitesConsecutives(classes).flatMap(morceauxDUneSuite)
+
+/** Vrai si le morceau est une plage (« PS → CM2 »), faux pour une classe seule. */
+export const estPlage = (morceau: MorceauClasses): boolean => morceau.debut !== morceau.fin
+
+/** Un morceau en texte : « CE1 » ou « PS → CM2 ». */
+export function texteMorceau(morceau: MorceauClasses): string {
+  if (!estPlage(morceau)) return morceau.debut.toUpperCase()
+  return `${morceau.debut.toUpperCase()} → ${morceau.fin.toUpperCase()}`
+}
+
+/** Des classes en texte court : « PS → CM2 », « GS · CE1 », « MS → CP · CM1 » ; '' sans classe. */
+export const texteClasses = (classes: readonly Classe[]): string => morceauxDeClasses(classes).map(texteMorceau).join(' · ')

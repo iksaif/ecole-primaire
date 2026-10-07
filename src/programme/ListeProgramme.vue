@@ -8,10 +8,10 @@
         </RouterLink>
         <LectureInterpretation v-if="ligne.competence.interpretation" :texte="ligne.competence.interpretation" />
       </h3>
-      <p class="classes">
-        <span v-for="c in ligne.competence.niveaux" :key="c" class="classe" :class="{ choisie: classes.includes(c) }">{{ c.toUpperCase() }}</span>
+      <div class="classes">
+        <PastillesClasses :classes="ligne.competence.niveaux" :choisies="classes" />
         <EtiquetteReference v-if="refs" :reference="ligne.reference" />
-      </p>
+      </div>
       <ul v-if="ligne.pourLesClasses.length" class="ressources">
         <li v-for="r in ligne.pourLesClasses" :key="r.id"><LigneRessource :ressource="r" :classes-choisies="classes" /></li>
       </ul>
@@ -32,6 +32,7 @@ import type { Classe } from '../data/classes.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import LigneRessource from '../ressources/composants/LigneRessource.vue'
+import PastillesClasses from '../ressources/composants/PastillesClasses.vue'
 import { adresseCompetence } from './adresse.ts'
 import type { ParamsReportes } from './adresse.ts'
 import { EMOJI } from './emojis.ts'
@@ -51,8 +52,6 @@ const premiereClasse = (l: LigneProgramme): Classe | null => classesEnCommun(l.c
 .competence { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: .9rem 1.1rem; border-left: 5px solid var(--violet); }
 h3 { font-size: 1rem; margin-bottom: .3rem; }
 .classes { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; margin-bottom: .5rem; }
-.classe { font-size: .75rem; font-weight: 700; padding: .05rem .5rem; border-radius: 999px; background: var(--gris-bg); border: 1px solid var(--gris-brd); }
-.classe.choisie { background: var(--bleu-fort); border-color: var(--bleu-fort); color: #fff; }
 .ressources { list-style: none; }
 .sans, .vide { color: var(--texte-doux); }
 .autres { margin-top: .4rem; font-size: .85rem; }

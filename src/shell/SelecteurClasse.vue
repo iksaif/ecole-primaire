@@ -26,14 +26,14 @@ import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import CadenasClasse from './CadenasClasse.vue'
 import ChoixClasses from './ChoixClasses.vue'
-import { libelleClasses } from './classes.ts'
+import { texteClasses } from '../data/classes.ts'
 import { EMOJI_BARRE } from './emojis.ts'
 import { useMenu } from './menus.ts'
 
 const { t } = useLangue()
 const { contexte, verrouillee, plusieursClasses, deverrouillerClasse } = useContexte()
 const { racine, bouton, ouvert, basculer, touche, sortie } = useMenu('classe')
-const libelle = computed(() => libelleClasses(contexte.value.classes))
+const libelle = computed(() => texteClasses(contexte.value.classes))
 
 /** Le cadenas s'est ouvert : la classe peut changer, le même menu montre alors les pastilles */
 const ouvrirClasses = async (): Promise<void> => {

@@ -14,7 +14,7 @@ import { fichesDesRegistres } from '../scripts/build/fiches/registres.ts'
 import { dimensionsJpeg, nbPagesPdf } from '../scripts/build/fiches/rendu.ts'
 import { installerPolices } from '../scripts/build/fiches/polices.ts'
 import { chargerEntree, chargerIndex, urlFiches } from '../src/telechargements/chargement.ts'
-import { CRITERES_VIDES, etiquetteClasses, filtrer, normaliser, parDomaine } from '../src/telechargements/recherche.ts'
+import { CRITERES_VIDES, filtrer, normaliser, parDomaine } from '../src/telechargements/recherche.ts'
 import { USAGES, VERSION_SCHEMA, usageDe } from '../src/telechargements/types.ts'
 import { ErreurSchema, lireEntree, lireIndex, problemesIndex } from '../src/telechargements/valider.ts'
 import { oublierIndex, useFiche, useFiches } from '../src/telechargements/useFiches.ts'
@@ -123,7 +123,6 @@ verifier(nbPagesPdf(new TextEncoder().encode('<< /Type /Pages >> << /Type /Page 
 
 console.log('Recherche et filtres')
 verifier(normaliser('Écriture Œuf') === 'ecriture oeuf', 'normaliser : accents et ligatures')
-verifier(etiquetteClasses(['gs', 'cp'], NIVEAUX) === 'GS · CP' && etiquetteClasses(['ce1', 'ce2', 'cm1'], NIVEAUX) === 'CE1 → CM1' && etiquetteClasses(['cp'], NIVEAUX) === 'CP', 'etiquetteClasses')
 const toutes = index.entrees
 const racines = toutes.filter(e => e.parent === null)
 verifier(filtrer(toutes, CRITERES_VIDES).length === racines.length, 'sans critère : les fiches par compétence sont sur la page de leur bilan')

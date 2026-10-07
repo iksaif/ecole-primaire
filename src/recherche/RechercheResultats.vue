@@ -15,7 +15,7 @@
             <strong><TexteSurligne :texte="l.entree.titre" :requete="requete" /></strong>
             <small v-if="l.entree.sousTitre">{{ l.entree.sousTitre }}</small>
           </span>
-          <span v-if="l.entree.classes.length" class="option-classes">{{ resumeClasses(l.entree.classes) }}</span>
+          <span v-if="l.entree.classes.length" class="option-classes">{{ texteClasses(l.entree.classes) }}</span>
         </li>
       </ul>
     </li>
@@ -23,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
+import { texteClasses } from '../data/classes.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_TYPE } from '../ressources/emojis.ts'
-import type { Classe } from '../ressources/types.ts'
 import type { EntreeRecherche } from './index.ts'
 import { ID_LISTE, idOption } from './identifiants.ts'
 import type { GroupeAffiche } from './resultats.ts'
@@ -34,13 +34,6 @@ import TexteSurligne from './TexteSurligne.vue'
 defineProps<{ groupes: readonly GroupeAffiche[], actif: number, requete: string }>()
 const emit = defineEmits<{ choisir: [entree: EntreeRecherche], survol: [position: number] }>()
 const { t } = useLangue()
-
-/** « CP », « CE1 – CE2 », « PS – CM2 » : la première et la dernière classe d'une ressource. */
-const resumeClasses = (classes: readonly Classe[]): string => {
-  const premiere = classes[0]?.toUpperCase()
-  const derniere = classes[classes.length - 1]?.toUpperCase()
-  return premiere === derniere ? (premiere ?? '') : `${premiere} – ${derniere}`
-}
 </script>
 
 <style scoped>

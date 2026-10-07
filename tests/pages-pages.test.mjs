@@ -78,7 +78,8 @@ console.log('Accueil : trois dispositions')
   verifier(!erreurs.length, `accueil parent : aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
   await page.getByRole('button', { name: /enseignant/ }).click()
   await page.waitForSelector('.copier')
-  verifier(await page.locator('h1').count() === 1 && (await page.locator('h1').textContent()).includes('Préparez'), 'le choix du profil en bas change la disposition')
+  // enseignant : titre gardé pour les lecteurs d'écran seulement, sans sous-titre
+  verifier(await page.locator('h1.sr-only').count() === 1 && await page.locator('.sous-titre').count() === 0, 'le choix du profil en bas change la disposition')
   await ctx.close()
 }
 {

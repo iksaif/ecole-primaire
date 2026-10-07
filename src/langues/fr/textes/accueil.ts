@@ -3,8 +3,6 @@ export default {
   titre: 'Des exercices et des fiches à imprimer pour l’école',
   sousTitre: 'De la petite section au CM2, gratuit, sans compte.',
   titreEnfant: 'Bonjour !',
-  titreEnseignant: 'Préparez vos classes',
-  sousTitreEnseignant: 'Exercices en ligne et fiches à imprimer, par classe et par compétence du programme.',
   maClasse: 'Ma classe',
   mesClasses: 'Mes classes',
   verrou: 'La classe est verrouillée (cadenas en haut) : un adulte peut l’ouvrir.',

@@ -1,8 +1,9 @@
 <template>
   <div class="adulte">
     <header class="entete">
-      <h1>{{ enseignant ? t('accueil.titreEnseignant') : t('accueil.titre') }}</h1>
-      <p class="sous-titre">{{ enseignant ? t('accueil.sousTitreEnseignant') : t('accueil.sousTitre') }}</p>
+      <!-- enseignant : pas de titre visible (la visite guidée présente le site), le titre reste pour les lecteurs d'écran -->
+      <h1 :class="{ 'sr-only': enseignant }">{{ t('accueil.titre') }}</h1>
+      <p v-if="!enseignant" class="sous-titre">{{ t('accueil.sousTitre') }}</p>
       <AccueilClasses />
       <AccueilLangue />
       <AccueilCopierLien v-if="enseignant" />

@@ -23,7 +23,7 @@ Les **textes et données** du site restent sous licence
 [Creative Commons Attribution – Partage dans les mêmes conditions 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/deed.fr) :
 
 - les textes de lecture, les phrases de dictée, les listes de mots, les questions des quiz ;
-- les traductions et les données en breton (`src/i18n/`, `src/data/`).
+- les traductions et les données en breton (`src/langues/`, les `textes.ts` de `src/exercices/` et de `src/affiches/`, `src/data/`).
 
 Vous pouvez les reprendre et les modifier, y compris dans un cadre commercial, en **citant la source** et en **partageant vos versions modifiées sous la même licence**.
 

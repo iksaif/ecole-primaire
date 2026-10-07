@@ -6,8 +6,6 @@ export default {
   titre: 'Poelladennoù ha fichennoù da voullañ evit ar skol', // br: à relire
   sousTitre: 'Eus ar rannskol vihan betek ar CM2, digoust, hep kont.', // br: à relire
   titreEnfant: 'Demat !', // br: à relire
-  titreEnseignant: 'Kempennit ho klasoù', // br: à relire
-  sousTitreEnseignant: 'Poelladennoù enlinenn ha fichennoù da voullañ, dre glas ha dre ampladur eus ar programm.', // br: à relire
   maClasse: 'Ma c\'hlas', // br: à relire
   mesClasses: 'Ma klasoù', // br: à relire
   verrou: 'Prennet eo ar c\'hlas (prenn e laez) : un den bras a c\'hall e zigeriñ.', // br: à relire

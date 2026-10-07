@@ -25,6 +25,27 @@ export default {
     titre: 'Nodrezh ar fichennoù', // br: à relire
     aide: 'Ar skritur implijet war ar fichennoù da voullañ.', // br: à relire
   },
+  voix: {
+    titre: 'Mouezh', // br: à relire
+    aide: 'Ar vouezh a lenn ar c\'hemennoù, anv al lizherennoù hag ar skrivadeg. Dont a ra eus ar merdeer : cheñch a ra eus un drobarzhell d\'eben.', // br: à relire
+    voixPour: 'Mouezh evit ar {langue}', // br: à relire
+    automatique: 'Emgefre (erbedet) : {nom}', // br: à relire
+    automatiqueSeul: 'Emgefre (erbedet)', // br: à relire
+    surAppareil: 'War an drobarzhell-mañ', // br: à relire
+    enLigne: 'Enlinenn', // br: à relire
+    qualite: 'gwelloc\'h kalite', // br: à relire
+    aucune: 'Mouezh ebet evit ar yezh-se war an drobarzhell-mañ : skrivet e chom an destennoù.', // br: à relire
+    noteEnLigne: 'Mouezh enlinenn : evit he lakaat da gomz e kas ar merdeer an destenn lennet da servij e embanner (Google, Microsoft, Apple…). Hol lec\'hienn ne gas netra. Gant ar mouezhioù « war an drobarzhell-mañ » ne ya netra er-maez.', // br: à relire
+    astuce: 'Evit ur vouezh naturaloc\'h : war Mac, iPhone hag iPad, pellgargit ur vouezh « Premium » pe « Gwellaet » (Arventennoù › Haezadusted › Danvez distaget) ; war Windows, ouzhpennit ur vouezh (Arventennoù › Eur ha yezh › Mouezh) ; war Android, e Haezadusted › Mouezh sintetek. Adkargit ar bajenn goude.', // br: à relire
+    vitesse: 'Tizh', // br: à relire
+    plusLente: 'goustatoc\'h', // br: à relire
+    plusRapide: 'buanoc\'h', // br: à relire
+    pourcent: '{n} %',
+    ecouter: '▶️ Selaou ur skouer', // br: à relire
+    exemple: 'Demat ! Selaou mat : diskouez din al lizherenn B, evel bolotenn.', // br: à relire
+    sansVoix: 'N\'eus mouezh ebet c\'hoazh evit : {langues}. Skrivet e chom an destennoù-se, evit ma vint lennet gant an oadour.', // br: à relire
+    sansSynthese: 'Ne oar ket ar merdeer-mañ lenn a vouezh uhel : skrivet e chom ar c\'hemennoù.', // br: à relire
+  },
   remise: {
     titre: 'Adderaouekaat',
     aide: 'Diverkañ an holl arventennoù hag ar skorioù enrollet war an drobarzhell-mañ.', // br: à relire

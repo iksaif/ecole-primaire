@@ -38,6 +38,12 @@
       <ChoixPolice />
     </section>
 
+    <section class="bloc" data-section="voix">
+      <h2>🔊 {{ t('reglages.voix.titre') }}</h2>
+      <p class="aide">{{ t('reglages.voix.aide') }}</p>
+      <ReglageVoix />
+    </section>
+
     <section class="bloc">
       <h2>🗑️ {{ t('reglages.remise.titre') }}</h2>
       <p class="aide">{{ t('reglages.remise.aide') }}</p>
@@ -50,10 +56,12 @@
 </template>
 
 <script setup lang="ts">
-// Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police.
+// Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police,
+// voix et vitesse de la lecture à voix haute (ReglageVoix, mémorisés par useTTS).
 import { ref } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
+import ReglageVoix from '../noyau/ReglageVoix.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { useLangueRegionale } from '../langues/useLangueRegionale.ts'
 import CadenasClasse from '../shell/CadenasClasse.vue'

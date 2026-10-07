@@ -45,14 +45,9 @@ export interface TirageFiche {
 }
 
 type Segment = [string, string]
-// Au présent et au passé simple, être, avoir et les verbes du 3e groupe n'ont pas de radical suivi d'une terminaison régulière (« je suis »
-// n'est pas « sui » + « s ») : la forme s'écrit en entière ; à l'imparfait et au futur, les terminaisons sont celles de tous les verbes.
-// Aux temps composés, l'auxiliaire est donné et le participe passé s'écrit (retour du 2026-10-07).
-const SANS_TERMINAISON_REGULIERE = new Set(['auxiliaire', '3e groupe'])
 export function lignes(verbe: string, temps: string): Ligne[] {
-  const entiere = (temps === 'present' || temps === 'passe-simple') && SANS_TERMINAISON_REGULIERE.has(verbeDe(verbe).groupe)
   return (formesTemps(verbe, temps) as [Segment, ...Segment[]][]).map(([[, pronom], ...segs]) => {
-    const k = entiere ? -1 : segs.map(([c]) => c).findLastIndex(c => c === 'ter' || c === 'pp')
+    const k = segs.map(([c]) => c).findLastIndex(c => c === 'ter' || c === 'pp')
     const txt = (l: Segment[]): string => l.map(([, x]) => x).join('')
     return { pronom: pronom.trim(), forme: txt(segs), debut: k > 0 ? txt(segs.slice(0, k)) : '', trou: k > 0 ? txt(segs.slice(k)) : txt(segs) }
   })

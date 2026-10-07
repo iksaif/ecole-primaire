@@ -76,27 +76,40 @@ vers un autre site que le nôtre.
 
 ## À propos de l'IA
 
-Le code a été écrit en grande partie avec l'aide d'un assistant de programmation (Claude). On s'en est
-servi comme d'un outil de développement : écrire du code, des tests, chercher des sources.
+Ce site a été écrit en grande partie avec un assistant de programmation (Claude). Nous avons décidé ce qu'il
+fallait faire, l'IA a écrit l'essentiel du code et des textes, et nous avons relu et testé le résultat. Le
+contenu pédagogique a été vérifié contre les programmes officiels, dont les textes sont dans `docs/programmes/`.
 
-Seuls, on n'aurait jamais eu le temps de faire tout ça. Bien sûr, ce serait mieux si tout était fait par des
-humains. Mais on y a vu une occasion : se servir de l'IA une fois, pour écrire le code, et obtenir ensuite
-des exercices et des fiches réglables à volonté, qui ne demandent presque aucune ressource pour être
-produits : du code classique, libre, qui tourne dans votre navigateur. Pas d'IA à chaque fiche, et autant
-que possible, rien d'imposé sur les fiches : pas de filigrane, pas de publicité, pas de marque.
+Sans elle, on n'aurait jamais eu le temps de faire un site comme celui-ci : deux langues, de la PS au CM2, et
+des centaines de fiches réglables. Ce serait mieux si tout était fait à la main, par des enseignants, des
+illustrateurs et des brittophones. On a fait un autre choix : se servir de l'IA pendant le développement,
+pour écrire du code libre qui produit ensuite les exercices et les fiches seul. Une fiche ne passe par aucune
+IA et ne demande aucun serveur : elle est fabriquée dans votre navigateur. Rien n'est imposé sur les fiches :
+pas de filigrane, pas de publicité, pas de marque.
 
-Le site publié n'utilise donc pas d'IA, sauf si vous le demandez : la Dictée et la Lecture peuvent générer
-des phrases avec votre propre clé Mistral (voir « Vie privée »).
+Ce code est aussi une base : chaque exercice, chaque fiche et chaque affiche suit le même modèle, rangé par
+compétence du programme. On peut donc en ajouter et en corriger facilement. Ce qui lui manque maintenant,
+c'est le regard d'enseignants : avec eux, le contenu peut gagner en qualité et servir à beaucoup plus de
+monde, dans d'autres classes et d'autres langues régionales. Si vous voulez y participer, même pour une
+remarque, écrivez-nous (voir « Contribuer »).
 
-Ce qui a demandé de la vigilance :
+Ce choix a des limites, et on préfère les dire :
 
-- **Le contenu pédagogique** a été relu, et vérifié contre des sources (programmes, dictionnaires) quand on
-  pouvait. Il reste sûrement des erreurs : signalez-les.
-- **Les nombres, l'alphabet, les jours et les mois en breton** ont été vérifiés dans le Wiktionnaire, le
-  Meurgorf (dictionnaire de l'Office public de la langue bretonne) et Kervarker.
-- **Le reste de l'interface en breton est une traduction automatique** qui n'a pas encore été relue par un
-  brittophone. Le site le signale aux visiteurs. Les passages dont on est le moins sûr sont marqués
-  `// br: à relire` dans les catalogues ; `npm run i18n:relecture` en fait un tableau à relire.
+- **Les modèles d'IA ont appris sur le travail d'autres personnes**, souvent sans leur accord, et leur coût en
+  énergie est réel. On n'a pas de réponse à ça. On a seulement choisi de rendre tout le résultat libre et
+  gratuit.
+- **Le contenu peut contenir des erreurs.** On n'est pas enseignants ; signalez-nous ce qui vous paraît faux.
+- **Le breton** : les nombres, l'alphabet, les jours et les mois ont été vérifiés dans le Wiktionnaire, le
+  Meurgorf (dictionnaire de l'Office public de la langue bretonne) et Kervarker. Le reste de l'interface est
+  une traduction automatique que des brittophones n'ont pas encore relue. Le site le signale aux visiteurs, et
+  toute relecture, même partielle, est la bienvenue : les passages à relire sont marqués `// br: à relire`,
+  et `npm run i18n:relecture` en fait un tableau.
+
+Le site publié n'utilise pas d'IA, sauf si vous le demandez : la Dictée et la Lecture peuvent générer des
+phrases avec votre propre clé Mistral (voir « Vie privée »).
+
+Si vous préférez des ressources faites sans IA, on le comprend : il en existe beaucoup d'excellentes, souvent
+partagées par des enseignants.
 
 ## Contribuer
 

@@ -175,6 +175,14 @@ export function installerContexte(router: Router, site: Site = SITE): void {
   }) ?? null
 }
 
+/**
+ * La classe verrouillée du profil « enfant » (sa seule classe), ou `null` : pas de verrou, ou contexte non installé (tests node,
+ * pages de développement). Les exercices et affiches s'y règlent et ne proposent plus le choix du niveau.
+ */
+export function classeVerrouillee(): Classe | null {
+  return etat?.utilisation.verrouillee.value ? etat.utilisation.contexte.value.classes[0] ?? null : null
+}
+
 /** Le contexte partagé. `installerContexte(router)` doit avoir été appelé (main.ts). */
 export function useContexte(): UtilisationContexte {
   if (!etat) throw new Error('useContexte : installerContexte(router) n’a pas été appelé')

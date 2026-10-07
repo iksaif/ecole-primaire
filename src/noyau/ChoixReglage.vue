@@ -21,7 +21,7 @@
   multiple : plusieurs boutons enfoncés) ; la marque « (bonus) » fait partie du nom du bouton.
 -->
 <template>
-  <div class="config-section" role="group" :aria-labelledby="titre ? idTitre : undefined" :data-reglage="cle">
+  <div v-if="!niveauFige" class="config-section" role="group" :aria-labelledby="titre ? idTitre : undefined" :data-reglage="cle">
     <div v-if="titre" :id="idTitre" class="config-section-title">{{ titre }}</div>
     <div v-if="cartes" class="cartes-reglage" :class="{ nombreuses: liste.length > 2 }" :style="{ '--nb-cartes': liste.length }">
       <button v-for="v in liste" :key="String(v)" type="button" class="carte-reglage" :class="{ active: actif(v) }" :data-valeur="String(v)"
@@ -47,6 +47,7 @@
 // textes : section `communs` (bonus, horsProgramme) ; marques lues dans la définition (src/noyau/reglages.ts)
 import { computed, useId } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
+import { classeVerrouillee } from '../contexte/useContexte.ts'
 import { estBonus, raisonHorsProgramme, valeursDe } from './reglages.ts'
 import type { Classe, DefinitionExercice, ValeurOption } from './types.ts'
 
@@ -77,6 +78,8 @@ const props = withDefaults(defineProps<{
   icone?: ((v: Valeur) => string) | null
   description?: ((v: Valeur) => string) | null
 }>(), { niveau: '', titre: '', libelle: null, libelles: null, valeurs: null, groupes: null, cartes: false, icone: null, description: null })
+// profil « enfant » : le niveau est figé sur la classe verrouillée (useReglages) : pas de choix à montrer
+const niveauFige = computed(() => { const c = classeVerrouillee(); return props.cle === 'niveau' && !!c && c in props.definition.niveaux })
 const emit = defineEmits<{ 'update:modelValue': [valeur: Modele] }>()
 defineSlots<{
   // contenu d'une valeur (par défaut son texte)

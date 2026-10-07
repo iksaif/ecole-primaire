@@ -19,6 +19,7 @@ export default {
   aVenirBadge: 'a zeu', // br: à relire
   cycle: 'Kelc\'h {n}', // br: à relire
   programme: 'Gwelet ar programm', // br: à relire
+  enfantAffiches: 'Ar skritelloù', // br: à relire
   enfantVide: 'N’eus c’hoari ebet amañ evit da glas c’hoazh.', // br: à relire
   enfantVideAide: 'Distro a-benn nebeut, pe goulenn gant un den deuet dibab ur c’hlas all.', // br: à relire
 } satisfies Traductions<typeof fr>

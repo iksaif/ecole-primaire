@@ -8,7 +8,8 @@ const FIN_FUT = ['ai', 'as', 'a', 'ons', 'ez', 'ont']
 const AVOIR_PRES = ['ai', 'as', 'a', 'avons', 'avez', 'ont'], ETRE_PRES = ['suis', 'es', 'est', 'sommes', 'êtes', 'sont']
 const AVOIR_IMP = ['avais', 'avais', 'avait', 'avions', 'aviez', 'avaient'], ETRE_IMP = ['étais', 'étais', 'était', 'étions', 'étiez', 'étaient']
 // verbes du programme : être, avoir, 1er groupe, 2e groupe et irréguliers du 3e groupe (cycles 2 et 3)
-// pres / ps : { r, f } (radical + terminaisons à colorer) ou formes entières ; imp / fut : radical (terminaisons communes)
+// pres / ps : { r, f } (radical + terminaisons à colorer) ou formes entières ; imp / fut : radical (terminaisons communes).
+// Radical variable (verbes en -cer, -ger, -eler, -eter, -yer, e muet : CM1) : `r` (pres, ps) et `imp` peuvent être une liste de six radicaux.
 export const VERBES = {
   etre:     { inf: 'être',     groupe: 'auxiliaire', aux: 'avoir', pp: 'été',    pres: ETRE_PRES, imp: 'ét', fut: 'ser', ps: ['fus', 'fus', 'fut', 'fûmes', 'fûtes', 'furent'] },
   avoir:    { inf: 'avoir',    groupe: 'auxiliaire', aux: 'avoir', pp: 'eu',     pres: AVOIR_PRES, imp: 'av', fut: 'aur', ps: ['eus', 'eus', 'eut', 'eûmes', 'eûtes', 'eurent'] },
@@ -30,6 +31,27 @@ export const AUTRES_VERBES = {
   aimer:    { inf: 'aimer',    groupe: '1er groupe', aux: 'avoir', pp: 'aimé',   pres: { r: 'aim', f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] }, imp: 'aim', fut: 'aimer', ps: { r: 'aim', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
   grandir:  { inf: 'grandir',  groupe: '2e groupe',  aux: 'avoir', pp: 'grandi', pres: { r: 'grand', f: ['is', 'is', 'it', 'issons', 'issez', 'issent'] }, imp: 'grandiss', fut: 'grandir', ps: { r: 'grand', f: ['is', 'is', 'it', 'îmes', 'îtes', 'irent'] } },
   choisir:  { inf: 'choisir',  groupe: '2e groupe',  aux: 'avoir', pp: 'choisi', pres: { r: 'chois', f: ['is', 'is', 'it', 'issons', 'issez', 'issent'] }, imp: 'choisiss', fut: 'choisir', ps: { r: 'chois', f: ['is', 'is', 'it', 'îmes', 'îtes', 'irent'] } },
+  // 1er groupe à radical variable (c3francais p. 18, CM1 : « variations du radical … -yer, -eler et -eter, -cer, -ger », e muet)
+  commencer: { inf: 'commencer', groupe: '1er groupe', aux: 'avoir', pp: 'commencé',
+    pres: { r: ['commenc', 'commenc', 'commenc', 'commenç', 'commenc', 'commenc'], f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] },
+    imp: ['commenç', 'commenç', 'commenç', 'commenc', 'commenc', 'commenç'], fut: 'commencer',
+    ps: { r: ['commenç', 'commenç', 'commenç', 'commenç', 'commenç', 'commenc'], f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  manger:   { inf: 'manger',   groupe: '1er groupe', aux: 'avoir', pp: 'mangé',
+    pres: { r: ['mang', 'mang', 'mang', 'mange', 'mang', 'mang'], f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] },
+    imp: ['mange', 'mange', 'mange', 'mang', 'mang', 'mange'], fut: 'manger',
+    ps: { r: ['mange', 'mange', 'mange', 'mange', 'mange', 'mang'], f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  appeler:  { inf: 'appeler',  groupe: '1er groupe', aux: 'avoir', pp: 'appelé',
+    pres: { r: ['appell', 'appell', 'appell', 'appel', 'appel', 'appell'], f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] },
+    imp: 'appel', fut: 'appeller', ps: { r: 'appel', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  jeter:    { inf: 'jeter',    groupe: '1er groupe', aux: 'avoir', pp: 'jeté',
+    pres: { r: ['jett', 'jett', 'jett', 'jet', 'jet', 'jett'], f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] },
+    imp: 'jet', fut: 'jetter', ps: { r: 'jet', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  acheter:  { inf: 'acheter',  groupe: '1er groupe', aux: 'avoir', pp: 'acheté',
+    pres: { r: ['achèt', 'achèt', 'achèt', 'achet', 'achet', 'achèt'], f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] },
+    imp: 'achet', fut: 'achèter', ps: { r: 'achet', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
+  nettoyer: { inf: 'nettoyer', groupe: '1er groupe', aux: 'avoir', pp: 'nettoyé',
+    pres: { r: ['nettoi', 'nettoi', 'nettoi', 'nettoy', 'nettoy', 'nettoi'], f: ['e', 'es', 'e', 'ons', 'ez', 'ent'] },
+    imp: 'nettoy', fut: 'nettoier', ps: { r: 'nettoy', f: ['ai', 'as', 'a', 'âmes', 'âtes', 'èrent'] } },
 }
 export const verbeDe = cle => VERBES[cle] ?? AUTRES_VERBES[cle] ?? null
 
@@ -49,7 +71,8 @@ function decouper(forme, fins) {
     ?? fins.find(t => forme === t)    // « ils ont » : la forme entière est la terminaison
   return f ? [['rad', forme.slice(0, -f.length)], ['ter', f]].filter(([, t]) => t) : [['rad', forme]]
 }
-const segmentsForme = (def, i, temps) => (Array.isArray(def) ? decouper(def[i], TERMINAISONS[temps][i]) : [['rad', def.r], ['ter', def.f[i]]])
+const radical = (r, i) => (Array.isArray(r) ? r[i] : r)
+const segmentsForme = (def, i, temps) => (Array.isArray(def) ? decouper(def[i], TERMINAISONS[temps][i]) : [['rad', radical(def.r, i)], ['ter', def.f[i]]])
 const voyelle = f => /^[aeiouyàâéèêëîïôöûüh]/i.test(f)
 
 // Les six lignes d'un temps : [[classe, texte], …] pour chaque personne, pronom compris (« j' » devant une voyelle)
@@ -59,7 +82,7 @@ export function formesTemps(verbe, temps) {
   const compose = (aux, i) => [['aux', aux[i]], ['', ' '], ['pp', v.pp + (v.aux === 'être' ? (i >= 3 ? '(e)s' : '(e)') : '')]]
   return PRONOMS.map((pronom, i) => {
     const segs = temps === 'present' ? segmentsForme(v.pres, i, 'pres')
-      : temps === 'imparfait' ? [['rad', v.imp], ['ter', FIN_IMP[i]]]
+      : temps === 'imparfait' ? [['rad', radical(v.imp, i)], ['ter', FIN_IMP[i]]]
       : temps === 'futur' ? [['rad', v.fut], ['ter', FIN_FUT[i]]]
       : temps === 'passe-compose' ? compose(auxP, i)
       : temps === 'passe-simple' ? segmentsForme(v.ps, i, 'ps')

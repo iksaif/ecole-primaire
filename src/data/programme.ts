@@ -694,6 +694,8 @@ export const COMPETENCES = [
     src('bo41', 94, 'CE2 : + verbes irréguliers du 3e groupe (faire, aller, dire, venir, pouvoir, voir, vouloir, prendre)')),
   c('conjugaison-2e-groupe', 'grammaire', 'Les mêmes temps pour les verbes du 2e groupe (finir)', ['cm1', 'cm2'],
     src('c3francais', 18, 'CM1 : présent, imparfait, futur, passé composé d’être, avoir, 1er et 2e groupes et des 8 irréguliers')),
+  c('conjugaison-radical-variable', 'grammaire', 'Verbes du 1er groupe à radical variable : -cer, -ger, -eler, -eter, -yer, e muet (je commence / nous commençons)', ['cm1', 'cm2'],
+    src('c3francais', 18, 'CM1 : mettre en évidence les variations du radical pour certains verbes du premier groupe (e muet ou é, -yer, -eler et -eter, -cer, -ger) ; CM2 : consolider')),
   c('conjugaison-passe-simple', 'grammaire', 'Passé simple et plus-que-parfait', ['cm2'],
     src('c3francais', 19, 'CM2 : passé simple, plus-que-parfait d’être, avoir, 1er et 2e groupes et des 8 irréguliers')),
   c('complements', 'grammaire', 'Compléments du verbe (COD, COI) et compléments circonstanciels', ['cm1', 'cm2'],

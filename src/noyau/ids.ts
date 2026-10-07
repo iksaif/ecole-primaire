@@ -141,6 +141,7 @@ export const K = fort('K', {
   conjugaison4Temps: 'conjugaison-4-temps',
   conjugaisonIrreguliers: 'conjugaison-irreguliers',
   conjugaison2eGroupe: 'conjugaison-2e-groupe',
+  conjugaisonRadicalVariable: 'conjugaison-radical-variable',
   conjugaisonPasseSimple: 'conjugaison-passe-simple',
   complements: 'complements',
   environnementProche: 'environnement-proche',

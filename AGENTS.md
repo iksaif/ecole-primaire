@@ -9,6 +9,9 @@ https://skoolik.app (br). Voir `README.md` pour l'organisation générale.
 - Code, commentaires, noms de variables et messages en **français**, comme le code existant. Les messages de
   commit sont en anglais (`feat:`, `fix:`, `refactor:`…).
 - Densité de commentaires et idiomes du fichier voisin. Pas de dépendance nouvelle sans raison forte.
+- **Code lisible avant tout** : jamais de ternaires imbriqués, de chaînes `typeof … ? … : Array.isArray(…) ? … : … && 'x' in …`,
+  ni de one-liners qui font trois choses. Une petite fonction nommée (avec un commentaire d'une ligne), un type explicite pour les
+  données qu'on lit, et des étapes sur plusieurs lignes. Si une ligne demande un effort pour être comprise, la réécrire.
 - Breton : traduction automatique acceptée, mais **chaque texte breton nouveau est marqué `// br: à relire`**.
   Ne jamais présenter du breton non vérifié comme sûr. Les nombres, l'alphabet, les jours et les mois sont
   vérifiés (Wiktionnaire, Meurgorf, Kervarker) : ne pas les modifier sans source.

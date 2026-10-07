@@ -45,11 +45,51 @@ export interface TirageFiche {
 }
 
 type Segment = [string, string]
+// Verbes du 1er groupe à radical variable (commencer, appeler…, CM1) : la variation est ce qu'on apprend, elle ne doit pas être donnée.
+// En lacunes, le début donné est la partie du radical commune à tous les temps (« commen », « appel », « ach »), l'élève écrit le reste.
+
+/** Un verbe du 1er groupe dans src/data/conjugaison.js : un radical (ou six, un par personne) pour chaque temps simple. */
+interface VerbePremierGroupe {
+  inf: string
+  pres: { r: string | string[] }
+  imp: string | string[]
+  fut: string
+  ps: { r: string | string[] }
+}
+
+/** Le début commun à tous les mots (« commenc », « commenç » → « commen »). */
+function prefixeCommun(mots: readonly string[]): string {
+  let prefixe = mots[0]
+  for (const mot of mots) {
+    while (!mot.startsWith(prefixe)) prefixe = prefixe.slice(0, -1)
+  }
+  return prefixe
+}
+
+/** Tous les radicaux d'un verbe du 1er groupe, à tous les temps simples. */
+function radicauxDe(v: VerbePremierGroupe): string[] {
+  const enListe = (r: string | string[]): string[] => (Array.isArray(r) ? r : [r])
+  return [...enListe(v.pres.r), ...enListe(v.imp), v.fut, ...enListe(v.ps.r)]
+}
+
+/** La partie stable du radical d'un verbe du 1er groupe à radical variable, ou `null` (verbe régulier, ou d'un autre groupe). */
+function radicalStable(verbe: string): string | null {
+  const v = verbeDe(verbe)
+  if (v.groupe !== '1er groupe') return null
+  const premier = v as VerbePremierGroupe
+  const variable = Array.isArray(premier.pres.r) || Array.isArray(premier.imp) || premier.fut !== premier.inf
+  return variable ? prefixeCommun(radicauxDe(premier)) : null
+}
+
 export function lignes(verbe: string, temps: string): Ligne[] {
+  const stable = radicalStable(verbe)
   return (formesTemps(verbe, temps) as [Segment, ...Segment[]][]).map(([[, pronom], ...segs]) => {
     const k = segs.map(([c]) => c).findLastIndex(c => c === 'ter' || c === 'pp')
     const txt = (l: Segment[]): string => l.map(([, x]) => x).join('')
-    return { pronom: pronom.trim(), forme: txt(segs), debut: k > 0 ? txt(segs.slice(0, k)) : '', trou: k > 0 ? txt(segs.slice(k)) : txt(segs) }
+    const forme = txt(segs)
+    // temps simple d'un verbe à radical variable : seule la partie stable est donnée
+    if (stable && segs[k]?.[0] === 'ter') return { pronom: pronom.trim(), forme, debut: stable, trou: forme.slice(stable.length) }
+    return { pronom: pronom.trim(), forme, debut: k > 0 ? txt(segs.slice(0, k)) : '', trou: k > 0 ? txt(segs.slice(k)) : forme }
   })
 }
 

@@ -25,9 +25,10 @@
 
 <script setup lang="ts" generic="Q, Rep">
 // textes : section `communs` (quitter, quitterTitre, question) ; points : ok, presque (nuance, orange), erreur
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { etatDe } from './useJeu.ts'
+import { useImmersion } from './immersion.ts'
 import type { Jeu } from './useJeu.ts'
 
 const props = defineProps<{
@@ -40,6 +41,12 @@ const { questions, index, bonnes, mauvaises, historique } = props.jeu
 
 // Focus : à l'arrivée et à chaque nouvelle question, si rien n'a le focus (il était sur un bouton disparu), la boîte le prend
 const boite = ref<HTMLElement | null>(null)
+
+// Immersion : tant que la question est affichée, l'interface du site s'efface (src/noyau/immersion.ts) ; Échap quitte la partie
+useImmersion()
+const surTouche = (e: KeyboardEvent): void => { if (e.key === 'Escape' && !e.defaultPrevented) props.jeu.quitter() }
+onMounted(() => document.addEventListener('keydown', surTouche))
+onUnmounted(() => document.removeEventListener('keydown', surTouche))
 const focusPerdu = () => !document.activeElement || document.activeElement === document.body
 const rendreLeFocus = () => nextTick(() => { if (focusPerdu()) boite.value?.focus({ preventScroll: true }) })
 onMounted(rendreLeFocus)

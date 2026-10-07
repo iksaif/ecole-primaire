@@ -7,6 +7,9 @@
       <button type="button" class="gros-bouton" @click="activer">{{ t('regionale.activer', { nom: nomDans }) }}</button>
     </EtatVide>
 
+    <!-- profil « enfant » : seulement les jeux de sa classe, en grosses tuiles -->
+    <MatiereEnfant v-else-if="contexte.profil === 'enfant'" :matiere="matiere" />
+
     <template v-else>
       <p v-if="regionale" class="intro">{{ t('regionale.intro', { nom: nomDans }) }}</p>
       <aside v-if="pageMatiere" class="fiches-pretes">
@@ -36,7 +39,7 @@
 // en liste, les autres en « à venir ». Une ressource n'y est qu'une fois, avec ses classes en pastilles ; les classes choisies
 // filtrent (union) et sont mises en évidence ; « Toutes les classes » montre tout sans changer la classe choisie.
 // La langue régionale est une matière comme les autres (sans encart « fiches toutes prêtes » : elle n'a pas de sous-page) ; en
-// mode « Français seul » la page est inactive et un bouton active le mode français + langue.
+// mode « Français seul » la page est inactive et un bouton active le mode français + langue. Profil « enfant » : MatiereEnfant (les jeux de sa classe).
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
@@ -53,6 +56,7 @@ import { EMOJI_ACCUEIL, EMOJI_MATIERE, majuscule } from '../ressources/composant
 import { NOM_COURT, cheminFiches, langueRegionaleDeLaRoute, matiereDeLaRoute } from './matieres.ts'
 import MatiereAVenir from './MatiereAVenir.vue'
 import MatiereBarre from './MatiereBarre.vue'
+import MatiereEnfant from './MatiereEnfant.vue'
 import MondeIntro from './MondeIntro.vue'
 import SautDomaines from './SautDomaines.vue'
 

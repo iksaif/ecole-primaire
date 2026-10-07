@@ -8,6 +8,9 @@
 </template>
 
 <script setup lang="ts">
+// Le choix du profil (pastille de la barre, menu mobile, réglages). Passer à « enfant » change presque tout (classe verrouillée, pages
+// simplifiées) : depuis une page quelconque, on revient à l'accueil, sauf là où l'on choisit son profil (accueil, réglages).
+import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import { PROFILS } from '../contexte/types.ts'
 import type { Profil } from '../contexte/types.ts'
@@ -17,5 +20,13 @@ import { EMOJI_PROFIL } from './emojis.ts'
 const emit = defineEmits<{ choisi: [] }>()
 const { t } = useLangue()
 const { contexte, choisirProfil } = useContexte()
-const choisir = (p: Profil): void => { choisirProfil(p); emit('choisi') }
+const route = useRoute()
+const router = useRouter()
+const PAGES_DU_PROFIL = ['/', '/parametres']
+function choisir(p: Profil): void {
+  const devientEnfant = p === 'enfant' && contexte.value.profil !== 'enfant'
+  choisirProfil(p)
+  emit('choisi')
+  if (devientEnfant && !PAGES_DU_PROFIL.includes(route.path)) void router.push('/')
+}
 </script>

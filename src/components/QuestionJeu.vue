@@ -23,7 +23,9 @@
 <script setup>
 // textes : catalogue commun (quitter, quitterTitre, question) ; points : ok, presque (nuance, orange), erreur
 import { useI18n } from '../i18n'
+import { onMounted, onUnmounted } from 'vue'
 import { etatDe } from '../composables/useJeu'
+import { useImmersion } from '../noyau/immersion.ts'
 
 const props = defineProps({
   // l'objet rendu par useJeu()
@@ -31,4 +33,9 @@ const props = defineProps({
 })
 const { t } = useI18n()
 const { questions, index, bonnes, mauvaises, historique } = props.jeu
+// immersion pendant la partie (comme src/noyau/QuestionJeu.vue) ; Échap quitte
+useImmersion()
+const surTouche = e => { if (e.key === 'Escape' && !e.defaultPrevented) props.jeu.quitter() }
+onMounted(() => document.addEventListener('keydown', surTouche))
+onUnmounted(() => document.removeEventListener('keydown', surTouche))
 </script>

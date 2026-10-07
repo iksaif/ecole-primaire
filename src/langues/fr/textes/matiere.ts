@@ -16,4 +16,6 @@ export default {
   aVenirBadge: 'à venir',
   cycle: 'Cycle {n}',
   programme: 'Voir le programme',
+  enfantVide: 'Pas encore de jeu ici pour ta classe.',
+  enfantVideAide: 'Reviens bientôt, ou demande à un adulte de choisir une autre classe.',
 } as const

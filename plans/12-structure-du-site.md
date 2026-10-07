@@ -69,6 +69,8 @@ document par page, contrastes du logo, du lien actif et du pied de page, débord
 - Le profil se change par une pastille « 👤 Parent » dans la barre.
 - Skoolik : mode Français + breton par défaut, interface en français (changeable dans les réglages).
 
-## Prochaine étape
-Maquettes cliquables (HTML local, `plans/maquettes/`) : accueil ×3 profils, page de matière, sous-page des fiches toutes
-prêtes, feuille de fiche, programme, recherche, mobile ; puis validation, puis code.
+## Suite
+
+Les maquettes cliquables sont dans `plans/maquettes/` (référence de comportement et d'aspect ; données et breton inventés). La structure est implémentée
+(`src/contexte/`, `src/ressources/`, `src/router/`, `src/shell/`, `src/pages/`, `src/recherche/`, `src/programme/` : voir leurs README et `REPRISE.md`).
+Reste à faire avant la mise en ligne : les redirections des anciennes adresses et `deploy/setup-nginx.sh` (par l'utilisateur), voir `REPRISE.md`, « Avant de déployer ».

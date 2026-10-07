@@ -1,101 +1,29 @@
 # Plan 10 — Couvrir tout le programme de la GS
 
-**But** : chaque compétence de `src/data/programme.js` travaillée en GS a au moins un exercice de l'app (🎯) et, quand
+**But** : chaque compétence de `src/data/programme.ts` travaillée en GS a au moins un exercice de l'app (🎯) et, quand
 c'est utile, une fiche (📄) ou une affiche (📘), adaptés à des enfants de 5 ans qui ne lisent pas encore : consigne
 dite par la synthèse vocale, images, gros boutons, pas de symbole mathématique (`+`, `=`, `<`, `>` arrivent au CP).
 
-**Couvre le point du TODO** « Couverture complète PS, MS, GS, CP, CE1 » (GS seulement) et, en partie, « Nouvelles
-affiches à proposer » (bande numérique 0–10, nombres de 1 à 10, solides) et « Manques au programme » (formes :
-bouton MS/GS, solides du cycle 1, composer/décomposer ; lettres : cursive, sons, b/d p/q).
+**Couvre le point du TODO** « Couverture complète PS, MS, GS, CP, CE1 » (volet GS).
 
-Relevé le 2026-10-04, dans le code (pas seulement `couverture.html`) : `ressourcesDe(id, 'gs')`
-(`src/impression/couverture.js`) chargé par Vite en SSR, puis lecture des vues `src/views/maternelle/*.vue`, des
-générateurs `src/views/imprimer/*.vue` et de `src/impression/**`. Programme relu dans le PDF consolidé Éduscol
-(`SOURCES.c1consolide`, texte extrait du PDF ; les numéros de page ci-dessous sont ceux de ce PDF, pas ceux du BO).
+## Reste à couvrir en GS (relevé du 2026-10-07, `npm run couverture`)
 
----
+11 compétences du programme de GS n'ont aucune ressource (exercice, fiche ou affiche) :
 
-## 1. État actuel
+- `composer-decomposer` (nombres-calcul) : Composer et décomposer les petits nombres (« trois, c’est deux et un »)
+- `problemes-maternelle` (nombres-calcul) : Résoudre de petits problèmes : réunir, ajouter, retirer, partager
+- `comparer-masses-maternelle` (grandeurs-mesures) : Comparer la masse de deux objets (plus lourd, plus léger)
+- `solides-maternelle` (espace-geometrie) : Reconnaître puis décrire cube, pavé, boule, pyramide, cylindre, cône
+- `assemblages-maternelle` (espace-geometrie) : Reproduire un assemblage (puzzle, pavage, tour de cubes)
+- `chronologie-maternelle` (temps-espace) : Remettre dans l’ordre des moments vécus, puis les étapes d’une histoire
+- `reperes-espace` (temps-espace) : Dans, sur, sous, devant, derrière, à côté : situer un objet
+- `categories-mots` (oral) : Ranger des mots-images par catégorie, trouver l’intrus
+- `syllabes-orales` (lecture) : Scander, compter et manipuler les syllabes d’un mot à l’oral
+- `son-lettres` (lecture) : Connaître le son des lettres
+- `environnement-proche` (temps-espace) : Reconnaître l’école, le quartier ou le village et ses lieux (mairie, commerces, jardin)
 
-### 1.1 Les 16 compétences de la GS
-
-`COMPETENCES.filter(k => k.niveaux.includes('gs'))` → 16 compétences. Aucune entrée de `HORS_PROGRAMME` en GS.
-
-| # | Compétence (`id`) | Domaine | Ce qui la couvre (couverture.js) | Vérifié dans le code | Manque |
-|---|---|---|---|---|---|
-| 1 | `denombrer-10` | nombres-calcul | 🎯 Compter les objets (`/maternelle/compter`) | Compter seulement : une collection de 1 à 10 emojis, 4 nombres au choix. La fiche « Les chiffres » (`fiche-ecriture-chiffres`, GS · CP) fait écrire 0–9 mais n'est étiquetée que `geste-ecriture-maternelle`/`cursive`/`copie` | constituer une collection d'un cardinal donné ; associer quantité / constellation / doigts / nom oral / chiffre ; comptine jusqu'à 30, à rebours de 10 à 1 ; écrire 1–10 relié à la compétence |
-| 2 | `comparer-quantites` | nombres-calcul | 🎯 Comparer les quantités | Le nombre de chaque groupe est affiché **avant** la réponse (`.groupe-nb`, `ComparerView.vue` l. 47 et 60) : on compare deux chiffres, pas deux quantités. Seule question : « qui a le plus ? » | « moins », « autant » ; comparer sans voir les nombres ; comparer deux nombres écrits (≤ 10) |
-| 3 | `composer-decomposer` | nombres-calcul | — | rien | tout |
-| 4 | `bande-numerique` | nombres-calcul | 🎯 Ranger les nombres (`/maternelle/ordonner`) | Ranger 3 à 5 nombres tirés dans 1–10 : ce n'est pas une bande (pas de cases, pas de position). La **fiche** écrit `<` et `>` entre les cases (`OrdonnerView.vue`, `htmlFiche`, `.signe`) et dans le corrigé : symboles du CP (`comparer-ranger`, `depuis('cp')`) → hors programme | compléter une bande lacunaire 1–10 ; placer une constellation, des doigts, un chiffre dans sa case ; avancer/reculer sur la bande ; affiche bande 0–10 |
-| 5 | `problemes-maternelle` | nombres-calcul | — | `ProblemesView` est CE1–CE2 (texte à lire) | tout |
-| 6 | `comparer-longueurs-maternelle` | grandeurs-mesures | — | rien | tout |
-| 7 | `comparer-masses-maternelle` | grandeurs-mesures | — | rien | tout |
-| 8 | `formes-maternelle` | espace-geometrie | 🎯 Les formes ; 📘 `affiche-formes-planes-cycle-1-2` (GS · CP · CE1) | `FormesView.vue` : les 4 formes, toujours dessinées dans la même position (carré et rectangle aux côtés horizontaux, triangle isocèle pointe en haut) ; aucun bouton MS/GS (le rectangle, GS, est aussi proposé en MS) ; « compter les côtés » propose 0 à 8. L'affiche marque les angles droits (« 4 angles droits ») : vocabulaire du CE1 (`angle-droit`) | formes « dans toutes les orientations et configurations » (p. 48) ; trier indépendamment de la couleur et de la taille ; niveau MS/GS |
-| 9 | `solides-maternelle` | espace-geometrie | — | L'affiche `affiche-solides-ce2` a exactement les 6 solides de la GS (`SOLIDES_CE1`) mais elle est étiquetée CE1 · CE2 et compte sommets et arêtes | exercice ; affiche GS (sans sommets ni arêtes, avec la pyramide à base triangulaire) |
-| 10 | `assemblages-maternelle` | espace-geometrie | — | rien | tout |
-| 11 | `motifs-maternelle` | motifs | — | rien | tout (y compris motifs évolutifs, GS seulement) |
-| 12 | `jours-mois` | temps-espace | — | Mesures (CE1) a un mode « Calendrier » (`MesuresView.vue`, questions `demain`, `hier`, `moisApres`, `moisAvant`) avec les jours et mois fr/br dans `src/i18n/*/contenu/mesures.js` ; les fiches d'écriture jours/mois sont CP · CE1 | exercice, affiches semaine / mois et saisons |
-| 13 | `syllabes-orales` | lecture | — (la Lecture `/lecture` la cite mais est CP–CE2) | `LectureView.vue` découpe des mots **écrits** (`MOTS_CP` : « rou-ge », « feuil-le ») : syllabes écrites, pas orales | tout, à l'oral (image + voix) |
-| 14 | `nom-lettres` | lecture | 🎯 Les lettres ; 📘 alphabet (générateur + 5 affiches) | `LettresView.vue`, mode « Reconnaître » : le gabarit affiche `question.lettre` (majuscule) et propose 4 majuscules → l'enfant apparie deux dessins identiques ; `affiche` (minuscule une fois sur deux) n'est utilisé que dans le mode « Majuscule / minuscule ». Ni nom de la lettre à l'oral, ni cursive, ni b/d p/q | nom à l'oral ; script ↔ cursive ; lettres proches (b/d, c/e/o, p/q, p. 15) |
-| 15 | `son-lettres` | lecture | — | rien | tout (voyelles et consonnes continues ; « hormis les occlusives », p. 15) |
-| 16 | `geste-ecriture-maternelle` | ecriture | 📄 Fiches d'écriture (générateur) + 31 fiches toutes prêtes GS · CP · CE1 | Les fiches « Lettre A… Z » contiennent les 4 écritures, dont l'**attaché majuscule** ; `fiche-ecriture-alphabet-attache-majuscule` est aussi GS · CP · CE1. Or `CONTRAINTES` GS : `cursive: 'minuscules'` (majuscules cursives : CE1, 2e partie d'année). Plus petit interligne proposé : 4 mm « débutant » (`INTERLIGNES`, `ecriture.js`), sur lignes Seyès. Pas de fiche « prénom » ni de mots transparents | fiches GS en cursive minuscule, lignage plus large ; écrire son prénom ; mots transparents |
-
-**Bilan** : 6 compétences sur 16 ont une ressource (5 avec un exercice : 1, 2, 4, 8, 14 ; la 16 a des fiches
-seulement) ; **10 n'ont rien** (3, 5, 6, 7, 9, 10, 11, 12, 13, 15). Après vérification, aucune des 6 n'est couverte
-entièrement (voir la colonne « Manque »).
-
-### 1.2 Défauts de l'existant (à corriger avant d'ajouter)
-
-1. **Aucune vue de maternelle n'utilise `useTTS`** (seulement Lecture, Dictée, Grammaire, Vocabulaire, Problèmes,
-   Heure). Les consignes (« Combien de pommes ? ») sont écrites : un enfant de 5 ans ne les lit pas.
-2. **Niveau par défaut MS** dans Compter, Comparer, Ordonner (`config = ref({ niveau: 'ms', … })`), sans tenir compte
-   de la classe de la barre du haut (`useClasse`) et sans `chargerReglages` (le réglage est perdu à chaque visite).
-3. Comparer : nombres visibles avant la réponse (§ 1.1, ligne 2).
-4. Ordonner : `<` et `>` sur la fiche et dans le corrigé (§ 1.1, ligne 4) — une fiche hors programme, c'est un bug
-   (AGENTS.md).
-5. Lettres : le mode « Reconnaître » n'est qu'un appariement (§ 1.1, ligne 14).
-6. Formes : pas de niveau ; rectangle proposé en MS (`CONTRAINTES` MS : `figures: ['triangle', 'carre', 'disque']`) ;
-   le test `tests/programme-maths.test.mjs` (cas `/maternelle/formes`, `ms`) ne l'interdit pas.
-7. `src/impression/exercices.js` : les 5 exercices de maternelle n'ont pas de `fiches` (fiches par compétence), donc
-   pas de 📄 en GS dans le rapport en dehors de l'écriture.
-8. Activité « Nombres en lettres » (`/imprimer/nombres?mise=affiches`) : `niveaux: de('gs', 'cm2')` alors que ses
-   compétences (`nombres-en-lettres`, `numeration-100`, `numeration-1000`) commencent au CP.
-9. Fiches d'écriture GS avec l'attaché majuscule (§ 1.1, ligne 16).
-
----
-
-## 2. Propositions
-
-### 2.0 Socle commun (avant les nouveaux exercices)
-
-**T1 — Consignes orales.** Petit composant `src/components/BoutonEcouter.vue` (bouton 🔊 / ⏹, `useTTS().lire`,
-`enLecture`), sur le modèle de `HeureView.vue` l. 114 (`v-if="langue !== 'br'"` : pas de voix bretonne, voir
-décision D2). Dans chaque vue de maternelle : la consigne est lue automatiquement au début de chaque question
-(après un geste de l'utilisateur, exigence des navigateurs : le clic sur « Commencer » suffit) et relisible avec le
-bouton. Texte lu : une clé `oral` dans le catalogue de la vue (« Combien y a-t-il de pommes ? »), distincte du texte
-écrit quand il le faut (« 3 » se lit « trois »). Le retour (« Bravo ! », « Il y en avait 7 ») est lu aussi.
-Fichiers : les 5 vues de `src/views/maternelle/`, leurs catalogues `src/i18n/{fr,br}/views/maternelle/*.js`.
-Breton : aucune clé `oral` bretonne n'est lue (pas de voix) ; ne pas en créer.
-
-**T2 — Niveau par défaut.** Compter, Comparer, Ordonner, Formes : `chargerReglages('<vue>_config', DEFAUT)` avec
-`niveau` = `useClasse().value` si c'est `ms` ou `gs`, sinon `ms`. Formes reçoit le bouton MS / GS (MS : triangle,
-carré, disque ; GS : + rectangle), lu depuis `contraintesDe(niveau).figures` plutôt qu'écrit en dur.
-
-**T3 — Corrections** (défauts 3 à 6 et 8) :
-- Comparer : `.groupe-nb` seulement après la réponse (`v-if="repondu"`) ; question alternée « le plus » / « le
-  moins » (`t('aMoins')`, br : à relire) ; option GS « Avec les nombres » (affiche un chiffre au lieu des objets
-  d'un côté, puis des deux : « comparer des quantités données par leur écriture chiffrée », p. 41).
-- Ordonner : fiche sans `<` / `>` : une flèche « du plus petit au plus grand » au-dessus des cases, corrigé
-  `1 · 3 · 7`. Graine fixe : vérifier que seul ce passage change (`?graine=N`, comparer le HTML).
-- Lettres, mode « Reconnaître » : afficher `question.affiche` et proposer les choix dans l'autre casse ; corriger le
-  texte `reconnaitreDesc`.
-- Formes : MS sans rectangle (T2).
-- `src/data/activites.js` : « Nombres en lettres » → `niveaux: de('cp', 'cm2')` (ou décision D6).
-
-**T4 — Fiches par compétence de la maternelle.** Dans `src/impression/exercices.js`, ajouter `choix` et `fiches` aux
-entrées `compter`, `comparer`, `ranger`, `lettres`, `formes` au fur et à mesure que les modes ci-dessous existent
-(`F(id, titre, competence, seul, { classes: ['gs'] })`). Le test « Fiches par compétence » de
-`tests/logique.test.mjs` vérifie déjà que chaque compétence est au programme de la classe.
+Les sections ci-dessous ne gardent que les propositions qui répondent à ces manques ; les autres sont faites (historique : `git log -- plans/10-couverture-gs.md`). Les noms de fichiers cités (vues `.vue`, `activites.js`, `exercices.js`, `programme.ts`…) sont ceux de l'ancien monde, supprimé : le code d'un nouvel exercice est un module `src/exercices/<id>/` (`npm run nouveau`, voir `src/exercices/README.md`), le programme est `src/data/programme.ts`.
+## Socle encore utile
 
 **T5 — Un imagier commun.** `src/data/imagier.js` (données pures, lu par node) : mots simples et imageables avec
 `{ mot, emoji, syllabes: n (oral, prononciation standard, e muet final non compté), initiale: 'f' (phonème), rime:
@@ -103,6 +31,8 @@ entrées `compter`, `comparer`, `ranger`, `lettres`, `formes` au fur et à mesur
 syllabes varie selon les régions). Réutilise `MOTS` de `src/impression/alphabet.js` quand c'est possible (« abeille »,
 « ballon »…). Contenu en français seulement (`enLangue('fr', …)` comme les exercices de français). Sert aux
 exercices E1, E2, E3 et aux fiches correspondantes.
+
+## Propositions encore à réaliser
 
 ### 2.1 Nombres et calcul
 
@@ -306,61 +236,22 @@ contenu de l'imagier (T5), voix française.
 - Breton : l'alphabet breton est déjà géré (`alphabetDe`) ; noms des lettres bretons **non vérifiés** → le mode
   « Écoute » est caché en breton (pas de voix de toute façon).
 
-### 2.6 Écriture
-
-**F1 — Écriture en GS** (`geste-ecriture-maternelle`).
-- `src/impression/ecriture.js` : interligne plus grand pour la GS (par exemple 5 mm, à valider : décision D4) dans
-  `INTERLIGNES`, et une liste `LISTES_MOTS` « Mots faciles » (mots orthographiquement transparents : papa, moto,
-  vélo, lune, ami, lit, rat… — p. 19 : « écrire un mot orthographiquement transparent en cursive »).
-- Fiches toutes prêtes GS (nouveaux slugs, `niveaux: 'GS'`, `competences: ['geste-ecriture-maternelle']`) : « Les
-  lettres rondes / à boucles / à ponts en attaché » (familles `PRESETS`, `styles: ['attache-min']`, `lier: true`),
-  « Mon prénom en attaché » (la fiche toute prête montre un prénom exemple ; le générateur prend celui de l'enfant,
-  qui reste dans le navigateur), « Mots faciles en attaché ».
-- Fiches existantes avec l'attaché majuscule : retirer la GS de leurs `niveaux` (slugs inchangés) — décision D3.
-- Tests : `tests/logique.test.mjs`, catalogue : aucune entrée dont `niveaux` contient GS n'a `attache-maj` dans
-  `config.styles` (règle tirée de `CONTRAINTES[gs].cursive`).
-
-### 2.7 Récapitulatif des fichiers
-
-| Proposition | Créer | Modifier |
-|---|---|---|
-| T1–T3 | `src/components/BoutonEcouter.vue` | 5 vues `src/views/maternelle/`, leurs catalogues fr/br, `src/data/activites.js` |
-| A3, A4, A5, B1, C2, C4, D1, E1, E2 | `src/views/maternelle/<Nom>View.vue`, `src/i18n/{fr,br}/views/maternelle/<Nom>View.js` | `src/router/index.js`, `src/views/maternelle/MaternelleView.vue` (+ catalogues), `src/data/activites.js` (`ACTIVITES`, `COMPETENCES_ROUTES`, `BR`), `src/impression/exercices.js`, `tests/outils.mjs` (`ROUTES`, `EXERCICES`), `tests/programme-maths.test.mjs` ou `programme-francais.test.mjs` (`CAS`) |
-| A3, C1, C2, D1 (affiches) | `src/impression/affiches/bande.js`, `calendrier.js` | `affiches/catalogue.js` (`AFFICHES_PROGRAMME`, `DOMAINES_AFFICHES`, `LOTS_FORMES`, `competencesAffiche`, `TELECHARGEMENTS_AFFICHES`), `affiches/formes.js`, le module qui assemble les familles (`affichesProgramme.js`), `src/views/imprimer/AffichesView.vue`, `tests/logique.test.mjs` (`respecte`) |
-| T5, E1–E3 | `src/data/imagier.js` | `src/i18n/fr/contenu/` (noms des lettres) |
-| F1 | — | `src/impression/ecriture.js`, `src/impression/catalogue.js` |
-
-Pour chaque nouvelle vue : cadre `ConfigExercice` (onglets « Faire l'exercice » / « Imprimer une fiche »,
-`useModeExercice`, `htmlFiche()` avec `${ligneNomDate(langue)}` et `<section class="corrige">`), réglages
-`chargerReglages`, aucune option de corrigé propre ; textes bretons nouveaux marqués `// br: à relire` ;
-`npm run i18n` à 0 problème. `savoirs.js` a déjà une phrase GS pour les 16 compétences.
-
----
-
 ## 3. Ordre conseillé, effort, décisions
 
-### 3.1 Étapes (chacune livrable seule)
+### 3.1 Étapes restantes (chacune livrable seule)
 
 | # | Étape | Compétences gagnées | Effort |
 |---|---|---|---|
-| 1 | T2 + T3 : niveau par défaut, Comparer, Ordonner sans `<` `>`, Lettres « Reconnaître », Formes MS/GS ; « Nombres en lettres » au CP | (qualité de 2, 4, 8, 14) | ½ j |
-| 2 | T1 : consignes orales dans les 5 vues de maternelle | tous les exercices de maternelle utilisables seuls | ½ j |
-| 3 | Affiches rapides : bande 1–10 (A3, famille `bande`), solides GS et formes GS sans angles droits (C1, C2) ; `fiche-ecriture-chiffres` → `denombrer-10` | 9 (📘) | 1 j |
-| 4 | A3 Bande numérique (vue + fiche) | 4 complète | 1 j ½ |
-| 5 | A4 Décomposer | 3 | 1 j |
-| 6 | A1 Compter : constituer, associer + fiches par compétence (T4) des 5 vues existantes | 1 | 1 j |
-| 7 | C4 Motifs | 11 | 1 j |
-| 8 | D1 Calendrier + 2 affiches | 12 | 1 j ½ |
-| 9 | T5 imagier + E1 Syllabes | 13 | 2 j (dont la constitution et la relecture des données) |
-| 10 | E2 Sons + E3 Lettres GS | 15, 14 complète | 2 j |
-| 11 | A5 Petits problèmes | 5 | 2 j |
-| 12 | B1 Grandeurs | 6, 7 | 1 j ½ |
-| 13 | C2 Solides (exercice) + C1 orientations et « Trier » | 9, 8 complète | 1 j ½ |
-| 14 | F1 Écriture GS | 16 complète | 1 j |
-| 15 | C3 Assemblages (fiche) | 10 | 1 j |
+| 1 | A4 Décomposer | `composer-decomposer` | 1 j |
+| 2 | T5 imagier + E1 Syllabes | `syllabes-orales` | 2 j (dont la constitution et la relecture des données) |
+| 3 | E2 Sons + E3 Lettres GS | `son-lettres` | 2 j |
+| 4 | A5 Petits problèmes | `problemes-maternelle` | 2 j |
+| 5 | B1 Grandeurs (masses) | `comparer-masses-maternelle` | ½ j |
+| 6 | C2 Solides (exercice), C1 orientations et « Trier » | `solides-maternelle` | 1 j ½ |
+| 7 | C3 Assemblages (fiche) | `assemblages-maternelle` | 1 j |
+| 8 | D1 repères dans le temps et l'espace | `chronologie-maternelle`, `reperes-espace`, `environnement-proche` | à chiffrer |
 
-Total ≈ 19 jours. Après l'étape 8, 13 compétences sur 16 ont un exercice ; après l'étape 15, toutes.
-Les ajouts à `programme.js` (§ 4) se font au début de l'étape concernée, après la décision D7.
+`categories-mots` (oral) : voir le plan PS, 3.2 (« Range les images »).
 
 ### 3.2 Décisions à prendre
 
@@ -382,12 +273,12 @@ Les ajouts à `programme.js` (§ 4) se font au début de l'étape concernée, ap
 6. **D6 — Nombres écrits en lettres en GS** (activité « Nombres en lettres », nom du nombre sur la bande) : *Reco :
    pas de nombres en lettres en GS (CP : `nombresEnLettresMax` 50) ; sur l'affiche de la bande, le nom seulement en
    option, désactivé par défaut.*
-7. **D7 — Compléter `programme.js`** (§ 4). *Reco : oui pour le rang (MS, GS) et les habiletés phonologiques (GS), qui
+7. **D7 — Compléter `programme.ts`** (§ 4). *Reco : oui pour le rang (MS, GS) et les habiletés phonologiques (GS), qui
    ont un exercice prévu ; préciser `son-lettres` (sans occlusives) ; noter les autres sans exercice pour l'instant.*
 
 ---
 
-## 4. Ce qui manque ou paraît douteux dans `programme.js` pour la GS
+## 4. Ce qui manque ou paraît douteux dans `programme.ts` pour la GS
 
 Pages du PDF consolidé Éduscol (`SOURCES.c1consolide`), lu le 2026-10-04 (texte extrait du PDF).
 
@@ -428,6 +319,6 @@ Pages du PDF consolidé Éduscol (`SOURCES.c1consolide`), lu le 2026-10-04 (text
     doivent montrer les deux.
 11. **`cursive: 'minuscules'` est la même valeur en GS et au CP** alors que la GS « trace et enchaîne » et que le CP
     « écrit en cursive » : un test ne peut pas distinguer les deux. Peut-être `'trace'` en GS. À trancher avec D3.
-12. **Pages des sources** : `programme.js` cite le PDF du BO n° 41 (`bo41`, p. 61–70) et du BO n° 19 ; ce plan cite
+12. **Pages des sources** : `programme.ts` cite le PDF du BO n° 41 (`bo41`, p. 61–70) et du BO n° 19 ; ce plan cite
     le PDF consolidé (pagination différente). Si des compétences sont ajoutées, garder `bo41`/`bo19` pour la
     cohérence et ne citer `c1consolide` qu'en complément.

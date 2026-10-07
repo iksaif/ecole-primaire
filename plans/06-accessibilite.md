@@ -1,36 +1,24 @@
 # Plan 06 — Accessibilité
 
-**But** : un site utilisable au clavier et avec un lecteur d'écran, lisible (contrastes, tailles), pour les
-enfants et les parents en situation de handicap.
+**But** : un site utilisable au clavier et avec un lecteur d'écran, lisible (contrastes, tailles), pour les enfants et les parents en situation de handicap.
 
-## Étapes
+## Fait
 
-1. **Audit automatique** :
-   - axe-core via Playwright (`@axe-core/playwright` en devDependency, ou dans /tmp) sur toutes les routes,
-     en français et en breton, en modes jeu et impression, plus les pages statiques ;
-   - rapport par page : violations, gravité, éléments ;
-   - script versionné `scripts/a11y.mjs`.
-2. **Corrections attendues** (d'après le code actuel) :
-   - boutons-icônes sans nom accessible : 🔊, ⚙️, 🗑, ✕, ◀ ▶, boutons de lettres et d'emojis, pièces et
-     billets (MonnaieView), cases des quadrillages (GeometrieView). Ajouter `aria-label` ;
-   - **langue des passages** : dans l'interface bretonne, les contenus français (exercices de français,
-     citations) doivent porter `lang="fr"`, et inversement ;
-   - contrastes : gris clairs (#888, #aaa) sur fond blanc pour les aides et les étiquettes, à vérifier
-     (seuil 4,5:1) ;
-   - focus visible sur tous les éléments interactifs (`:focus-visible`), y compris `.level-btn` et
-     `.lettre-btn` ;
-   - SVG interactifs (horloge, droite graduée, fractions, quadrillage) : `role`, nom, et commande au clavier.
-     L'horloge a des boutons +/−, à vérifier ; le coloriage des fractions et la symétrie se font seulement à
-     la souris aujourd'hui → flèches et espace ;
-   - retours des exercices (« Bravo », « La bonne réponse était… ») : zone `aria-live="polite"` ;
-   - confettis et animations : respecter `prefers-reduced-motion` ;
-   - fenêtres modales (avis de traduction, recherche) : focus piégé et retour du focus à la fermeture.
-3. **Lecteur d'écran** : un parcours manuel avec VoiceOver (macOS ou iPad) sur 3 exercices et une fiche.
-4. **Police pour la dyslexie** : OpenDyslexic existe pour les fiches. Ajouter une option d'affichage pour
-   l'interface elle-même dans les Paramètres ? À discuter.
-5. Ajouter `scripts/a11y.mjs` aux tests, avec un échec si une violation « critique » ou « sérieuse »
-   apparaît.
+- Audit automatique : axe-core (`tests/accessibilite.test.mjs`, `tests/outils-axe.mjs`) sur les routes de la base, en français et en breton, à 360 et 1280 px ;
+  **aucune violation critique ou sérieuse** exigée par `npm test` (toutes les routes au niveau `test:complet`). Les boutons sans nom accessible sont donc déjà
+  détectés sur ces parcours.
+- Focus clavier visible partout (`:focus-visible` global dans `src/style.css`), contrastes de texte relevés (`--bleu-fort`, `--texte-doux` : 4,5:1 au moins).
 
-## Effort
+## Reste (à vérifier ou à faire)
 
-Audit : 1 heure. Corrections : 1 à 2 jours selon le rapport.
+1. **Langue des passages** : dans l'interface bretonne, les contenus français (exercices de français, citations) devraient porter `lang="fr"`, et inversement
+   (aucun `lang=` posé dans les composants du noyau aujourd'hui).
+2. **Passe manuelle** : clavier seul, puis VoiceOver (macOS ou iPad) sur 3 exercices et une fiche ; axe ne voit pas l'ordre de lecture ni la qualité des libellés.
+3. **SVG interactifs** (horloge, droite graduée, fractions, quadrillage, symétrie) : nom, `role` et commande au clavier (flèches, espace) ; le coloriage des
+   fractions et la symétrie se faisaient seulement à la souris.
+4. **Annonces** : les retours (« Bravo », « La bonne réponse était… ») dans une zone `aria-live="polite"` partout où ce n'est pas déjà le cas ; confettis et
+   animations : respecter `prefers-reduced-motion` (présent dans quelques composants seulement).
+5. **Fenêtres modales** (avis de traduction, recherche) : focus piégé et retour du focus à la fermeture.
+6. À discuter : une option d'affichage pour l'interface elle-même (OpenDyslexic existe pour les fiches).
+
+Effort : 1 à 2 jours selon ce que la passe manuelle trouve.

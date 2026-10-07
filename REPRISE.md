@@ -11,7 +11,7 @@
   contexte/routeur/pages (plan 13 : `src/contexte/`, `src/router/`, `src/shell/`, `src/pages/`, `src/ressources/`, `src/recherche/`,
   `src/programme/`), fiches en JSON + PDF (`scripts/build/fiches/`), pages HTML statiques (`scripts/build/statique/`).
 - La **migration de l'ancien monde** est faite pour tout ce qui est publié : **26 exercices et 11 affiches** dans le modèle de la base.
-  Compteurs de `npm run qualite` : `ancienMondeNonReporte` 99, `importeursAncienSocle` 30, `couverture` 57,8 %.
+  Compteurs de `npm run qualite` : `ancienMondeNonReporte` 1, `importeursAncienSocle` 0, `couverture` 57,8 %.
 
 ### Porté (modèle `definir` / `definirAffiche`, fiches sous leurs slugs historiques)
 - Exercices : calcul-mental, calcul-pose, tables, numération, suites, problèmes, heure, monnaie, longueurs, mesures, fractions,
@@ -19,10 +19,9 @@
 - Affiches : alphabet, nombres, numération (tableau), droite numérique, tables (× et +), monnaie (+ planches à découper),
   horloge (aiguilles colorées), formes et solides, conjugaison. Trois exemples de développement : `exemple`, `exemple-jours`, `exemple-riche`.
 
-### Reste (voir `plans/14-migration-restante.md`)
-- Les affiches **« Ce que je sais faire »** (cachées : seulement quand elles seront publiées) et le **retrait de l'ancien monde** (deux
-  composants à déplacer, les compteurs de couverture à réécrire sur `src/ressources/`, puis supprimer `src/views/` ancien, `src/components/`,
-  `src/composables/`, `src/i18n/`…).
+### Migration terminée
+- Plus rien à reporter : l'ancien monde (anciennes vues, composants, composables, `src/i18n/`, catalogues et couverture de `src/impression/`) est supprimé
+  (commit `c088a7b`). Les affiches **« Ce que je sais faire »** (jamais publiées) sont gardées hors du dépôt, dans `brouillons/ce-que-je-sais-faire/`.
 - **Comment porter** : copier le modèle d'un report récent (`git show de94063 --stat` calcul-mental, `70db8c9` heure,
   `2b285f8` monnaie, `dbfdd31` tables, `fd1b429` numération, `da40463` alphabet, `a286573` monnaie affiche), `npm run nouveau`
   pour le squelette d'un exercice, instantanés identiques (`npm run instantanes`), slugs inchangés, `tirerUniques`, textes typés
@@ -53,7 +52,7 @@ npm run types && npm run lint && npm run i18n && npm run qualite
 |---|---|
 | `AGENTS.md` | règles de travail, commandes, où sont les choses |
 | `docs/TODO.md` | toutes les demandes, décisions et reports restants (la plus à jour) |
-| `plans/11-base-saine.md`, `12-structure-du-site.md`, `13-implementation-structure.md` | décisions et architecture de la base saine et du site |
+| `plans/README.md` (index des plans ouverts), `plans/11-base-saine.md`, `plans/12-structure-du-site.md` | règles de la base saine, décisions de structure du site ; ce qui reste à faire |
 | `plans/maquettes/index.html` (+ `captures/`) | maquette cliquable de référence (données et breton inventés) |
 | `src/exercices/README.md`, `src/affiches/README.md`, `src/contexte/README.md`, `src/ressources/README.md` | les modèles |
 | `scripts/README.md` | les scripts, rangés par rôle |

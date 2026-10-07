@@ -1,103 +1,37 @@
 # Plan 10 — Couvrir tout le programme du CP
 
-**But** : chaque compétence de `src/data/programme.js` travaillée au CP a au moins un exercice de l'app (qui
+**But** : chaque compétence de `src/data/programme.ts` travaillée au CP a au moins un exercice de l'app (qui
 s'imprime aussi) ou, quand un exercice n'a pas de sens, une fiche ou une affiche ; aucune option proposée au CP ne
 sort des `CONTRAINTES` du CP. On ajoute d'abord un niveau CP aux exercices existants ; une seule vue nouvelle est
 proposée (Données).
 
-Point de départ : `couverture.html` (généré le 2026-10-04), puis vérification dans le code : niveaux et options
-réellement proposés au CP dans chaque vue, presets de `src/impression/calcul.js`, `fiches` de
-`src/impression/exercices.js`. Textes officiels relus pour ce plan (texte extrait des PDF) : annexe 4 (maths
-cycle 2), p. 3-10, 25-26, 32-33, 37 ; BO n° 41, p. 75-92 (français cycle 2).
+## Reste à couvrir en CP (relevé du 2026-10-07, `npm run couverture`)
 
-Ce plan découle du TODO « Couverture complète PS, MS, GS, CP, CE1 » (`docs/TODO.md`, « Manques au programme »).
+20 compétences du programme de CP n'ont aucune ressource (exercice, fiche ou affiche) :
 
----
+- `ordinaux` (nombres-calcul) : Les nombres ordinaux (premier, deuxième…) et le rang dans une file
+- `sens-multiplication` (nombres-calcul) : Comprendre le sens de la multiplication (puis le signe ×)
+- `problemes-additifs` (nombres-calcul) : Résoudre des problèmes d’addition et de soustraction (parties-tout, comparaison)
+- `problemes-multiplicatifs` (nombres-calcul) : Résoudre des problèmes de multiplication et de partage
+- `problemes-etapes` (nombres-calcul) : Résoudre des problèmes en deux ou trois étapes
+- `longueurs` (grandeurs-mesures) : Mesurer avec la règle ; m et cm (CP), km (CE1), dm et mm (CE2), du mm au km (CM1)
+- `masses` (grandeurs-mesures) : Peser et comparer des masses ; g et kg (CE1), tonne (CE2), mg (CM1)
+- `tracer-figures` (espace-geometrie) : Reproduire ou tracer des figures sur quadrillage, à la règle puis à l’équerre et au compas
+- `solides` (espace-geometrie) : Reconnaître, nommer et décrire les solides (faces, sommets, arêtes)
+- `reperage-deplacements` (espace-geometrie) : Se repérer et coder un déplacement sur un quadrillage
+- `tableaux-diagrammes` (donnees) : Lire et remplir un tableau, un diagramme en barres
+- `son-lettres` (lecture) : Connaître le son des lettres
+- `comprendre-texte` (lecture) : Comprendre un texte lu (personnages, informations, ordre des événements)
+- `ordre-alphabetique` (vocabulaire) : Ranger des mots dans l’ordre alphabétique, chercher dans le dictionnaire
+- `synonymes-antonymes` (vocabulaire) : Trouver des synonymes et des contraires
+- `familles-mots` (vocabulaire) : Familles de mots, préfixes et suffixes
+- `phrase` (grammaire) : La phrase : majuscule, point ; phrases déclarative, interrogative, impérative ; forme négative
+- `classes-mots` (grammaire) : Nature des mots : nom, verbe, déterminant, adjectif, pronom (liste par année)
+- `sujet-verbe` (grammaire) : Trouver le verbe et son sujet ; accorder le verbe avec le sujet
+- `date-langue-regionale` (regionale-mots) : Dire la date du jour dans la langue régionale (« Peseurt deiz eo hiziv ? » en breton)
 
-## 1. État actuel au CP
-
-**42 compétences** ont `'cp'` dans `niveaux`. Selon le rapport, 22 sont couvertes et 20 n'ont rien. Une fois le code
-vérifié, il en reste **19 vraiment couvertes**, dont **6 par une affiche seulement**, et **23 sans rien**. Trois cases
-du rapport sont à tort vertes (voir 1.3).
-
-Légende : 🎯 exercice de l'app au niveau CP · 📄 fiche toute prête ou générateur · 📘 affiche · ✗ rien.
-
-### 1.1 Mathématiques (24 compétences)
-
-| Compétence (`id`) | Ce qui la couvre au CP (vérifié) | Manque |
-|---|---|---|
-| `numeration-100` | 📘 `/imprimer/nombres` (tableau 0–100, dizaines) | **Aucun exercice** : `NumerationView` n'a que `ce1` et `ce2` dans `NIVEAUX` |
-| `nombres-en-lettres` | 📘 nombres en lettres 10–50 (`nombres-francais-breton-10-20`… `-40-50`), droites 0–20 et 0–100 | Exercice ≤ 50 |
-| `comparer-ranger` | ✗ | Exercice (comparer `<` `>` `=`, ranger 5 nombres ≤ 100) |
-| `droite-graduee` | 📘 `affiche-droite-numerique-de-0-a-20`, `-0-a-100` | Exercice (graduée de 1 en 1) |
-| `ordinaux` | ✗ (nulle part, ni au CE1) | Exercice : jusqu'à « vingtième », rang dans une file, suites répétitives (annexe 4 p. 4-5) |
-| `tables-addition` | 🎯 Calcul mental CP (`+`, `−` sur `[1,10]`) · 📄 `fiche-tables-d-addition-cp`, `fiche-additions-jusqu-a-20` · 📘 tables d'addition | — |
-| `doubles-moities` | 🎯 Calcul mental CP : doubles de `plage(1, 10)` seulement · 📄 `fiche-doubles-et-moities-cp` (plage `'10'`) | Doubles de 20, 30, 40, 50 et moitiés de 40, 60, 80, 100 (`CONTRAINTES.cp.doubles`, `moities`) : ni dans l'exercice, ni dans la fiche |
-| `complement-dizaine` | 🎯 Calcul mental CP : « Compléments à 10 » seulement · 📄 `fiche-complements-dizaine-superieure` (CP · CE1) | Le complément à la dizaine supérieure (74 + … = 80) dans l'exercice : `strat: null` au CP désactive `OP_VERS_DIZ` |
-| `ajouter-dizaines` | 📄 `fiche-ajouter-retirer-10` (CP · CE1, `dixCent` ±10) | Exercice : ± 1, ± 2, ± 10, ± 20…90 (`OP_DIZ` désactivé au CP) |
-| `ajouter-9` | ✗ (le rapport compte le générateur, mais `neufOnze` a `niveaux: ['ce1', …]` et Calcul mental CP a `strat: null`) | + 9 au CP (pas − 9 ni ± 11 : CE1, annexe 4 p. 7 et p. 15) |
-| `addition-posee` | 🎯 Calcul posé « 1 chiffre (CP) », « 2 chiffres (CP / CE1) » · 📄 fiche par compétence | (mineur) pas d'addition « 2 chiffres + 1 chiffre » (28 + 8) ni à trois termes (28 + 8 + 56, annexe 4 p. 5) |
-| `sens-multiplication` | ✗ | « 3 fois 20, c'est 20 + 20 + 20 » (annexe 4 p. 5) ; problèmes multiplicatifs CP |
-| `problemes-additifs` | ✗ (`ProblemesView` : CE1, CE2) | Une étape, parties-tout et transformations, nombres ≤ 100 ; **pas de comparaison** au CP (CE1) |
-| `problemes-multiplicatifs` | ✗ | Recherche du tout, nombre de parts, valeur d'une part, champ ≤ 30, additions itérées (pas de `×`) |
-| `problemes-etapes` | ✗ | Additifs en deux étapes, champ ≤ 30 (pas de « mixtes » : CE1) |
-| `longueurs` | ✗ (`MesuresView` : CE1, CE2) | Mesurer à la règle (cm), « 2 cm, 20 cm ou 1 m ? », comparer, 1 m = 100 cm |
-| `masses` | ✗ | Comparer deux ou trois objets (balance Roberval), sans unité |
-| `monnaie-euros` | 📘 `affiche-monnaie-euros` | Exercice : euros entiers ≤ 100 € (compter, faire une somme, le moins de pièces, comparer, rendre) |
-| `heure-entiere` | 📘 `affiche-horloge-heures-entieres` | Exercice : lire et placer les heures entières ≤ 12, associer une heure à un moment de la journée |
-| `figures-planes` | 📘 `affiche-formes-planes-cycle-1-2` (GS · CP · CE1) | Exercice : disque, carré, rectangle, triangle ; côtés et sommets ; **pas** d'angle droit ni de cercle (CE1) |
-| `tracer-figures` | ✗ | Reproduire sur quadrillage (existe au CE1 : `genReproduction`) |
-| `solides` | ✗ (`affiche-solides-ce2` est CE1 · CE2 : pyramide, arêtes) | Exercice et affiche : cube, pavé, boule, cylindre, cône ; nommer cube, pavé, boule ; faces du cube et du pavé |
-| `reperage-deplacements` | ✗ (le repérage CE1 nomme des cases « B3 », ce qui n'est pas l'attendu du CP) | Coder et suivre un déplacement (≤ 10 instructions dont 2 virages, annexe 4 p. 33) ; gauche/droite, sur/sous… |
-| `tableaux-diagrammes` | ✗ (aucune activité, à aucun niveau) | Tableau d'effectifs, diagramme en barres (2 à 5 valeurs, < 40 individus), tableau à double entrée (annexe 4 p. 37) |
-
-### 1.2 Français (18 compétences)
-
-| Compétence (`id`) | Ce qui la couvre au CP (vérifié) | Manque |
-|---|---|---|
-| `nom-lettres` | 🎯 Les lettres (GS, CP : reconnaître, majuscule/minuscule) · 📘 alphabet (5 affiches) | Association avec la cursive ; b/d, p/q |
-| `son-lettres` | ✗ | Valeur sonore des lettres (son initial d'un mot) |
-| `decodage` | 🎯 Lecture & Syllabes CP : 15 mots (`MOTS_CP`), reconstitution | Banque de mots trop petite, pas de pseudo-mots ni de phrases déchiffrables ; aucune fiche prégénérée (Lecture absente de `EXERCICES`) |
-| `fluence` | ✗ | Texte avec compteur de mots, chrono d'une minute ; objectif 30 mots/min (`lectureMotsParMinute`) |
-| `comprendre-texte` | Le rapport compte Lecture (mode `lecture_texte`), mais ce mode n'a qu'un bouton « J'ai lu » : **aucune question** | Questions de compréhension (qui, où, quoi, ordre, reprises « le lion / il / le fauve ») |
-| `cursive` | 📄 fiches d'écriture (26 lettres, alphabets, chiffres, jours, mois) | — (pas d'exercice possible à l'écran ; suffisant) |
-| `copie` | 📄 mêmes fiches d'écriture | (mineur) copie de phrases : le générateur `/imprimer/ecriture` permet un texte libre |
-| `dictee` | 🎯 Dictée CP | — |
-| `ordre-alphabetique` | ✗ (`VocabulaireView` : CE1, CE2) | Ranger par la première lettre, lettre avant/après |
-| `synonymes-antonymes` | ✗ | Contraires (lourd/léger), mots de même sens |
-| `familles-mots` | ✗ | chant/chanter, chat/chaton, coller/décoller (BO n° 41 p. 88-89) ; catégories (champ lexical) |
-| `orthographe-lexicale` | 🎯 Orthographe « Lettres manquantes » (≈ 12 questions CP) et Dictée · 📄 fiche par compétence | Banque de questions mince ; bug : « Le soli___ brille. » attend `soleil` |
-| `accents-lettres` | Le rapport compte Orthographe, mais aucune question ne porte sur les accents, s/c/g ou an/am, on/om… | Thème « Sons et lettres » |
-| `phrase` | ✗ (`GrammaireView` : `niv` sans `'cp'`) | Majuscule, point, ordonner une phrase, types de phrases, forme négative |
-| `classes-mots` | ✗ | Tri de corpus (« la boîte des noms », « la boîte des verbes ») ; `CONTRAINTES.cp.classesMots: []` : pas de nature à nommer |
-| `sujet-verbe` | ✗ | S'initier : « le chat miaule / les chats miaulent » |
-| `accords-gn` | 🎯 Orthographe « Accords » (féminin -e, pluriel -s, niveau CP) | Exercice de grammaire (genre, nombre, chaîne d'accords) |
-| `conjugaison-present-etre-avoir` | 🎯 Conjugaison CP · 📘 être et avoir au présent | — |
-
-### 1.3 Ce que le rapport compte à tort
-
-Les `competences` d'une route (`COMPETENCES_ROUTES` dans `src/data/activites.js`, `COMPETENCES_CALCUL`) valent pour
-tous les niveaux de l'activité. `ressourcesDe()` (`src/impression/couverture.js`) les attribue donc à chaque classe,
-même quand l'option n'existe pas dans cette classe :
-
-- `ajouter-9` au CP : rien ne le propose (voir plus haut) ;
-- `accents-lettres` au CP : aucune question d'Orthographe ;
-- `comprendre-texte` au CP : aucune question ;
-- `ajouter-dizaines` au CP : le rapport cite Calcul mental, qui ne le propose pas au CP (seul le générateur le fait).
-
-Erreurs de données voisines :
-
-- `COMPETENCES_TYPES.dixCent = 'multiplier-10-100'` (`calcul.js`) : `fiche-ajouter-retirer-10` (CP · CE1, ± 10) est
-  rangée en « multiplier par 10 », compétence du CE1, au lieu de `ajouter-dizaines` ;
-- `fiche-suites-de-nombres` est indiquée « CP · CE1 » avec `suites-nombres`, compétence qui commence au CE1. Ses
-  nombres vont jusqu'à 190 (pas 10, départs jusqu'à 140), au-delà du champ du CP ;
-- Générateur de calcul (`CalculView`) au CP : les paramètres d'un type ne sont pas filtrés par niveau. Par exemple,
-  `dixCent` propose × 100 et des nombres jusqu'à 10 000. C'est acceptable pour un outil libre (les types hors niveau
-  sont grisés), mais il faut le savoir.
-
----
-
-## 2. Propositions
+Les sections ci-dessous ne gardent que les propositions qui répondent à ces manques ; les autres sont faites (historique : `git log -- plans/10-couverture-cp.md`). Les noms de fichiers cités (vues `.vue`, `activites.js`, `exercices.js`, `programme.ts`…) sont ceux de l'ancien monde, supprimé : le code d'un nouvel exercice est un module `src/exercices/<id>/` (`npm run nouveau`, voir `src/exercices/README.md`), le programme est `src/data/programme.ts`.
+## Propositions encore à réaliser
 
 Principes communs (comme pour les niveaux CE1/CE2 existants) :
 
@@ -123,57 +57,6 @@ Principes communs (comme pour les niveaux CE1/CE2 existants) :
   couvre automatiquement les nouvelles `fiches`.
 - **Phrases « Je sais… »** : `src/data/savoirs.js` a déjà une phrase CP pour chaque compétence CP. Il n'y a rien à
   ajouter, sauf si on crée une compétence (section 4).
-
-### Étape 0 — Couverture honnête et données fausses (petit)
-
-- `src/data/activites.js` : `COMPETENCES_ROUTES[route]` accepte un objet par niveau, en plus d'une liste
-  (`{ cp: [...], ce1: [...] }`). On l'utilise pour `/maths/calcul-mental`, `/francais/orthographe` et `/lecture`.
-  `src/impression/couverture.js` (`RESSOURCES`) déplie l'objet en une ressource par niveau. Une seule source,
-  partagée par `/programme` et `scripts/couverture.mjs`.
-- `src/impression/calcul.js` : la compétence de `dixCent` dépend des opérations. `+10`, `-10`, `+100` et `-100`
-  donnent `ajouter-dizaines` ; `x10` et `x100` donnent `multiplier-10-100`. Remplacer l'entrée de
-  `COMPETENCES_TYPES` par une fonction `(type, params)`. Le slug et le contenu de `fiche-ajouter-retirer-10` ne
-  bougent pas.
-- `fiche-suites-de-nombres` : `niveaux: 'CE1'` (décision D2). La fiche CP « compter de 2 en 2, de 10 en 10 » relève de
-  `numeration-100` : elle vient avec l'étape 2.
-- `OrthographeView.vue` : corriger `indice: 'soli___'` en `'sol___'`. Cela modifie la fiche CP de lettres manquantes
-  si la question tombe, ce qui est une correction voulue.
-- Test : `tests/logique.test.mjs`, une ressource ne déclare au niveau N que des compétences qui ont N dans
-  `niveaux`. Ce test aurait attrapé `fiche-ajouter-retirer-10`.
-
-### Étape 1 — Calcul mental CP : les stratégies du programme (petit)
-
-`src/views/maths/CalcuMentalView.vue`, `NIVEAUX.cp` :
-
-- `doubles: [...plage(1, 10), 20, 30, 40, 50]`. Les moitiés suivent (`n * 2`) et donnent 2…20, 40, 60, 80, 100,
-  soit exactement `CONTRAINTES.cp.moities`.
-- `strat: 100`, avec une liste des stratégies permises par niveau. Le CE1 propose ± 9 **et** ± 11, ce que le CP n'a
-  pas. Ajouter à `NIVEAUX` une clé `strats` :
-  - CP : `[OP_VERS_DIZ, OP_DIZ, OP_PASSAGE_PLUS, '+ 9']` ;
-  - CE1 et au-delà : toutes.
-
-  `opDispo()` lit `strats`. `OP_911` au CP ne tire que `+ 9`. `OP_PASSAGE` au CP : seulement l'ajout (47 + 6) et
-  « soustraire un nombre < 10 à un nombre entier de dizaines » (50 − 6, annexe 4 p. 8). Pas de 53 − 7.
-- Nouvelle opération CP seulement : `'Fois'`, du type « 3 fois 20 = … (20 + 20 + 20) ». Résultat ≤ 100, facteur
-  2 à 5, nombre répété ≤ 20 ou dizaine entière. Elle vise `sens-multiplication`. Libellés : `op_fois` dans
-  `src/i18n/fr|br/views/maths/CalcuMentalView.js` ; texte de la question dans le même catalogue (`foisQ`), en breton
-  `// br: à relire`.
-- `exercices.js`, exercice `calcul-mental` :
-  - `choix` : ajouter `'^Fois$'` ;
-  - `fiches` : ajouter `classes` `'cp'` à `dizaines` (« ± dizaines, passer la dizaine ») et à `ajouter-9`, avec un
-    titre propre au CP (« ajouter 9 ») ;
-  - `complements` CP : `['^Compléments à 10$', '^Vers la dizaine']` ;
-  - nouvelle fiche `F('fois', '« 3 fois 20 »', 'sens-multiplication', ['^Fois$'], { classes: ['cp'] })`.
-- `src/impression/calcul.js` :
-  - `neufOnze.niveaux` : ajouter `'cp'` ; `PRESETS_NIVEAU.cp.params.neufOnze = { ops: ['+9'], plage: '100' }` ;
-  - `doubles` : nouvelle option de plage `'cp'` (doubles 20, 30, 40, 50 ; moitiés 40, 60, 80, 100), libellé
-    `doubles_cp` dans `contenu/calcul-libelles.js` fr et br ;
-  - preset CP : `plages: ['10', 'cp']`.
-  - **Décision D1** : régénérer `fiche-doubles-et-moities-cp` avec ces valeurs (même slug, contenu modifié
-    volontairement).
-- Test : la ligne CP de `CAS` existe déjà (`champ('calculMentalMax')`, `tout:Opérations`). Ajouter :
-  - `sans(/− (9|11)\b|\+ 11\b/, '± 11 / − 9 au CP')` ;
-  - une vérification que les doubles demandés font partie de `CONTRAINTES.cp.doubles`, ou des nombres jusqu'à 10.
 
 ### Étape 2 — Numération CP (+ ordinaux) (moyen)
 
@@ -219,47 +102,6 @@ Principes communs (comme pour les niveaux CE1/CE2 existants) :
   - une ligne avec seulement « Écrire en lettres », qui vérifie que le nombre en chiffres de chaque question est
     ≤ 50 (`champ('nombresEnLettresMax')`) ;
   - une ligne `Ordinaux` qui vérifie les rangs ≤ 20.
-
-### Étape 3 — Heure CP (petit)
-
-`src/views/maths/HeureView.vue` :
-
-- `NIVEAUX.cp = { exercices: ['lire', 'placer', 'moment'], exercicesDefaut: ['lire', 'placer'], precisions: ['heure'],
-  precisionsDefaut: ['heure'], durees: [], dureesCinq: [], dureesMinute: [], dureeMax: 0, conversions: [] }`.
-  `distracteurs()` filtre déjà sur `pool` (`[0]`) : pas de « 3 h 15 » parmi les choix. `placer` : heures 1 à 12
-  (`heureMax12`).
-- Nouveau sous-exercice `moment` (CP seulement) : « Associer une heure à un moment de la journée » (annexe 4 p. 26).
-  Une action familière (se lever, aller à l'école, déjeuner à midi, goûter, se coucher) et trois horloges ; on
-  choisit la plausible. Données : `moments` du catalogue `src/i18n/fr|br/contenu/heure.js`, à compléter (breton
-  `// br: à relire`). Lire « midi » pour 12 h : vérifier `oral12`.
-- Aide de configuration : `aideCp` (« Au CP : les heures entières seulement »), comme `aideCe1`.
-- `exercices.js` : `classes` + `C('cp', '^CP$')` ; fiche
-  `F('lire', "lire et placer les heures entières", 'heure-entiere', ["Lire l'heure", 'Placer les aiguilles'], { classes: ['cp'] })` ;
-  `durees` : `classes: ['ce1', 'ce2']`.
-- `activites.js` : `niveaux` + `'cp'` ; `desc` « Heures entières (CP), demies, quarts… ».
-- Test : `['/maths/heure', '^CP$', 'cp', [heure, sans(/\b(1[3-9]|2[0-3]) h\b/, 'heure > 12')], ['tout:Exercices', 'tout:Précision']]`.
-  `heure()` vérifie déjà la précision `entiere` (60).
-
-### Étape 4 — Monnaie CP (petit)
-
-`src/views/maths/MonnaieView.vue` :
-
-- `NIVEAUX.cp` : `types: ['compter', 'composer', 'moins', 'rendre', 'comparer']`, `notation: 'ec'`,
-  `saisieDecimale: false`, `centimesPermis: false` et seulement les blocs `entiers` :
-  - `compter.entiers = { valeurs: [100, 200, 500, 1000, 2000, 5000], nb: [2, 6], min: 300, max: 10000 }` ;
-  - `composer.entiers = { min: 300, max: 10000, pas: 100 }` ;
-  - `rendre.entiers` avec `paye` 500, 1000, 2000 et 5000, `rendu` en euros entiers ;
-  - `comparer.entiers` avec `max: 5000` ;
-  - `palette.entiers`.
-- Le choix « Euros entiers / Avec centimes » (lignes 29-30) est masqué si `!niveau.centimesPermis`, et
-  `config.centimes` est forcé à `false` au CP. Les fiches lisent `niv.palette[...]` (≤ 20 € pour l'entourage :
-  déjà le cas).
-- Consigne du programme : « Produire 56 € sans pièce de 1 € » (contrainte). C'est une option possible de `moins`,
-  plus tard.
-- `exercices.js` : `C('cp', '^CP$')` ; les fiches `compter` et `rendre` valent pour le CP (`monnaie-euros`).
-  `centimes` reste `classes: ['ce2']`.
-- `activites.js` : `niveaux: ['cp', 'ce1', 'ce2']`.
-- Test : `['/maths/monnaie', '^CP$', 'cp', [champ(), sans(/\d+ ?c\b|centime|,\d{2} ?€/, 'centimes au CP')], ['tout:Exercices']]`.
 
 ### Étape 5 — Problèmes CP (moyen)
 
@@ -440,25 +282,6 @@ Principes communs (comme pour les niveaux CE1/CE2 existants) :
   (sans occlusives en GS) et on garde la classe publiée `gs-cp` (slug inchangé). Fiches par compétence :
   `nom-lettres`, `son-lettres`.
 
-### Étape 12 — Orthographe : « Sons et lettres » (petit à moyen)
-
-`src/views/francais/OrthographeView.vue` :
-
-- Nouveau thème `sons` (`niv: 'cp'`, jusqu'au CE2), pour `accents-lettres` (BO n° 41 p. 89) :
-  - c/ç/qu (« un ma**ç**on ») ;
-  - g/ge/gu ;
-  - s/ss entre deux voyelles ;
-  - m devant m, b, p (« ja**m**be », « o**m**bre ») ;
-  - é/è/ê, avec QCM « Quel accent ? ».
-
-  Questions du même format que `lettres` (`phrase`, `bonne`, `choix`, `explication`). Les explications sont des clés
-  du catalogue d'interface, en breton `// br: à relire`.
-- Enrichir les `lettres` du CP (lettres muettes finales : « un chat → un chaton », CP p. 89).
-- `exercices.js` : `choix` + `'Sons et lettres'` ; `F('sons', 'les sons et les lettres', 'accents-lettres',
-  ['Sons et lettres'], { classes: ['cp', 'ce1', 'ce2'] })`. La classe `cp-cm2` (homophones) n'est pas touchée.
-- Test : le bloc « Orthographe » de `programme-francais` vérifie déjà les pluriels et les féminins ; ajouter que le
-  thème `sons` existe au CP.
-
 ### Étape 13 — Données : tableaux et diagrammes (grand, nouvelle vue)
 
 Rien ne couvre `tableaux-diagrammes`, à aucun niveau (CP → CM2). Proposition (**décision D6**) : une vue
@@ -502,34 +325,7 @@ Cadre : `src/impression/affiches/cadre.js`, catalogue `affiches/catalogue.js`, d
 
 ---
 
-## 3. Ordre conseillé, effort, décisions
-
-| # | Étape | Effort | Compétences CP gagnées (exercice) |
-|---|---|---|---|
-| 0 | Couverture honnête, `dixCent`, `fiche-suites-de-nombres`, bug « soli___ » | ½ j | — (le rapport devient juste) |
-| 1 | Calcul mental CP (stratégies, doubles, « fois ») + générateur | ½ j | `ajouter-dizaines`, `ajouter-9`, `sens-multiplication`, `doubles-moities` et `complement-dizaine` complets |
-| 2 | Numération CP + ordinaux | 1 j | `numeration-100`, `nombres-en-lettres`, `comparer-ranger`, `droite-graduee`, `ordinaux` |
-| 3 | Heure CP | ½ j | `heure-entiere` |
-| 4 | Monnaie CP | ½ j | `monnaie-euros` |
-| 5 | Problèmes CP | 1 j | `problemes-additifs`, `problemes-multiplicatifs`, `problemes-etapes` |
-| 6 | Mesures CP | ½ à 1 j | `longueurs`, `masses` |
-| 7 | Géométrie CP + parcours | 1 à 2 j | `figures-planes`, `tracer-figures`, `solides`, `reperage-deplacements` |
-| 8 | Grammaire CP | 1 j | `phrase`, `sujet-verbe`, `accords-gn`, (`classes-mots`) |
-| 9 | Vocabulaire CP | 1 j | `ordre-alphabetique`, `synonymes-antonymes`, `familles-mots` |
-| 12 | Orthographe « Sons et lettres » | ½ j | `accents-lettres` |
-| 11 | Les lettres : sons, cursive | 1 j | `son-lettres` (+ `nom-lettres` complet) |
-| 10 | Lecture : fluence, compréhension, fiches | 2 à 3 j (dont les textes) | `fluence`, `comprendre-texte`, `decodage` complet |
-| 13 | Données (nouvelle vue) | 2 j | `tableaux-diagrammes` (+ CE1, CE2) |
-| 14 | Affiches numération CP et solides CP | ½ j | (affiches) |
-
-Chaque étape est livrable seule : vue + `activites.js` + `exercices.js` + i18n fr/br + test, un commit par étape.
-Après les étapes 0 à 9 et 12 (≈ 8 jours), 36 compétences CP sur 42 ont un exercice (35 si D3 = non). Il reste
-`fluence`, `comprendre-texte`, `son-lettres` et `tableaux-diagrammes` (étapes 10, 11 et 13). `cursive` et `copie`
-restent couvertes par des fiches, ce qui suffit.
-
-Coût du build : chaque classe CP ajoutée produit `NB_VARIANTES` (4) fiches, plus 2 par compétence et par langue,
-soit environ 15 exercices × (4 + 2 × 3) × 2 langues ≈ 300 PDF de plus. Le build parallélisé l'absorbe, mais c'est à
-surveiller (TODO « ne pas générer deux fois les mêmes PDF »).
+## 3. Décisions
 
 ### Décisions à prendre (avec recommandation)
 
@@ -553,7 +349,7 @@ surveiller (TODO « ne pas générer deux fois les mêmes PDF »).
 
 ---
 
-## 4. Ce qui manque ou semble douteux dans `programme.js` pour le CP
+## 4. Ce qui manque ou semble douteux dans `programme.ts` pour le CP
 
 Sources : annexe 4 (maths cycle 2, `SOURCES.c2maths`) et BO n° 41 (`SOURCES.bo41`), pages du PDF.
 

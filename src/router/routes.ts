@@ -7,6 +7,7 @@ import type { Langue } from '../langues/registre.ts'
 import { LANGUES } from '../langues/registre.ts'
 import type { CleTexte } from '../langues/traduire.ts'
 import { cheminRegional } from './chemins.ts'
+import { versAffiche, versEcriture } from './anciennesAdresses.ts'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -48,15 +49,21 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     { path: '/competence/:id', component: () => import('../pages/CompetenceView.vue'), meta: { titre: 'routeur.titre.competence' } },
     { path: '/parametres', component: () => import('../pages/ReglagesView.vue'), meta: { titre: 'nav.reglages' } },
     { path: '/about', component: () => import('../pages/AProposView.vue'), meta: { titre: 'nav.apropos' } },
+    // mentions légales et confidentialité (obligatoires : éditeur, hébergeur, données, licences)
+    { path: '/mentions-legales', component: () => import('../pages/MentionsLegalesView.vue'), meta: { titre: 'shell.pied.mentions' } },
     { path: '/nouveautes', component: () => import('../pages/NouveautesView.vue'), meta: { titre: 'nav.nouveautes' } },
     // les affiches au format « définition » (src/affiches/) : une page, le formulaire générique (?affiche=<id>&variante=<v>)
     { path: '/imprimer/affiches', component: () => import('../pages/AfficheView.vue'), meta: { titre: 'routeur.titre.affiche' } },
-    // ancienne adresse de l'affiche de l'alphabet (liens externes, favoris)
-    { path: '/imprimer/alphabet', redirect: to => ({ path: '/imprimer/affiches', query: { affiche: 'alphabet' }, hash: to.hash }) },
-    // ancienne adresse de l'affiche des nombres (liens externes, favoris) ; ?mise=fiche : toutes les sections sur une feuille
-    { path: '/imprimer/nombres', redirect: to => ({ path: '/imprimer/affiches', query: { affiche: 'nombres' }, hash: to.hash }) },
-    // ancienne adresse des affiches des tables (liens externes, favoris)
-    { path: '/imprimer/calcul', redirect: to => ({ path: '/imprimer/affiches', query: { affiche: 'tables' }, hash: to.hash }) },
+    // anciennes adresses des affiches (liens externes, favoris, anciennes pages statiques) ; ?preset=<slug> : la variante de ce slug
+    { path: '/imprimer/alphabet', component: aVenir, beforeEnter: to => versAffiche('alphabet', to.query) },
+    { path: '/imprimer/nombres', component: aVenir, beforeEnter: to => versAffiche('nombres', to.query) },
+    { path: '/imprimer/calcul', component: aVenir, beforeEnter: to => versAffiche('tables', to.query) },
+    // anciennes pages de l'app (production avant la base saine) : la page qui les remplace (anciennesAdresses.ts)
+    { path: '/imprimer/ecriture', component: aVenir, beforeEnter: to => versEcriture(to.query) },
+    { path: '/imprimer', redirect: { path: '/telechargements' } },
+    { path: '/lecture', redirect: to => ({ path: '/francais/lecture', query: to.query }) },
+    { path: '/autres', redirect: to => ({ path: '/monde/quiz', query: to.query }) },
+    { path: '/maternelle', redirect: to => ({ path: '/maths', query: { classes: 'ps,ms,gs', ...to.query } }) },
     // nouveau:routes
   ]
 }

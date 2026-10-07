@@ -78,6 +78,7 @@ export default {
     signaler: 'Menegiñ ur fazi', // br: à relire
     depot: 'Kod war GitHub', // br: à relire
     contact: 'Darempred', // br: à relire
+    mentions: 'Notennoù lezennel', // br: à relire
     libre: 'Digoust · hep bruderezh · hep toupin na spiadur',
   },
 } satisfies Traductions<typeof fr>

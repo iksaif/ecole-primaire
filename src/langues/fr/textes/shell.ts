@@ -75,6 +75,7 @@ export default {
     signaler: 'Signaler une erreur',
     depot: 'Code sur GitHub',
     contact: 'Contact',
+    mentions: 'Mentions légales',
     libre: 'Gratuit · sans publicité · sans cookie ni pistage',
   },
 } as const

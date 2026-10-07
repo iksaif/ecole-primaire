@@ -9,6 +9,7 @@
         <li><a :href="`${SITE.depot}/issues/new`" target="_blank" rel="noopener"><span aria-hidden="true">{{ EMOJI_PIED.signaler }}</span> {{ t('shell.pied.signaler') }}</a></li>
         <li><a :href="SITE.depot" target="_blank" rel="noopener"><span aria-hidden="true">{{ EMOJI_PIED.depot }}</span> {{ t('shell.pied.depot') }}</a></li>
         <li><a :href="`mailto:${SITE.contact}`"><span aria-hidden="true">{{ EMOJI_PIED.contact }}</span> {{ t('shell.pied.contact') }}</a></li>
+        <li><RouterLink to="/mentions-legales"><span aria-hidden="true">{{ EMOJI_PIED.mentions }}</span> {{ t('shell.pied.mentions') }}</RouterLink></li>
       </ul>
     </nav>
     <p>{{ t('shell.pied.libre') }}</p>

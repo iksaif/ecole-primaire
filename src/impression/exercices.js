@@ -7,7 +7,6 @@ import { ACTIVITES } from '../data/activites.js'
 import { classesEntre } from '../data/classes.js'
 import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
-import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
 export const NB_VARIANTES = 4
@@ -68,20 +67,6 @@ const LISTE = [
         const fiches = CONJUGAISON.fiches.filter(f => f.id === id)
         return F(id, titre, fiches[0].competence, [re], { classes: fiches.map(f => f.niveau) })
       }) },
-  { id: 'vocabulaire', route: '/francais/vocabulaire', groupe: 'francais', titre: { fr: 'Vocabulaire', br: 'Geriaoueg' },
-    // classes et fiches : celles de la définition (src/exercices/vocabulaire/definition.js)
-    classes: Object.keys(VOCABULAIRE.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Ranger des mots', 'Lettre avant', 'Mots-repères', 'Définitions', 'Le sens dans la phrase', 'Contraires', 'Mots de même sens', 'se disent pareil',
-      'Sens propre', 'Familles de mots', 'Préfixes', 'Suffixes', 'Mot étiquette', 'Intrus dans une catégorie'],
-    fiches: [
-      ['ordre-alphabetique', "l'ordre alphabétique et le dictionnaire", ['Ranger des mots', 'Lettre avant', 'Mots-repères', 'Définitions', 'Le sens dans la phrase']],
-      ['sens', 'le sens des mots', ['Contraires', 'Mots de même sens', 'Sens propre']],
-      ['familles', 'familles de mots, préfixes et suffixes', ['Familles de mots', 'Préfixes', 'Suffixes']],
-      ['categories', 'les catégories de mots', ['Mot étiquette', 'Intrus dans une catégorie']],
-    ].map(([id, titre, seul]) => {
-      const fiches = VOCABULAIRE.fiches.filter(f => f.id === id)
-      return F(id, titre, fiches[0].competence, seul, { classes: fiches.map(f => f.niveau) })
-    }) },
   // ── Culture générale ──
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
     classes: [C('cp-cm2', null)] },

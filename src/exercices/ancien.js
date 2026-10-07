@@ -11,10 +11,6 @@ import grammaireDefinition from './grammaire/definition.js'
 import * as grammaireGenerateur from './grammaire/generateur.js'
 import * as grammaireFiche from './grammaire/fiche.js'
 import { TEXTES as grammaireTextes } from './grammaire/textes.js'
-import vocabulaireDefinition from './vocabulaire/definition.js'
-import * as vocabulaireGenerateur from './vocabulaire/generateur.js'
-import * as vocabulaireFiche from './vocabulaire/fiche.js'
-import { TEXTES as vocabulaireTextes } from './vocabulaire/textes.js'
 import dicteeDefinition from './dictee/definition.js'
 import * as dicteeGenerateur from './dictee/generateur.js'
 import * as dicteeFiche from './dictee/fiche.js'
@@ -84,7 +80,6 @@ import { TEXTES as dicteeTextes } from './dictee/textes.js'
 export const REGISTRE = [
   { definition: conjugaisonDefinition, generateur: conjugaisonGenerateur, fiche: conjugaisonFiche, textes: conjugaisonTextes },
   { definition: grammaireDefinition, generateur: grammaireGenerateur, fiche: grammaireFiche, textes: grammaireTextes },
-  { definition: vocabulaireDefinition, generateur: vocabulaireGenerateur, fiche: vocabulaireFiche, textes: vocabulaireTextes },
   { definition: dicteeDefinition, generateur: dicteeGenerateur, fiche: dicteeFiche, textes: dicteeTextes },
 ]
 

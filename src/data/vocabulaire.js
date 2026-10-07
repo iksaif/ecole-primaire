@@ -1,7 +1,7 @@
 // Vocabulaire — corpus de l'exercice : mots par lettre, contraires, synonymes, familles, définitions, catégories,
 // préfixes, suffixes, sens figuré (CE1, CE2 ; le CE2 reprend certaines banques du CE1).
 // Donnée pure, jamais traduite : c'est du français étudié (exercice de français, `contenu: 'fr'`), comme
-// src/data/conjugaison.js et src/data/dicteeMots.js. Le générateur (src/exercices/vocabulaire/generateur.js) la lit,
+// src/data/conjugaison.js et src/data/dicteeMots.js. Le générateur (src/exercices/vocabulaire/generateur.ts) la lit,
 // sans Vue, et les mots restent lisibles par node.
 
 export const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'

@@ -11,7 +11,7 @@
   - slots : #element="{ element, index, rang }" contenu d'un bouton (rang : position dans la réponse, -1 si pas
     touché) ; #place="{ element, index, rang }" contenu d'une case de la réponse (par défaut, celui de #element) ;
     le slot par défaut s'affiche entre la réponse et les boutons (flèche d'aide « du plus petit au plus grand »).
-  - props de forme : separateur (texte entre deux cases, ex. « → ») ; sansZone (pas de cases : le rang est montré
+  - props de forme : separateur (texte entre deux cases, ex. « → ») ; mots (des mots, pas des nombres : étiquettes larges) ; sansZone (pas de cases : le rang est montré
     dans le bouton, voir #element) ; sansBouton (pas de Valider : l'appelant valide seul quand `complet`).
   - événement valider : clic sur « Valider » (actif quand tous les éléments sont placés). « Annuler » retire le
     dernier élément. La vue vide `ordre` à chaque nouvelle question (surQuestion de useJeu) ; elements doit garder la
@@ -21,7 +21,7 @@
   focalisable (`aria-disabled`) et le focus passe au suivant libre, puis à « Valider » : il ne se perd pas.
 -->
 <template>
-  <div class="ordre-clics">
+  <div class="ordre-clics" :class="{ mots }">
     <div v-if="!sansZone" class="ordre-zone" :class="etat" role="group" :aria-label="t('communs.taReponse')" aria-live="polite">
       <template v-for="(_, k) in elements" :key="k">
         <span v-if="separateur && k > 0" class="ordre-sep" aria-hidden="true">{{ separateur }}</span>
@@ -64,7 +64,9 @@ const props = withDefaults(defineProps<{
   separateur?: string
   sansZone?: boolean
   sansBouton?: boolean
-}>(), { verrou: false, etat: '', separateur: '', sansZone: false, sansBouton: false })
+  // des mots (Vocabulaire, Grammaire) : étiquettes à la largeur du mot au lieu de pastilles rondes
+  mots?: boolean
+}>(), { verrou: false, etat: '', separateur: '', sansZone: false, sansBouton: false, mots: false })
 const emit = defineEmits<{ 'update:modelValue': [ordre: number[]], valider: [] }>()
 type PropsElement = { element: E, index: number, rang: number }
 defineSlots<{
@@ -124,6 +126,10 @@ function envoyer() {
 .ordre-btn:hover:not([aria-disabled]) { background: #fff5e0; transform: scale(1.08); }
 .ordre-btn.pris { opacity: .3; cursor: default; }
 .ordre-btn[aria-disabled]:not(.pris) { cursor: default; }
+
+/* mots : étiquettes à la largeur du mot */
+.mots .ordre-btn { border-radius: 999px; font-size: 1.3rem; font-weight: 800; min-height: 3rem; padding: .4rem 1.1rem; }
+.mots .ordre-slot { width: auto; min-width: 5rem; height: 3rem; padding: 0 .7rem; font-size: 1.2rem; font-weight: 800; }
 
 .ordre-actions { display: flex; gap: .75rem; justify-content: center; margin-bottom: .75rem; }
 .ordre-actions [aria-disabled="true"] { opacity: .5; cursor: default; }

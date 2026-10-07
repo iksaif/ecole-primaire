@@ -27,6 +27,7 @@ import { module as geometrie } from './geometrie/index.ts'
 import { module as motifs } from './motifs/index.ts'
 import { module as lettres } from './lettres/index.ts'
 import { module as orthographe } from './orthographe/index.ts'
+import { module as vocabulaire } from './vocabulaire/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -56,6 +57,7 @@ const BASE: readonly EntreeRegistre[] = [
   motifs,
   lettres,
   orthographe,
+  vocabulaire,
   // nouveau:registre
 ]
 

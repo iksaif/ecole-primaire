@@ -23,5 +23,6 @@ export const VUES: Readonly<Record<string, VueExercice>> = {
   '/maths/geometrie': () => import('./maths/GeometrieView.vue'),
   '/maternelle/lettres': () => import('./maternelle/LettresView.vue'),
   '/francais/orthographe': () => import('./francais/OrthographeView.vue'),
+  '/francais/vocabulaire': () => import('./francais/VocabulaireView.vue'),
   // nouveau:vues
 }

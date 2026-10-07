@@ -23,10 +23,6 @@ import dicteeDefinition from './dictee/definition.js'
 import * as dicteeGenerateur from './dictee/generateur.js'
 import * as dicteeFiche from './dictee/fiche.js'
 import { TEXTES as dicteeTextes } from './dictee/textes.js'
-import lettresDefinition from './lettres/definition.js'
-import * as lettresGenerateur from './lettres/generateur.js'
-import * as lettresFiche from './lettres/fiche.js'
-import { TEXTES as lettresTextes } from './lettres/textes.js'
 
 /**
  * Réglages d'un exercice : valeurs simples ou listes de valeurs choisies (ids).
@@ -95,7 +91,6 @@ export const REGISTRE = [
   { definition: vocabulaireDefinition, generateur: vocabulaireGenerateur, fiche: vocabulaireFiche, textes: vocabulaireTextes },
   { definition: orthographeDefinition, generateur: orthographeGenerateur, fiche: orthographeFiche, textes: orthographeTextes },
   { definition: dicteeDefinition, generateur: dicteeGenerateur, fiche: dicteeFiche, textes: dicteeTextes },
-  { definition: lettresDefinition, generateur: lettresGenerateur, fiche: lettresFiche, textes: lettresTextes },
 ]
 
 /** @param {string} id */

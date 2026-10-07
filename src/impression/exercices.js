@@ -9,7 +9,6 @@ import CONJUGAISON from '../exercices/conjugaison/definition.js'
 import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
 import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
-import LETTRES from '../exercices/lettres/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
 export const NB_VARIANTES = 4
@@ -98,10 +97,6 @@ const LISTE = [
       const fiches = ORTHOGRAPHE.fiches.filter(f => f.id === id)
       return F(id, titre, fiches[0].competence, [seul], { classes: fiches.map(f => f.niveau) })
     }) },
-  // ── Maternelle ──
-  { id: 'lettres', route: '/maternelle/lettres', groupe: 'maternelle', titre: { fr: 'Les lettres', br: 'Al lizherennoù' },
-    // une seule fiche publiée (exercices-lettres-gs-cp), celle du niveau par défaut : les niveaux de la définition
-    classes: [C(Object.keys(LETTRES.niveaux).join('-'), null)] },
   // ── Culture générale ──
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
     classes: [C('cp-cm2', null)] },

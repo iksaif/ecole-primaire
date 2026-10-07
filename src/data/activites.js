@@ -7,7 +7,6 @@ import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import VOCABULAIRE from '../exercices/vocabulaire/definition.js'
 import ORTHOGRAPHE from '../exercices/orthographe/definition.js'
 import DICTEE from '../exercices/dictee/definition.js'
-import LETTRES from '../exercices/lettres/definition.js'
 
 // classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
 export { CLASSES }
@@ -56,7 +55,6 @@ export const ACTIVITES = [
   // ── Maths ──
 
   // ── Français ──
-  { fiche: true, to: '/maternelle/lettres',   matiere: 'francais', domaine: 'lecture', rubrique: 'Lettres et sons', icon: '🔡', titre: 'Les lettres', desc: 'Reconnaître et associer majuscules et minuscules', niveaux: Object.keys(LETTRES.niveaux) },
   { fiche: true, to: '/lecture', matiere: 'francais', domaine: 'lecture', rubrique: 'Lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
   { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: Object.keys(DICTEE.niveaux) },
   { fiche: true, to: '/francais/orthographe', matiere: 'francais', domaine: 'vocabulaire', rubrique: 'Orthographe', icon: '🔤', titre: 'Orthographe', desc: 'Homophones, accords, lettres manquantes', niveaux: Object.keys(ORTHOGRAPHE.niveaux) },
@@ -73,7 +71,6 @@ export const ACTIVITES = [
 const BR = {
   '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
-  '/maternelle/lettres':   ['Al lizherennoù', 'Anaout ha liammañ ar pennlizherennoù hag al lizherennoù bihan'],
   '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],
   '/francais/orthographe': ['Reizhskrivañ', 'Heñvelsonioù, kenglotadurioù, lizherennoù a vank (e galleg)'],
   '/francais/grammaire':   ['Yezhadur', 'Frazenn, natur ar gerioù, sujed, kenglotadurioù (e galleg)'],
@@ -88,7 +85,6 @@ const BR = {
 // ont les leurs dans leur catalogue. Test : une compétence n'est déclarée qu'aux classes où elle est au programme.
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
-  '/maternelle/lettres': Object.fromEntries(Object.entries(LETTRES.niveaux).map(([n, v]) => [n, v.competences])),
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
   '/francais/dictee': Object.fromEntries(Object.entries(DICTEE.niveaux).map(([n, v]) => [n, v.competences])),
   // accents et lettres à plusieurs sons : aucune question aujourd'hui

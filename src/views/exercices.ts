@@ -21,5 +21,6 @@ export const VUES: Readonly<Record<string, VueExercice>> = {
   '/maternelle/formes': () => import('./maternelle/FormesView.vue'),
   '/maternelle/motifs': () => import('./maternelle/MotifsView.vue'),
   '/maths/geometrie': () => import('./maths/GeometrieView.vue'),
+  '/maternelle/lettres': () => import('./maternelle/LettresView.vue'),
   // nouveau:vues
 }

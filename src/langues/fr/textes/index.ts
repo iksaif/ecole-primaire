@@ -43,10 +43,11 @@ import problemes from './problemes.ts'
 import formes from './formes.ts'
 import geometrie from './geometrie.ts'
 import motifs from './motifs.ts'
+import lettres from './lettres.ts'
 import { AVEC_DEV } from '../../../dev.ts'
 
 // Textes des exemples et des pages /dev : absents d'un build de production (AVEC_DEV, src/dev.ts). Le type les garde : en production
 // aucun code ne les lit (les exemples n'y sont pas).
 const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev }
 
-export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, ...sectionsDev } as const
+export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, ...sectionsDev } as const

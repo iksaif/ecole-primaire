@@ -1,9 +1,15 @@
-// Les lettres — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche() : relier chaque
-// majuscule à sa minuscule, par blocs de 6 lettres, et le corrigé.
-//   fiche({ questions, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; T et langue : celles de l'interface (alphabet de la langue) ; police : usePoliceFiche() dans l'app
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
+// Les lettres — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node). Relier chaque majuscule à sa
+// minuscule, par blocs de 6 lettres, et le corrigé.
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
 import { echapper as e } from '../../utils/html.js'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import type { TirageFiche } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 // Même police que POLICE_SCRIPT de src/utils/impression.js (module qui lit le navigateur : pas ici)
 const SCRIPT = 'Andika'
@@ -18,19 +24,18 @@ const CSS = `
       .l i { width: .5rem; height: .5rem; border-radius: 50%; background: #333; display: inline-block; }
       .corr { font-size: 1.15rem; line-height: 2; }`
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
-  const { blocs } = x
-  const html = blocs.map(({ lettres, droite }) => `<div class="bloc">
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  const html = x.blocs.map(({ lettres, droite }) => `<div class="bloc">
       <div class="col">${lettres.map(l => `<div class="l"><span>${e(l)}</span><i></i></div>`).join('')}</div>
       <div class="col min">${droite.map(l => `<div class="l"><i></i><span>${e(l.toLowerCase())}</span></div>`).join('')}</div>
     </div>`).join('')
   // corrigé : un bloc par ligne, dans l'ordre de la fiche, chaque majuscule avec sa minuscule
-  const corrige = blocs.map(({ lettres }) => `<div>${lettres.map(l => `${e(l)} – ${e(l.toLowerCase())}`).join(' &nbsp;·&nbsp; ')}</div>`).join('')
+  const corrige = x.blocs.map(({ lettres }) => `<div>${lettres.map(l => `${e(l)} – ${e(l.toLowerCase())}`).join(' &nbsp;·&nbsp; ')}</div>`).join('')
   const titre = T('titre')
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '700px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T('fConsigne')}</p>
+    <p class="consigne">${T('consigne')}</p>
     <div class="blocs">${html}</div>
     <section class="corrige"><h2>${T('corrige')} — ${e(titre)}</h2>
       <div class="corr">${corrige}</div></section>`,

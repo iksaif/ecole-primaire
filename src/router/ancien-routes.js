@@ -4,7 +4,6 @@ export const routes = [
   { path: '/',                  component: () => import('../views/HomeView.vue') },
   { path: '/maths',             component: () => import('../views/MathsView.vue') },
   { path: '/maternelle',               component: () => import('../views/maternelle/MaternelleView.vue') },
-  { path: '/maternelle/lettres',       component: () => import('../views/maternelle/LettresView.vue') },
   { path: '/francais',            component: () => import('../views/FrancaisView.vue') },
   { path: '/francais/dictee',     component: () => import('../views/francais/DicteeView.vue') },
   { path: '/francais/conjugaison', component: () => import('../views/francais/ConjugaisonView.vue') },

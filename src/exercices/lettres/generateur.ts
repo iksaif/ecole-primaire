@@ -1,12 +1,13 @@
 // Les lettres — générateur : QUOI poser comme questions, et comment les corriger. Pur : aucun import de Vue, aucun Math.random (le hasard
 // vient de `rng`), donc lisible par node, par les tests et par le build des fiches.
-//   questions({ niveau, reglages, rng, T, nb })   une partie : 15 lettres (nb) du groupe, toutes différentes, à reconnaître ou à associer
-//                                                 majuscule / minuscule
+//   questions({ niveau, reglages, rng, T, nb })   une partie : nb lettres (réglage nbQ) du groupe, toutes différentes : entendre le nom
+//                                                 et montrer la lettre, ou associer deux écritures (capitale, script, cursive) ;
+//                                                 les mauvaises réponses viennent d'abord des lettres proches (b/d, p/q, c/e/o…)
 //   questionsFiche({ niveau, reglages, rng, T })  les blocs de la fiche « relier chaque majuscule à sa minuscule »
 //   verifier(q, rep)                              rep : { choix } (indice de la proposition touchée)
 //   bonneReponse(q) / mauvaiseReponse(q)  ecartsAuProgramme(x, contraintes)
 // L'alphabet est celui de la langue du contenu (T('alphabet'), catalogue textes.ts), sans test de langue ici. L'ordre des tirages est
-// celui de l'ancienne version : même flux de hasard, mêmes fiches (instantanés).
+// celui de l'ancienne version pour la fiche : mêmes fiches (instantanés) ; le jeu a été refait (revue du 2026-10-07).
 import type { Classe, Contraintes, ParamsGenerateur, Rng, Verdict } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
@@ -17,22 +18,30 @@ type Reglages = ReglagesDeDefinition<typeof DEFINITION>
 type Cle = CleContenu<typeof CONTENU>
 type T = ParamsGenerateur<Reglages, Cle>['T']
 
-export const NB_QUESTIONS = 15   // lettres d'une partie
 export const PAR_BLOC = 6        // lettres d'un bloc de la fiche
 
+/** Une écriture d'une lettre : capitale (A), script (a, Andika) ou cursive (a, Playwrite FR Trad). */
+export type Ecriture = 'capitale' | 'script' | 'cursive'
+/** La lettre `l` (en capitale dans l'alphabet) écrite dans une écriture : capitale telle quelle, script et cursive en minuscules. */
+export const ecrire = (l: string, e: Ecriture): string => (e === 'capitale' ? l : l.toLowerCase())
+/** Le couple d'écritures d'un réglage `ecritures` (« capitale-script » → ['capitale', 'script']). */
+export const couple = (ecritures: Reglages['ecritures']): [Ecriture, Ecriture] => ecritures.split('-') as [Ecriture, Ecriture]
+
 /**
- * Une question : la lettre (`lettre`, en majuscule), ce qu'on montre (`affiche`), 4 propositions (`options`) dont la bonne (`bonne`, et son
- * texte `attendu`) ; en mode « majuscule », `question` dit ce qu'on cherche. `cle` : ce qui fait deux questions « la même ».
+ * Une question. `lettre` : la lettre (capitale de l'alphabet) ; `nom` : ce que dit la voix ; `montre` : la lettre montrée (mode
+ * « majuscule », ou « reconnaitre » sans voix) dans son écriture ; `options` : 4 propositions, toutes dans l'écriture `ecriture`, dont
+ * la bonne (`bonne`, et son texte `attendu`). `cle` : ce qui fait deux questions « la même ».
  */
 export interface Question {
   cle: string
   mode: Reglages['mode']
   lettre: string
-  affiche: string
+  nom: string
+  montre: { texte: string, ecriture: Ecriture }
+  ecriture: Ecriture
   options: { label: string }[]
   bonne: number
   attendu: string
-  question?: 'quelleMinuscule' | 'quelleMajuscule'
 }
 /** La réponse de l'élève : l'indice de la proposition touchée. */
 export interface Reponse { choix: number }
@@ -49,31 +58,41 @@ export function lettresDe(T: T, groupe: Reglages['groupe']): string[] {
   return alphabet
 }
 
-const fausses = (rng: Rng, pool: readonly string[], exclure: string, n: number): string[] => rng.melanger(pool.filter(l => l !== exclure)).slice(0, n)
+// Lettres que l'on confond (BO n° 41 p. 52 : « b/d, c/e/o, p/q » ; et les capitales proches) : les mauvaises réponses en viennent d'abord
+const PROCHES: Readonly<Record<string, string>> = {
+  B: 'DPR', D: 'BPQO', P: 'BDQR', Q: 'PDOG', R: 'BP', C: 'EOG', E: 'CFO', O: 'CQDE', G: 'CQ', F: 'ETP', T: 'FIL',
+  N: 'UMHW', U: 'NVW', M: 'NW', W: 'MVN', H: 'NK', I: 'LJT', L: 'IJT', J: 'IL', V: 'UWY', Y: 'VX', X: 'KY', K: 'XH', A: 'OH', S: 'Z', Z: 'S',
+}
+// Lettres dont la capitale et la minuscule ont la même forme : sans intérêt pour « associer capitale et script »
+const MEME_FORME = new Set(['C', 'K', 'O', 'P', 'S', 'U', 'V', 'W', 'X', 'Z'])
 
-function question(rng: Rng, mode: Reglages['mode'], pool: readonly string[], lettre: string): Question {
-  if (mode === 'reconnaitre') {
-    // montre la majuscule ou la minuscule ; on retrouve la lettre parmi des majuscules
-    const affiche = rng.vrai(0.5) ? lettre : lettre.toLowerCase()
-    const choix = rng.melanger([lettre, ...fausses(rng, pool, lettre, 3)])
-    return { cle: `reconnaitre-${lettre}`, mode, lettre, affiche, options: choix.map(label => ({ label })), bonne: choix.indexOf(lettre), attendu: lettre }
-  }
-  // montre la majuscule → trouver la minuscule, ou l'inverse
-  const versMin = rng.vrai(0.5)
-  const affiche = versMin ? lettre : lettre.toLowerCase()
-  const attendu = versMin ? lettre.toLowerCase() : lettre
-  const pool2 = versMin ? pool.map(l => l.toLowerCase()) : pool
-  const choix = rng.melanger([attendu, ...fausses(rng, pool2, attendu, 3)])
+/** Trois mauvaises réponses : jusqu'à deux lettres proches de `lettre`, puis au hasard dans le groupe. */
+function fausses(rng: Rng, pool: readonly string[], lettre: string): string[] {
+  const proches = rng.melanger([...(PROCHES[lettre] ?? '')].filter(l => l !== lettre && pool.includes(l))).slice(0, 2)
+  const autres = rng.melanger(pool.filter(l => l !== lettre && !proches.includes(l))).slice(0, 3 - proches.length)
+  return [...proches, ...autres]
+}
+
+function question(rng: Rng, reglages: Reglages, pool: readonly string[], lettre: string): Question {
+  const [de, vers] = couple(reglages.ecritures)
+  // « reconnaitre » : propositions dans la première écriture ; « majuscule » : dans un sens ou dans l'autre
+  const inverse = reglages.mode === 'majuscule' && rng.vrai(0.5)
+  const ecriture = reglages.mode === 'reconnaitre' ? de : inverse ? de : vers
+  const autre = ecriture === de ? vers : de
+  const choix = rng.melanger([lettre, ...fausses(rng, pool, lettre)])
   return {
-    cle: `majuscule-${lettre}`, mode, lettre, affiche, options: choix.map(label => ({ label })), bonne: choix.indexOf(attendu), attendu,
-    question: versMin ? 'quelleMinuscule' : 'quelleMajuscule',
+    cle: `${reglages.mode}-${lettre}`, mode: reglages.mode, lettre, nom: lettre,
+    montre: { texte: ecrire(lettre, autre), ecriture: autre }, ecriture,
+    options: choix.map(l => ({ label: ecrire(l, ecriture) })), bonne: choix.indexOf(lettre), attendu: ecrire(lettre, ecriture),
   }
 }
 
-/** Une partie : `nb` lettres (15) du groupe, mélangées, toutes différentes (au plus les lettres du groupe). */
-export function questions({ reglages, rng, T, nb = NB_QUESTIONS }: ParamsGenerateur<Reglages, Cle>): Question[] {
+/** Une partie : `nb` lettres (réglage `nbQ`) du groupe, mélangées, toutes différentes ; en « associer capitale et script », sans les lettres de même forme. */
+export function questions({ reglages, rng, T, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] {
   const pool = lettresDe(T, reglages.groupe)
-  return rng.melanger([...pool]).slice(0, nb).map(lettre => question(rng, reglages.mode, pool, lettre))
+  const sansMemeForme = reglages.mode === 'majuscule' && reglages.ecritures === 'capitale-script'
+  const tirables = sansMemeForme ? pool.filter(l => !MEME_FORME.has(l)) : pool
+  return rng.melanger([...tirables]).slice(0, nb).map(lettre => question(rng, reglages, pool, lettre))
 }
 
 /** La fiche : les lettres du groupe en blocs de 6 (répartition équilibrée : 26 lettres → 6 + 5 + 5 + 5 + 5), majuscules à gauche, minuscules mélangées à droite. */

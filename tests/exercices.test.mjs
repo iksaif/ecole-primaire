@@ -7,7 +7,6 @@ import { readdirSync, statSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { REGISTRE } from '../src/exercices/index.ts'
-import { REGISTRE as ANCIEN } from '../src/exercices/ancien.js'
 import { toutAuProgramme, estBonus, raisonHorsProgramme, jeuxDeReglages, langueContenuDe, lireVerdict, aUnJeu } from '../src/noyau/reglages.ts'
 // noyau i18n (traduire : pluriels, interpolation, catalogue commun) : imports avec extension, lisible par node
 import { traducteurExercice } from '../src/exercices/traducteur.ts'
@@ -29,12 +28,11 @@ function controler(problemes, message) {
 
 console.log('Registre')
 const dossiers = readdirSync(join(racine, 'src/exercices')).filter(d => statSync(join(racine, 'src/exercices', d)).isDirectory())
-// les exemples (`exemple: true`) sont vérifiés comme les autres, mais ne sont pas au catalogue public (activites.js) ;
-// les exercices de l'ancien monde (ancien.js) le sont aussi, contre la même logique du noyau
-const TOUS = [...REGISTRE, ...ANCIEN]
+// les exemples (`exemple: true`) sont vérifiés comme les autres, mais ne sont pas au catalogue public (activites.js)
+const TOUS = REGISTRE
 const estExemple = d => REGISTRE.some(e => e.exemple && e.definition === d)
 const ids = TOUS.map(e => e.definition.id)
-controler(dossiers.filter(d => !ids.includes(d)).map(d => `${d} absent de src/exercices/index.ts (ou ancien.js)`), `${dossiers.length} dossier(s), tous dans le registre`)
+controler(dossiers.filter(d => !ids.includes(d)).map(d => `${d} absent de src/exercices/index.ts`), `${dossiers.length} dossier(s), tous dans le registre`)
 controler(ids.filter((id, i) => ids.indexOf(id) !== i).map(id => `${id} en double`), 'ids uniques')
 
 for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
@@ -89,10 +87,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
   }
   const activite = ACTIVITES.find(a => a.to === d.route)
   if (estExemple(d)) { if (activite) pbs.push(`${d.route} (exemple) ne doit pas être au catalogue`) }
-  // catalogue de l'ancien monde (activites.js) : seulement pour les exercices de ancien.js ; la base n'a que son registre
-  else if (!ANCIEN.some(e => e.definition === d)) { if (!/^\/[\w-]+(\/[\w-]+)*$/.test(d.route)) pbs.push(`route ${d.route} invalide`) }
-  else if (!activite) pbs.push(`route ${d.route} absente de activites.js`)
-  else if (activite.niveaux.join() !== Object.keys(d.niveaux).join()) pbs.push(`activites.js : niveaux ${activite.niveaux} ≠ ${Object.keys(d.niveaux)}`)
+  else if (!/^\/[\w-]+(\/[\w-]+)*$/.test(d.route)) pbs.push(`route ${d.route} invalide`)
   // jeu en ligne : `jeu: false` = fiche seule (ni questions ni verifier) ; sinon les deux sont là
   const jeu = aUnJeu(d)
   if (jeu !== ('questions' in g && 'verifier' in g)) pbs.push(jeu ? 'jeu en ligne : questions et verifier attendus' : 'fiche seule (jeu: false) : ni questions ni verifier')
@@ -113,8 +108,7 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
           const qs = jeu ? g.questions({ niveau: n, reglages, rng: creerRng(graine), T, nb: 10 }) : []
           if (jeu && !qs.length) ecarts.push(`graine ${graine} : aucune question`)
           // jamais deux fois la même question (src/noyau/uniques.ts) ; les exercices pas encore reportés n'y sont pas tenus
-          const duNoyau = !ANCIEN.some(e => e.definition === d)
-          if (duNoyau) ecarts.push(...doublons(qs).map(q => `graine ${graine} : question en double ${q.slice(0, 60)}`))
+          ecarts.push(...doublons(qs).map(q => `graine ${graine} : question en double ${q.slice(0, 60)}`))
           if (jeu) ecarts.push(...g.ecartsAuProgramme(qs, k).map(e => `graine ${graine} : ${e}`))
           // verifier rend un booléen ou { ok, nuance } (lireVerdict)
           const juste = (q, rep) => lireVerdict(g.verifier(q, rep)).ok
@@ -122,10 +116,10 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
           if (g.bonneReponse) for (const q of qs) if (!juste(q, g.bonneReponse(q))) ecarts.push(`graine ${graine} : la bonne réponse est refusée (${q.cle})`)
           // et une fausse est refusée (un verifier toujours vrai ne se verrait pas autrement) ; exigée des exercices du noyau
           if (g.mauvaiseReponse) { for (const q of qs) if (juste(q, g.mauvaiseReponse(q))) ecarts.push(`graine ${graine} : une mauvaise réponse est acceptée (${q.texte ?? q.cle})`) }
-          else if (!ANCIEN.some(e => e.definition === d) && !ecarts.includes('mauvaiseReponse manquante (voir Generateur, types.ts)')) ecarts.push('mauvaiseReponse manquante (voir Generateur, types.ts)')
+          else if (!ecarts.includes('mauvaiseReponse manquante (voir Generateur, types.ts)')) ecarts.push('mauvaiseReponse manquante (voir Generateur, types.ts)')
           const tirage = g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T })
           ecarts.push(...g.ecartsAuProgramme(tirage, k).map(e => `fiche, graine ${graine} : ${e}`))
-          if (duNoyau && Array.isArray(tirage)) ecarts.push(...doublons(tirage).map(q => `fiche, graine ${graine} : question en double ${q.slice(0, 60)}`))
+          if (Array.isArray(tirage)) ecarts.push(...doublons(tirage).map(q => `fiche, graine ${graine} : question en double ${q.slice(0, 60)}`))
           const html = f.fiche({ questions: tirage, reglages, T, langue })
           const encore = f.fiche({ questions: g.questionsFiche({ niveau: n, reglages, rng: creerRng(graine), T }), reglages, T, langue })
           if (!/^<!DOCTYPE html><html lang="\w+">/.test(html)) fiches.push(`${l} ${graine} : pas de doctype ou de lang`)

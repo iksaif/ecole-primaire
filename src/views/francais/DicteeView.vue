@@ -1,235 +1,227 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🖊️ {{ t('titre') }}</h1>
+    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('dictee.titre') }}</h1>
 
-    <!-- Config -->
-    <ConfigExercice v-if="phase === 'config'" :config="config" v-model:mode="mode" :fiche="fiche" police
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       :desactive="chargement" @commencer="commencer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('niveau')" />
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="cats" v-model="config.cats"
-        :titre="t('categories', { n: etiquetteNiveau })" :libelle="cat => `${nomCat(t, cat)} (${corpus.categories[cat].length})`" />
-      <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('mode')"
-        :libelle="m => t(m === 'mots' ? 'motsSeuls' : 'phrases')" :icone="m => (m === 'mots' ? '🔤' : '💬')"
-        :description="m => t(m === 'mots' ? 'motsSeulsDesc' : 'phrasesDesc')" />
+        :titre="t('dictee.categories', { n: etiquetteNiveau })" :libelle="cat => `${nomCategorie(cat)} (${corpus.categories[cat]?.length ?? 0})`" />
+      <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('dictee.mode')"
+        :libelle="m => t(m === 'mots' ? 'dictee.motsSeuls' : 'dictee.phrases')" :icone="m => (m === 'mots' ? '🔤' : '💬')"
+        :description="m => t(m === 'mots' ? 'dictee.motsSeulsDesc' : 'dictee.phrasesDesc')" />
 
-      <div class="config-section" v-if="mode === 'jouer' && config.mode === 'phrases'">
-        <div class="config-section-title">
-          {{ t('cleApi') }}
-          <span class="cle-opt"> {{ t('cleApiOpt') }}</span>
-        </div>
-        <div class="api-row">
-          <span class="api-ok" :class="{ aucune: !cleMistral }">{{ cleMistral ? t('cleOk') : t('cleAucune') }}</span>
-          <RouterLink to="/parametres" class="btn btn-ghost">{{ t('parametresParents') }}</RouterLink>
-        </div>
+      <!-- phrases générées par Mistral : facultatif, avec la clé que l'utilisateur saisit lui-même (mistral.ts) -->
+      <div v-if="mode === 'jouer' && config.mode === 'phrases'" class="config-section">
+        <div class="config-section-title">{{ t('dictee.cleApi') }} <span class="cle-opt">{{ t('dictee.cleApiOpt') }}</span></div>
+        <p class="api-etat" :class="{ aucune: !cleSaisie }">{{ cleSaisie ? t('dictee.cleOk') : t('dictee.cleAucune') }}</p>
+        <form class="api-row" @submit.prevent="enregistrerCle">
+          <label class="sr-only" for="cle-mistral">{{ t('dictee.cleSaisie') }}</label>
+          <input id="cle-mistral" v-model="champCle" type="password" autocomplete="off" :placeholder="t('dictee.cleSaisie')">
+          <button type="submit" class="btn btn-ghost" :disabled="!champCle.trim()">{{ t('dictee.cleEnregistrer') }}</button>
+          <button v-if="cleSaisie" type="button" class="btn btn-ghost" @click="effacerCle">{{ t('dictee.cleEffacer') }}</button>
+        </form>
+        <p class="api-aide">{{ t('dictee.cleConfidentialite') }}</p>
       </div>
 
-      <ChoixReglage :definition="DEFINITION" cle="nb" v-model="config.nb" :titre="t('nbMots')" :libelle="n => (n === 0 ? t('tous') : n)" />
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('dictee.nbMots')" :libelle="n => (n === 0 ? t('dictee.tous') : String(n))" />
 
       <div v-if="mode === 'jouer'" class="config-section">
-        <div class="config-section-title">{{ t('vitesse') }}</div>
+        <div class="config-section-title">{{ t('dictee.vitesse') }}</div>
         <div class="slider-row">
-          <span>🐢</span>
-          <input type="range" min="0.5" max="1.2" step="0.05" v-model.number="config.vitesse">
-          <span>🐇</span>
+          <span aria-hidden="true">🐢</span>
+          <input v-model.number="config.vitesse" type="range" min="0.5" max="1.2" step="0.05" :aria-label="t('dictee.vitesse')">
+          <span aria-hidden="true">🐇</span>
           <span class="slider-val">{{ config.vitesse }}</span>
         </div>
       </div>
 
       <div v-if="mode === 'imprimer'" class="config-section">
-        <div class="config-section-title">{{ t('pagesFiche') }}</div>
+        <div class="config-section-title">{{ t('dictee.pagesFiche') }}</div>
         <div class="btn-group">
-          <button class="level-btn" :class="{ active: config.liste }" @click="basculerPage('liste')">📋 {{ t('pageListe') }}</button>
-          <button class="level-btn" :class="{ active: config.dictee }" @click="basculerPage('dictee')">✏️ {{ t('pageDictee') }}</button>
+          <button type="button" class="level-btn" :class="{ active: config.liste }" :aria-pressed="config.liste" @click="basculerPage('liste')">📋 {{ t('dictee.pageListe') }}</button>
+          <button type="button" class="level-btn" :class="{ active: config.dictee }" :aria-pressed="config.dictee" @click="basculerPage('dictee')">✏️ {{ t('dictee.pageDictee') }}</button>
         </div>
       </div>
-      <div v-if="chargement" class="loading-badge"><span class="spinner"></span> {{ t('generation') }}</div>
-    </ConfigExercice>
+      <div v-if="chargement" class="loading-badge" role="status"><span class="spinner"></span> {{ t('dictee.generation') }}</div>
+    </CadreExercice>
 
     <!-- Dictée : un mot (ou une phrase) à écouter, puis à écrire -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <!-- Contexte phrase -->
       <div v-if="q.mode === 'phrases' && q.phrase" class="phrase-ctx-container">
-        <button v-if="!afficherIndice" class="btn btn-ghost btn-sm indice" @click="afficherIndice = true">{{ t('afficherIndice') }}</button>
+        <button v-if="!afficherIndice" type="button" class="btn btn-ghost btn-sm indice" @click="afficherIndice = true">{{ t('dictee.afficherIndice') }}</button>
         <div v-else class="phrase-ctx">
           <span v-html="phraseAvecBlanc"></span>
-          <button class="btn-masquer-indice" @click="afficherIndice = false" :title="t('masquerIndice')" :aria-label="t('masquerIndice')">🙈</button>
+          <button type="button" class="btn-masquer-indice" :title="t('dictee.masquerIndice')" :aria-label="t('dictee.masquerIndice')" @click="afficherIndice = false">🙈</button>
         </div>
       </div>
 
-      <button class="btn-ecouter" :class="{ playing: enLecture }" @click="ecouter">
-        <span>{{ enLecture ? '⏹' : '🔊' }}</span>
-        <span>{{ enLecture ? t('arreter') : (q.mode === 'phrases' ? t('ecouterPhrase') : t('ecouterMot')) }}</span>
+      <button type="button" class="btn-ecouter" :class="{ playing: enLecture }" @click="ecouter">
+        <span aria-hidden="true">{{ enLecture ? '⏹' : '🔊' }}</span>
+        <span>{{ enLecture ? t('dictee.arreter') : (q.mode === 'phrases' ? t('dictee.ecouterPhrase') : t('dictee.ecouterMot')) }}</span>
       </button>
 
-      <div class="hint-text">{{ t('consigne') }}</div>
+      <div class="hint-text">{{ t('dictee.consigne') }}</div>
 
-      <SaisieReponse v-model="reponse" class="dictee-input" :etat="etat" :disabled="repondu" focus placeholder="…" @entree="valider" />
+      <SaisieReponse v-model="reponse" class="dictee-input" :etat="etat" :disabled="repondu" focus placeholder="…" @entree="repondu ? jeu.suivante() : valider()" />
 
-      <div class="feedback" :class="etat">{{ retour?.message }}</div>
+      <RetourReponse :message="retour?.message" :etat="etat" />
 
       <div class="btn-group actions">
-        <button class="btn btn-ghost" @click="ecouter">{{ t('reecouter') }}</button>
-        <button class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('valider') }}</button>
-        <button class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('passer') }}</button>
+        <template v-if="!repondu">
+          <button type="button" class="btn btn-ghost" @click="ecouter">{{ t('dictee.reecouter') }}</button>
+          <button type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('dictee.passer') }}</button>
+        </template>
+        <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
 
-    <!-- Résultats -->
     <ResultatsJeu v-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
       @rejouer="commencer" @reglages="jeu.quitter">
       <TableauCorrection :historique="historique">
-        <template #question="{ entree }">{{ historique.indexOf(entree) + 1 }}</template>
+        <template #question="{ entree }">{{ rang(entree.question) }}</template>
       </TableauCorrection>
     </ResultatsJeu>
   </div>
 </template>
 
-<script setup>
-// Dictée : la vue ne fait que les réglages, la voix et le rendu. Niveaux, générateur et fiche : src/exercices/dictee/
-// (definition.js, generateur.js, fiche.js) ; mots : src/data/dicteeMots.js. Exercice de français : la fiche est toujours
-// en français, l'interface suit la langue choisie.
+<script setup lang="ts">
+// Dictée : la vue ne fait que les réglages, la voix et le rendu. Niveaux, générateur et fiche : src/exercices/dictee/ (definition.ts,
+// generateur.ts, fiche.ts) ; phrases générées (facultatif, clé saisie par l'utilisateur) : mistral.ts ; mots : src/data/dicteeMots.js.
+// Exercice de français : la fiche et la voix sont toujours en français, l'interface suit la langue choisie.
 import { ref, computed, watch, nextTick, onUnmounted } from 'vue'
-import { estVide } from '../../utils/reponses'
-import { chargerValeur, sauvegarder } from '../../utils'
-import { creerRng, graineAleatoire } from '../../utils/hasard'
-import { useTTS } from '../../composables/useTTS'
-import { useI18n, contenu } from '../../i18n'
-import ConfigExercice from '../../components/ConfigExercice.vue'
-import ChoixReglage from '../../components/ChoixReglage.vue'
-import QuestionJeu from '../../components/QuestionJeu.vue'
-import ResultatsJeu from '../../components/ResultatsJeu.vue'
-import SaisieReponse from '../../components/SaisieReponse.vue'
-import TableauCorrection from '../../components/TableauCorrection.vue'
-import { useReglages } from '../../composables/useReglages'
-import { useFicheExercice } from '../../composables/useFicheExercice'
-import { useJeu } from '../../composables/useJeu'
-import DEFINITION, { corpusDe } from '../../exercices/dictee/definition'
-import { INTERFACE, TEXTES } from '../../exercices/dictee/textes'
-import { questions as genererQuestions, questionsFiche, verifier, phraseDe } from '../../exercices/dictee/generateur'
-import { fiche as ficheDictee, nomCat } from '../../exercices/dictee/fiche'
+import { estVide } from '../../utils/reponses.ts'
+import { chargerValeur, sauvegarder } from '../../utils/index.js'
+import { creerRng, graineAleatoire } from '../../utils/hasard.ts'
+import { useLangue } from '../../langues/useLangue.ts'
+import { traducteur } from '../../langues/catalogue.ts'
+import CadreExercice from '../../noyau/CadreExercice.vue'
+import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import QuestionJeu from '../../noyau/QuestionJeu.vue'
+import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
+import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
+import SaisieReponse from '../../noyau/SaisieReponse.vue'
+import RetourReponse from '../../noyau/RetourReponse.vue'
+import TableauCorrection from '../../noyau/TableauCorrection.vue'
+import { useTTS } from '../../noyau/useTTS.ts'
+import { useReglages } from '../../noyau/useReglages.ts'
+import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import { useJeu } from '../../noyau/useJeu.ts'
+import DEFINITION, { corpusDe } from '../../exercices/dictee/definition.ts'
+import { CONTENU } from '../../exercices/dictee/textes.ts'
+import { questions as tirer, questionsFiche, verifier } from '../../exercices/dictee/generateur.ts'
+import type { Question, Reponse } from '../../exercices/dictee/generateur.ts'
+import { fiche as ficheDictee, cleCategorie } from '../../exercices/dictee/fiche.ts'
+import { cleMistral, enregistrerCleMistral, phraseGeneree } from '../../exercices/dictee/mistral.ts'
 
-const { t } = useI18n(INTERFACE)
-// Réglages mémorisés, ajustés au changement de niveau (politique commune : src/composables/useReglages.js) ; contenu
-// (fiche) : toujours en français
-const { config, langueContenu } = useReglages(DEFINITION, 'dictee_config')
-const T = contenu(TEXTES, () => langueContenu.value).t
+const { t } = useLangue()
+const { config, langueContenu } = useReglages(DEFINITION)
+// T : les textes de la fiche (CONTENU, textes.ts), toujours en français
+const T = traducteur(CONTENU, () => langueContenu.value)
 
 const corpus = computed(() => corpusDe(config.value.niveau))
 // CM1 et CM2 partagent un corpus : « CM »
 const etiquetteNiveau = computed(() => (config.value.niveau.startsWith('cm') ? 'CM' : config.value.niveau.toUpperCase()))
-const cleMistral = ref(!!localStorage.getItem('ep_mistral_key'))
+const nomCategorie = (cat: string): string => t(`dictee.cat.${cleCategorie(cat)}` as 'dictee.cat.pronoms')
 
-// ── Voix ──
-const { enLecture, lire, arreter } = useTTS()
-const reponse = ref('')
+// ── Clé Mistral : saisie ici, gardée sur l'appareil, jamais affichée ──
+const cleSaisie = ref(!!cleMistral())
+const champCle = ref('')
+function enregistrerCle(): void { enregistrerCleMistral(champCle.value); champCle.value = ''; cleSaisie.value = !!cleMistral() }
+function effacerCle(): void { enregistrerCleMistral(''); cleSaisie.value = false }
+
+// ── Voix (toujours en français : la dictée est en français) ──
+const { enLecture, parler, arreter } = useTTS()
+const reponse = ref<string | number>('')
 const afficherIndice = ref(false)
-function ecouter() {
+const lire = (texte: string): void => { parler(texte, 'fr', { vitesse: config.value.vitesse }) }
+function ecouter(): void {
   if (enLecture.value) { arreter(); return }
   const qu = q.value
-  if (qu) lire(qu.phrase ?? qu.mot, { vitesse: config.value.vitesse })
+  if (qu) lire(qu.phrase ?? qu.mot)
 }
 const phraseAvecBlanc = computed(() => {
-  const { phrase, mot } = q.value ?? {}
-  if (!phrase || !mot) return phrase
-  return phrase.replace(new RegExp(mot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '<span class="blank">___</span>')
+  const qu = q.value
+  if (!qu?.phrase) return ''
+  const motEchappe = qu.mot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return qu.phrase.replace(new RegExp(motEchappe, 'gi'), '<span class="blank">___</span>')
 })
 
-// ── Phrases générées (clé Mistral des parents, facultative) : à défaut, celles de src/data/dicteeMots.js ──
-async function genererPhrase(mot) {
-  const apiKey = localStorage.getItem('ep_mistral_key') || ''
-  if (!apiKey) return phraseDe(mot)
-  try {
-    const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: 'mistral-small-latest',
-        messages: [{ role: 'user', content:
-          `Tu es un assistant pédagogique pour enfants de CP (6-7 ans).\nGénère UNE SEULE phrase courte et simple en français (10 mots maximum) contenant l'expression "${mot}".\nRéponds UNIQUEMENT avec la phrase, sans guillemets ni explication.`
-        }],
-        temperature: 0.7, max_tokens: 60,
-      }),
-    })
-    if (!res.ok) throw new Error()
-    const data = await res.json()
-    return data.choices?.[0]?.message?.content?.trim() || phraseDe(mot)
-  } catch {
-    return phraseDe(mot)
-  }
-}
-
-// ── Jeu : un mot, ou une phrase, à la fois ; bonne réponse : mot suivant après 0,9 s ; erreur : la réponse est lue puis
-// on continue après 2,4 s ; « Passer » enchaîne aussitôt ──
-let preparees = []
+// ── Jeu : un mot, ou une phrase, à la fois ; erreur : la bonne réponse est lue, puis on continue ──
+let preparees: Question[] = []
 const chargement = ref(false)
-const jeu = useJeu({
+const jeu = useJeu<Question, Reponse>({
   generer: () => preparees,
   verifier,
-  messageErreur: (qu, rep) => (rep ? t('feedbackErr', { r: qu.attendu }) : ''),
-  messageNuance: qu => `⚠️ ${t('accents', { r: qu.attendu })}`,
-  surQuestion: () => { reponse.value = ''; afficherIndice.value = false; nextTick(ecouter) },
+  messageErreur: (qu, rep) => (rep ? t('dictee.feedbackErr', { r: qu.attendu }) : ''),
+  messageNuance: qu => `⚠️ ${t('dictee.accents', { r: qu.attendu })}`,
+  surQuestion: () => { reponse.value = ''; afficherIndice.value = false; void nextTick(ecouter) },
   delai: 900,
-  apresErreur: 'continuer',
-  delaiErreur: 2400,
+  apresErreur: 3000,
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
+// numéro d'un mot dans le tableau de correction
+const rang = (qu: Question): number => historique.value.findIndex(h => h.question === qu) + 1
 
-async function commencer() {
-  if (chargement.value) return  // empêche le double clic pendant la génération
+async function commencer(): Promise<void> {
+  if (chargement.value) return   // pas de double clic pendant la génération
   arreter()
   // mots récemment vus : repoussés en fin de liste, d'une séance à l'autre
   const cle = `dictee_vus_${config.value.mode}`
-  const qs = genererQuestions({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()), vus: chargerValeur(cle, []) })
+  const qs = tirer({ niveau: config.value.niveau, reglages: config.value, rng: creerRng(graineAleatoire()), T, vus: chargerValeur(cle, []) as string[] })
   sauvegarder(cle, qs.map(x => x.mot))
   if (config.value.mode === 'phrases') {
     chargement.value = true
-    const phrases = await Promise.all(qs.map(x => genererPhrase(x.mot)))
-    qs.forEach((x, i) => { x.phrase = x.attendu = phrases[i] })
+    const phrases = await Promise.all(qs.map(x => phraseGeneree(x.mot)))
+    qs.forEach((x, i) => { x.phrase = phrases[i]; x.attendu = phrases[i] })
     chargement.value = false
   }
   preparees = qs
   jeu.demarrer()
 }
 
-function valider() {
-  if (repondu.value || estVide(reponse.value)) return
+function valider(): void {
+  const texte = String(reponse.value)
+  if (repondu.value || estVide(texte)) return
   arreter()
-  jeu.repondre({ texte: reponse.value }, { donne: reponse.value.trim() })
+  jeu.repondre({ texte }, { donne: texte.trim() })
 }
-function passer() {
+function passer(): void {
   if (repondu.value) return
   arreter()
-  jeu.passer({ donne: t('passe') })
-  jeu.suivante()
+  jeu.passer({ donne: t('dictee.passe') })
 }
 
 // après une erreur, la bonne réponse est lue
-let relecture = null
+let relecture: ReturnType<typeof setTimeout> | undefined
 watch(retour, r => {
   clearTimeout(relecture)
-  if (r && !r.ok && r.message) relecture = setTimeout(() => lire(q.value.attendu, { vitesse: config.value.vitesse }), 600)
+  const qu = q.value
+  if (r && !r.ok && r.message && qu) relecture = setTimeout(() => lire(qu.attendu), 600)
 })
 watch(phase, p => { if (p !== 'jeu') { arreter(); clearTimeout(relecture) } })
 onUnmounted(() => { arreter(); clearTimeout(relecture) })
 
 // ── Fiche imprimable : au moins une des deux pages ──
-function basculerPage(p) {
+function basculerPage(p: 'liste' | 'dictee'): void {
   const autre = p === 'liste' ? 'dictee' : 'liste'
   if (config.value[p] && !config.value[autre]) return
   config.value[p] = !config.value[p]
 }
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng }),
-  mettreEnPage: (x, police) => ficheDictee({ questions: x, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheDictee({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
 })
 </script>
 
 <style scoped>
-.container { max-width: 640px; margin: 0 auto; padding: 1rem; }
 .cle-opt { font-weight: 400; color: #aaa; font-size: .85em; }
 .api-row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-.api-ok { font-size: .8rem; font-weight: 700; color: var(--vert); }
-.api-ok.aucune { color: #aaa; }
+.api-etat { font-size: .85rem; font-weight: 700; color: var(--vert-texte); margin: 0 0 .4rem; }
+.api-etat.aucune { color: var(--texte-doux); }
+.api-row input { flex: 1; min-width: 12rem; padding: .4rem .6rem; border: 2px solid var(--gris-brd); border-radius: 8px; font: inherit; }
+.api-aide { font-size: .8rem; color: var(--texte-doux); margin: .4rem 0 0; }
 .api-row .btn { font-size: .85rem; }
 
 .slider-row { display: flex; align-items: center; gap: .75rem; }

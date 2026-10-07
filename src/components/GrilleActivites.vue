@@ -10,7 +10,6 @@
         <span class="card-title">{{ langue === 'br' && a.br ? a.br.titre : a.titre }}</span>
         <span class="card-desc">{{ description(a) }}</span>
         <span class="card-tag">{{ etiquetteNiveaux(a.niveaux) }}</span>
-        <component :is="PastilleMigration" v-if="PastilleMigration && a.fiche" :route="a.to" />
       </RouterLink>
     </div>
   </template>
@@ -18,7 +17,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent } from 'vue'
+import { computed } from 'vue'
 import { ACTIVITES, DOMAINES_BR, etiquetteNiveaux } from '../data/activites'
 import { useI18n } from '../i18n'
 import messagesFr from '../i18n/fr/components/GrilleActivites.js'
@@ -33,7 +32,6 @@ const props = defineProps({
 })
 const classe = useClasse()
 // mode dev seulement (absent du build) : pastille « migré / à migrer » vers src/exercices/ (plan 10)
-const PastilleMigration = import.meta.env.DEV ? defineAsyncComponent(() => import('./PastilleMigration.vue')) : null
 const { code: regionale } = useLangueRegionale()
 // description dans la langue de l'interface, variante « langue régionale » si elle est active
 function description(a) {

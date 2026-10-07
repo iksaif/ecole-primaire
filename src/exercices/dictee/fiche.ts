@@ -1,17 +1,22 @@
-// Dictée — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche() : la liste des mots à
-// apprendre (script, attaché, je recopie), puis la page de dictée (lignes numérotées) et son corrigé.
-//   fiche({ questions, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; T et langue : toujours le français (exercice de français) ; police : usePoliceFiche() dans l'app,
-//   dont les @font-face de l'écriture script et de l'attachée (cssPolices)
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
+// Dictée — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node). La liste des mots à apprendre (script,
+// attaché, je recopie), puis la page de dictée (lignes numérotées) et son corrigé ; toujours en français (exercice de français).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
 import { echapper as e } from '../../utils/html.js'
-import { phraseDe } from './generateur.js'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type DEFINITION from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import { phraseDe } from './generateur.ts'
+import type { TirageFiche } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 // Mêmes polices que POLICE_SCRIPT et POLICE_ATTACHE de src/utils/impression.js (module qui lit le navigateur : pas ici)
 const SCRIPT = 'Andika'
 const ATTACHE = 'Playwrite FR Trad'
 
-const css = phrases => `
+const css = (phrases: boolean): string => `
       section + section:not(.corrige) { page-break-before: always; break-before: page; }
       h2 { font-size: .95rem; margin: 1rem 0 .2rem; background: #f0f3f7; padding: .25rem .6rem; border-radius: 6px; }
       .consigne { font-weight: 700; margin: .6rem 0 1rem; }
@@ -29,12 +34,14 @@ const css = phrases => `
       section.corrige h2 { background: none; padding: 0; }
       .a-dicter { columns: ${phrases ? 1 : 3}; font-size: 1.05rem; line-height: 1.9; font-family: '${SCRIPT}', Arial, sans-serif; }`
 
-// Nom d'une catégorie : clé du catalogue dérivée du nom français (« Corps humain » → cat_corps_humain), le nom français
-// s'affiche si la clé manque
-const cleCat = cat => 'cat_' + cat.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
-export const nomCat = (T, cat) => { const k = cleCat(cat), v = T(k); return v === k ? cat : v }
+/** La clé d'une catégorie : son nom français sans accents, en minuscules et tirets bas (« Corps humain » → corps_humain). */
+export function cleCategorie(cat: string): string {
+  const sansAccents = cat.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  return sansAccents.replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
+}
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
+export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  const nomCat = (cat: string): string => T(`cat.${cleCategorie(cat)}` as Cle)
   const { niveau, mots, parCat, phrases } = x
   // CM1 et CM2 ont le même corpus : « CM » (fiche publiée exercices-dictee-cm1-cm2)
   const titre = `${T('titre')} — ${niveau.startsWith('cm') ? 'CM' : niveau.toUpperCase()}`
@@ -42,11 +49,13 @@ export function fiche({ questions: x, T, langue, police, cssPolices }) {
     ${ligneNomDate(langue)}`
 
   // Page 1 : mots à apprendre, regroupés par catégorie
-  const vus = new Set()
+  // un mot présent dans deux catégories n'est listé qu'une fois (dans la première)
+  const dejaListes = new Set<string>()
   const liste = parCat.map(g => {
-    const ms = g.mots.filter(m => !vus.has(m) && vus.add(m))
+    const ms = g.mots.filter(m => !dejaListes.has(m))
+    ms.forEach(m => dejaListes.add(m))
     if (!ms.length) return ''
-    return `<h2>${e(nomCat(T, g.cat))}</h2>
+    return `<h2>${e(nomCat(g.cat))}</h2>
       <table><tbody>${ms.map(m => `<tr><td class="script">${e(m)}</td><td class="attache">${e(m)}</td><td class="recopie"></td></tr>`).join('')}</tbody></table>`
   }).join('')
   const pageListe = `<section>${entete}

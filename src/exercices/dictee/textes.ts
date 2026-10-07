@@ -1,0 +1,47 @@
+// Dictée — textes de CONTENU, toujours en français (`contenu: 'fr'` : la fiche n'a pas de breton) : titre, consignes de la fiche, noms des
+// catégories de mots (clé : le nom de la catégorie de src/data/dicteeMots.js, sans accents, en minuscules et tirets bas). « corrige » vient
+// de `communs`. Les textes de l'INTERFACE (réglages, jeu, et les noms des catégories traduits) : src/langues/<langue>/textes/dictee.ts.
+import { catalogue } from '../../langues/catalogue.ts'
+
+export const CONTENU = catalogue({
+  titre: 'Dictée',
+  fConsigneListe: 'Lis chaque mot, puis recopie-le sur la ligne.',
+  fScript: 'Script',
+  fAttache: 'Attaché',
+  fRecopie: 'Je recopie',
+  fConsigneMots: "Écoute bien et écris le mot que l'adulte te dicte.",
+  fConsignePhrases: "Écoute bien et écris la phrase que l'adulte te dicte.",
+  fADicter: "À dicter par l'adulte, dans l'ordre :",
+  cat: {
+    mots_outils: 'Mots outils',
+    pronoms: 'Pronoms',
+    jours: 'Jours',
+    nombres: 'Nombres',
+    lieux: 'Lieux',
+    transports: 'Transports',
+    animaux: 'Animaux',
+    fruits: 'Fruits',
+    famille: 'Famille',
+    verbes: 'Verbes',
+    determinants: 'Déterminants',
+    corps_humain: 'Corps humain',
+    maison: 'Maison',
+    ecole: 'École',
+    verbes_courants: 'Verbes courants',
+    adjectifs: 'Adjectifs',
+    saisons: 'Saisons',
+    aliments: 'Aliments',
+    mots_invariables: 'Mots invariables',
+    mots_en_tion: 'Mots en -tion',
+    mots_en_eur: 'Mots en -eur',
+    nature_et_environnement: 'Nature et environnement',
+    vocabulaire_scientifique: 'Vocabulaire scientifique',
+    adverbes: 'Adverbes',
+    vocabulaire_civique: 'Vocabulaire civique',
+    vocabulaire_geographique: 'Vocabulaire géographique',
+    mots_difficiles_courants: 'Mots difficiles courants',
+    connecteurs_logiques: 'Connecteurs logiques',
+    vocabulaire_litteraire: 'Vocabulaire littéraire',
+    mots_latins_grecs_courants: 'Mots latins/grecs courants',
+  },
+})

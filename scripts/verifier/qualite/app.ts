@@ -11,7 +11,7 @@
 // Compteur (max) :
 //   erreursDeType    erreurs de `npm run types` (vue-tsc strict ; seuls les .ts, .vue et .d.ts comptent, pas les .js) : toujours 0
 //
-// La couverture et exercicesMigres lisent l'ANCIEN monde (activites.js, impression/couverture.js, exercices/ancien.js) : ils
+// La couverture et exercicesMigres lisent l'ANCIEN monde (activites.js, impression/couverture.js) : ils
 // disparaîtront, ou seront réécrits sur src/ressources/, avec le dernier exercice ancien (le catalogue neuf ne compte aujourd'hui
 // que les exercices déjà reportés : il ne mesure pas encore la couverture du site).
 import { spawnSync } from 'node:child_process'
@@ -26,7 +26,6 @@ interface Programme {
 }
 interface Couverture { ressourcesDe: (competence: string, niveau: string) => Record<string, unknown[]> }
 interface Activites { ACTIVITES: { fiche?: boolean, to: string }[] }
-interface Ancien { REGISTRE: { definition: { route: string } }[] }
 interface Base { REGISTRE: { definition: { route: string }, exemple?: true }[] }
 
 /** Un seul serveur Vite pour tous les compteurs qui en ont besoin ; fermé par `fermerChargeur` à la fin du contrôle. */
@@ -53,12 +52,11 @@ async function couvertureDes(matieres: string[]) {
 
 const exercicesMigres: Compteur = async () => {
   const { ACTIVITES } = await vite.charger<Activites>('/src/data/activites.js')
-  const { REGISTRE } = await vite.charger<Ancien>('/src/exercices/ancien.js')
   const { REGISTRE: BASE } = await vite.charger<Base>('/src/exercices/index.ts')
   // les exercices reportés dans la base (registre typé) ne sont plus au catalogue de l'ancien monde (activites.js) : on les compte des deux côtés
   const reportes = BASE.filter(e => !e.exemple).map(e => e.definition.route)
   const exercices = [...ACTIVITES.filter(a => a.fiche && /^\/(maths|francais|maternelle)\//.test(a.to)).map(a => a.to), ...reportes]
-  const migres = new Set([...REGISTRE.map(e => e.definition.route), ...reportes])
+  const migres = new Set(reportes)
   const restants = exercices.filter(r => !migres.has(r))
   const n = exercices.length - restants.length
   return { valeur: n, detail: `${n} / ${exercices.length} exercices au format définition (${reportes.length} dans la base)` }

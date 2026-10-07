@@ -37,14 +37,12 @@ export default {
   couvertureDescription: 'pep barregezh eus ar programm × pep klas : ar pezh a c’holo anezhi en diazez, ar pezh a c’hortoz bezañ dizougen, an toulloù', // br: à relire
   couvertureIntro: 'Ur gaslig evit pep barregezh ha pep klas ma’z eo er programm (src/data/programme.ts). Tremen war ur gaslig : an danvezioù a c’holo anezhi.', // br: à relire
   couvertureBase: '{n} kaslig golo diwar {total} en diazez', // br: à relire
-  couvertureAvecAncien: 'gant an {n} kaslig eus ar poelladennoù da zizougen c’hoazh', // br: à relire
   couvertureTrous: 'kaslig hep netra', // br: à relire
   couvertureSansFiches: 'N’eus ket eus meneger ar fichennoù prest : an danvezioù eus ar marilhoù hepken a vez kontet. `npm run fiches:dev` evit ar fichennoù.', // br: à relire
   couvertureFiltres: 'Siloù', // br: à relire
   couvertureToutes: 'An holl zanvezioù', // br: à relire
   couvertureSorte: { tout: 'An holl zanvezioù', exercice: 'Poelladennoù', affiche: 'Skritelloù', fiche: 'Fichennoù prest' }, // br: à relire
   couvertureTrousSeuls: 'Ar barregezhioù gant toulloù hepken', // br: à relire
-  couvertureLegende: { couvert: 'golo gant an diazez', ancien: 'poelladenn da zizougen', trou: 'netra', hors: 'n’emañ ket e programm ar c’hlas' }, // br: à relire
+  couvertureLegende: { couvert: 'golo gant an diazez', trou: 'netra', hors: 'n’emañ ket e programm ar c’hlas' }, // br: à relire
   couvertureCompetence: 'Barregezh', // br: à relire
-  couvertureAReporter: 'Da zizougen : {liste}', // br: à relire
 } satisfies Traductions<typeof fr>

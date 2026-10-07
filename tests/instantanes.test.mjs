@@ -11,7 +11,6 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { REGISTRE } from '../src/exercices/index.ts'
-import { REGISTRE as ANCIEN } from '../src/exercices/ancien.js'
 import { traducteurExercice } from '../src/exercices/traducteur.ts'
 import { creerRng } from '../src/utils/hasard.js'
 import {
@@ -56,7 +55,7 @@ function montrerDiff(cle, html, attendue) {
 
 const debut = performance.now()
 let nbCas = 0, nbDiffs = 0
-for (const module of [...REGISTRE, ...ANCIEN]) {
+for (const module of REGISTRE) {
   const id = module.definition.id
   const cas = casDe(module.definition).filter(c => retenu(c.cle))
   if (!cas.length) continue

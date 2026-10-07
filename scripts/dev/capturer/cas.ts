@@ -1,5 +1,5 @@
 // Les cas à capturer : un cas = une fiche = (exercice, niveau, graine, langue, réglages). Deux sources :
-//   - un exercice du registre ancien (src/exercices/ancien.js) : les cas du test des instantanés (défauts du niveau, tout
+//   - un exercice du registre (src/exercices/index.ts) : les cas du test des instantanés (défauts du niveau, tout
 //     au programme, fiches de la définition), via tests/outils-instantanes.mjs ;
 //   - un fichier --reglages : les cas écrits à la main (format dans l'en-tête de capturer-fiches.ts).
 import { readFileSync } from 'node:fs'

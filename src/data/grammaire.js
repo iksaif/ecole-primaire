@@ -1,6 +1,6 @@
 // Grammaire — corpus de l'exercice : phrases annotées, pluriels, accords, négations (CE1, CE2 ; le CM reprend le CE2).
 // Donnée pure, jamais traduite : c'est du français étudié (exercice de français, `contenu: 'fr'`), comme
-// src/data/conjugaison.js et src/data/dicteeMots.js. Le générateur (src/exercices/grammaire/generateur.js) la lit,
+// src/data/conjugaison.js et src/data/dicteeMots.js. Le générateur (src/exercices/grammaire/generateur.ts) la lit,
 // sans Vue, et les phrases restent lisibles par node.
 
 // Phrases annotées. Syntaxe : mot:code (d=déterminant, n=nom, N=nom propre, v=verbe conjugué,

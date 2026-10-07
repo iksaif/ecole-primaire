@@ -227,9 +227,9 @@ console.log('Production : état vide, domaines « à venir »')
     '/francais au CP en production : l’affiche de l’alphabet, imprimable, dans « Lecture »')
   // au CE2 elle est hors classe : la lecture a une ressource (plus « à venir »), l'écriture n'en a pas encore
   await aller(page, app('/francais?classes=ce2'))
-  await page.waitForSelector('.a-venir [data-domaine]')
-  verifier(await page.locator('[data-ressource="affiche:alphabet"]').count() === 0 && await page.locator('.a-venir [data-domaine="ecriture"]').count() === 1 && await page.locator('.a-venir [data-domaine="lecture"]').count() === 0 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0,
-    '/francais au CE2 : l’alphabet est hors classe, « écriture » à venir, aucun domaine inventé')
+  await page.waitForSelector('[data-ressource="exercice:dictee"]')
+  verifier(await page.locator('[data-ressource="affiche:alphabet"]').count() === 0 && await page.locator('.a-venir [data-domaine="ecriture"]').count() === 0 && await page.locator('[data-ressource="exercice:dictee"]').count() === 1 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0,
+    '/francais au CE2 : l’alphabet est hors classe, « écriture » a la dictée, aucun domaine inventé')
   await aller(page, app('/maths?classes=cp'))
   await page.waitForSelector('[data-ressource="exercice:calcul-mental"]')
   verifier(await page.locator('[data-ressource="exercice:calcul-mental"] .badge.jeu').count() === 1 && await page.locator('[data-ressource="exercice:calcul-mental"] .badge.imprimable').count() === 1 && await page.locator('.vide').count() === 0,

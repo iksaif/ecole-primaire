@@ -17,7 +17,19 @@
     <section class="bloc bloc-version" data-reglage="variante" :aria-labelledby="`${idBase}-version`">
       <h2 class="bloc-titre" :id="`${idBase}-version`"><span class="num" aria-hidden="true">1</span> {{ t('formulaireAffiche.version') }}</h2>
       <p class="bloc-aide">{{ t('formulaireAffiche.versionAide') }}</p>
-      <div class="btn-group" role="group" :aria-labelledby="`${idBase}-version`">
+      <!-- variantes placées sur des axes (un verbe × une série de temps) : une rangée de boutons par axe -->
+      <template v-if="axes.length">
+        <div v-for="axe in axes" :key="axe.id" class="axe" role="group" :aria-labelledby="`${idBase}-axe-${axe.id}`" :data-axe="axe.id">
+          <div class="axe-titre" :id="`${idBase}-axe-${axe.id}`">{{ T(`axe.${axe.id}`) }}</div>
+          <div class="btn-group">
+            <button type="button" v-for="valeur in axe.valeurs" :key="valeur" class="level-btn" :data-valeur="valeur"
+              :class="{ active: axesCourants[axe.id] === valeur }" :aria-pressed="axesCourants[axe.id] === valeur" @click="choisirSurAxe(axe.id, valeur)">
+              {{ T(`axe.${axe.id}.${valeur}`) }}</button>
+          </div>
+        </div>
+        <p class="axe-classes">{{ T(cleVariante(config.variante, 'court')) }} · {{ definition.variantes[config.variante]?.classes.map(n => n.toUpperCase()).join(' · ') }}</p>
+      </template>
+      <div v-else class="btn-group" role="group" :aria-labelledby="`${idBase}-version`">
         <button type="button" v-for="(v, id) in definition.variantes" :key="id" class="level-btn" :data-valeur="id"
           :class="{ active: config.variante === id }" :aria-pressed="config.variante === id" @click="config = reglagesApresVariante(definition, config, id)">
           {{ T(cleVariante(id, 'court')) }} <small>· {{ v.classes.map(n => n.toUpperCase()).join(' · ') }}</small></button>
@@ -140,6 +152,23 @@ const CLE = `affiche_${definition.id.replaceAll('-', '_')}`
 const memorises = reglagesDe(definition, chargerReglages(CLE, reglagesDe(definition)))
 // un lien vers une variante (fiche toute prête) ouvre CETTE fiche, avec ses réglages : seules les polices choisies sont gardées
 const config = ref(reglagesDe(definition, props.depart.variante ? { polices: memorises.polices, ...props.depart } : { ...memorises, ...props.depart }))
+
+// ── Axes des variantes (definition.variantes[…].axes) : les valeurs de chaque axe, dans l'ordre des variantes ──
+const axes = computed(() => {
+  const variantes = Object.values(definition.variantes)
+  const noms = Object.keys(variantes[0]?.axes ?? {})
+  return noms.map(id => ({ id, valeurs: [...new Set(variantes.map(v => v.axes?.[id] ?? ''))] }))
+})
+const axesCourants = computed<Readonly<Record<string, string>>>(() => definition.variantes[config.value.variante]?.axes ?? {})
+/** Choisir une valeur sur un axe : la variante qui garde les autres axes ; s'il n'y en a pas, la première qui a cette valeur. */
+function choisirSurAxe(axe: string, valeur: string): void {
+  const entrees = Object.entries(definition.variantes)
+  const voulus = { ...axesCourants.value, [axe]: valeur }
+  const memePlace = entrees.find(([, v]) => Object.entries(voulus).every(([a, x]) => v.axes?.[a] === x))
+  const premiere = entrees.find(([, v]) => v.axes?.[axe] === valeur)
+  const id = (memePlace ?? premiere)?.[0]
+  if (id) config.value = reglagesApresVariante(definition, config.value, id)
+}
 watch(config, v => sauvegarder(CLE, v), { deep: true })
 // les réglages à choix, lus et écrits par clé (leurs clés dépendent de l'affiche)
 const valeur = (cle: string): ValeurReglage => (config.value as Reglages)[cle]
@@ -150,6 +179,7 @@ watch(() => ({ ...config.value }), c => { if (JSON.stringify(reglagesDe(definiti
 // textes de l'affiche pour le FORMULAIRE (titres des réglages, noms des variantes, aides) : dans la langue de l'interface,
 // pas dans celle de la feuille (français si l'affiche n'a pas la traduction). L'aperçu, lui, suit la langue de la feuille.
 const T = (cle: string): string => traducteurAffiche(props.module.textes, langueInterface.value)(cle)
+
 const idBase = useId()
 const idChamp = (cle: string): string => `${idBase}-${cle}`
 const champs = computed(() => champsDe(definition, varianteDe(definition, config.value.variante)))
@@ -180,6 +210,9 @@ const resultat = computed(() => (polices.pret.value ? genererAffiche(props.modul
 </script>
 
 <style scoped>
+.axe { margin-bottom: .6rem; }
+.axe-titre { font-size: .8rem; font-weight: 800; text-transform: uppercase; color: var(--texte-doux); margin-bottom: .3rem; }
+.axe-classes { font-size: .85rem; color: var(--texte-doux); margin: .2rem 0 0; }
 .config-box.large { max-width: 960px; }
 /* deux blocs : la version (une fiche toute prête, sur fond teinté) puis tout ce qui la personnalise */
 .bloc-version { background: #eef5fd; border-left: 5px solid var(--bleu-fort); border-radius: var(--radius); padding: 1rem 1.1rem .6rem; margin-bottom: 1.5rem; }

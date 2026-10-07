@@ -38,8 +38,6 @@ export const NB_VARIANTES_COMPETENCE = 2
 export interface OptionsRegistres {
   /** ajoute les exercices et les affiches d'exemple (domaine fictif) */
   avecExemples?: boolean
-  /** ajoute les exercices de l'ancien registre (src/exercices/ancien.js), pour comparer ou reporter */
-  avecAnciens?: boolean
   /** site (mode Vite) : les affiches ne sont produites que dans les langues qu'il publie ; défaut : toutes */
   site?: string
   /** ne garder que les fiches dont le slug commence ainsi (test, mise au point) */
@@ -205,12 +203,11 @@ function fichesExercice(module: ModuleExercice): FicheSource[] {
 }
 
 /** Les fiches à produire, dans l'ordre des registres (affiches d'abord). */
-export async function fichesDesRegistres({ avecExemples = false, avecAnciens = false, prefixe = '', site, echantillon = false }: OptionsRegistres = {}): Promise<FicheSource[]> {
+export async function fichesDesRegistres({ avecExemples = false, prefixe = '', site, echantillon = false }: OptionsRegistres = {}): Promise<FicheSource[]> {
   const affiches: ModuleAffiche[] = [...AFFICHES as ModuleAffiche[]]
   // le registre ; les exemples (`exemple: true`) seulement avec `avecExemples`, jamais en production
   const exercices: ModuleExercice[] = EXERCICES.filter(e => avecExemples || !e.exemple)
   if (avecExemples) affiches.push(...(await import('../../../src/affiches/dev.ts')).EXEMPLES as ModuleAffiche[])
-  if (avecAnciens) exercices.push(...(await import('../../../src/exercices/ancien.js')).REGISTRE as unknown as ModuleExercice[])
   const publiees = site ? languesDuSite(siteDe(site)) : LANGUES
   const fiches = [...affiches.flatMap(m => fichesAffiche(m, publiees)), ...exercices.flatMap(fichesExercice)]
   const vues = new Set<string>()

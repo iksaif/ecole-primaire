@@ -15,14 +15,13 @@
 
 ### Porté (modèle `definir` / `definirAffiche`, fiches sous leurs slugs historiques)
 - Exercices : calcul-mental, calcul-pose, tables, numération, suites, problèmes, heure, monnaie, longueurs, mesures, fractions,
-  formes, géométrie, motifs, compter, comparer, ranger (= « ordonner », id gardé pour le slug `exercices-ranger-*`), lettres, orthographe, vocabulaire, conjugaison.
+  formes, géométrie, motifs, compter, comparer, ranger (= « ordonner », id gardé pour le slug `exercices-ranger-*`), lettres, orthographe, vocabulaire, conjugaison, dictée, grammaire (tous ; `ancien.js` supprimé).
 - Affiches : alphabet, nombres, numération (tableau), droite numérique, tables (× et +), monnaie (+ planches à découper),
-  horloge (aiguilles colorées), formes et solides. Trois exemples de développement : `exemple`, `exemple-jours`, `exemple-riche`.
+  horloge (aiguilles colorées), formes et solides, conjugaison. Trois exemples de développement : `exemple`, `exemple-jours`, `exemple-riche`.
 
 ### Reste à porter (voir `src/exercices/ancien.js`, `src/impression/`)
-- Exercices **de français** : **grammaire, dictée**.
-- Affiches/fiches : **conjugaison** (`src/impression/affiches/conjugaison.js`), **resume** (`resume.js`), **écriture** (Seyès,
-  `src/impression/ecriture.js` : exercice « fiche seule », `jeu: false`), `affichesProgramme.js`.
+- **Plus aucun exercice dans l'ancien monde.** Restent : la **fiche d'écriture** (Seyès, exercice « fiche seule » ; trois manques du
+  modèle à régler d'abord), les affiches **« Ce que je sais faire »** (cachées), **Lecture** et **Quiz** : voir `plans/14-migration-restante.md`.
 - Décisions déjà prises pour ces reports : la **dictée** peut appeler Mistral **seulement avec la clé saisie par l'utilisateur**, et un test doit
   prouver que rien ne sort sans clé (garde générique déjà dans `tests/vie-privee.test.mjs`, à viser sur la vraie dictée) ;
   le français est toujours en `fr` (`enLangue('fr', …)`).

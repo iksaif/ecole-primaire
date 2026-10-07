@@ -12,6 +12,7 @@ import { module as droite } from './droite/index.ts'
 import { module as tables } from './tables/index.ts'
 import { module as formes } from './formes/index.ts'
 import { module as horloge } from './horloge/index.ts'
+import { module as conjugaison } from './conjugaison/index.ts'
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'
@@ -25,6 +26,7 @@ export const REGISTRE: ModuleAffiche<Reglages>[] = [
   tables,
   formes,
   horloge,
+  conjugaison,
   // nouveau:registre
 ]
 

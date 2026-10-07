@@ -32,6 +32,8 @@ export interface SpecVariante {
   /** format et sens par défaut de la variante (parmi `formats` et `orientations` de l'affiche) : A3 pour « l'affiche de la classe » */
   format?: Format
   orientation?: Orientation
+  /** place de la variante sur les axes du choix (beaucoup de variantes : un verbe × une série de temps) ; toutes les variantes ont les mêmes axes */
+  axes?: Readonly<Record<string, string>>
 }
 
 export interface SpecAffiche<C extends SpecReglages, V extends Record<string, SpecVariante>> {
@@ -118,7 +120,22 @@ export function definirAffiche<C extends SpecReglages = {}, V extends Record<str
     if (s.slug) v.slug = s.slug
     if (s.format) { if (!formats.includes(s.format)) erreur(`${ou} : format ${s.format} non permis (formats : ${formats.join(', ')})`); v.format = s.format }
     if (s.orientation) { if (!orientations.includes(s.orientation)) erreur(`${ou} : orientation ${s.orientation} non permise (orientations : ${orientations.join(', ')})`); v.orientation = s.orientation }
+    if (s.axes) v.axes = s.axes
     variantes[vid] = v
+  }
+  // axes : toutes les variantes ou aucune, les mêmes axes, et pas deux variantes au même endroit
+  const avecAxes = ids.filter(vid => declarees[vid].axes)
+  if (avecAxes.length && avecAxes.length !== ids.length) erreur('axes : toutes les variantes doivent en avoir, ou aucune')
+  if (avecAxes.length) {
+    const noms = Object.keys(declarees[ids[0]].axes ?? {}).join()
+    const places = new Set<string>()
+    for (const vid of ids) {
+      const axes = declarees[vid].axes ?? {}
+      if (Object.keys(axes).join() !== noms) erreur(`variante ${vid} : axes ${Object.keys(axes).join()} au lieu de ${noms}`)
+      const place = Object.values(axes).join('|')
+      if (places.has(place)) erreur(`variante ${vid} : une autre variante a déjà les axes ${place}`)
+      places.add(place)
+    }
   }
 
   // le formulaire ne parle que de réglages qui existent

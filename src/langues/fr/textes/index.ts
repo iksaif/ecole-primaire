@@ -47,10 +47,12 @@ import lettres from './lettres.ts'
 import orthographe from './orthographe.ts'
 import vocabulaire from './vocabulaire.ts'
 import conjugaison from './conjugaison.ts'
+import dictee from './dictee.ts'
+import grammaire from './grammaire.ts'
 import { AVEC_DEV } from '../../../dev.ts'
 
 // Textes des exemples et des pages /dev : absents d'un build de production (AVEC_DEV, src/dev.ts). Le type les garde : en production
 // aucun code ne les lit (les exemples n'y sont pas).
 const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev }
 
-export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, ...sectionsDev } as const
+export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, ...sectionsDev } as const

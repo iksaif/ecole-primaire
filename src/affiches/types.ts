@@ -71,6 +71,11 @@ export interface VarianteAffiche<R extends object = Reglages> extends NiveauExer
   /** format et sens par défaut de cette variante (parmi ceux de l'affiche) ; défaut : le premier de chaque liste. L'élève peut les changer. */
   format?: Format
   orientation?: Orientation
+  /**
+   * place de la variante sur les axes du choix (ex. { verbe: 'etre', temps: 'cycle' }) : le formulaire propose alors une rangée de boutons
+   * par axe au lieu de la liste des variantes ; textes `axe.<axe>` (titre de la rangée) et `axe.<axe>.<valeur>` (bouton)
+   */
+  axes?: Readonly<Record<string, string>>
 }
 
 /**

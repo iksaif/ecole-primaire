@@ -2,8 +2,6 @@
 import { RESUMES, RESUMES_VISIBLES } from '../impression/affiches/catalogue.js'
 import { CLASSES, classesEntre } from './classes.js'
 // exercices au format « définition » (src/exercices/) : niveaux et compétences viennent de leur définition
-import GRAMMAIRE from '../exercices/grammaire/definition.js'
-import DICTEE from '../exercices/dictee/definition.js'
 
 // classes : src/data/classes.js (réexportées pour les vues qui les lisent avec le catalogue)
 export { CLASSES }
@@ -38,9 +36,6 @@ export const ACTIVITES = [
   { to: '/imprimer/ecriture', matiere: 'imprimer', domaine: 'ecriture', genre: 'fiche', icon: '✏️', titre: "Fiches d'écriture", desc: 'Script et attaché, majuscules et minuscules, sur lignes Seyès', niveaux: de('gs', 'ce2') },
 
   // Affiches du programme : une carte par famille, dans son domaine, seulement sur la page « À imprimer » (`detail`)
-  { to: '/imprimer/affiches?affiche=conjugaison', matiere: 'imprimer', domaine: 'grammaire', genre: 'affiche', detail: true, icon: '✍️', titre: 'Affiches de conjugaison', desc: 'Être, avoir, 1er et 2e groupes, verbes irréguliers', niveaux: de('cp', 'cm2'),
-    br: { titre: 'Skritelloù displegañ', desc: 'Bezañ, kaout, 1añ ha 2l strollad, verboù direizh' } }, // br: à relire
-
   // « Ce que je sais faire » : une carte par domaine du programme qui a des affiches résumé
   ...[...new Set(RESUMES_VISIBLES ? RESUMES.map(r => r.domaine) : [])].map(domaine => ({
     to: `/imprimer/affiches?affiche=resume&domaine=${domaine}`, matiere: 'imprimer', domaine, genre: 'affiche', detail: true, icon: '✅',
@@ -53,8 +48,6 @@ export const ACTIVITES = [
 
   // ── Français ──
   { fiche: true, to: '/lecture', matiere: 'francais', domaine: 'lecture', rubrique: 'Lecture', icon: '📖', titre: 'Lecture & Syllabes', desc: 'Syllabes, reconstitution de mots et textes interactifs', niveaux: de('cp', 'ce2') },
-  { fiche: true, to: '/francais/dictee',      matiere: 'francais', domaine: 'ecriture', rubrique: 'Orthographe', icon: '🖊️', titre: 'Dictée', desc: 'Écoute et écris les mots — synthèse vocale', niveaux: Object.keys(DICTEE.niveaux) },
-  { fiche: true, to: '/francais/grammaire',   matiere: 'francais', domaine: 'grammaire', rubrique: 'Grammaire et conjugaison', icon: '🧱', titre: 'Grammaire', desc: 'Phrase, nature des mots, sujet, accords', niveaux: Object.keys(GRAMMAIRE.niveaux) },
 
 
   // ── Culture générale ──
@@ -65,8 +58,6 @@ export const ACTIVITES = [
 const BR = {
   '/imprimer/ecriture': ['Fichennoù skrivañ', 'Skript hag a-stag, pennlizherennoù ha lizherennoù bihan, war linennoù Seyès'],
   '/maternelle/compter':  ['Kontañ an traoù', 'Kont ha kav an niver mat'],
-  '/francais/dictee':      ['Skrivadeg', 'Selaou ha skriv ar gerioù (e galleg)'],
-  '/francais/grammaire':   ['Yezhadur', 'Frazenn, natur ar gerioù, sujed, kenglotadurioù (e galleg)'],
   '/lecture': ['Lenn ha silabennoù', 'Silabennoù, adsevel gerioù ha testennoù (e galleg)'],
   '/autres':  ['Quiz sevenadur hollek', 'Douaroniezh, istor, skiantoù, loened'],
 }
@@ -77,9 +68,7 @@ const BR = {
 const COMPETENCES_ROUTES = {
   '/imprimer/ecriture': ['geste-ecriture-maternelle', 'cursive', 'copie'],
   // au CP : + et −, compléments à 10, doubles et moitiés (± dizaines, ± 9 et passage de dizaine sont désactivés)
-  '/francais/dictee': Object.fromEntries(Object.entries(DICTEE.niveaux).map(([n, v]) => [n, v.competences])),
   // accents et lettres à plusieurs sons : aucune question aujourd'hui
-  '/francais/grammaire': Object.fromEntries(Object.entries(GRAMMAIRE.niveaux).map(([n, v]) => [n, v.competences])),
   // compréhension : le mode « Lecture de textes » n'a pas encore de questions
   '/lecture': ['decodage'],
 }

@@ -5,7 +5,6 @@
 // n'importe que des données pures.
 import { ACTIVITES } from '../data/activites.js'
 import { classesEntre } from '../data/classes.js'
-import GRAMMAIRE from '../exercices/grammaire/definition.js'
 import CALCUL_POSE from '../exercices/calcul-pose/definition.js'
 
 export const NB_VARIANTES = 4
@@ -34,26 +33,6 @@ const LISTE = [
       F('soustraction', 'la soustraction posée', 'soustraction-posee', ['Opération › Soustraction'], { clics: ['Retenue › ^Mélangé$'], classes: classesFiche(CALCUL_POSE, 'soustraction') }),
     ] },
   // ── Français (contenu en français, consignes traduites) ──
-  { id: 'dictee', route: '/francais/dictee', groupe: 'francais', titre: { fr: 'Dictée', br: 'Skrivadeg' },
-    // classes : celles de la définition (src/exercices/dictee/definition.js) ; CM1 et CM2 ont un même corpus : une seule
-    // fiche publiée (exercices-dictee-cm1-cm2), faite au CM1
-    classes: [...['cp', 'ce1', 'ce2'].map(n => C(n, `^${n.toUpperCase()}$`)), C('cm1-cm2', '^CM1$')] },
-  { id: 'grammaire', route: '/francais/grammaire', groupe: 'francais', titre: { fr: 'Grammaire', br: 'Yezhadur' },
-    // classes et fiches : celles de la définition (src/exercices/grammaire/definition.js)
-    classes: Object.keys(GRAMMAIRE.niveaux).map(n => C(n, `^${n.toUpperCase()}$`)),
-    choix: ['Mots dans l', 'Phrase ou pas', 'Majuscule et point', 'Types de phrases', 'forme négative', 'Affirmative ou négative', 'Phrase simple',
-      'Trouver le verbe', 'Trouver les noms', 'Trouver les déterminants', 'Trouver les adjectifs', "Nature d'un mot", 'Nom principal',
-      'Trouver le sujet', 'Il, elle', 'complément de phrase', 'Où \\? Quand', 'Complément du verbe', 'Masculin', 'Singulier', 'Mettre au pluriel', "Accorder l'adjectif", 'Il chante'],
-    fiches: [
-      ['phrase', 'la phrase', ['Mots dans l', 'Phrase ou pas', 'Majuscule et point', 'Types de phrases', 'forme négative', 'Affirmative ou négative', 'Phrase simple']],
-      ['nature', 'la nature des mots', ['Trouver les noms', 'Trouver les déterminants', 'Trouver les adjectifs', "Nature d'un mot", 'Nom principal']],
-      ['sujet-verbe', 'le verbe et son sujet', ['Trouver le verbe', 'Trouver le sujet', 'Il, elle', 'Il chante']],
-      ['accords', 'genre, nombre et accords', ['Masculin', 'Singulier', 'Mettre au pluriel', "Accorder l'adjectif"]],
-      ['complements', 'les compléments', ['complément de phrase', 'Où \\? Quand', 'Complément du verbe']],
-    ].map(([id, titre, seul]) => {
-      const fiches = GRAMMAIRE.fiches.filter(f => f.id === id)
-      return F(id, titre, fiches[0].competence, seul, { classes: fiches.map(f => f.niveau) })
-    }) },
   // ── Culture générale ──
   { id: 'quiz', route: '/autres', groupe: 'autres', titre: { fr: 'Quiz culture générale', br: 'Quiz sevenadur hollek' },
     classes: [C('cp-cm2', null)] },

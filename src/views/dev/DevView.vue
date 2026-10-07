@@ -37,7 +37,7 @@ import { ref, computed, onMounted } from 'vue'
 import type { ModuleAffiche } from '../../affiches/types.ts'
 
 // clés sans paramètre (celles de la page de couverture qui en ont ne sont pas listées ici)
-type CleDev = Exclude<Extract<CleTexte, `dev.${string}`>, 'dev.couvertureBase' | 'dev.couvertureAvecAncien' | 'dev.couvertureAReporter'>
+type CleDev = Exclude<Extract<CleTexte, `dev.${string}`>, 'dev.couvertureBase'>
 
 const { t, langue } = useLangue()
 interface Exemple { titre: string, to: string, description: string, fichiers: string }

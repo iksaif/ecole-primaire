@@ -51,6 +51,9 @@ export default definirAffiche({
   sont un tableau (`classes: ['ms']`), jamais du texte. `choix(valeurs, { defaut, bonus, horsProgramme })` (de `src/noyau/definir.ts`, comme les
   exercices) se déclare dans une variante, pas dans les réglages communs (ils dépendent du programme de ses classes).
 - Un réglage **sans** `choix` (`max`, `completer`) est une valeur de la variante, que lit le dessin ; l'élève ne le change pas.
+- Beaucoup de variantes (un verbe × une série de temps) : chacune déclare sa place, `axes: { verbe: 'etre', temps: 'cycle' }` (toutes les
+  variantes, les mêmes axes, jamais deux au même endroit) ; le formulaire montre une rangée de boutons par axe (textes `axe.<axe>` et
+  `axe.<axe>.<valeur>`) au lieu de la liste des variantes. Exemple : `conjugaison/`.
 - Une variante peut avoir son `format` et son `orientation` par défaut (`format: 'A3'`) : ceux de la fiche publiée ; l'élève les change, et le premier PDF de la page de téléchargement est celui-là.
 - Les types suivent : `type Reglages = ReglagesDeAffiche<typeof definition>` donne à `dessin` des réglages typés.
 - `variantes` est un objet **ou une fonction pure** qui le produit (classes × un paramètre) ; elle est appelée à l'import, le

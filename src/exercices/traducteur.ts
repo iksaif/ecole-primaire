@@ -1,7 +1,6 @@
-// T(cle, params) d'un exercice, pour les consommateurs hors de l'app (build des fiches, tests) qui lisent aussi les exercices
-// de l'ancien registre (src/exercices/ancien.js) : leurs textes sont encore deux catalogues `{ fr, br }` de src/i18n/, lus par
-// l'ancien `contenu`. Un exercice du nouveau format (`catalogue(…)`, src/langues/catalogue.ts) passe par `traducteur`.
-// Ce pont disparaît avec le dernier exercice de l'ancien format ; l'app, elle, n'en a pas besoin.
+// T(cle, params) d'un exercice ou d'une affiche, pour les consommateurs hors de l'app (build des fiches, tests). Tous les exercices
+// sont au format `catalogue(…)` (src/langues/catalogue.ts) ; le build passe encore ici des textes d'affiches qui ne le sont pas
+// (`texteMulti`, scripts/build/fiches/registres.ts), lus par l'ancien `contenu` de src/i18n/. Ce pont disparaît avec eux.
 import { contenu as contenuAncien } from '../i18n/index.js'
 import { estCatalogue, traducteur } from '../langues/catalogue.ts'
 import type { TraducteurContenu } from '../langues/catalogue.ts'

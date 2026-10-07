@@ -1,9 +1,16 @@
-// Grammaire — fiche imprimable (pure : lisible par node). Met en page le tirage de questionsFiche().
-//   fiche({ questions, T, langue, police, cssPolices }) → document HTML complet (documentFiche, ligneNomDate,
-//   section.corrige) ; T et langue : toujours le français (exercice de français) ; police : usePoliceFiche() dans l'app
-import { documentFiche, ligneNomDate } from '../../impression/document.js'
-import { ORDRE_FICHE } from './definition.js'
-import { texteTokens, valeur, tc, consigneFiche } from './generateur.js'
+// Grammaire — fiche imprimable : la mise en page du tirage de questionsFiche(). Pure (lisible par node). Toujours en français (exercice de
+// français) : les textes calculés des questions sont lus avec T, le catalogue de contenu (textes.ts).
+import { documentFiche, ligneNomDate } from '../../impression/document.ts'
+import type { ParamsFiche } from '../../noyau/types.ts'
+import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { CleContenu } from '../../langues/catalogue.ts'
+import type DEFINITION from './definition.ts'
+import { ORDRE_FICHE } from './definition.ts'
+import type { CONTENU } from './textes.ts'
+import { texteTokens, valeur, tc, consigneFiche } from './generateur.ts'
+import type { Question, TirageFiche, Tr } from './generateur.ts'
+
+type Cle = CleContenu<typeof CONTENU>
 
 const CSS = `
       h2 { font-size: 1rem; margin: 1.4rem 0 .4rem; background: #f0f3f7; padding: .3rem .6rem; border-radius: 6px; }
@@ -26,16 +33,16 @@ const CSS = `
 
 const LIGNE = '<span class="ligne"></span>'
 const CASE = '<span class="case"></span>'
-const minuscule = s => s.charAt(0).toLowerCase() + s.slice(1)
+const minuscule = (s: string): string => s.charAt(0).toLowerCase() + s.slice(1)
 
 // Rendu d'une question sur papier
-function questionFiche(q, T) {
+function questionFiche(q: Question, T: Tr): string {
   const tokTxt = q.tokens ? texteTokens(q.tokens) : ''
   const html = valeur(q.html, T)
-  const bonne = q.choix?.[q.bonne]
+  const bonne = q.choix?.[q.bonne ?? 0] ?? ''
   switch (q.type) {
     case 'ordre':
-      return `<div class="etiqs">${q.etiquettes.map(e => `<span class="etiq">${e}</span>`).join('')} <span class="etiq">${q.fin}</span></div><div class="lignebloc">${LIGNE}</div>`
+      return `<div class="etiqs">${(q.etiquettes ?? []).map(e => `<span class="etiq">${e}</span>`).join('')} <span class="etiq">${q.fin}</span></div><div class="lignebloc">${LIGNE}</div>`
     case 'phrase':
       return `<div>${html}</div><div class="cases">${CASE} ${T('fiche_cestPhrase')} &nbsp;&nbsp; ${CASE} ${T('fiche_pasPhrase')}</div>`
     case 'majuscule': {
@@ -49,7 +56,7 @@ function questionFiche(q, T) {
     case 'negation':
       return `<div>${html.replace(/<div class="sens">(.*)<\/div>/, ' <em>($1)</em>')}</div><div class="lignebloc">${LIGNE}</div>`
     case 'negReconnaitre':
-      return q.choix.length === 2
+      return (q.choix ?? []).length === 2
         ? `<div>${html}</div><div class="cases">${CASE} ${tc(T, 'affirmative')} &nbsp;&nbsp; ${CASE} ${tc(T, 'négative')}</div>`
         : `<div>${html} &nbsp;→ <span class="ligne moyenne"></span></div>`
     case 'verbe': case 'nom': case 'det': case 'adj': case 'sujet': case 'cplt': case 'gnNoyau':
@@ -74,7 +81,8 @@ function questionFiche(q, T) {
   return ''
 }
 
-export function fiche({ questions: x, T, langue, police, cssPolices }) {
+export function fiche({ questions: x, T: TC, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  const T = TC as Tr
   const { niveau, questions: qs } = x
   const ordre = [...new Set(qs.map(q => q.type))].sort((a, b) => ORDRE_FICHE.indexOf(a) - ORDRE_FICHE.indexOf(b))
   const parType = ordre.map(ty => ({ t: ty, qs: qs.filter(q => q.type === ty) }))

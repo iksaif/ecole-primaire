@@ -3,11 +3,10 @@
     <h1 class="section-heading">{{ t('dev.couvertureTitre') }}</h1>
     <p class="intro">{{ t('dev.couvertureIntro') }}</p>
 
-    <!-- totaux : la base seule, puis avec les exercices encore à reporter -->
+    <!-- totaux : les cases couvertes, et les trous -->
     <div class="totaux">
       <div class="total"><strong>{{ pct(totaux.base, totaux.cases) }}</strong><span>{{ t('dev.couvertureBase', { n: totaux.base, total: totaux.cases }) }}</span></div>
-      <div class="total ancien"><strong>{{ pct(totaux.base + totaux.ancien, totaux.cases) }}</strong><span>{{ t('dev.couvertureAvecAncien', { n: totaux.ancien }) }}</span></div>
-      <div class="total trou"><strong>{{ totaux.cases - totaux.base - totaux.ancien }}</strong><span>{{ t('dev.couvertureTrous') }}</span></div>
+      <div class="total trou"><strong>{{ totaux.cases - totaux.base }}</strong><span>{{ t('dev.couvertureTrous') }}</span></div>
     </div>
     <p v-if="fiches.etat !== 'pret'" class="note">{{ t('dev.couvertureSansFiches') }}</p>
 
@@ -23,7 +22,6 @@
 
     <div class="legende">
       <span><i class="pastille couvert"></i>{{ t('dev.couvertureLegende.couvert') }}</span>
-      <span><i class="pastille ancien"></i>{{ t('dev.couvertureLegende.ancien') }}</span>
       <span><i class="pastille trou"></i>{{ t('dev.couvertureLegende.trou') }}</span>
       <span><i class="pastille hors"></i>{{ t('dev.couvertureLegende.hors') }}</span>
       <span>🎯 {{ t('dev.couvertureSorte.exercice') }} · 🖼️ {{ t('dev.couvertureSorte.affiche') }} · 📄 {{ t('dev.couvertureSorte.fiche') }}</span>
@@ -45,7 +43,6 @@
                 <span v-if="k.cases[c].n.affiche">🖼️{{ k.cases[c].n.affiche }}</span>
                 <span v-if="k.cases[c].n.fiche">📄{{ k.cases[c].n.fiche }}</span>
               </template>
-              <template v-else-if="k.cases[c].etat === 'ancien'">⏳</template>
               <template v-else-if="k.cases[c].etat === 'trou'">—</template>
             </td>
           </tr>
@@ -58,8 +55,7 @@
 <script setup lang="ts">
 // Couverture du programme (développement seulement, /dev/couverture) : chaque compétence de src/data/programme.ts × chaque classe où elle
 // est au programme, et ce qui la couvre dans le catalogue de la base (src/ressources/ : exercices, affiches, et fiches prêtes si leur
-// index est là, `npm run fiches:dev`). Une case couverte seulement par un exercice encore dans l'ancien monde (src/exercices/ancien.js)
-// est marquée « à reporter ». Remplace, pour la base, le rapport `npm run couverture` (qui lit l'ancien monde).
+// index est là, `npm run fiches:dev`). Remplace, pour la base, le rapport `npm run couverture` (qui lit l'ancien monde).
 import { computed, ref } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
 import { COMPETENCES, DOMAINES } from '../../data/programme.ts'
@@ -68,12 +64,11 @@ import type { Classe } from '../../data/classes.ts'
 import { useRessources } from '../../ressources/useRessources.ts'
 import { texteDe } from '../../ressources/textes.ts'
 import type { RessourceDeContenu } from '../../ressources/types.ts'
-import { REGISTRE as ANCIENS } from '../../exercices/ancien.js'
 import { NOM_COURT } from '../../pages/matieres.ts'
 import type { MatierePage } from '../../pages/matieres.ts'
 
 type Sorte = 'tout' | 'exercice' | 'affiche' | 'fiche'
-type Etat = 'couvert' | 'ancien' | 'trou' | 'hors'
+type Etat = 'couvert' | 'trou' | 'hors'
 interface Case { etat: Etat, n: Record<'exercice' | 'affiche' | 'fiche', number>, titre: string }
 
 const { t, langueAffichee } = useLangue()
@@ -85,14 +80,6 @@ const matiere = ref<MatierePage | ''>('')
 const sorte = ref<Sorte>('tout')
 const trousSeuls = ref(false)
 const pct = (n: number, total: number): string => (total ? `${Math.round((n / total) * 100)} %` : '—')
-
-// les exercices encore dans l'ancien monde : leurs compétences, par classe
-const anciens = new Map<string, string[]>()   // `${competence}:${classe}` → titres
-for (const e of ANCIENS as { definition: { id: string, niveaux: Record<string, { competences?: string[] }> } }[]) {
-  for (const [classe, niv] of Object.entries(e.definition.niveaux)) {
-    for (const k of niv.competences ?? []) anciens.set(`${k}:${classe}`, [...(anciens.get(`${k}:${classe}`) ?? []), e.definition.id])
-  }
-}
 
 // ressources du catalogue, par compétence et par classe (une ressource couvre une compétence pour chacune de ses classes)
 const parCase = computed(() => {
@@ -110,15 +97,12 @@ function caseDe(k: { id: string, niveaux: readonly Classe[] }, c: Classe): Case 
   const rs = parCase.value.get(`${k.id}:${c}`) ?? []
   for (const r of rs) n[r.type]++
   if (rs.length) return { etat: 'couvert', n, titre: rs.map(r => `${r.emoji} ${texteDe(r.titre, langueAffichee.value)}`).join('\n') }
-  const vieux = anciens.get(`${k.id}:${c}`)
-  if (vieux) return { etat: 'ancien', n, titre: t('dev.couvertureAReporter', { liste: vieux.join(', ') }) }
   return { etat: 'trou', n, titre: '' }
 }
 
 const compte = (cases: Case[]) => ({
   cases: cases.filter(x => x.etat !== 'hors').length,
   base: cases.filter(x => x.etat === 'couvert').length,
-  ancien: cases.filter(x => x.etat === 'ancien').length,
 })
 
 const matieres = computed(() => MATIERES_VUES.map(id => {
@@ -135,13 +119,13 @@ const matieres = computed(() => MATIERES_VUES.map(id => {
 
 const totaux = computed(() => matieres.value
   .filter(m => !matiere.value || m.id === matiere.value)
-  .reduce((s, m) => ({ cases: s.cases + m.cases, base: s.base + m.base, ancien: s.ancien + m.ancien }), { cases: 0, base: 0, ancien: 0 }))
+  .reduce((s, m) => ({ cases: s.cases + m.cases, base: s.base + m.base }), { cases: 0, base: 0 }))
 
 // « seulement les trous » : les compétences qui ont au moins une case sans rien de la base
 const matieresAffichees = computed(() => matieres.value
   .filter(m => !matiere.value || m.id === matiere.value)
   .map(m => ({ ...m, domaines: m.domaines
-    .map(d => ({ ...d, competences: trousSeuls.value ? d.competences.filter(k => Object.values(k.cases).some(x => x.etat === 'trou' || x.etat === 'ancien')) : d.competences }))
+    .map(d => ({ ...d, competences: trousSeuls.value ? d.competences.filter(k => Object.values(k.cases).some(x => x.etat === 'trou')) : d.competences }))
     .filter(d => d.competences.length) })))
 </script>
 
@@ -153,7 +137,6 @@ const matieresAffichees = computed(() => matieres.value
 .total { background: white; box-shadow: var(--shadow); border-radius: var(--radius); padding: .8rem 1.1rem; border-left: 5px solid var(--vert); display: flex; flex-direction: column; min-width: 12rem; }
 .total strong { font-size: 1.8rem; }
 .total span { font-size: .85rem; color: var(--texte-doux); }
-.total.ancien { border-left-color: var(--orange); }
 .total.trou { border-left-color: var(--rouge); }
 .filtres { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin: .8rem 0; }
 .sep { width: 1px; height: 1.6rem; background: var(--gris-brd); margin: 0 .3rem; }
@@ -172,7 +155,6 @@ th small { display: block; margin: 0; }
 td { text-align: center; white-space: nowrap; min-width: 4.2rem; }
 td span { margin: 0 .1rem; }
 .couvert, .pastille.couvert { background: #e3f6e3; }
-.ancien, .pastille.ancien { background: #fff1d6; }
 .trou, .pastille.trou { background: #fde4e4; color: var(--rouge); }
 .hors, .pastille.hors { background: #f4f4f4; }
 .pastille.hors { border: 1px solid var(--gris-brd); }

@@ -1,4 +1,4 @@
-// Capture des fiches d'une vue dans Chrome (vues PAS ENCORE migrées vers src/exercices/ : à garder tant qu'il en reste) :
+// Capture des fiches d'une vue dans Chrome (vues PAS ENCORE migrées vers src/exercices/ : Lecture, Quiz, fiches d'écriture…) :
 // empreintes au format des instantanés (tests/instantanes/<exercice>.json, mêmes clés de cas), et HTML complets pour
 // `npm run instantanes -- --diff`. La capture « avant » d'une vue ancienne devient ainsi l'instantané de référence de
 // l'exercice migré (procédure : src/exercices/README.md).
@@ -8,7 +8,7 @@
 //        [--url http://localhost:5173/ecole-primaire/] [--paralleles 8] [--recharger]
 //
 // - Serveur : --url, sinon TEST_URL, sinon le serveur de dev (npm run dev).
-// - Cas : pour un exercice du registre (src/exercices/ancien.js), ceux du test des instantanés ; sinon ceux de --reglages :
+// - Cas : pour un exercice du registre (src/exercices/index.ts), ceux du test des instantanés ; sinon ceux de --reglages :
 //     { "cle": "monnaie_config",                       // clé des réglages mémorisés de la vue (chargerReglages)
 //       "cas": [{ "niveau": "ce1", "nom": "defauts",    // → clé <id>/ce1/graineN/<langue>/defauts
 //                 "reglages": { … },                    // réglages mémorisés (ep_<cle>) avant l'ouverture de la vue
@@ -19,7 +19,7 @@
 // - Un navigateur, un contexte par langue × niveau, en parallèle (--paralleles). Pilotage de la page : capturer/page.ts.
 import { parseArgs } from 'node:util'
 import { chromium } from 'playwright-core'
-import { REGISTRE } from '../../src/exercices/ancien.js'
+import { REGISTRE } from '../../src/exercices/index.ts'
 import { trouverChrome } from '../../tests/outils.mjs'
 import {
   GRAINES, DOSSIER_HTML, empreinte, ecrireInstantanes, ecrireHtml, fichierInstantanes, languesDe, lireInstantanes,

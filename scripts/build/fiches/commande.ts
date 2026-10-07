@@ -1,10 +1,9 @@
 // Commande `npm run fiches` : produit les fiches PDF toutes prêtes et leurs JSON (index et une entrée par fiche).
-//   node scripts/build/fiches/commande.ts [--mode <site>] [--outDir <dossier>] [--avec-exemples] [--avec-anciens]
+//   node scripts/build/fiches/commande.ts [--mode <site>] [--outDir <dossier>] [--avec-exemples]
 //                                   [--prefixe <slug>] [--travailleurs <n>]
 //   --mode          site (mode Vite : ecoleprimaire, skoolik…) écrit dans l'index ; défaut : production
 //   --outDir        dossier du site (défaut : dist) : les fichiers vont dans <outDir>/fiches/
 //   --avec-exemples ajoute les exercices et affiches d'exemple (jamais en production)
-//   --avec-anciens  ajoute les exercices de l'ancien registre (comparaison, reports)
 //   --prefixe       seulement les fiches dont le slug commence ainsi (mise au point)
 //   --echantillon   seulement un échantillon représentatif (build de test rapide ; `echantillonner`) : jamais en production
 //   --travailleurs  onglets de Chrome en parallèle (défaut : un par cœur, 8 au plus)
@@ -24,7 +23,6 @@ const { values } = parseArgs({
     mode: { type: 'string', default: 'production' },
     outDir: { type: 'string', default: 'dist' },
     'avec-exemples': { type: 'boolean', default: false },
-    'avec-anciens': { type: 'boolean', default: false },
     prefixe: { type: 'string', default: '' },
     echantillon: { type: 'boolean', default: false },
     travailleurs: { type: 'string' },
@@ -37,7 +35,7 @@ if (values.mode === 'production' && values['avec-exemples']) throw new Error('--
 if (values.mode === 'production' && values.echantillon) throw new Error('--echantillon : jamais dans un build de production (donner un --mode de test)')
 
 installerPolices()
-const fiches = await fichesDesRegistres({ avecExemples: values['avec-exemples'], avecAnciens: values['avec-anciens'], prefixe: values.prefixe, echantillon: values.echantillon, site: values.mode })
+const fiches = await fichesDesRegistres({ avecExemples: values['avec-exemples'], prefixe: values.prefixe, echantillon: values.echantillon, site: values.mode })
 console.log(`Fiches (${values.mode}) → ${values.outDir}/fiches/ : ${fiches.length} à produire`)
 
 const debut = performance.now()

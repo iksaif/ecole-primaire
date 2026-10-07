@@ -25,5 +25,7 @@ export const VUES: Readonly<Record<string, VueExercice>> = {
   '/francais/orthographe': () => import('./francais/OrthographeView.vue'),
   '/francais/vocabulaire': () => import('./francais/VocabulaireView.vue'),
   '/francais/conjugaison': () => import('./francais/ConjugaisonView.vue'),
+  '/francais/dictee': () => import('./francais/DicteeView.vue'),
+  '/francais/grammaire': () => import('./francais/GrammaireView.vue'),
   // nouveau:vues
 }

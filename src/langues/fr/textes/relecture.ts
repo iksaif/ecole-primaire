@@ -10,7 +10,7 @@ export default {
   source: {
     interface: 'Interface du site',
     exercice: 'Contenu des exercices',
-    affiche: 'Affiches',
+    affiche: 'Textes des affiches',
   },
   toutes: 'Tout cocher',
   aucune: 'Tout décocher',
@@ -24,20 +24,19 @@ export default {
   sectionsCompte: 'Sections : {n}',
   vide: 'Aucun texte avec ces choix.',
   // le document imprimé, toujours en français
-  docTitre: 'Relecture du breton',
   docNombre: '{n} textes',
   docConsigne: 'Pour chaque texte : le français est la référence, le breton est la traduction actuelle (souvent automatique). Cochez « OK » si le breton convient ; sinon écrivez la bonne version dans l’encadré (ou barrez et corrigez). En cas de doute sur le sens du français, notez-le. Trugarez !',
   docContact: 'À renvoyer à {contact}',
-  docFrancais: 'Français',
+  docFrancais: 'Texte français',
   docBreton: 'Brezhoneg',
-  docCorrection: 'Correction',
+  docCorrection: 'Votre correction',
   docOk: 'OK',
   docCorriger: 'à corriger',
   docIncertain: 'à relire',
   docAbsent: '— pas encore traduit —',
   docOrigine: {
     interface: 'Interface',
-    exercice: 'Exercice',
+    exercice: 'Contenu d’exercice',
     affiche: 'Affiche',
   },
 } as const

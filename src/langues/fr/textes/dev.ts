@@ -5,7 +5,7 @@ export default {
   intro: 'Cette page et ses exemples n’existent qu’avec <code>npm run dev</code> : rien n’en reste dans le build.',
   exemples: 'Exemples de départ',
   documentation: 'Documentation',
-  relectureTitre: 'Relecture du breton',
+  relectureTitre: 'Relecture du breton (PDF à imprimer)',
   relectureDescription: 'les textes bretons à relire, en document à imprimer ou en PDF avec de la place pour les corrections (à donner à un·e brittophone)',
   exerciceSimpleTitre: 'Exemple d’exercice simple',
   exerciceSimpleDescription: 'une suite de nombres à compléter : niveaux, bonus, hors programme, fiche par compétence, jeu et fiche imprimable ; interface dans la langue de l’écran, contenu de la fiche traduit aussi',

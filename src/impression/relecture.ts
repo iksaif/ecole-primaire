@@ -43,13 +43,13 @@ const CSS = `
       .cases span { margin-left: 5mm; }
       .case { display: inline-block; width: 3mm; height: 3mm; border: .3mm solid #333; margin-right: 1.2mm; vertical-align: -.4mm; }
       .texte { margin: 0 0 .8mm; }
-      .texte .lib { display: inline-block; min-width: 19mm; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .03em; color: #555; }
+      .texte .lib { display: inline-block; min-width: 27mm; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .03em; color: #555; }
       .texte.bz { font-style: italic; }
       .texte.absent { color: #999; }
       .correction { position: relative; }
       .correction .lib { position: absolute; left: 0; top: 4.2mm; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .03em; color: #555; }
       .ligne { height: 7mm; border-bottom: .3mm solid #888; }
-      .correction .ligne:first-of-type { margin-left: 19mm; }`
+      .correction .ligne:first-of-type { margin-left: 27mm; }`
 
 const T = (cle: Parameters<typeof traduire>[1], ...args: unknown[]): string =>
   (traduire as (l: 'fr', c: string, ...a: unknown[]) => string)('fr', cle, ...args)
@@ -89,7 +89,7 @@ export function documentRelecture(lignes: readonly LigneRelecture[], options: Op
   const sections = parSection(lignes)
   const corps = sections.map(([titre, textes], i) =>
     `<h2${options.parSection && i > 0 ? ' class="page"' : ''}>${echapper(titre)} (${textes.length})</h2>\n${textes.map(l => article(l, options)).join('\n')}`).join('\n')
-  const titre = T('relecture.docTitre')
+  const titre = T('relecture.titre')
   return documentFiche({
     titre, langue: 'fr', css: CSS, largeur: '720px', marge: '0',
     h1: `${echapper(titre)} — ${echapper(T('relecture.docNombre', { n: lignes.length }))}`,

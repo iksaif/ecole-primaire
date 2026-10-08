@@ -24,6 +24,8 @@ async function ouvrir({ route = '/maths', langue = 'fr', largeur = 1280, profil,
 // les classes choisies deviennent le réglage mémorisé : l'adresse n'écrit que l'écart, on lit donc le libellé de la barre
 const attendreClasses = (page, libelle) => page.waitForFunction(l => /Classe|Klas/.test(document.querySelector('header.nav .nbtn.classe')?.getAttribute('aria-label') ?? '') && document.querySelector('header.nav .nbtn.classe').getAttribute('aria-label').endsWith(l), libelle)
 const debordement = page => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)
+// ce qui dépasse à droite de la fenêtre (pour que l'échec dise QUOI, pas seulement qu'il y a un débordement : polices différentes en CI)
+const quiDepasse = page => page.evaluate(() => [...document.querySelectorAll('body *')].filter(e => e.getBoundingClientRect().right > innerWidth + 1 && e.offsetParent).slice(0, 4).map(e => `${e.tagName.toLowerCase()}${e.className && typeof e.className === 'string' ? '.' + e.className.split(' ')[0] : ''} (${Math.round(e.getBoundingClientRect().right)} px)`).join(', '))
 const enBarre = page => page.evaluate(() => [...document.querySelectorAll('header.nav a, header.nav button')].filter(e => e.offsetParent).map(e => (e.getAttribute('aria-label') ?? e.textContent).trim()))
 
 // ── 1. barre : débordement et accessibilité, aux trois largeurs, en français et en breton, menus ouverts ──
@@ -33,14 +35,14 @@ for (const largeur of [1280, 360, 320]) {
     for (const profil of ['parent', 'enseignant', 'enfant']) {
       const { ctx, page, erreurs } = await ouvrir({ largeur, langue, profil, route: '/maths?mode=bi' })
       const nom = `${profil} (${langue}, ${largeur})`
-      verifier(await debordement(page) <= 0, `${nom} : aucun débordement horizontal`)
+      { const d = await debordement(page); verifier(d <= 0, `${nom} : aucun débordement horizontal${d > 0 ? ` (${d} px : ${await quiDepasse(page)})` : ''}`) }
       if (langue === 'fr' || largeur === 360) await verifierAxe(page, `${nom} : barre et pied`, ENVELOPPE)
       // chaque menu ouvert : pas de débordement ni de violation
       for (const nomMenu of [/^(Langue|Yezh) :/, /^(Classe|Klas) :|Classe verrouillée|Klas prennet/, /^(Profil) :/, /^(Ouvrir le menu|Digeriñ al lañser)$/]) {
         const bouton = page.locator('header.nav button[aria-expanded]:visible').and(page.getByRole('button', { name: nomMenu }))
         if (!await bouton.count()) continue
         await bouton.click()
-        verifier(await debordement(page) <= 0, `${nom} : menu ${nomMenu} ouvert sans débordement`)
+        { const d = await debordement(page); verifier(d <= 0, `${nom} : menu ${nomMenu} ouvert sans débordement${d > 0 ? ` (${d} px : ${await quiDepasse(page)})` : ''}`) }
         if (langue === 'fr') await verifierAxe(page, `${nom} : menu ${nomMenu} ouvert`, ENVELOPPE)
         await page.keyboard.press('Escape')
       }

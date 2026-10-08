@@ -24,11 +24,18 @@ export default {
   cles: 'Diskouez an alc’hwezioù (arouezenn teknikel)', // br: à relire
   parSection: 'Ur rann dre bajenn', // br: à relire
   compte: 'Testennoù : {n}', // br: à relire
+  compteParties: 'en o zouez {fiches} evit endalc’had ar fichennoù ha {ui} evit an etrefas', // br: à relire
   sectionsCompte: 'Rannoù : {n}', // br: à relire
   vide: 'Testenn ebet gant an dibaboù-mañ.', // br: à relire
   docNombre: '{n} testenn', // br: à relire
   docConsigne: 'Evit pep testenn : ar galleg zo ar patrom, ar brezhoneg zo an droidigezh a-vremañ (alies emgefreek). Kouchit « mat » ma talv ar brezhoneg ; mod all skrivit ar stumm mat el lec’h roet (pe dilamit ha reizhit). Ma n’oc’h ket sur eus talvoudegezh ar galleg, notit-se. Trugarez !', // br: à relire
   docContact: 'Da gas da {contact}', // br: à relire
+  docPriorite: 'Ma vank an amzer : ar rann 1 (endalc’had ar fichennoù, ar pezh a lenn ar vugale) eo ar pouezusañ ; ar rann 2 (an etrefas) a c’hall gortoz.', // br: à relire
+  docPartieNumero: 'Rann {n} — {titre} ({nombre} testenn)', // br: à relire
+  docPartie: {
+    contenu: 'Endalc’had ar fichennoù : poelladennoù hag afichoù', // br: à relire
+    interface: 'Etrefas al lec’hienn : bouton, lañser ha kemennadennoù', // br: à relire
+  },
   docFrancais: 'Testenn e galleg', // br: à relire
   docBreton: 'Brezhoneg',
   docCorrection: 'Ho reizhadenn', // br: à relire

@@ -14,6 +14,9 @@ clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du progr
 
 ## Demandes du 2026-10-08
 
+- [x] **Relecture du breton : séparer le contenu des fiches de l'interface dans le PDF** (demande du 2026-10-08) — fait : deux parties, « Partie 1 — Contenu des fiches : exercices et affiches »
+  (690 textes, environ 56 pages) puis « Partie 2 — Interface du site » (945 textes), saut de page entre les deux et un mot sur la priorité ; les sources de la page sont dans le même ordre.
+
 - [x] **Page de développement « Relecture du breton » (PDF à imprimer pour un·e brittophone)** (demande du 2026-10-08) — fait : `/dev/relecture-breton` (développement seulement) liste les textes
   bretons marqués `// br: à relire` (ou tous), de l'interface, des exercices et des affiches, par section à cocher, et prépare un document A4 à imprimer ou à enregistrer en PDF : pour chaque texte,
   la clé, le français, le breton actuel, des lignes de correction (selon la longueur, ou 1 à 5) et des cases « OK » / « à corriger » ; option « une section par page » et clés masquables. Lecture

@@ -42,7 +42,7 @@
       </ul>
     </details>
 
-    <p class="compte"><strong>{{ t('relecture.compte', { n: selection.lignes.length }) }}</strong></p>
+    <p class="compte"><strong>{{ t('relecture.compte', { n: selection.lignes.length }) }}</strong> — {{ t('relecture.compteParties', { fiches: selection.fiches, ui: selection.lignes.length - selection.fiches }) }}</p>
     <p v-if="!selection.lignes.length" class="vide">{{ t('relecture.vide') }}</p>
     <ApercuImpression v-else :html="html" format="A4" orientation="portrait" fluide />
   </div>
@@ -63,9 +63,9 @@ import type { LigneRelecture, OrigineRelecture } from '../../langues/relecture.t
 const { t } = useLangue()
 
 const SOURCES: { id: OrigineRelecture, cle: 'relecture.source.interface' | 'relecture.source.exercice' | 'relecture.source.affiche' }[] = [
-  { id: 'interface', cle: 'relecture.source.interface' },
   { id: 'exercice', cle: 'relecture.source.exercice' },
   { id: 'affiche', cle: 'relecture.source.affiche' },
+  { id: 'interface', cle: 'relecture.source.interface' },
 ]
 
 const toutes = lignesDuSite()
@@ -103,7 +103,8 @@ function basculer(id: string): void {
 const selection = computed(() => {
   const retenues = candidats.value.filter(l => !exclues.has(idSection(l)))
   const sections = new Set(retenues.map(idSection)).size
-  return { lignes: retenues, sections }
+  const fiches = retenues.filter(l => l.origine !== 'interface').length
+  return { lignes: retenues, sections, fiches }
 })
 
 const html = computed(() => documentRelecture(selection.value.lignes, {

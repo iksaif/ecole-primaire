@@ -34,6 +34,9 @@ const CSS = `
       .contact { margin: 0 0 4mm; color: #555; }
       h2 { font-size: 12pt; margin: 5mm 0 2mm; padding: 1mm 2.5mm; background: #2c3e50; color: #fff; break-after: avoid; }
       h2.page { break-before: page; margin-top: 0; }
+      h2.partie { font-size: 14pt; background: #1d4e9e; padding: 2mm 3mm; margin-top: 7mm; }
+      h2.partie.page { margin-top: 0; }
+      .priorite { margin: 0 0 3mm; padding: 1.5mm 3mm; border-left: 1.6mm solid #1d4e9e; background: #eef3fb; }
       article { border: .3mm solid #999; border-radius: 1.5mm; padding: 1.4mm 3mm 1.8mm; margin: 0 0 2mm; break-inside: avoid; }
       article.incertain { border-left: 1.6mm solid #e0a800; }
       .entete { display: flex; justify-content: space-between; align-items: baseline; gap: 4mm; min-height: 3.4mm; margin: 0 0 .8mm; }
@@ -74,6 +77,11 @@ function article(l: LigneRelecture, o: OptionsRelecture): string {
   </article>`
 }
 
+/** Les deux parties du document : le contenu des fiches (exercices et affiches), le plus important, puis l'interface du site. */
+const PARTIES = ['contenu', 'interface'] as const
+type Partie = (typeof PARTIES)[number]
+const partieDe = (l: LigneRelecture): Partie => (l.origine === 'interface' ? 'interface' : 'contenu')
+
 /** Les lignes groupées par section, dans l'ordre où elles arrivent. */
 function parSection(lignes: readonly LigneRelecture[]): [string, LigneRelecture[]][] {
   const groupes = new Map<string, LigneRelecture[]>()
@@ -84,17 +92,34 @@ function parSection(lignes: readonly LigneRelecture[]): [string, LigneRelecture[
   return [...groupes]
 }
 
-/** Le document complet (HTML) : titre, consigne, puis une rubrique par section. */
-export function documentRelecture(lignes: readonly LigneRelecture[], options: OptionsRelecture): string {
-  const sections = parSection(lignes)
-  const corps = sections.map(([titre, textes], i) =>
+/** Les sections d'une partie : un titre par section, puis ses textes. `saut` : un saut de page avant chaque section (sauf la première). */
+function htmlSections(lignes: readonly LigneRelecture[], options: OptionsRelecture): string {
+  return parSection(lignes).map(([titre, textes], i) =>
     `<h2${options.parSection && i > 0 ? ' class="page"' : ''}>${echapper(titre)} (${textes.length})</h2>\n${textes.map(l => article(l, options)).join('\n')}`).join('\n')
+}
+
+/**
+ * Le corps du document. Avec les deux parties : une bannière par partie (« Partie 1 — Contenu des fiches… »), un saut de page avant la seconde, et
+ * un mot sur la priorité. Avec une seule : les sections, sans bannière.
+ */
+function htmlCorps(lignes: readonly LigneRelecture[], options: OptionsRelecture): string {
+  const parties = PARTIES.map(p => ({ id: p, lignes: lignes.filter(l => partieDe(l) === p) })).filter(p => p.lignes.length > 0)
+  if (parties.length < 2) return htmlSections(lignes, options)
+  const bannieres = parties.map((p, k) => {
+    const titre = T('relecture.docPartieNumero', { n: k + 1, titre: T(`relecture.docPartie.${p.id}`), nombre: p.lignes.length })
+    return `<h2 class="partie${k > 0 ? ' page' : ''}">${echapper(titre)}</h2>\n${htmlSections(p.lignes, options)}`
+  })
+  return `<p class="priorite">${echapper(T('relecture.docPriorite'))}</p>\n${bannieres.join('\n')}`
+}
+
+/** Le document complet (HTML) : titre, consigne, puis le contenu des fiches et l'interface. */
+export function documentRelecture(lignes: readonly LigneRelecture[], options: OptionsRelecture): string {
   const titre = T('relecture.titre')
   return documentFiche({
     titre, langue: 'fr', css: CSS, largeur: '720px', marge: '0',
     h1: `${echapper(titre)} — ${echapper(T('relecture.docNombre', { n: lignes.length }))}`,
     corps: `<p class="consigne">${echapper(T('relecture.docConsigne'))}</p>
     <p class="contact">${echapper(T('relecture.docContact', { contact: options.contact }))}</p>
-    ${corps}`,
+    ${htmlCorps(lignes, options)}`,
   })
 }

@@ -47,5 +47,5 @@ function textesDesAffiches(): LigneRelecture[] {
   })
 }
 
-/** Tous les textes, dans l'ordre : interface, exercices, affiches. */
-export const lignesDuSite = (): LigneRelecture[] => [...interfaceDuSite(), ...contenuDesExercices(), ...textesDesAffiches()]
+/** Tous les textes, dans l'ordre de la relecture : le contenu des fiches (exercices, affiches), le plus important, puis l'interface. */
+export const lignesDuSite = (): LigneRelecture[] => [...contenuDesExercices(), ...textesDesAffiches(), ...interfaceDuSite()]

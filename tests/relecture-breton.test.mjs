@@ -76,4 +76,14 @@ verifier(!nu.includes('class="case"') && !nu.includes('accueil.titre'), 'documen
 verifier((nu.match(/class="ligne"/g) ?? []).length === 3, 'document : lignes automatiques (1 par texte court)')
 verifier(!html.includes('class="page"') && documentRelecture(lignes, { ...base, parSection: true }).includes('class="page"'), 'document : saut de page par section à la demande')
 
+// deux parties : le contenu des fiches (exercices, affiches) d'abord, l'interface ensuite, saut de page entre les deux
+const iPartie1 = html.indexOf('Partie 1'), iPartie2 = html.indexOf('Partie 2')
+verifier(iPartie1 >= 0 && iPartie2 > iPartie1, 'parties : la partie 1 précède la partie 2')
+verifier(html.indexOf('Contenu des fiches') < html.indexOf('Interface du site'), 'parties : le contenu des fiches est annoncé avant l\'interface')
+verifier(html.indexOf('Quelle heure ?') < html.indexOf('Bienvenue'), 'parties : un texte d\'exercice vient avant un texte d\'interface, même donné après')
+verifier(compte(/class="partie/g) === 2 && /class="partie page"/.test(html), 'parties : deux bannières, saut de page avant la seconde')
+verifier(html.includes('class="priorite"'), 'parties : la priorité est dite quand il y a deux parties')
+const seul = documentRelecture(lignes.filter(x => x.origine === 'interface'), base)
+verifier(!seul.includes('class="partie') && !seul.includes('class="priorite"'), 'parties : une seule partie, pas de bannière')
+
 process.exit(nbEchecs() ? 1 : 0)

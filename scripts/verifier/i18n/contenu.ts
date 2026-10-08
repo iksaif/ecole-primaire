@@ -5,7 +5,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { chemin } from '../../lib/racine.ts'
-import { feuilles } from './arbre.ts'
+import { feuilles, marquesContenu } from '../../../src/langues/relecture.ts'
 import type { Arbre, Bilan } from './arbre.ts'
 import { AUTRE } from './arbre.ts'
 import { ligneSection, ligneTexte } from './relecture.ts'
@@ -27,8 +27,7 @@ export async function verifierContenu(relecture: boolean): Promise<Bilan & { cat
     bilan.catalogues++
     const traduction = cat.traductions[AUTRE]
     const fr = new Map(feuilles(cat.source)), br = new Map(feuilles(traduction ?? {}))
-    const bloc = source.slice(Math.max(0, source.search(/\bbr:\s*\{/)))
-    const marquees = new Set(traduction ? [...bloc.matchAll(/^\s*(['"]?)([\w'-]+)\1:.*br: à relire/gm)].map(m => m[2]) : [])
+    const marquees = traduction ? marquesContenu(source) : new Set<string>()
     const racineDe = (k: string): string => k.split('.')[0]
     if (br.size && ([...fr.keys()].some(k => !br.has(k)) || [...br.keys()].some(k => !fr.has(k)))) {
       bilan.problemes++

@@ -1,0 +1,43 @@
+// Textes de la page de développement /dev/relecture-breton (français) et du document qu'elle prépare (src/impression/relecture.ts).
+// Source des clés : br/textes/relecture.ts doit avoir exactement les mêmes. Page visible seulement avec `npm run dev`.
+export default {
+  titre: 'Relecture du breton',
+  intro: 'Les textes bretons du site sont en grande partie traduits automatiquement. Cette page prépare un document à imprimer (ou à enregistrer en PDF) pour le donner à un·e brittophone : pour chaque texte, le français, le breton actuel et de la place pour écrire la correction.',
+  quoi: 'Quels textes',
+  aRelire: 'Seulement ceux à relire',
+  tous: 'Tous les textes',
+  sources: 'D’où viennent les textes',
+  source: {
+    interface: 'Interface du site',
+    exercice: 'Contenu des exercices',
+    affiche: 'Affiches',
+  },
+  toutes: 'Tout cocher',
+  aucune: 'Tout décocher',
+  mise: 'Mise en page',
+  lignes: 'Lignes de correction',
+  auto: 'Selon la longueur du texte',
+  cases: 'Cases « OK » et « à corriger »',
+  cles: 'Afficher les clés (repère technique)',
+  parSection: 'Une section par page',
+  compte: 'Textes : {n}',
+  sectionsCompte: 'Sections : {n}',
+  vide: 'Aucun texte avec ces choix.',
+  // le document imprimé, toujours en français
+  docTitre: 'Relecture du breton',
+  docNombre: '{n} textes',
+  docConsigne: 'Pour chaque texte : le français est la référence, le breton est la traduction actuelle (souvent automatique). Cochez « OK » si le breton convient ; sinon écrivez la bonne version dans l’encadré (ou barrez et corrigez). En cas de doute sur le sens du français, notez-le. Trugarez !',
+  docContact: 'À renvoyer à {contact}',
+  docFrancais: 'Français',
+  docBreton: 'Brezhoneg',
+  docCorrection: 'Correction',
+  docOk: 'OK',
+  docCorriger: 'à corriger',
+  docIncertain: 'à relire',
+  docAbsent: '— pas encore traduit —',
+  docOrigine: {
+    interface: 'Interface',
+    exercice: 'Exercice',
+    affiche: 'Affiche',
+  },
+} as const

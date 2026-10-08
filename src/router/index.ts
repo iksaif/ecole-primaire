@@ -24,6 +24,7 @@ if (import.meta.env.DEV || import.meta.env.VITE_AVEC_DEV) {   // expression écr
     { path: '/dev/affiches', component: () => import('../views/dev/AfficheDevView.vue'), meta: { titre: 'nav.dev' } },
     { path: '/dev/composants', component: () => import('../views/dev/ComposantsView.vue'), meta: { titre: 'nav.dev' } },
     { path: '/dev/couverture', component: () => import('../views/dev/CouvertureDevView.vue'), meta: { titre: 'nav.dev' } },
+    { path: '/dev/relecture-breton', component: () => import('../views/dev/RelectureBretonDevView.vue'), meta: { titre: 'nav.dev' } },
   )
 }
 

@@ -8,6 +8,8 @@ export default {
   intro: 'N’emañ ar bajenn-mañ hag he skouerioù nemet gant <code>npm run dev</code> : na chom netra anezho er build.', // br: à relire
   exemples: 'Skouerioù evit kregiñ', // br: à relire
   documentation: 'Teuliadur', // br: à relire
+  relectureTitre: 'Adlenn ar brezhoneg', // br: à relire
+  relectureDescription: 'an testennoù brezhonek da adlenn, en un teul da voullañ pe e PDF gant plas evit ar reizhadennoù (da reiñ d’ur brezhonegerez·ez)', // br: à relire
   exerciceSimpleTitre: 'Skouer ur boelladenn simpl', // br: à relire
   exerciceSimpleDescription: 'un heuliad niveroù da glokaat : livioù, bonus, er-maez ar programm, fichenn dre barregezh, c’hoari ha fichenn da voullañ ; etrefas e yezh ar skramm, danvez ar fichenn troet ivez', // br: à relire
   exerciceCorpusTitre: 'Skouer ur boelladenn gant korpus', // br: à relire

@@ -27,6 +27,7 @@ import feuille from './feuille.ts'
 import exemple from './exemple.ts'
 import exempleCorpus from './exempleCorpus.ts'
 import dev from './dev.ts'
+import relecture from './relecture.ts'
 import calculMental from './calculMental.ts'
 import heure from './heure.ts'
 import numeration from './numeration.ts'
@@ -58,6 +59,6 @@ import { AVEC_DEV } from '../../../dev.ts'
 
 // Textes des exemples et des pages /dev : absents d'un build de production (AVEC_DEV, src/dev.ts). Le type les garde : en production
 // aucun code ne les lit (les exemples n'y sont pas).
-const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev }
+const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev, relecture } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev, relecture: typeof relecture }
 
 export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, ecriture, lecture, quiz, mentions, assistant, ...sectionsDev } as const

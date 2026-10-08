@@ -72,6 +72,7 @@ const EXEMPLES = computed<Exemple[]>(() => [
 const PAGES: { titre: CleDev, to: string, description: CleDev, fichiers: string }[] = [
   { titre: 'dev.composantsTitre', to: '/dev/composants', description: 'dev.composantsDescription', fichiers: 'src/noyau/ et src/views/dev/ComposantsView.vue' },
   { titre: 'dev.couvertureTitre', to: '/dev/couverture', description: 'dev.couvertureDescription', fichiers: 'src/views/dev/CouvertureDevView.vue (programme : src/data/programme.ts)' },
+  { titre: 'dev.relectureTitre', to: '/dev/relecture-breton', description: 'dev.relectureDescription', fichiers: 'src/views/dev/RelectureBretonDevView.vue (document : src/impression/relecture.ts, lecture des textes : src/langues/relecture.ts)' },
 ]
 const DOCS: { fichier: string, description: CleDev }[] = [
   { fichier: 'src/exercices/README.md', description: 'dev.docExercice' },

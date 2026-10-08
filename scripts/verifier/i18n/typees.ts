@@ -7,28 +7,12 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { LANGUE_SOURCE } from '../../../src/langues/registre.ts'
 import { chemin } from '../../lib/racine.ts'
-import { feuilles } from './arbre.ts'
+import { feuilles, marquesSection } from '../../../src/langues/relecture.ts'
 import type { Arbre, Bilan } from './arbre.ts'
 import { AUTRE } from './arbre.ts'
 import { ligneSection, ligneTexte } from './relecture.ts'
 
 const dossierTextes = (l: string): string => chemin('src/langues', l, 'textes')
-
-/** Les chemins de clés marqués « à relire » dans le source d'une section. */
-function marques(source: string): Set<string> {
-  const res = new Set<string>(), pile: string[] = []
-  let precedenteMarquee = false
-  for (const l of source.split('\n')) {
-    const m = l.match(/^(\s*)(['"]?)([\w'-]+)\2:\s*(.*)$/)
-    const marquee = /br: à relire/.test(l)
-    if (!m) { precedenteMarquee = marquee && /^\s*\/\//.test(l); continue }
-    const niveau = m[1].length / 2 - 1
-    pile.length = Math.max(niveau, 0); pile[pile.length] = m[3]
-    if (marquee || precedenteMarquee || pile.slice(0, -1).some(c => res.has(c))) res.add(pile.join('.'))
-    precedenteMarquee = false
-  }
-  return res
-}
 
 const charger = async (l: string, fichier: string): Promise<Arbre> =>
   (await import(pathToFileURL(join(dossierTextes(l), fichier)).href)).default as Arbre
@@ -40,7 +24,7 @@ export async function verifierTypees(relecture: boolean): Promise<Bilan & { sect
     const section = f.replace(/\.ts$/, '')
     const fr = new Map(feuilles(await charger(LANGUE_SOURCE, f)))
     const br = new Map(feuilles(await charger(AUTRE, f)))
-    const marquees = marques(readFileSync(join(dossierTextes(AUTRE), f), 'utf8'))
+    const marquees = marquesSection(readFileSync(join(dossierTextes(AUTRE), f), 'utf8'))
     const estMarquee = (k: string): boolean => [...marquees].some(c => k === c || k.startsWith(`${c}.`))
     bilan.textes += fr.size
     for (const k of fr.keys()) if (estMarquee(k)) bilan.aRelire++

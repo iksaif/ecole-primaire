@@ -74,6 +74,7 @@ console.log('Ouverture')
   await ctx.close()
 }
 for (const [nom, options] of [
+  ['une autre page que l’accueil', { route: '/maths' }],
   ['une adresse qui porte un réglage (lien pour les familles)', { route: '/?classes=cm1' }],
   ['un profil déjà mémorisé', { avant: () => localStorage.setItem('ep_profil', '"parent"') }],
 ]) {
@@ -177,20 +178,6 @@ console.log('Breton, 320 px')
   const dansLEcran = await page.evaluate(sel => { const r = document.querySelector(sel).getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth }, FENETRE)
   verifier(dansLEcran, 'à 320 px : la bulle tient dans la largeur de l’écran')
   verifier(!erreurs.length, `sans erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
-  await ctx.close()
-}
-
-// ── 5b. première visite : sur n'importe quelle page, pas seulement l'accueil ──
-{
-  console.log('Première visite sur une sous-page')
-  for (const route of ['/maths/fiches', '/telechargements', '/programme']) {
-    const { ctx, page, erreurs } = await ouvrir({ route })
-    verifier(await ouverte(page), `${route} : la visite guidée s’ouvre dès l’arrivée`)
-    verifier(!erreurs.length, `${route} : sans erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
-    await ctx.close()
-  }
-  const { ctx, page } = await ouvrir({ route: '/maths?classes=cm1' })
-  verifier(!await ouverte(page), 'une adresse partagée avec son contexte (?classes=) ne l’ouvre pas')
   await ctx.close()
 }
 

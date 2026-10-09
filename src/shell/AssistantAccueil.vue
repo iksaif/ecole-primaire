@@ -207,8 +207,7 @@ function ouvrirSiBesoin(): void {
   assistantDemande.value = false
   if (demande || (premiereVisite() && sansContexte(route.query))) void ouvrir()
 }
-// à l'arrivée sur n'importe quelle page : une fois la première navigation faite (l'adresse, donc le contexte demandé, est alors connue)
-onMounted(() => { void router.isReady().then(ouvrirSiBesoin) })
+onMounted(ouvrirSiBesoin)
 // « Revoir » depuis l'accueil lui-même (pas de nouveau montage)
 watch(assistantDemande, demande => { if (demande) ouvrirSiBesoin() })
 onUnmounted(() => { if (ouvert.value) rendreInerte(false) })

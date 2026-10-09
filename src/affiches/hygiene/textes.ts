@@ -33,14 +33,14 @@ export const TEXTES: TextesAffiche = {
     'variante.gestes.titre': 'Skritell ar jestoù evit chom e stad', // br: à relire
     'variante.gestes.description': 'Pemp jest evit chom e stad : naetaat an dent, kousket, fiñval, debriñ a bep seurt, skarzhañ e fri.', // br: à relire
     'lot.gestes': 'Evit chom e stad', // br: à relire
-    'mot.mouiller': 'glebiñ', // br: à relire
+    'mot.mouiller': 'glebiañ', // vérifié (Wiktionnaire, 2026-10-09)
     'mot.savonner': 'sapunañ', // br: à relire
-    'mot.frotter': 'frotañ', // br: à relire
+    'mot.frotter': 'frotañ', // vérifié (Wiktionnaire, 2026-10-09)
     'mot.rincer': 'rinsañ', // br: à relire
-    'mot.essuyer': 'sec’hañ', // br: à relire
-    'mot.dents': 'naetaat an dent', // br: à relire
-    'mot.dormir': 'kousket a ran', // br: à relire
-    'mot.bouger': 'fiñval a ran', // br: à relire
+    'mot.essuyer': 'sec’hañ', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.dents': 'naetaat an dent', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.dormir': 'kousket a ran', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.bouger': 'fiñval a ran', // vérifié (Wiktionnaire, 2026-10-09)
     'mot.manger': 'debriñ a ran a bep seurt', // br: à relire
     'mot.moucher': 'skarzhañ a ran ma fri', // br: à relire
   },

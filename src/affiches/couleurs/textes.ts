@@ -30,17 +30,17 @@ export const TEXTES: TextesAffiche = {
     'variante.couleurs.titre': 'Skritell al livioù : ruz, glas, melen, gwer…', // br: à relire
     'variante.couleurs.description': 'Al livioù diazez, pep hini gant un dra evit anavezout anezhi ; gant pe hep an du, ar gwenn hag al louet.', // br: à relire
     'lot.couleurs': 'Al livioù', // br: à relire
-    'mot.rouge': 'ruz', // br: à relire
-    'mot.bleu': 'glas', // br: à relire
-    'mot.jaune': 'melen', // br: à relire
-    'mot.vert': 'gwer', // br: à relire
-    'mot.orange': 'orañjez', // br: à relire
-    'mot.violet': 'mouk', // br: à relire
-    'mot.rose': 'roz', // br: à relire
-    'mot.marron': 'gell', // br: à relire
-    'mot.noir': 'du', // br: à relire
-    'mot.blanc': 'gwenn', // br: à relire
-    'mot.gris': 'louet', // br: à relire
+    'mot.rouge': 'ruz', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.bleu': 'glas', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.jaune': 'melen', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.vert': 'gwer', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.orange': 'orañjez', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.violet': 'mouk', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.rose': 'roz', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.marron': 'gell', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.noir': 'du', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.blanc': 'gwenn', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.gris': 'louet', // vérifié (Wiktionnaire, 2026-10-09)
     'reglage.neutres': 'Du, gwenn ha louet', // br: à relire
     'valeur.neutres.true': 'Ouzhpennet', // br: à relire
     'valeur.neutres.false': 'Hep ouzhpennañ', // br: à relire

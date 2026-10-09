@@ -15,6 +15,8 @@ const definition = definirAffiche({
   competences: [K.partiesCorps, K.cinqSens],
   variantes: {
     parties: { classes: ['ps', 'ms', 'gs'], slug: 'affiche-parties-du-corps' },
+    // MS, GS : le corps entier avec le cou, le tronc et le ventre (puzzle du corps, BO 2021 p. 40)
+    bonhomme: { classes: ['ms', 'gs'], slug: 'affiche-le-corps-humain' },
     sens: { classes: ['ps', 'ms', 'gs'], slug: 'affiche-les-cinq-sens' },
   },
 })

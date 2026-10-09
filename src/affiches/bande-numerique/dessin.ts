@@ -83,7 +83,10 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, _T, ctx) => {
     const couleur = rangees > 1 ? COULEURS[rangee % COULEURS.length] : COULEURS[Math.floor(n / 5) % COULEURS.length]
     let s = `<rect x="${x + 0.5}" y="${y + 0.5}" width="${l - 1}" height="${h - 1}" rx="2" fill="white" stroke="${couleur}" stroke-width="1"/>`
     if (!avecRepresentation) {
-      s += txt(x + l / 2, y + h * 0.5, n, Math.min(l * 0.5, h * 0.55), { gras: true, couleur })
+      // la dizaine (10, 20, 30) est une case pleine : on la repère de loin, c'est là que la bande change de rangée
+      const dizaine = n % 10 === 0
+      if (dizaine) s += `<rect x="${x + 0.5}" y="${y + 0.5}" width="${l - 1}" height="${h - 1}" rx="2" fill="${couleur}"/>`
+      s += txt(x + l / 2, y + h * 0.5, n, Math.min(l * 0.5, h * 0.55), { gras: true, couleur: dizaine ? '#fff' : couleur })
       return s
     }
     // le bandeau du chiffre : un fond de la couleur de la case (très clair) et un filet dessous

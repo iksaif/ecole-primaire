@@ -42,14 +42,14 @@ export const TEXTES: TextesAffiche = {
     'variante.routine.description': 'Un devezh skol e c’hwec’h dre-gammed, en urzh : pred-mintin, skol, lein, merenn, koan, kousket.', // br: à relire
     'lot.routine': 'Ma devezh', // br: à relire
     'mot.matin': 'ar mintin', 'mot.jour': 'an deiz', 'mot.apresMidi': 'ar goude-kreisteiz', // br: à relire
-    'mot.midi': 'ar c’hreisteiz', // br: à relire
-    'mot.soir': 'an abardaez', // br: à relire
-    'mot.nuit': 'an noz', // br: à relire
+    'mot.midi': 'ar c’hreisteiz', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.soir': 'an abardaez', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.nuit': 'an noz', // vérifié (Wiktionnaire, 2026-10-09)
     'mot.petitDejeuner': 'ar pred-mintin', // br: à relire
-    'mot.ecole': 'ar skol', // br: à relire
-    'mot.dejeuner': 'al lein', // br: à relire
-    'mot.gouter': 'ar merenn', // br: à relire
-    'mot.diner': 'ar c’hoan', // br: à relire
-    'mot.dormir': 'ar c’housk', // br: à relire
+    'mot.ecole': 'ar skol', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.dejeuner': 'al lein', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.gouter': 'ar verenn', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.diner': 'ar goan', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.dormir': 'ar c’housk', // vérifié (Wiktionnaire, 2026-10-09)
   },
 }

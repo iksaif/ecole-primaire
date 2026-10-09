@@ -31,13 +31,13 @@ export const TEXTES: TextesAffiche = {
     'variante.plante.titre': 'Skritell kelc’h buhez ar blantenn : had, bouzhig, plantenn, bleunienn', // br: à relire
     'variante.plante.description': 'Eus an had d’ar vleunienn, e pevar dre-gammed a heul an eil egile en ur c’helc’h.', // br: à relire
     'lot.plante': 'Buhez ar blantenn', // br: à relire
-    'mot.oeuf': 'ar vi', // br: à relire
+    'mot.oeuf': 'ar vi', // vérifié (Wiktionnaire, 2026-10-09)
     'mot.eclosion': 'ar vi o tigeriñ', // br: à relire
     'mot.poussin': 'ar yarig', // br: à relire
-    'mot.poule': 'ar yar', // br: à relire
-    'mot.graine': 'an had', // br: à relire
+    'mot.poule': 'ar yar', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.graine': 'an had', // vérifié (Wiktionnaire, 2026-10-09)
     'mot.pousse': 'ar bouzhig', // br: à relire
     'mot.plante': 'ar blantenn', // br: à relire
-    'mot.fleur': 'ar vleunienn', // br: à relire
+    'mot.fleur': 'ar vleunienn', // vérifié (Wiktionnaire, 2026-10-09)
   },
 }

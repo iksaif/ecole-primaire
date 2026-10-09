@@ -34,12 +34,20 @@ const SCENES: Readonly<Record<string, string>> = {
   devant: `${SOL}${MUR}${emojiSvg('chat', 40, 44, 46)}`,
   derriere: `${SOL}${emojiSvg('chat', 40, 44, 46)}${MUR}`,
   cote: `${SOL}${emojiSvg('arbre', 2, 14, 66)}${emojiSvg('chat', 60, 46, 36)}`,
+  // MS : entre deux arbres ; à gauche, à droite d'un arbre (le chat est à gauche ou à droite de l'arbre, vus de face comme l'enfant regarde la feuille)
+  entre: `${SOL}${emojiSvg('arbre', 0, 22, 44)}${emojiSvg('arbre', 56, 22, 44)}${emojiSvg('chat', 36, 46, 30)}`,
+  gauche: `${SOL}${emojiSvg('arbre', 40, 12, 56)}${emojiSvg('chat', 4, 50, 34)}`,
+  droite: `${SOL}${emojiSvg('arbre', 4, 12, 56)}${emojiSvg('chat', 62, 50, 34)}`,
 }
 
-const REPERES = ['dans', 'sur', 'sous', 'devant', 'derriere', 'cote']
+// PS, MS, GS : six repères ; dès la MS, « entre », « à gauche », « à droite » (BO 2021 p. 27 : « au milieu, à droite, à gauche, entre… » à partir de 4 ans)
+const REPERES: Readonly<Record<string, readonly string[]>> = {
+  reperes: ['dans', 'sur', 'sous', 'devant', 'derriere', 'cote'],
+  'reperes-plus': ['dans', 'sur', 'sous', 'devant', 'derriere', 'cote', 'entre', 'gauche', 'droite'],
+}
 
 export const dessin: Rendu<Reglages>['dessin'] = (r, zone, _T, ctx) => {
-  const cartes: Carte[] = REPERES.map(id => ({
+  const cartes: Carte[] = REPERES[r.variante].map(id => ({
     mot: langue => ctx.Tde(langue)(`mot.${id}`),
     dessin: cote => `<svg width="${cote}mm" height="${cote}mm" viewBox="0 0 100 100" aria-hidden="true">${SCENES[id]}</svg>`,
   }))

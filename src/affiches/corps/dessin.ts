@@ -3,6 +3,7 @@ import type { Rendu } from '../types.ts'
 import { CSS_CARTES, dessinerCartes, titreDeLaPage } from '../cartes.ts'
 import type { Carte, Enchainement } from '../cartes.ts'
 import type { NomEmoji } from '../../images/tables.ts'
+import { dessinerBonhomme } from './bonhomme.ts'
 import type { Reglages } from './definition.ts'
 
 /** Une carte de la feuille : son identifiant (les textes `mot.<id>`, `precision.<id>`) et son image. */
@@ -31,6 +32,7 @@ const CARTES: Readonly<Record<string, { enchainement: Enchainement, numeroter?: 
 }
 
 export const dessin: Rendu<Reglages>['dessin'] = (r, zone, _T, ctx) => {
+  if (r.variante === 'bonhomme') return [{ corps: dessinerBonhomme(zone, ctx, r.langues), titre: titreDeLaPage(r, ctx) }]
   const lot = CARTES[r.variante]
   const cartes: Carte[] = lot.elements.map(e => ({
     emoji: e.emoji,

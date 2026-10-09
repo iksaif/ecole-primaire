@@ -18,8 +18,8 @@ export const TEXTES: TextesAffiche = {
     'variante.etats.titre': 'Skritell an dour : ar skorn a dich, an dour a skorn', // br: à relire
     'variante.etats.description': 'Ar skorn hag an dour dre-dermen : ar skorn a dich, an dour a skorn.', // br: à relire
     'lot.etats': 'Teuzañ ha skorniñ', // br: à relire
-    'mot.glace': 'ar skorn', // br: à relire
-    'mot.eau': 'an dour', // br: à relire
-    'precision.glace': 'a dich', 'precision.eau': 'a skorn', // br: à relire
+    'mot.glace': 'ar skorn', // vérifié (Wiktionnaire, 2026-10-09)
+    'mot.eau': 'an dour', // vérifié (Wiktionnaire, 2026-10-09)
+    'precision.glace': 'teuziñ a ra', 'precision.eau': 'skornañ a ra', // vérifié (Wiktionnaire, 2026-10-09)
   },
 }

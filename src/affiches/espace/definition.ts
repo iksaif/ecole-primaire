@@ -16,6 +16,7 @@ const definition = definirAffiche({
   competences: [K.reperesEspace],
   variantes: {
     reperes: { classes: ['ps', 'ms', 'gs'], slug: 'affiche-reperes-d-espace' },
+    'reperes-plus': { classes: ['ms', 'gs'], slug: 'affiche-reperes-d-espace-gauche-droite' },
   },
 })
 

@@ -115,7 +115,7 @@ export const CONTENU = catalogue({
     justeAvant: 'An niver diouzhtu a-raok {n}',
     cTrouve: 'Kav an niver.',
     cCalcule: 'Jed.',
-    cSuite: 'Kloka an heuliad.', // br: à relire
+    cSuite: 'Klok an heuliad.', // br: à relire
     cDroite: 'Pe niver a ziskouez ar bir ? (+ {pas} bep derez)', // br: à relire (« derez » = graduation)
     libDroite: 'Linenn eus {a} betek {b}',
     cRanger: "Klik war an niveroù eus ar bihanañ d'ar brasañ.",

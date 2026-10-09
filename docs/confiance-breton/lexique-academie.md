@@ -77,6 +77,35 @@ n'est pas pour autant faux, mais n'est pas attesté.
 | lozanj | **absent** ; voisin « lozañj » (avec ñ), contenu non lu | — : orthographe à faire vérifier |
 | skript | « script » (informatique, texte audiovisuel) : **pas l’écriture script** | Termofis, Brezhoneg21 |
 
+Deuxième série (2026-10-09, vocabulaire de mathématiques et de fiches) :
+
+| Mot | Résultat | Source affichée |
+|---|---|---|
+| **segmant** | segment ; m. ; pluriel segmantoù (synonyme troc’had) ; « segment » avec un *e* **n’existe pas** | Termofis (mathématiques), Brezhoneg21 |
+| **nadoz** | aiguille ; f. ; pluriel nadozioù (« aiguille d’horloge » non cité) | Termofis |
+| bir | **flèche** ; m. ; pluriel biroù : bon pour la flèche de la droite numérique, **pas attesté pour l’aiguille** d’une horloge | Termofis, Favereau, Preder |
+| **skin** | rayon ; m. ; pluriel skinoù | Brezhoneg21, Termofis (physique) |
+| **pakad** | paquet ; m. ; pluriel pakadoù | Termofis, Favereau, Brezhoneg21 |
+| **bilhed** | billet (aussi billet de banque) ; m. ; pluriel bilhedoù | Termofis, Favereau |
+| koust / goust | **koust** = coût ; m. ; pluriel koustoù (« a goust » = *koust* muté) ; **goust** = goût | Termofis, Favereau |
+| **priz** | prix, tarif ; m. ; pluriel prizioù, prizoù | Termofis, Favereau |
+| **kevatal** | égal (adjectif, mathématiques) ; pluriel kevatalioù | Termofis, Brezhoneg21 |
+| hevelep | semblable, identique, même | Favereau, Devri, Glosbe, Preder |
+| **tal** | face (mathématiques) ; m. ; pluriel talioù | Termofis |
+| **korn** | angle, coin ; m. ; pluriel kornioù ; « angle droit » = **korn serzh** (Preder) : notre « korn skouer » n’est pas attesté | Termofis, Preder |
+| **heuliad** | suite, série ; m. ; pluriel heuliadoù | Brezhoneg21, Favereau, Termofis |
+| **bandenn** | bande ; f. ; pluriel bandennoù | Termofis, Favereau |
+| **koulz-amzer** | saison ; m. ; pluriel koulzioù-amzer | Termofis |
+| **mouk** | **violet** (et non « pourpre ») | Favereau, Brezhoneg21, Preder, Glosbe |
+| derc’hel | tenir ; poursuivre (Termofis) | Devri, Termofis |
+| pavez skouer | pavé droit (genre non indiqué) | Brezhoneg21 |
+| pezh moneiz | pièce de monnaie (seule Glosbe) | Glosbe |
+| écriture cursive / script | **aucune entrée** (« skript » = script informatique) | — |
+
+Corrigé à la suite : « segment » → « segmant » (mesures, géométrie, interface), « bir » → « nadoz » pour les aiguilles de l’affiche de l’horloge, « Kelc’hia » / « gromm » → « Kelc’h »,
+« Kloka » / « Leunia » → « Klok », « Tresa » → « Tres » (académie), « Teuzañ ha skorniñ » → « Teuziñ ha skornañ ».
+Non corrigé faute de source : « korn skouer » (angle droit : Preder a « korn serzh »), « hirgarrezeg » (pavé droit : « pavez skouer », genre inconnu), « skript » / « a-stag ».
+
 Conséquences sur nos textes : « Reizhadenn » (corrigé), « Anv-bihan » (prénom), « Liesadenn(où) », « Pennlizherenn », « kub », « kostez » sont **attestés** (A) ; « liesañ » et
 « hirgarrezeg » ne le sont pas ; « skript » ne dit pas ce que nous voulons (écriture script) ; « lozanj » est peut-être « lozañj ». « pavez skouer » remplacerait « hirgarrezeg »
 si le genre était confirmé (l’article change selon le genre : non fait).

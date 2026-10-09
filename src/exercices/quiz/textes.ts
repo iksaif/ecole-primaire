@@ -16,7 +16,7 @@ export const CONTENU = catalogue({
 }, {
   br: {
     titre: 'Kwiz — Sevenadur hollek', // br: à relire
-    consigne: 'Lenn pep goulenn ha gromm ar respont mat.', // br: à relire
+    consigne: 'Lenn pep goulenn ha kelc\'h ar respont mat.', // br: à relire
     corrige: 'Reizhadenn',
     theme: {
       animaux: 'Bed al loened',

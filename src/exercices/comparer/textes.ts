@@ -9,6 +9,6 @@ export const CONTENU = catalogue({
 }, {
   br: {
     titre: "Keñveriañ ar c'hementadoù", // br: à relire
-    consigne: "War pep linenn, gromm ar strollad en deus muioc'h.", // br: à relire
+    consigne: "War pep linenn, kelc'h ar strollad en deus muioc'h.", // br: à relire
   },
 })

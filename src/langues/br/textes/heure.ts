@@ -29,7 +29,7 @@ export default {
   ecrisNumerique: '(skriv anezhi evel war un horolaj niverel)',
   maintenant: 'Bremañ',
   plusTard: "Diwezhatoc'h",
-  complete: 'Leunia',
+  complete: 'Klok', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
   lisEmploi: 'Lenn an implij-amzer.',
   heures: 'Eurioù', // br: à relire
   minutes: 'Munutoù', // br: à relire

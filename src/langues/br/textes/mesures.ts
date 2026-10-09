@@ -6,11 +6,11 @@ import type fr from '../../fr/textes/mesures.ts'
 export default {
   titre: 'Muzulioù',
   description: "Hirderioù, pouezioù, endalc'hioù, deiziadur",
-  segmentsRegle: 'Segmentoù war ar reolenn',
+  segmentsRegle: 'Segmantoù war ar reolenn', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
   commencent0: 'A grog e 0',
   pasToujours0: 'Ne gregont ket atav e 0',
-  nbSegments: 'Segmentoù da vuzuliañ war ar fichenn', // br: à relire
-  rappel100: "Moullit da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmentoù.",
+  nbSegments: 'Segmantoù da vuzuliañ war ar fichenn', // br: à relire
+  rappel100: "Moullit da 100 % (« ment wir »), hep azasaat d'ar bajenn, a-hend-all ne vo ket mat hirder ar segmantoù.", // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
   passer: 'Tremen ⏭',
   passe: '(tremenet)',
   exercices: {

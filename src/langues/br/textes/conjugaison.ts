@@ -19,7 +19,7 @@ export default {
   },
   mode: 'Mod',
   modes: { lacunes: 'Toulloù', complet: 'Klok' }, // br: à relire
-  modesDesc: { lacunes: 'Leunia an dibennoù', complet: 'Skriv ar stumm a-bezh' },
+  modesDesc: { lacunes: 'Klok an dibennoù', complet: 'Skriv ar stumm a-bezh' }, // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
   accents: 'Diwall ouzh an akcentoù : {forme}', // br: à relire (« attention aux accents » : terme à vérifier)
   ficheFormat: 'War ar fichenn', // br: à relire
   ficheFormats: { tableaux: 'Taolennoù (pevar verb)', lignes: 'Ur stumm dre linenn' }, // br: à relire

@@ -109,7 +109,7 @@ export const CONTENU = catalogue({
     partDeTexte: '{nom} eus {total}, pegement eo ?',
     partDeConsigne: '{nom} : unan eus {parts} lodenn gevatal.', // br: à relire
     partDeLibelle: '{nom} eus {total}',
-    cEgalesNombre: 'Kloka evit ma vo kevatal an darnaouennoù.', // br: à relire
+    cEgalesNombre: 'Klok evit ma vo kevatal an darnaouennoù.', // br: à relire
     cEgalesChoix: 'Peseurt darnaouenn a zo kevatal da',
     libEgale: 'Kevatal da {f}',
     cDroite: 'Peseurt darnaouenn a ziskouez ar bir ? (rannet eo an unanenn e {d} lodenn gevatal)',
@@ -122,11 +122,11 @@ export const CONTENU = catalogue({
     pEnLettres: '{f} e lizherennoù :',
     pEnChiffres: '{f} e sifroù :',
     pPartDe: '{l} =',
-    pComplete: 'Kloka :',
-    pEntoure: "Kelc'hia an darnaouenn kevatal da {f} :", // br: à relire
+    pComplete: 'Klok :', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
+    pEntoure: "Kelc'h an darnaouenn kevatal da {f} :", // br: à relire
     pDroite: 'Peseurt darnaouenn a ziskouez ar bir ?',
     pReponse: 'Respont :',
-    pPlacer: 'Tresa ur bir evit lakaat {f} war al linenn.',
+    pPlacer: 'Tres ur bir evit lakaat {f} war al linenn.', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
     pNbQuestions: '{n} goulenn',
   },
 })

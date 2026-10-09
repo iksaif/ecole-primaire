@@ -24,7 +24,7 @@ export const CONTENU = catalogue({
   br: {
     titre: 'Kontañ an traoù',
     consigneEcrire: 'Kont an traoù ha skriv an niver er gaoued.',
-    consigneEntourer: 'Kont an traoù ha gromm an niver mat.',
+    consigneEntourer: 'Kont an traoù ha kelc\'h an niver mat.', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     objet: {
       pomme: 'aval',
       etoile: 'steredenn',

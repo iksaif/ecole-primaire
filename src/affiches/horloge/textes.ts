@@ -44,23 +44,23 @@ export const TEXTES: TextesAffiche = {
     'titre.minutes': 'An horolaj : an eurioù hag ar munutennoù', // br: à relire
     'variante.heures.court': 'Horolaj : eurioù', // br: à relire
     'variante.heures.titre': 'Skritell an horolaj : lenn an eurioù klok', // br: à relire
-    'variante.heures.description': "An horolaj gant biroù evit lenn ha lakaat an eurioù klok, gant mare an deiz (programm ar CP).", // br: à relire
+    'variante.heures.description': "An horolaj gant nadozioù evit lenn ha lakaat an eurioù klok, gant mare an deiz (programm ar CP).", // br: à relire
     'variante.quarts.court': 'Horolaj : kardoù ha hanterioù', // br: à relire
     'variante.quarts.titre': 'Skritell an horolaj : ha kard, ha hanter, nemet ar c’hard', // br: à relire
-    'variante.quarts.description': "An horolaj gant biroù evit lenn an eurioù klok, an hanteroù-eurioù hag ar c'hardoù-eur, gant eurioù ar goude merenn (programm ar CE1).", // br: à relire
+    'variante.quarts.description': "An horolaj gant nadozioù evit lenn an eurioù klok, an hanteroù-eurioù hag ar c'hardoù-eur, gant eurioù ar goude merenn (programm ar CE1).", // br: à relire
     'variante.minutes.court': 'Horolaj : munutennoù', // br: à relire
     'variante.minutes.titre': 'Skritell an horolaj : eurioù, munutennoù, kard ha hanter', // br: à relire
     'variante.minutes.description': "An horolaj gant ar munutennoù, « ha kard », « ha hanter » ha « nemet ar c'hard », hag an diskouez niverel 24 eur (programm ar CE2).", // br: à relire
-    'legende.petite.a': 'Ar bir verr, ruz,', 'legende.petite.b': 'a ziskouez an eurioù', // br: à relire
-    'legende.grandeHeures.a': 'Ar bir hir, glas,', 'legende.grandeHeures.b': 'a zo war ar 12 : eur klok eo', // br: à relire
+    'legende.petite.a': 'An nadoz verr, ruz,', 'legende.petite.b': 'a ziskouez an eurioù', // br: à relire
+    'legende.grandeHeures.a': 'An nadoz hir, glas,', 'legende.grandeHeures.b': 'a zo war ar 12 : eur klok eo', // br: à relire
     'legende.matin.a': 'Ar mintin', 'legende.matin.b': '7 e, 8 e… kreisteiz (12 e)', // br: à relire
     'legende.soir.a': 'An noz', 'legende.soir.b': '9 eur noz = 21 e', // br: à relire
-    'legende.grandeQuarts.a': 'Ar bir hir, glas,', 'legende.grandeQuarts.b': 'war ar 12 : eur klok', // br: à relire
+    'legende.grandeQuarts.a': 'An nadoz hir, glas,', 'legende.grandeQuarts.b': 'war ar 12 : eur klok', // br: à relire
     'legende.sur3.a': 'War ar 3', 'legende.sur3.b': '… ha kard', // br: à relire
     'legende.sur6.a': 'War ar 6', 'legende.sur6.b': '… hanter', // br: à relire
     'legende.sur9.a': 'War ar 9', 'legende.sur9.b': "… nemet ar c'hard", // br: à relire
     'legende.vert.a': 'Sifroù gwer', 'legende.vert.b': 'goude merenn : 13 e = 1 eur', // br: à relire
-    'legende.grandeMinutes.a': 'Ar bir hir, glas,', 'legende.grandeMinutes.b': 'a ziskouez ar munutennoù', // br: à relire
+    'legende.grandeMinutes.a': 'An nadoz hir, glas,', 'legende.grandeMinutes.b': 'a ziskouez ar munutennoù', // br: à relire
     'legende.heure60.a': 'Un eur', 'legende.heure60.b': '60 munutenn', // br: à relire
     'legende.quartHeure.a': "Ur c'hard-eur", 'legende.quartHeure.b': '15 munutenn', // br: à relire
     'legende.demiHeure.a': 'Un hanter-eur', 'legende.demiHeure.b': '30 munutenn', // br: à relire

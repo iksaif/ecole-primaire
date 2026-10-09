@@ -157,9 +157,9 @@ export const CONTENU = catalogue({
     centreChoix: { centre: "ar c'hreiz", rayon: 'ur skin', diametre: 'un treuzkiz', sommet: 'ur beg' },
     centreQ: "Petra eo ar poent O evit ar c'helc'h-mañ ?",
     segmentChoix: { rayon: 'ur skin', diametre: 'un treuzkiz', cote: "ur c'hostez" },
-    segmentQ: 'Petra eo ar segment ruz {nom} ?',
-    lequelRayonQ: "Peseurt segment a zo ur skin eus ar c'helc'h ?",
-    lequelDiametreQ: "Peseurt segment a zo un treuzkiz eus ar c'helc'h ?",
+    segmentQ: 'Petra eo ar segmant ruz {nom} ?', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    lequelRayonQ: "Peseurt segmant a zo ur skin eus ar c'helc'h ?", // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    lequelDiametreQ: "Peseurt segmant a zo un treuzkiz eus ar c'helc'h ?", // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
     mesureDiametreQ: "Skin ar c'helc'h-mañ a vuzul {r} cm. Pegeit eo e dreuzkiz ?",
     mesureRayonQ: "Treuzkiz ar c'helc'h-mañ a vuzul {d} cm. Pegeit eo e skin ?",
     patronQ: "Hag-eñ eo an tresadenn-mañ ur patrom eus ar c'hub ? (Soñj e plegez anezhañ.)", // br: à relire (patrom)
@@ -195,13 +195,13 @@ export const CONTENU = catalogue({
     ficheAngles: 'Kornioù skouer',
     ficheAnglesConsigne: "Gant da skouer, klask ar c'hornioù skouer. Skriv o lizherennoù (pe « hini ebet »).",
     ficheVraiFauxTitre: 'Gwir pe gaou ?',
-    ficheVraiFauxConsigne: "Kelc'hia ar respont mat.",
+    ficheVraiFauxConsigne: "Kelc'h ar respont mat.", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheVraiFaux: 'Gwir — Gaou',
     ficheCercle: "Kelc'h",
     ficheCercleTrace: "Gant da gelc'hier, tres ur c'helc'h a greiz O hag a skin 3 cm.",
     ficheCercleRepasse: 'Adtremen e glas ur skin hag e ruz un treuzkiz.',
     fichePatrons: "Patromoù ar c'hub",
-    fichePatronsConsigne: "Kelc'hia an tresadennoù a zo patromoù ar c'hub. Gallout a rez o didroc'hañ evit gwiriañ !",
+    fichePatronsConsigne: "Kelc'h an tresadennoù a zo patromoù ar c'hub. Gallout a rez o didroc'hañ evit gwiriañ !", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheAvertissement: "Moullañ da 100 %, hep azasaat d'ar bajenn : neuze e vuzul pep karrezenn 1 cm.",
     corrigeReproduction: "an hevelep stumm hag ar patrom, en hevelep lec'h (respont da wiriañ war ar gael)", // br: à relire
     corrigeCercle: "kelc'h a skin 3 cm (treuzkiz 6 cm) — skin : {rayon} — treuzkiz : {diametre}", // br: à relire

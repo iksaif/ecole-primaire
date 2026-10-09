@@ -112,17 +112,17 @@ export const CONTENU = catalogue({
     ficheIlYa: 'Sammad',
     ficheCompterTitre: "Kont an arc'hant.",
     ficheExempleVirgule: '(skriv da skouer 3,50 €)',
-    ficheEntoureTitre: "Kelc'hia ar pezhioù moneiz hag ar bilhedoù.",
-    ficheEntoure: "Kelc'hia ar pezh a zo ezhomm evit paeañ resis",
+    ficheEntoureTitre: "Kelc'h ar pezhioù moneiz hag ar bilhedoù.", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
+    ficheEntoure: "Kelc'h ar pezh a zo ezhomm evit paeañ resis", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheMoinsTitre: 'An nebeutañ a bezhioù hag a vilhedoù.',
     fichePourPayer: 'Evit paeañ',
-    ficheMoinsConsigne: "kelc'hia lizherenn an hini a implij an nebeutañ a bezhioù hag a vilhedoù.",
+    ficheMoinsConsigne: "kelc'h lizherenn an hini a implij an nebeutañ a bezhioù hag a vilhedoù.", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheComparerTitre: "Keñveria ar yalc'hoù.",
-    ficheComparerConsigne: "Piv en deus ar muiañ a arc'hant ? Kelc'hia e anv (pe an daou ma o deus kement all).",
+    ficheComparerConsigne: "Piv en deus ar muiañ a arc'hant ? Kelc'h e anv (pe an daou ma o deus kement all).", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheRendreTitre: 'Pegement a vez distroet dit ?',
     ficheA: 'da',
     ficheOnTeRend: 'Distroet e vo dit',
-    ficheConvertirTitre: 'Leunia.',
+    ficheConvertirTitre: 'Klok.', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     corrigeUneSolution: '(un diskoulm e-touez re all)', // br: à relire
 
     fiche: {

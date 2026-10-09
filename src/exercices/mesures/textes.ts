@@ -194,7 +194,7 @@ export const CONTENU = catalogue({
     et: 'ha',
     ou: 'pe',
     donc: 'neuze',
-    completeQ: 'Leunia.',
+    completeQ: 'Klok.', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     phrases: { // br: à relire
       crayon: "Ur c'hreion a vuzul",
       gomme: 'Ur gomenn a vuzul',
@@ -247,14 +247,14 @@ export const CONTENU = catalogue({
     ariaBroc: 'Pod derezennet',
     ariaBouteilles: 'Boutailhoù ha sailh',
 
-    regleMmQ: 'Pegeit eo ar segment ruz, e milimetroù ?',
-    regleMmTexte: 'Segment eus {s} cm betek {e} war ar reolenn',
-    regleMmExpl0: 'Kregiñ a ra ar segment e 0 hag echuiñ a ra e {e}. 1 cm = 10 mm, neuze {L} = {mm} mm.',
-    regleMmExplDecale: 'Kregiñ a ra ar segment e {s} cm hag echuiñ a ra e {e} : {L} eo e hirder. 1 cm = 10 mm, neuze {L} = {mm} mm.',
-    regleQ: 'Pegeit eo ar segment ruz ?',
-    regleTexte: 'Segment eus {s} betek {e} war ar reolenn',
-    regleExpl0: 'Kregiñ a ra ar segment e 0 hag echuiñ a ra e {e} : {L} cm eo e hirder.',
-    regleExplDecale: "Kregiñ a ra ar segment e {s} hag echuiñ a ra e {e} : {e} − {s} = {L} cm. Gallout a reer ivez kontañ ar c'hantimetroù etre {s} ha {e}.",
+    regleMmQ: 'Pegeit eo ar segmant ruz, e milimetroù ?', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    regleMmTexte: 'Segmant eus {s} cm betek {e} war ar reolenn', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    regleMmExpl0: 'Kregiñ a ra ar segmant e 0 hag echuiñ a ra e {e}. 1 cm = 10 mm, neuze {L} = {mm} mm.', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    regleMmExplDecale: 'Kregiñ a ra ar segmant e {s} cm hag echuiñ a ra e {e} : {L} eo e hirder. 1 cm = 10 mm, neuze {L} = {mm} mm.', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    regleQ: 'Pegeit eo ar segmant ruz ?', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    regleTexte: 'Segmant eus {s} betek {e} war ar reolenn', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    regleExpl0: 'Kregiñ a ra ar segmant e 0 hag echuiñ a ra e {e} : {L} cm eo e hirder.', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    regleExplDecale: "Kregiñ a ra ar segmant e {s} hag echuiñ a ra e {e} : {e} − {s} = {L} cm. Gallout a reer ivez kontañ ar c'hantimetroù etre {s} ha {e}.", // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
 
     uniteQ: 'Dibab an unanenn vat.',
     comparerQ: 'Keñveria gant <, = pe >.',
@@ -338,12 +338,12 @@ export const CONTENU = catalogue({
     moisAnneeExpl: 'Ur bloavezh = 12 miz : {liste}.',
 
     ficheReponse: 'Respont',
-    ficheEntoure: "Kelc'hia",
-    ficheTrace: 'Tres ur segment hir a',
-    ficheMesureMm: 'Muzulia pep segment gant da reolenn (e cm hag e mm)',
-    ficheMesure: 'Muzulia pep segment gant da reolenn',
+    ficheEntoure: "Kelc'h", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
+    ficheTrace: 'Tres ur segmant hir a', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    ficheMesureMm: 'Muzulia pep segmant gant da reolenn (e cm hag e mm)', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
+    ficheMesure: 'Muzulia pep segmant gant da reolenn', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
     ficheTraceTitre: 'Tres gant da reolenn',
-    ficheConversion: '🔁 Leunia an amdroadurioù',
+    ficheConversion: '🔁 Klok an amdroadurioù', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheUnite: 'Skriv an unanenn vat',
     ficheComparer: '🟰 Keñveria gant &lt;, = pe &gt;',
     ficheMasse: '⚖️ Ar pouezioù',

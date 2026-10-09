@@ -16,7 +16,8 @@
           <template v-if="etape.id === 'profil'">
             <h2 :id="ID_TITRE" ref="titre" tabindex="-1">{{ t('assistant.profil.titre', { nom: SITE.nom }) }}</h2>
             <p>{{ t('assistant.profil.texte') }}</p>
-            <div role="group" aria-labelledby="assistant-question">
+            <!-- un seul profil possible (mode enseignant caché) : pas de question ni de choix, juste « Suivant » -->
+            <div v-if="choixDeProfil" role="group" aria-labelledby="assistant-question">
               <p id="assistant-question" class="question">{{ t('assistant.profil.question') }}</p>
               <button v-for="p in profilsAssistant" :key="p" type="button" class="option" :aria-pressed="contexte.profil === p" @click="choisirProfilEtAvancer(p)">
                 <span class="icone" aria-hidden="true">{{ EMOJI_PROFIL[p] }}</span>
@@ -65,6 +66,7 @@
               <button v-if="index > 0" type="button" class="btn btn-ghost" @click="aller(index - 1)">{{ t('assistant.precedent') }}</button>
               <button v-if="etape.id === 'fin'" type="button" class="btn btn-primary" @click="fermer">{{ t('assistant.fin.commencer') }}</button>
               <button v-else-if="etape.id !== 'profil'" type="button" class="btn btn-primary" @click="aller(index + 1)">{{ t('communs.suivant') }}</button>
+              <button v-else-if="!choixDeProfil" type="button" class="btn btn-primary" @click="choisirProfilEtAvancer(profilsAssistant[0])">{{ t('communs.suivant') }}</button>
             </span>
           </div>
         </div>
@@ -113,6 +115,8 @@ let focusAvant: HTMLElement | null = null
 const enseignant = computed(() => contexte.value.profil === 'enseignant')
 // l'assistant ne propose « enseignant » que si le mode est actif (idée en construction : src/contexte/enseignant.ts)
 const profilsAssistant = computed(() => PROFILS_ASSISTANT.filter(p => profilsProposes(modeEnseignantActif.value).includes(p)))
+/** y a-t-il un vrai choix de profil ? (non : le mode enseignant est caché, il ne reste que le parent) */
+const choixDeProfil = computed(() => profilsAssistant.value.length > 1)
 const etapes = computed(() => etapesAssistant(contexte.value.profil, proposees.length > 0))
 const etape = computed(() => etapes.value[Math.min(index.value, etapes.value.length - 1)] ?? { id: 'fin', reperes: [] })
 /** la langue régionale du site, nommée dans la langue de l'interface (« breton », « brezhoneg ») */

@@ -10,7 +10,7 @@ export default {
     titre: 'Bienvenue sur {nom} !',
     texte: 'Des exercices à faire à l’écran et des fiches à imprimer, de la petite section au CM2. Quelques conseils pour bien commencer.',
     question: 'Vous êtes parent ou enseignant·e ?',
-    parentDesc: 'Mon enfant s’entraîne à la maison, à l’écran ou sur papier.',
+    parentDesc: 'Mon enfant joue et s’exerce à la maison, à l’écran ou sur papier ; j’imprime aussi des affiches pour son bureau.',
     enseignantDesc: 'Je prépare des exercices et des fiches pour ma classe ou mes classes.',
   },
   classes: {

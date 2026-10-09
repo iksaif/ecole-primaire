@@ -16,7 +16,7 @@ export default {
   // n = nombre de ressources (la forme), classes = « CE1 + CE2 »
   compte: { one: '{n} ressource · {classes}', other: '{n} ressources · {classes}' },
   aucune: 'Les ressources arrivent · {classes}',
-  mondeDesc: 'Le quiz, et ce qui arrive : sciences, histoire, géographie',
+  mondeDesc: 'Le quiz et des affiches : le corps, la journée, la météo, le vivant',
   programmeDesc: 'Ce qu’on apprend : {classes}',
   programmeDescEnseignant: 'Classe × domaine → compétences → ressources',
   fichesDesc: 'PDF à télécharger et imprimer, sans rien régler',

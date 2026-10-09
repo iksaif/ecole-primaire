@@ -18,7 +18,7 @@ export default {
   },
   compte: { one: '{n} danvez · {classes}', other: '{n} danvez · {classes}' }, // br: à relire
   aucune: 'Ar danvezioù a zeu abred · {classes}', // br: à relire
-  mondeDesc: 'Ar c\'hwiz, ha ar pezh a zeu : skiantoù, istor, douaroniezh', // br: à relire
+  mondeDesc: 'Ar c\'hwiz ha skritelloù : ar c\'horf, an devezh, an amzer, ar bev', // br: à relire
   programmeDesc: 'Ar pezh a zesker : {classes}', // br: à relire
   programmeDescEnseignant: 'Klas × domani → ampladurioù → danvezioù', // br: à relire
   fichesDesc: 'PDF da pellgargañ ha da voullañ, hep reizhañ netra', // br: à relire

@@ -52,8 +52,11 @@ export function dessinerCalendrier(zone: { W: number, H: number }, ctx: Contexte
 }
 
 export const CSS_CALENDRIER = `
-  .calendrier { position: relative; border-radius: 3mm; overflow: hidden; border: .3mm solid #cfd6df; box-sizing: border-box; }
-  .fond-annee { position: absolute; top: 0; }
+  /* pas d'overflow caché : les hautes et les basses lettres de l'attaché dépassent d'une rangée ; les coins arrondis sont posés sur le fond et sur la bande */
+  .calendrier { position: relative; border-radius: 3mm; border: .3mm solid #cfd6df; box-sizing: border-box; }
+  .fond-annee { position: absolute; top: 0; border-radius: 0 2.7mm 2.7mm 0; }
+  .troncon-saison:first-of-type { border-radius: 2.7mm 0 0 0; }
+  .troncon-saison:last-of-type { border-radius: 0 0 0 2.7mm; }
   .mois-annee { position: absolute; display: flex; align-items: center; border-bottom: .3mm solid rgba(0, 0, 0, .12); line-height: 1; box-sizing: border-box; }
   .mois-annee .mot { text-align: center; white-space: nowrap; }
   .troncon-saison { position: absolute; left: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1mm; line-height: 1; box-sizing: border-box; }

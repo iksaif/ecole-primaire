@@ -72,9 +72,12 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, zone, _T, ctx) => {
 export const css = `${CSS_LISTE}${CSS_CALENDRIER}
   .saisons { display: flex; }
   .saisons.portrait { flex-direction: column; }
-  .saison { display: flex; border-radius: 4mm; overflow: hidden; border: .3mm solid #cfd6df; }
+  /* pas d'overflow caché (l'attaché dépasse d'une rangée) : le coin arrondi du bloc de la saison est posé sur lui */
+  .saison { display: flex; border-radius: 4mm; border: .3mm solid #cfd6df; }
   .saisons.portrait .saison { flex-direction: row; }
   .saisons.paysage .saison { flex-direction: column; }
+  .saisons.portrait .bloc-saison { border-radius: 3.7mm 0 0 3.7mm; }
+  .saisons.paysage .bloc-saison { border-radius: 3.7mm 3.7mm 0 0; }
   .bloc-saison { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1mm; line-height: 1; }
   .nom-saison { font-weight: 700; white-space: nowrap; color: #222; }
   .nom-saison.l1 { color: #1d4e9e; }

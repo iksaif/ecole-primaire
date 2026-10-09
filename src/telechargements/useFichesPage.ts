@@ -8,6 +8,8 @@ import { computed, reactive, ref, watch } from 'vue'
 import type { ComputedRef, Reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
+import { AVEC_DEV } from '../dev.ts'
+import { confianceMin } from '../langues/confianceReglage.ts'
 import type { Classe, EntreeIndex, Matiere } from './types.ts'
 import { useFiches } from './useFiches.ts'
 import { CRITERES_PAGE_VIDES, domainesProposes, filtrerFiches, languesProposees, toutesLesClassesDeLAdresse, usageDeLAdresse, usageEnAdresse } from './pages.ts'
@@ -43,7 +45,9 @@ export function useFichesPage(matiere: () => Matiere | null, { toutesLesClasses 
 
   const modeEtLangue = computed(() => ({ mode: contexte.value.mode, regionale: contexte.value.regionale }))
   const classes = computed<readonly Classe[]>(() => (toutes.value ? [] : contexte.value.classes))
-  const avec = (c: Partial<CriteresPage>): CriteresPage => ({ ...saisis, classes: classes.value, ...c })
+  /** niveau de confiance minimum appliqué ; en développement, rien n'est caché (les cartes marquent ce que le réglage cacherait) */
+  const seuilConfiance = computed(() => (AVEC_DEV ? 0 : confianceMin.value))
+  const avec = (c: Partial<CriteresPage>): CriteresPage => ({ ...saisis, classes: classes.value, confianceMin: seuilConfiance.value, ...c })
 
   /** les fiches de la matière dans le mode, pour les classes choisies, sans le filtre de langue (qui en fixe les choix) */
   const avantLangue = computed<EntreeIndex[]>(() => (index.value ? filtrerFiches(index.value, matiere(), avec({ langue: '' }), modeEtLangue.value) : []))
@@ -55,6 +59,12 @@ export function useFichesPage(matiere: () => Matiere | null, { toutesLesClasses 
     domaine: domaines.value.some(d => (d.id ?? 'hors-programme') === saisis.domaine) ? saisis.domaine : '',
   }))
   const resultats: ComputedRef<EntreeIndex[]> = computed(() => (index.value ? filtrerFiches(index.value, matiere(), criteres.value, modeEtLangue.value) : []))
+  /** fiches cachées par le réglage de fiabilité des traductions (pour le dire, et proposer de le changer) */
+  const nbMasqueesConfiance = computed(() => {
+    if (!index.value) return 0
+    const toutes = filtrerFiches(index.value, matiere(), avec({ ...criteres.value, confianceMin: 0 }), modeEtLangue.value)
+    return toutes.length - resultats.value.length
+  })
   const filtre = computed(() => !!(saisis.texte || saisis.usage || criteres.value.domaine || criteres.value.langue) || toutes.value !== toutesLesClasses)
 
   /** classes mises en évidence sur les cartes : celles du contexte, sauf si la page montre toutes les classes */
@@ -88,7 +98,7 @@ export function useFichesPage(matiere: () => Matiere | null, { toutesLesClasses 
   }
 
   // `reactive` : les composants reçoivent l'objet en entier et lisent `page.resultats`, sans `.value`
-  return reactive({ etat, index, vide, recharger, contexte, saisis, criteres, resultats, filtre, langues, domaines, toutes, selection, bilingue, classeActive, choisirClasse, choisirToutes, regler, effacer, verrouillee })
+  return reactive({ etat, index, vide, recharger, contexte, saisis, criteres, resultats, filtre, nbMasqueesConfiance, langues, domaines, toutes, selection, bilingue, classeActive, choisirClasse, choisirToutes, regler, effacer, verrouillee })
 }
 
 export type PageFiches = ReturnType<typeof useFichesPage>

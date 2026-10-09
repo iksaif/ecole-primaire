@@ -1,4 +1,5 @@
 import type { Classe } from '../data/classes.ts'
+import type { TableConfiance } from './confiance.ts'
 // Types du système de langues : définition d'une langue, catalogues de textes typés, clés et paramètres dérivés du français.
 // Purs (aucune dépendance) : lisibles par node, sans compilation.
 
@@ -140,6 +141,8 @@ export interface LangueDef<L extends string = string> {
   voix: Voix
   /** présent pour une langue régionale (qu'on peut activer, enseigner) */
   donnees?: DonneesRegionales
+  /** niveau de confiance de la traduction de chaque exercice et affiche (src/langues/confiance.ts) ; absent : langue source, ou rien d'évalué */
+  confiance?: TableConfiance
   /** emplacement du futur programme de la langue (compétences propres) ; `null` tant qu'il n'existe pas */
   programme: null
 }

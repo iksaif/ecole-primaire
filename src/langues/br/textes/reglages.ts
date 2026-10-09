@@ -58,5 +58,12 @@ export default {
     confirmer: 'Ha sur oc\'h ? Diverket e vo pep tra a zo enrollet war an drobarzhell-mañ.', // br: à relire
     fait: { one: '✅ {n} arventenn dilamet.', other: '✅ {n} arventenn dilamet.' }, // br: à relire
   },
+  onglets: {
+    aria: 'Rubrikoù an arventennoù', // br: à relire
+    langues: '🌍 Yezhoù', // br: à relire
+    moi: '🎒 Klas ha profil', // br: à relire
+    fiches: '🖨️ Fichennoù ha mouezh', // br: à relire
+    appareil: '🧰 Trobarzhell', // br: à relire
+  },
   retour: '← Distreiñ d\'an degemer',
 } satisfies Traductions<typeof fr>

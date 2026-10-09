@@ -8,7 +8,8 @@
 // Les exemples (domaine fictif) n'y entrent qu'avec `avecExemples`, jamais en production.
 import { traducteurExercice } from '../../../src/exercices/traducteur.ts'
 import { REGISTRE as EXERCICES } from '../../../src/exercices/index.ts'
-import { CODES } from '../../../src/langues/registre.ts'
+import { CODES, confianceFiche, estLangue, langue as definitionDeLangue } from '../../../src/langues/registre.ts'
+import { fichesInconnues } from '../../../src/langues/confiance.ts'
 import type { Langue } from '../../../src/langues/registre.ts'
 import { REGISTRE as AFFICHES } from '../../../src/affiches/index.ts'
 import { entreesDe as entreesAffiche, languesDuSite } from '../../../src/affiches/catalogue.ts'
@@ -129,6 +130,7 @@ function fichesAffiche(module: ModuleAffiche, publiees: readonly string[]): Fich
         titreCourt: texteMulti(module.textes, `variante.${variante}.court`, e.court),
         description, descriptionLongue: description,
         niveaux: [...v.classes], domaine: d.domaine, genre: 'affiche', langues: [...e.langues], parent: null, famille: d.id,
+        confiance: confianceFiche(e.langues, 'affiche', d.id, e.slug),
         personnaliser: lienPersonnaliser(e.lien),
         exemple: estExemple(d.domaine), competences: competencesVisees(v.competences), reglages,
       },
@@ -206,6 +208,7 @@ function fichesExercice(module: ModuleExercice, publiees: readonly string[]): Fi
             titreCourt: f ? texteMulti(module.textes, `fiche.${f.id}.court`, competences[0]?.libelle ?? f.id) : titre,
             description, descriptionLongue: description,
             niveaux: [...(f?.classes ?? [niveau])], domaine: def.domaine, genre: 'exercice', langues: [langue], famille: def.id,
+            confiance: confianceFiche([langue], 'exercice', def.id, slug),
             parent: f && avecBilan ? slugDuBilan : null,
             // « Personnaliser » : l'exercice réglé comme cette fiche (useReglages lit `fiche` et `niveau`)
             personnaliser: { route: def.route, requete: f ? { mode: 'imprimer', fiche: f.id, niveau } : { mode: 'imprimer' } },
@@ -232,6 +235,13 @@ export async function fichesDesRegistres({ avecExemples = false, prefixe = '', s
   for (const f of fiches) {
     if (vues.has(f.meta.slug)) throw new Error(`slug « ${f.meta.slug} » produit deux fois (registres)`)
     vues.add(f.meta.slug)
+  }
+  // une exception de confiance qui vise une fiche absente est une faute (slug changé, faute de frappe) : le build s'arrête (builds partiels exceptés)
+  if (!prefixe && !echantillon) {
+    for (const code of publiees.filter(estLangue)) {
+      const inconnues = fichesInconnues(definitionDeLangue(code).confiance ?? {}, vues)
+      if (inconnues.length) throw new Error(`Confiance (${code}) : fiche(s) inconnue(s) : ${inconnues.join(', ')}`)
+    }
   }
   const gardees = fiches.filter(f => f.meta.slug.startsWith(prefixe))
   return echantillon ? echantillonner(gardees) : gardees

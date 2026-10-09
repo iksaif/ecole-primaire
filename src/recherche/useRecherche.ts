@@ -10,7 +10,7 @@ import { texteClasses } from '../data/classes.ts'
 import { AVEC_DEV } from '../dev.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { ressourcesCompetences } from '../ressources/catalogue.ts'
-import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 import { deplacer } from './clavier.ts'
 import { chercher, construireIndexRecherche } from './index.ts'
 import type { EntreeRecherche } from './index.ts'
@@ -22,7 +22,7 @@ const DELAI_MS = 90
 
 export function useRecherche() {
   const router = useRouter()
-  const { catalogue } = useRessources()
+  const { affichables: catalogue } = useAffichable()
   const { contexte } = useContexte()
   const { langueAffichee, t } = useLangue()
 

@@ -22,7 +22,7 @@ import type { Langue } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { filtrerParClasses } from '../ressources/filtres.ts'
 import { competenceDe, domaineDe } from '../data/programme.ts'
-import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 import type { Classe, RessourceDeContenu } from '../ressources/types.ts'
 import CarteRessource from '../ressources/composants/CarteRessource.vue'
 import IconeMatiere from '../shell/IconeMatiere.vue'
@@ -30,7 +30,7 @@ import { MATIERES_PAGE, NOM_COURT } from './matieres.ts'
 
 const props = defineProps<{ langue: Langue, classes: readonly Classe[], vue: Vue }>()
 const { t, langueAffichee } = useLangue()
-const { catalogue } = useRessources()
+const { affichables: catalogue } = useAffichable()
 const id = useId()
 const nom = computed(() => LANGUES[props.langue].nom[langueAffichee.value])
 /** Déjà rangée dans un domaine de la langue régionale (elle en travaille une compétence) : pas répétée ici. */

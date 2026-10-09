@@ -6,6 +6,7 @@
 import type { Classe } from '../data/classes.ts'
 import type { CompetenceId, DomaineId, Matiere, Source } from '../data/programme.ts'
 import type { ValeurReglage } from '../noyau/types.ts'
+import type { NiveauConfiance } from '../langues/confiance.ts'
 import type { Format, Orientation } from '../utils/page.ts'
 
 export type { Classe, CompetenceId, DomaineId, Matiere, Source, ValeurReglage, Format, Orientation }
@@ -110,6 +111,11 @@ export interface EntreeIndex {
   usage: Usage
   /** langues du contenu de la fiche (codes) : ['fr'], ['br'], ['fr', 'br'] pour une fiche bilingue */
   langues: string[]
+  /**
+   * confiance dans la traduction (0 à 4, src/langues/confiance.ts) : le niveau le plus bas des langues régionales de la fiche ;
+   * `null` pour une fiche en français seul
+   */
+  confiance: NiveauConfiance | null
   /** pages d'un document de la fiche */
   nbPages: number
   /** nombre de documents différents (exercices : plusieurs fiches tirées avec des graines différentes) */

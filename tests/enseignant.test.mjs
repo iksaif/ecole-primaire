@@ -95,7 +95,7 @@ const rubriques = page => page.locator('nav.rubriques a').allTextContents()
 // ── 4b. la page des réglages : une section pour l'afficher ou le cacher, avec l'explication ──
 {
   console.log('Page des réglages')
-  const { ctx, page } = await ouvrir('/parametres')
+  const { ctx, page } = await ouvrir('/parametres?onglet=moi')
   const section = page.locator('[data-section="enseignant"]')
   verifier(/idée en construction/.test(await section.innerText()) && /relus avec des enseignants/.test(await section.innerText()), 'la section explique que c\'est une idée en construction')
   const case_ = section.locator('input[type="checkbox"]')

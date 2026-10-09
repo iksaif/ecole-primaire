@@ -1,3 +1,5 @@
+// Les images disent ce que l'enfant fait à ce moment-là (le bol du matin, le repas de midi, le ballon de l'après-midi, le bain du soir, la lune
+// de la nuit, le doudou du dodo) : un coq ou un ciel au lever du soleil ne parlent pas à un enfant de 3-4 ans.
 // Le dessin de la journée : des cartes (image, mot dans chaque langue de la feuille), dessin commun de la maternelle : src/affiches/cartes.ts.
 import type { Rendu } from '../types.ts'
 import { CSS_CARTES, dessinerCartes, titreDeLaPage } from '../cartes.ts'
@@ -10,16 +12,16 @@ interface Element { id: string, emoji: NomEmoji }
 
 const CARTES: Readonly<Record<string, { enchainement: Enchainement, numeroter?: boolean, elements: readonly Element[] }>> = {
   'jour-nuit': { enchainement: 'grille', elements: [
-    { id: 'matin', emoji: 'coq' },
-    { id: 'soir', emoji: 'couchant' },
+    { id: 'matin', emoji: 'bol' },
+    { id: 'soir', emoji: 'bain' },
     { id: 'jour', emoji: 'soleil' },
     { id: 'nuit', emoji: 'lune' },
   ] },
   moments: { enchainement: 'suite', numeroter: true, elements: [
-    { id: 'matin', emoji: 'coq' },
+    { id: 'matin', emoji: 'bol' },
     { id: 'midi', emoji: 'repas' },
-    { id: 'apresMidi', emoji: 'jouet' },
-    { id: 'soir', emoji: 'couchant' },
+    { id: 'apresMidi', emoji: 'ballon' },
+    { id: 'soir', emoji: 'bain' },
     { id: 'nuit', emoji: 'lune' },
   ] },
   routine: { enchainement: 'suite', numeroter: true, elements: [
@@ -28,7 +30,7 @@ const CARTES: Readonly<Record<string, { enchainement: Enchainement, numeroter?: 
     { id: 'dejeuner', emoji: 'repas' },
     { id: 'gouter', emoji: 'gouter' },
     { id: 'diner', emoji: 'pates' },
-    { id: 'dormir', emoji: 'lit' },
+    { id: 'dormir', emoji: 'doudou' },
   ] },
 }
 

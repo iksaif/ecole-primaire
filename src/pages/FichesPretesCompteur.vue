@@ -1,6 +1,9 @@
 <template>
   <!-- « 9 fiches pour CE1 » : le nombre de résultats, annoncé aux lecteurs d'écran quand un filtre le change. -->
   <p class="compteur" role="status" aria-live="polite">{{ texte }}</p>
+  <p v-if="page.nbMasqueesConfiance > 0" class="compteur">
+    {{ t('confiance.masquees', { n: page.nbMasqueesConfiance }) }} <RouterLink to="/parametres">{{ t('confiance.regler') }}</RouterLink>
+  </p>
 </template>
 
 <script setup lang="ts">

@@ -7,6 +7,7 @@
     <p v-if="description" class="description" :lang="langueDescription">{{ description }}</p>
     <PastillesClasses :classes="ressource.classes" :choisies="classesChoisies" />
     <BadgesRessource :badges="ressource.badges" />
+    <PastilleConfiance :niveau="traduite(ressource)" />
   </article>
 </template>
 
@@ -17,6 +18,8 @@ import { computed } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
 import { texteDe, langueDifferente } from '../textes.ts'
 import type { Classe, Langue, RessourceDeContenu } from '../types.ts'
+import PastilleConfiance from './PastilleConfiance.vue'
+import { useAffichable } from '../useAffichable.ts'
 import BadgesRessource from './BadgesRessource.vue'
 import { lienDansLaLangue } from './presentation.ts'
 import PastillesClasses from './PastillesClasses.vue'
@@ -29,6 +32,7 @@ const props = withDefaults(defineProps<{
   langueContenu?: Langue
 }>(), { niveauTitre: 4, langueContenu: undefined })
 const { langueAffichee } = useLangue()
+const { traduite } = useAffichable()
 const titre = computed(() => texteDe(props.ressource.titre, langueAffichee.value))
 // ouverte dans la langue demandée (page de la langue régionale), sinon telle quelle
 const lien = computed(() => lienDansLaLangue(props.ressource, props.langueContenu))

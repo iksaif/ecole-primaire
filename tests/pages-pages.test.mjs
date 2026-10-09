@@ -307,7 +307,7 @@ console.log('Page de la langue régionale')
 console.log('Réglages : classe, profil et mode de langue passent par le contexte')
 {
   const o = await ouvrir()
-  await aller(o.page, app('/parametres?classes=ce1'))
+  await aller(o.page, app('/parametres?classes=ce1&onglet=moi'))
   verifier(await o.page.getByRole('button', { name: 'CE1', exact: true }).getAttribute('aria-pressed') === 'true', 'la classe de l’adresse est celle des réglages')
   // un parent a parfois plusieurs enfants : cliquer une autre classe l'ajoute
   await o.page.getByRole('button', { name: 'CM2', exact: true }).click()

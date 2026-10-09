@@ -60,13 +60,13 @@ import { interpretationDe, referenceDe } from '../programme/references.ts'
 import { useNonIndexable } from '../router/useNonIndexable.ts'
 import { competencesVoisines, ressourcesDeCompetence } from '../ressources/filtres.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
-import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 import { useTitreDePage } from '../router/titres.ts'
 
 const { t, langueAffichee } = useLangue()
 const route = useRoute()
 const { contexte } = useContexte()
-const { catalogue } = useRessources()
+const { affichables: catalogue } = useAffichable()
 
 const competence = computed(() => competenceDe(String(route.params.id)))
 useNonIndexable(() => !competence.value)

@@ -5,7 +5,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import { extraireParamsContexte } from '../contexte/url.ts'
-import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 import { adresseProgramme, completerLien } from './adresse.ts'
 import { PARAMS_DE_LA_PAGE, affichageEffectif, ecrireEtatProgramme, lireEtatProgramme } from './etat.ts'
 import type { Affichage, EtatProgramme, MatiereProgramme } from './etat.ts'
@@ -15,7 +15,7 @@ export function useProgramme() {
   const route = useRoute()
   const router = useRouter()
   const { contexte, lienTableau } = useContexte()
-  const { catalogue } = useRessources()
+  const { affichables: catalogue } = useAffichable()
 
   const etat = computed<EtatProgramme>(() => lireEtatProgramme(route.query, contexte.value.classes))
 

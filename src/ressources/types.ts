@@ -12,6 +12,7 @@ import type { Classe } from '../data/classes.ts'
 import type { CompetenceId, DomaineId, Matiere } from '../data/programme.ts'
 import type { CleTexte } from '../langues/traduire.ts'
 import type { Langue } from '../langues/registre.ts'
+import type { NiveauConfiance } from '../langues/confiance.ts'
 import type { Texte, Usage } from '../telechargements/types.ts'
 
 export type { Classe, CompetenceId, DomaineId, Matiere, Langue, Usage }
@@ -50,6 +51,8 @@ export interface Badges {
 
 /** Une ressource de contenu : rangée dans un domaine du programme, à afficher ou pour s'entraîner. */
 interface Contenu extends Commun {
+  /** confiance dans sa traduction en langue régionale (0 à 4, src/langues/confiance.ts) ; `null` : pas de traduction (français seul) */
+  readonly confiance: NiveauConfiance | null
   readonly matiere: Matiere
   readonly domaine: DomaineId
   readonly badges: Badges

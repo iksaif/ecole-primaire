@@ -13,6 +13,7 @@
       <p class="badges">
         <FichesPretesLangues :langues="entree.langues" regionales />
         <span class="badge">{{ t(entree.usage === 'apprendre' ? 'fichesPretes.apprendre' : 'fichesPretes.sentrainer') }}</span>
+        <PastilleConfiance :niveau="entree.confiance ?? null" />
         <span v-if="entree.exemple" class="badge exemple">{{ t('fichesPretes.badgeExemple') }}</span>
       </p>
       <p class="meta">{{ t('fichesPretes.pdfPages', { n: entree.nbPages }) }}</p>
@@ -27,6 +28,7 @@ import { langueDuTexte, texteDe } from '../telechargements/recherche.ts'
 import type { Classe, EntreeIndex } from '../telechargements/types.ts'
 import PastillesClasses from '../ressources/composants/PastillesClasses.vue'
 import FichesPretesLangues from './FichesPretesLangues.vue'
+import PastilleConfiance from '../ressources/composants/PastilleConfiance.vue'
 
 withDefaults(defineProps<{
   entree: EntreeIndex

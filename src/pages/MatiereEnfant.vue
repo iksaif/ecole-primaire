@@ -29,6 +29,7 @@ import { useLangue } from '../langues/useLangue.ts'
 import { filtrerParClasses, filtrerParMode } from '../ressources/filtres.ts'
 import { texteDe } from '../ressources/textes.ts'
 import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 import type { Matiere } from '../data/programme.ts'
 import EtatVide from '../ressources/composants/EtatVide.vue'
 import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
@@ -37,7 +38,8 @@ import AccueilTuile from './AccueilTuile.vue'
 const props = defineProps<{ matiere: Matiere, couleur?: string }>()
 const { t, langueAffichee } = useLangue()
 const { contexte } = useContexte()
-const { catalogue, pret } = useRessources()
+const { pret } = useRessources()
+const { affichables: catalogue } = useAffichable()
 
 const deLaMatiere = computed(() => filtrerParClasses(
   filtrerParMode(catalogue.value, contexte.value.mode, contexte.value.regionale).filter(r => r.matiere === props.matiere),

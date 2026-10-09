@@ -11,7 +11,7 @@ export const EMOJIS = {
   baleine: '1F433', citron: '1F34B', grenouille: '1F438', carotte: '1F955', raisin: '1F347', cochon: '1F437', chataigne: '1F330',
   chatNoir: '1F408-200D-2B1B', bonhommeDeNeige: '2603', elephant: '1F418',
   // la journée
-  coq: '1F413', soleil: '2600', couchant: '1F307', lune: '1F319', jouet: '1F9F8',
+  bol: '1F963', soleil: '2600', lune: '1F319', doudou: '1F9F8', bain: '1F6C1',
   croissant: '1F950', repas: '1F37D', gouter: '1F36A', pates: '1F35D', lit: '1F6CF', brosseADents: '1FAA5', ecole: '1F3EB',
   // le corps et les cinq sens
   visage: '1F642', deuxYeux: '1F440', oeil: '1F441', oreille: '1F442', nez: '1F443', bouche: '1F444', langue: '1F445', sourire: '1F601',
@@ -28,7 +28,7 @@ export const EMOJIS = {
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */
-export const SCENES: readonly NomEmoji[] = ['couchant']
+export const SCENES: readonly NomEmoji[] = []
 
 /** Le nom d'un emoji de la table. */
 export type NomEmoji = keyof typeof EMOJIS

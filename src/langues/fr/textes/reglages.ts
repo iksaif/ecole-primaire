@@ -56,5 +56,12 @@ export default {
     confirmer: 'Êtes-vous sûr ? Tout ce qui est mémorisé sur cet appareil sera effacé.',
     fait: { one: '✅ {n} réglage supprimé.', other: '✅ {n} réglages supprimés.' },
   },
+  onglets: {
+    aria: 'Rubriques des réglages',
+    langues: '🌍 Langues',
+    moi: '🎒 Classe et profil',
+    fiches: '🖨️ Fiches et voix',
+    appareil: '🧰 Appareil',
+  },
   retour: '← Retour à l’accueil',
 } as const

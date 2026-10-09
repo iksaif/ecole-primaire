@@ -28,7 +28,7 @@ const html = emojiHtml('pomme', '8mm')
 verifier(html.startsWith('<svg') && html.includes('width="8mm"') && html.includes('viewBox="0 0 72 72"') && html.includes('data-image="openmoji"'), 'HTML : un svg de la taille demandée, marqué openmoji')
 verifier(html.includes('aria-hidden="true"') && !html.includes('role="img"'), 'HTML sans alt : image décorative')
 verifier(emojiHtml('pomme', '8mm', 'une "pomme"').includes('aria-label="une &quot;pomme&quot;"'), 'HTML avec alt : lu par les lecteurs d’écran, guillemets échappés')
-verifier(emojiHtml('couchant', '8mm').includes('border-radius'), 'une scène en carré plein a les coins arrondis')
+verifier(SCENES.every(n => emojiHtml(n, '8mm').includes('border-radius')), 'une scène en carré plein a les coins arrondis')
 const svg = emojiSvg('pomme', 1.234, 5, 10)
 verifier(svg.includes('x="1.23"') && svg.includes('y="5"') && svg.includes('width="10"'), 'SVG : position et côté')
 let message = ''

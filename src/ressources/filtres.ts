@@ -5,6 +5,8 @@ import { DOMAINES, DOMAINES_EXEMPLE, COMPETENCES, COMPETENCES_EXEMPLE, competenc
 import type { Domaine } from '../data/programme.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import type { Mode } from '../contexte/types.ts'
+import { assezSure } from '../langues/confiance.ts'
+import type { NiveauConfiance } from '../langues/confiance.ts'
 import type { Classe, CompetenceId, DomaineId, Langue, Matiere, RessourceDeContenu } from './types.ts'
 
 /** Les domaines du programme (ceux des exemples en développement), dans l'ordre du programme. */
@@ -28,6 +30,24 @@ export function languesUtilisables(mode: Mode, regionale: Langue | null): readon
 export function filtrerParMode<T extends { readonly langues: readonly Langue[] }>(ressources: readonly T[], mode: Mode, regionale: Langue | null): T[] {
   const utilisables = languesUtilisables(mode, regionale)
   return ressources.filter(r => r.langues.some(l => utilisables.includes(l)))
+}
+
+/**
+ * La traduction de la ressource est-elle assez sûre pour le seuil ? Seulement si le mode MONTRE la langue régionale de la ressource : en français
+ * seul, une ressource traduite en breton reste là, sa traduction n'étant pas lue. Sans seuil, tout passe. Même règle pour les ressources du
+ * catalogue et pour les entrées de l'index des fiches (qui portent `langues` et `confiance`).
+ */
+export function traductionAssezSure(r: AvecTraduction, mode: Mode, regionale: Langue | null, seuil: number | undefined): boolean {
+  return !traductionMontree(r, mode, regionale) || assezSure(r.confiance, seuil)
+}
+
+/** Ce que la règle lit d'une ressource ou d'une entrée de fiche : ses langues et la confiance dans sa traduction. */
+export interface AvecTraduction { readonly langues: readonly string[], readonly confiance?: NiveauConfiance | null }
+
+/** Le mode montre-t-il une langue régionale de cette ressource ? (français seul : non) */
+export function traductionMontree(r: AvecTraduction, mode: Mode, regionale: Langue | null): boolean {
+  const utilisables: readonly string[] = languesUtilisables(mode, regionale)
+  return r.langues.some(l => l !== LANGUE_SOURCE && utilisables.includes(l))
 }
 
 /**

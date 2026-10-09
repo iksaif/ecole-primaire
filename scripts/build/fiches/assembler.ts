@@ -65,7 +65,7 @@ function voisinesDe(e: EntreeIndex, famille: Map<string, string>, tous: readonly
 const enEntreeIndex = (e: Entree): EntreeIndex => ({
   slug: e.slug, titre: e.titre, titreCourt: e.titreCourt, description: e.description, niveaux: e.niveaux, domaine: e.domaine,
   matieres: e.matieres, genre: e.genre, usage: e.usage, langues: e.langues, nbPages: e.nbPages, nbVariantes: e.nbVariantes, taillePdf: e.taillePdf,
-  miniature: e.miniature, parent: e.parent, personnaliser: e.personnaliser, exemple: e.exemple, recherche: e.recherche,
+  miniature: e.miniature, parent: e.parent, personnaliser: e.personnaliser, exemple: e.exemple, recherche: e.recherche, confiance: e.confiance,
 })
 
 /** L'index et les entrées de fiches rendues. `genereLe` : date ISO (paramètre pour des données reproductibles). */

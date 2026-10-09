@@ -68,7 +68,7 @@
 
         <GroupeReglages v-else-if="e.sorte === 'langues'" id="langues" :titre="t('formulaireAffiche.langues')" :aide="aide('langues')">
           <div class="btn-group" data-reglage="langues">
-            <button type="button" v-for="l in definition.langues" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langues.includes(l) }" :aria-pressed="config.langues.includes(l)"
+            <button type="button" v-for="l in languesProposees" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langues.includes(l) }" :aria-pressed="config.langues.includes(l)"
               @click="basculerLangue(l)">{{ l.toUpperCase() }}</button>
           </div>
         </GroupeReglages>
@@ -90,10 +90,10 @@
     </component>
 
     <div class="config-grid">
-      <div v-if="!definition.bilingue && definition.langues.length > 1" class="config-section" data-reglage="langue">
+      <div v-if="!definition.bilingue && languesProposees.length > 1" class="config-section" data-reglage="langue">
         <div class="config-section-title" :id="`${idBase}-langue`">{{ t('formulaireAffiche.langue') }}</div>
         <div class="btn-group" role="group" :aria-labelledby="`${idBase}-langue`">
-          <button type="button" v-for="l in definition.langues" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langue === l }" :aria-pressed="config.langue === l"
+          <button type="button" v-for="l in languesProposees" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langue === l }" :aria-pressed="config.langue === l"
             @click="config.langue = l; config.langues = [l]">{{ l.toUpperCase() }}</button>
         </div>
       </div>
@@ -125,6 +125,8 @@ import ApercuImpression from '../noyau/ApercuImpression.vue'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
 import ChoixReglage from '../noyau/ChoixReglage.vue'
 import GroupeReglages from './GroupeReglages.vue'
+import { langueProposable } from '../langues/confianceReglage.ts'
+import { estLangue } from '../langues/registre.ts'
 import { usePolices, disponiblesDe } from '../noyau/polices.ts'
 import { chargerReglages, sauvegarder } from '../utils/index.js'
 import { useLangue } from '../langues/useLangue.ts'
@@ -148,6 +150,8 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{ reglages: [config: Readonly<Record<string, unknown>>] }>()
 const { t, langue: langueInterface } = useLangue()
 const definition = props.module.definition
+/** les langues de l'affiche dont le bouton est proposé : une traduction pas assez sûre pour le réglage de la fiabilité n'y est pas (sauf en développement) */
+const languesProposees = computed(() => definition.langues.filter(l => estLangue(l) && langueProposable(l, 'affiche', definition.id)))
 const choix = commeExercice(definition)
 
 // réglages mémorisés par affiche, ramenés à des valeurs valides (reglagesDe)

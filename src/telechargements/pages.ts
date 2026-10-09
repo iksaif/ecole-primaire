@@ -4,7 +4,7 @@
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import type { Langue } from '../langues/registre.ts'
 import type { Mode } from '../contexte/types.ts'
-import { languesUtilisables, voisines } from '../ressources/filtres.ts'
+import { languesUtilisables, traductionAssezSure, voisines } from '../ressources/filtres.ts'
 import type { RessourceDeContenu, RessourceFiche } from '../ressources/types.ts'
 import { normaliser } from './recherche.ts'
 import type { Classe, Entree, EntreeIndex, Format, IndexFiches, Matiere, Orientation, Usage, Variante } from './types.ts'
@@ -24,6 +24,8 @@ export interface CriteresPage {
   domaine: string
   /** code de langue, `LANGUE_BILINGUE`, ou '' */
   langue: string
+  /** niveau de confiance minimum de la traduction (src/langues/confiance.ts) ; absent : pas de filtre */
+  confianceMin?: number
 }
 
 export const CRITERES_PAGE_VIDES: CriteresPage = { texte: '', classes: [], usage: '', domaine: '', langue: '' }
@@ -89,6 +91,7 @@ export function filtrerFiches(index: IndexFiches, matiere: Matiere | null, c: Cr
     && (!c.usage || e.usage === c.usage)
     && (!c.domaine || (c.domaine === 'hors-programme' ? e.domaine === null : e.domaine === c.domaine))
     && correspondALangue(e, c.langue)
+    && traductionAssezSure(e, contexte.mode, contexte.regionale, c.confianceMin)
     && mots.every(m => e.recherche.includes(m)))
 }
 

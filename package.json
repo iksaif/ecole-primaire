@@ -24,6 +24,7 @@
     "test:complet": "node tests/lancer.mjs --complet",
     "instantanes": "node tests/instantanes.test.mjs",
     "i18n": "node scripts/verifier/i18n.ts",
+    "confiance": "node --no-warnings scripts/verifier/confiance.ts",
     "i18n:relecture": "node scripts/verifier/i18n.ts --relecture",
     "couverture": "node --no-warnings scripts/verifier/couverture.ts",
     "lint": "eslint .",

@@ -5,7 +5,7 @@ import type { Entree, Format, Orientation, Texte, Variante } from '../../../src/
 /** Ce que l'entrée sait avant tout rendu : tout sauf les fichiers, les tailles et les liens entre entrées. */
 export type MetaFiche = Pick<Entree,
   'slug' | 'titre' | 'titreCourt' | 'description' | 'descriptionLongue' | 'niveaux' | 'domaine' | 'genre' | 'langues'
-  | 'parent' | 'personnaliser' | 'exemple' | 'competences' | 'reglages'> & {
+  | 'parent' | 'personnaliser' | 'exemple' | 'competences' | 'reglages' | 'confiance'> & {
   /** exercice ou affiche d'où vient la fiche : sert à rapprocher les voisines (pas publié) */
   famille: string
 }

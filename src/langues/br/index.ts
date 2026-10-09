@@ -4,6 +4,7 @@ import textes from './textes/index.ts'
 import { reglesBr } from './regles.ts'
 import { drapeauBr } from './drapeau.ts'
 import { donneesBr } from './donnees.ts'
+import confiance from './confiance.ts'
 
 export default {
   code: 'br',
@@ -18,5 +19,6 @@ export default {
   traductionRelue: false,
   voix: { disponible: false, bcp47: 'br' },
   donnees: donneesBr,
+  confiance,
   programme: null,
 } as const satisfies LangueDef

@@ -11,6 +11,7 @@ import ressource from './ressource.ts'
 import apropos from './apropos.ts'
 import shell from './shell.ts'
 import avis from './avis.ts'
+import confiance from './confiance.ts'
 import assistant from './assistant.ts'
 import nouveautes from './nouveautes.ts'
 import cadre from './cadre.ts'
@@ -61,4 +62,4 @@ import { AVEC_DEV } from '../../../dev.ts'
 // aucun code ne les lit (les exemples n'y sont pas).
 const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev, relecture } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev, relecture: typeof relecture }
 
-export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, ecriture, lecture, quiz, mentions, assistant, ...sectionsDev } as const
+export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, confiance, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, ecriture, lecture, quiz, mentions, assistant, ...sectionsDev } as const

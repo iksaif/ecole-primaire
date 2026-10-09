@@ -10,7 +10,7 @@ import { cheminRegional } from '../router/chemins.ts'
 import { texteClasses } from '../data/classes.ts'
 import { EMOJI_MATIERE, majuscule } from '../ressources/composants/presentation.ts'
 import { filtrerParClasses, filtrerParMode } from '../ressources/filtres.ts'
-import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 import { MATIERES_PAGE, cheminMatiere } from './matieres.ts'
 import type { MatierePage } from './matieres.ts'
 
@@ -21,7 +21,7 @@ const COULEUR_REGIONALE = '#f39c12'
 export function useTuilesAccueil() {
   const { t, langueAffichee } = useLangue()
   const { contexte } = useContexte()
-  const { catalogue } = useRessources()
+  const { affichables: catalogue } = useAffichable()
   const classes = computed(() => contexte.value.classes)
   const classesTexte = computed(() => texteClasses(classes.value))
   const visibles = computed(() => filtrerParMode(catalogue.value, contexte.value.mode, contexte.value.regionale))

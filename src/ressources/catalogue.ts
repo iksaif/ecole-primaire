@@ -30,7 +30,7 @@ import { slugDe, languesDuSite } from '../affiches/catalogue.ts'
 import type { ModuleAffiche } from '../affiches/types.ts'
 import { traducteurAffiche } from '../affiches/textes.ts'
 import type { EntreeRegistre } from '../exercices/index.ts'
-import { LANGUE_SOURCE, LANGUES, CODES, estLangue } from '../langues/registre.ts'
+import { LANGUE_SOURCE, LANGUES, CODES, confianceFiche, estLangue } from '../langues/registre.ts'
 import { languesDe } from '../langues/catalogue.ts'
 import { lireFeuille } from '../langues/traduire.ts'
 import type { CleTexte } from '../langues/traduire.ts'
@@ -94,6 +94,7 @@ function ressourceExercice({ definition, textes, exemple }: EntreeRegistre, site
     emoji: definition.emoji ?? EMOJI_DOMAINE[domaine], matiere: domaineDe(domaine)?.matiere ?? 'monde', domaine, classes, competences,
     badges: { jeu: aUnJeu(definition), imprimable: true }, usage: 'sentrainer', langues, route: definition.route,
     exemple: estExemple(exemple === true, domaine),
+    confiance: confianceFiche(langues, 'exercice', definition.id),
   }
 }
 
@@ -111,6 +112,7 @@ function ressourceAffiche({ definition: d, textes }: ModuleAffiche, site: Source
     emoji: d.emoji ?? EMOJI_DOMAINE[domaine], matiere: domaineDe(domaine)?.matiere ?? 'monde', domaine, classes, competences,
     badges: { jeu: false, imprimable: true }, usage: 'apprendre', langues, route: `${d.route}?affiche=${d.id}`,
     exemple: estExemple(false, domaine),
+    confiance: confianceFiche(langues, 'affiche', d.id),
   }
 }
 
@@ -150,7 +152,7 @@ function ressourcesFiches(index: IndexFiches, table: ReadonlyMap<string, readonl
       id: `fiche:${e.slug}`, type: 'fiche', slug: e.slug, parent: e.parent, titre: { texte: e.titre }, description: { texte: e.description },
       emoji: EMOJI_DOMAINE[domaine], matiere: domaineDe(domaine)?.matiere ?? 'monde', domaine, classes: classesDans(e.niveaux), competences,
       badges: { jeu: false, imprimable: true }, usage: e.usage, langues, route: `/telechargements/${e.slug}/`,
-      exemple: estExemple(e.exemple, domaine),
+      exemple: estExemple(e.exemple, domaine), confiance: e.confiance ?? null,
     }]
   })
 }

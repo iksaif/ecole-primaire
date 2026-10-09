@@ -147,7 +147,7 @@ for (const largeur of [1280, 390]) {
 // ── 4. revoir depuis les réglages ; « Passer » ──
 console.log('Revoir, passer')
 {
-  const { ctx, page } = await ouvrir({ route: '/parametres', avant: () => localStorage.setItem('ep_assistant_vu', 'true') })
+  const { ctx, page } = await ouvrir({ route: '/parametres?onglet=appareil', avant: () => localStorage.setItem('ep_assistant_vu', 'true') })
   await page.waitForSelector('[data-page="reglages"]')
   await page.getByRole('button', { name: /Revoir la visite guidée/ }).click()
   verifier(await ouverte(page) && new URL(page.url()).pathname.endsWith('/'), '« Revoir la visite guidée » ouvre la fenêtre sur l’accueil')

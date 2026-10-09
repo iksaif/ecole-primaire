@@ -51,6 +51,7 @@ import { useLangue } from '../langues/useLangue.ts'
 import { PLUSIEURS_DOMAINES, filtrerParMode, grouperParDomaine } from '../ressources/filtres.ts'
 import type { DomaineId } from '../ressources/types.ts'
 import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 import FilAriane from '../shell/FilAriane.vue'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
 import EtatVide from '../ressources/composants/EtatVide.vue'
@@ -70,7 +71,8 @@ import SautDomaines from './SautDomaines.vue'
 const route = useRoute()
 const { t, langueAffichee } = useLangue()
 const { contexte, choisirMode } = useContexte()
-const { catalogue, pret } = useRessources()
+const { pret } = useRessources()
+const { affichables: catalogue } = useAffichable()
 const toutes = ref(false)
 const vue = computed(() => contexte.value.vue)
 

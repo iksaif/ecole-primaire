@@ -26,12 +26,12 @@ import { anciennete, retenirExistants } from '../ressources/recents.ts'
 import type { Anciennete } from '../ressources/recents.ts'
 import { texteDe } from '../ressources/textes.ts'
 import { useRecents } from '../ressources/useRecents.ts'
-import { useRessources } from '../ressources/useRessources.ts'
+import { useAffichable } from '../ressources/useAffichable.ts'
 
 defineProps<{ gros?: boolean }>()
 const { t, langueAffichee } = useLangue()
 const { contexte } = useContexte()
-const { catalogue } = useRessources()
+const { affichables: catalogue } = useAffichable()
 const { recents } = useRecents()
 
 const texteAnciennete = (a: Anciennete): string => (a.cle === 'jours' ? t('accueil.anciennete.jours', { n: a.n }) : t(`accueil.anciennete.${a.cle}`))

@@ -17,7 +17,7 @@
         <tr v-for="e in entrees" :key="e.slug">
           <td class="c-titre"><div class="titre">
             <RouterLink :to="`/telechargements/${e.slug}`" :lang="langueDuTexte(e.titre, langueAffichee)"><strong>{{ texteDe(e.titre, langueAffichee) }}</strong></RouterLink>
-            <FichesPretesLangues :langues="e.langues" regionales />
+            <FichesPretesLangues :langues="e.langues" regionales /> <PastilleConfiance :niveau="e.confiance ?? null" />
             <span v-if="e.exemple" class="badge">{{ t('fichesPretes.badgeExemple') }}</span>
           </div></td>
           <td class="c-dom">{{ nomDomaine(e) }}</td>
@@ -36,6 +36,7 @@ import { langueDuTexte, texteDe } from '../telechargements/recherche.ts'
 import type { Classe, EntreeIndex, IndexFiches } from '../telechargements/types.ts'
 import PastillesClasses from '../ressources/composants/PastillesClasses.vue'
 import FichesPretesLangues from './FichesPretesLangues.vue'
+import PastilleConfiance from '../ressources/composants/PastilleConfiance.vue'
 
 const props = withDefaults(defineProps<{
   entrees: readonly EntreeIndex[]

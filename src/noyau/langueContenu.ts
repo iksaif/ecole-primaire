@@ -11,6 +11,7 @@ import type { ComputedRef, InjectionKey, Ref } from 'vue'
 import { chargerValeur, sauvegarder } from '../utils/index.js'
 import { langueAffichee } from '../langues/etat.ts'
 import { langueRegionaleActive } from '../langues/useLangueRegionale.ts'
+import { langueProposable } from '../langues/confianceReglage.ts'
 import { estLangue, LANGUE_SOURCE } from '../langues/registre.ts'
 import type { Langue } from '../langues/registre.ts'
 import type { DefinitionExercice } from './types.ts'
@@ -31,7 +32,8 @@ const CLE: InjectionKey<LangueContenu> = Symbol('langueContenu')
 function proposeesPour(definition: DefinitionExercice): Langue[] {
   if (definition.contenu === 'fr') return []
   const candidates = [langueAffichee.value, LANGUE_SOURCE, langueRegionaleActive()]
-  return [...new Set(candidates.filter(estLangue))]
+  // une traduction pas assez sûre pour le réglage de la fiabilité n'est pas proposée (sauf en développement)
+  return [...new Set(candidates.filter(estLangue))].filter(l => langueProposable(l, 'exercice', definition.id))
 }
 
 /**
@@ -46,7 +48,9 @@ export function langueContenuProposee(definition: DefinitionExercice): ComputedR
   const langue = computed(() => {
     if (definition.contenu === 'fr') return LANGUE_SOURCE
     const voulue = proposees.value.find(l => l === choix.value)
-    return voulue ?? langueAffichee.value
+    if (voulue) return voulue
+    // la langue affichée n'est pas proposée (traduction pas assez sûre) : le contenu reste en français
+    return proposees.value.includes(langueAffichee.value) ? langueAffichee.value : LANGUE_SOURCE
   })
   provide(CLE, { proposees, langue, choisir: l => { choix.value = l } })
   return langue

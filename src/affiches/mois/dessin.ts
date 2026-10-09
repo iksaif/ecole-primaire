@@ -1,24 +1,14 @@
-// Le dessin des mois de l'année. Sans les saisons : une ligne par mois (dessin commun des listes de mots : listeMots.ts). Avec les saisons :
-// quatre bandes, une par saison, chacune de sa couleur, avec ses trois mois dedans — pour voir d'un coup d'œil dans quelle saison tombe
-// chaque mois (printemps : mars, avril, mai ; été : juin, juillet, août ; automne : septembre, octobre, novembre ; hiver : décembre,
-// janvier, février). Portrait : les bandes l'une sous l'autre, la saison à gauche et les mois à droite ; paysage : quatre colonnes.
+// Le dessin des mois de l'année. Sans les saisons : une ligne par mois (dessin commun des listes de mots : listeMots.ts). Avec les saisons : les mois
+// de janvier à décembre avec les saisons en bande à gauche, qui changent en cours de mois (calendrier.ts) ; ou, en option, quatre bandes de couleur, une par
+// saison, avec ses trois mois dedans (portrait : l'une sous l'autre ; paysage : quatre colonnes). Une note dit que les saisons ne commencent pas au début d'un mois.
 import type { ContexteDessin, Rendu } from '../types.ts'
 import { echapper } from '../../utils/html.js'
 import { CSS_LISTE, dessinerListe, ecritures, tailleQuiTient } from '../listeMots.ts'
+import { CSS_CALENDRIER, dessinerCalendrier } from './calendrier.ts'
+import { SAISONS } from './saisons.ts'
 import type { Reglages } from './definition.ts'
 
 const MOIS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-
-/**
- * Les saisons dans l'ordre des repères de l'académie de Rennes (« nevez-amzer, hañv, diskar-amzer, goañv »), avec leurs mois (0 = janvier),
- * leur image et leurs deux couleurs : le fond pâle de la bande et l'accent de la saison (la case de gauche).
- */
-const SAISONS = [
-  { id: 'printemps', emoji: '🌱', mois: [2, 3, 4], fond: '#eaf7e4', accent: '#a5d98f' },
-  { id: 'ete', emoji: '☀️', mois: [5, 6, 7], fond: '#fff7d9', accent: '#ffd966' },
-  { id: 'automne', emoji: '🍂', mois: [8, 9, 10], fond: '#fdeede', accent: '#f4aa6c' },
-  { id: 'hiver', emoji: '❄️', mois: [11, 0, 1], fond: '#e8f2fc', accent: '#9fc9f0' },
-] as const
 
 const ECART = 3   // mm entre les bandes (ou les colonnes)
 
@@ -60,13 +50,26 @@ function dessinerSaisons(zone: { W: number, H: number }, ctx: ContexteDessin, la
   return `<div class="saisons ${paysage ? 'paysage' : 'portrait'}" style="width:${W}mm;height:${H}mm;gap:${ECART}mm">${bandes}</div>`
 }
 
-export const dessin: Rendu<Reglages>['dessin'] = (r, zone, _T, ctx) => {
-  if (r.saisons) return [dessinerSaisons(zone, ctx, r.langues, r.attache)]
-  const elements = MOIS.map(i => ({ mot: (l: string) => ctx.Tde(l)(`mois.${i}`) }))
-  return [dessinerListe(elements, zone, ctx, { langues: r.langues, attache: r.attache })]
+/** La note sous les saisons : une ligne (ou deux) par langue de la feuille. */
+function dessinerNote(W: number, h: number, ctx: ContexteDessin, langues: readonly string[]): string {
+  const taille = Math.min(3.8, h / (langues.length * 2.4))
+  const textes = langues.map((l, k) => `<span class="l${k}" style="font-family:${ctx.police('script')};font-size:${taille}mm">${echapper(ctx.Tde(l)('note.saisons'))}</span>`).join('')
+  return `<p class="note-saisons" style="width:${W}mm;height:${h}mm">${textes}</p>`
 }
 
-export const css = `${CSS_LISTE}
+export const dessin: Rendu<Reglages>['dessin'] = (r, zone, _T, ctx) => {
+  if (!r.saisons) {
+    const elements = MOIS.map(i => ({ mot: (l: string) => ctx.Tde(l)(`mois.${i}`) }))
+    return [dessinerListe(elements, zone, ctx, { langues: r.langues, attache: r.attache })]
+  }
+  // avec les saisons : le dessin, puis la note dessous
+  const hNote = zone.H * 0.09
+  const reste = { W: zone.W, H: zone.H - hNote - 2 }
+  const saisons = r.ordre === 'saisons' ? dessinerSaisons(reste, ctx, r.langues, r.attache) : dessinerCalendrier(reste, ctx, r.langues, r.attache)
+  return [`<div style="width:${zone.W}mm;height:${zone.H}mm">${saisons}<div style="height:2mm"></div>${dessinerNote(zone.W, hNote, ctx, r.langues)}</div>`]
+}
+
+export const css = `${CSS_LISTE}${CSS_CALENDRIER}
   .saisons { display: flex; }
   .saisons.portrait { flex-direction: column; }
   .saison { display: flex; border-radius: 4mm; overflow: hidden; border: .3mm solid #cfd6df; }

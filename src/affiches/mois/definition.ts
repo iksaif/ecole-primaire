@@ -1,4 +1,6 @@
 // Les mois de l'année et les saisons : une affiche pour le mur de la classe, en français, en breton, ou les deux sur la même feuille.
+// Les mois suivent l'année, de janvier à décembre, avec les saisons en bande à gauche : elles changent vers le 21 (mars, juin, septembre, décembre), pas au début
+// d'un mois, et l'hiver est coupé en deux. La présentation « par saison » (quatre bandes de trois mois) reste en option.
 // Programme (src/data/programme.ts) : les mois et les saisons en GS (jours-mois), l'année et ses saisons au CP (calendrier-mesure-temps,
 // jour-nuit-saisons), et dans la langue régionale (mois-saisons-langue-regionale). Deux variantes, l'écriture de la classe : en script en
 // GS, en script et en attaché au CP. Les saisons sont à part, sous les mois : elles ne commencent pas avec un mois.
@@ -22,9 +24,11 @@ const definition = definirAffiche({
   reglages: {
     attache: choix([false, true]),
     saisons: choix([true, false]),
+    // avec les saisons : « annee » commence en janvier (l'hiver est coupé, les saisons changent en cours de mois) ; « saisons » regroupe les mois par saison
+    ordre: choix(['annee', 'saisons']),
   },
   formulaire: {
-    visibleSi: { 'polices.attache': { reglage: 'attache', valeur: true } },
+    visibleSi: { 'polices.attache': { reglage: 'attache', valeur: true }, ordre: { reglage: 'saisons', valeur: true } },
   },
   variantes: {
     gs: { classes: ['gs'], slug: 'affiche-mois-de-l-annee' },

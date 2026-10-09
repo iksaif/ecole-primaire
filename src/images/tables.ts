@@ -11,7 +11,7 @@ export const EMOJIS = {
   baleine: '1F433', citron: '1F34B', grenouille: '1F438', carotte: '1F955', raisin: '1F347', cochon: '1F437', chataigne: '1F330',
   chatNoir: '1F408-200D-2B1B', bonhommeDeNeige: '2603', elephant: '1F418',
   // la journée
-  bol: '1F963', soleil: '2600', lune: '1F319', doudou: '1F9F8', bain: '1F6C1',
+  bol: '1F963', soleil: '2600', lune: '1F319', doudou: '1F9F8', bain: '1F6C1', toboggan: '1F6DD',
   croissant: '1F950', repas: '1F37D', gouter: '1F36A', pates: '1F35D', lit: '1F6CF', brosseADents: '1FAA5', ecole: '1F3EB',
   // le corps et les cinq sens
   visage: '1F642', deuxYeux: '1F440', oeil: '1F441', oreille: '1F442', nez: '1F443', bouche: '1F444', langue: '1F445', sourire: '1F601',
@@ -19,7 +19,7 @@ export const EMOJIS = {
   // dessins maison : OpenMoji n'a ni le cou, ni le tronc, ni le ventre
   cou: 'maison:cou', tronc: 'maison:tronc', ventre: 'maison:ventre',
   // l'hygiène
-  goutte: '1F4A7', savon: '1F9FC', bulles: '1FAE7', eclaboussures: '1F4A6', papier: '1F9FB', coureur: '1F3C3', salade: '1F957', eternuement: '1F927',
+  mainsOuvertes: '1F450', goutte: '1F4A7', savon: '1F9FC', bulles: '1FAE7', eclaboussures: '1F4A6', papier: '1F9FB', coureur: '1F3C3', salade: '1F957', eternuement: '1F927',
   // les cycles de vie, l'eau
   oeuf: '1F95A', poussinQuiEclot: '1F423', poussin: '1F425', poule: '1F414', graine: '1FAD8', pousse: '1F331', plantePot: '1FAB4', tournesol: '1F33B',
   glacon: '1F9CA',

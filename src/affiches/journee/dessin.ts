@@ -1,4 +1,4 @@
-// Les images disent ce que l'enfant fait à ce moment-là (le bol du matin, le repas de midi, le ballon de l'après-midi, le bain du soir, la lune
+// Les images disent ce que l'enfant fait à ce moment-là (le bol du matin, le repas de midi, le toboggan de l'après-midi, le bain du soir, la lune
 // de la nuit, le doudou du dodo) : un coq ou un ciel au lever du soleil ne parlent pas à un enfant de 3-4 ans.
 // Le dessin de la journée : des cartes (image, mot dans chaque langue de la feuille), dessin commun de la maternelle : src/affiches/cartes.ts.
 import type { Rendu } from '../types.ts'
@@ -20,7 +20,7 @@ const CARTES: Readonly<Record<string, { enchainement: Enchainement, numeroter?: 
   moments: { enchainement: 'suite', numeroter: true, elements: [
     { id: 'matin', emoji: 'bol' },
     { id: 'midi', emoji: 'repas' },
-    { id: 'apresMidi', emoji: 'ballon' },
+    { id: 'apresMidi', emoji: 'toboggan' },
     { id: 'soir', emoji: 'bain' },
     { id: 'nuit', emoji: 'lune' },
   ] },

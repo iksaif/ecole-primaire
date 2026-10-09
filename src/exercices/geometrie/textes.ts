@@ -111,8 +111,8 @@ export const CONTENU = catalogue({
 }, {
   br: {
     titre: 'Mentoniezh',
-    figure: {
-      carre: 'karrez', rectangle: 'hirgarrez', triangle: "tric'horn",
+    figure: { // br: à relire (rectangle : « skouergorneg », comme l’académie de Rennes)
+      carre: 'karrez', rectangle: 'skouergorneg', triangle: "tric'horn",
       triangle_rectangle: "tric'horn skouer", cercle: "kelc'h", losange: 'lozanj', // br: à relire (triangle rectangle)
     },
     // br: à relire (pavé droit : « hirgarrezeg »)
@@ -136,7 +136,7 @@ export const CONTENU = catalogue({
     vraiOuFaux: 'Gwir pe gaou ?',
     vrai: 'Gwir',
     faux: 'Gaou',
-    choixFigure: { carre: 'karrez', rectangle: 'hirgarrez', losange: 'lozanj', triangleRectangle: "tric'horn skouer" },
+    choixFigure: { carre: 'karrez', rectangle: 'skouergorneg', losange: 'lozanj', triangleRectangle: "tric'horn skouer" }, // br: à relire
     // br: à relire — mutations après les chiffres non faites : « 4 kostez »
     propriete: {
       'q-carre': 'Peseurt stumm en deus 4 kostez hir kement-ha-kement ha 4 korn skouer ?', // br: à relire
@@ -145,12 +145,12 @@ export const CONTENU = catalogue({
       'q-losange': 'Peseurt stumm en deus 4 kostez hir kement-ha-kement, met korn skouer ebet ?', // br: à relire
       'v-carre-ad': "Ur c'harrez en deus 4 korn skouer.", // br: à relire
       'v-carre-cotes': "Hir kement-ha-kement eo 4 kostez ur c'harrez.", // br: à relire
-      'v-rect-cotes': 'Hir kement-ha-kement eo atav 4 kostez un hirgarrez.', // br: à relire
-      'v-rect-opp': "En un hirgarrez, ar c'hostezioù a-dal a zo hir kement-ha-kement.", // br: à relire
-      'v-rect-ad': 'Un hirgarrez en deus 4 korn skouer.', // br: à relire
+      'v-rect-cotes': 'Hir kement-ha-kement eo atav 4 kostez ur skouergorneg.', // br: à relire
+      'v-rect-opp': "En ur skouergorneg, ar c'hostezioù a-dal a zo hir kement-ha-kement.", // br: à relire
+      'v-rect-ad': 'Ur skouergorneg en deus 4 korn skouer.', // br: à relire
       'v-trirect-3': "Un tric'horn skouer en deus 3 korn skouer.", // br: à relire
       'v-trirect-1': "Un tric'horn skouer en deus ur c'horn skouer.", // br: à relire
-      'v-carre-rect': "Ur c'harrez a zo un hirgarrez dibar.", // br: à relire
+      'v-carre-rect': "Ur c'harrez a zo ur skouergorneg dibar.", // br: à relire
       'v-losange-ad': 'Ul lozanj en deus atav 4 korn skouer.', // br: à relire
       'v-tri-cotes': "Un tric'horn en deus 4 kostez.", // br: à relire
     },

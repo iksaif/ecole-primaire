@@ -34,20 +34,20 @@ export const TEXTES: TextesAffiche = {
   },
   br: {
     titre: 'Skritelloù an taolennoù', // br: à relire
-    'titre.multiplication': 'An taolennoù liesañ', // br: à relire
+    'titre.multiplication': 'An taolennoù lieskementiñ', // br: à relire
     'titre.addition': 'An taolennoù sammañ', // br: à relire
     table: 'Taolenn {t}', // br: à relire
     'reglage.tables': 'Taolennoù da ziskouez', // br: à relire
     'valeur.tables.1': '1', 'valeur.tables.2': '2', 'valeur.tables.3': '3', 'valeur.tables.4': '4', 'valeur.tables.5': '5', 'valeur.tables.6': '6', 'valeur.tables.7': '7', 'valeur.tables.8': '8', 'valeur.tables.9': '9', 'valeur.tables.10': '10',
     'variante.multiplication-a4.court': 'Skritell taolennoù × (A4)', // br: à relire
-    'variante.multiplication-a4.titre': 'Skritell an taolennoù liesañ 1 betek 10 (A4)', // br: à relire
-    'variante.multiplication-a4.description': 'Skritell an taolennoù liesañ — affiche des tables de multiplication de 1 à 10 en breton, A4 e liv. PDF digoust da voullañ.', // br: à relire
+    'variante.multiplication-a4.titre': 'Skritell an taolennoù lieskementiñ 1 betek 10 (A4)', // br: à relire
+    'variante.multiplication-a4.description': 'Skritell an taolennoù lieskementiñ — affiche des tables de multiplication de 1 à 10 en breton, A4 e liv. PDF digoust da voullañ.', // br: à relire
     'variante.multiplication-a3.court': 'Skritell taolennoù × (A3)', // br: à relire
-    'variante.multiplication-a3.titre': "Skritell an taolennoù liesañ evit ar c'hlas (A3)", // br: à relire
-    'variante.multiplication-a3.description': 'Skritell vras an taolennoù liesañ — grande affiche A3 des tables de multiplication en breton pour la classe. PDF digoust.', // br: à relire
+    'variante.multiplication-a3.titre': "Skritell an taolennoù lieskementiñ evit ar c'hlas (A3)", // br: à relire
+    'variante.multiplication-a3.description': 'Skritell vras an taolennoù lieskementiñ — grande affiche A3 des tables de multiplication en breton pour la classe. PDF digoust.', // br: à relire
     'variante.multiplication-une-par-page.court': 'Un daolenn × dre bajenn', // br: à relire
-    'variante.multiplication-une-par-page.titre': 'An taolennoù liesañ : ur skritell vras evit pep taolenn', // br: à relire
-    'variante.multiplication-une-par-page.description': 'Dek skritell A4, unan evit pep taolenn liesañ — une affiche par table de multiplication, en breton. PDF digoust.', // br: à relire
+    'variante.multiplication-une-par-page.titre': 'An taolennoù lieskementiñ : ur skritell vras evit pep taolenn', // br: à relire
+    'variante.multiplication-une-par-page.description': 'Dek skritell A4, unan evit pep taolenn lieskementiñ — une affiche par table de multiplication, en breton. PDF digoust.', // br: à relire
     'variante.pythagore.court': 'Taolenn Pitagor', // br: à relire
     'variante.pythagore.titre': 'Taolenn Pitagor : taolenn al liesadennoù 1 betek 10', // br: à relire
     'variante.pythagore.description': 'Taolenn Pitagor — table de Pythagore (multiplications de 1 × 1 à 10 × 10) pour les classes bilingues breton. Skritell digoust da voullañ.', // br: à relire

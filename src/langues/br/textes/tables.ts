@@ -4,7 +4,7 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/tables.ts'
 
 export default {
-  titre: 'Taolennoù liesañ',
+  titre: 'Taolennoù lieskementiñ', // br: à relire (multiplication : « lieskementiñ », comme l’académie de Rennes)
   description: 'En em bleustr war an holl daolennoù',
   tablesAReviser: 'Taolennoù da adwelet',
   toutes: 'An holl',

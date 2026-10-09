@@ -10,7 +10,7 @@ export const CONTENU = catalogue({
   pNbQuestions: '{n} questions',
 }, {
   br: {
-    titre: 'Taolennoù liesañ',
+    titre: 'Taolennoù lieskementiñ', // br: à relire (multiplication : « lieskementiñ », comme l’académie de Rennes)
     pTable: 'Taolenn {n}',
     pTables: 'Taolennoù : {liste}',
     pJusqua: '× betek {n}',

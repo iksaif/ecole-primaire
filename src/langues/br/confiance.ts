@@ -1,15 +1,59 @@
 // Le niveau de confiance de chaque ressource en breton (échelle : src/langues/confiance.ts ; méthode et prompt de (re)tagage :
-// docs/confiance-breton/). Une ressource absente de cette table vaut 0 (« non évaluée »). Le niveau est celui du maillon le plus
-// faible parmi les textes qui figurent sur la fiche imprimée ; les titres et descriptions du catalogue ne comptent que s'ils sont longs.
-// Évaluations de départ (2026-10-09) : prudentes, à revoir avec le prompt.
+// docs/confiance-breton/). Une ressource absente de cette table vaut 0 (« non évaluée »). Une entrée `'fiche:<slug>'` (slug publié, suffixe
+// de langue compris) l'emporte pour cette fiche seule. Le niveau est celui du maillon le plus faible parmi les textes qui figurent sur la fiche
+// imprimée ; les titres et descriptions du catalogue ne comptent que s'ils sont longs.
+// Évaluations du 2026-10-09 : prudentes, faites par un assistant avec les sources en ligne (Wiktionnaire, Wikeriadur). Les textes ont ensuite été corrigés
+// avec le vocabulaire de l'académie de Rennes (docs/confiance-breton/lexique-academie.md : « lieskementiñ », « skouergorneg ») ; les niveaux restent à 0 là où
+// une phrase ou une consigne construite par nous n'est attestée nulle part : seule une relecture humaine les fera monter. À revoir avec le prompt.
 import type { TableConfiance } from '../confiance.ts'
 
 const MOTS_VERIFIES = 'Contenu imprimé : mots vérifiés (Wiktionnaire, Meurgorf, Kervarker, AGENTS.md). Titres et descriptions du catalogue : courts, automatiques.'
 
 export default {
+  // ── affiches : mots vérifiés ──
   'affiche:alphabet': { niveau: 2, le: '2026-10-09', par: 'assistant', note: `Alphabet breton de 25 lettres. ${MOTS_VERIFIES}` },
   'affiche:jours': { niveau: 2, le: '2026-10-09', par: 'assistant', note: `Les sept jours. ${MOTS_VERIFIES}` },
   'affiche:mois': { niveau: 2, le: '2026-10-09', par: 'assistant', note: `Les douze mois et les quatre saisons (repères de l'académie de Rennes). ${MOTS_VERIFIES} Phrase « note.saisons » : automatique.` },
   'affiche:nombres': { niveau: 2, le: '2026-10-09', par: 'assistant', note: `Nombres en breton (système vigésimal). ${MOTS_VERIFIES}` },
+  'affiche:meteo': { niveau: 2, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire : heol, glav, avel, erc’h, koumoul, penaos, amzer. Question « Penaos eo an amzer ? » reprise de l’évaluation d’entrée en CP bilingue de l’académie (bretonCP p. 11). Mots seuls, sans article.' },
   'affiche:bande-numerique': { niveau: 1, le: '2026-10-09', par: 'assistant', note: 'Nombres vérifiés ; noms des objets à compter (avaloù, steredoù…) et réglages : automatiques, courts.' },
+  'fiche:affiche-matin-soir-jour-nuit-br': { niveau: 1, le: '2026-10-09', par: 'assistant', note: 'Seulement mintin, abardaez, deiz, noz (Wiktionnaire) avec article an/ar, sans mutation : classe B. Titre = ces quatre groupes. Autres fiches de la ressource : mots ou phrases non vérifiés.' },
+  'fiche:affiche-matin-soir-jour-nuit-fr-br': { niveau: 1, le: '2026-10-09', par: 'assistant', note: 'Même contenu breton que la fiche en breton seul : mintin, abardaez, deiz, noz (Wiktionnaire), classe B.' },
+
+  // ── affiches : au moins un texte de classe C ──
+  'affiche:formes': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Beaucoup de textes C : légendes, aides, nombres avec mutation (« 6 zal karrez »), accords, termes de géométrie non vérifiés (lozanj, trapez, prism eeun, kenstok). Aucun mot vérifié seul sur la fiche.' },
+  'affiche:horloge': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Légendes en phrases (« Ar bir verr, ruz, a ziskouez an eurioù »), « ha kard », « nemet ar c’hard », « Mont a ran d’ar skol » : verbes et mutations non vérifiables.' },
+  'affiche:couleurs': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire OK : ruz, glas, melen, gwer, orañjez, roz, gell, du, gwenn, louet, liv. C : « mouk » est donné pour « pourpre », pas « violet ». Avec un mot sourcé pour violet : niveau 1 (titre « Al livioù » = B).' },
+  'affiche:journee': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire OK : mintin, deiz, kreisteiz, abardaez, noz, skol, koan. C : « goude-kreisteiz », « pred-mintin », lein (= petit-déjeuner, pas déjeuner), merenn (déjeuner, goûter dialectal), « ar c’housk ».' },
+  'affiche:corps': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire OK : penn, daoulagad, fri, genoù, dorn, brec’h, gar, troad, gouzoug, kof, gwel, kleved, teod, kroc’hen. C : « ar blas » (Wiktionnaire : blaz), « an skouarn » (« ar » attendu), « ar stok », « ar c’horf » (tronc), « ar c’hwezh », titres.' },
+  'affiche:hygiene': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire OK : glebiañ, frotañ, sec’hañ, debriñ, fiñval. C : sapunañ et rinsañ introuvables, « naetaat an dent », « skarzhañ a ran ma fri » (skarzhañ = vider, curer), verbes conjugués, titres.' },
+  'affiche:cycles': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire OK : vi, yar, had, bleunienn. C introuvables : yarig, bouzhig, plantenn ; « ar vi o tigeriñ » et les titres sont des phrases ou groupes non attestés.' },
+  'affiche:eau': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire OK : skorn, dour, teuziñ, skornañ. C : « teuziñ a ra / skornañ a ra » (verbes conjugués), titre « Teuzañ ha skorniñ » (skorniñ introuvable ; graphies teuzañ/teuziñ, skornañ/skorniñ mêlées).' },
+  'affiche:espace': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Wiktionnaire OK : etre, a-gleiz, a-zehou, e-barzh, war, dindan, dirak, a-dreñv, e-kichen, kazh, pelec’h. C : titre « Pelec’h emañ ar c’hazh ? » (phrase adaptée de bretonCP, mutation non sourcée) et « (derc’hel) ». Avec un titre sourcé : niveau 2.' },
+  'affiche:monnaie': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Titre, sections, 7 relations (« 2 vilhed 10 € », mutations), légende et planche : 23 C. « bilhed » existe (Wikeriadur), mais « pezh moneiz » et « santim » sont introuvables dans les sources en ligne.' },
+  'affiche:numeration': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'A : « mil » (×2), « degadoù » (Wikeriadur). C : « kantadoù », « unanennoù », « dekvedoù », rangs, phrases de lecture et notes avec accords : 16 C.' },
+  'affiche:droite': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Titre, légende « Al linenn niveroù » et 3 phrases d’aide (« Lammat a ran… », « tra hir »), tournures non vérifiables : 5 C. Les nombres en lettres sont vérifiés, mais les phrases ne le sont pas.' },
+  'affiche:tables': { niveau: 0, le: '2026-10-09', par: 'assistant', note: '« taolenn » et « sammañ » sont attestés par l’académie de Rennes (lexique-academie.md) ; « liesañ » corrigé en « lieskementiñ » (académie). Reste C : « al liesadennoù » (Pythagore), non attesté. 3 titres à faire relire.' },
+
+  // ── exercices : phrases et consignes de classe C ──
+  'exercice:calcul-mental': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Phrases et descriptions de fiches non vérifiées (« An doubl eus {n} = ? », « Betek an degad », « klokadur » marqué à relire). Seul « deiziad » confirmé (Wiktionnaire). Les C dominent.' },
+  'exercice:monnaie': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Consignes et énoncés non vérifiés (« Paeañ {somme} gant an nebeutañ posubl », « Piv en deus ar muiañ a arc’hant ? »), noms d’objets avec articles et mutations. Aucun mot confirmé dans une source.' },
+  'exercice:heure': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Heure dite à l’oral (« {h} nemet kard », « {h} ha kard »), moments de la journée et consignes : marqués à relire, aucun mot vérifié en source. Beaucoup de phrases (C).' },
+  'exercice:numeration': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Nombres vérifiés (AGENTS.md) mais consignes non vérifiées (« Dispenn an niver e {liste} », « Kloka an heuliad », « Pe niver a ziskouez ar bir ? ») et vocabulaire pédagogique (derez, bir, kantad).' },
+  'exercice:compter': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Noms d’objets courts (B) mais consignes à l’impératif non vérifiées (« Kont an traoù ha skriv an niver er gaoued », « gromm an niver mat ») ; « glesker » marqué à relire.' },
+  'exercice:comparer': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Titre et consigne marqués à relire : « Keñveriañ ar c’hementadoù », « War pep linenn, gromm ar strollad en deus muioc’h. » Phrase avec verbe conjugué et mutations (C).' },
+  'exercice:ranger': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Consigne marquée à relire (« Skriv an niveroù er c’haoued, en urzh mat. ») ; « Renk eus ar bihanañ d’ar brasañ » et le titre « Renkañ an niveroù » non confirmés en source.' },
+  'exercice:tables': { niveau: 1, le: '2026-10-09', par: 'assistant', note: 'Fiche imprimée : groupes courts sans verbe conjugué (« Taolenn {n} », « × betek {n} », « {n} goulenn », titre « Taolennoù lieskementiñ »). taolenn et betek : académie de Rennes ; lieskementiñ : académie, Favereau ; goulenn, Reizhadenn (Favereau), Anv-bihan (Termofis) : Geriafurch. Le titre combine deux mots attestés : classe B, donc pas 2.' },
+  'exercice:calcul-pose': { niveau: 0, le: '2026-10-09', par: 'assistant', note: '« Jedadur lakaet » et « Liesadennoù » marqués à relire ; « sammadenn » et « lamadenn » attestés par l’académie (lexique-academie.md) ; « Liesadennoù » et « {n} poelladenn » non confirmés.' },
+  'exercice:suites': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Consignes et description en phrases automatiques (verbes à l’impératif, « Kendalc’hit pep heuliad… », « Kavit ar reolenn… ») : 6 textes C, aucun mot A vérifié.' },
+  'exercice:longueurs': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Consignes automatiques (« Grenn ar c’hreion goulennet. », superlatifs an hirañ / ar berrañ) : 6 textes C, aucun A ni B.' },
+  'exercice:fractions': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'kelc’h (cercle) et hanter (moitié) vérifiés au Wiktionnaire. Reste : nombreuses questions et consignes en phrases, ordinaux, mutations : environ 36 textes C.' },
+  'exercice:problemes': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Énoncés générés avec verbes conjugués, genre, possessifs mutés (e vamm / he mamm), « en deus / he deus », unités : environ 50 textes C, aucun mot vérifié.' },
+  'exercice:mesures': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Jours et mois repris d’AGENTS.md (vérifiés) ; tout le reste est en phrases (« Kempouez eo ar balañs… », explications) : environ 55 textes C. Vocabulaire de mesure non retrouvé en source en ligne.' },
+  'exercice:formes': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'karrez (Wiktionnaire) et tric’horn (académie) vérifiés ; « hirgarrez » corrigé en « skouergorneg » (académie). pladenn et couleurs non retrouvés ; 3 consignes automatiques (« Liv pep stumm… », « Pet a zo ? ») : textes C.' },
+  'exercice:geometrie': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'karrez, kelc’h (Wiktionnaire), tric’horn et skouergorneg (académie) vérifiés. Une soixantaine de textes C : questions, propriétés, consignes, mutations après chiffre non faites, terminologie (hirgarrezeg, skin, treuzkiz).' },
+  'exercice:motifs': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Titre et 3 consignes avec verbes et mutations : 4 C. « patromoù » : Wikeriadur donne patrom = image, pas motif.' },
+  'exercice:lettres': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Alphabet et voyelles vérifiés (A) ; titre « Al lizherennoù » (B) ; la consigne « Lak ul linenn etre… » est un C (verbe, mutations, tournure).' },
+  'exercice:ecriture': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'A : « Skrivañ », « Deiziad » (Wikeriadur, Wiktionnaire). C : « Anv-bihan », « Skript », « A-stag » introuvables en ligne, et les 4 noms d’écritures qui les contiennent.' },
+  'exercice:quiz': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Titre, consigne, « Reizhadenn », 5 thèmes et 53 questions-réponses : phrases, mutations, interrogatifs, tout en C. Aucun texte A ou B.' },
 } as const satisfies TableConfiance

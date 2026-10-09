@@ -20,6 +20,7 @@ les colonnes. Chaque fichier a une section « Page N » par page du PDF : ce son
 | `lvc2.md` | Programme de langues vivantes étrangères et régionales du cycle 2 (annexe 1, BO n° 12 du 19 mars 2026) : CP à la rentrée 2026, CE1 et CE2 en 2027 ; colonne « parcours bilingues » |
 | `bretonA1.md` | Breton A1, « Cycle 1 bilingue / Cycle 2 », repères de progressivité linguistique (académie de Rennes, 26/10/2024) : document académique, pas un BO ; seule source sur la maternelle bilingue |
 | `bretonCP.md` | Breton A1, évaluation diagnostique d'entrée en CP bilingue (académie de Rennes, 03/05/2026) : le texte seulement (illustrations TES/Canopé non reprises) |
+| `bretonA1A2.md`, `bretonA2B1.md` | Breton A1-A2 et A2-B1, repères de progressivité linguistique (académie de Rennes) : documents académiques, pas des BO ; sources du vocabulaire vérifié (`docs/confiance-breton/lexique-academie.md`) |
 
 Les adresses des PDF sont dans `SOURCES` (`src/data/programme.ts`) et en tête de chaque fichier. Ce sont des textes
 officiels publiés par le ministère de l'Éducation nationale ; ils sont repris ici tels quels, pour référence.

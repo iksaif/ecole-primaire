@@ -14,11 +14,11 @@ export const CONTENU = catalogue({
 }, {
   br: {
     titre: 'Ar stummoù',
-    forme: {
+    forme: { // br: à relire (rectangle : « skouergorneg », comme l’académie de Rennes)
       disque: 'pladenn', // br: à relire (« disque » plein ; kelc'h = cercle)
       carre: 'karrez',
       triangle: "tric'horn",
-      rectangle: 'hirgarrez',
+      rectangle: 'skouergorneg',
     },
     couleur: { rouge: 'ruz', bleu: 'glas', vert: 'gwer', jaune: 'melen' },
     consignePS: 'Liv an holl stummoù evel hemañ.', // br: à relire

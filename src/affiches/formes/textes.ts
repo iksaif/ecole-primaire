@@ -81,18 +81,18 @@ export const TEXTES: TextesAffiche = {
   br: {
     titre: 'Ar stummoù hag ar soludoù', // br: à relire
     'variante.plan-cycle2.court': 'Stummoù plaen', // br: à relire
-    'variante.plan-cycle2.titre': "Skritell ar stummoù plaen : pladenn, karrez, hirgarrez, tric'horn", // br: à relire
+    'variante.plan-cycle2.titre': "Skritell ar stummoù plaen : pladenn, karrez, skouergorneg, tric'horn", // br: à relire
     'variante.plan-cycle2.description': "Ar pevar stumm plaen da reiñ skouer er c'helc'hiad 2, gant o c'hostezioù hag o c'hornioù skouer.", // br: à relire
     'variante.plan-gs.court': 'Stummoù plaen (skol-vamm)', // br: à relire
-    'variante.plan-gs.titre': "Skritell ar stummoù plaen eus ar renk meur : pladenn, karrez, hirgarrez, tric'horn", // br: à relire
+    'variante.plan-gs.titre': "Skritell ar stummoù plaen eus ar renk meur : pladenn, karrez, skouergorneg, tric'horn", // br: à relire
     'variante.plan-gs.description': "Ar pevar stumm plaen da envel er renk meur, gant o c'hostezioù hag o c'hornioù skouer.", // br: à relire
     'variante.plan-ce1.court': 'Stummoù plaen CE1', // br: à relire
-    'variante.plan-ce1.titre': "Skritell ar stummoù plaen eus ar CE1 : pladenn, karrez, hirgarrez, tric'horn", // br: à relire
+    'variante.plan-ce1.titre': "Skritell ar stummoù plaen eus ar CE1 : pladenn, karrez, skouergorneg, tric'horn", // br: à relire
     'variante.plan-ce1.description': "Ar pevar stumm plaen da reiñ skouer, gant o c'hornioù skouer (programm ar CE1).", // br: à relire
     'lot.plan-ce1': 'Ar stummoù plaen', // br: à relire
     'variante.plan-cm1.court': 'Stummoù plaen CM1', // br: à relire
     'variante.plan-cm1.titre': 'Skritell ar stummoù plaen eus ar CM1', // br: à relire
-    'variante.plan-cm1.description': "Karrez, hirgarrez, lozanj, tric'horn skouer, tric'horn kevreizh, tric'horn kevatal ha pladenn, gant o c'herzhioù (programm ar CM1).", // br: à relire
+    'variante.plan-cm1.description': "Karrez, skouergorneg, lozanj, tric'horn skouer, tric'horn kevreizh, tric'horn kevatal ha pladenn, gant o c'herzhioù (programm ar CM1).", // br: à relire
     'variante.plan-cycle3.court': 'Stummoù plaen CM2', // br: à relire
     'variante.plan-cycle3.titre': "Skritell ar stummoù plaen eus ar c'helc'hiad 3 (CM2)", // br: à relire
     'variante.plan-cycle3.description': "Tric'horn skouer, kevreizh, kevatal, lozanj, trapez, pentagon, hexagon… gant o c'herzhioù (programm ar CM2).", // br: à relire
@@ -131,7 +131,7 @@ export const TEXTES: TextesAffiche = {
     'legende.solides': 'Ar biñsoù kuzhet e pikennoù', // br: à relire
     'figure.disque.nom': 'ar pladenn', 'figure.disque.info': "Ur c'helc'h leun.\nAr riblenn a zo ur c'helc'h.", // br: à relire
     'figure.carre.nom': "ar c'harrez", 'figure.carre.info': '4 kostez\n4 beg', 'figure.carre.cotes': "4 c'hostez ingal", 'figure.carre.angles': "4 c'horn skouer", // br: à relire
-    'figure.rectangle.nom': 'an hirgarrez', 'figure.rectangle.info': '4 kostez\n4 beg', 'figure.rectangle.angles': "4 c'horn skouer", 'figure.rectangle.cotes': 'kostezioù a-dal ingal', // br: à relire
+    'figure.rectangle.nom': 'ar skouergorneg', 'figure.rectangle.info': '4 kostez\n4 beg', 'figure.rectangle.angles': "4 c'horn skouer", 'figure.rectangle.cotes': 'kostezioù a-dal ingal', // br: à relire
     'figure.triangle.nom': "an tric'horn", 'figure.triangle.info': "3 c'hostez\n3 beg", // br: à relire
     'figure.triangle-rectangle.nom': "an tric'horn skouer", 'figure.triangle-rectangle.info': "3 c'hostez\n3 beg", 'figure.triangle-rectangle.angles': "1 c'horn skouer", // br: à relire
     'figure.isocele.nom': "an tric'horn kevreizh", 'figure.isocele.info': "3 c'hostez\n3 beg", 'figure.isocele.cotes': '2 gostez ingal', // br: à relire
@@ -141,12 +141,12 @@ export const TEXTES: TextesAffiche = {
     'figure.pentagone.nom': 'ar pentagon', 'figure.pentagone.info': "5 kostez\n5 beg", // br: à relire
     'figure.hexagone.nom': 'an hexagon', 'figure.hexagone.info': "6 c'hostez\n6 beg", // br: à relire
     'solide.cube.nom': "ar c'hub", 'solide.cube.info': "6 zal karrez\n8 beg · 12 biñs", // br: à relire
-    'solide.pave.nom': 'an hirgarrezeg', 'solide.pave.info': "6 zal hirgarrez\n8 beg · 12 biñs", // br: à relire
+    'solide.pave.nom': 'an hirgarrezeg', 'solide.pave.info': "6 zal skouergorneg\n8 beg · 12 biñs", // br: à relire
     'solide.boule.nom': 'ar boull', 'solide.boule.info': "Tal plaen ebet\nun dremm gromm", // br: à relire
     'solide.cylindre.nom': 'ar silindr', 'solide.cylindre.info': "2 zal blaen (pladennoù)\n+ 1 dremm gromm", // br: à relire
     'solide.cone.nom': "ar c'hon", 'solide.cone.info': "1 tal plaen (ur bladenn)\n+ 1 dremm gromm\n1 beg", // br: à relire
     'solide.pave.nom.solides-maternelle': 'an hirgarrezeg', 'solide.pyramide.nom.solides-maternelle': 'ar piramid', // br: à relire
     'solide.pyramide.nom': 'ar piramid (diazez karrez)', 'solide.pyramide.info': "5 tal : 1 c'harrez + 4 tric'horn\n5 beg · 8 biñs", // br: à relire
-    'solide.prisme.nom': 'ar prism eeun', 'solide.prisme.info': "5 tal : 2 dric'horn + 3 hirgarrez\n6 beg · 9 biñs", // br: à relire
+    'solide.prisme.nom': 'ar prism eeun', 'solide.prisme.info': "5 tal : 2 dric'horn + 3 skouergorneg\n6 beg · 9 biñs", // br: à relire
   },
 }

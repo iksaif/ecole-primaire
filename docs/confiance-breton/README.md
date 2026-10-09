@@ -35,7 +35,7 @@ comme une traduction non relue, et le niveau retombe à 2 au plus.
 
 | Classe | Texte | Condition |
 |---|---|---|
-| **A** | un mot ou une expression figée (nombre, jour, mois, lettre, couleur, partie du corps, unité…) | **trouvé dans au moins une source fiable** (Wiktionnaire, Geriadur ar Brezhoneg, Kervarker, Meurgorf, TermBret/Termofis, programmes de l'académie de Rennes) ; la source est citée dans la note. |
+| **A** | un mot ou une expression figée (nombre, jour, mois, lettre, couleur, partie du corps, unité, consigne de classe…) | **trouvé dans au moins une source fiable** (Wiktionnaire, Geriadur ar Brezhoneg, Kervarker, Meurgorf, TermBret/Termofis, **documents de l'académie de Rennes** et **Geriafurch** (`https://geriafurch.bzh/fr/brfr/<mot>`, qui dit quelle source atteste : préférer Termofis et Favereau à Glosbe) : `lexique-academie.md`) ; la source est citée dans la note. |
 | **B** | une phrase ou un groupe très court (≤ 5 mots), sans mutation à deviner, sans verbe conjugué ni accord | le sens est transparent, chaque mot est de classe A. |
 | **C** | tout le reste : phrase longue, verbe conjugué, mutation, pluriel irrégulier, genre, nombre qui s'accorde, tournure idiomatique, vocabulaire pédagogique (« consigne », « corrigé », « entoure »…) | non vérifiable sans locuteur. |
 
@@ -48,6 +48,13 @@ comme une traduction non relue, et le niveau retombe à 2 au plus.
 Score indicatif pour comparer deux ressources : `(2·nA + 1·nB) / (2·N)` (N textes imprimés), de 0 à 1. Il ne remplace pas la règle du maillon faible :
 un seul texte de classe C met la ressource à 0, parce que c'est lui que l'enfant ou l'enseignant·e lira de travers.
 
+### Traducteurs automatiques : un second avis, jamais une preuve
+
+Troer (`https://niverel.brezhoneg.bzh/fr/troer/`, portail brezhoneg.bzh), Glosbe en phrases, Google Traduction : ce sont des **traductions automatiques**, comme la nôtre. Quand deux
+traducteurs indépendants donnent la même phrase que nous, c'est un indice (une phrase de classe C reste C, mais devient une priorité de relecture plus basse) ; quand ils divergent,
+c'est un signal à porter sur la liste de relecture. Cela ne fait **jamais** passer un texte en classe A ni au-dessus du niveau 1. Troer est une page qui s'exécute dans le navigateur : un
+agent ne peut pas la lire avec `WebFetch`, la comparaison se fait à la main (ou avec un navigateur piloté), et le texte saisi part chez l'éditeur du service (rien à voir avec notre site).
+
 ### 4. Pièges
 
 - Un mot de classe A **dans une phrase** devient de classe B ou C : la mutation (`ar c'hi` / `ur c'hi`, `daou vloaz`) dépend du mot d'avant.
@@ -57,5 +64,5 @@ un seul texte de classe C met la ressource à 0, parce que c'est lui que l'enfan
 
 ## Évaluer ou réévaluer
 
-Le prompt est dans [`prompt.md`](prompt.md). Il se lance sur une ou plusieurs ressources, en lecture seule pour le code (il ne modifie que
+Les sources, classées par fiabilité : [`sources.md`](sources.md). Le prompt d'évaluation est [`prompt.md`](prompt.md) ; pour traduire de nouveaux textes, [`prompt-traduire.md`](prompt-traduire.md). Il se lance sur une ou plusieurs ressources, en lecture seule pour le code (il ne modifie que
 `src/langues/br/confiance.ts`) et rend les entrées à coller.

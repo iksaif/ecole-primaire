@@ -185,67 +185,67 @@ export const CONTENU = catalogue({
       'calcul-mental-ce1': {
         court: 'Jediñ e penn CE1 (mesket)', // br: à relire
         titre: 'Fichenn jediñ e penn CE1 : adwelet mesket', // br: à relire
-        description: 'Jediñ e penn CE1 — fiche de calcul mental CE1 en breton : taolennoù liesañ, sammadennoù, lamadennoù, klokaat hag an doubl, gant ar reizhadenn.', // br: à relire
+        description: 'Jediñ e penn CE1 — fiche de calcul mental CE1 en breton : taolennoù lieskementiñ, sammadennoù, lamadennoù, klokaat hag an doubl, gant ar reizhadenn.', // br: à relire
       },
       'table-2': {
-        court: 'Taolenn liesañ 2', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 2', // br: à relire
-        description: 'Taolenn liesañ 2 — fiche de la table de 2 en breton : liesadennoù (2 × 7, 7 × 2) ha faktorioù o vankout (2 × … = 12), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 2', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 2', // br: à relire
+        description: 'Taolenn lieskementiñ 2 — fiche de la table de 2 en breton : liesadennoù (2 × 7, 7 × 2) ha faktorioù o vankout (2 × … = 12), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-3': {
-        court: 'Taolenn liesañ 3', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 3', // br: à relire
-        description: 'Taolenn liesañ 3 — fiche de la table de 3 en breton : liesadennoù (3 × 7, 7 × 3) ha faktorioù o vankout (3 × … = 18), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 3', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 3', // br: à relire
+        description: 'Taolenn lieskementiñ 3 — fiche de la table de 3 en breton : liesadennoù (3 × 7, 7 × 3) ha faktorioù o vankout (3 × … = 18), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-4': {
-        court: 'Taolenn liesañ 4', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 4', // br: à relire
-        description: 'Taolenn liesañ 4 — fiche de la table de 4 en breton : liesadennoù (4 × 7, 7 × 4) ha faktorioù o vankout (4 × … = 24), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 4', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 4', // br: à relire
+        description: 'Taolenn lieskementiñ 4 — fiche de la table de 4 en breton : liesadennoù (4 × 7, 7 × 4) ha faktorioù o vankout (4 × … = 24), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-5': {
-        court: 'Taolenn liesañ 5', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 5', // br: à relire
-        description: 'Taolenn liesañ 5 — fiche de la table de 5 en breton : liesadennoù (5 × 7, 7 × 5) ha faktorioù o vankout (5 × … = 30), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 5', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 5', // br: à relire
+        description: 'Taolenn lieskementiñ 5 — fiche de la table de 5 en breton : liesadennoù (5 × 7, 7 × 5) ha faktorioù o vankout (5 × … = 30), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-10': {
-        court: 'Taolenn liesañ 10', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 10', // br: à relire
-        description: 'Taolenn liesañ 10 — fiche de la table de 10 en breton : liesadennoù (10 × 7, 7 × 10) ha faktorioù o vankout (10 × … = 60), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 10', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 10', // br: à relire
+        description: 'Taolenn lieskementiñ 10 — fiche de la table de 10 en breton : liesadennoù (10 × 7, 7 × 10) ha faktorioù o vankout (10 × … = 60), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-6': {
-        court: 'Taolenn liesañ 6', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 6', // br: à relire
-        description: 'Taolenn liesañ 6 — fiche de la table de 6 en breton : liesadennoù (6 × 7, 7 × 6) ha faktorioù o vankout (6 × … = 36), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 6', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 6', // br: à relire
+        description: 'Taolenn lieskementiñ 6 — fiche de la table de 6 en breton : liesadennoù (6 × 7, 7 × 6) ha faktorioù o vankout (6 × … = 36), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-7': {
-        court: 'Taolenn liesañ 7', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 7', // br: à relire
-        description: 'Taolenn liesañ 7 — fiche de la table de 7 en breton : liesadennoù (7 × 7, 7 × 7) ha faktorioù o vankout (7 × … = 42), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 7', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 7', // br: à relire
+        description: 'Taolenn lieskementiñ 7 — fiche de la table de 7 en breton : liesadennoù (7 × 7, 7 × 7) ha faktorioù o vankout (7 × … = 42), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-8': {
-        court: 'Taolenn liesañ 8', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 8', // br: à relire
-        description: 'Taolenn liesañ 8 — fiche de la table de 8 en breton : liesadennoù (8 × 7, 7 × 8) ha faktorioù o vankout (8 × … = 48), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 8', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 8', // br: à relire
+        description: 'Taolenn lieskementiñ 8 — fiche de la table de 8 en breton : liesadennoù (8 × 7, 7 × 8) ha faktorioù o vankout (8 × … = 48), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'table-9': {
-        court: 'Taolenn liesañ 9', // br: à relire
-        titre: 'Fichenn jediñ : taolenn liesañ 9', // br: à relire
-        description: 'Taolenn liesañ 9 — fiche de la table de 9 en breton : liesadennoù (9 × 7, 7 × 9) ha faktorioù o vankout (9 × … = 54), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
+        court: 'Taolenn lieskementiñ 9', // br: à relire
+        titre: 'Fichenn jediñ : taolenn lieskementiñ 9', // br: à relire
+        description: 'Taolenn lieskementiñ 9 — fiche de la table de 9 en breton : liesadennoù (9 × 7, 7 × 9) ha faktorioù o vankout (9 × … = 54), gant ar reizhadenn. Fichenn digoust da voullañ.', // br: à relire
       },
       'tables-2-a-5': {
         court: 'Taolennoù 2 betek 5 mesket', // br: à relire
-        titre: 'Fichenn jediñ : taolennoù liesañ 2, 3, 4 ha 5 mesket', // br: à relire
-        description: 'Taolennoù liesañ 2 betek 5 — fiche de calcul en breton : 40 liesadenn mesket, faktorioù o vankout ha reizhadenn. CE1, CE2.', // br: à relire
+        titre: 'Fichenn jediñ : taolennoù lieskementiñ 2, 3, 4 ha 5 mesket', // br: à relire
+        description: 'Taolennoù lieskementiñ 2 betek 5 — fiche de calcul en breton : 40 liesadenn mesket, faktorioù o vankout ha reizhadenn. CE1, CE2.', // br: à relire
       },
       'tables-6-a-9': {
         court: 'Taolennoù 6 betek 9 mesket', // br: à relire
-        titre: 'Fichenn jediñ : taolennoù liesañ 6, 7, 8 ha 9 mesket', // br: à relire
-        description: 'Taolennoù liesañ 6 betek 9 — fiche de calcul en breton : 40 liesadenn mesket gant faktorioù o vankout ha reizhadenn. CE2, CM1, CM2.', // br: à relire
+        titre: 'Fichenn jediñ : taolennoù lieskementiñ 6, 7, 8 ha 9 mesket', // br: à relire
+        description: 'Taolennoù lieskementiñ 6 betek 9 — fiche de calcul en breton : 40 liesadenn mesket gant faktorioù o vankout ha reizhadenn. CE2, CM1, CM2.', // br: à relire
       },
       'toutes-les-tables': {
         court: 'An holl daolennoù (60 jedadenn)', // br: à relire
-        titre: 'Fichenn jediñ : an holl daolennoù liesañ (60 jedadenn)', // br: à relire
-        description: 'An holl daolennoù liesañ — toutes les tables de multiplication en breton : 60 liesadenn mesket war ur bajenn, gant ar reizhadenn. CE2, CM1, CM2.', // br: à relire
+        titre: 'Fichenn jediñ : an holl daolennoù lieskementiñ (60 jedadenn)', // br: à relire
+        description: 'An holl daolennoù lieskementiñ — toutes les tables de multiplication en breton : 60 liesadenn mesket war ur bajenn, gant ar reizhadenn. CE2, CM1, CM2.', // br: à relire
       },
       'divisions-combien-de-fois': {
         court: 'Pet gwech ? (CE2)', // br: à relire

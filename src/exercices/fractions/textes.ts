@@ -95,7 +95,7 @@ export const CONTENU = catalogue({
     partDe: { d2: 'An hanter', d3: 'An trede', d4: "Ar c'hard", d5: 'Ar pempvet', d10: 'An dekvet' },
     // en breton la consigne garde le nombre en chiffres
     nbParts: '0|1|2|3|4|5|6|7|8|9|10',
-    disque: "Kelc'h", barre: 'Barrenn', rectangle: 'Hirgarrez',
+    disque: "Kelc'h", barre: 'Barrenn', rectangle: 'Skouergorneg', // br: à relire (« skouergorneg » : académie de Rennes)
     partsColoriees: { other: '{n} lodenn livet war {d}' },
     partsSur: { other: '{n} lodenn war {d}' },
     graduationApres0: '{o} derez goude 0',

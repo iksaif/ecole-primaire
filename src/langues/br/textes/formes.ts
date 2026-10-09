@@ -5,7 +5,7 @@ import type fr from '../../fr/textes/formes.ts'
 
 export default {
   titre: 'Ar stummoù',
-  description: "Rummañ, anavezout hag envel ar bladenn, ar c'harrez, an tric'horn hag an hirgarrez", // br: à relire
+  description: "Rummañ, anavezout hag envel ar bladenn, ar c'harrez, an tric'horn hag ar skouergorneg", // br: à relire
   niveau: {
     ps: '🐣 PS — rummañ', // br: à relire
     ms: '🌱 MS — anavezout', // br: à relire

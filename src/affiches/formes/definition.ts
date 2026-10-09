@@ -25,7 +25,7 @@ const definition = definirAffiche({
   orientations: ['portrait'],
   langues: CODES,
   // chaque variante garde celles qui sont au programme de TOUTES ses classes
-  competences: [K.figuresPlanes, K.solides, K.formesMaternelle],
+  competences: [K.figuresPlanes, K.solides, K.formesMaternelle, K.solidesMaternelle],
   formulaire: { groupes: [{ id: 'proprietes', reglages: ['angles', 'cotes', 'paralleles', 'rayon', 'faces'] }] },
   variantes: {
     // les quatre formes de référence : au CP (figures planes) ; en GS elles se nomment (formes de la maternelle) : pas de propriétés
@@ -35,6 +35,8 @@ const definition = definirAffiche({
     'plan-ce1': { classes: ['ce1'], sauf: [K.solides], reglages: { angles: AU_PROGRAMME, cotes: BONUS, paralleles: BONUS, rayon: BONUS } },
     'plan-cm1': { classes: ['cm1'], slug: 'affiche-figures-planes-cm1', sauf: [K.solides], reglages: { angles: AU_PROGRAMME, cotes: AU_PROGRAMME, paralleles: BONUS, rayon: AU_PROGRAMME } },
     'plan-cycle3': { classes: ['cm2'], slug: 'affiche-figures-planes-cycle-3', sauf: [K.solides], reglages: { angles: AU_PROGRAMME, cotes: AU_PROGRAMME, paralleles: AU_PROGRAMME, rayon: AU_PROGRAMME } },
+    // maternelle : les six solides à reconnaître et à nommer, chacun avec un objet de tous les jours ; ni faces ni arêtes (elles viennent au CE1)
+    'solides-maternelle': { classes: ['ms', 'gs'], slug: 'affiche-solides-maternelle', sauf: [K.figuresPlanes, K.solides, K.formesMaternelle], reglages: { faces: BONUS } },
     'solides-ce2': { classes: ['ce1', 'ce2'], slug: 'affiche-solides-ce2', sauf: [K.figuresPlanes], reglages: { faces: AU_PROGRAMME } },
     'solides-cm1': { classes: ['cm1', 'cm2'], slug: 'affiche-solides-cm1', sauf: [K.figuresPlanes], reglages: { faces: AU_PROGRAMME } },
   },

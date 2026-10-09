@@ -221,8 +221,8 @@ console.log('Production : état vide, domaines « à venir »')
   // Le Monde non plus : le quiz à partir du CP, les affiches des jours et des mois en maternelle (« Se repérer dans le temps et l'espace »)
   await aller(page, app('/monde?classes=gs'))
   await page.waitForSelector('[data-ressource="affiche:jours"]')
-  verifier(await page.locator('.groupe[data-domaine="temps-espace"] [data-ressource="affiche:jours"]').count() === 1 && await page.locator('.a-venir [data-domaine="vivant"]').count() === 1 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0,
-    '/monde en GS : les jours dans « Se repérer dans le temps et l’espace », « vivant » à venir, aucun domaine inventé')
+  verifier(await page.locator('.groupe[data-domaine="temps-espace"] [data-ressource="affiche:jours"]').count() === 1 && await page.locator('.groupe[data-domaine="vivant"] [data-ressource="affiche:cycles"]').count() === 1 && await page.locator('.a-venir [data-domaine="exemple"]').count() === 0,
+    '/monde en GS : les jours dans « Se repérer dans le temps et l’espace », les cycles de vie dans « vivant », aucun domaine inventé')
   // le français n'est plus vide en maternelle et au CP : l'affiche de l'alphabet (première affiche reportée) est en lecture
   await aller(page, app('/francais?classes=cp'))
   await page.waitForSelector('[data-ressource="affiche:alphabet"]')
@@ -247,7 +247,7 @@ console.log('Production : état vide, domaines « à venir »')
   // au CM2, le quiz est là (« plusieurs domaines ») et les domaines du programme restent à venir
   await aller(page, app('/monde?classes=cm2'))
   await page.waitForSelector('.a-venir')
-  verifier(await page.locator('.a-venir [data-domaine="vivant"]').count() === 1 && cycle1 > 0, 'les domaines suivent le cycle de la classe')
+  verifier(await page.locator('.a-venir [data-domaine="objets-techniques"]').count() === 1 && await page.locator('.a-venir [data-domaine="histoire"]').count() === 1 && cycle1 > 0, 'les domaines suivent le cycle de la classe (histoire au cycle 3 seulement)')
   verifier(await page.locator('[data-ressource="exercice:quiz"]').count() >= 1, 'Le Monde : le quiz est une carte du catalogue, dans « Plusieurs domaines »')
   verifier(!erreurs.length, `aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
   for (const largeur of [1280, 360]) for (const langue of LANGUES_TEST) {

@@ -24,6 +24,9 @@ export const TEXTES: TextesAffiche = {
     'variante.plan-cycle3.court': 'Figures planes CM2',
     'variante.plan-cycle3.titre': 'Affiche des figures planes du cycle 3 (CM2)',
     'variante.plan-cycle3.description': 'Triangle rectangle, isocèle, équilatéral, losange, trapèze, pentagone, hexagone… avec leurs propriétés (programme du CM2).',
+    'variante.solides-maternelle.court': 'Solides (maternelle)',
+    'variante.solides-maternelle.titre': 'Affiche des solides de la maternelle : cube, pavé, boule, cylindre, cône, pyramide',
+    'variante.solides-maternelle.description': 'Les six solides à reconnaître et à nommer, chacun avec un objet de tous les jours (dé, boîte, ballon, boîte de conserve, glace).',
     'variante.solides-ce2.court': 'Solides',
     'variante.solides-ce2.titre': 'Affiche des solides : cube, pavé, boule, cylindre, cône, pyramide',
     'variante.solides-ce2.description': 'Les six solides du programme du CE1 et du CE2 avec le nombre et la nature de leurs faces, sommets et arêtes.',
@@ -34,6 +37,7 @@ export const TEXTES: TextesAffiche = {
     'lot.plan-gs': 'Les formes planes',
     'lot.plan-cm1': 'Les figures planes',
     'lot.plan-cycle3': 'Les figures planes',
+    'lot.solides-maternelle': 'Je reconnais les solides',
     'lot.solides-ce2': 'Les solides',
     'lot.solides-cm1': 'Les solides',
     'legende.traits': 'traits rouges',
@@ -69,6 +73,8 @@ export const TEXTES: TextesAffiche = {
     'solide.boule.nom': 'la boule', 'solide.boule.info': 'Aucune face plane\nune surface courbe',
     'solide.cylindre.nom': 'le cylindre', 'solide.cylindre.info': '2 faces planes (des disques)\n+ 1 surface courbe',
     'solide.cone.nom': 'le cône', 'solide.cone.info': '1 face plane (un disque)\n+ 1 surface courbe\n1 sommet',
+    // maternelle : le nom court (« pavé », sans parallélépipède ; « pyramide », sans la base)
+    'solide.pave.nom.solides-maternelle': 'le pavé', 'solide.pyramide.nom.solides-maternelle': 'la pyramide',
     'solide.pyramide.nom': 'la pyramide (base carrée)', 'solide.pyramide.info': '5 faces : 1 carré + 4 triangles\n5 sommets · 8 arêtes',
     'solide.prisme.nom': 'le prisme droit', 'solide.prisme.info': '5 faces : 2 triangles + 3 rectangles\n6 sommets · 9 arêtes',
   },
@@ -90,6 +96,9 @@ export const TEXTES: TextesAffiche = {
     'variante.plan-cycle3.court': 'Stummoù plaen CM2', // br: à relire
     'variante.plan-cycle3.titre': "Skritell ar stummoù plaen eus ar c'helc'hiad 3 (CM2)", // br: à relire
     'variante.plan-cycle3.description': "Tric'horn skouer, kevreizh, kevatal, lozanj, trapez, pentagon, hexagon… gant o c'herzhioù (programm ar CM2).", // br: à relire
+    'variante.solides-maternelle.court': 'Soludoù (skol-vamm)', // br: à relire
+    'variante.solides-maternelle.titre': 'Skritell soludoù ar skol-vamm : kub, hirgarrezeg, boull, silindr, kon, piramid', // br: à relire
+    'variante.solides-maternelle.description': 'Ar c’hwec’h solud da anavezout ha da envel, pep hini gant un dra pemdez.', // br: à relire
     'variante.solides-ce2.court': 'Soludoù', // br: à relire
     'variante.solides-ce2.titre': "Skritell ar soludoù : kub, hirgarrezeg, boull, silindr, kon, piramid", // br: à relire
     'variante.solides-ce2.description': "Ar c'hwec'h solud eus programm ar CE1 hag ar CE2 gant niver ha giz o zaloù, o begoù hag o biñsoù.", // br: à relire
@@ -100,6 +109,7 @@ export const TEXTES: TextesAffiche = {
     'lot.plan-gs': 'Ar stummoù plaen', // br: à relire
     'lot.plan-cm1': 'Ar stummoù plaen', // br: à relire
     'lot.plan-cycle3': 'Ar stummoù plaen', // br: à relire
+    'lot.solides-maternelle': 'Anavezout a ran ar soludoù', // br: à relire
     'lot.solides-ce2': 'Ar soludoù', // br: à relire
     'lot.solides-cm1': 'Ar soludoù', // br: à relire
     'legende.traits': 'linennoù ruz', // br: à relire
@@ -135,6 +145,7 @@ export const TEXTES: TextesAffiche = {
     'solide.boule.nom': 'ar boull', 'solide.boule.info': "Tal plaen ebet\nun dremm gromm", // br: à relire
     'solide.cylindre.nom': 'ar silindr', 'solide.cylindre.info': "2 zal blaen (pladennoù)\n+ 1 dremm gromm", // br: à relire
     'solide.cone.nom': "ar c'hon", 'solide.cone.info': "1 tal plaen (ur bladenn)\n+ 1 dremm gromm\n1 beg", // br: à relire
+    'solide.pave.nom.solides-maternelle': 'an hirgarrezeg', 'solide.pyramide.nom.solides-maternelle': 'ar piramid', // br: à relire
     'solide.pyramide.nom': 'ar piramid (diazez karrez)', 'solide.pyramide.info': "5 tal : 1 c'harrez + 4 tric'horn\n5 beg · 8 biñs", // br: à relire
     'solide.prisme.nom': 'ar prism eeun', 'solide.prisme.info': "5 tal : 2 dric'horn + 3 hirgarrez\n6 beg · 9 biñs", // br: à relire
   },

@@ -22,6 +22,9 @@
         <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)">{{ t('assistant.revoir.bouton') }}</button>
       </p>
 
+      <h2 class="about-h2">🖼️ {{ t('apropos.images') }}</h2>
+      <p class="about-para">{{ t('apropos.imagesTexte') }}</p>
+
       <h2 class="about-h2">🔤 {{ t('apropos.polices') }}</h2>
       <p class="about-para">{{ t('apropos.policesTexte') }}</p>
 

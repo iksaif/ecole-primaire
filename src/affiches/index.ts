@@ -16,6 +16,14 @@ import { module as conjugaison } from './conjugaison/index.ts'
 import { module as jours } from './jours/index.ts'
 import { module as mois } from './mois/index.ts'
 import { module as meteo } from './meteo/index.ts'
+import { module as couleurs } from './couleurs/index.ts'
+import { module as journee } from './journee/index.ts'
+import { module as corps } from './corps/index.ts'
+import { module as hygiene } from './hygiene/index.ts'
+import { module as cycles } from './cycles/index.ts'
+import { module as eau } from './eau/index.ts'
+import { module as espace } from './espace/index.ts'
+import { module as bandeNumerique } from './bande-numerique/index.ts'
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'
@@ -33,6 +41,14 @@ export const REGISTRE: ModuleAffiche<Reglages>[] = [
   jours,
   mois,
   meteo,
+  couleurs,
+  journee,
+  corps,
+  hygiene,
+  cycles,
+  eau,
+  espace,
+  bandeNumerique,
   // nouveau:registre
 ]
 

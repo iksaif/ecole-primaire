@@ -181,6 +181,8 @@ const adresse = new URL(page.url())
 const attendus = { serie: 'speciales', 'police.script': 'Luciole', titre: 'Notre classe & « la nôtre »', format: 'A3' }
 const porte = Object.entries(attendus).every(([cle, v]) => adresse.searchParams.get(cle) === v) && adresse.searchParams.get('styles')?.split(',').length >= 1
 verifier(porte, `l'adresse porte les réglages, une clé chacun (${adresse.search})`)
+// l'aperçu se reconstruit après l'adresse : attendre qu'il montre le titre choisi avant de le lire
+await page.waitForFunction(() => document.querySelector('iframe')?.contentDocument?.documentElement?.innerHTML?.includes('Notre classe &amp;'), null, { timeout: 8000 }).catch(() => {})
 const docAvant = await doc()
 const neuf = await (await contexte(nav)).newPage()
 surveiller(neuf)

@@ -21,9 +21,9 @@ export const LOTS: Readonly<Record<string, Lot>> = {
   'plan-ce1': FORMES_PLANES,
   'plan-cm1': { type: 'figures', liste: ['carre', 'rectangle', 'losange', 'triangle', 'triangle-rectangle', 'isocele', 'equilateral', 'disque'] },
   'plan-cycle3': { type: 'figures', liste: ['carre', 'rectangle', 'losange', 'triangle', 'triangle-rectangle', 'isocele', 'equilateral', 'trapeze', 'pentagone', 'hexagone', 'disque'] },
-  // maternelle (MS, GS) : les six solides, chacun avec un objet que l'enfant connaît (la pyramide n'en a pas parmi les emojis)
+  // maternelle (MS, GS) : les six solides, chacun avec un objet que l'enfant connaît (la pyramide : celle de Gizeh, dans les extras d'OpenMoji)
   'solides-maternelle': { type: 'solides', liste: ['cube', 'pave', 'boule', 'cylindre', 'cone', 'pyramide'], sansLegende: true,
-    objets: { cube: 'de', pave: 'boite', boule: 'ballon', cylindre: 'conserve', cone: 'glace' } },
+    objets: { cube: 'de', pave: 'boite', boule: 'ballon', cylindre: 'conserve', cone: 'glace', pyramide: 'pyramide' } },
   'solides-ce2': { type: 'solides', liste: ['cube', 'pave', 'boule', 'cylindre', 'cone', 'pyramide'] },
   'solides-cm1': { type: 'solides', liste: ['cube', 'pave', 'prisme', 'pyramide', 'cylindre', 'cone', 'boule'] },
 }

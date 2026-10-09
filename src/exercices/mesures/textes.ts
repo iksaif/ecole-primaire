@@ -174,7 +174,7 @@ export const CONTENU = catalogue({
 
   // ─── Fiche ───
   ficheReponse: 'Réponse',
-  ficheEntoure: 'Entoure',
+  ficheEntoure: 'Entoure :',
   ficheTrace: 'Trace un segment de',
   ficheMesureMm: 'Mesure chaque segment avec ta règle (en cm et mm)',
   ficheMesure: 'Mesure chaque segment avec ta règle',
@@ -338,7 +338,7 @@ export const CONTENU = catalogue({
     moisAnneeExpl: 'Ur bloavezh = 12 miz : {liste}.',
 
     ficheReponse: 'Respont',
-    ficheEntoure: "Kelc'h", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
+    ficheEntoure: "Kelc'h :", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheTrace: 'Tres ur segmant hir a', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
     ficheMesureMm: 'Muzulia pep segmant gant da reolenn (e cm hag e mm)', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
     ficheMesure: 'Muzulia pep segmant gant da reolenn', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)

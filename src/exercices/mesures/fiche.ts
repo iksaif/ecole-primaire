@@ -52,7 +52,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
       if (qi.affiche) h += `<div class="affiche">${qi.affiche}</div>`
       if (qi.mode === 'nombre') h += `<div class="affiche">${T('ficheReponse')} : ${TROU} ${qi.unite || ''}</div>`
       else if (qi.type === 'calendrier' && (qi.choix?.length ?? 0) > 3) h += `<div class="affiche">${T('ficheReponse')} : ${TROU}${TROU}</div>`
-      else h += `<div class="choix">${T('ficheEntoure')} : ${(qi.choix ?? []).map(c => `<span>${c}</span>`).join('')}</div>`
+      else h += `<div class="choix">${T('ficheEntoure')} ${(qi.choix ?? []).map(c => `<span>${c}</span>`).join('')}</div>`
     }
     return h + '</div>'
   }

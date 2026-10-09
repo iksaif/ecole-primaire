@@ -49,7 +49,9 @@ export const attendu = (q: Question): number => rangsAttendus(q)[q.cherche === '
 
 export function question({ niveau, mode, rng }: { niveau: Classe, mode: Mode, rng: Rng }): Question {
   const { rapport, nb } = donneesDe(niveau)
-  const n = mode === 'ranger' ? nb : 2
+  // le nombre de crayons de la classe (« MS — 4 crayons », « GS — 5 crayons »), pour ranger comme pour trouver le plus long ou le plus court ;
+  // en PS, on compare deux crayons très différents
+  const n = mode === 'ranger' || niveau !== 'ps' ? nb : 2
   const couleurs = rng.melanger(COULEURS)
   const crayons = rng.melanger(longueurs(n, n === 2 ? rapport : Math.min(rapport, 1.3), rng).map((longueur, i) => ({ longueur, couleur: couleurs[i] })))
   const cherche = rng.vrai(0.5) ? 'long' : 'court'

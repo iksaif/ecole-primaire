@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">
+  <path fill="#FCEA2B" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 28 Q36 35 54 28 Q61 43 54 56 H18 Q11 43 18 28 Z"/>
+  <path fill="#F1B31C" d="M49 31 Q53 30 54 28 Q61 43 54 56 H50 Q57 43 49 31 Z"/>
+  <circle cx="36" cy="45" r="2.6"/>
+  <path fill="#92D3F5" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 55 H55 V64 H17 Z"/>
+  <path fill="#61B2E4" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M24 6 H48 L63 14 L59 23 L54 21 V28 Q36 35 18 28 V21 L13 23 L9 14 Z"/>
+  <path fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M29 6 Q36 12 43 6"/>
+  <path fill="none" stroke="#000" stroke-width="9.5" stroke-linecap="round" d="M12 21 L17 30 M60 21 L55 30"/>
+  <path fill="none" stroke="#FCEA2B" stroke-width="5.5" stroke-linecap="round" d="M12 21 L17 30 M60 21 L55 30"/>
+  <g fill="#FCEA2B" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 29 Q13 25 18 25 H24 Q27 25 27 28 Q27 32 23 32 H17 Q13 32 13 29 Z"/>
+    <path d="M59 29 Q59 25 54 25 H48 Q45 25 45 28 Q45 32 49 32 H55 Q59 32 59 29 Z"/>
+  </g>
+  <path fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 25 V28 M23 25 V28 M52 25 V28 M49 25 V28"/>
+</svg>

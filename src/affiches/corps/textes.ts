@@ -8,6 +8,10 @@ export const TEXTES: TextesAffiche = {
     'variante.parties.titre': 'Affiche des parties du corps : tête, yeux, nez, bouche…',
     'variante.parties.description': 'Dix parties du corps à nommer, chacune avec son image.',
     'lot.parties': 'Les parties du corps',
+    'variante.parties-plus.court': 'Parties du corps, avec le tronc',
+    'variante.parties-plus.titre': 'Affiche des parties du corps : la tête, le cou, le tronc, le ventre, les bras, les jambes…',
+    'variante.parties-plus.description': 'Douze parties du corps à nommer, dont le cou, le tronc et le ventre (à partir de la MS).',
+    'lot.parties-plus': 'Les parties de mon corps',
     'variante.bonhomme.court': 'Le corps humain',
     'variante.bonhomme.titre': 'Affiche du corps humain : la tête, le cou, le tronc, le ventre, les bras, les jambes',
     'variante.bonhomme.description': 'Un bonhomme avec les noms des parties du corps : tête, cou, tronc, ventre, bras, main, jambe, pied.',
@@ -44,6 +48,10 @@ export const TEXTES: TextesAffiche = {
     'variante.parties.titre': 'Skritell rannoù ar c’horf : penn, daoulagad, fri, genoù…', // br: à relire
     'variante.parties.description': 'Dek rann eus ar c’horf da envel, pep hini gant e skeudenn.', // br: à relire
     'lot.parties': 'Rannoù ar c’horf', // br: à relire
+    'variante.parties-plus.court': 'Rannoù ar c’horf, gant ar c’horf', // br: à relire
+    'variante.parties-plus.titre': 'Skritell rannoù ar c’horf : ar penn, ar gouzoug, ar c’horf, ar c’hof, an divrec’h, an divhar…', // br: à relire
+    'variante.parties-plus.description': 'Daouzek rann eus ar c’horf da envel, en o zouez ar gouzoug, ar c’horf hag ar c’hof (adalek ar skol-vamm krenn).', // br: à relire
+    'lot.parties-plus': 'Rannoù ma c’horf', // br: à relire
     'variante.bonhomme.court': 'Korf an den', // br: à relire
     'variante.bonhomme.titre': 'Skritell korf an den : ar penn, ar gouzoug, ar c’horf, ar c’hof, ar brec’hioù, ar c’har', // br: à relire
     'variante.bonhomme.description': 'Un den gant anvioù rannoù ar c’horf : penn, gouzoug, korf, kof, brec’h, dorn, gar, troad.', // br: à relire

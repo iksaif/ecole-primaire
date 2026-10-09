@@ -6,7 +6,9 @@ import { echapper } from '../../utils/html.js'
 import { tailleQuiTient } from '../listeMots.ts'
 
 const LARGEUR = 100, HAUTEUR = 150
-const PEAU = '#ffe0b2', HAUT = '#90caf9', CONTOUR = '#37474f'
+// Palette et trait d'OpenMoji (https://openmoji.org/styleguide) : contour noir épais et arrondi, aplats, peau jaune avec une ombre orangée.
+const PEAU = '#fcea2b', OMBRE = '#f1b15d', HAUT = '#61b2e4', SHORT = '#92d3f5', CHAUSSURE = '#ea5a47', CHEVEUX = '#a57939', CONTOUR = '#000'
+const TRAIT = 2.2
 
 /** Une partie du corps nommée : son identifiant (texte `mot.<id>`), le côté de l'étiquette et le point visé dans le dessin. */
 interface Partie { id: string, cote: 'gauche' | 'droite', x: number, y: number }
@@ -16,32 +18,43 @@ const PARTIES: readonly Partie[] = [
   { id: 'tete', cote: 'droite', x: 60, y: 14 },
   { id: 'cou', cote: 'gauche', x: 47, y: 34 },
   { id: 'bras', cote: 'droite', x: 79, y: 58 },
-  { id: 'tronc', cote: 'gauche', x: 38, y: 52 },
-  { id: 'ventre', cote: 'droite', x: 56, y: 74 },
+  { id: 'tronc', cote: 'gauche', x: 36, y: 52 },
+  { id: 'ventre', cote: 'droite', x: 57, y: 74 },
   { id: 'main', cote: 'gauche', x: 13, y: 86 },
   { id: 'jambe', cote: 'gauche', x: 39, y: 112 },
   { id: 'pied', cote: 'droite', x: 69, y: 137 },
 ]
 
-/** Un membre : un trait épais arrondi, contour sombre puis couleur (le contour dépasse un peu de chaque côté). */
+/** Un membre : un trait épais arrondi, contour noir puis couleur (le contour dépasse de chaque côté). */
 function membre(x1: number, y1: number, x2: number, y2: number, epaisseur: number, couleur: string): string {
   const trait = (largeur: number, teinte: string): string => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${teinte}" stroke-width="${largeur}" stroke-linecap="round"/>`
-  return `${trait(epaisseur + 2.4, CONTOUR)}${trait(epaisseur, couleur)}`
+  return `${trait(epaisseur + 2 * TRAIT, CONTOUR)}${trait(epaisseur, couleur)}`
 }
 
-/** Le bonhomme lui-même, dans un cadre de 100 × 150. */
+/** Une forme fermée au style OpenMoji : aplat et contour noir arrondi. */
+const forme = (balise: string, attributs: string, fond: string): string =>
+  `<${balise} ${attributs} fill="${fond}" stroke="${CONTOUR}" stroke-width="${TRAIT}" stroke-linejoin="round" stroke-linecap="round"/>`
+
+/**
+ * Le bonhomme, dans un cadre de 100 × 150, au style d'OpenMoji. Le tronc va des épaules à la taille : le haut est caché par un tee-shirt court, le
+ * bas laisse voir le ventre (peau, avec le nombril) — le tronc entier est donc visible, et le ventre se distingue de la poitrine.
+ */
 function figure(): string {
-  const bras = membre(30, 44, 14, 80, 8, PEAU) + membre(70, 44, 86, 80, 8, PEAU)
-  const jambes = membre(41, 86, 39, 126, 11, PEAU) + membre(59, 86, 61, 126, 11, PEAU)
-  const mains = [13, 87].map(x => `<circle cx="${x}" cy="84" r="5.5" fill="${PEAU}" stroke="${CONTOUR}" stroke-width="1.2"/>`).join('')
-  const pieds = [36, 64].map(x => `<ellipse cx="${x}" cy="135" rx="10" ry="5" fill="#8d6e63" stroke="${CONTOUR}" stroke-width="1.2"/>`).join('')
-  const cou = `<rect x="45" y="28" width="10" height="11" fill="${PEAU}" stroke="${CONTOUR}" stroke-width="1.2"/>`
-  const tronc = `<rect x="30" y="38" width="40" height="48" rx="9" fill="${HAUT}" stroke="${CONTOUR}" stroke-width="1.2"/>`
-  const ventre = `<ellipse cx="50" cy="72" rx="13" ry="10" fill="#bbdefb"/><circle cx="50" cy="73" r="1.4" fill="${CONTOUR}"/>`
-  const tete = `<circle cx="50" cy="16" r="13" fill="${PEAU}" stroke="${CONTOUR}" stroke-width="1.2"/>`
-    + `<circle cx="45" cy="14" r="1.6" fill="${CONTOUR}"/><circle cx="55" cy="14" r="1.6" fill="${CONTOUR}"/>`
-    + `<path d="M44 20 Q50 25 56 20" fill="none" stroke="${CONTOUR}" stroke-width="1.3" stroke-linecap="round"/>`
-  return `${jambes}${pieds}${bras}${mains}${cou}${tronc}${ventre}${tete}`
+  const jambes = membre(41, 90, 39, 124, 12, SHORT) + membre(59, 90, 61, 124, 12, SHORT)
+  const pieds = [34, 66].map(x => forme('ellipse', `cx="${x}" cy="136" rx="11" ry="5.5"`, CHAUSSURE)).join('')
+  const bras = membre(30, 46, 15, 80, 8, PEAU) + membre(70, 46, 85, 80, 8, PEAU)
+  const mains = [14, 86].map(x => forme('circle', `cx="${x}" cy="85" r="6"`, PEAU)).join('')
+  const cou = forme('rect', 'x="45" y="28" width="10" height="12"', OMBRE)
+  // le tronc : peau, puis le tee-shirt court sur la moitié haute, puis le short à la taille
+  const tronc = forme('rect', 'x="30" y="38" width="40" height="52" rx="9"', PEAU)
+  const teeShirt = forme('path', 'd="M30 47 Q30 38 39 38 H61 Q70 38 70 47 V66 H30 Z"', HAUT)
+  const short = forme('rect', 'x="30" y="82" width="40" height="12" rx="4"', SHORT)
+  const nombril = `<path d="M47.5 75 Q50 78 52.5 75" fill="none" stroke="${CONTOUR}" stroke-width="1.6" stroke-linecap="round"/>`
+  const tete = forme('circle', 'cx="50" cy="17" r="14"', PEAU)
+    + forme('path', 'd="M36.5 15 Q37 3 50 3 Q63 3 63.5 15 Q56 9 50 10 Q44 9 36.5 15 Z"', CHEVEUX)
+    + `<circle cx="44.5" cy="19" r="1.8" fill="${CONTOUR}"/><circle cx="55.5" cy="19" r="1.8" fill="${CONTOUR}"/>`
+    + `<path d="M44 24.5 Q50 29 56 24.5" fill="none" stroke="${CONTOUR}" stroke-width="1.8" stroke-linecap="round"/>`
+  return `${jambes}${pieds}${bras}${mains}${cou}${tronc}${teeShirt}${nombril}${short}${tete}`
 }
 
 /** Le bonhomme et ses étiquettes, centrés dans la zone `{ W, H }` (mm). */

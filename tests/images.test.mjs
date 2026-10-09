@@ -3,6 +3,7 @@
 import { EMOJIS, SCENES } from '../src/images/tables.ts'
 import { OPENMOJI } from '../src/images/openmoji-donnees.ts'
 import { emojiHtml, emojiSvg } from '../src/images/openmoji.ts'
+import { readdirSync, readFileSync } from 'node:fs'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const noms = Object.keys(EMOJIS)
@@ -14,6 +15,13 @@ verifier(new Set(codes).size === codes.length, 'deux noms ne désignent pas le m
 verifier(Object.keys(OPENMOJI).every(c => codes.includes(c)), 'aucun dessin inutile dans les données (relancer scripts/generer/images.ts)')
 verifier(SCENES.every(n => n in EMOJIS), 'les scènes sont des emojis de la table')
 verifier(Object.values(OPENMOJI).every(d => !/\sid="|url\(#|<script|href=/.test(d)), 'dessins autonomes : sans identifiant, renvoi ni script')
+
+console.log('Dessins maison (src/images/maison/)')
+const fichiers = readdirSync(new URL('../src/images/maison/', import.meta.url)).filter(f => f.endsWith('.svg'))
+const maison = codes.filter(c => c.startsWith('maison:')).map(c => `${c.slice('maison:'.length)}.svg`)
+verifier(fichiers.length > 0 && fichiers.every(f => maison.includes(f)), `chaque dessin maison est dans la table (${fichiers.join(', ')})`)
+verifier(fichiers.every(f => readFileSync(new URL(`../src/images/maison/${f}`, import.meta.url), 'utf8').includes('viewBox="0 0 72 72"')), 'cadre 72 × 72, comme OpenMoji')
+verifier(emojiHtml('tronc', '8mm').includes('data-image="maison"') && emojiHtml('pomme', '8mm').includes('data-image="openmoji"'), 'la balise dit la source : maison ou openmoji')
 
 console.log('Rendus')
 const html = emojiHtml('pomme', '8mm')

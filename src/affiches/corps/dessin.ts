@@ -22,6 +22,21 @@ const CARTES: Readonly<Record<string, { enchainement: Enchainement, numeroter?: 
     { id: 'jambe', emoji: 'jambe' },
     { id: 'pied', emoji: 'pied' },
   ] },
+  // dès la MS : avec le cou, le tronc et le ventre (dessins maison, OpenMoji n'en a pas ; BO p. 31 : « la tête, le cou, le tronc… »)
+  'parties-plus': { enchainement: 'grille', elements: [
+    { id: 'tete', emoji: 'visage' },
+    { id: 'cou', emoji: 'cou' },
+    { id: 'tronc', emoji: 'tronc' },
+    { id: 'ventre', emoji: 'ventre' },
+    { id: 'bras', emoji: 'bras' },
+    { id: 'main', emoji: 'mainOuverte' },
+    { id: 'jambe', emoji: 'jambe' },
+    { id: 'pied', emoji: 'pied' },
+    { id: 'yeux', emoji: 'deuxYeux' },
+    { id: 'oreille', emoji: 'oreille' },
+    { id: 'nez', emoji: 'nez' },
+    { id: 'bouche', emoji: 'bouche' },
+  ] },
   sens: { enchainement: 'grille', elements: [
     { id: 'vue', emoji: 'oeil' },
     { id: 'ouie', emoji: 'oreille' },

@@ -1,4 +1,4 @@
-// Les emojis OpenMoji (couleur) rendus en SVG, sans fichier ni requête : le dessin de chaque emoji de `tables.ts` est dans
+// Les emojis OpenMoji (couleur) et nos dessins maison au même style (src/images/maison/), rendus en SVG, sans fichier ni requête : le dessin de chaque emoji de `tables.ts` est dans
 // `openmoji-donnees.ts` (généré par scripts/generer/images.ts). Fonctions pures : lisibles par node (build des PDF, instantanés)
 // comme par le navigateur, et le même rendu partout (écran, aperçu, PDF) — contrairement aux emojis du système.
 // OpenMoji : https://openmoji.org, licence CC BY-SA 4.0 (LICENCE-CONTENU.md, page de crédits).
@@ -16,10 +16,13 @@ function dessinDe(nom: NomEmoji): string {
   return dessin
 }
 
+/** La source d'un emoji, pour les crédits (`data-image`, lu par les propriétés des PDF) : OpenMoji, ou un dessin maison. */
+const sourceDe = (nom: NomEmoji): string => (EMOJIS[nom]?.startsWith('maison:') ? 'maison' : 'openmoji')
+
 /** Un emoji dans un SVG : carré de côté `taille` (unités du SVG) dont le coin haut gauche est en (x, y). */
 export function emojiSvg(nom: NomEmoji, x: number, y: number, taille: number): string {
   const arrondi = (n: number): number => Math.round(n * 100) / 100
-  return `<svg x="${arrondi(x)}" y="${arrondi(y)}" width="${arrondi(taille)}" height="${arrondi(taille)}" viewBox="0 0 ${COTE} ${COTE}" data-image="openmoji">${dessinDe(nom)}</svg>`
+  return `<svg x="${arrondi(x)}" y="${arrondi(y)}" width="${arrondi(taille)}" height="${arrondi(taille)}" viewBox="0 0 ${COTE} ${COTE}" data-image="${sourceDe(nom)}">${dessinDe(nom)}</svg>`
 }
 
 /**
@@ -30,5 +33,5 @@ export function emojiHtml(nom: NomEmoji, taille: string, alt = ''): string {
   // une scène (le lever du soleil) est un carré plein : coins arrondis, comme une vignette
   const coins = SCENES.includes(nom) ? ' style="border-radius:12%"' : ''
   const acces = alt ? `role="img" aria-label="${alt.replace(/"/g, '&quot;')}"` : 'aria-hidden="true"'
-  return `<svg ${acces} width="${taille}" height="${taille}" viewBox="0 0 ${COTE} ${COTE}"${coins} data-image="openmoji">${dessinDe(nom)}</svg>`
+  return `<svg ${acces} width="${taille}" height="${taille}" viewBox="0 0 ${COTE} ${COTE}"${coins} data-image="${sourceDe(nom)}">${dessinDe(nom)}</svg>`
 }

@@ -20,7 +20,7 @@ export const TEXTES: TextesAffiche = {
     'variante.cp.court': 'Les mois de l’année (script et attaché)',
     'variante.cp.titre': 'Affiche des mois de l’année en script et en attaché, et des saisons (CP)',
     'variante.cp.description': 'Les douze mois de l’année en script et en attaché, et les quatre saisons ; en français, en breton, ou les deux.',
-    'reglage.ordre': 'Présentation',
+    'reglage.ordre': 'Ordre des mois',
     'valeur.ordre.annee': 'De janvier à décembre',
     'valeur.ordre.saisons': 'Par saison',
     'saison.debut': 'vers le {jour} {mois}',
@@ -41,7 +41,7 @@ export const TEXTES: TextesAffiche = {
     'variante.cp.court': 'Mizioù ar bloaz (skript hag a-stag)', // br: à relire
     'variante.cp.titre': 'Skritell mizioù ar bloaz e skript hag e a-stag, hag ar c’houlzioù-amzer (CP)', // br: à relire
     'variante.cp.description': 'An daouzek miz e skript hag e a-stag, hag ar pevar c’houlz-amzer ; e galleg, e brezhoneg, pe en div yezh.', // br: à relire
-    'reglage.ordre': 'Aozadur', // br: à relire
+    'reglage.ordre': 'Urzh ar mizioù', // br: à relire
     'valeur.ordre.annee': 'Eus Genver da Kerzu', // br: à relire
     'valeur.ordre.saisons': 'Dre c’houlz-amzer', // br: à relire
     'saison.debut': 'war-dro {jour} {mois}', // br: à relire

@@ -20,9 +20,10 @@
 <template>
   <div class="container" data-page="affiche">
     <template v-if="courant">
-      <div class="entete">
-        <h1 class="section-heading">{{ titre }}</h1>
-        <button type="button" class="btn btn-ghost copier" @click="copierLien">🔗 {{ copie ? t('formulaireAffiche.lienCopie') : t('formulaireAffiche.copierLien') }}</button>
+      <div class="etroit"><FilAriane :maillons="maillons" :etiquette="t('matiere.fil')" /></div>
+      <div class="entete etroit">
+        <h1 class="titre"><span class="emoji" aria-hidden="true">{{ emoji }}</span> {{ titre }}</h1>
+        <button type="button" class="btn btn-ghost copier" @click="copierLien"><span aria-hidden="true">🔗</span> {{ copie ? t('formulaireAffiche.lienCopie') : t('formulaireAffiche.copierLien') }}</button>
       </div>
       <FormulaireAffiche :key="cleFormulaire" :module="courant" :depart="depart" @reglages="ecrireAdresse" />
     </template>
@@ -38,6 +39,13 @@ import { REGISTRE } from '../affiches/index.ts'
 import { lireLien, queryDeReglages } from '../affiches/catalogue.ts'
 import { traducteurAffiche } from '../affiches/textes.ts'
 import { useTitreDePage } from '../router/titres.ts'
+import { domaineDe } from '../data/programme.ts'
+import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
+import { EMOJI_MATIERE } from '../ressources/composants/presentation.ts'
+import FilAriane from '../shell/FilAriane.vue'
+import { EMOJI_BARRE } from '../shell/emojis.ts'
+import { cheminMatiere } from '../telechargements/pages.ts'
+import { NOM_COURT } from './matieres.ts'
 import { useLangue } from '../langues/useLangue.ts'
 
 const { t, langue } = useLangue()
@@ -73,9 +81,21 @@ async function copierLien(): Promise<void> {
 // le titre de l'affiche, dans la langue de l'interface (français si elle n'a pas la traduction)
 const titre = computed(() => (courant.value ? traducteurAffiche(courant.value.textes, langue.value)('titre') : ''))
 useTitreDePage(() => titre.value)
+// l'icône de l'affiche (celle de sa définition, sinon celle de son domaine) et le fil d'Ariane : Accueil › la matière › l'affiche
+const emoji = computed(() => courant.value?.definition.emoji ?? (courant.value ? EMOJI_DOMAINE[courant.value.definition.domaine] : ''))
+const matiere = computed(() => (courant.value ? domaineDe(courant.value.definition.domaine)?.matiere ?? null : null))
+const maillons = computed(() => [
+  { texte: t('matiere.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
+  ...(matiere.value && matiere.value in NOM_COURT ? [{ texte: t(NOM_COURT[matiere.value as keyof typeof NOM_COURT]), vers: cheminMatiere(matiere.value) ?? undefined, emoji: EMOJI_MATIERE[matiere.value] }] : []),
+  { texte: titre.value, emoji: emoji.value },
+])
 </script>
 
 <style scoped>
-.entete { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.copier { font-size: .9rem; }
+/* l'en-tête a la largeur du formulaire (960 px, centré) : mêmes bords à gauche et à droite */
+.etroit { max-width: 960px; margin-left: auto; margin-right: auto; }
+.entete { display: flex; align-items: center; justify-content: space-between; gap: .75rem 1rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.titre { display: flex; align-items: center; gap: .6rem; font-size: 1.9rem; font-weight: 900; line-height: 1.2; margin: 0; }
+.titre .emoji { font-size: 1.9rem; line-height: 1; }
+.copier { font-size: .9rem; min-height: 44px; }
 </style>

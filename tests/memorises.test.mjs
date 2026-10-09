@@ -48,7 +48,10 @@ async function essayer([nom, valeur]) {
   for (const [adresse, base] of [...routes.map(r => [r, app]), ...routesDev.map(r => [r, appDev])]) {
     erreurs.length = 0
     await page.goto(base(adresse))   // rechargement complet : les réglages sont réabîmés à chaque page
-    const prete = await page.waitForSelector('h1', { timeout: 8000 }).then(() => true).catch(() => false)
+    let prete = await page.waitForSelector('h1', { timeout: 8000 }).then(() => true).catch(() => false)
+    // une page vide sous la charge (CI, niveau complet : 50 000 caractères × 20 clés × des centaines de pages) : un seul nouvel essai,
+    // plus patient ; un défaut réel (page qui plante, qui boucle) échoue aux deux
+    if (!prete) { await page.reload(); prete = await page.waitForSelector('h1', { timeout: 20000 }).then(() => true).catch(() => false) }
     // une page qui boucle ne répond plus au script : l'évaluation échoue
     const vivante = prete && await page.evaluate(() => true, null, { timeout: 3000 }).catch(() => false)
     if (!vivante || erreurs.length) ko.push(`${adresse}${prete ? '' : ' (page vide)'}${prete && !vivante ? ' (ne répond plus)' : ''}${erreurs.length ? ' — ' + erreurs[0] : ''}`)

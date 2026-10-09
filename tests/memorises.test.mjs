@@ -23,7 +23,7 @@ const CLES = [...new Set([
   ...EXEMPLES.map(e => `${e.definition.id.replaceAll('-', '_')}_config`),
 ])].sort()
 // garde : le balayage doit retrouver au moins ce que le contexte, la langue et les ressources lisent
-const ATTENDUES = ['classes', 'mode', 'reg', 'profil', 'vue', 'langue_interface', 'langue_regionale', 'polices', 'plis', 'recents']
+const ATTENDUES = ['classes', 'mode', 'reg', 'profil', 'enseignant', 'vue', 'langue_interface', 'langue_regionale', 'polices', 'plis', 'recents']
 const manquantes = ATTENDUES.filter(c => !CLES.includes(c))
 verifier(!manquantes.length, `${CLES.length} clés lues dans les sources${manquantes.length ? ` — manquantes : ${manquantes}` : ''} (${CLES.join(', ')})`)
 

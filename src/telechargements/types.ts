@@ -19,11 +19,11 @@ export const FICHIER_INDEX = 'index.json'
 
 // ── Genre et usage ──
 
-/** affiche : à apprendre et afficher ; fiche : à remplir, écrite à la main ; exercice : fiche tirée d'un exercice du site. */
+/** affiche : à afficher ; fiche : à remplir, écrite à la main ; exercice : fiche tirée d'un exercice du site. */
 export const GENRES = ['affiche', 'fiche', 'exercice'] as const
 export type Genre = (typeof GENRES)[number]
 
-/** Pour apprendre (affiches) ou pour s'entraîner (fiches et exercices). */
+/** À afficher (les affiches, id interne `apprendre`) ou pour s'entraîner (fiches et exercices). */
 export const USAGES = ['apprendre', 'sentrainer'] as const
 export type Usage = (typeof USAGES)[number]
 

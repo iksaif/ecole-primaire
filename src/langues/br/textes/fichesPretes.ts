@@ -19,7 +19,7 @@ export default {
   toutesClasses: '🌐 An holl glasoù', // br: à relire
   usage: 'Implij', // br: à relire
   tous: '🌐 An holl', // br: à relire
-  apprendre: '📘 Evit deskiñ', // br: à relire
+  apprendre: '🖼️ Da ziskouez', // br: à relire
   sentrainer: '✏️ Evit en em ober', // br: à relire
   domaine: 'Domani', // br: à relire
   tousDomaines: '🌐 An holl zomanioù', // br: à relire

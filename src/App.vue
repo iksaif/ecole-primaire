@@ -2,9 +2,13 @@
   <a :href="`#${ID_CONTENU}`" class="lien-evitement" @click.prevent="focaliserContenu">{{ t('routeur.evitement') }}</a>
   <!-- pendant une partie en ligne (immersion : src/noyau/immersion.ts), la barre et le pied de page s'effacent -->
   <AppNav v-if="!immersion" />
+  <!-- confirmation de l'adresse spéciale qui active ou désactive le mode enseignant (idée en construction) -->
+  <BandeauEnseignant />
   <!-- avis de traduction automatique (modale, une fois par langue) ; palette de recherche (Ctrl+K, ⌘K, « / » ou le 🔍 de la barre) -->
   <AvisTraduction />
   <Recherche />
+  <!-- visite guidée de la toute première visite : sur la page d'arrivée, quelle qu'elle soit (src/shell/AssistantAccueil.vue) -->
+  <AssistantAccueil />
   <main :id="ID_CONTENU" tabindex="-1" :class="{ immersion }">
     <RouterView />
   </main>
@@ -14,7 +18,9 @@
 <script setup lang="ts">
 import AppNav from './shell/AppNav.vue'
 import AppFooter from './shell/AppFooter.vue'
+import BandeauEnseignant from './shell/BandeauEnseignant.vue'
 import AvisTraduction from './shell/AvisTraduction.vue'
+import AssistantAccueil from './shell/AssistantAccueil.vue'
 import Recherche from './recherche/Recherche.vue'
 import { useLangue } from './langues/useLangue.ts'
 import { ID_CONTENU, focaliserContenu } from './router/focus.ts'

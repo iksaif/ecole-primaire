@@ -1,5 +1,6 @@
 <template>
   <div v-if="competence" class="container" data-page="competence">
+    <BandeauConstruction />
     <FilAriane :maillons="maillons" :etiquette="t('competence.fil')" />
     <h1 class="section-heading" :lang="LANGUE_SOURCE"><span aria-hidden="true">{{ EMOJI.competence }}</span> {{ competence.libelle }}</h1>
 
@@ -46,6 +47,7 @@ import { competenceDe, domaineDe } from '../data/programme.ts'
 import type { CompetenceId } from '../data/programme.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
+import BandeauConstruction from '../shell/BandeauConstruction.vue'
 import FilAriane from '../shell/FilAriane.vue'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
 import CompetenceOfficiel from '../programme/CompetenceOfficiel.vue'

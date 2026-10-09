@@ -3,7 +3,7 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/accueil.ts'
 
 export default {
-  titre: 'Poelladennoù ha fichennoù da voullañ evit ar skol', // br: à relire
+  titre: 'Afichoù, fichennoù da voullañ ha poelladennoù evit pleustriñ', // br: à relire
   sousTitre: 'Eus ar rannskol vihan betek ar CM2, digoust, hep kont.', // br: à relire
   titreEnfant: 'Demat !', // br: à relire
   maClasse: 'Ma c\'hlas', // br: à relire

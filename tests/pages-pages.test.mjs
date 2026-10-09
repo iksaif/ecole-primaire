@@ -26,6 +26,7 @@ async function ouvrir({ profil, largeur = 1280, langue = 'fr', stockage = {} } =
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write']).catch(() => {})
   await ctx.addInitScript(([p, s]) => {
     try {
+      localStorage.setItem('ep_enseignant', 'true')   // le mode enseignant est activé sur l'appareil (caché par défaut : tests/enseignant.test.mjs)
       if (p) localStorage.setItem('ep_profil', JSON.stringify(p))
       for (const [k, v] of Object.entries(s)) localStorage.setItem(`ep_${k}`, JSON.stringify(v))
     } catch {}

@@ -16,7 +16,13 @@ export default {
   },
   profil: {
     titre: 'Qui utilise le site ?',
-    aide: 'Le profil ne change que la disposition et le nombre de classes. Rien n’est verrouillé.',
+  },
+  // le mode enseignant est caché par défaut : une idée en construction (src/contexte/enseignant.ts)
+  enseignant: {
+    titre: 'Mode enseignant (idée en construction)',
+    aide: 'Un profil pour les enseignants : plusieurs classes, l’entrée Programme, un lien à envoyer aux familles. C’est une idée en construction : rien n’y est validé, et ses contenus et ses outils doivent encore être relus avec des enseignants.',
+    case: 'Afficher le mode enseignant sur cet appareil',
+    parSite: 'Ce site le propose d’office.',
   },
   police: {
     titre: 'Police des fiches',

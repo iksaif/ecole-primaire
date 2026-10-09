@@ -3,6 +3,7 @@
 // langue…) dans src/contexte/. Le serveur renvoie toute adresse inconnue vers index.html (deploy/setup-nginx.sh).
 // Les anciennes adresses `/#/chemin` sont réécrites en `/chemin` avant le démarrage par le script d'index.html.
 import { createRouter, createWebHistory } from 'vue-router'
+import { appliquerAdresseEnseignant } from '../contexte/enseignant.ts'
 import type { RouteRecordRaw } from 'vue-router'
 import { SITE } from '../sites.ts'
 import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
@@ -45,6 +46,9 @@ const router = createRouter({
   // un changement de contexte ou de filtre (même page) ne ramène pas en haut
   scrollBehavior: (to, from, enregistree) => enregistree ?? (to.path === from.path ? false : { top: 0 }),
 })
+
+// Le mode enseignant, caché par défaut, s'active ou se désactive par `?enseignant=oui` / `?enseignant=non` (src/contexte/enseignant.ts) : le paramètre est retiré de l'adresse.
+router.beforeEach(to => appliquerAdresseEnseignant(to))
 
 // Une adresse qui porte son propre contexte (`?classes=cm1`) le garde d'une page à l'autre tant qu'on suit des liens du site :
 // les liens internes n'ont pas à le répéter. Un changement sur la même page (replace) est voulu tel quel : on n'y touche pas.

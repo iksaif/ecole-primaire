@@ -5,7 +5,7 @@
 //
 // Quatre sortes de ressources de contenu, un exercice et son générateur de fiche étant UNE ressource à deux badges :
 //   exercice    un exercice du registre : se joue à l'écran (badge `jeu`) et/ou s'imprime (badge `imprimable`)
-//   affiche     une affiche du registre des affiches (à apprendre, à imprimer)
+//   affiche     une affiche du registre des affiches (à afficher, à imprimer)
 //   fiche       une fiche toute prête (PDF), lue dans l'index `fiches/index.json`
 // Deux sortes de navigation, que la recherche cherche aussi : `competence` (du programme) et `page` (une page du site).
 import type { Classe } from '../data/classes.ts'
@@ -48,7 +48,7 @@ export interface Badges {
   readonly imprimable: boolean
 }
 
-/** Une ressource de contenu : rangée dans un domaine du programme, pour apprendre ou s'entraîner. */
+/** Une ressource de contenu : rangée dans un domaine du programme, à afficher ou pour s'entraîner. */
 interface Contenu extends Commun {
   readonly matiere: Matiere
   readonly domaine: DomaineId

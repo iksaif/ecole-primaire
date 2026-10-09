@@ -18,7 +18,7 @@ export default {
   imprimer: 'Imprimer',
   ouvrirTitre: 'Ouvrir : {titre}',
   imprimerTitre: 'Imprimer : {titre}',
-  apprendre: 'Pour apprendre',
+  apprendre: 'À afficher',
   sentrainer: 'Pour s’entraîner',
   rien: 'Rien dans cette catégorie pour cette sélection.',
   ressources: { one: '{n} ressource', other: '{n} ressources' },

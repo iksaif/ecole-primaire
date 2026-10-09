@@ -6,6 +6,7 @@
       <p v-if="!enseignant" class="sous-titre">{{ t('accueil.sousTitre') }}</p>
       <AccueilClasses />
       <AccueilLangue />
+      <BandeauConstruction />
       <AccueilCopierLien v-if="enseignant" />
     </header>
     <ul class="tuiles">
@@ -13,7 +14,7 @@
         <AccueilTuile :to="m.to" :emoji="m.emoji" :titre="m.titre" :couleur="m.couleur"
           :description="m.matiere === 'monde' ? t('accueil.mondeDesc') : m.n ? t('accueil.compte', { n: m.n, classes: classesTexte }) : t('accueil.aucune', { classes: classesTexte })" />
       </li>
-      <li v-if="regionale"><AccueilTuile :to="regionale.to" :drapeau="regionale.code" :titre="regionale.titre" :couleur="regionale.couleur" /></li>
+      <li v-if="regionale"><AccueilTuile :to="regionale.to" :drapeau="regionale.code" :titre="regionale.titre" :sous="regionale.sous" :langue-sous="regionale.langueSous" :couleur="regionale.couleur" /></li>
       <li><AccueilTuile to="/programme" :emoji="EMOJI_ACCUEIL.programme" :titre="t('accueil.tuile.programme')" couleur="#9b59b6"
         :description="enseignant ? t('accueil.programmeDescEnseignant') : t('accueil.programmeDesc', { classes: classesTexte })" /></li>
       <li><AccueilTuile to="/telechargements" :emoji="EMOJI_ACCUEIL.fiches" :titre="t('accueil.tuile.fiches')" couleur="#e91e8c" :description="t('accueil.fichesDesc')" /></li>
@@ -27,6 +28,7 @@
 // l'enseignant (plusieurs classes, entrée Programme décrite comme son outil, « Copier le lien pour les familles »).
 import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
+import BandeauConstruction from '../shell/BandeauConstruction.vue'
 import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
 import AccueilClasses from './AccueilClasses.vue'
 import AccueilLangue from './AccueilLangue.vue'

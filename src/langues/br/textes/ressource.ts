@@ -18,7 +18,7 @@ export default {
   imprimer: 'Moullañ', // br: à relire
   ouvrirTitre: 'Digeriñ : {titre}', // br: à relire
   imprimerTitre: 'Moullañ : {titre}', // br: à relire
-  apprendre: 'Evit deskiñ', // br: à relire
+  apprendre: 'Da ziskouez', // br: à relire
   sentrainer: 'Evit en em zudiañ', // br: à relire
   rien: 'Netra er rummad-mañ evit an dibab-mañ.', // br: à relire
   ressources: { one: '{n} danvez', other: '{n} danvez' }, // br: à relire

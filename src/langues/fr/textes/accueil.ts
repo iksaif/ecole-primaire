@@ -1,6 +1,6 @@
 // Textes de l'interface — page d'accueil (français) : trois dispositions (enfant, parent, enseignant).
 export default {
-  titre: 'Des exercices et des fiches à imprimer pour l’école',
+  titre: 'Affiches, fiches à imprimer et exercices pour s’entraîner',
   sousTitre: 'De la petite section au CM2, gratuit, sans compte.',
   titreEnfant: 'Bonjour !',
   maClasse: 'Ma classe',

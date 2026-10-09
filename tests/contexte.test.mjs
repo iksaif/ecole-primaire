@@ -6,7 +6,8 @@ import { runInNewContext } from 'node:vm'
 import { NIVEAUX } from '../src/data/classes.ts'
 import { SITES } from '../src/sites.ts'
 import { lireContexteDeLAdresse, ecrireContexteDansLAdresse, fusionnerParamsContexte, extraireParamsContexte, sansContexte, chaineDeQuery } from '../src/contexte/url.ts'
-import { defautsContexte, classesPourProfil, classesMigrees, modeMigre, modeDuSite } from '../src/contexte/regles.ts'
+import { defautsContexte, classesPourProfil, classesMigrees, modeMigre, modeDuSite, profilsProposes, profilEffectif } from '../src/contexte/regles.ts'
+import { demandeDeLAdresse, changerModeEnseignant } from '../src/contexte/enseignant.ts'
 import { lienPourLesFamilles, lienDuTableau } from '../src/contexte/partage.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -135,6 +136,16 @@ async function demarrer(adresse = '/', site = E, memoire = {}) {
   verifier(stocke('vue') === 'liste' && !('vue' in routeur.currentRoute.value.query), 'choisir la vue : mémorisée, adresse propre')
   await c.basculerRefs()
   verifier(c.contexte.value.refs === true && stocke('refs') === true, 'basculer les références')
+}
+{
+  // le mode enseignant est caché par défaut : « enseignant » n'est pas choisissable, et un profil mémorisé retombe sur le défaut
+  verifier(egal(profilsProposes(false), ['enfant', 'parent']) && egal(profilsProposes(true), ['enfant', 'parent', 'enseignant']), 'profilsProposes : enseignant seulement si le mode est actif')
+  verifier(profilEffectif('enseignant', false) === 'parent' && profilEffectif('enseignant', true) === 'enseignant' && profilEffectif('enfant', false) === 'enfant', 'profilEffectif : enseignant retombe sur parent tant que le mode est caché')
+  verifier(demandeDeLAdresse({ enseignant: 'oui' }) === true && demandeDeLAdresse({ enseignant: 'non' }) === false && demandeDeLAdresse({ enseignant: '1' }) === null && demandeDeLAdresse({}) === null, 'demandeDeLAdresse : oui, non, ou rien')
+  const cache = await demarrer('/programme')
+  cache.c.choisirProfil('enseignant')
+  verifier(cache.c.contexte.value.profil === 'parent' && stocke('profil') === null, 'mode caché : choisir « enseignant » est refusé')
+  changerModeEnseignant(true)
 }
 {
   const { routeur, c } = await demarrer('/programme')

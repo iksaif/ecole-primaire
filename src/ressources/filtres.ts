@@ -52,7 +52,7 @@ export interface GroupeDomaine {
   readonly domaine: DomaineId | typeof PLUSIEURS_DOMAINES
   /** les ressources du domaine pour les classes choisies, dans l'ordre du catalogue */
   readonly ressources: readonly RessourceDeContenu[]
-  /** `ressources` à apprendre (affiches, leçons) */
+  /** `ressources` à afficher (les affiches) */
   readonly apprendre: readonly RessourceDeContenu[]
   /** `ressources` pour s'entraîner (exercices, fiches) */
   readonly sentrainer: readonly RessourceDeContenu[]

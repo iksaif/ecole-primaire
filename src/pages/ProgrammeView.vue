@@ -1,5 +1,6 @@
 <template>
   <div class="container" data-page="programme">
+    <BandeauConstruction />
     <FilAriane :maillons="maillons" :etiquette="t('programme.fil')" />
     <h1 class="section-heading"><span aria-hidden="true">{{ EMOJI.programme }}</span> {{ t('programme.titre') }}</h1>
     <p class="chapeau">{{ t('programme.chapeau', { classes: classesTexte, matiere: t(`programme.matiere.${etat.matiere}`) }) }}</p>
@@ -23,6 +24,7 @@ import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { EMOJI_BARRE } from '../shell/emojis.ts'
 import { texteClasses } from '../data/classes.ts'
+import BandeauConstruction from '../shell/BandeauConstruction.vue'
 import FilAriane from '../shell/FilAriane.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'

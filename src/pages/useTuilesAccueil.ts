@@ -2,7 +2,7 @@
 // régionale quand elle est active. Partagé par les dispositions enfant et adulte.
 import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
-import { LANGUES } from '../langues/registre.ts'
+import { LANGUES, nomDeLangue } from '../langues/registre.ts'
 import type { Langue } from '../langues/registre.ts'
 import { contenu } from '../langues/traduire.ts'
 import { useLangue } from '../langues/useLangue.ts'
@@ -37,7 +37,11 @@ export function useTuilesAccueil() {
   })))
   const regionale = computed(() => {
     const code = contexte.value.regionale
-    return code ? { code, to: cheminRegional(code), titre: majuscule(LANGUES[code].nomLocal), couleur: COULEUR_REGIONALE } : null
+    if (!code) return null
+    // comme « Maths » et « Matematik » : le nom de la langue dans la langue affichée (« Breton »), et son nom local dessous (« Brezhoneg ») quand ils diffèrent
+    const titre = majuscule(nomDeLangue(code, langueAffichee.value))
+    const local = majuscule(LANGUES[code].nomLocal)
+    return { code, to: cheminRegional(code), titre, sous: local === titre ? null : local, langueSous: LANGUES[code].bcp47, couleur: COULEUR_REGIONALE }
   })
   return { tuiles, regionale, classes, classesTexte, t }
 }

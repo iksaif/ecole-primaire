@@ -19,7 +19,12 @@ export default {
   },
   profil: {
     titre: 'Piv a implij al lec\'hienn ?', // br: à relire
-    aide: 'Ar profil ne cheñch nemet an daolenn hag an niver a glasoù. Netra n\'eo prennet.', // br: à relire
+  },
+  enseignant: {
+    titre: 'Mod ar gelennerien (ur soñj o vezañ savet)', // br: à relire
+    aide: 'Ur profil evit ar gelennerien : meur a glas, ar programm, ul liamm da gas d’ar familhoù. Ur soñj o vezañ savet eo : netra n’eo bet gwiriekaet, ha ret eo adlenn e zanvez hag e ostilhoù gant kelennerien c’hoazh.', // br: à relire
+    case: 'Diskouez mod ar gelennerien war an ardivink-mañ', // br: à relire
+    parSite: 'Kinniget eo gant al lec’hienn-mañ.', // br: à relire
   },
   police: {
     titre: 'Nodrezh ar fichennoù', // br: à relire

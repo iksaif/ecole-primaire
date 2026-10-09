@@ -1,6 +1,6 @@
 // Logique pure des pages de fiches prêtes (node, sans Chrome) : filtres, langues proposées, entrées sœurs, formats, pages, voisines.
 import { orientationsDe, proposeUnChoixDeSens, filtrerFiches, languesProposees, domainesProposes, entreesSoeurs, memeFiche, slugDeBase, formatsDe, pdfDe, proposeUnChoixDeFormat,
-  pageVoisine, voisinesDeFiche, jeuDeLaFiche, grouperParMatiere, parTitre, matiereDe, dansLeMode, CRITERES_PAGE_VIDES, LANGUE_BILINGUE, cheminFiches } from '../src/telechargements/pages.ts'
+  pageVoisine, voisinesDeFiche, jeuDeLaFiche, grouperParMatiere, parTitre, matiereDe, dansLeMode, CRITERES_PAGE_VIDES, LANGUE_BILINGUE, cheminFiches, usageDeLAdresse, usageEnAdresse, toutesLesClassesDeLAdresse } from '../src/telechargements/pages.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const e = (slug, o = {}) => ({ slug, titre: { fr: slug }, niveaux: ['ce1'], domaine: 'nombres-calcul', usage: 'sentrainer', langues: ['fr'], parent: null, recherche: slug.replace(/-/g, ' '), ...o })
@@ -26,6 +26,9 @@ verifier(slugs(filtrerFiches(index, 'maths', CRITERES_PAGE_VIDES, ctx('regionale
 verifier(slugs(filtrerFiches(index, 'maths', { ...CRITERES_PAGE_VIDES, classes: ['cp'] }, ctx())) === 'frise', 'classe')
 verifier(slugs(filtrerFiches(index, 'maths', { ...CRITERES_PAGE_VIDES, classes: ['cp', 'ce2'] }, ctx())) === 'tables,tables-fr-br,frise', 'plusieurs classes : union')
 verifier(slugs(filtrerFiches(index, null, { ...CRITERES_PAGE_VIDES, usage: 'apprendre' }, ctx())) === 'frise', 'usage, toutes matières')
+verifier(usageDeLAdresse('afficher') === 'apprendre' && usageDeLAdresse('apprendre') === 'apprendre' && usageDeLAdresse(['sentrainer']) === 'sentrainer' && usageDeLAdresse('zut') === '' && usageDeLAdresse(undefined) === '', 'adresse : ?usage=afficher|sentrainer (apprendre accepté), le reste ne filtre pas')
+verifier(usageEnAdresse('apprendre') === 'afficher' && usageEnAdresse('sentrainer') === 'sentrainer' && usageEnAdresse('') === undefined, 'adresse : le filtre d\'usage s\'écrit afficher | sentrainer')
+verifier(toutesLesClassesDeLAdresse('oui') && !toutesLesClassesDeLAdresse('non') && !toutesLesClassesDeLAdresse(undefined), 'adresse : ?toutes=oui')
 verifier(slugs(filtrerFiches(index, 'francais', CRITERES_PAGE_VIDES, ctx())) === 'lire', 'autre matière')
 verifier(slugs(filtrerFiches(index, null, { ...CRITERES_PAGE_VIDES, domaine: 'hors-programme' }, ctx())) === 'culture', 'hors programme')
 verifier(slugs(filtrerFiches(index, 'maths', { ...CRITERES_PAGE_VIDES, texte: 'TÁBLES' }, ctx())) === 'tables,tables-fr-br', 'recherche sans accent ni casse')

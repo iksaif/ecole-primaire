@@ -13,6 +13,8 @@ const nav = await lancerNavigateur()
 /** Une page ouverte sur `route` avec une langue d'interface, une largeur et un profil d'appareil. */
 async function ouvrir({ route = '/maths', langue = 'fr', largeur = 1280, profil, base = app } = {}) {
   const ctx = await contexte(nav, { langue, viewport: { width: largeur, height: 800 } })
+  // l'appareil a activé le mode enseignant (caché par défaut : tests/enseignant.test.mjs)
+  await ctx.addInitScript(() => localStorage.setItem('ep_enseignant', 'true'))
   if (profil) await ctx.addInitScript(p => localStorage.setItem('ep_profil', JSON.stringify(p)), profil)
   const page = await ctx.newPage()
   const erreurs = surveiller(page)

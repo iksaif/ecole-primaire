@@ -61,13 +61,26 @@ export default {
     titre: 'Profil',
     etat: 'Profil : {profil}',
     question: 'Me zo… (diret)', // br: à relire
-    note: 'N’eo ket ar profil nemet evit kemmañ an aozadur hag an niver a glasoù. Netra n’eo prennet.', // br: à relire
     enfant: 'Bugel', // br: à relire
     enfantDesc: 'Ur c’hlas, prennet gant ur c’hadenn vihan', // br: à relire
     parent: 'Kerent', // br: à relire
     parentDesc: 'Ur c’hlas pe meur a hini (meur a vugale), fichennoù prest', // br: à relire
     enseignant: 'Kelenner', // br: à relire
-    enseignantDesc: 'Meur a glas, programm, liamm evit ar familhoù', // br: à relire
+    enseignantDesc: 'Meur a glas, programm, liamm evit ar familhoù — ur soñj o vezañ savet, n’eo ket bet gwiriekaet c’hoazh', // br: à relire
+  },
+  enseignant: {
+    activeTitre: 'Mod ar gelennerien bet gweredekaet war an ardivink-mañ', // br: à relire
+    activeTexte: 'Ur soñj o vezañ savet eo : netra n’eo bet gwiriekaet, ha ret eo adlenn e zanvez hag e ostilhoù gant kelennerien c’hoazh. Degemeret mat eo ho evezhiadennoù.', // br: à relire
+    desactiveTitre: 'Mod ar gelennerien diweredekaet', // br: à relire
+    desactiveTexte: 'N’eo ket kinniget ar profil « Kelenner » ken war an ardivink-mañ.', // br: à relire
+    desactiver: 'Diweredekaat mod ar gelennerien', // br: à relire
+    compris: 'Komprenet em eus', // br: à relire
+    fermer: 'Serriñ ar c’hemennad-mañ', // br: à relire
+    pastille: 'beta', // br: à relire
+    pastilleTitre: 'Mod ar gelennerien : ur soñj o vezañ savet, n’eo ket bet gwiriekaet c’hoazh', // br: à relire
+    enConstruction: 'Ur soñj o vezañ savet : n’eo ket bet gwiriekaet nag adlennet c’hoazh ar rann-mañ evit ar gelennerien.', // br: à relire
+    donnerAvis: 'Reiñ un tamm alioù', // br: à relire
+    avisSujet: 'Mod ar gelennerien : ma ali', // br: à relire
   },
   pied: {
     navigation: 'Treid ar bajenn', // br: à relire

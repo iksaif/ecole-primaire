@@ -1,14 +1,16 @@
 // L'état d'une page de fiches prêtes (liste d'une matière, index global) : l'index des fiches, les critères de filtre, les
 // résultats. Les classes viennent du contexte (adresse d'abord) ; « toutes les classes » est un choix de la page seule. Les
-// autres critères (texte, usage, domaine, langue) restent à la page : ils ne sont ni dans l'adresse ni mémorisés.
+// autres critères (texte, domaine, langue) restent à la page : ils ne sont ni dans l'adresse ni mémorisés. L'usage (`?usage=afficher|sentrainer`) et « toutes les
+// classes » (`?toutes=oui`) sont dans l'adresse : un lien direct vers un filtre (src/telechargements/pages.ts).
 //   const page = useFichesPage(() => 'maths')   // ou () => null : toutes les matières
 //   page.resultats, page.criteres, page.choisirClasse(c), page.effacer()
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import type { ComputedRef, Reactive } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import type { Classe, EntreeIndex, Matiere } from './types.ts'
 import { useFiches } from './useFiches.ts'
-import { CRITERES_PAGE_VIDES, domainesProposes, filtrerFiches, languesProposees } from './pages.ts'
+import { CRITERES_PAGE_VIDES, domainesProposes, filtrerFiches, languesProposees, toutesLesClassesDeLAdresse, usageDeLAdresse, usageEnAdresse } from './pages.ts'
 import type { CriteresPage } from './pages.ts'
 
 export interface OptionsFichesPage {
@@ -22,8 +24,22 @@ type CriteresSaisis = Omit<CriteresPage, 'classes'>
 export function useFichesPage(matiere: () => Matiere | null, { toutesLesClasses = false }: OptionsFichesPage = {}) {
   const { etat, index, vide, recharger } = useFiches()
   const { contexte, choisirClasses, ajouterClasse, retirerClasse, plusieursClasses, verrouillee } = useContexte()
-  const saisis: Reactive<CriteresSaisis> = reactive({ texte: CRITERES_PAGE_VIDES.texte, usage: CRITERES_PAGE_VIDES.usage, domaine: CRITERES_PAGE_VIDES.domaine, langue: CRITERES_PAGE_VIDES.langue })
-  const toutes = ref(toutesLesClasses)
+  const route = useRoute()
+  const router = useRouter()
+  const saisis: Reactive<CriteresSaisis> = reactive({ texte: CRITERES_PAGE_VIDES.texte, usage: usageDeLAdresse(route.query.usage), domaine: CRITERES_PAGE_VIDES.domaine, langue: CRITERES_PAGE_VIDES.langue })
+  const toutes = ref(toutesLesClasses || toutesLesClassesDeLAdresse(route.query.toutes))
+  // une adresse qu'on ouvre ou qu'on suit (précédent, lien) règle les critères ; un choix de la page écrit l'adresse (ci-dessous)
+  watch(() => route.query.usage, v => { saisis.usage = usageDeLAdresse(v) })
+  watch(() => route.query.toutes, v => { toutes.value = toutesLesClasses || toutesLesClassesDeLAdresse(v) })
+  /** Écrit des paramètres de la page dans l'adresse (`undefined` : le retire), sans toucher aux autres ; `replace` : pas de pile d'historique. */
+  async function ecrireAdresse(parametres: Readonly<Record<string, string | undefined>>): Promise<void> {
+    const query = { ...route.query }
+    for (const [cle, valeur] of Object.entries(parametres)) {
+      if (valeur === undefined) delete query[cle]
+      else query[cle] = valeur
+    }
+    await router.replace({ query })
+  }
 
   const modeEtLangue = computed(() => ({ mode: contexte.value.mode, regionale: contexte.value.regionale }))
   const classes = computed<readonly Classe[]>(() => (toutes.value ? [] : contexte.value.classes))
@@ -52,15 +68,23 @@ export function useFichesPage(matiere: () => Matiere | null, { toutesLesClasses 
     const etaitToutes = toutes.value
     const dejaLa = classeActive(c)
     toutes.value = false
+    await ecrireAdresse({ toutes: undefined })
     if (plusieursClasses.value && !etaitToutes) await (dejaLa ? retirerClasse(c) : ajouterClasse(c))
     else await choisirClasses([c])
   }
-  const choisirToutes = (): void => { toutes.value = true }
+  const choisirToutes = (): void => {
+    toutes.value = true
+    void ecrireAdresse({ toutes: toutesLesClasses ? undefined : 'oui' })
+  }
   /** Règle un ou plusieurs critères saisis (texte, usage, domaine, langue). */
-  const regler = (c: Partial<CriteresSaisis>): void => { Object.assign(saisis, c) }
+  const regler = (c: Partial<CriteresSaisis>): void => {
+    Object.assign(saisis, c)
+    if (c.usage !== undefined) void ecrireAdresse({ usage: usageEnAdresse(c.usage) })
+  }
   function effacer(): void {
     saisis.texte = ''; saisis.usage = ''; saisis.domaine = ''; saisis.langue = ''
     toutes.value = toutesLesClasses
+    void ecrireAdresse({ usage: undefined, toutes: undefined })
   }
 
   // `reactive` : les composants reçoivent l'objet en entier et lisent `page.resultats`, sans `.value`

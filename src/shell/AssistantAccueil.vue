@@ -18,7 +18,7 @@
             <p>{{ t('assistant.profil.texte') }}</p>
             <div role="group" aria-labelledby="assistant-question">
               <p id="assistant-question" class="question">{{ t('assistant.profil.question') }}</p>
-              <button v-for="p in PROFILS_ASSISTANT" :key="p" type="button" class="option" :aria-pressed="contexte.profil === p" @click="choisirProfilEtAvancer(p)">
+              <button v-for="p in profilsAssistant" :key="p" type="button" class="option" :aria-pressed="contexte.profil === p" @click="choisirProfilEtAvancer(p)">
                 <span class="icone" aria-hidden="true">{{ EMOJI_PROFIL[p] }}</span>
                 <span><strong>{{ t(`shell.profil.${p}`) }}</strong><small>{{ t(`assistant.profil.${p}Desc`) }}</small></span>
               </button>
@@ -86,6 +86,8 @@ import { nomDeLangue } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { useLangueRegionale } from '../langues/useLangueRegionale.ts'
 import { focaliserContenu } from '../router/focus.ts'
+import { profilsProposes } from '../contexte/regles.ts'
+import { modeEnseignantActif } from '../contexte/enseignant.ts'
 import { SITE } from '../sites.ts'
 import ChoixClasses from './ChoixClasses.vue'
 import OptionsLangue from './OptionsLangue.vue'
@@ -109,6 +111,8 @@ const titre = ref<HTMLElement | null>(null)
 let focusAvant: HTMLElement | null = null
 
 const enseignant = computed(() => contexte.value.profil === 'enseignant')
+// l'assistant ne propose « enseignant » que si le mode est actif (idée en construction : src/contexte/enseignant.ts)
+const profilsAssistant = computed(() => PROFILS_ASSISTANT.filter(p => profilsProposes(modeEnseignantActif.value).includes(p)))
 const etapes = computed(() => etapesAssistant(contexte.value.profil, proposees.length > 0))
 const etape = computed(() => etapes.value[Math.min(index.value, etapes.value.length - 1)] ?? { id: 'fin', reperes: [] })
 /** la langue régionale du site, nommée dans la langue de l'interface (« breton », « brezhoneg ») */
@@ -203,7 +207,8 @@ function ouvrirSiBesoin(): void {
   assistantDemande.value = false
   if (demande || (premiereVisite() && sansContexte(route.query))) void ouvrir()
 }
-onMounted(ouvrirSiBesoin)
+// à l'arrivée sur n'importe quelle page : une fois la première navigation faite (l'adresse, donc le contexte demandé, est alors connue)
+onMounted(() => { void router.isReady().then(ouvrirSiBesoin) })
 // « Revoir » depuis l'accueil lui-même (pas de nouveau montage)
 watch(assistantDemande, demande => { if (demande) ouvrirSiBesoin() })
 onUnmounted(() => { if (ouvert.value) rendreInerte(false) })

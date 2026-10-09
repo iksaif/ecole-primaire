@@ -1,5 +1,5 @@
 // Assistant de première visite (« visite guidée ») : quelles étapes selon le profil, quand l'ouvrir, comment le revoir.
-// Le composant est `AssistantAccueil.vue` (monté par l'accueil). Les éléments de la barre qu'il montre portent un attribut
+// Le composant est `AssistantAccueil.vue` (monté par App.vue : il s'ouvre sur la page d'arrivée, quelle qu'elle soit). Les éléments de la barre qu'il montre portent un attribut
 // `data-repere` (AppNav) : une étape en cite plusieurs, le premier visible gagne (au téléphone, le ☰ remplace ce qui est caché).
 import { ref } from 'vue'
 import type { Router } from 'vue-router'
@@ -55,6 +55,7 @@ export function etapesAssistant(profil: Profil, avecLangueRegionale: boolean): E
 
 /** Revoir l'assistant : il s'ouvre sur l'accueil. */
 export async function revoirAssistant(router: Router): Promise<void> {
-  assistantDemande.value = true
+  // d'abord la navigation : la fenêtre (montée par App.vue) s'ouvre sur la page où l'on arrive, ici l'accueil
   await router.push('/')
+  assistantDemande.value = true
 }

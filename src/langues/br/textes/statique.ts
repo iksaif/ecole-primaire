@@ -24,9 +24,9 @@ export default {
   voisines: 'Fichennoù tost', // br: à relire
   fiches: 'Fichennoù da bellgargañ', // br: à relire
   cadreProgramme: 'Programmoù ofisiel an Dazont-skol (Ministrerezh an Deskadurezh)', // br: à relire
-  type: { affiche: 'Afich da zeskiñ', fiche: 'Fichenn labour', exercice: 'Fichenn labour' }, // br: à relire
+  type: { affiche: 'Afich da ziskouez', fiche: 'Fichenn labour', exercice: 'Fichenn labour' }, // br: à relire
   indexTitre: 'An holl fichennoù da voullañ', // br: à relire
-  indexIntro: 'Afichoù evit deskiñ ha fichennoù evit en em ziaesaat, e PDF, digoust ha prest da voullañ, rummet dre danvez ha dre urzh al lizherenneg.', // br: à relire
+  indexIntro: 'Afichoù da ziskouez ha fichennoù evit en em ziaesaat, e PDF, digoust ha prest da voullañ, rummet dre danvez ha dre urzh al lizherenneg.', // br: à relire
   indexVide: 'Fichennoù a zeuio a-benn nebeut.', // br: à relire
   matiere: { maths: 'Matematik', francais: 'Galleg', monde: 'Ar bed', regionale: 'Yezh rannvroel' }, // br: à relire
   horsProgramme: 'Fichennoù all', // br: à relire

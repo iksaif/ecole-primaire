@@ -17,7 +17,7 @@ export default {
   toutesClasses: '🌐 Toutes les classes',
   usage: 'Usage',
   tous: '🌐 Tous',
-  apprendre: '📘 Pour apprendre',
+  apprendre: '🖼️ À afficher',
   sentrainer: '✏️ Pour s’entraîner',
   domaine: 'Domaine',
   tousDomaines: '🌐 Tous les domaines',

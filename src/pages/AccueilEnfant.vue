@@ -5,7 +5,7 @@
       <li v-for="m in tuiles" :key="m.matiere">
         <AccueilTuile :to="m.to" :emoji="m.emoji" :titre="m.titre" :sous="m.sous" :langue-sous="m.langueSous" :couleur="m.couleur" grande />
       </li>
-      <li v-if="regionale"><AccueilTuile :to="regionale.to" :drapeau="regionale.code" :titre="regionale.titre" :couleur="regionale.couleur" grande /></li>
+      <li v-if="regionale"><AccueilTuile :to="regionale.to" :drapeau="regionale.code" :titre="regionale.titre" :sous="regionale.sous" :langue-sous="regionale.langueSous" :couleur="regionale.couleur" grande /></li>
     </ul>
     <AccueilReprendre gros />
     <p v-if="verrouillee" class="verrou"><span aria-hidden="true">🔒</span> {{ t('accueil.verrou') }}</p>

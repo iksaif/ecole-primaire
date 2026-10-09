@@ -74,7 +74,6 @@ console.log('Ouverture')
   await ctx.close()
 }
 for (const [nom, options] of [
-  ['une autre page que l’accueil', { route: '/maths' }],
   ['une adresse qui porte un réglage (lien pour les familles)', { route: '/?classes=cm1' }],
   ['un profil déjà mémorisé', { avant: () => localStorage.setItem('ep_profil', '"parent"') }],
 ]) {
@@ -115,7 +114,7 @@ for (const largeur of [1280, 390]) {
 // ── 3. parcours enseignant ──
 for (const largeur of [1280, 390]) {
   console.log(`Parcours enseignant (${largeur} px)`)
-  const { ctx, page, erreurs } = await ouvrir({ largeur })
+  const { ctx, page, erreurs } = await ouvrir({ largeur, avant: () => localStorage.setItem('ep_enseignant', 'true') })
   await ouverte(page)
   await page.locator(`${FENETRE} .option`, { hasText: 'Enseignant' }).click()
   await pose(page)
@@ -181,10 +180,24 @@ console.log('Breton, 320 px')
   await ctx.close()
 }
 
+// ── 5b. première visite : sur n'importe quelle page, pas seulement l'accueil ──
+{
+  console.log('Première visite sur une sous-page')
+  for (const route of ['/maths/fiches', '/telechargements', '/programme']) {
+    const { ctx, page, erreurs } = await ouvrir({ route })
+    verifier(await ouverte(page), `${route} : la visite guidée s’ouvre dès l’arrivée`)
+    verifier(!erreurs.length, `${route} : sans erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
+    await ctx.close()
+  }
+  const { ctx, page } = await ouvrir({ route: '/maths?classes=cm1' })
+  verifier(!await ouverte(page), 'une adresse partagée avec son contexte (?classes=) ne l’ouvre pas')
+  await ctx.close()
+}
+
 // ── 6. skoolik ──
 if (URL_SKOOLIK) {
   console.log('skoolik')
-  const { ctx, page, erreurs } = await ouvrir({ base: route => `${URL_SKOOLIK}${route.replace(/^\//, '')}` })
+  const { ctx, page, erreurs } = await ouvrir({ base: route => `${URL_SKOOLIK}${route.replace(/^\//, '')}`, avant: () => localStorage.setItem('ep_enseignant', 'true') })
   verifier(await ouverte(page) && /Skoolik/.test(await titre(page)), 'skoolik : la visite guidée s’ouvre, au nom du site')
   await page.locator(`${FENETRE} .option`, { hasText: 'Enseignant' }).click()
   await suivant(page)

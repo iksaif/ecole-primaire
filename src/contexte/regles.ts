@@ -5,6 +5,7 @@ import type { Langue } from '../langues/registre.ts'
 import type { Site } from '../sites.ts'
 import { CLASSE_DE_DEPART, normaliserClasses } from './url.ts'
 import type { DefautsContexte } from './url.ts'
+import { PROFILS } from './types.ts'
 import type { Mode, Profil } from './types.ts'
 
 /** Réglages mémorisés sur l'appareil (`null` : jamais choisi, donc le défaut du site). */
@@ -43,6 +44,17 @@ export function defautsContexte(site: Site, memo: Memorise = MEMORISE_VIDE, prof
     refs: memo.refs ?? profil === 'enseignant',
   }
 }
+
+/**
+ * Les profils proposés : le mode enseignant est une idée en construction, caché tant que le site ne le propose pas d'office et que
+ * l'appareil ne l'a pas activé (adresse spéciale, src/contexte/enseignant.ts).
+ */
+export const profilsProposes = (enseignantActif: boolean): readonly Profil[] =>
+  enseignantActif ? PROFILS : PROFILS.filter(p => p !== 'enseignant')
+
+/** Le profil qui s'applique : un profil « enseignant » mémorisé redevient le profil d'un appareil neuf tant que le mode est caché. */
+export const profilEffectif = (memorise: Profil, enseignantActif: boolean): Profil =>
+  profilsProposes(enseignantActif).includes(memorise) ? memorise : PROFIL_PAR_DEFAUT
 
 /** Tout profil choisit plusieurs classes (un parent a parfois plusieurs enfants), sauf l'enfant : une seule, verrouillée. */
 export const plusieursClasses = (profil: Profil): boolean => profil !== 'enfant'

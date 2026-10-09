@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-// Un domaine du programme dans une page de matière : titre, « Pour apprendre » / « Pour s'entraîner », en cartes ou en liste.
+// Un domaine du programme dans une page de matière : titre, « À afficher » / « Pour s'entraîner », en cartes ou en liste.
 // Replié (rien pour les classes choisies) ou ouvert par défaut ; ce que le lecteur plie ou déplie est mémorisé par domaine
 // (`usePlis`). « Hors de la classe CE1 : 3 » annonce les ressources des autres classes : un domaine n'est jamais masqué.
 import { computed } from 'vue'

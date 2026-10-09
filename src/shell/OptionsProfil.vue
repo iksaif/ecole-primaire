@@ -1,6 +1,6 @@
 <template>
   <div role="group" :aria-label="t('shell.profil.titre')">
-    <button v-for="p in PROFILS" :key="p" type="button" class="option" :aria-pressed="contexte.profil === p" @click="choisir(p)">
+    <button v-for="p in proposes" :key="p" type="button" class="option" :aria-pressed="contexte.profil === p" @click="choisir(p)">
       <span class="icone" aria-hidden="true">{{ EMOJI_PROFIL[p] }}</span>
       <span><strong>{{ t(`shell.profil.${p}`) }}</strong><small>{{ t(`shell.profil.${p}Desc`) }}</small></span>
     </button>
@@ -10,9 +10,11 @@
 <script setup lang="ts">
 // Le choix du profil (pastille de la barre, menu mobile, réglages). Passer à « enfant » change presque tout (classe verrouillée, pages
 // simplifiées) : depuis une page quelconque, on revient à l'accueil, sauf là où l'on choisit son profil (accueil, réglages).
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
-import { PROFILS } from '../contexte/types.ts'
+import { profilsProposes } from '../contexte/regles.ts'
+import { modeEnseignantActif } from '../contexte/enseignant.ts'
 import type { Profil } from '../contexte/types.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_PROFIL } from './emojis.ts'
@@ -20,6 +22,8 @@ import { EMOJI_PROFIL } from './emojis.ts'
 const emit = defineEmits<{ choisi: [] }>()
 const { t } = useLangue()
 const { contexte, choisirProfil } = useContexte()
+// « Enseignant » n'est proposé que si le mode est actif (idée en construction : src/contexte/enseignant.ts)
+const proposes = computed(() => profilsProposes(modeEnseignantActif.value))
 const route = useRoute()
 const router = useRouter()
 const PAGES_DU_PROFIL = ['/', '/parametres']

@@ -18,7 +18,8 @@ import type { Langue } from '../langues/registre.ts'
 import { SITE } from '../sites.ts'
 import type { Site } from '../sites.ts'
 import { lienDuTableau, lienPourLesFamilles } from './partage.ts'
-import { PROFIL_PAR_DEFAUT, classesMigrees, classesPourProfil, defautsContexte, modeMigre, plusieursClasses } from './regles.ts'
+import { PROFIL_PAR_DEFAUT, classesMigrees, classesPourProfil, defautsContexte, modeMigre, plusieursClasses, profilEffectif, profilsProposes } from './regles.ts'
+import { enseignantActifPour } from './enseignant.ts'
 import type { Memorise } from './regles.ts'
 import { MODES, PROFILS, VUES } from './types.ts'
 import type { Contexte, Mode, Profil, Vue } from './types.ts'
@@ -105,7 +106,9 @@ export function installerContexte(router: Router, site: Site = SITE): void {
   const scope = effectScope(true)
   etat = scope.run((): Etat => {
     const memo = ref(lireMemorise(site))
-    const profil = ref(lireProfil())
+    // le profil mémorisé ; celui qui s'applique est « parent » quand il vaut « enseignant » et que ce mode est caché (src/contexte/enseignant.ts)
+    const profilMemorise = ref(lireProfil())
+    const profil = computed({ get: () => profilEffectif(profilMemorise.value, enseignantActifPour(site)), set: (p: Profil) => { profilMemorise.value = p } })
     const deverrouille = ref(false)
     const defauts = computed(() => defautsContexte(site, memo.value, profil.value))
     const requete = (): QueryBrute => router.currentRoute.value.query
@@ -156,6 +159,7 @@ export function installerContexte(router: Router, site: Site = SITE): void {
       choisirVue: vue => changer({ vue }, { vue }),
       basculerRefs: () => changer({ refs: !contexte.value.refs }, { refs: !contexte.value.refs }),
       choisirProfil: p => {
+        if (!profilsProposes(enseignantActifPour(site)).includes(p)) return
         profil.value = p
         deverrouille.value = false
         sauvegarder('profil', p)

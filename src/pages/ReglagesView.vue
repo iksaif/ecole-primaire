@@ -28,8 +28,15 @@
 
     <section class="bloc">
       <h2>👤 {{ t('reglages.profil.titre') }}</h2>
-      <p class="aide">{{ t('reglages.profil.aide') }}</p>
       <OptionsProfil />
+    </section>
+
+    <!-- le mode enseignant est caché par défaut : une idée en construction, pas encore validée (src/contexte/enseignant.ts) -->
+    <section class="bloc" data-section="enseignant">
+      <h2>🚧 {{ t('reglages.enseignant.titre') }}</h2>
+      <p class="aide">{{ t('reglages.enseignant.aide') }}</p>
+      <label class="case"><input type="checkbox" :checked="modeEnseignantActif" :disabled="SITE.enseignantVisible" @change="basculerEnseignant"> {{ t('reglages.enseignant.case') }}</label>
+      <p v-if="SITE.enseignantVisible" class="aide">{{ t('reglages.enseignant.parSite') }}</p>
     </section>
 
     <section class="bloc">
@@ -78,12 +85,19 @@ import IconeMatiere from '../shell/IconeMatiere.vue'
 import OptionsLangue from '../shell/OptionsLangue.vue'
 import OptionsProfil from '../shell/OptionsProfil.vue'
 import { revoirAssistant } from '../shell/assistant.ts'
+import { changerModeEnseignant, modeEnseignantActif } from '../contexte/enseignant.ts'
+import { SITE } from '../sites.ts'
 
 const { t, langue, langues } = useLangue()
 const router = useRouter()
 const regionale = useLangueRegionale()
 const { verrouillee, deverrouillerClasse } = useContexte()
 const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
+
+/** la case « Afficher le mode enseignant » : le réglage de l'appareil (le même que l'adresse spéciale `?enseignant=oui`) */
+function basculerEnseignant(e: Event): void {
+  changerModeEnseignant((e.target as HTMLInputElement).checked)
+}
 
 const message = ref('')
 function toutReinitialiser(): void {
@@ -104,6 +118,7 @@ h1 { color: var(--bleu-fort); margin-bottom: .25rem; }
 h2 { font-size: 1.1rem; margin-bottom: .25rem; }
 .aide { color: var(--texte-doux); font-size: .9rem; margin-bottom: .75rem; }
 .choix { display: flex; gap: .5rem; flex-wrap: wrap; }
+label.case { display: flex; align-items: center; gap: .5rem; min-height: 2.75rem; font-weight: 600; }
 .succes { margin-top: .75rem; font-weight: 600; color: var(--vert-texte); }
 .retour { display: inline-block; text-decoration: none; margin-top: .5rem; }
 </style>

@@ -17,6 +17,7 @@ const nav = await lancerNavigateur()
 async function ouvrir({ profil, largeur = 1280, langue = 'fr' } = {}) {
   const ctx = await contexte(nav, { langue, viewport: { width: largeur, height: 900 } })
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write']).catch(() => {})
+  await ctx.addInitScript(() => { try { localStorage.setItem('ep_enseignant', 'true') } catch {} })   // mode enseignant activé (caché par défaut : tests/enseignant.test.mjs)
   if (profil) await ctx.addInitScript(p => { try { localStorage.setItem('ep_profil', JSON.stringify(p)) } catch {} }, profil)
   const page = await ctx.newPage()
   return { ctx, page, erreurs: surveiller(page) }

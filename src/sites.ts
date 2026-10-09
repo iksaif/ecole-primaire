@@ -29,6 +29,11 @@ export interface Site {
   contact: string
   /** dépôt du code (contributions, signalements) */
   depot: string
+  /**
+   * Le mode « enseignant » est une idée en construction, pas encore validée avec des enseignants : caché (`false`) tant que l'appareil ne l'a pas
+   * activé par l'adresse spéciale `?enseignant=oui` (src/contexte/enseignant.ts). `true` : proposé d'office.
+   */
+  enseignantVisible: boolean
 }
 
 const DEPOT = 'https://github.com/iksaif/ecole-primaire'
@@ -50,6 +55,7 @@ export const SITES = {
     langueRegionale: '',
     contact: CONTACT,
     depot: DEPOT,
+    enseignantVisible: false,
   },
   // Version bretonne : interface en breton (français disponible) et breton actif d'office
   skoolik: {
@@ -66,6 +72,7 @@ export const SITES = {
     langueRegionale: 'br',
     contact: CONTACT,
     depot: DEPOT,
+    enseignantVisible: false,
   },
 } as const satisfies Record<string, Site>
 

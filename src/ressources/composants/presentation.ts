@@ -11,7 +11,7 @@ import type { Classe, DomaineId, Langue, Matiere, RessourceDeContenu, Usage } fr
 // langue régionale : 🗣️ quand il faut du texte ; les pages montrent son drapeau dessiné (IconeMatiere : le Gwenn-ha-du n'existe pas en emoji)
 export const EMOJI_MATIERE: Readonly<Record<Matiere, string>> = { maths: '🔢', francais: '📝', monde: '🌍', regionale: '🗣️' }
 export const EMOJI_BADGE = { jeu: '🎮', imprimable: '🖨️' } as const
-export const EMOJI_USAGE: Readonly<Record<Usage, string>> = { apprendre: '📘', sentrainer: '✏️' }
+export const EMOJI_USAGE: Readonly<Record<Usage, string>> = { apprendre: '🖼️', sentrainer: '✏️' }
 export const EMOJI_VUE: Readonly<Record<Vue, string>> = { cartes: '▦', liste: '☰' }
 export const EMOJI_ACCUEIL = { programme: '📚', fiches: '📄', reprendre: '▶️', copier: '🔗', classe: '🎒', aVenir: '🚧' } as const
 

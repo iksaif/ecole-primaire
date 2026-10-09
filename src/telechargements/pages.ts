@@ -28,6 +28,25 @@ export interface CriteresPage {
 
 export const CRITERES_PAGE_VIDES: CriteresPage = { texte: '', classes: [], usage: '', domaine: '', langue: '' }
 
+// ── Ce que la page écrit dans son adresse (liens directs) ──
+// `?usage=afficher` ou `?usage=sentrainer` : le filtre d'usage (« à afficher » : les affiches ; « pour s'entraîner » : fiches et exercices) ;
+// `?toutes=oui` : les fiches de toutes les classes, pas seulement celles du contexte. Les deux marchent sur /maths/fiches, /francais/fiches,
+// /monde/fiches et /telechargements (toutes les matières).
+
+/** Le filtre d'usage d'une adresse ; `apprendre` (le nom interne, l'ancien libellé) reste accepté ; autre chose : aucun filtre. */
+export function usageDeLAdresse(valeur: unknown): Usage | '' {
+  const v = Array.isArray(valeur) ? valeur[0] : valeur
+  if (v === 'afficher' || v === 'apprendre') return 'apprendre'
+  if (v === 'sentrainer') return 'sentrainer'
+  return ''
+}
+
+/** La valeur d'adresse d'un filtre d'usage (`undefined` : pas de paramètre). */
+export const usageEnAdresse = (usage: Usage | ''): string | undefined => (usage === 'apprendre' ? 'afficher' : usage || undefined)
+
+/** `?toutes=oui` : toutes les classes. */
+export const toutesLesClassesDeLAdresse = (valeur: unknown): boolean => (Array.isArray(valeur) ? valeur[0] : valeur) === 'oui'
+
 /** La matière d'une entrée, d'après le domaine de l'index (hors programme : le monde, comme l'index le range). */
 export function matiereDe(e: Pick<EntreeIndex, 'domaine'>, index: Pick<IndexFiches, 'filtres'>): Matiere {
   return index.filtres.domaines.find(d => d.id === e.domaine)?.matiere ?? 'monde'

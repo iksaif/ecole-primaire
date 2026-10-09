@@ -59,9 +59,14 @@ export const matieresDe = (e: Pick<EntreeIndex, 'domaine' | 'matieres'>, index: 
 /** Les fiches de la langue régionale sont dans cette langue (seule ou avec le français) : pas l'affiche de la météo en français seul. */
 const estDansLaLangue = (e: Pick<EntreeIndex, 'langues'>, regionale: Langue | null): boolean => !!regionale && e.langues.includes(regionale)
 
-/** Une fiche se lit dans une des langues de l'entrée : celle du mode doit en faire partie (mode français : fiches françaises seulement). */
+/**
+ * Une fiche se lit dans une des langues de l'entrée : celle du mode doit en faire partie. Mode français : français seulement, donc ni les
+ * fiches bretonnes ni les fiches bilingues (qui montreraient du breton) ; les autres modes gardent les fiches bilingues.
+ */
 export function dansLeMode(e: Pick<EntreeIndex, 'langues'>, mode: Mode, regionale: Langue | null): boolean {
   const utilisables: readonly string[] = languesUtilisables(mode, regionale)
+  const francaisSeulement = mode === 'fr' || !regionale
+  if (francaisSeulement) return e.langues.every(l => utilisables.includes(l))
   return e.langues.some(l => utilisables.includes(l))
 }
 

@@ -148,3 +148,4 @@ clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du progr
       formulation des divisions au CE2
 - Surveillance (disponibilité, expiration des domaines et des certificats) : Datadog, configuré par l'utilisateur
   dans un autre agent — ne pas y toucher ici
+- [x] **/telechargements?usage=afficher : cacher les fiches bilingues quand la langue choisie est seulement le français** (demande du 2026-10-09). — fait (`dansLeMode`, `src/telechargements/pages.ts`) : en mode français, ni fiches bretonnes ni bilingues (sur l'index actuel : 76 « à afficher » en français, 30 bilingues cachées).

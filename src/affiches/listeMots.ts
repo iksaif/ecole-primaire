@@ -25,13 +25,13 @@ export interface OptionsListe {
 type TypePolice = 'script' | 'attache'
 
 /** La taille (mm) qui fait tenir le plus long des textes dans `largeur`, sans dépasser `plafond`. */
-function tailleQuiTient(textes: readonly string[], police: string, largeur: number, plafond: number, ctx: ContexteDessin): number {
+export function tailleQuiTient(textes: readonly string[], police: string, largeur: number, plafond: number, ctx: ContexteDessin): number {
   const plusLong = Math.max(...textes.map(t => ctx.mesure.largeur(t, police)), 0.001)   // en corps de texte (em)
   return Math.min(plafond, (largeur * 0.9) / plusLong)
 }
 
 /** Les écritures d'une colonne : le script, et l'attaché si demandé. */
-const ecritures = (attache: boolean): TypePolice[] => (attache ? ['script', 'attache'] : ['script'])
+export const ecritures = (attache: boolean): TypePolice[] => (attache ? ['script', 'attache'] : ['script'])
 
 export function dessinerListe(elements: readonly ElementListe[], { W, H }: { W: number, H: number }, ctx: ContexteDessin, options: OptionsListe): string {
   const { langues, attache, entete, bandeau } = options

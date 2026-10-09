@@ -14,6 +14,9 @@ clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du progr
 
 ## Demandes du 2026-10-09
 
+- [x] **Affiche des mois (`/imprimer/affiches?affiche=mois&variante=gs&attache=true`) : la refaire pour mettre en évidence le lien saison / mois** (demande du 2026-10-09). — fait (`src/affiches/mois/dessin.ts`) : avec les saisons, quatre bandes de couleur, une par saison (🌱 mars-mai, ☀️ juin-août, 🍂 septembre-novembre, ❄️ décembre-février), chacune avec ses trois mois dedans ; en paysage, quatre colonnes ; sans les saisons, la liste de douze mois comme avant. Découpage par mois entiers (météorologique), à faire valider.
+- [x] **Pied de page : cacher le lien « Programme » hors du profil enseignant** — fait (`AppFooter.vue`, test dans `pages-shell`).
+ (demande du 2026-10-09).
 - [x] **Carte « Brezhoneg » : un tout nouveau titre** — fait (provisoire, à confirmer) : le titre est le nom de la langue dans la langue affichée (« Breton »), avec « Brezhoneg » dessous, comme « Maths » et « Matematik ».
 - [x] **Visite guidée : seulement à la première visite de l'accueil** (demande du 2026-10-09, qui remplace « aussi sur `/<matière>/fiches` et les sous-pages », essayé puis abandonné parce que plus compliqué) — fait : elle est de nouveau montée par `Accueil.vue`, comme avant.
 - [x] **`AGENTS.md` : parler de `main`, plus de `base-saine`** — fait, avec ce qui n'était plus vrai depuis la suppression de l'ancien monde.

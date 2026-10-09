@@ -2,7 +2,8 @@
   <footer class="pied">
     <nav :aria-label="t('shell.pied.navigation')">
       <ul>
-        <li><RouterLink to="/programme"><span aria-hidden="true">{{ EMOJI_BARRE.programme }}</span> {{ t('shell.pied.programme') }}</RouterLink></li>
+        <!-- le Programme est l'outil de l'enseignant : pas dans le pied de page des autres profils (la page reste accessible, par l'accueil) -->
+        <li v-if="enseignant"><RouterLink to="/programme"><span aria-hidden="true">{{ EMOJI_BARRE.programme }}</span> {{ t('shell.pied.programme') }}</RouterLink></li>
         <li><RouterLink to="/telechargements"><span aria-hidden="true">{{ EMOJI_BARRE.fichesPretes }}</span> {{ t('shell.pied.fichesPretes') }}</RouterLink></li>
         <li><RouterLink to="/nouveautes"><span aria-hidden="true">{{ EMOJI_PIED.nouveautes }}</span> {{ t('shell.pied.nouveautes') }}</RouterLink></li>
         <li><RouterLink to="/about"><span aria-hidden="true">{{ EMOJI_PIED.apropos }}</span> {{ t('shell.pied.apropos') }}</RouterLink></li>
@@ -17,11 +18,15 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { SITE } from '../sites.ts'
 import { EMOJI_BARRE, EMOJI_PIED } from './emojis.ts'
 
 const { t } = useLangue()
+const { contexte } = useContexte()
+const enseignant = computed(() => contexte.value.profil === 'enseignant')
 </script>
 
 <style scoped>

@@ -59,7 +59,14 @@ console.log('Pied de page')
 {
   const { ctx, page } = await ouvrir({ route: '/' })
   const liens = await page.locator('footer.pied a').evaluateAll(l => l.map(a => a.getAttribute('href') ?? ''))
-  verifier(['programme', 'telechargements', 'nouveautes', 'about', 'issues/new', 'github.com'].every(m => liens.some(h => h.includes(m))), `liens du pied de page : ${liens.length}`)
+  verifier(['telechargements', 'nouveautes', 'about', 'issues/new', 'github.com'].every(m => liens.some(h => h.includes(m))), `liens du pied de page : ${liens.length}`)
+  verifier(!liens.some(h => h.includes('programme')), 'parent : pas de lien « Programme » dans le pied de page')
+  await ctx.close()
+}
+{
+  const { ctx, page } = await ouvrir({ route: '/', profil: 'enseignant' })
+  const liens = await page.locator('footer.pied a').evaluateAll(l => l.map(a => a.getAttribute('href') ?? ''))
+  verifier(liens.some(h => h.includes('programme')), 'enseignant : le lien « Programme » est dans le pied de page')
   await ctx.close()
 }
 

@@ -26,7 +26,7 @@ npm run lint              # ESLint de correction (eslint.config.js) : doit reste
 npm run types             # vue-tsc strict sur les .ts et <script lang="ts"> (scripts/verifier/types.mjs) : doit rester à 0 erreur
 npm run qualite           # compteurs à seuil (scripts/verifier/qualite-seuils.json) : 'br' en dur, vues > 600 lignes…
 npm run instantanes       # empreintes des fiches des exercices migrés (node, ~1 s) ; -- --diff <cas>, -- --maj [préfixe]
-node scripts/dev/capturer-fiches.ts <route> …   # mêmes empreintes, capturées dans Chrome (vues pas encore migrées)
+node scripts/dev/capturer-fiches.ts <route> …   # mêmes empreintes, capturées dans Chrome
 npm run fiches -- --mode skoolik --outDir dist-skoolik [--avec-exemples] [--echantillon]   # fiches PDF + JSON (src/telechargements/README.md) ; npm run fiches:dev → public/fiches/ pour npm run dev
 npm run statique -- --mode skoolik --outDir dist-skoolik [--avec-exemples]   # pages HTML statiques des fiches, sitemap, robots, 404 (après vite build et npm run fiches ; src/telechargements/README.md, « Pages statiques »)
 npm run i18n              # clés manquantes fr/br : doit rester à 0 problème
@@ -53,17 +53,14 @@ qui importe des modules du projet doit être placé **dans le dépôt** le temps
 - **Les imports de fichiers `.ts` portent l'extension `.ts`**, partout (Vite, node, vue-tsc) : `from '../data/programme.ts'`.
 - `npm run types` doit rester à 0 erreur (CI, et compteur `erreursDeType` de `qualite`). Les erreurs situées dans des
   `.js` (même avec `// @ts-check`, qui reste utile à l'éditeur) sont ignorées : le JS n'est pas vérifié.
-- **Deux mondes pendant la migration** (plan 10) : `src/noyau/` (nouveau socle typé : `useJeu`, `useReglages`,
-  `useFicheExercice`, `CadreExercice`, `ChoixReglage`…, types dans `src/noyau/types.ts`) et l'ancien socle
-  (`src/composables/`, `src/components/ConfigExercice.vue`…, marqué `@deprecated`). `src/noyau/**` et les exemples
-  n'importent jamais l'ancien socle (règle ESLint) ; le compteur `importeursAncienSocle` de `qualite` ne doit que
-  baisser. `data/classes`, `data/programme`, `utils/hasard`, `utils/reponses` et `impression/document` sont en `.ts` sur
-  place, leurs anciens `.js` ne sont que des raccourcis d'une ligne : le code neuf importe le `.ts`.
+- **Un seul monde, typé** : `src/noyau/` (socle : `useJeu`, `useReglages`, `useFicheExercice`, `CadreExercice`, `ChoixReglage`…, types dans `src/noyau/types.ts`). L'ancien
+  monde (anciennes vues, composants, composables, `src/i18n/`) est supprimé (commit `c088a7b`) ; le compteur `ancienMondeNonReporte` de `qualite` doit rester à son seuil. `data/classes`,
+  `data/programme`, `utils/hasard`, `utils/reponses` et `impression/document` sont en `.ts` ; leurs anciens `.js` ne sont que des raccourcis d'une ligne : le code neuf importe le `.ts`.
 
 ## Où sont les choses
 
-Branche `base-saine` (plan 11, `plans/11-base-saine.md`) : tout ce qui est nouveau est en TypeScript ; l'ancien monde
-(vues d'exercices, impressions, catalogues, `src/i18n/`) est déconnecté mais présent, et `main` reste la production.
+**Tout se fait dans `main`** (depuis le 2026-10-09 : la branche `base-saine` est abandonnée, elle pointe sur le même commit). Rien n'est déployé tant que l'utilisateur ne l'a pas demandé
+(plan 11 : `plans/11-base-saine.md`, la liste « Avant de déployer »). Tout ce qui est nouveau est en TypeScript.
 
 - `src/sites.ts` : réglages par site (identité, langues d'interface proposées et par défaut, langue régionale par défaut).
   `src/langues/` : registre typé des langues (`registre.ts`, type `Langue`), règles, nombres, données régionales,
@@ -71,44 +68,34 @@ Branche `base-saine` (plan 11, `plans/11-base-saine.md`) : tout ce qui est nouve
   `useLangue().t('section.cle', params)`. **Aucun `'br'` en dur** hors de ces deux endroits : on interroge le registre
   (`donneesRegionales`, `voix`, `traductionRelue`) ou le réglage. Nouveau texte : dans les deux langues, breton marqué
   `// br: à relire` ; `npm run i18n` compte les passages à relire. Navigation et pages de la base : `src/shell/`, `src/pages/`.
+- **Mode « enseignant » : caché par défaut** (une idée en construction, pas encore validée) : `enseignantVisible` dans `src/sites.ts`, activé sur un appareil par l'adresse spéciale
+  `?enseignant=oui` (`?enseignant=non` pour le cacher) ou par la case de la page des réglages ; `src/contexte/enseignant.ts`. Quand il est actif : pastille « bêta » sur le profil, bandeau
+  `BandeauConstruction` sur ses pages. Un test qui a besoin du profil enseignant met `ep_enseignant` à `true` dans le stockage de l'appareil.
 - Tests : `tests/*.test.mjs` = la base ; `tests/ancien/` = tests de l'ancien code (Chrome lents), à reporter avec leur exercice. `tests/lancer.mjs` (en-tête) fixe la règle de dépendances : tests NODE (aucun build, lancés d'emblée) et CHROME (attendent les builds, du plus long au plus court) ; un test nouveau s'inscrit dans l'une des deux listes, et `npm test` affiche les durées (objectif ≤ 1 min).
 
-- `src/exercices/` : **le modèle de tout exercice nouveau ou migré** (plan 10 ; pilote : `heure/`). Un dossier par
-  exercice : `definition.js` (niveaux → `competences` de `programme.js`, `reglages` par défaut, `options`, `bonus`,
-  `horsProgramme` avec raison ; `fiches` par compétence), `generateur.js` et `fiche.js` purs (lisibles par node),
-  `textes.js`. Format : `src/exercices/README.md` et le JSDoc de `src/exercices/index.ts` (registre : y ajouter
-  l'exercice). La vue reste mince : `useReglages` + `ConfigExercice`, `useJeu` + `<ResultatsJeu>`, `useFicheExercice`,
-  rendu d'une question (`<ChoixReponses>`, `<SaisieReponse>`) ; niveaux affichés = `definition.niveaux`. Hasard : `src/utils/hasard.ts` (`creerRng`), graine des fiches :
-  `useGraine` ; gabarit de fiche : `documentFiche` (`src/impression/document.ts`). `tests/exercices.test.mjs` vérifie
-  chaque exercice du registre contre le programme.
-- `src/affiches/` : **le modèle de toute affiche nouvelle** (plan 10, phase 2e ; aucune affiche existante n'y est encore migrée). Un dossier par affiche en TypeScript : `definition.ts` (`definirAffiche`), `dessin.ts` pur, `textes.ts` ; registre `index.ts`, exemple de départ visible en dev seulement (`exemples.ts`, `/dev/affiches`) ; formulaire générique `src/noyau/FormulaireAffiche.vue`. Format : `src/affiches/README.md`.
+- `src/exercices/` : **le modèle de tout exercice** (pilote : `heure/`). Un dossier par exercice : `definition.ts` (niveaux → `competences` de `programme.ts`, `reglages` par défaut, `bonus`,
+  `horsProgramme` avec raison ; `fiches` par compétence), `generateur.ts` et `fiche.ts` purs (lisibles par node), `textes.ts`. Format : `src/exercices/README.md` et le JSDoc de
+  `src/exercices/index.ts` (registre : y ajouter l'exercice). La vue (`src/views/`) reste mince : `useReglages` + `CadreExercice`, `useJeu` + `<ResultatsJeu>`, `useFicheExercice`, rendu d'une question
+  (`<ChoixReponses>`, `<SaisieReponse>`) ; niveaux affichés = `definition.niveaux`. Hasard : `src/utils/hasard.ts` (`creerRng`), graine des fiches : `useGraine` ; gabarit de fiche :
+  `documentFiche` (`src/impression/document.ts`). `tests/exercices.test.mjs` vérifie chaque exercice du registre contre le programme.
+- `src/affiches/` : **le modèle de toute affiche nouvelle** (toutes les affiches publiées y sont). Un dossier par affiche en TypeScript : `definition.ts` (`definirAffiche`), `dessin.ts` pur, `textes.ts` ; registre `index.ts`, exemple de départ visible en dev seulement (`exemples.ts`, `/dev/affiches`) ; formulaire générique `src/noyau/FormulaireAffiche.vue`. Format : `src/affiches/README.md`.
 - Créer un exercice : `npm run nouveau -- exercice <id> "<Titre>" --domaine <d> --competences <ids> [--modele simple|corpus] [--matiere maths|francais|maternelle]` copie `src/exercices/exemple/` (tutoriel, TypeScript, `definir`), garde les niveaux du modèle où une compétence est au programme, et l'inscrit au registre typé (`src/exercices/index.ts`), à la table des vues (`src/views/exercices.ts`, qui sert la route) et aux textes typés fr/br (breton « à relire ») : il apparaît aussitôt dans le catalogue, la recherche et les fiches PDF. Premier report réel : `calcul-mental/` (plages de classes `pourClasses`, fiches sous leurs adresses historiques `slug`). La page `/dev` (dev seulement) liste les exemples. Voir `src/exercices/README.md`.
 - **Regards critiques** : à la création ou au report d'un exercice, d'une fiche à imprimer ou d'une affiche, proposer à l'utilisateur de faire passer deux agents critiques en lecture seule, du point de vue de l'enfant de la classe visée et de l'enseignant·e : prompts prêts dans `docs/critiques/` (`enfant.md`, `enseignant.md` ; mode d'emploi dans le README).
-- `src/views/` : une vue par exercice. Le cadre commun `ConfigExercice` gère les onglets « Faire l'exercice »
-  et « Imprimer une fiche » (`?mode=imprimer`, `useModeExercice`). La vue fournit `htmlFiche()`.
-  - Prénom/date et corrigé : `useOptionsFiche`. La vue écrit `${ligneNomDate(langue)}` et
-    `<section class="corrige"><h2>…</h2>…</section>` ; le cadre applique les options. Ne pas recréer
-    d'option de corrigé propre à une vue.
+- `src/views/` : une vue mince par exercice (`src/views/exercices.ts` sert les routes). Le cadre commun `CadreExercice` (`src/noyau/`) gère les onglets « Faire l'exercice » et
+  « Imprimer une fiche » (`?mode=imprimer`, `useModeExercice`) ; la fiche vient de `fiche.ts` via `useFicheExercice`.
+  - Prénom/date et corrigé : `useOptionsFiche`. La fiche écrit `${ligneNomDate(langue)}` et `<section class="corrige"><h2>…</h2>…</section>` ; le cadre applique les options.
+    Ne pas recréer d'option de corrigé propre à une vue.
   - Réglages mémorisés : `chargerReglages(cle, DEFAUT)` (`src/utils`), jamais `charger` brut pour une config.
-- `src/impression/` : générateurs de fiches et d'affiches, partagés par l'app et par le build des PDF.
-  `api-build.js` est le point d'entrée du build (`?generation=1`, `window.__ecolePrimaire`).
-- `src/langues/` (base saine, TypeScript) : **où écrire un texte**. Interface (noyau, exemples, pages, `/dev`) : une section
+- `src/impression/` : le gabarit des fiches (`document.ts`), le cadre des affiches (`affiches/cadre.ts`) et le document de relecture du breton (`relecture.ts`), partagés par l'app et par le build des PDF.
+- `src/langues/` (TypeScript) : **où écrire un texte**. Interface (noyau, exemples, pages, `/dev`) : une section
   `fr/textes/<section>.ts` + `br/textes/<section>.ts` (`satisfies Traductions<…>`), lue par `useLangue().t('section.cle')` ;
   mots communs du jeu et des fiches : section `communs` ; noms de domaines : `domaines`. Contenu d'un exercice (fiche,
   énoncés) : `catalogue(…)` dans `src/exercices/<id>/textes.ts` (`src/langues/catalogue.ts`, « français seulement » possible).
-  Aucun import de `src/i18n/` depuis `src/noyau/`, les exemples, `src/affiches/` et `scripts/build/fiches/` (seul le pont
-  `src/exercices/traducteur.ts` lit l'ancien format, pour les exercices pas encore reportés).
-- `src/i18n/` (ancien monde, ne pas y ajouter de texte de la base) :
-  - catalogues d'interface `fr/…` et `br/…` (un fichier par composant) ;
-  - contenu des exercices dans `<langue>/contenu/` ;
-  - `regles.js` : règles de langue (mutations bretonnes, ha/hag, élision, pluriels).
-  - Pas de `if (langue === 'br')` dans les générateurs : passer par `contenu()` et `regles()`.
-  - Exercice de français : contenu et fiche toujours en `fr` (`enLangue('fr', …)`).
+  Pas de `if (langue === 'br')` dans les générateurs : passer par le registre (`regles`, `donneesRegionales`). Exercice de français : contenu et fiche toujours en `fr` (`enLangue('fr', …)`).
+  Relecture du breton : `/dev/relecture-breton` (document à imprimer), `npm run i18n:relecture`.
 - `src/data/programme.ts` : référentiel des programmes officiels (domaines, compétences, contraintes par
   niveau, avec sources). **Il fait foi** pour les niveaux. Une option d'exercice ou une fiche qui sort du
   programme d'un niveau est un bug.
-- `src/data/activites.js` : catalogue des activités (niveaux, domaine). `src/data/languesRegionales.js` :
-  données des langues régionales.
 - `scripts/` : rangé par rôle (`build/` PDF, JSON et pages statiques `/telechargements/` (SEO) et sitemap ; `verifier/`, `generer/`, `deploiement/`, `dev/`, `ponctuel/`), voir `scripts/README.md`.
 - `tests/` : `exercices` (définitions, node sans Chrome), `instantanes` (empreintes des fiches, node), `logique`, `routes`, `cadre`, `memorises` (réglages corrompus), `statiques`, `affiches` (rien ne
   dépasse des feuilles), `reglages` (complet).

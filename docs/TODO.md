@@ -12,6 +12,34 @@ mentions légales reportées (`/mentions-legales`), anciennes routes de l'app re
 (Search Console, Bing). Important mais pas bloquant : relecture du breton (`AvisTraduction` doit s'afficher sur skoolik), passe
 clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du programme (corriger change les fiches : `--maj` justifié).
 
+## Demandes du 2026-10-09
+
+- [x] **Carte « Brezhoneg » : un tout nouveau titre** — fait (provisoire, à confirmer) : le titre est le nom de la langue dans la langue affichée (« Breton »), avec « Brezhoneg » dessous, comme « Maths » et « Matematik ».
+- [x] **Visite guidée de la première visite : aussi sur `/<matière>/fiches` et les sous-pages** — fait : `AssistantAccueil` est monté par `App.vue` ; elle s'ouvre à la première visite sur la page d'arrivée, sauf pour
+  une adresse partagée avec son contexte (`?classes=`). Avant, elle ne s'ouvrait qu'en revenant sur l'accueil.
+- [x] **`AGENTS.md` : parler de `main`, plus de `base-saine`** — fait, avec ce qui n'était plus vrai depuis la suppression de l'ancien monde.
+- [x] **Mode enseignant : l'activer depuis la page des réglages, avec les notices** — fait : section « Mode enseignant (idée en construction) » dans `/parametres` (case et explication).
+- [x] **Mode enseignant, idées 1 et 2 retenues** — fait : pastille « bêta » sur le profil, `BandeauConstruction` sur Programme, compétence et l'accueil de l'enseignant (avec « Donner un avis »).
+- [x] **Fiches toutes prêtes : un lien direct vers le filtre « à afficher » (et « pour s'entraîner »)** — fait : `?usage=afficher` ou `?usage=sentrainer` dans l'adresse (écrit aussi quand on clique le filtre).
+- [x] **Un lien vers *toutes* les fiches (pas seulement maths / français / monde)** — fait : `/telechargements?toutes=oui&usage=afficher` (toutes les matières, toutes les classes) ; `?usage=` et `?toutes=oui` marchent
+  aussi sur `/maths/fiches`, `/francais/fiches` et `/monde/fiches`.
+- [x] **« Pour apprendre » → « à afficher »** (moins présomptueux) — fait : « À afficher » (🖼️) pour les affiches dans les filtres, les groupes d'une matière et les pages statiques ; titre de l'accueil « Affiches, fiches à
+  imprimer et exercices pour s’entraîner » ; les descriptions de fiches (« pour apprendre à écrire… ») ne changent pas.
+- [ ] **Affiche `affiche-formes-planes-cycle-1-2` : la proposer aussi en GS** — essayé puis **annulé le 2026-10-09** (demande de l'utilisateur) : fusionner avec la variante `plan-gs` (identique) demandait qu'une variante repose sur une compétence `horsProgramme` ; la GS garde son affiche `plan-gs`, le CP la sienne.
+- [x] **Titre de l'accueil** (validé le 2026-10-09).
+
+- [ ] **Mode « enseignant » : dire clairement que c'est une idée en construction, à valider et à relire** (demande du 2026-10-09) — fait : le mode est **caché par défaut** (`enseignantVisible: false` dans
+  `src/sites.ts`) : plus de profil « Enseignant » (menu, accueil, visite guidée) ni d'entrée « Programme » tant que l'appareil ne l'a pas activé par l'adresse spéciale `?enseignant=oui`
+  (`?enseignant=non` pour le cacher ; le paramètre est retiré de l'adresse, un bandeau confirme et dit « idée en construction, à relire avec des enseignants » ; `src/contexte/enseignant.ts`,
+  `src/shell/BandeauEnseignant.vue`, `tests/enseignant.test.mjs`) ; la description du profil dit « idée en construction, pas encore validée ». **Idées pour aller plus loin, à choisir** : (1) une pastille
+  « bêta » ou « en construction » à côté du nom du profil dans la barre ; (2) un bandeau discret sur les pages propres à l'enseignant (Programme, compétence, « Copier le lien pour les familles ») ;
+  (3) une phrase sur la page « À propos » et dans « Nouveautés » : ce qui est validé, ce qui ne l'est pas ; (4) un lien « Donner un avis » (mailto) dans le bandeau et sur ces pages ; (5) marquer
+  chaque contenu pour enseignants « non relu » tant qu'aucun·e enseignant·e ne l'a relu (liste dans `plans/07-relecture-pedagogique.md`) ; (6) activer le mode par site (skoolik avant ecoleprimaire) ;
+  (7) un lien d'activation à donner aux enseignant·es testeurs, avec une page courte qui explique ce qu'on attend d'eux ; (8) retirer le bandeau seulement quand le mode est validé.
+- [x] **Menu du profil : retirer la note « Le profil ne change que la disposition… »** (demande du 2026-10-09) — fait.
+- [x] **Titre de l'accueil sans « pour l'école »** (demande du 2026-10-09) — fait : « Affiches, fiches et exercices pour apprendre et s’entraîner » (le mode parent devient le mode principal) ; breton à relire.
+- [x] **Travailler dans `main`** (demande du 2026-10-09) : plus de branche `base-saine` ; `main` local contient tout (fusion de `origin/main`, 6 commits d'avance, rien de poussé).
+
 ## Demandes du 2026-10-08
 
 - [x] **Relecture du breton : séparer le contenu des fiches de l'interface dans le PDF** (demande du 2026-10-08) — fait : deux parties, « Partie 1 — Contenu des fiches : exercices et affiches »

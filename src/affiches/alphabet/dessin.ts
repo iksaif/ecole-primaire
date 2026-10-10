@@ -21,6 +21,9 @@ const ROUGE = '#d62828', BLEU = '#1d4e9e', NOIR = '#1a1a1a'
 const arrondi = (n: number): number => Math.round(n * 1000) / 1000
 // espace entre la majuscule et la minuscule (em)
 const ECART_SCRIPT = 0.3, ECART_ATTACHE = 0.5
+// le mot illustré : part de la hauteur d'une carte, taille du mot (part de cette ligne) et de l'image (en em du mot) ; agrandis
+// le 2026-10-10 (0,2 ; 0,42 ; 1,3 avant) sans prendre beaucoup de place aux lettres
+const PART_MOT = 0.24, PART_TEXTE_MOT = 0.46, IMAGE_EM = 1.5
 
 /** Un mot illustré par lettre : ceux de la langue régionale (données vérifiées) ; le français a les siens dans les textes de l'affiche. */
 function motsDe(langue: string, lettres: readonly string[], T: Traducteur): Mots {
@@ -50,7 +53,7 @@ function carte(l: string, x: number, y: number, w: number, h: number, { r, ctx, 
   const couleur = r.voyelles ? (estVoyelle(l) ? ROUGE : BLEU) : NOIR
   const styles = r.styles as readonly string[]
   const aScript = styles.some(s => s.startsWith('script')), aAttache = styles.some(s => s.startsWith('attache'))
-  const hMot = avecMot ? h * 0.2 : 0
+  const hMot = avecMot ? h * PART_MOT : 0
   const nbZones = Number(aScript) + Number(aAttache)
   const hZone = (h - hMot - h * 0.06) / Math.max(1, nbZones)
   const { mesure } = ctx
@@ -106,14 +109,15 @@ function carte(l: string, x: number, y: number, w: number, h: number, { r, ctx, 
     const segments = morceaux.filter(([t]) => t)
     const largeurs = segments.map(([t, gras]) => mesure.largeur(t, nom, gras))
     const enMot = largeurs.reduce((a, b) => a + b, 0)
-    // l'image (un carré de 1,3 em, selon la préférence « Images ») puis un quart d'em puis le mot : 85 % de la largeur de la carte
-    // au plus, 42 % de la hauteur de la ligne
-    const taille = Math.min(hMot * 0.42, w * 0.85 / (1.3 + 0.25 + enMot))
+    // l'image (un carré de IMAGE_EM em, selon la préférence « Images ») puis un quart d'em puis le mot : 85 % de la largeur de la carte
+    // au plus, PART_TEXTE_MOT de la hauteur de la ligne
+    const enTout = IMAGE_EM + 0.25 + enMot
+    const taille = Math.min(hMot * PART_TEXTE_MOT, w * 0.85 / enTout)
     const centre = haut + hMot / 2
-    let xm = x + w / 2 - (1.3 + 0.25 + enMot) * taille / 2
-    const cote = taille * 1.3
+    let xm = x + w / 2 - enTout * taille / 2
+    const cote = taille * IMAGE_EM
     s += ctx.images.svg(image, xm, centre - cote / 2, cote)
-    xm += (1.3 + 0.25) * taille
+    xm += (IMAGE_EM + 0.25) * taille
     segments.forEach(([t, gras], i) => {
       s += texte(xm, centre, taille, famille, gras ? couleur : '#444', t, { gras })
       xm += largeurs[i] * taille

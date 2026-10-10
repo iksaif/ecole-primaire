@@ -80,9 +80,9 @@ function dessinDefinition({ W, H }: { W: number, H: number }, T: (cle: string) =
 }
 
 /**
- * « La phrase » expliquée (CE1, sans types ni formes), en cinq bandes : la définition et son exemple ; les trois vérifications (majuscule,
- * point, sens), chacune dans un rond de couleur ; deux suites de mots qui ne sont pas des phrases, vérifiées pas à pas (✓ ✓ ✗) ; « de qui on
- * parle / ce qu'on en dit » sur deux exemples (le groupe sujet en bleu, le reste en vert) ; une phrase peut être courte ou longue.
+ * « La phrase » expliquée (CE1, sans types ni formes), en quatre bandes : la définition et son exemple ; les trois vérifications (majuscule,
+ * point, sens), chacune dans un rond de couleur ; une suite de mots qui n'est pas une phrase, vérifiée pas à pas (✓ ✓ ✗) ; « de qui on
+ * parle / ce qu'on en dit » sur un exemple (le groupe sujet en bleu, le reste en vert). Peu de texte, en grand : c'est une affiche.
  */
 function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
   const police = ctx.nomPolice()
@@ -101,8 +101,8 @@ function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) 
   ]
   const verifier = (w: number, h: number): string => {
     const lV = (w - 8) / 3
-    const tNom = taille(verifs.map(v => v.nom), lV * 0.9, h * 0.15)
-    const tDetail = taille(verifs.map(v => v.detail).filter(Boolean), lV * 0.92, h * 0.12)
+    const tNom = taille(verifs.map(v => v.nom), lV * 0.9, h * 0.16)
+    const tDetail = taille(verifs.map(v => v.detail).filter(Boolean), lV * 0.92, h * 0.13)
     const rond = Math.min(h * 0.3, lV * 0.3)
     return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.verifier')], w * 0.9, h * 0.13)}mm">${echapper(T('exp.verifier'))}</p>
     <div class="verifs">${verifs.map((v, i) => `<div class="verif" style="width:${lV}mm;border-color:${v.couleur}">
@@ -110,40 +110,35 @@ function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) 
       <b style="font-size:${tNom}mm;color:${v.couleur}">${echapper(v.nom)}</b>${v.detail ? `<span style="font-size:${tDetail}mm">${echapper(v.detail)}</span>` : ''}</div>`).join('')}</div></div>`
   }
 
-  // 3. deux suites de mots qui ne sont pas des phrases, vérifiées : ✓ ou ✗ pour chacune des trois vérifications
+  // 3. une suite de mots qui n'est pas une phrase, vérifiée : ✓ ou ✗ pour chacune des trois vérifications
   const pas = [
     { texte: T('exp.pas.1'), coches: [true, true, false], raison: T('exp.pas.1.raison') },
-    { texte: T('exp.pas.2'), coches: [false, false, false], raison: T('exp.pas.2.raison') },
   ]
   const coche = (ok: boolean, i: number): string => `<span class="coche-exp" style="color:${ok ? VERT : ROUGE}">${i + 1} ${ok ? '✓' : '✗'}</span>`
   const contreExemples = (w: number, h: number): string => {
-    const tPas = taille(pas.map(p => p.texte), w * 0.55, h * 0.13)
-    const tRaison = taille(pas.map(p => p.raison), w * 0.9, h * 0.09)
+    const tPas = taille(pas.map(p => p.texte), w * 0.6, h * 0.2)
+    const tRaison = taille(pas.map(p => p.raison), w * 0.92, h * 0.14)
     return `<div class="bande-exp pas-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.pas.titre')], w * 0.9, h * 0.12)}mm;color:${ROUGE}">${echapper(T('exp.pas.titre'))}</p>
     ${pas.map(p => `<div class="ligne-exp"><s style="font-size:${tPas}mm">${echapper(p.texte)}</s><span class="coches" style="font-size:${tPas * 0.8}mm">${p.coches.map(coche).join('')}</span></div>
       <p class="raison" style="font-size:${tRaison}mm">→ ${echapper(p.raison)}</p>`).join('')}</div>`
   }
 
   // 4. de qui on parle, ce qu'on en dit : le groupe sujet en bleu, le reste en vert
-  const exemples = [1, 2].map(n => ({ sujet: T(`exp.qui.${n}.sujet`), reste: T(`exp.qui.${n}.reste`) }))
+  const exemples = [1].map(n => ({ sujet: T(`exp.qui.${n}.sujet`), reste: T(`exp.qui.${n}.reste`) }))
   const quiOnParle = (w: number, h: number): string => {
-    const tQui = taille(exemples.map(e => `${e.sujet} ${e.reste}`), w * 0.8, h * 0.18)
-    const tEtiq = Math.min(tQui * 0.45, 5.5)
+    const tQui = taille(exemples.map(e => `${e.sujet} ${e.reste}`), w * 0.85, h * 0.3)
+    const tEtiq = Math.min(tQui * 0.4, 7)
     const groupe = (texte: string, couleur: string, etiquette: string): string =>
       `<span class="groupe-exp" style="border-color:${couleur}"><span>${echapper(texte)}</span><small style="color:${couleur};font-size:${tEtiq}mm">${echapper(etiquette)}</small></span>`
     return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.qui.titre')], w * 0.95, h * 0.12)}mm">${echapper(T('exp.qui.titre'))}</p>
     ${exemples.map(e => `<p class="phrase-exp" style="font-size:${tQui}mm">${groupe(e.sujet, BLEU, T('exp.qui.sujet'))}${groupe(e.reste, VERT, T('exp.qui.reste'))}</p>`).join('')}</div>`
   }
 
-  // 5. courte ou longue
-  const longueur = (w: number, h: number): string => `<div class="bande-exp" style="width:${w}mm;height:${h}mm">
-    <p class="longueur-exp" style="font-size:${taille([T('exp.longueur')], w * 0.95, h * 0.32)}mm">${echapper(T('exp.longueur'))}</p></div>`
-
   const contenu = (html: string): string => `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${html}</div>`
   // portrait : les cinq bandes l'une sous l'autre ; paysage : deux colonnes (ce qu'est une phrase / ce qui n'en est pas une, et ses groupes)
-  if (H >= W) return contenu(definition(W, H * 0.16) + verifier(W, H * 0.24) + contreExemples(W, H * 0.24) + quiOnParle(W, H * 0.26) + longueur(W, H * 0.1))
+  if (H >= W) return contenu(definition(W, H * 0.22) + verifier(W, H * 0.3) + contreExemples(W, H * 0.22) + quiOnParle(W, H * 0.26))
   const l = (W - 6) / 2
-  const gauche = `<div class="colonne-exp">${definition(l, H * 0.34)}${verifier(l, H * 0.46)}${longueur(l, H * 0.2)}</div>`
+  const gauche = `<div class="colonne-exp">${definition(l, H * 0.42)}${verifier(l, H * 0.58)}</div>`
   const droite = `<div class="colonne-exp">${contreExemples(l, H * 0.48)}${quiOnParle(l, H * 0.52)}</div>`
   return contenu(`<div class="colonnes-exp">${gauche}${droite}</div>`)
 }

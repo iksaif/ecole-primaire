@@ -196,7 +196,7 @@ function dessinTypes({ W, H }: { W: number, H: number }, T: (cle: string) => str
   const tRegle = tailleQuiTient([`${T('regle.titre')} ${T('regle.texte')}`], police, W * 0.9, hRegle * 0.34, ctx)
   const tExRegle = tailleQuiTient([exemple], police, W * 0.6, hRegle * 0.4, ctx)
   const regle = `<div class="regle" style="height:${hRegle}mm"><p style="font-size:${tRegle}mm"><b>${echapper(T('regle.titre'))}</b> ${echapper(T('regle.texte'))}</p>
-    <p class="exemple-regle" style="font-size:${tExRegle}mm">${exempleHtml}</p></div>`
+    <p class="regle-exemple" style="font-size:${tExRegle}mm">${exempleHtml}</p></div>`
 
   // 2. les trois types de phrases
   const types: Carte[] = [
@@ -223,7 +223,7 @@ export const css = `
   .titre-bande { margin: 0; color: #444; font-weight: 700; line-height: 1.7; flex: none; }
   .regle { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2mm; flex: none; text-align: center; }
   .regle p { margin: 0; }
-  .exemple-regle { font-weight: 600; }
+  .regle-exemple { font-weight: 600; }
   .marque { display: inline-block; border: .6mm solid ${ROUGE}; border-radius: 50%; padding: 0 1mm; line-height: 1.1; color: ${ROUGE}; }
   .rangee-phrase { display: flex; flex: none; }
   .carte-phrase { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5mm; border: .5mm solid; border-radius: 3mm; box-sizing: border-box; text-align: center; padding: 1mm; }

@@ -5,7 +5,7 @@
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types" :titre="t('grammaire.exercices')"
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types" :titre="t('communs.exercices')"
         :libelle="ty => tr(`type_${ty}`)" :groupes="groupes">
         <template #valeur="{ valeur: ty, texte }"><span class="theme-icon">{{ ICONES[ty] }}</span> {{ texte }}</template>
         <p class="astuce">{{ t('grammaire.astuce') }}</p>

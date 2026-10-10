@@ -1,5 +1,6 @@
 import type { Classe } from '../data/classes.ts'
 import type { TableConfiance } from './confiance.ts'
+import type { NomEmoji } from '../images/tables.ts'
 // Types du système de langues : définition d'une langue, catalogues de textes typés, clés et paramètres dérivés du français.
 // Purs (aucune dépendance) : lisibles par node, sans compilation.
 
@@ -79,8 +80,8 @@ export interface DonneesRegionales {
   alphabet: readonly string[]
   lettresEnPlus: readonly string[]
   titreAlphabet: string
-  /** Mot illustré par lettre : [mot, emoji] */
-  mots: Readonly<Record<string, readonly [string, string]>>
+  /** Mot illustré par lettre : [mot, nom de l'emoji (src/images/tables.ts)] */
+  mots: Readonly<Record<string, readonly [string, NomEmoji]>>
   /** Nombre en lettres (0 à 9999) */
   enLettres(n: number): string
   /** Listes de mots : jours, mois, nombres… `libelle` : nom de la liste dans chaque langue d'interface */

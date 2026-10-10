@@ -45,7 +45,7 @@ export const TEXTES: TextesAffiche = {
     'valeur.styles.attache-maj': 'Attaché majuscule', 'valeur.styles.attache-min': 'Attaché minuscule',
     'reglage.mot': 'Un mot et une image',
     'valeur.mot.true': 'Oui', 'valeur.mot.false': 'Non',
-    'aide.mot': 'Un mot et une image pour chaque lettre (A comme abeille 🐝).',
+    'aide.mot': 'Un mot et une image pour chaque lettre (A comme abeille).',
     'reglage.voyelles': 'Couleurs',
     'valeur.voyelles.true': 'Voyelles en rouge, consonnes en bleu', 'valeur.voyelles.false': 'Tout en noir',
     'reglage.lignes': 'Lignes d’écriture',
@@ -85,7 +85,7 @@ export const TEXTES: TextesAffiche = {
     'valeur.styles.attache-maj': 'A-stag, pennlizherennoù', 'valeur.styles.attache-min': 'A-stag, lizherennoù bihan', // br: à relire
     'reglage.mot': 'Ur ger hag ur skeudenn', // br: à relire
     'valeur.mot.true': 'Ya', 'valeur.mot.false': 'Ket', // br: à relire
-    'aide.mot': 'Ur ger hag ur skeudenn evit pep lizherenn (A evel abeille 🐝).', // br: à relire
+    'aide.mot': 'Ur ger hag ur skeudenn evit pep lizherenn (A evel abeille).', // br: à relire
     'reglage.voyelles': 'Livioù', // br: à relire
     'valeur.voyelles.true': 'Vogalennoù e ruz, kensonennoù e glas', 'valeur.voyelles.false': 'Pep tra e du', // br: à relire
     'reglage.lignes': 'Linennoù skrivañ', // br: à relire

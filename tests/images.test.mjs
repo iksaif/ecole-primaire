@@ -22,7 +22,9 @@ for (const [style, donnees] of [['couleur', COULEUR], ['contour', CONTOUR]]) {
 }
 verifier(new Set(codes).size === codes.length, 'deux noms ne désignent pas le même emoji')
 verifier(SCENES.every(n => n in EMOJIS), 'les scènes sont des emojis de la table')
-verifier(codes.every(c => COULEUR[c] !== CONTOUR[c]), 'le contour diffère de la couleur pour chaque emoji')
+// le contour ne garde que le noir et le blanc (un emoji déjà noir et blanc, comme le nuage, est identique en couleur)
+const COULEUR_RESTANTE = /(?:fill|stroke)="(?!none"|#000"|#000000"|#fff"|#ffffff"|black"|white")[^"]*"/i
+verifier(codes.every(c => !COULEUR_RESTANTE.test(CONTOUR[c])), 'le contour ne garde que le noir et le blanc')
 
 // Budget : les données sont dans le paquet des fiches et des affiches, chargé à la demande. Au-delà, découper (contour à la demande,
 // lots par domaine) : src/images/README.md, « Poids ». Ne pas relever le budget sans l'écrire là.

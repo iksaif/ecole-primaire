@@ -6,6 +6,7 @@
 //               d'une seule lettre (breton : ñ et ù ; ch et c'h sont des digrammes, déjà dans son alphabet)
 import { donneesRegionales } from '../../langues/registre.ts'
 import type { Langue } from '../../langues/registre.ts'
+import type { NomEmoji } from '../../images/tables.ts'
 
 export const SERIES = ['alphabet', 'speciales'] as const
 export type Serie = (typeof SERIES)[number]
@@ -32,9 +33,12 @@ export const majuscule = (lettre: string): string => lettre.charAt(0).toUpperCas
 /** Voyelle ? (« é », « ù » comptent ; les ligatures œ et æ aussi ; « ch », « c'h », « ñ », « ç » non). */
 export const estVoyelle = (lettre: string): boolean => /^[aeiouyœæ]/.test(lettre.normalize('NFD'))
 
-// l'image de chaque mot du français (le mot est dans les textes de l'affiche : `mot.<lettre>`) ; une langue régionale a les siennes
-export const IMAGES: Readonly<Record<string, string>> = {
-  a: '🐝', b: '🎈', c: '🦆', d: '🐬', e: '🐌', f: '🍓', g: '🦍', h: '🦉', i: '🖼️', j: '🧃', k: '🐨', l: '🦁', m: '🏠',
-  n: '☁️', o: '🍊', p: '🍎', q: '🎳', r: '🦊', s: '☀️', t: '🐢', u: '🏭', v: '🐄', w: '🚃', x: '🚕', y: '🖊️', z: '🦓',
-  é: '⭐', è: '🍦', ê: '🎉', ë: '🎄', à: '📍', â: '🍝', î: '🏝️', ï: '🌽', ô: '🏨', ù: '🧭', û: '🫐', ç: '🧊', œ: '🥚', æ: '🥇',
+// l'image de chaque mot du français (le mot est dans les textes de l'affiche : `mot.<lettre>`), un emoji de src/images/tables.ts ; une
+// langue régionale a les siennes. Images ambiguës relues et acceptées (2026-10-07) : image, jus, usine, taxi (pour x), stylo, nuage.
+export const IMAGES: Readonly<Record<string, NomEmoji>> = {
+  a: 'abeille', b: 'ballonDeBaudruche', c: 'canard', d: 'dauphin', e: 'escargot', f: 'fraise', g: 'gorille', h: 'hibou', i: 'tableau',
+  j: 'jus', k: 'koala', l: 'lion', m: 'maison', n: 'nuage', o: 'orange', p: 'pomme', q: 'quilles', r: 'renard', s: 'soleil',
+  t: 'tortue', u: 'usine', v: 'vache', w: 'wagon', x: 'taxi', y: 'stylo', z: 'zebre',
+  é: 'etoile', è: 'glace', ê: 'fete', ë: 'sapinDeNoel', à: 'repere', â: 'pates', î: 'ile', ï: 'mais', ô: 'hotel', ù: 'boussole',
+  û: 'myrtilles', ç: 'glacon', œ: 'oeuf', æ: 'medaille',
 }

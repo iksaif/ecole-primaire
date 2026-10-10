@@ -10,11 +10,12 @@ import type { Langue } from '../../langues/registre.ts'
 import type { Traducteur } from '../../noyau/types.ts'
 import type { ContexteDessin, Page, Rendu } from '../types.ts'
 import { IMAGES, estVoyelle, lettresDe, majuscule } from './lettres.ts'
+import type { NomEmoji } from '../../images/tables.ts'
 import { H_TITRE } from './definition.ts'
 import type { Reglages } from './definition.ts'
 
 type Config = Parameters<Rendu<Reglages>['dessin']>[0]
-type Mots = Readonly<Record<string, readonly [string, string]>>
+type Mots = Readonly<Record<string, readonly [string, NomEmoji]>>
 
 const ROUGE = '#d62828', BLEU = '#1d4e9e', NOIR = '#1a1a1a'
 const arrondi = (n: number): number => Math.round(n * 1000) / 1000
@@ -105,11 +106,13 @@ function carte(l: string, x: number, y: number, w: number, h: number, { r, ctx, 
     const segments = morceaux.filter(([t]) => t)
     const largeurs = segments.map(([t, gras]) => mesure.largeur(t, nom, gras))
     const enMot = largeurs.reduce((a, b) => a + b, 0)
-    // l'image (1,3 em) puis un quart d'em puis le mot : 85 % de la largeur de la carte au plus, 42 % de la hauteur de la ligne
+    // l'image (un carré de 1,3 em, selon la préférence « Images ») puis un quart d'em puis le mot : 85 % de la largeur de la carte
+    // au plus, 42 % de la hauteur de la ligne
     const taille = Math.min(hMot * 0.42, w * 0.85 / (1.3 + 0.25 + enMot))
     const centre = haut + hMot / 2
     let xm = x + w / 2 - (1.3 + 0.25 + enMot) * taille / 2
-    s += texte(xm, centre, taille * 1.3, famille, NOIR, image)
+    const cote = taille * 1.3
+    s += ctx.images.svg(image, xm, centre - cote / 2, cote)
     xm += (1.3 + 0.25) * taille
     segments.forEach(([t, gras], i) => {
       s += texte(xm, centre, taille, famille, gras ? couleur : '#444', t, { gras })

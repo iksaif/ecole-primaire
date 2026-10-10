@@ -10,11 +10,11 @@ const plage = (de: number, a: number): number[] => Array.from({ length: a - de +
 // pl. zebred), vérifié le 2026-10-04 dans le Wiktionnaire breton (br.wiktionary.org/wiki/zebr), le Favereau
 // (via geriafurch.bzh) et les traductions de « zèbre » du Wiktionnaire ; homographe de « zebr », forme mutée de debr.
 const MOTS_ILLUSTRES: DonneesRegionales['mots'] = {
-  a: ['aval', '🍎'], b: ['bara', '🍞'], ch: ['chokolad', '🍫'], "c'h": ["c'hwil", '🪲'], d: ['dour', '💧'],
-  e: ["erc'h", '❄️'], f: ['frouezh', '🍓'], g: ['gavr', '🐐'], h: ['heol', '☀️'], i: ['iliz', '⛪'],
-  j: ['jirafenn', '🦒'], k: ['ki', '🐕'], l: ['loar', '🌙'], m: ['mor', '🌊'], n: ['neizh', '🪺'],
-  o: ['ognon', '🧅'], p: ['pesk', '🐟'], r: ['rod', '🛞'], s: ['skol', '🏫'], t: ['ti', '🏠'],
-  u: ['unan', '1️⃣'], v: ['vi', '🥚'], w: ["warc'hoazh", '📅'], y: ['yar', '🐔'], z: ['zebr', '🦓'],
+  a: ['aval', 'pomme'], b: ['bara', 'pain'], ch: ['chokolad', 'chocolat'], "c'h": ["c'hwil", 'scarabee'], d: ['dour', 'goutte'],
+  e: ["erc'h", 'flocon'], f: ['frouezh', 'fraise'], g: ['gavr', 'chevre'], h: ['heol', 'soleil'], i: ['iliz', 'eglise'],
+  j: ['jirafenn', 'girafe'], k: ['ki', 'chien'], l: ['loar', 'lune'], m: ['mor', 'vague'], n: ['neizh', 'nid'],
+  o: ['ognon', 'oignon'], p: ['pesk', 'poisson'], r: ['rod', 'roue'], s: ['skol', 'ecole'], t: ['ti', 'maison'],
+  u: ['unan', 'chiffreUn'], v: ['vi', 'oeuf'], w: ["warc'hoazh", 'calendrier'], y: ['yar', 'poule'], z: ['zebr', 'zebre'],
 }
 
 // Les noms de jours et de mois prennent une majuscule en breton

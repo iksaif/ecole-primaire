@@ -1,5 +1,6 @@
 // Les emojis que le site affiche, par nom : une faute de frappe ne compile pas, et le script `scripts/generer/images.ts` n'importe
-// que ces fichiers-là. Deux sources : OpenMoji (code = nom du fichier de la version d'OpenMoji, en majuscules, sans le sélecteur FE0F),
+// que ces fichiers-là. Deux sources : OpenMoji (code = nom du fichier de la version d'OpenMoji, en majuscules, sans le sélecteur FE0F final ; une touche garde le sien au milieu :
+// `0031-FE0F-20E3`),
 // et nos dessins « maison » au même style quand OpenMoji n'a pas ce qu'il faut (code `maison:<nom>` = src/images/maison/<nom>.svg ;
 // règles de dessin : src/images/maison/README.md). Un emoji se rend avec le rendu que reçoit le dessin (`ctx.images` d'une affiche,
 // `images` d'une fiche : `svg(…)` ou `html(…)`, src/images/rendu.ts). Un emoji de plus : l'écrire ici, puis
@@ -27,6 +28,15 @@ export const EMOJIS = {
   glacon: '1F9CA',
   // les objets des solides
   de: '1F3B2', boite: '1F4E6', ballon: '26BD', conserve: '1F96B', glace: '1F366', pyramide: 'E20F', // E20F : « great pyramid of giza » (extras d'OpenMoji, même licence)
+  // l'alphabet (français : src/affiches/alphabet/lettres.ts ; breton : src/langues/br/donnees.ts) ; pomme, soleil, maison, étoile, glace
+  // (« crème »), pâtes, glaçon, œuf, goutte (« dour »), lune, école, poule et zèbre sont plus haut ou partagés
+  abeille: '1F41D', ballonDeBaudruche: '1F388', canard: '1F986', dauphin: '1F42C', escargot: '1F40C', fraise: '1F353', gorille: '1F98D',
+  hibou: '1F989', tableau: '1F5BC', jus: '1F9C3', koala: '1F428', lion: '1F981', maison: '1F3E0', nuage: '2601', orange: '1F34A',
+  quilles: '1F3B3', renard: '1F98A', tortue: '1F422', usine: '1F3ED', vache: '1F404', wagon: '1F683', taxi: '1F695', stylo: '1F58A',
+  zebre: '1F993', fete: '1F389', sapinDeNoel: '1F384', repere: '1F4CD', ile: '1F3DD', mais: '1F33D', hotel: '1F3E8', boussole: '1F9ED',
+  myrtilles: '1FAD0', medaille: '1F947',
+  pain: '1F35E', chocolat: '1F36B', scarabee: '1FAB2', flocon: '2744', chevre: '1F410', eglise: '26EA', girafe: '1F992', chien: '1F415',
+  vague: '1F30A', nid: '1FABA', oignon: '1F9C5', poisson: '1F41F', roue: '1F6DE', chiffreUn: '0031-FE0F-20E3', calendrier: '1F4C5',
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */

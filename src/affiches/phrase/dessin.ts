@@ -1,14 +1,9 @@
-// Le dessin de « La phrase » : quatre bandes, du haut vers le bas.
-//   1. la règle : une phrase commence par une majuscule et finit par un point (dans l'exemple, la majuscule et le point sont entourés) ;
-//   2. les trois types, chacun avec son signe en grand dans un rond de couleur, à quoi il sert et un exemple ;
-//   3. les deux formes (négative : « ne … pas » en couleur ; exclamative : le point d'exclamation) ;
-//   4. (réglage) les groupes : la phrase d'exemple découpée en groupe sujet, verbe, complément, chaque groupe souligné de sa couleur.
-// Pur : la mesure du texte vient du contexte.
+// Le dessin des quatre affiches « La phrase » (definition.ts) : une fonction par variante, des bandes du haut vers le bas, en portrait.
+// Pur : la mesure du texte vient du contexte. Les noms des types et des formes sont ceux de l'exercice (src/langues/fr/textes/grammaire.ts).
 import { echapper } from '../../utils/html.js'
 import { tailleQuiTient } from '../listeMots.ts'
 import type { ContexteDessin, Rendu } from '../types.ts'
 import GRAMMAIRE from '../../langues/fr/textes/grammaire.ts'
-import PHRASE from '../../langues/fr/textes/grammairePhrase.ts'
 import type { Reglages } from './definition.ts'
 
 const BLEU = '#1d4e9e', ORANGE = '#d9480f', VERT = '#2b8a3e', VIOLET = '#862e9c', ROUGE = '#c2255c'
@@ -128,41 +123,71 @@ function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) 
       <p class="raison" style="font-size:${tRaison}mm">→ ${echapper(p.raison)}</p>`).join('')}</div>`
   }
 
-  // 4. de qui on parle, ce qu'on en dit : le groupe sujet en bleu, le reste en vert
-  const exemples = [1].map(n => ({ sujet: T(`exp.qui.${n}.sujet`), reste: T(`exp.qui.${n}.reste`) }))
-  const quiOnParle = (w: number, h: number): string => {
-    const tQui = taille(exemples.map(e => `${e.sujet} ${e.reste}`), w * 0.85, h * 0.3)
-    const tEtiq = Math.min(tQui * 0.4, 7)
-    const groupe = (texte: string, couleur: string, etiquette: string): string =>
-      `<span class="groupe-exp" style="border-color:${couleur}"><span>${echapper(texte)}</span><small style="color:${couleur};font-size:${tEtiq}mm">${echapper(etiquette)}</small></span>`
-    return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.qui.titre')], w * 0.95, h * 0.12)}mm">${echapper(T('exp.qui.titre'))}</p>
-    ${exemples.map(e => `<p class="phrase-exp" style="font-size:${tQui}mm">${groupe(e.sujet, BLEU, `${T('exp.qui.sujet')} · ${T('exp.qui.sujet.nom')}`)}${groupe(e.reste, VERT, T('exp.qui.reste'))}</p>`).join('')}</div>`
+  // 4. les groupes de la phrase de l'exemple : le groupe sujet (de qui, de quoi on parle), le verbe, le complément ; chacun souligné de sa couleur
+  const groupes = [
+    { texte: T('exp.qui.1.sujet'), couleur: BLEU, nom: T('groupe.sujet'), question: T('exp.qui.sujet') },
+    { texte: T('exp.qui.1.verbe'), couleur: ORANGE, nom: GRAMMAIRE.choix_verbe, question: T('exp.qui.verbe') },
+    { texte: T('exp.qui.1.complement'), couleur: VERT, nom: T('groupe.complement'), question: T('exp.qui.complement') },
+  ]
+  const lesGroupes = (w: number, h: number): string => {
+    const tPhrase = taille([groupes.map(g => g.texte).join(' ')], w * 0.85, h * 0.3)
+    const tNom = Math.min(tPhrase * 0.5, 7)
+    const tQuestion = Math.min(tNom * 0.85, taille(groupes.map(g => g.question), (w * 0.85) / 3, h * 0.1))
+    return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.qui.titre')], w * 0.9, h * 0.12)}mm">${echapper(T('exp.qui.titre'))}</p>
+    <p class="phrase-exp" style="font-size:${tPhrase}mm">${groupes.map(g => `<span class="groupe-exp" style="border-color:${g.couleur}"><span>${echapper(g.texte)}</span>
+      <small style="color:${g.couleur};font-size:${tNom}mm">${echapper(g.nom)}</small><em style="font-size:${tQuestion}mm">${echapper(g.question)}</em></span>`).join('')}</p></div>`
   }
 
-  const contenu = (html: string): string => `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${html}</div>`
-  // portrait : les cinq bandes l'une sous l'autre ; paysage : deux colonnes (ce qu'est une phrase / ce qui n'en est pas une, et ses groupes)
-  if (H >= W) return contenu(definition(W, H * 0.22) + verifier(W, H * 0.3) + contreExemples(W, H * 0.22) + quiOnParle(W, H * 0.26))
-  const l = (W - 6) / 2
-  const gauche = `<div class="colonne-exp">${definition(l, H * 0.42)}${verifier(l, H * 0.58)}</div>`
-  const droite = `<div class="colonne-exp">${contreExemples(l, H * 0.48)}${quiOnParle(l, H * 0.52)}</div>`
-  return contenu(`<div class="colonnes-exp">${gauche}${droite}</div>`)
+  return `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${definition(W, H * 0.2) + verifier(W, H * 0.28) + contreExemples(W, H * 0.22) + lesGroupes(W, H * 0.3)}</div>`
+}
+
+/** CP : les trois types de phrases, reconnus par leur signe de fin ; ce que fait chaque phrase en grand (je dis, je demande, je donne un ordre). */
+function dessinTypesCP({ W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
+  const police = ctx.nomPolice()
+  const hIntro = H * 0.1
+  const tIntro = tailleQuiTient([T('cp.intro')], police, W * 0.92, hIntro * 0.45, ctx)
+  // les cartes : le rôle de la phrase prend la place du nom (le mot « déclarative » ne se lit pas au CP)
+  const cartes: Carte[] = [
+    { signe: ['point'], couleur: BLEU, nom: T('cp.declarative.role'), role: GRAMMAIRE.choix_declarative, exemple: echapper(T('type.declarative.exemple')) },
+    { signe: ['?'], couleur: ORANGE, nom: T('cp.interrogative.role'), role: GRAMMAIRE.choix_interrogative, exemple: echapper(T('type.interrogative.exemple')) },
+    { signe: ['point'], couleur: VERT, nom: T('cp.imperative.role'), role: GRAMMAIRE.choix_imperative, exemple: echapper(T('type.imperative.exemple')) },
+  ]
+  return `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}"><p class="intro-cp" style="height:${hIntro}mm;font-size:${tIntro}mm">${echapper(T('cp.intro'))}</p>
+    ${pile(cartes, W, H - hIntro, ctx)}</div>`
+}
+
+/** Les cartes l'une sous l'autre (CP) : le signe en grand à gauche, ce que fait la phrase et l'exemple à droite, le nom du type en petit. */
+function pile(cartes: readonly Carte[], W: number, H: number, ctx: ContexteDessin): string {
+  const ecart = 4
+  const h = (H - (cartes.length - 1) * ecart) / cartes.length
+  const police = ctx.nomPolice()
+  const rond = h * 0.62
+  const lTexte = W - rond - 16
+  const tNom = tailleQuiTient(cartes.map(c => c.nom), police, lTexte, h * 0.26, ctx)
+  const tExemple = tailleQuiTient(cartes.map(c => c.exemple.replace(/<[^>]+>/g, '')), police, lTexte, h * 0.2, ctx)
+  const tRole = Math.min(tExemple * 0.6, 5)
+  const signes = (c: Carte): string => c.signe.map(s => (s === 'point' ? `<span class="point" style="width:${rond * 0.22}mm;height:${rond * 0.22}mm"></span>` : `<span>${s}</span>`)).join('')
+  return `<div class="pile-cp" style="gap:${ecart}mm">${cartes.map(c => `<div class="carte-cp" style="height:${h}mm;border-color:${c.couleur}">
+    <span class="rond" style="width:${rond}mm;height:${rond}mm;background:${c.couleur};font-size:${rond * 0.68}mm">${signes(c)}</span>
+    <div class="textes-cp"><b style="font-size:${tNom}mm;color:${c.couleur}">${echapper(c.nom)}</b><span class="exemple" style="font-size:${tExemple}mm">${c.exemple}</span>
+    <small style="font-size:${tRole}mm">${echapper(c.role)}</small></div></div>`).join('')}</div>`
 }
 
 export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
-  if (r.variante === 'explication') return [{ corps: dessinExplication({ W, H }, T, ctx), titre: r.titre || PHRASE.titre }]
+  if (r.variante === 'explication') return [{ corps: dessinExplication({ W, H }, T, ctx), titre: r.titre || T('titre.explication') }]
+  if (r.variante === 'types-cp') return [{ corps: dessinTypesCP({ W, H }, T, ctx), titre: r.titre || T('titre.types-cp') }]
   if (r.variante === 'definition') return [{ corps: dessinDefinition({ W, H }, T, ctx), titre: r.titre || T('variante.definition.court') }]
-  return [{ corps: dessinTypes(r, { W, H }, T, ctx), titre: r.titre || T('titre.ce1') }]
+  return [{ corps: dessinTypes({ W, H }, T, ctx), titre: r.titre || T('titre.ce1') }]
 }
 
-/** La phrase au CE1 : la règle, les trois types, les deux formes, les groupes (réglage). */
-function dessinTypes(r: Reglages, { W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
+/** CE1 : la règle, les trois types, les deux formes (les groupes sont sur « Reconnaître une phrase »). */
+function dessinTypes({ W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
   const police = ctx.nomPolice()
   const tTitre = Math.min(6.5, H * 0.03)
   const hTitre = tTitre * 1.7
-  // les hauteurs des bandes : la règle, les types (la plus grande), les formes, les groupes (réglage)
-  const parts = r.groupes ? [0.17, 0.33, 0.27, 0.23] : [0.2, 0.42, 0.38, 0]
-  const libre = H - hTitre * (r.groupes ? 3 : 2)
-  const [hRegle, hTypes, hFormes, hGroupes] = parts.map(p => p * libre)
+  // les hauteurs des bandes : la règle, les types (la plus grande), les formes
+  const libre = H - hTitre * 2
+  const [hRegle, hTypes, hFormes] = [0.2, 0.42, 0.38].map(p => p * libre)
 
   // 1. la règle, avec la majuscule et le point entourés dans l'exemple
   const exemple = T('regle.exemple')
@@ -187,19 +212,9 @@ function dessinTypes(r: Reglages, { W, H }: { W: number, H: number }, T: (cle: s
     { signe: ['!'], couleur: ROUGE, nom: T('forme.exclamative'), role: T('forme.exclamative.role'), exemple: echapper(T('forme.exclamative.exemple')) },
   ]
 
-  // 4. les groupes de la phrase : chaque groupe souligné de sa couleur, son nom dessous
-  const groupesHtml = (): string => {
-    const g = [['sujet', BLEU], ['verbe', ORANGE], ['complement', VERT]] as const
-    const t = tailleQuiTient([g.map(([id]) => T(`groupe.exemple.${id}`)).join('  ')], police, W * 0.85, hGroupes * 0.32, ctx)
-    const tNom = Math.min(t * 0.55, hGroupes * 0.16)
-    return `<div class="groupes" style="height:${hGroupes}mm">${g.map(([id, couleur]) => `<span class="groupe" style="border-color:${couleur}">
-      <span style="font-size:${t}mm">${echapper(T(`groupe.exemple.${id}`))}</span><small style="font-size:${tNom}mm;color:${couleur}">${echapper(id === 'verbe' ? GRAMMAIRE.choix_verbe : T(`groupe.${id}`))}</small></span>`).join('')}</div>`
-  }
-
   const corps = `${regle}
     ${titre(T('types.titre'), tTitre)}${rangee(types, W, hTypes, ctx)}
-    ${titre(T('formes.titre'), tTitre)}${rangee(formes, W, hFormes * 0.82, ctx)}<p class="lien-formes" style="font-size:${Math.min(tTitre * 0.75, hFormes * 0.08)}mm">${echapper(T('formes.lien'))}</p>
-    ${r.groupes ? `${titre(T('groupes.titre'), tTitre)}${groupesHtml()}` : ''}`
+    ${titre(T('formes.titre'), tTitre)}${rangee(formes, W, hFormes * 0.82, ctx)}<p class="lien-formes" style="font-size:${Math.min(tTitre * 0.75, hFormes * 0.08)}mm">${echapper(T('formes.lien'))}</p>`
   return `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${corps}</div>`
 }
 
@@ -219,9 +234,6 @@ export const css = `
   .negation { color: ${VIOLET}; }
   .point { display: inline-block; border-radius: 50%; background: #fff; }
   .rond { gap: .6mm; }
-  .groupes { display: flex; justify-content: center; align-items: center; gap: 3mm; flex: none; }
-  .groupe { display: inline-flex; flex-direction: column; align-items: center; border-bottom: 1.2mm solid; padding: 0 1mm 1mm; line-height: 1.2; }
-  .groupe small { font-weight: 700; }
   .colonnes-exp { display: flex; gap: 6mm; }
   .colonne-exp { display: flex; flex-direction: column; }
   .bande-exp { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5mm; flex: none; text-align: center; }
@@ -236,6 +248,12 @@ export const css = `
   .phrase-exp { display: flex; gap: 2mm; justify-content: center; }
   .groupe-exp { display: inline-flex; flex-direction: column; align-items: center; border-bottom: 1.2mm solid; padding: 0 1mm .5mm; line-height: 1.2; }
   .groupe-exp small { font-weight: 700; white-space: nowrap; }
+  .groupe-exp em { color: #555; white-space: nowrap; }
+  .intro-cp { display: flex; align-items: center; justify-content: center; margin: 0; text-align: center; font-weight: 700; color: #444; }
+  .pile-cp { display: flex; flex-direction: column; }
+  .carte-cp { display: flex; align-items: center; gap: 6mm; padding: 0 5mm; border: .6mm solid; border-radius: 4mm; box-sizing: border-box; }
+  .textes-cp { display: flex; flex-direction: column; gap: 1.5mm; line-height: 1.15; }
+  .textes-cp small { color: #666; }
   .longueur-exp { color: #444; font-style: italic; }
   .lien-formes { margin: 1mm 0 0; color: #444; text-align: center; font-style: italic; flex: none; }
   .exemple-def { display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none; padding-bottom: 6mm; box-sizing: border-box; }

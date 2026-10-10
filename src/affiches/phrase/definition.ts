@@ -1,9 +1,7 @@
-// La phrase (CE1) : ce qu'est une phrase (une majuscule, un point, du sens), ses trois types avec leur ponctuation (déclarative, interrogative,
-// impérative), ses deux formes (négative avec « ne … pas », exclamative), et ses groupes (le groupe sujet, le verbe, le complément).
-// Programme (src/data/programme.ts) : « phrase » (BO n° 41 p. 93 : « Reconnaitre et utiliser les trois types de phrases, en lien avec la
-// ponctuation : déclarative, interrogative et impérative » ; « les formes négatives et exclamatives » ; « groupe sujet, verbe et compléments
-// sans distinguer ces derniers entre eux »). Français seulement (décision du 2026-10-10). Dessin : dessin.ts.
-import { definirAffiche, choix } from '../definir.ts'
+// La phrase, quatre affiches (CP et CE1) : qu'est-ce qu'une phrase (CP), ses trois types par la ponctuation (CP), reconnaître une phrase et ses
+// groupes (CE1), ses types et ses formes (CE1). Programme (src/data/programme.ts) : « phrase » et « sujet-verbe » (BO n° 41 p. 92-93).
+// Français seulement (décision du 2026-10-10). Dessin : dessin.ts.
+import { definirAffiche } from '../definir.ts'
 import { D, K } from '../../noyau/ids.ts'
 import type { ReglagesDeAffiche } from '../types.ts'
 
@@ -11,18 +9,22 @@ const definition = definirAffiche({
   id: 'phrase',
   domaine: D.grammaire,
   emoji: '✍️',
-  orientations: ['portrait', 'landscape'],
+  // portrait seulement : ce sont des affiches de texte en bandes, illisibles en deux colonnes étroites
+  orientations: ['portrait'],
   formats: ['A4', 'A3'],
   competences: [K.phrase, K.sujetVerbe],
-  // les groupes de la phrase (sujet, verbe, complément) : une bande de plus en bas de l'affiche
-  reglages: { groupes: choix([true, false]) },
+  // quatre affiches, deux par classe ; chacune dit une seule chose (pas de réglage qui ajoute ou retire une partie)
   variantes: {
-    // ce qu'est une phrase, sans les types : la majuscule, le point (. ? !), des mots dans l'ordre, un sens, un verbe ; et ce qui n'en est pas une
-    // (CP : « notion de phrase simple : majuscule, ponctuation, sens », BO n° 41 p. 92 ; CE1 p. 93)
-    definition: { classes: ['cp'], slug: 'affiche-qu-est-ce-qu-une-phrase', reglages: { groupes: false } },
-    // CE1, sans les types ni les formes, plus expliquée : la définition (une suite de mots qui a du sens), les trois vérifications (majuscule,
-    // point, sens), deux contre-exemples vérifiés pas à pas, « de qui on parle / ce qu'on en dit » (le groupe sujet et le reste, BO p. 93)
-    explication: { classes: ['ce1'], slug: 'affiche-la-phrase-expliquee', orientation: 'portrait', reglages: { groupes: false } },
+    // CP : ce qu'est une phrase (majuscule, point, ordre, sens) et ce qui n'en est pas une (« notion de phrase simple : majuscule,
+    // ponctuation, sens », BO n° 41 p. 92)
+    definition: { classes: ['cp'], slug: 'affiche-qu-est-ce-qu-une-phrase' },
+    // CP : les trois types de phrases reconnus par leur ponctuation (« s'appuyer sur la ponctuation pour reconnaître les trois types de
+    // phrases », BO p. 92) : le signe, ce qu'on fait (je dis, je demande, je donne un ordre), un exemple
+    'types-cp': { classes: ['cp'], slug: 'affiche-types-de-phrases-cp' },
+    // CE1 : reconnaître une phrase (une suite de mots qui a du sens, les trois vérifications, un contre-exemple) et ses groupes : groupe
+    // sujet, verbe, complément (BO p. 93)
+    explication: { classes: ['ce1'], slug: 'affiche-la-phrase-expliquee' },
+    // CE1 : les trois types et les deux formes (négative, exclamative), BO p. 93
     ce1: { classes: ['ce1'], slug: 'affiche-la-phrase' },
   },
 })

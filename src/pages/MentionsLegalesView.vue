@@ -4,7 +4,7 @@
       <h1 class="section-heading">{{ t('mentions.titre') }}</h1>
 
       <h2>{{ t('mentions.editeur') }}</h2>
-      <p>{{ t('mentions.editeurTexte') }} Corentin Chary — ✉️ <a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a></p>
+      <p>{{ t('mentions.editeurTexte') }} Corentin Chary — <Icone nom="courriel" /> <a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a></p>
 
       <h2>{{ t('mentions.hebergeur') }}</h2>
       <p>OVH SAS, 2 rue Kellermann, 59100 Roubaix, France — <a href="https://www.ovhcloud.com" target="_blank" rel="noopener">ovhcloud.com</a></p>
@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Mentions légales et confidentialité : éditeur, hébergeur, données (rien ne sort, sauf le signal anonyme et Mistral avec une clé),
 // licences des contenus, du code et des polices. Obligatoires (LCEN). Reprise de l'ancienne page, supprimée le 2026-10-07 sans report.
 import { useLangue } from '../langues/useLangue.ts'

@@ -1,16 +1,16 @@
 <template>
   <!-- indicateur discret : l'élément natif <details> s'ouvre au clavier et s'annonce sans aria supplémentaire -->
   <details class="lecture">
-    <summary :title="t('programme.interpretation.resume')"><span aria-hidden="true">{{ EMOJI.interpretation }}</span><span class="sr-only">{{ t('programme.interpretation.resume') }}</span></summary>
+    <summary :title="t('programme.interpretation.resume')"><span aria-hidden="true"><Icone nom="info" /></span><span class="sr-only">{{ t('programme.interpretation.resume') }}</span></summary>
     <p :lang="LANGUE_SOURCE"><strong>{{ t('programme.interpretation.titre') }} :</strong> {{ texte }}</p>
   </details>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Une compétence dont la lecture du texte est une interprétation (ex. Le monde : textes applicables en 2027) le dit ici.
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI } from './emojis.ts'
 
 defineProps<{ texte: string }>()
 const { t } = useLangue()

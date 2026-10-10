@@ -1,7 +1,7 @@
 <template>
   <div class="vue" role="group" :aria-label="t('ressource.vue.titre')">
     <button v-for="v in VUES" :key="v" type="button" :aria-pressed="contexte.vue === v" :class="{ actif: contexte.vue === v }" @click="choisirVue(v)">
-      <span aria-hidden="true">{{ EMOJI_VUE[v] }}</span> {{ t(`ressource.vue.${v}`) }}
+      <Icone :nom="ICONE_VUE[v]" /> {{ t(`ressource.vue.${v}`) }}
     </button>
   </div>
 </template>
@@ -11,7 +11,8 @@
 import { useContexte } from '../../contexte/useContexte.ts'
 import { VUES } from '../../contexte/types.ts'
 import { useLangue } from '../../langues/useLangue.ts'
-import { EMOJI_VUE } from './presentation.ts'
+import { ICONE_VUE } from './presentation.ts'
+import Icone from '../../images/Icone.vue'
 
 const { t } = useLangue()
 const { contexte, choisirVue } = useContexte()

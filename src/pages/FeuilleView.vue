@@ -46,22 +46,22 @@ import FeuilleCompetences from './FeuilleCompetences.vue'
 import FeuilleEntete from './FeuilleEntete.vue'
 import FeuilleLiens from './FeuilleLiens.vue'
 import FeuilleVoisines from './FeuilleVoisines.vue'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
 import FilAriane from '../shell/FilAriane.vue'
+import type { Maillon } from '../shell/FilAriane.vue'
 
 const { t, langueAffichee } = useLangue()
 const route = useRoute()
 const feuille = useFeuille(() => String(route.params.slug ?? ''))
 
 const nomMatiere = computed(() => (feuille.matiere ? t(`fichesPretes.matieres.${feuille.matiere}`) : ''))
-const maillons = computed(() => {
+const maillons = computed((): Maillon[] => {
   const e = feuille.entree
   if (!e) return []
   const matiere = feuille.matiere
   return [
-    { texte: t('feuille.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
+    { texte: t('feuille.accueil'), vers: '/', icone: 'accueil' },
     ...(matiere ? [{ texte: nomMatiere.value, vers: cheminMatiere(matiere) ?? undefined, matiere }] : []),
-    { texte: t('feuille.fichesPretes'), vers: (matiere ? cheminFiches(matiere) : null) ?? '/telechargements', emoji: EMOJI_BARRE.fichesPretes },
+    { texte: t('feuille.fichesPretes'), vers: (matiere ? cheminFiches(matiere) : null) ?? '/telechargements', icone: 'fiches' },
     { texte: texteDe(e.titre, langueAffichee.value), langue: langueDuTexte(e.titre, langueAffichee.value) },
   ]
 })

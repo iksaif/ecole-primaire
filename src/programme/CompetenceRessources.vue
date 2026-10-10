@@ -1,6 +1,6 @@
 <template>
   <section aria-labelledby="h-ressources">
-    <h2 id="h-ressources"><span aria-hidden="true">{{ EMOJI.programme }}</span> {{ t('competence.ressources.titre') }}
+    <h2 id="h-ressources"><span aria-hidden="true"><Icone nom="programme" /></span> {{ t('competence.ressources.titre') }}
       <span class="nombre">{{ t('competence.ressources.nombre', { n: ressources.length }) }}</span></h2>
     <p v-if="!groupes.length" class="vide">{{ t('competence.vide') }}</p>
     <div v-for="g in groupes" :key="g.cle" class="groupe">
@@ -13,13 +13,13 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Toutes les ressources liées à une compétence, en trois groupes (exercices et générateurs, affiches, fiches toutes prêtes) ;
 // un groupe sans ressource n'est pas montré ; sans aucune ressource, une seule ligne le dit. Les cartes sont celles de src/ressources/composants/ (mêmes que les pages de matière).
 import { computed } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import CarteRessource from '../ressources/composants/CarteRessource.vue'
 import type { Classe, RessourceDeContenu } from '../ressources/types.ts'
-import { EMOJI } from './emojis.ts'
 
 const props = defineProps<{ ressources: readonly RessourceDeContenu[], classes: readonly Classe[] }>()
 const { t } = useLangue()

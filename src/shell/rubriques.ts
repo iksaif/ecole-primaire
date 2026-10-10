@@ -4,14 +4,17 @@
 import type { Profil } from '../contexte/types.ts'
 import type { Langue } from '../langues/registre.ts'
 import { cheminRegional } from '../router/chemins.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 export type CleRubrique = 'shell.rubriques.maths' | 'shell.rubriques.francais' | 'shell.rubriques.monde' | 'shell.rubriques.programme'
 
 export interface Rubrique {
   readonly id: 'maths' | 'francais' | 'monde' | 'regionale' | 'programme'
   readonly chemin: string
-  /** emoji devant le nom ; absent pour la langue régionale (son drapeau le remplace) */
+  /** emoji devant le nom (une matière) ; absent pour la langue régionale (son drapeau le remplace) */
   readonly emoji?: string
+  /** icône d'interface à la place de l'emoji (le programme n'est pas une matière) */
+  readonly icone?: NomIcone
   /** clé du nom ; absente pour la langue régionale (son nom, dans elle-même, vient du registre) */
   readonly cle?: CleRubrique
   readonly langue?: Langue
@@ -25,7 +28,7 @@ export function rubriques(regionale: Langue | null, profil: Profil): Rubrique[] 
     { id: 'francais', chemin: '/francais', emoji: '📝', cle: 'shell.rubriques.francais', sous: ['/francais'] },
     { id: 'monde', chemin: '/monde', emoji: '🌍', cle: 'shell.rubriques.monde', sous: ['/monde'] },
     ...(regionale ? [{ id: 'regionale', chemin: cheminRegional(regionale), langue: regionale, sous: [cheminRegional(regionale)] } as const] : []),
-    ...(profil === 'enseignant' ? [{ id: 'programme', chemin: '/programme', emoji: '📚', cle: 'shell.rubriques.programme', sous: ['/programme', '/competence'] } as const] : []),
+    ...(profil === 'enseignant' ? [{ id: 'programme', chemin: '/programme', icone: 'programme', cle: 'shell.rubriques.programme', sous: ['/programme', '/competence'] } as const] : []),
   ]
 }
 

@@ -4,13 +4,13 @@
   <ul :id="ID_LISTE" class="resultats" role="listbox" :aria-label="t('recherche.resultats')">
     <li v-for="g in groupes" :key="g.type" role="presentation">
       <div :id="`${ID_LISTE}-${g.type}`" class="groupe" role="presentation">
-        <span aria-hidden="true">{{ EMOJI_TYPE[g.type] }}</span> {{ t(`recherche.groupes.${g.type}`) }}
+        <Icone :nom="ICONE_TYPE[g.type]" /> {{ t(`recherche.groupes.${g.type}`) }}
         <span v-if="g.restants" class="groupe-reste">· {{ t('recherche.autres', { n: g.restants }) }}</span>
       </div>
       <ul role="group" :aria-labelledby="`${ID_LISTE}-${g.type}`">
         <li v-for="l in g.lignes" :id="idOption(l.position)" :key="l.entree.id" class="option" role="option"
           :aria-selected="l.position === actif" @click="emit('choisir', l.entree)" @mousemove="emit('survol', l.position)">
-          <span class="option-emoji" aria-hidden="true">{{ l.entree.emoji }}</span>
+          <span class="option-emoji" aria-hidden="true"><Icone v-if="l.entree.type === 'page'" nom="page" /><template v-else>{{ l.entree.emoji }}</template></span>
           <span class="option-texte">
             <strong><TexteSurligne :texte="l.entree.titre" :requete="requete" /></strong>
             <small v-if="l.entree.sousTitre">{{ l.entree.sousTitre }}</small>
@@ -25,7 +25,8 @@
 <script setup lang="ts">
 import { texteClasses } from '../data/classes.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI_TYPE } from '../ressources/emojis.ts'
+import Icone from '../images/Icone.vue'
+import { ICONE_TYPE } from '../ressources/emojis.ts'
 import type { EntreeRecherche } from './index.ts'
 import { ID_LISTE, idOption } from './identifiants.ts'
 import type { GroupeAffiche } from './resultats.ts'

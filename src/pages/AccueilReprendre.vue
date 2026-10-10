@@ -1,6 +1,6 @@
 <template>
   <section v-if="elements.length" class="reprendre" :class="{ gros }" aria-labelledby="reprendre-titre">
-    <h2 id="reprendre-titre"><span aria-hidden="true">{{ EMOJI_ACCUEIL.reprendre }}</span> {{ t('accueil.reprendre') }}</h2>
+    <h2 id="reprendre-titre"><Icone nom="reprendre" /> {{ t('accueil.reprendre') }}</h2>
     <ul>
       <li v-for="e in elements" :key="e.ressource.id">
         <RouterLink :to="e.ressource.route" class="element">
@@ -16,12 +16,12 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // « Reprendre » : les derniers exercices ouverts sur cet appareil (src/ressources/recents.ts), ceux qui existent encore dans le
 // catalogue. Rien à montrer : la section n'apparaît pas. `gros` : la disposition enfant (titre seul, grande tuile).
 import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
 import { anciennete, retenirExistants } from '../ressources/recents.ts'
 import type { Anciennete } from '../ressources/recents.ts'
 import { texteDe } from '../ressources/textes.ts'

@@ -3,11 +3,11 @@
   <div ref="racine" class="menu-deroulant" @keydown="touche" @focusout="sortie">
     <button v-if="verrouillee" ref="bouton" type="button" class="nbtn verrou" :aria-expanded="ouvert" aria-controls="menu-cadenas"
       :aria-label="t('shell.classe.verrouillee', { classes: libelle })" @click="basculer">
-      <span aria-hidden="true">{{ EMOJI_BARRE.verrou }}</span> <span aria-hidden="true">{{ libelle }}</span>
+      <span aria-hidden="true"><Icone nom="verrou" /></span> <span aria-hidden="true">{{ libelle }}</span>
     </button>
     <button v-else ref="bouton" type="button" class="nbtn classe" :aria-expanded="ouvert" aria-controls="menu-classe"
       :aria-label="t('shell.classe.etat', { classes: libelle })" @click="basculer">
-      <span class="icone" aria-hidden="true">{{ EMOJI_BARRE.classe }}</span>
+      <span class="icone" aria-hidden="true"><Icone nom="classe" /></span>
       <span class="etiquette etiquette-large" aria-hidden="true">{{ t('shell.classe.titre') }}</span>
       <span aria-hidden="true">{{ libelle }}</span> <span aria-hidden="true">▾</span>
     </button>
@@ -21,13 +21,13 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed, nextTick } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import CadenasClasse from './CadenasClasse.vue'
 import ChoixClasses from './ChoixClasses.vue'
 import { texteClasses } from '../data/classes.ts'
-import { EMOJI_BARRE } from './emojis.ts'
 import { useMenu } from './menus.ts'
 
 const { t } = useLangue()

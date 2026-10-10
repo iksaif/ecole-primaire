@@ -10,7 +10,7 @@
         :aria-labelledby="ID_TITRE" data-assistant @keydown="touche">
         <span v-if="bulle" class="pointe" :style="{ left: `${bulle.pointe}px` }" aria-hidden="true" />
         <div class="defilement">
-          <button type="button" class="fermer" :aria-label="t('assistant.fermer')" :title="t('assistant.fermer')" @click="fermer">✕</button>
+          <button type="button" class="fermer" :aria-label="t('assistant.fermer')" :title="t('assistant.fermer')" @click="fermer"><Icone nom="fermer" /></button>
           <p class="progression">{{ t('assistant.etape', { n: index + 1, total: etapes.length }) }}</p>
 
           <template v-if="etape.id === 'profil'">
@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // S'ouvre seul à la toute première visite de l'accueil (rien de mémorisé, adresse sans réglage de contexte), ou à la demande
 // (« Revoir la visite guidée » : réglages, À propos). Fenêtre modale : le reste du site est inerte, le focus reste dans la
 // fenêtre, Échap, ✕ et « Passer » la ferment à tout moment ; une fois fermée, elle est mémorisée comme vue (`ep_assistant_vu`).

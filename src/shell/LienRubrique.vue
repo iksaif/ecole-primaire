@@ -1,13 +1,15 @@
 <template>
-  <!-- un lien de rubrique : emoji (ou drapeau de la langue régionale) et nom ; allumé sur sa page et celles qui en dépendent -->
+  <!-- un lien de rubrique : emoji, icône (le programme) ou drapeau de la langue régionale, et nom ; allumé sur sa page et celles qui en dépendent -->
   <RouterLink :to="rubrique.chemin" :class="{ 'router-link-active': actif }" :aria-current="actif ? 'page' : undefined">
     <Drapeau v-if="rubrique.langue" :langue="rubrique.langue" />
+    <Icone v-else-if="rubrique.icone" :nom="rubrique.icone" />
     <span v-else aria-hidden="true">{{ rubrique.emoji }}</span>
     {{ nom }}
   </RouterLink>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { LANGUES } from '../langues/registre.ts'

@@ -90,11 +90,14 @@ console.log('Résultats groupés, filtre de classe')
   await aller(page, '/?classes=cp')
   await page.keyboard.press('Control+k')
   await attendreOption(page, 'nombres')
-  const groupes = await page.locator(`${FENETRE} [role=group]`).evaluateAll(gs => gs.map(g => ({ nom: document.getElementById(g.getAttribute('aria-labelledby'))?.textContent?.trim(), n: g.querySelectorAll('[role=option]').length })))
+  const groupes = await page.locator(`${FENETRE} [role=group]`).evaluateAll(gs => gs.map(g => {
+    const entete = document.getElementById(g.getAttribute('aria-labelledby'))
+    return { nom: entete?.textContent?.trim(), type: entete?.id.split('-').pop(), icone: !!entete?.querySelector('svg.icone'), n: g.querySelectorAll('[role=option]').length }
+  }))
   verifier(groupes.length >= 1 && groupes.every(g => g.nom && g.n > 0), `résultats groupés par type, chaque groupe nommé et non vide (${groupes.map(g => g.nom).join(' | ')})`)
-  const ordre = ['🎮', '📘', '📄', '🎯', '🧭']
-  const emojis = groupes.map(g => ordre.findIndex(e => g.nom.startsWith(e)))
-  verifier(emojis.every(i => i >= 0) && emojis.every((e, i) => i === 0 || e > emojis[i - 1]), 'types dans l’ordre exercices, affiches, fiches, compétences, pages, avec leur emoji')
+  const ordre = ['exercice', 'affiche', 'fiche', 'competence', 'page']
+  const rangs = groupes.map(g => ordre.indexOf(g.type))
+  verifier(rangs.every(i => i >= 0) && rangs.every((r, i) => i === 0 || r > rangs[i - 1]) && groupes.every(g => g.icone), 'types dans l’ordre exercices, affiches, fiches, compétences, pages, avec leur icône')
   const marques = await options(page).locator('strong mark').allTextContents()
   verifier(marques.length > 0 && marques.every(m => /nombre/i.test(m)), `le mot trouvé est surligné par <mark> dans les titres (${marques.length})`)
   verifier((await titres(page)).every(t => !/<mark|&lt;/.test(t)), 'le texte des résultats reste du texte (aucun HTML injecté)')
@@ -106,7 +109,7 @@ console.log('Résultats groupés, filtre de classe')
   await attendreOption(page, 'nombres')
   const bouton = page.locator(`${FENETRE} .contexte button`)
   verifier(await bouton.getAttribute('aria-pressed') === 'false', '« Toutes les classes » : aria-pressed=false au départ')
-  verifier(/🎒/.test(await page.locator(`${FENETRE} .contexte span`).first().innerText()), '« Classe : … » porte son emoji')
+  verifier(await page.locator(`${FENETRE} .contexte span`).first().locator('svg.icone').count() === 1, '« Classe : … » porte son icône')
   const annonce = await page.locator(`${FENETRE} [role=status]`).innerText()
   verifier(/résultat/.test(annonce), `le nombre de résultats est annoncé (« ${annonce} »)`)
 

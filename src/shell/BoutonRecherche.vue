@@ -1,14 +1,14 @@
 <template>
   <!-- ouvre la palette de recherche (src/recherche/) ; Ctrl+K, ⌘K et « / » sont installés par la palette elle-même -->
   <button type="button" class="nbtn" :aria-label="t('shell.barre.rechercher')" aria-haspopup="dialog" :aria-expanded="rechercheOuverte" @click="ouvrirRecherche()">
-    <span aria-hidden="true">{{ EMOJI_BARRE.recherche }}</span><span class="etiquette-large">{{ t('shell.barre.rechercher') }}</span>
+    <span aria-hidden="true"><Icone nom="recherche" /></span><span class="etiquette-large">{{ t('shell.barre.rechercher') }}</span>
   </button>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { ouvrirRecherche, rechercheOuverte } from '../recherche/palette.ts'
-import { EMOJI_BARRE } from './emojis.ts'
 
 const { t } = useLangue()
 </script>

@@ -1,18 +1,18 @@
 <template>
   <div class="barre" role="group" :aria-label="t('programme.classes.legende')">
-    <span class="legende" aria-hidden="true">{{ EMOJI.classe }} {{ t('programme.classes.legende') }}</span>
+    <span class="legende" aria-hidden="true"><Icone nom="classe" /> {{ t('programme.classes.legende') }}</span>
     <button v-for="c in NIVEAUX" :key="c" type="button" class="puce" :aria-pressed="contexte.classes.includes(c)" :disabled="verrouillee" @click="choisir(c)">{{ c.toUpperCase() }}</button>
     <span v-if="verrouillee" class="note">{{ t('programme.classes.verrouillee') }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Les classes du contexte : une seule pour un parent ou un enfant, plusieurs (union) pour un enseignant. Tout passe par `useContexte`.
 import { NIVEAUX } from '../data/classes.ts'
 import type { Classe } from '../data/classes.ts'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI } from './emojis.ts'
 
 const { t } = useLangue()
 const { contexte, verrouillee, plusieursClasses, choisirClasses, ajouterClasse, retirerClasse } = useContexte()

@@ -16,14 +16,14 @@
     <div class="groupe outils">
       <div class="groupe" role="group" :aria-label="t('programme.affichage.legende')">
         <button v-for="a in AFFICHAGES" :key="a" type="button" class="choix" :aria-pressed="affichage === a" @click="emit('affichage', a)">
-          <span aria-hidden="true">{{ a === 'tableau' ? '▦' : '☰' }}</span> {{ t(`programme.affichage.${a}`) }}
+          <Icone :nom="a === 'tableau' ? 'vueTableau' : 'vueListe'" /> {{ t(`programme.affichage.${a}`) }}
         </button>
       </div>
       <button type="button" class="choix" :aria-pressed="contexte.refs" @click="basculerRefs()">
-        <span aria-hidden="true">{{ EMOJI.references }}</span> {{ t('programme.refs') }}
+        <span aria-hidden="true"><Icone nom="references" /></span> {{ t('programme.refs') }}
       </button>
       <button type="button" class="btn btn-ghost copier" @click="copier">
-        <span aria-hidden="true">{{ EMOJI.lien }}</span> {{ t('programme.lien.copier') }}
+        <span aria-hidden="true"><Icone nom="lien" /></span> {{ t('programme.lien.copier') }}
       </button>
     </div>
     <p class="statut" role="status" aria-live="polite">{{ message }}</p>
@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Barre de la page « Programme » : matière, classes, domaine, présentation (tableau / liste), références officielles, lien à copier.
 // Les choix de matière, de domaine et de présentation remontent à la page (adresse) ; classes et références passent par le contexte.
 import { ref } from 'vue'
@@ -39,7 +40,7 @@ import type { DomaineId } from '../data/programme.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
 import ChoixClassesProgramme from './ChoixClassesProgramme.vue'
-import { EMOJI, EMOJI_MATIERE } from './emojis.ts'
+import { EMOJI_MATIERE } from './emojis.ts'
 import { AFFICHAGES, MATIERES_PROGRAMME } from './etat.ts'
 import type { Affichage, EtatProgramme, MatiereProgramme } from './etat.ts'
 import { nomDuDomaine } from './noms.ts'

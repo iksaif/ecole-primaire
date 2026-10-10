@@ -4,7 +4,7 @@
     <li v-for="ligne in choisies" :key="ligne.competence.id" class="competence">
       <h3>
         <RouterLink :to="adresseCompetence(ligne.competence.id, premiereClasse(ligne), reportes)" :lang="LANGUE_SOURCE">
-          <span aria-hidden="true">{{ EMOJI.competence }}</span> {{ ligne.competence.libelle }}
+          <span aria-hidden="true"><Icone nom="competence" /></span> {{ ligne.competence.libelle }}
         </RouterLink>
         <LectureInterpretation v-if="ligne.competence.interpretation" :texte="ligne.competence.interpretation" />
       </h3>
@@ -26,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Présentation par défaut (le tableau en est l'alternative) : une carte par compétence des classes choisies, avec ses ressources.
 import { computed } from 'vue'
 import type { Classe } from '../data/classes.ts'
@@ -35,7 +36,6 @@ import LigneRessource from '../ressources/composants/LigneRessource.vue'
 import PastillesClasses from '../ressources/composants/PastillesClasses.vue'
 import { adresseCompetence } from './adresse.ts'
 import type { ParamsReportes } from './adresse.ts'
-import { EMOJI } from './emojis.ts'
 import EtiquetteReference from './EtiquetteReference.vue'
 import LectureInterpretation from './LectureInterpretation.vue'
 import { classesEnCommun } from './tableau.ts'

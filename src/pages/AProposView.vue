@@ -13,7 +13,7 @@
       <h1 class="section-heading titre">{{ t('apropos.titre') }}</h1>
       <p class="about-para">{{ t('apropos.intro') }}</p>
 
-      <h2 class="about-h2">🛠️ {{ t('apropos.comment') }}</h2>
+      <h2 class="about-h2"><Icone nom="outils" /> {{ t('apropos.comment') }}</h2>
       <ul class="about-list">
         <li v-for="ligne in liste('apropos.commentListe')" :key="ligne">{{ ligne }}</li>
       </ul>
@@ -31,7 +31,7 @@
       <h2 class="about-h2">🤝 {{ t('apropos.contribuer') }}</h2>
       <p class="about-para">{{ depot[0] }}<a :href="SITE.depot" target="_blank" rel="noopener">{{ DEPOT_TEXTE }}</a>{{ depot[1] }}</p>
       <ul class="about-list">
-        <li>🐞 {{ erreur[0] }}<a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a>{{ erreur[1] }}
+        <li><Icone nom="bug" /> {{ erreur[0] }}<a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a>{{ erreur[1] }}
           (<a :href="`${SITE.depot}/issues/new`" target="_blank" rel="noopener">{{ t('apropos.issue') }}</a>)</li>
         <li>💡 {{ t('apropos.contribuerProposer') }}</li>
         <li><IconeMatiere matiere="regionale" /> {{ t('apropos.contribuerRelire') }}</li>
@@ -42,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { SITE } from '../sites.ts'

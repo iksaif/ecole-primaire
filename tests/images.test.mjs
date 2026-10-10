@@ -9,6 +9,9 @@ import { CONTOUR } from '../src/images/donnees/contour.ts'
 import { creerRenduImages } from '../src/images/rendu.ts'
 import { assainirImages, DEFAUT_IMAGES } from '../src/images/preference.ts'
 import { caractereDe } from '../src/images/systeme.ts'
+import { ICONES, REMPLIES } from '../src/images/icones.ts'
+import { BOLD, FILL } from '../src/images/donnees/icones.ts'
+import { iconeHtml } from '../src/images/icone.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const noms = Object.keys(EMOJIS)
@@ -83,5 +86,18 @@ console.log('Préférence')
 verifier(JSON.stringify(assainirImages(undefined)) === JSON.stringify(DEFAUT_IMAGES), 'rien de mémorisé : le défaut')
 verifier(JSON.stringify(assainirImages({ famille: 'systeme', style: 'bleu' })) === '{"famille":"systeme","style":"couleur"}', 'un champ inconnu reprend son défaut, l’autre est gardé')
 verifier(JSON.stringify(assainirImages('contour')) === JSON.stringify(DEFAUT_IMAGES), 'une valeur corrompue : le défaut')
+
+console.log('Icônes d’interface (Phosphor)')
+const nomsIcones = Object.keys(ICONES)
+verifier(nomsIcones.every(n => !!BOLD[n]) && Object.keys(BOLD).every(n => n in ICONES), `chaque icône a son dessin, aucun de trop (${nomsIcones.length} ; relancer scripts/generer/icones.ts)`)
+verifier(REMPLIES.every(n => !!FILL[n]) && Object.keys(FILL).every(n => REMPLIES.includes(n)), 'les icônes pleines sont celles de REMPLIES')
+verifier(new Set(Object.values(ICONES)).size === nomsIcones.length, 'une icône Phosphor ne sert qu’à un rôle')
+verifier([...Object.values(BOLD), ...Object.values(FILL)].every(d => !/\sid="|url\(#|<script|fill="#/.test(d)), 'dessins autonomes, de la couleur du texte (aucune couleur écrite)')
+const icone = iconeHtml('recherche')
+verifier(icone.includes('aria-hidden="true"') && icone.includes('width="1.25em"') && icone.includes('fill="currentColor"'), 'icône décorative par défaut, 1.25em, couleur du texte')
+verifier(iconeHtml('fermer', { libelle: 'Fermer "x"', taille: '24px' }).includes('role="img" aria-label="Fermer &quot;x&quot;"'), 'icône seule : libellé lu, échappé')
+let messageIcone = ''
+try { iconeHtml('recherche', { pleine: !REMPLIES.includes('recherche') }) } catch (e) { messageIcone = String(e.message) }
+verifier(REMPLIES.includes('recherche') || messageIcone.includes('recherche'), 'une version pleine absente échoue en disant laquelle')
 
 process.exit(nbEchecs() ? 1 : 0)

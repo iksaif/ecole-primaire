@@ -3,14 +3,14 @@
     <nav :aria-label="t('shell.pied.navigation')">
       <ul>
         <!-- le Programme est l'outil de l'enseignant : pas dans le pied de page des autres profils (la page reste accessible, par l'accueil) -->
-        <li v-if="enseignant"><RouterLink to="/programme"><span aria-hidden="true">{{ EMOJI_BARRE.programme }}</span> {{ t('shell.pied.programme') }}</RouterLink></li>
-        <li><RouterLink to="/telechargements"><span aria-hidden="true">{{ EMOJI_BARRE.fichesPretes }}</span> {{ t('shell.pied.fichesPretes') }}</RouterLink></li>
-        <li><RouterLink to="/nouveautes"><span aria-hidden="true">{{ EMOJI_PIED.nouveautes }}</span> {{ t('shell.pied.nouveautes') }}</RouterLink></li>
-        <li><RouterLink to="/about"><span aria-hidden="true">{{ EMOJI_PIED.apropos }}</span> {{ t('shell.pied.apropos') }}</RouterLink></li>
-        <li><a :href="`${SITE.depot}/issues/new`" target="_blank" rel="noopener"><span aria-hidden="true">{{ EMOJI_PIED.signaler }}</span> {{ t('shell.pied.signaler') }}</a></li>
-        <li><a :href="SITE.depot" target="_blank" rel="noopener"><span aria-hidden="true">{{ EMOJI_PIED.depot }}</span> {{ t('shell.pied.depot') }}</a></li>
-        <li><a :href="`mailto:${SITE.contact}`"><span aria-hidden="true">{{ EMOJI_PIED.contact }}</span> {{ t('shell.pied.contact') }}</a></li>
-        <li><RouterLink to="/mentions-legales"><span aria-hidden="true">{{ EMOJI_PIED.mentions }}</span> {{ t('shell.pied.mentions') }}</RouterLink></li>
+        <li v-if="enseignant"><RouterLink to="/programme"><span aria-hidden="true"><Icone nom="programme" /></span> {{ t('shell.pied.programme') }}</RouterLink></li>
+        <li><RouterLink to="/telechargements"><span aria-hidden="true"><Icone nom="fiches" /></span> {{ t('shell.pied.fichesPretes') }}</RouterLink></li>
+        <li><RouterLink to="/nouveautes"><span aria-hidden="true"><Icone nom="nouveautes" /></span> {{ t('shell.pied.nouveautes') }}</RouterLink></li>
+        <li><RouterLink to="/about"><span aria-hidden="true"><Icone nom="info" /></span> {{ t('shell.pied.apropos') }}</RouterLink></li>
+        <li><a :href="`${SITE.depot}/issues/new`" target="_blank" rel="noopener"><span aria-hidden="true"><Icone nom="bug" /></span> {{ t('shell.pied.signaler') }}</a></li>
+        <li><a :href="SITE.depot" target="_blank" rel="noopener"><span aria-hidden="true"><Icone nom="code" /></span> {{ t('shell.pied.depot') }}</a></li>
+        <li><a :href="`mailto:${SITE.contact}`"><span aria-hidden="true"><Icone nom="courriel" /></span> {{ t('shell.pied.contact') }}</a></li>
+        <li><RouterLink to="/mentions-legales"><span aria-hidden="true"><Icone nom="mentions" /></span> {{ t('shell.pied.mentions') }}</RouterLink></li>
       </ul>
     </nav>
     <p>{{ t('shell.pied.libre') }}</p>
@@ -18,11 +18,11 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { SITE } from '../sites.ts'
-import { EMOJI_BARRE, EMOJI_PIED } from './emojis.ts'
 
 const { t } = useLangue()
 const { contexte } = useContexte()

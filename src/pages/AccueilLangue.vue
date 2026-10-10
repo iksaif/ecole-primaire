@@ -1,15 +1,15 @@
 <template>
   <div v-if="options.length > 1" class="choix-langue" role="group" :aria-label="t('shell.langue.titre')">
-    <span class="titre"><span aria-hidden="true">{{ EMOJI_BARRE.langue }}</span> {{ t('shell.langue.titre') }}</span>
+    <span class="titre"><span aria-hidden="true"><Icone nom="langue" /></span> {{ t('shell.langue.titre') }}</span>
     <button v-for="o in options" :key="o.id" type="button" class="puce" :class="{ active: o.actif }" :aria-pressed="o.actif" @click="choisir(o)">{{ o.titre }}</button>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Le choix du mode de langue sur l'accueil (Français · Français + langue régionale · langue régionale seule), sous le choix de
 // classe ; rien si le site ne propose aucune langue régionale. Même source que le sélecteur de la barre (useModesLangue).
 import { useModesLangue } from '../shell/useModesLangue.ts'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
 import { useLangue } from '../langues/useLangue.ts'
 
 const { t } = useLangue()

@@ -46,7 +46,7 @@
 
       <template v-else-if="ongletCourant === 'moi'">
         <section class="bloc">
-          <h2>🎒 {{ t('reglages.classe.titre') }}</h2>
+          <h2><Icone nom="classe" /> {{ t('reglages.classe.titre') }}</h2>
           <p class="aide">{{ t('reglages.classe.aide') }}</p>
           <CadenasClasse v-if="verrouillee" @ouvert="deverrouillerClasse" />
           <ChoixClasses v-else />
@@ -104,6 +104,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police,
 // voix et vitesse de la lecture à voix haute (ReglageVoix, mémorisés par useTTS).
 import { computed, nextTick, ref } from 'vue'

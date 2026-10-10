@@ -1,24 +1,23 @@
 <template>
   <div class="barre">
     <p class="classes">
-      <span aria-hidden="true">{{ EMOJI_ACCUEIL.classe }}</span> {{ t('matiere.classe', { n: classes.length }) }} :
+      <Icone nom="classe" /> {{ t('matiere.classe', { n: classes.length }) }} :
       <strong>{{ texteClasses(classes) }}</strong> · {{ t('ressource.ressources', { n: total }) }}
     </p>
     <button type="button" class="toutes" :class="{ actif: toutes }" :aria-pressed="toutes" @click="emit('basculer')">
-      <span aria-hidden="true">{{ EMOJI_BARRE.tous }}</span> {{ t('matiere.toutesLesClasses') }}
+      <span aria-hidden="true"><Icone nom="tous" /></span> {{ t('matiere.toutesLesClasses') }}
     </button>
     <SelecteurVue />
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // La barre de contexte d'une page de matière : « Classe : CE1 · 12 ressources », le bouton « Toutes les classes » (montre les
 // ressources de toutes les classes sans changer la classe choisie) et le choix cartes / liste.
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
 import { texteClasses } from '../data/classes.ts'
-import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
 import type { Classe } from '../ressources/types.ts'
 
 defineProps<{ classes: readonly Classe[], total: number, toutes: boolean }>()

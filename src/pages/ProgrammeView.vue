@@ -2,7 +2,7 @@
   <div class="container" data-page="programme">
     <BandeauConstruction />
     <FilAriane :maillons="maillons" :etiquette="t('programme.fil')" />
-    <h1 class="section-heading"><span aria-hidden="true">{{ EMOJI.programme }}</span> {{ t('programme.titre') }}</h1>
+    <h1 class="section-heading"><span aria-hidden="true"><Icone nom="programme" /></span> {{ t('programme.titre') }}</h1>
     <p class="chapeau">{{ t('programme.chapeau', { classes: classesTexte, matiere: t(`programme.matiere.${etat.matiere}`) }) }}</p>
 
     <BarreProgramme :etat="etat" :affichage="affichage" :domaines="domaines" :lien="lienDeCetteVue"
@@ -18,18 +18,18 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Page « Le programme » (/programme) : classe × domaine → compétences → ressources, en tableau ou en liste. L'état est dans
 // l'adresse (matière, domaine, présentation, classes, références) : une adresse partagée rouvre la même vue.
 import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
 import { texteClasses } from '../data/classes.ts'
 import BandeauConstruction from '../shell/BandeauConstruction.vue'
 import FilAriane from '../shell/FilAriane.vue'
+import type { Maillon } from '../shell/FilAriane.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
 import BarreProgramme from '../programme/BarreProgramme.vue'
-import { EMOJI } from '../programme/emojis.ts'
 import { domainesProposes } from '../programme/etat.ts'
 import ListeProgramme from '../programme/ListeProgramme.vue'
 import { nomDuDomaine } from '../programme/noms.ts'
@@ -40,9 +40,9 @@ const { t, langueAffichee } = useLangue()
 const { contexte } = useContexte()
 const { etat, affichage, lignes, reportes, choisirMatiere, choisirDomaine, choisirAffichage, lienDeCetteVue } = useProgramme()
 const domaines = computed(() => domainesProposes(etat.value.matiere, contexte.value.classes))
-const maillons = computed(() => [
-  { texte: t('programme.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
-  { texte: t('programme.titre'), emoji: EMOJI.programme },
+const maillons = computed((): Maillon[] => [
+  { texte: t('programme.accueil'), vers: '/', icone: 'accueil' },
+  { texte: t('programme.titre'), icone: 'programme' },
 ])
 const classesTexte = computed(() => texteClasses(contexte.value.classes))
 </script>

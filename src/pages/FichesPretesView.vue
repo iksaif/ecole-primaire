@@ -54,9 +54,9 @@ import FichesPretesCarte from './FichesPretesCarte.vue'
 import FichesPretesCompteur from './FichesPretesCompteur.vue'
 import FichesPretesEtat from './FichesPretesEtat.vue'
 import FilAriane from '../shell/FilAriane.vue'
+import type { Maillon } from '../shell/FilAriane.vue'
 import FichesPretesFiltres from './FichesPretesFiltres.vue'
 import FichesPretesTable from './FichesPretesTable.vue'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
 import SelecteurVue from '../ressources/composants/SelecteurVue.vue'
 
 const props = defineProps<{ matiere: Matiere }>()
@@ -71,10 +71,10 @@ const nomMatiere = computed(() => (props.matiere === 'regionale' && regionale ? 
 // la page de la matière : /maths… ; pour la langue régionale, l'adresse de cette page sans « /fiches » (/brezhoneg)
 const route = useRoute()
 const pageDeLaMatiere = computed(() => cheminMatiere(props.matiere) ?? (props.matiere === 'regionale' ? route.path.replace(/\/fiches$/, '') : null))
-const maillons = computed(() => [
-  { texte: t('fichesPretes.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
+const maillons = computed((): Maillon[] => [
+  { texte: t('fichesPretes.accueil'), vers: '/', icone: 'accueil' },
   { texte: nomMatiere.value, vers: pageDeLaMatiere.value ?? undefined, matiere: props.matiere },
-  { texte: t('fichesPretes.fichesPretes'), emoji: EMOJI_BARRE.fichesPretes },
+  { texte: t('fichesPretes.fichesPretes'), icone: 'fiches' },
 ])
 </script>
 

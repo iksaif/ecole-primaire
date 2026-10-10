@@ -44,7 +44,7 @@ import FichesPretesCarte from './FichesPretesCarte.vue'
 import FichesPretesCompteur from './FichesPretesCompteur.vue'
 import FichesPretesEtat from './FichesPretesEtat.vue'
 import FilAriane from '../shell/FilAriane.vue'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
+import type { Maillon } from '../shell/FilAriane.vue'
 import FichesPretesFiltres from './FichesPretesFiltres.vue'
 import FichesPretesTable from './FichesPretesTable.vue'
 
@@ -52,7 +52,7 @@ const { t, langueAffichee } = useLangue()
 const page = useFichesPage(() => null)
 const vue = computed(() => page.contexte.vue)
 
-const maillons = computed(() => [{ texte: t('fichesPretes.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil }, { texte: t('fichesPretes.titreIndex'), emoji: EMOJI_BARRE.fichesPretes }])
+const maillons = computed((): Maillon[] => [{ texte: t('fichesPretes.accueil'), vers: '/', icone: 'accueil' }, { texte: t('fichesPretes.titreIndex'), icone: 'fiches' }])
 const groupes = computed(() => (page.index ? grouperParMatiere(page.index, page.resultats, MATIERES, langueAffichee.value) : []))
 </script>
 

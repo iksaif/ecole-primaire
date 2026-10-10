@@ -8,11 +8,12 @@
       <li v-if="regionale"><AccueilTuile :to="regionale.to" :drapeau="regionale.code" :titre="regionale.titre" :sous="regionale.sous" :langue-sous="regionale.langueSous" :couleur="regionale.couleur" grande /></li>
     </ul>
     <AccueilReprendre gros />
-    <p v-if="verrouillee" class="verrou"><span aria-hidden="true">🔒</span> {{ t('accueil.verrou') }}</p>
+    <p v-if="verrouillee" class="verrou"><Icone nom="verrou" /> {{ t('accueil.verrou') }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Accueil de l'enfant : très grosses tuiles à icônes, peu de texte, la classe verrouillée (un adulte l'ouvre par le cadenas de la barre).
 import { useContexte } from '../contexte/useContexte.ts'
 import AccueilReprendre from './AccueilReprendre.vue'

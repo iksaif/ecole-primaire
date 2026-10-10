@@ -1,6 +1,6 @@
 <template>
   <section class="officiel" aria-labelledby="h-officiel">
-    <h2 id="h-officiel"><span aria-hidden="true">{{ EMOJI.programme }}</span> {{ t('competence.officiel.titre') }}</h2>
+    <h2 id="h-officiel"><span aria-hidden="true"><Icone nom="programme" /></span> {{ t('competence.officiel.titre') }}</h2>
     <p class="texte" :lang="LANGUE_SOURCE"><strong>{{ SOURCES[reference.source].titre }}</strong></p>
     <p>
       <a :href="reference.url" target="_blank" rel="noopener noreferrer">{{ etiquette }}<span class="sr-only"> ({{ t('competence.officiel.ouvre') }})</span></a>
@@ -12,13 +12,13 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Le texte officiel d'une compétence : son nom, le lien vers le PDF à la bonne page (page DU PDF) et l'extrait cité par
 // src/data/programme.ts ; ce qui est une interprétation de ce texte est dit à part.
 import { computed } from 'vue'
 import { SOURCES } from '../data/programme.ts'
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI } from './emojis.ts'
 import { etiquetteDeReference } from './references.ts'
 import type { Reference } from './references.ts'
 

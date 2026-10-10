@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import { iconeHtml } from '../images/icone.ts'
 import journal from '../../CHANGELOG.md?raw'
 import { SITE } from '../sites.ts'
 import { useLangue } from '../langues/useLangue.ts'
@@ -28,7 +29,7 @@ function rendre(md: string): string {
   let items: string[] | null = null
   const fermer = (): void => { if (items) { out.push(`<ul>${items.map(l => `<li>${enLigne(l)}</li>`).join('')}</ul>`); items = null } }
   for (const ligne of md.split('\n')) {
-    if (/^# /.test(ligne)) { fermer(); out.push(`<h1 class="section-heading">🆕 ${enLigne(ligne.slice(2))}</h1>`) }
+    if (/^# /.test(ligne)) { fermer(); out.push(`<h1 class="section-heading">${iconeHtml('nouveautes')} ${enLigne(ligne.slice(2))}</h1>`) }
     else if (/^## /.test(ligne)) { fermer(); out.push(`<h2>${enLigne(ligne.slice(3))}</h2>`) }
     else if (/^- /.test(ligne)) { (items ??= []).push(ligne.slice(2)) }
     else if (/^\s+\S/.test(ligne) && items) { items[items.length - 1] += ' ' + ligne.trim() }

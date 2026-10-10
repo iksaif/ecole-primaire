@@ -3,7 +3,7 @@
     <FilAriane :maillons="maillons" :etiquette="t('matiere.fil')" />
     <h1 class="titre"><IconeMatiere :matiere="matiere" :langue="code ?? undefined" /> <span :lang="regionale ? bcp47 : undefined">{{ nom }}</span></h1>
 
-    <EtatVide v-if="regionale && !actif" :emoji="EMOJI_BARRE.verrou" :titre="t('regionale.inactif')" :texte="t('regionale.inactifAide')">
+    <EtatVide v-if="regionale && !actif" icone="verrou" :titre="t('regionale.inactif')" :texte="t('regionale.inactifAide')">
       <button type="button" class="gros-bouton" @click="activer">{{ t('regionale.activer', { nom: nomDans }) }}</button>
     </EtatVide>
 
@@ -13,9 +13,9 @@
     <template v-else>
       <p v-if="regionale" class="intro">{{ t('regionale.intro', { nom: nomDans }) }}</p>
       <aside v-if="lienFiches" class="fiches-pretes">
-        <span class="emoji" aria-hidden="true">{{ EMOJI_ACCUEIL.fiches }}</span>
+        <Icone class="emoji" nom="fiches" taille="2rem" />
         <p><strong>{{ t('matiere.fichesTitre') }}</strong><br>{{ t('matiere.fichesTexte') }}</p>
-        <RouterLink :to="lienFiches" class="gros-bouton">{{ EMOJI_ACCUEIL.fiches }} {{ t('matiere.fichesBouton') }}</RouterLink>
+        <RouterLink :to="lienFiches" class="gros-bouton"><Icone nom="fiches" /> {{ t('matiere.fichesBouton') }}</RouterLink>
       </aside>
 
       <MondeIntro v-if="matiere === 'monde'" />
@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Page d'une matière (/maths, /francais, /monde, et la langue régionale /brezhoneg : la matière vient de la route). Les domaines
 // sont ceux du programme des cycles des classes choisies (grouperParDomaine) : ceux qui ont des ressources s'affichent en cartes ou
 // en liste, les autres en « à venir ». Une ressource n'y est qu'une fois, avec ses classes en pastilles ; les classes choisies
@@ -53,7 +54,7 @@ import type { DomaineId } from '../ressources/types.ts'
 import { useRessources } from '../ressources/useRessources.ts'
 import { useAffichable } from '../ressources/useAffichable.ts'
 import FilAriane from '../shell/FilAriane.vue'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
+import type { Maillon } from '../shell/FilAriane.vue'
 import EtatVide from '../ressources/composants/EtatVide.vue'
 import GroupeDomaine from '../ressources/composants/GroupeDomaine.vue'
 import { EMOJI_ACCUEIL, majuscule } from '../ressources/composants/presentation.ts'
@@ -89,8 +90,8 @@ const lienFiches = computed(() => {
   return code.value ? `${cheminRegional(code.value)}/fiches` : null
 })
 const nom = computed(() => (code.value ? majuscule(LANGUES[code.value].nomLocal) : pageMatiere.value ? t(NOM_COURT[pageMatiere.value]) : ''))
-const maillons = computed(() => [
-  { texte: t('matiere.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
+const maillons = computed((): Maillon[] => [
+  { texte: t('matiere.accueil'), vers: '/', icone: 'accueil' },
   { texte: nom.value, matiere: matiere.value ?? undefined },
 ])
 const classes = computed(() => contexte.value.classes)

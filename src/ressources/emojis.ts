@@ -2,6 +2,7 @@
 // emoji ne compile pas. Pur.
 import type { DomaineId } from '../data/programme.ts'
 import type { TypeRessource } from './types.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 export const EMOJI_DOMAINE: Readonly<Record<DomaineId, string>> = {
   'nombres-calcul': '🔢',
@@ -32,11 +33,11 @@ export const EMOJI_DOMAINE: Readonly<Record<DomaineId, string>> = {
   exemple: '⭐',   // domaine fictif des exemples (développement)
 }
 
-/** Emoji d'un type de ressource : l'en-tête de ses résultats dans la recherche. */
-export const EMOJI_TYPE: Readonly<Record<TypeRessource, string>> = {
-  exercice: '🎮',
-  affiche: '📘',
-  fiche: '📄',
-  competence: '🎯',
-  page: '🧭',
+/** Icône d'un type de ressource (une notion de l'interface, Phosphor) : l'en-tête de ses résultats dans la recherche. */
+export const ICONE_TYPE: Readonly<Record<TypeRessource, NomIcone>> = {
+  exercice: 'exercice',
+  affiche: 'affiche',
+  fiche: 'fiches',
+  competence: 'competence',
+  page: 'page',
 }

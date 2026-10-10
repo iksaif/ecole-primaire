@@ -1,6 +1,6 @@
 <template>
   <div class="cadenas" role="dialog" :aria-label="t('shell.cadenas.titre')">
-    <h3>{{ EMOJI_BARRE.verrou }} {{ t('shell.cadenas.titre') }}</h3>
+    <h3><Icone nom="verrou" /> {{ t('shell.cadenas.titre') }}</h3>
     <p>{{ t('shell.cadenas.consigne') }}</p>
     <button ref="bouton" type="button" class="appui" :aria-label="t('shell.cadenas.bouton')"
       @pointerdown.prevent="demarrer" @pointerup="arreter" @pointercancel="arreter" @pointerleave="arreter" @contextmenu.prevent
@@ -8,7 +8,7 @@
       <svg viewBox="0 0 64 64" width="88" height="88" aria-hidden="true">
         <circle cx="32" cy="32" r="26" class="fond" />
         <circle cx="32" cy="32" r="26" class="anneau" :stroke-dasharray="CIRCONFERENCE" :stroke-dashoffset="CIRCONFERENCE * (1 - progression)" transform="rotate(-90 32 32)" />
-        <text x="32" y="40" text-anchor="middle" font-size="24">{{ EMOJI_BARRE.verrou }}</text>
+        <g class="verrou" v-html="VERROU" />
       </svg>
     </button>
     <p class="aide">{{ t('shell.cadenas.aide') }}</p>
@@ -18,10 +18,14 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
+import { iconeSvg } from '../images/icone.ts'
 import { onMounted, ref } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI_BARRE } from './emojis.ts'
 import { useAppuiLong } from './useAppuiLong.ts'
+
+// le cadenas au centre de l'anneau qui se remplit (cadre de 64)
+const VERROU = iconeSvg('verrou', 20, 20, 24)
 
 const emit = defineEmits<{ ouvert: [] }>()
 const { t } = useLangue()

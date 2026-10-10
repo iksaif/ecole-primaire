@@ -1,19 +1,19 @@
 <template>
   <div class="copier">
-    <button type="button" class="gros-bouton" @click="copier"><span aria-hidden="true">{{ EMOJI_ACCUEIL.copier }}</span> {{ t('accueil.copier') }}</button>
+    <button type="button" class="gros-bouton" @click="copier"><Icone nom="lien" /> {{ t('accueil.copier') }}</button>
     <p class="aide">{{ t('accueil.copierAide', { classes: texteClasses(contexte.classes) }) }}</p>
     <p class="etat" role="status" aria-live="polite">{{ message }}<template v-if="lien"> <code>{{ lien }}</code></template></p>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // « Copier le lien pour les familles » (enseignant) : l'adresse de la page avec la classe et le mode de langue, copiée dans le
 // presse-papiers ; le résultat est annoncé (`aria-live`). Si le navigateur refuse la copie, le lien est écrit pour qu'on le copie à la main.
 import { ref } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { texteClasses } from '../data/classes.ts'
-import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
 
 const { t } = useLangue()
 const { contexte, lienFamilles } = useContexte()

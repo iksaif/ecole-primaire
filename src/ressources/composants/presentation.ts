@@ -7,13 +7,14 @@ import { CYCLE_DE, estMaternelle } from '../../data/classes.ts'
 import { LANGUES, LANGUE_SOURCE } from '../../langues/registre.ts'
 import { lireFeuille } from '../../langues/traduire.ts'
 import type { Classe, DomaineId, Langue, Matiere, RessourceDeContenu, Usage } from '../types.ts'
+import type { NomIcone } from '../../images/icones.ts'
 
 // langue régionale : 🗣️ quand il faut du texte ; les pages montrent son drapeau dessiné (IconeMatiere : le Gwenn-ha-du n'existe pas en emoji)
 export const EMOJI_MATIERE: Readonly<Record<Matiere, string>> = { maths: '🔢', francais: '📝', monde: '🌍', regionale: '🗣️' }
 export const EMOJI_BADGE = { jeu: '🎮', imprimable: '🖨️' } as const
 export const EMOJI_USAGE: Readonly<Record<Usage, string>> = { apprendre: '🖼️', sentrainer: '✏️' }
-export const EMOJI_VUE: Readonly<Record<Vue, string>> = { cartes: '▦', liste: '☰' }
-export const EMOJI_ACCUEIL = { programme: '📚', fiches: '📄', reprendre: '▶️', copier: '🔗', classe: '🎒', aVenir: '🚧' } as const
+export const ICONE_VUE: Readonly<Record<Vue, NomIcone>> = { cartes: 'vueCartes', liste: 'vueListe' }
+export const EMOJI_ACCUEIL = { programme: '📚', fiches: '📄', aVenir: '🚧' } as const
 
 /**
  * L'école d'une classe, qui choisit l'article quand on lit une plage en entier (`ressource.plage`) : « de la PS » (maternelle),

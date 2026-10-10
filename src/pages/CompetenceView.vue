@@ -2,14 +2,14 @@
   <div v-if="competence" class="container" data-page="competence">
     <BandeauConstruction />
     <FilAriane :maillons="maillons" :etiquette="t('competence.fil')" />
-    <h1 class="section-heading" :lang="LANGUE_SOURCE"><span aria-hidden="true">{{ EMOJI.competence }}</span> {{ competence.libelle }}</h1>
+    <h1 class="section-heading" :lang="LANGUE_SOURCE"><span aria-hidden="true"><Icone nom="competence" /></span> {{ competence.libelle }}</h1>
 
     <p class="meta">
       <span>{{ EMOJI_DOMAINE[competence.domaine] }} {{ t('competence.domaine') }} : <strong>{{ nomDuDomaine(competence.domaine, langueAffichee) }}</strong></span>
       <RouterLink v-if="matiere" :to="`/${matiere}`">{{ t('competence.voirMatiere') }}</RouterLink>
     </p>
     <p class="meta classes">
-      <span><span aria-hidden="true">{{ EMOJI.classe }}</span> {{ t('competence.classes') }} :</span>
+      <span><span aria-hidden="true"><Icone nom="classe" /></span> {{ t('competence.classes') }} :</span>
       <RouterLink v-for="c in competence.niveaux" :key="c" class="classe" :class="{ choisie: contexte.classes.includes(c) }"
         :to="adresseCompetence(competence.id, c, reportes)" :aria-current="contexte.classes.includes(c) ? 'true' : undefined">{{ c.toUpperCase() }}</RouterLink>
     </p>
@@ -21,7 +21,7 @@
       <h2 id="h-voisines">{{ t('competence.voisines.titre') }} <span class="precision">({{ t('competence.voisines.precision') }})</span></h2>
       <ul v-if="voisines.length" class="liste">
         <li v-for="k in voisines" :key="k.id">
-          <RouterLink :to="adresseCompetence(k.id, null, reportes)" :lang="LANGUE_SOURCE"><span aria-hidden="true">{{ EMOJI.competence }}</span> {{ k.libelle }}</RouterLink>
+          <RouterLink :to="adresseCompetence(k.id, null, reportes)" :lang="LANGUE_SOURCE"><span aria-hidden="true"><Icone nom="competence" /></span> {{ k.libelle }}</RouterLink>
           <span class="niveaux"> · {{ texteClasses(k.niveaux) }}</span>
         </li>
       </ul>
@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Page d'une compétence (/competence/:id) : le point d'arrivée d'une case du programme. L'intitulé, le domaine, les classes, le
 // texte officiel (page du PDF et extrait), toutes les ressources liées, les compétences voisines. Titre du document : l'intitulé.
 import { computed } from 'vue'
@@ -49,11 +50,10 @@ import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import BandeauConstruction from '../shell/BandeauConstruction.vue'
 import FilAriane from '../shell/FilAriane.vue'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
+import type { Maillon } from '../shell/FilAriane.vue'
 import CompetenceOfficiel from '../programme/CompetenceOfficiel.vue'
 import CompetenceRessources from '../programme/CompetenceRessources.vue'
 import { adresseCompetence, adresseProgramme } from '../programme/adresse.ts'
-import { EMOJI } from '../programme/emojis.ts'
 import { MATIERES_PROGRAMME } from '../programme/etat.ts'
 import { nomDuDomaine } from '../programme/noms.ts'
 import { interpretationDe, referenceDe } from '../programme/references.ts'
@@ -82,9 +82,9 @@ const aPlusDeVoisines = computed(() => !!competence.value && competencesVoisines
 const adresseDuProgramme = computed(() => adresseProgramme(
   { matiere: matiere.value ?? 'maths', domaine: competence.value?.domaine ?? null, affichage: null }, contexte.value.classes, reportes.value))
 
-const maillons = computed(() => [
-  { texte: t('competence.accueil'), vers: '/', emoji: EMOJI_BARRE.accueil },
-  { texte: t('competence.programme'), vers: adresseDuProgramme.value, emoji: EMOJI_BARRE.programme },
+const maillons = computed((): Maillon[] => [
+  { texte: t('competence.accueil'), vers: '/', icone: 'accueil' },
+  { texte: t('competence.programme'), vers: adresseDuProgramme.value, icone: 'programme' },
   ...(competence.value ? [{ texte: nomDuDomaine(competence.value.domaine, langueAffichee.value), emoji: EMOJI_DOMAINE[competence.value.domaine] }] : []),
 ])
 

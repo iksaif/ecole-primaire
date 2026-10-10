@@ -8,7 +8,7 @@
       <ul class="nav-links">
         <li v-for="r in liens" :key="r.id" :data-repere="r.id === 'programme' ? 'programme' : undefined"><LienRubrique :rubrique="r" /></li>
         <!-- entrée de développement : l'emoji seul (le nom est dans l'étiquette) pour ne pas allonger la barre -->
-        <li v-if="AVEC_DEV"><RouterLink to="/dev" :class="{ 'router-link-active': route.path.startsWith('/dev') }" :aria-label="t('shell.barre.dev')" :title="t('shell.barre.dev')">{{ EMOJI_BARRE.dev }}</RouterLink></li>
+        <li v-if="AVEC_DEV"><RouterLink to="/dev" :class="{ 'router-link-active': route.path.startsWith('/dev') }" :aria-label="t('shell.barre.dev')" :title="t('shell.barre.dev')"><Icone nom="outils" /></RouterLink></li>
       </ul>
     </nav>
     <div class="nav-droite">
@@ -20,13 +20,14 @@
       <SelecteurLangue v-if="!enfant" class="grand-ecran" data-repere="langue" />
       <SelecteurClasse data-repere="classe" />
       <PastilleProfil :class="{ 'grand-ecran': !enfant }" data-repere="profil" />
-      <RouterLink v-if="!enfant" to="/parametres" class="nbtn grand-ecran" :aria-label="t('shell.barre.reglages')" :title="t('shell.barre.reglages')">{{ EMOJI_BARRE.reglages }}</RouterLink>
+      <RouterLink v-if="!enfant" to="/parametres" class="nbtn grand-ecran" :aria-label="t('shell.barre.reglages')" :title="t('shell.barre.reglages')"><Icone nom="reglages" /></RouterLink>
       <MenuMobile v-if="!enfant" :rubriques="liens" data-repere="menu" />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
@@ -42,7 +43,6 @@ import MenuMobile from './MenuMobile.vue'
 import PastilleProfil from './PastilleProfil.vue'
 import SelecteurClasse from './SelecteurClasse.vue'
 import SelecteurLangue from './SelecteurLangue.vue'
-import { EMOJI_BARRE } from './emojis.ts'
 import { menuOuvert } from './menus.ts'
 import { rubriques } from './rubriques.ts'
 

@@ -6,19 +6,19 @@
     <div v-if="rechercheOuverte" class="fond" @mousedown.self="fermerRecherche()">
       <div ref="fenetre" class="fenetre" role="dialog" aria-modal="true" :aria-label="t('recherche.titre')" @keydown="surClavier">
         <div class="tete">
-          <span aria-hidden="true">{{ EMOJI_BARRE.recherche }}</span>
+          <span aria-hidden="true"><Icone nom="recherche" /></span>
           <input ref="champ" v-model="saisie" type="text" role="combobox" autocomplete="off" spellcheck="false" enterkeyhint="search"
             :placeholder="t('recherche.placeholder')" :aria-label="t('recherche.champ')" :aria-expanded="lignes.length > 0"
             :aria-controls="lignes.length ? ID_LISTE : undefined" aria-autocomplete="list"
             :aria-activedescendant="lignes.length ? idOption(position) : undefined"
             @keydown.down.prevent="aller(1)" @keydown.up.prevent="aller(-1)" @keydown.enter.prevent="choisirActive">
-          <button type="button" class="fermer" :aria-label="t('recherche.fermer')" @click="fermerRecherche()">✕</button>
+          <button type="button" class="fermer" :aria-label="t('recherche.fermer')" @click="fermerRecherche()"><Icone nom="fermer" /></button>
         </div>
 
         <div class="contexte">
-          <span><span aria-hidden="true">{{ EMOJI_BARRE.classe }}</span> {{ t('recherche.classe', { classes: classesTexte }) }}</span>
+          <span><span aria-hidden="true"><Icone nom="classe" /></span> {{ t('recherche.classe', { classes: classesTexte }) }}</span>
           <button type="button" class="level-btn" :class="{ active: toutesLesClasses }" :aria-pressed="toutesLesClasses"
-            @click="toutesLesClasses = !toutesLesClasses"><span aria-hidden="true">{{ EMOJI_BARRE.tous }}</span> {{ t('recherche.toutesLesClasses') }}</button>
+            @click="toutesLesClasses = !toutesLesClasses"><span aria-hidden="true"><Icone nom="tous" /></span> {{ t('recherche.toutesLesClasses') }}</button>
           <span v-if="masques" class="doux">{{ t('recherche.masques', { n: masques }) }}</span>
         </div>
 
@@ -26,7 +26,7 @@
         <p v-else-if="!aRequete" class="vide">{{ t('recherche.aide') }}</p>
         <div v-else class="vide">
           <p>{{ toutesLesClasses ? t('recherche.aucunPartout', { requete }) : t('recherche.aucun', { requete, classes: classesTexte }) }}</p>
-          <button v-if="!toutesLesClasses" type="button" class="level-btn" @click="toutesLesClasses = true"><span aria-hidden="true">{{ EMOJI_BARRE.tous }}</span> {{ t('recherche.essayerToutes') }}</button>
+          <button v-if="!toutesLesClasses" type="button" class="level-btn" @click="toutesLesClasses = true"><span aria-hidden="true"><Icone nom="tous" /></span> {{ t('recherche.essayerToutes') }}</button>
         </div>
 
         <p class="annonce sr-only" role="status" aria-live="polite">{{ annonce }}</p>
@@ -40,9 +40,9 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { ref } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI_BARRE } from '../shell/emojis.ts'
 import { ID_LISTE, idOption } from './identifiants.ts'
 import { fermerRecherche, rechercheOuverte } from './palette.ts'
 import RechercheResultats from './RechercheResultats.vue'

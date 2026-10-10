@@ -121,7 +121,7 @@ console.log('Programme : titre, fil d’Ariane, liste par défaut, adresse de la
   const { ctx, page } = await ouvrir()
   await page.goto(app('/programme?classes=ce1,ce2'))
   await pret(page)
-  verifier(await page.locator('h1').count() === 1 && (await page.locator('h1').textContent()).trim() === '📚 Programme', 'titre « 📚 Programme »')
+  verifier(await page.locator('h1').count() === 1 && (await page.locator('h1').textContent()).trim() === 'Programme' && await page.locator('h1 svg.icone').count() === 1, 'titre « Programme », avec son icône')
   const fil = await page.locator('nav.fil li').allTextContents()
   verifier(fil.length === 2 && /Accueil/.test(fil[0]) && /Programme/.test(fil[1]) && await page.locator('nav.fil li a').count() === 1, 'fil d’Ariane : Accueil › Programme')
   verifier(await presse(page, 'Liste') && await page.locator('table.prog').count() === 0, 'la liste est la présentation par défaut (comme la maquette)')
@@ -130,7 +130,7 @@ console.log('Programme : titre, fil d’Ariane, liste par défaut, adresse de la
   await page.getByRole('button', { name: 'Tableau', exact: true }).click()
   await page.waitForSelector('table.prog')
   const entete = page.locator('table.prog thead th').last()
-  verifier((await entete.textContent()).trim().startsWith('🧰') && await entete.locator('.sr-only').textContent() === 'Ressources' && await entete.locator('[aria-hidden="true"]').textContent() === '🧰', 'colonne « Ressources » : l’icône 🧰 et un libellé accessible')
+  verifier(await entete.locator('[aria-hidden="true"] svg.icone').count() === 1 && await entete.locator('.sr-only').textContent() === 'Ressources', 'colonne « Ressources » : une icône décorative et un libellé accessible')
   verifier((await page.locator('p.adresse code').textContent()).includes('affichage=tableau'), 'l’adresse suit la vue')
   await ctx.close()
 }

@@ -9,7 +9,7 @@
           <th v-for="c in NIVEAUX" :key="c" scope="col" :class="{ choisie: classes.includes(c) }">
             {{ c.toUpperCase() }}<span v-if="classes.includes(c)" class="sr-only"> ({{ t('programme.tableau.choisie') }})</span>
           </th>
-          <th scope="col"><span aria-hidden="true">{{ EMOJI.ressources }}</span><span class="sr-only">{{ t('programme.tableau.ressources') }}</span></th>
+          <th scope="col"><span aria-hidden="true"><Icone nom="ressources" /></span><span class="sr-only">{{ t('programme.tableau.ressources') }}</span></th>
         </tr>
       </thead>
       <tbody>
@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Le tableau du programme : une ligne par compétence, une colonne par classe. Chaque case est un lien vers la page de la
 // compétence (avec la classe dans l'adresse) ; l'étiquette de référence est un lien distinct (jamais un lien dans un lien).
 import { computed } from 'vue'
@@ -48,7 +49,6 @@ import { LANGUE_SOURCE } from '../langues/registre.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { adresseCompetence } from './adresse.ts'
 import type { ParamsReportes } from './adresse.ts'
-import { EMOJI } from './emojis.ts'
 import EtiquetteReference from './EtiquetteReference.vue'
 import LectureInterpretation from './LectureInterpretation.vue'
 import { nomDuDomaine } from './noms.ts'

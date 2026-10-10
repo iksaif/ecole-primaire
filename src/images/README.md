@@ -63,6 +63,22 @@ Au-delà du budget, il faudra découper le générateur : le contour à la deman
 pas, puisqu'ils ne voient que le rendu. Pour l'interface (domaines, retours), prévoir un lot séparé et court, sinon les dessins
 entreraient dans le paquet principal.
 
+## Les icônes d'interface (Phosphor)
+
+Ce qui se clique ou qui nomme une notion de l'interface (barre, menu, pied de page, fil d'Ariane, boutons d'action, libellés du
+programme, types de la recherche) n'est pas un contenu : c'est une icône [Phosphor](https://phosphoricons.com) (MIT), de la couleur du
+texte, et non un emoji.
+
+- `icones.ts` : `ICONES`, nom → icône Phosphor (`imprimer: 'printer'`). Une action = une icône, la même partout. `REMPLIES` : les
+  icônes qui ont aussi leur version pleine (état actif ou sélectionné). Graisse bold.
+- `donnees/icones.ts` : les dessins, **générés** par `node scripts/generer/icones.ts` (Phosphor v2.0.8, cache hors du dépôt).
+  25 à 30 icônes pèsent moins de 5 Ko gzip : elles sont dans le paquet principal.
+- `<Icone nom="imprimer" />` : décorative à côté d'un texte ; seule dans un bouton, `libelle` (lu par les lecteurs d'écran). Taille
+  1.25em par défaut : elle suit le texte. Dans du HTML construit en chaîne : `iconeHtml(nom)` ; dans un SVG : `iconeSvg(nom, x, y, taille)`
+  (`icone.ts`).
+- Fil d'Ariane, état vide, rubriques : un champ `icone` (une page de l'interface) à côté du champ `emoji` (un contenu).
+- Jamais une icône et un emoji côte à côte à la même taille : les grandes tuiles de l'accueil et les matières restent des emojis.
+
 ## Garde-fous
 
 - `tests/images.test.mjs` vérifie les données, le budget, les dessins maison, les quatre combinaisons et la préférence corrompue.

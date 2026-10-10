@@ -1,19 +1,19 @@
 <template>
   <div class="choix-classes" role="group" :aria-label="t(plusieurs ? 'accueil.mesClasses' : 'accueil.maClasse')">
-    <span class="titre"><span aria-hidden="true">{{ EMOJI_ACCUEIL.classe }}</span> {{ t(plusieurs ? 'accueil.mesClasses' : 'accueil.maClasse') }}</span>
+    <span class="titre"><Icone nom="classe" /> {{ t(plusieurs ? 'accueil.mesClasses' : 'accueil.maClasse') }}</span>
     <button v-for="c in CLASSES" :key="c.id" type="button" class="puce" :class="{ active: contexte.classes.includes(c.id) }"
       :aria-pressed="contexte.classes.includes(c.id)" @click="choisir(c.id)">{{ c.label }}</button>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Le choix des classes sur l'accueil : une seule (parent) ou plusieurs (enseignant : on ajoute et on retire, jamais moins d'une),
 // par le contexte, donc dans l'adresse.
 import { useContexte } from '../contexte/useContexte.ts'
 import { CLASSES } from '../data/classes.ts'
 import type { Classe } from '../data/classes.ts'
 import { useLangue } from '../langues/useLangue.ts'
-import { EMOJI_ACCUEIL } from '../ressources/composants/presentation.ts'
 
 const { t } = useLangue()
 const { contexte, plusieursClasses: plusieurs, choisirClasses, ajouterClasse, retirerClasse } = useContexte()

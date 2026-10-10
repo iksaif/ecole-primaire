@@ -4,7 +4,6 @@
 import { COULEURS, txt } from '../../impression/affiches/cadre.ts'
 import { enLettresFr } from '../../utils/nombres.js'
 import { donneesRegionales } from '../../langues/registre.ts'
-import { emojiSvg } from '../../images/openmoji.ts'
 import type { NomEmoji } from '../../images/tables.ts'
 import { tailleQuiTient } from '../listeMots.ts'
 import type { Rendu } from '../types.ts'
@@ -95,7 +94,7 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, _T, ctx) => {
     s += txt(x + l / 2, y + hBandeau / 2, n, Math.min(l * 0.5, hBandeau * 0.85), { gras: true, couleur })
     for (const place of blocs[i].places) {
       const cx = x + l / 2 + place.x * cote, cy = y + hautBloc + place.y * cote
-      if (r.representation === 'objets') s += emojiSvg(objet, cx - cote / 2, cy, cote)
+      if (r.representation === 'objets') s += ctx.images.svg(objet, cx - cote / 2, cy, cote)
       else s += `<circle cx="${cx}" cy="${cy + cote / 2}" r="${cote * 0.32}" fill="${couleur}"/>`
     }
     // les nombres en lettres : une ligne par langue de la feuille

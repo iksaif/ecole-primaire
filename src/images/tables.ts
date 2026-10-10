@@ -1,9 +1,9 @@
 // Les emojis que le site affiche, par nom : une faute de frappe ne compile pas, et le script `scripts/generer/images.ts` n'importe
 // que ces fichiers-là. Deux sources : OpenMoji (code = nom du fichier de la version d'OpenMoji, en majuscules, sans le sélecteur FE0F),
 // et nos dessins « maison » au même style quand OpenMoji n'a pas ce qu'il faut (code `maison:<nom>` = src/images/maison/<nom>.svg ;
-// règles de dessin : src/images/maison/README.md). Un emoji se rend avec
-// `emojiSvg` (dans un SVG) ou `emojiHtml` (dans un texte HTML) de `src/images/openmoji.ts`. Un emoji de plus : l'écrire ici, puis
-// `node scripts/generer/images.ts`. Il garde un seul sens : jamais un même nom pour deux choses différentes à l'écran.
+// règles de dessin : src/images/maison/README.md). Un emoji se rend avec le rendu que reçoit le dessin (`ctx.images` d'une affiche,
+// `images` d'une fiche : `svg(…)` ou `html(…)`, src/images/rendu.ts). Un emoji de plus : l'écrire ici, puis
+// `node scripts/generer/images.ts` (src/images/README.md). Il garde un seul sens : jamais un même nom pour deux choses différentes à l'écran.
 export const EMOJIS = {
   // objets à compter, à nommer
   pomme: '1F34E', etoile: '2B50', fleur: '1F338', coccinelle: '1F41E', chat: '1F431', arbre: '1F333',

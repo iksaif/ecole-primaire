@@ -1,10 +1,9 @@
 // Le dessin de l’hygiène : des cartes (image, mot dans chaque langue de la feuille), dessin commun de la maternelle : src/affiches/cartes.ts.
 // Le lavage des mains montre les mains à chaque étape, avec ce qui agit dessus (l'eau, le savon, la mousse, le rinçage, le papier) : on voit
 // le geste, pas seulement l'objet.
-import type { Rendu } from '../types.ts'
+import type { ContexteDessin, Rendu } from '../types.ts'
 import { CSS_CARTES, dessinerCartes, titreDeLaPage } from '../cartes.ts'
 import type { Carte, Enchainement } from '../cartes.ts'
-import { emojiSvg } from '../../images/openmoji.ts'
 import type { NomEmoji } from '../../images/tables.ts'
 import type { Reglages } from './definition.ts'
 
@@ -32,17 +31,17 @@ const CARTES: Readonly<Record<string, { enchainement: Enchainement, numeroter?: 
 }
 
 /** Les mains ouvertes (en bas) et l'objet qui agit dessus (au-dessus, ou devant elles), dans un carré de `cote` mm. */
-function surLesMains(e: Element, cote: number): string {
+function surLesMains(e: Element, cote: number, images: ContexteDessin['images']): string {
   // les mains restent petites, en bas ; l'objet est grand : c'est lui qui dit l'étape
-  const objet = e.surLesMains === 'devant' ? emojiSvg(e.emoji, 14, 22, 44) : emojiSvg(e.emoji, 13, 0, 46)
-  return `<svg width="${cote}mm" height="${cote}mm" viewBox="0 0 72 72" aria-hidden="true">${emojiSvg('mainsOuvertes', 18, 36, 36)}${objet}</svg>`
+  const objet = e.surLesMains === 'devant' ? images.svg(e.emoji, 14, 22, 44) : images.svg(e.emoji, 13, 0, 46)
+  return `<svg width="${cote}mm" height="${cote}mm" viewBox="0 0 72 72" aria-hidden="true">${images.svg('mainsOuvertes', 18, 36, 36)}${objet}</svg>`
 }
 
 export const dessin: Rendu<Reglages>['dessin'] = (r, zone, _T, ctx) => {
   const lot = CARTES[r.variante]
   const cartes: Carte[] = lot.elements.map((e, i) => ({
     emoji: e.emoji,
-    dessin: e.surLesMains ? cote => surLesMains(e, cote) : undefined,
+    dessin: e.surLesMains ? cote => surLesMains(e, cote, ctx.images) : undefined,
     mot: langue => ctx.Tde(langue)(`mot.${e.id}`),
     numero: lot.numeroter ? i + 1 : undefined,
   }))

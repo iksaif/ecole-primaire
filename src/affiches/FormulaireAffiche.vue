@@ -6,7 +6,8 @@
   Variante ; préréglages (jeux de réglages nommés, qui restent modifiables) ; puis les groupes de `definition.formulaire`
   (ordre, titre, aide, « visible si ») : réglages à choix (« (bonus) », « (hors programme) », valeurs qui dépendent des
   autres réglages), champs libres (texte, nombre), langues affichées, polices, hasard ; puis la feuille (langue, format et
-  orientation s'ils ne sont pas fixes, titre personnalisé) ; aperçu et impression. `depart` : réglages du lien
+  orientation s'ils ne sont pas fixes, titre personnalisé ; les images (ChoixImages) si le dessin a rendu des emojis : une préférence
+  de l'appareil, partagée avec les fiches, qui n'entre pas dans l'adresse) ; aperçu et impression. `depart` : réglages du lien
   (?variante=…&langues=fr,br).
   Langue : le formulaire (titres, noms des variantes, aides) est dans la langue de l'INTERFACE ; seul l'aperçu est dans
   la langue de l'affiche. Une langue sans traduction d'un texte retombe sur le français.
@@ -111,6 +112,7 @@
             @click="config.orientation = o">{{ t(o === 'landscape' ? 'formulaireAffiche.paysage' : 'formulaireAffiche.portrait') }}</button>
         </div>
       </div>
+      <ChoixImages v-if="resultat.avecImages" />
     </div>
     </section>
 
@@ -123,11 +125,13 @@ import { ref, computed, watch, useId } from 'vue'
 import { texteClasses } from '../data/classes.ts'
 import ApercuImpression from '../noyau/ApercuImpression.vue'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
+import ChoixImages from '../noyau/ChoixImages.vue'
 import ChoixReglage from '../noyau/ChoixReglage.vue'
 import GroupeReglages from './GroupeReglages.vue'
 import { langueProposable } from '../langues/confianceReglage.ts'
 import { estLangue } from '../langues/registre.ts'
 import { usePolices, disponiblesDe } from '../noyau/polices.ts'
+import { useImagesFiche } from '../images/useImagesFiche.ts'
 import { chargerReglages, sauvegarder } from '../utils/index.js'
 import { useLangue } from '../langues/useLangue.ts'
 import { graineAleatoire } from '../utils/hasard.ts'
@@ -219,7 +223,12 @@ watch([polices.pret, scripts, attaches], () => {
   if (!polices.pret.value) return
   config.value = reglagesDe(definition, config.value, [...scripts.value, ...attaches.value].map(p => p.id))
 }, { immediate: true })
-const resultat = computed(() => (polices.pret.value ? genererAffiche(props.module, config.value, undefined, mesureNavigateur) : { html: '', nbPages: 1 }))
+// les images : la préférence de l'appareil (famille, style), passée au dessin avec les réglages
+const images = useImagesFiche()
+const resultat = computed(() => {
+  if (!polices.pret.value) return { html: '', nbPages: 1, avecImages: false }
+  return genererAffiche(props.module, { ...config.value, images: images.value }, undefined, mesureNavigateur)
+})
 </script>
 
 <style scoped>

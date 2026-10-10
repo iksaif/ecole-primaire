@@ -11,6 +11,7 @@ import type { Classe } from '../data/classes.ts'
 import type { CompetenceId, DomaineId, Contraintes } from '../data/programme.ts'
 import type { Rng } from '../utils/hasard.ts'
 import type { CatalogueContenu } from '../langues/catalogue.ts'
+import type { ImagesFiche } from '../images/preference.ts'
 
 export type { Classe, CompetenceId, DomaineId, Contraintes, Rng }
 
@@ -210,6 +211,11 @@ export interface ParamsFiche<R extends object = Reglages, F = unknown, Cle exten
   cssPolices?: string
   /** fiche à plusieurs écritures : la famille de chaque type (`script`, `attache`) ; `cssPolices` embarque leurs @font-face */
   polices?: Readonly<Record<string, string>>
+  /**
+   * la préférence « Images » (famille, style : useFicheExercice) ; la fiche dessine ses emojis avec `imagesDe(params)`
+   * (src/images/rendu.ts), qui prend le défaut (OpenMoji en couleur) quand elle est absente : build des PDF publiés, instantanés
+   */
+  images?: ImagesFiche
   /**
    * mesure du texte, pour une fiche qui ajuste le texte à la place (taille par la hauteur d'x, coupure des lignes) : canvas dans le
    * navigateur (mesureNavigateur), largeurs tabulées au build (mesureEstimee). La même que celle des affiches.

@@ -60,4 +60,15 @@ export default {
     effacer: 'Effacer la clé',
     confidentialite: 'La clé reste sur cet appareil. Elle n’est envoyée qu’à Mistral (api.mistral.ai), seulement pour écrire des phrases ; sans clé, rien ne sort du navigateur.',
   },
+  // la préférence « Images » des fiches et des affiches (ChoixImages.vue)
+  images: {
+    titre: 'Images',
+    famille: 'Dessins des images',
+    openmoji: 'Dessins du site',
+    systeme: 'Emojis de cet appareil',
+    style: 'Style des images',
+    couleur: 'En couleur',
+    contour: 'Contour, à colorier',
+    noteSysteme: 'Les emojis de l’appareil changent d’un appareil à l’autre et n’existent pas en contour.',
+  },
 } as const

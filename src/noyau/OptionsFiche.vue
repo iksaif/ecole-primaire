@@ -1,8 +1,9 @@
 <!--
   Bloc « Sur la fiche » : options communes à toutes les fiches d'exercice du noyau (optionsFiche.ts, dernier choix
   mémorisé) — une ligne par préoccupation : « Prénom et date » (case à cocher, le slot ajoute des boutons à côté), le
-  corrigé (sans / sur une autre page / en bas à l'envers : un seul choix, en boutons radio d'une seule pièce), puis la police.
-  Affiché par CadreExercice en mode impression. `police` : false pour un exercice sans texte à mettre en police.
+  corrigé (sans / sur une autre page / en bas à l'envers : un seul choix, en boutons radio d'une seule pièce), puis la police et les images.
+  Affiché par CadreExercice en mode impression. `police` : false pour un exercice sans texte à mettre en police ; `images` : true pour
+  une fiche qui dessine des emojis avec le rendu reçu (ParamsFiche.images), qui propose alors leur famille et leur style (ChoixImages).
   Accessibilité : éléments natifs (case à cocher, radios dans un <fieldset> nommé : flèches du clavier natives), focus visible
   sur le bouton entier, libellés sur une seule ligne, le groupe passe entier à la ligne si l'écran est étroit.
 -->
@@ -23,21 +24,27 @@
       </label>
     </fieldset>
     <ChoixPolice v-if="police" class="police-fiche" />
+    <ChoixImages v-if="images" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useId } from 'vue'
+import { defineAsyncComponent, useId } from 'vue'
 import ChoixPolice from './ChoixPolice.vue'
 import { useOptionsFiche, CHOIX_CORRIGE } from './optionsFiche.ts'
 import { useLangue } from '../langues/useLangue.ts'
+
+// chargé à la demande : ses aperçus tirent les dessins des emojis (src/images/donnees/), inutiles aux fiches sans image
+const ChoixImages = defineAsyncComponent(() => import('./ChoixImages.vue'))
 
 withDefaults(defineProps<{
   // la fiche a un corrigé → choix « sans / sur une autre page / en bas à l'envers »
   avecCorrige?: boolean
   // le choix de la police est proposé
   police?: boolean
-}>(), { avecCorrige: true, police: true })
+  // le choix des images (famille, style) est proposé
+  images?: boolean
+}>(), { avecCorrige: true, police: true, images: false })
 defineSlots<{ default?(): unknown }>()
 
 const { t } = useLangue()

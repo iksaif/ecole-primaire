@@ -7,7 +7,6 @@ import { CASE, FIGURES_ICONES } from '../../dessins/figures.ts'
 import type { FigureIcone } from '../../dessins/figures.ts'
 import { solide } from '../../dessins/solides.ts'
 import type { SolideId } from '../../dessins/solides.ts'
-import { emojiHtml } from '../../images/openmoji.ts'
 import type { Rendu } from '../types.ts'
 import { LOTS } from './lots.ts'
 import type { Reglages } from './definition.ts'
@@ -39,7 +38,7 @@ function infoDe(T: (cle: string) => string, cle: string, type: 'figures' | 'soli
 // marge intérieure d'une carte, en part de sa largeur (de chaque côté)
 export const MARGE = 0.04
 
-export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H: Hzone }, T, { mesure, nomPolice }) => {
+export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H: Hzone }, T, { mesure, nomPolice, images }) => {
   const lot = LOTS[r.variante] ?? LOTS['plan-cycle2']
   // propriétés à montrer, et donc la légende : sa hauteur est réservée aux cartes
   const montrer = { angles: !!r.angles, cotes: !!r.cotes, paralleles: !!r.paralleles, rayon: !!r.rayon, faces: !!r.faces }
@@ -78,7 +77,7 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H: Hzone }, T, { mesur
   const dessinMax = Math.min(t * 0.78, ch * 0.92 - Math.max(...textes.map(x => x.haut)) - hObjet)
   const objetDe = (id: string): string => {
     const nomEmoji = objets?.[id as SolideId]
-    return nomEmoji ? emojiHtml(nomEmoji, `${hObjet}mm`) : ''
+    return nomEmoji ? images.html(nomEmoji, `${hObjet}mm`) : ''
   }
   const cartes = textes.map(({ id, nom, info, tNom, tInfo }, k) => {
     const fond = FONDS[k % 6]

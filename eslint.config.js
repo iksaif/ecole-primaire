@@ -6,6 +6,32 @@ import vue from 'eslint-plugin-vue'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
+/** L'ancien socle et ses raccourcis : interdits au monde TypeScript (voir le bloc « Les deux mondes »). */
+const ANCIEN_SOCLE = [
+  { group: ['**/composables/*'], message: "Ancien socle : utiliser src/noyau/ (useJeu, useReglages, useFicheExercice…)." },
+  {
+    group: ['**/components/ConfigExercice.vue', '**/components/OptionsFiche.vue', '**/components/ChoixReglage.vue', '**/components/ChoixReponses.vue',
+      '**/components/SaisieReponse.vue', '**/components/QuestionJeu.vue', '**/components/ResultatsJeu.vue', '**/components/ResultatsEtoiles.vue',
+      '**/components/TableauCorrection.vue', '**/components/OrdonnerClics.vue', '**/components/ChoixPolice.vue'],
+    message: "Ancien socle : utiliser les composants de src/noyau/ (CadreExercice, ChoixReglage, ChoixReponses…).",
+  },
+  { group: ['**/exercices/outils', '**/exercices/outils.js'], message: "Ancien socle : utiliser src/noyau/reglages.ts." },
+  {
+    group: ['**/data/classes', '**/data/classes.js', '**/data/programme', '**/data/programme.js', '**/utils/hasard', '**/utils/hasard.js',
+      '**/utils/reponses', '**/utils/reponses.js', '**/impression/document', '**/impression/document.js'],
+    message: "Raccourci legacy : importer le module .ts (programme.ts, classes.ts, hasard.ts, reponses.ts, document.ts).",
+  },
+]
+
+/** Le rendu des images se reçoit : seuls src/images/, le noyau et le cadre des affiches le fabriquent ou lisent les données. */
+const IMAGES_PAR_LE_CADRE = [
+  { group: ['**/images/donnees/*'], message: 'Images : les données ne se lisent que par src/images/rendu.ts.' },
+  {
+    group: ['**/images/rendu.ts'], importNames: ['creerRenduImages'],
+    message: 'Images : utiliser le rendu reçu (ctx.images pour une affiche, imagesDe(params) pour une fiche), qui suit la préférence « Images ».',
+  },
+]
+
 export default [
   { ignores: ['dist*/**', 'node_modules/**', 'public/**', 'plans/**', 'brouillons/**', 'couverture.html', 'i18n-relecture.html'] },
   js.configs.recommended,
@@ -44,25 +70,20 @@ export default [
     // avec le dernier exercice migré. Les modules partagés (utils/index.js, i18n, utils/impression.js, ApercuImpression,
     // SignalerErreur…) restent permis. data/classes.ts, data/programme.ts, utils/hasard.ts, utils/reponses.ts et
     // impression/document.ts s'importent avec leur extension .ts : leurs anciens chemins .js sont des raccourcis.
-    files: ['src/noyau/**', 'src/exercices/exemple/**', 'src/affiches/**'],
-    rules: {
-      'no-restricted-imports': ['error', {
-        patterns: [
-          { group: ['**/composables/*'], message: "Ancien socle : utiliser src/noyau/ (useJeu, useReglages, useFicheExercice…)." },
-          {
-            group: ['**/components/ConfigExercice.vue', '**/components/OptionsFiche.vue', '**/components/ChoixReglage.vue', '**/components/ChoixReponses.vue',
-              '**/components/SaisieReponse.vue', '**/components/QuestionJeu.vue', '**/components/ResultatsJeu.vue', '**/components/ResultatsEtoiles.vue',
-              '**/components/TableauCorrection.vue', '**/components/OrdonnerClics.vue', '**/components/ChoixPolice.vue'],
-            message: "Ancien socle : utiliser les composants de src/noyau/ (CadreExercice, ChoixReglage, ChoixReponses…).",
-          },
-          { group: ['**/exercices/outils', '**/exercices/outils.js'], message: "Ancien socle : utiliser src/noyau/reglages.ts." },
-          {
-            group: ['**/data/classes', '**/data/classes.js', '**/data/programme', '**/data/programme.js', '**/utils/hasard', '**/utils/hasard.js',
-              '**/utils/reponses', '**/utils/reponses.js', '**/impression/document', '**/impression/document.js'],
-            message: "Raccourci legacy : importer le module .ts (programme.ts, classes.ts, hasard.ts, reponses.ts, document.ts).",
-          },
-        ],
-      }],
-    },
+    // Le cadre des affiches (generer.ts, types.ts) fabrique le rendu des images : il est ici, avec le noyau.
+    files: ['src/noyau/**', 'src/affiches/generer.ts', 'src/affiches/types.ts'],
+    rules: { 'no-restricted-imports': ['error', { patterns: ANCIEN_SOCLE }] },
+  },
+  {
+    // Les dessins des affiches et des fiches reçoivent le rendu des images (ctx.images, imagesDe(params)) : ils ne le fabriquent
+    // pas et ne lisent pas les données, pour que la préférence « Images » de l'utilisateur les atteigne tous (src/images/README.md).
+    files: ['src/exercices/exemple/**', 'src/affiches/**'],
+    ignores: ['src/affiches/generer.ts', 'src/affiches/types.ts'],
+    rules: { 'no-restricted-imports': ['error', { patterns: [...ANCIEN_SOCLE, ...IMAGES_PAR_LE_CADRE] }] },
+  },
+  {
+    files: ['src/exercices/**', 'src/moteurs/**'],
+    ignores: ['src/exercices/exemple/**'],
+    rules: { 'no-restricted-imports': ['error', { patterns: IMAGES_PAR_LE_CADRE }] },
   },
 ]

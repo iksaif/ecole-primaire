@@ -30,6 +30,7 @@ import { empreinte, racine, lireInstantanes, ecrireInstantanes, fichierInstantan
 import { verifier, nbEchecs } from './outils.mjs'
 import { lireFeuille } from '../src/langues/traduire.ts'
 import { LANGUES } from '../src/langues/registre.ts'
+import { creerRenduImages } from '../src/images/rendu.ts'
 
 const MODULES = [...REGISTRE, ...EXEMPLES]
 const module_riche = EXEMPLES.find(m => m.definition.id === 'exemple-riche')
@@ -89,7 +90,7 @@ function mesures(c) { const m = mesuresAffiche({ format: c.format, orientation: 
 // T et contexte comme genererAffiche les donne (sans passer par le cadre)
 function contextes(module, c) {
   const Tde = l => traducteurAffiche(module.textes, l)
-  return [Tde(c.langue), { Tde, police: () => "'Andika', Arial, sans-serif", nomPolice: () => 'Andika', mesure: mesureEstimee, rng: creerRng(c.graine) }]
+  return [Tde(c.langue), { Tde, police: () => "'Andika', Arial, sans-serif", nomPolice: () => 'Andika', mesure: mesureEstimee, rng: creerRng(c.graine), images: creerRenduImages() }]
 }
 
 for (const module of MODULES) {

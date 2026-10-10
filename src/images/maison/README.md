@@ -7,8 +7,9 @@ qu'elle se mêle aux autres sur une fiche ou une affiche. Un fichier par dessin 
 
 1. Dessiner `<nom>.svg` en suivant les règles ci-dessous (on peut partir d'un fichier voisin).
 2. L'inscrire dans `src/images/tables.ts` : `<nom>: 'maison:<nom>'` (le nom de la table peut différer du nom du fichier).
-3. `node scripts/generer/images.ts` : le dessin entre dans `openmoji-donnees.ts` et se rend avec `emojiSvg` / `emojiHtml`, comme un OpenMoji
-   (balise marquée `data-image="maison"`).
+3. `node scripts/generer/images.ts` : le dessin entre dans `src/images/donnees/` (couleur, et contour déduit : aplats → blanc ; une
+   retouche à la main va dans `<nom>.contour.svg`) et se rend comme un OpenMoji, avec le rendu reçu (`ctx.images`, `imagesDe(params)` :
+   `src/images/README.md`), balise marquée `data-image="maison"`. Regarder aussi le contour.
 4. `node tests/images.test.mjs`, puis regarder le dessin **à côté de vrais OpenMoji** (une carte d'affiche, ou une page d'essai).
 5. Pour une affiche de maternelle : proposer un regard critique « enfant » et « enseignant·e » (`docs/critiques/`) : un dessin qui se lit
    comme un visage, un vêtement ou un objet est le défaut le plus fréquent.

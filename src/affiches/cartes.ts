@@ -4,7 +4,6 @@
 // (`suite`) ou en cercle (`cycle`). Une seule page. Pur : la mesure du texte vient du contexte, les images de src/images/.
 import type { ContexteDessin } from './types.ts'
 import { echapper } from '../utils/html.js'
-import { emojiHtml } from '../images/openmoji.ts'
 import type { NomEmoji } from '../images/tables.ts'
 import { tailleQuiTient } from './listeMots.ts'
 
@@ -69,7 +68,7 @@ function meilleureDisposition(cartes: readonly Carte[], zone: { W: number, H: nu
 
 /** Le contenu d'une carte : l'image (sur son aplat de couleur au besoin), le numéro et les mots. */
 function htmlCarte(c: Carte, d: Disposition, ctx: ContexteDessin, langues: readonly string[]): string {
-  const dessiner = (cote: number): string => (c.dessin ? c.dessin(cote) : c.emoji ? emojiHtml(c.emoji, `${cote}mm`) : '')
+  const dessiner = (cote: number): string => (c.dessin ? c.dessin(cote) : c.emoji ? ctx.images.html(c.emoji, `${cote}mm`) : '')
   const image = dessiner(d.image * (c.couleur ? 0.62 : 1))
   const aplat = c.couleur
     ? `<span class="aplat" style="width:${d.image}mm;height:${d.image}mm;background:${c.couleur}"><span class="rond" style="width:${d.image * 0.74}mm;height:${d.image * 0.74}mm">${image}</span></span>`

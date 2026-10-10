@@ -63,4 +63,15 @@ export default {
     effacer: "Diverkañ an alc'hwez", // br: à relire
     confidentialite: "An alc'hwez a chom war an ardivink-mañ. Ne vez kaset nemet da Mistral (api.mistral.ai), evit skrivañ frazennoù hepken ; hep alc'hwez, netra ne zeu er-maez eus ar merdeer.", // br: à relire
   },
+  // ar skeudennoù (ChoixImages.vue)
+  images: {
+    titre: 'Skeudennoù', // br: à relire
+    famille: 'Tresadennoù ar skeudennoù', // br: à relire
+    openmoji: "Tresadennoù al lec'hienn", // br: à relire
+    systeme: 'Emojioù an ardivink-mañ', // br: à relire
+    style: 'Doare ar skeudennoù', // br: à relire
+    couleur: 'E liv', // br: à relire
+    contour: 'Trolinenn, da livañ', // br: à relire
+    noteSysteme: "Emojioù an ardivink a cheñch eus un ardivink d'egile ha n'eus ket anezho e trolinenn.", // br: à relire
+  },
 } satisfies Traductions<typeof fr>

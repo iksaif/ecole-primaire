@@ -3,6 +3,7 @@
 import type { Classe, CompetenceId, DomaineId, NiveauExercice, OptionsDe, Reglages, Rng, Traducteur, ValeurOption, ValeurReglage } from '../noyau/types.ts'
 import type { Champ } from '../noyau/declaration.ts'
 import type { Format, Orientation } from '../utils/page.ts'
+import type { RenduImages } from '../images/rendu.ts'
 
 export type { Format, Orientation }
 
@@ -152,6 +153,8 @@ export interface ContexteDessin {
   mesure: Mesure
   /** hasard de la graine (seulement si la définition a `hasard: true`) */
   rng: Rng
+  /** les emojis, selon la préférence « Images » (famille, style) : `images.svg(…)`, `images.html(…)` ; le dessin n'importe jamais rendu.ts ni les données */
+  images: RenduImages
 }
 
 /**

@@ -78,7 +78,7 @@ export interface SpecAffiche<C extends SpecReglages, V extends Record<string, Sp
 }
 
 // noms réservés : ce sont les réglages de la feuille, communs à toutes les affiches
-const RESERVES = ['variante', 'format', 'orientation', 'langue', 'langues', 'titre', 'polices', 'graine']
+const RESERVES = ['variante', 'format', 'orientation', 'langue', 'langues', 'titre', 'polices', 'graine', 'images']
 // réglages de la feuille que le formulaire peut placer dans un groupe ou rendre conditionnels
 const DE_LA_FEUILLE = ['langues', 'titre', 'polices', 'graine']
 // réglages de la feuille qu'une condition `visibleSi` peut lire

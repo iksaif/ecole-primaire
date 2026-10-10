@@ -2,7 +2,6 @@
 // l'image de la personne, le ou les pronoms en grand (il / elle, ils / elles côte à côte), et, si demandé, l'exemple avec « chanter » au présent.
 // Pur : la mesure du texte vient du contexte, les images de src/images/.
 import { echapper } from '../../utils/html.js'
-import { emojiHtml } from '../../images/openmoji.ts'
 import type { NomEmoji } from '../../images/tables.ts'
 import { tailleQuiTient } from '../listeMots.ts'
 import type { Rendu } from '../types.ts'
@@ -51,7 +50,7 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
   const image = Math.min(hCase * (r.exemple ? 0.34 : 0.42), lPronom * 0.4)
 
   const pronomHtml = (p: Pronom, couleur: string): string =>
-    `<div class="pronom" style="width:${lPronom}mm"><span class="images">${p.images.map(n => emojiHtml(n, `${image}mm`)).join('')}</span><b style="font-size:${tPronom}mm;color:${couleur}">${echapper(p.pronom)}</b><em style="font-size:${tRemplace}mm">${echapper(p.remplace)}</em>${r.exemple ? `<span style="font-size:${tExemple}mm">${exempleColore(p.exemple, couleur)}</span>` : ''}</div>`
+    `<div class="pronom" style="width:${lPronom}mm"><span class="images">${p.images.map(n => ctx.images.html(n, `${image}mm`)).join('')}</span><b style="font-size:${tPronom}mm;color:${couleur}">${echapper(p.pronom)}</b><em style="font-size:${tRemplace}mm">${echapper(p.remplace)}</em>${r.exemple ? `<span style="font-size:${tExemple}mm">${exempleColore(p.exemple, couleur)}</span>` : ''}</div>`
   const entete = `<div class="entete" style="height:${hEntete}mm"><span style="width:${lEntete}mm"></span>${['singulier', 'pluriel'].map(c => `<span style="width:${lCase}mm;font-size:${tColonne}mm">${echapper(T(c))}</span>`).join('')}</div>`
   const rangees = TABLEAU.map((cases, i) => {
     const couleur = COULEURS[i]

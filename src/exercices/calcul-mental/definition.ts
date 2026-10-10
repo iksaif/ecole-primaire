@@ -7,7 +7,7 @@
 //   CM1, CM2 : entiers (pas de contrainte chiffrée au cycle 3), tables jusqu'à 12 puis 25.
 // Les identifiants d'opérations (« + », « Compléments à 10 »…) sont aussi les valeurs des réglages mémorisés des visiteurs :
 // ils ne changent pas (les libellés affichés sont dans textes.ts).
-import { definir, cases, choix, pourClasses, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, cases, choix, pourClasses, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 // Les opérations proposées (littéraux : le type des réglages en découle)
@@ -40,7 +40,7 @@ export default definir({
 
   // temps : secondes par question (0 = sans limite) ; nbQ : questions du jeu ; nbFiche : calculs d'une fiche
   reglages: {
-    nbQ: choix([5, 10, 20], { defaut: 10 }),
+    nbQ: choix([5, 10, 20], { defaut: 10, libre: NB_LIBRE }),
     temps: choix([0, 10, 20, 30], { defaut: 10 }),
     nbFiche: choix([10, 20, 30, 40, 60], { defaut: 20 }),
   },

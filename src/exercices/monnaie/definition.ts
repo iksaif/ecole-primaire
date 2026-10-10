@@ -5,7 +5,7 @@
 //   CE2 : euros et centimes, 1 € = 100 c, écriture à virgule, montants plus grands (p. 30-31).
 // Les sommes sont toujours en centimes entiers dans le générateur. Les identifiants des types d'exercices (« compter »…) sont
 // aussi les valeurs des réglages mémorisés des visiteurs : ils ne changent pas (les libellés affichés sont dans l'interface).
-import { definir, cases, choix, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, cases, choix, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 // Les types d'exercices proposés, par niveau (« 1 € = 100 c » arrive au CE2 : le CP et le CE1 n'ont pas de conversion)
@@ -24,7 +24,7 @@ export default definir({
   // réglages communs à tous les niveaux : nombre de questions du jeu ; le total affiché pendant qu'on compose (sans choix : un
   // simple interrupteur, jamais essayé par les tests de fiches)
   reglages: {
-    nbQ: choix([5, 10, 15], { defaut: 10 }),
+    nbQ: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }),
     aideTotal: true as boolean,
   },
 

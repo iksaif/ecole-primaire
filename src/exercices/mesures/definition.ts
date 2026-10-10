@@ -6,7 +6,7 @@
 // changerait les fiches publiées : un lot à part, voir docs/TODO.md).
 // Le calendrier (jours, mois) n'est pas dans le programme de mathématiques : exercice « hors programme », jamais coché.
 // Les identifiants des exercices (« regle »…) sont aussi les valeurs des réglages mémorisés des visiteurs (clé « mesures_config »).
-import { definir, cases, choix, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, cases, choix, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 const RAISON_CALENDRIER = 'Le calendrier relève de « Questionner le monde », pas du programme de mathématiques du cycle 2'
@@ -26,7 +26,7 @@ export default definir({
   // réglages communs à tous les niveaux : nombre de questions, segments sur la règle (« décalés » : ne commencent pas à 0 ; seulement
   // en jeu), segments à mesurer sur la fiche
   reglages: {
-    nbQ: choix([5, 10, 15], { defaut: 10 }),
+    nbQ: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }),
     decale: choix([false, true]),
     nbSegments: choix([4, 6, 8], { defaut: 6 }),
   },

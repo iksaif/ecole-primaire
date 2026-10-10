@@ -7,7 +7,7 @@
 //   geo-france  CE2, CM2   la France sur une carte (villes, fleuves, massifs), les régions (pas au programme du CM1)
 //   geo-monde   CM1, CM2   continents et océans, modes de vie dans le monde, pays de l'Union européenne
 //   histoire    CM1, CM2   les grandes périodes de l'histoire, la frise chronologique
-import { definir, choix } from '../../noyau/definir.ts'
+import { definir, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -24,7 +24,7 @@ export default definir({
     K.periodesHistoire, K.friseChronologique,
   ],
   reglages: {
-    nb: choix([5, 10, 15], { defaut: 10 }),
+    nb: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }),
   },
   niveaux: {
     cp: { reglages: { theme: choix(['animaux']) } },

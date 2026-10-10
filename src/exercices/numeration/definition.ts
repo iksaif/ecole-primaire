@@ -7,7 +7,7 @@
 // « Nombres jusqu'à » (plage) : le plus grand nombre tiré ; il détermine le nombre de chiffres (2, 3 ou 4).
 // Les identifiants des types d'exercices (« decomposer »…) sont aussi les valeurs des réglages mémorisés des visiteurs
 // (clé « numeration_config ») : ils ne changent pas ; les libellés affichés sont dans src/langues/<langue>/textes/numeration.ts.
-import { definir, cases, choix } from '../../noyau/definir.ts'
+import { definir, cases, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export const TYPES = ['decomposer', 'representation', 'lettresChiffres', 'chiffresLettres', 'comparer', 'suites', 'droite', 'ranger'] as const
@@ -28,7 +28,7 @@ export default definir({
 
   // réglages communs à tous les niveaux : nombre de questions à l'écran et sur la fiche
   reglages: {
-    nbQ: choix([5, 10, 15, 20], { defaut: 10 }),
+    nbQ: choix([5, 10, 15, 20], { defaut: 10, libre: NB_LIBRE }),
     nbFiche: choix([5, 10, 15, 20, 30], { defaut: 10 }),
   },
 

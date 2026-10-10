@@ -9,7 +9,7 @@
 // Écritures (BO n° 41 p. 52 : « capitale, scripte, cursive » ; la majuscule cursive est au CE1) : GS, capitale → script par défaut,
 // puis script → cursive ; CP, script → cursive par défaut (la lecture en script, l'écriture en cursive), capitale → script en rappel.
 // Revue du 2026-10-07 (plans/critique-lettres-2026-10-07.md) : « Reconnaître » montrait « R » à retrouver parmi des capitales.
-import { definir, choix } from '../../noyau/definir.ts'
+import { definir, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -29,8 +29,8 @@ export default definir({
 
   // GS : 10 questions ; CP : 15
   niveaux: {
-    gs: { reglages: { ecritures: choix(['capitale-script', 'script-cursive'], { defaut: 'capitale-script' }), nbQ: choix([10, 15], { defaut: 10 }) } },
-    cp: { reglages: { ecritures: choix(['script-cursive', 'capitale-script'], { defaut: 'script-cursive' }), nbQ: choix([10, 15], { defaut: 15 }) } },
+    gs: { reglages: { ecritures: choix(['capitale-script', 'script-cursive'], { defaut: 'capitale-script' }), nbQ: choix([10, 15], { defaut: 10, libre: NB_LIBRE }) } },
+    cp: { reglages: { ecritures: choix(['script-cursive', 'capitale-script'], { defaut: 'script-cursive' }), nbQ: choix([10, 15], { defaut: 15, libre: NB_LIBRE }) } },
   },
 
   // le bilan est la seule fiche publiée (relier majuscules et minuscules) ; son adresse date d'avant les niveaux : celle du niveau par défaut

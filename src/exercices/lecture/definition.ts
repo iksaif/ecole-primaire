@@ -3,7 +3,7 @@
 //
 // Programme : le décodage (syllabes, mots) est au programme du CP et du CE1 ; la lecture à voix haute du CP au CM2. Au CE2, compter et
 // reconstituer des mots longs restent proposés, hors programme (consolider le découpage des mots longs).
-import { definir, choix } from '../../noyau/definir.ts'
+import { definir, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 const HORS_CE2 = 'Le décodage est au programme du CP et du CE1 ; au CE2, découper des mots longs consolide la lecture.'
@@ -18,7 +18,7 @@ export default definir({
   corrige: reglages => reglages.mode !== 'texte',
   competences: [K.decodage, K.fluence],
   reglages: {
-    nb: choix([5, 10, 15], { defaut: 10 }),
+    nb: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }),
   },
   niveaux: {
     cp: { reglages: { mode: choix(['syllabes', 'mots', 'texte']) } },

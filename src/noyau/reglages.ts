@@ -11,6 +11,12 @@ const niveauDe = (definition: DefinitionExercice, niveau: unknown): NiveauExerci
 // Options et défauts d'un niveau : ceux de l'exercice, puis ceux du niveau, qui l'emportent (politique commune aux affiches)
 const optionsDe = (definition: DefinitionExercice, niv: NiveauExercice) => optionsDuNiveau(definition.options, niv)
 const defautsDe = (definition: DefinitionExercice, niv: NiveauExercice): Reglages => defautsDuNiveau(definition.reglages, niv)
+/** Le nombre libre d'un réglage à un niveau (celui du niveau, sinon le commun), s'il en a un. */
+const libreDe = (definition: DefinitionExercice, niv: NiveauExercice | undefined, cle: string) => niv?.libres?.[cle] ?? definition.libres?.[cle]
+
+/** Le nombre libre d'un réglage pour l'interface (ChoixReglage) : bornes, ou `null`. */
+export const nombreLibre = (definition: DefinitionExercice, niveau: unknown, cle: string): { min: number, max: number } | null =>
+  libreDe(definition, niveauDe(definition, niveau), cle) ?? null
 
 /**
  * Réglages complets et valides pour un niveau : niveau connu (sinon celui par défaut), défauts communs et du niveau,
@@ -26,7 +32,7 @@ export function reglagesDuNiveau<R extends object>(definition: DefinitionExercic
   const defauts = defautsDe(def, niv)
   const res: Reglages = { ...defauts }
   for (const cle of Object.keys(defauts)) if (cle in reglages && reglages[cle] !== undefined) res[cle] = reglages[cle] as ValeurReglage
-  for (const [cle, offertes] of Object.entries(optionsDe(def, niv))) res[cle] = valeurValide(defauts[cle], offertes, res[cle])
+  for (const [cle, offertes] of Object.entries(optionsDe(def, niv))) res[cle] = valeurValide(defauts[cle], offertes, res[cle], libreDe(def, niv, cle))
   return { ...res, niveau } as Config<R>
 }
 

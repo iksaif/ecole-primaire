@@ -5,7 +5,7 @@
 // `plage` : plus grand nombre des données (donnees.ts, PLAGES). Les identifiants des catégories et des plages sont aussi les valeurs
 // des réglages mémorisés des visiteurs (clé « problemes_config ») : ils ne changent pas ; les libellés sont dans
 // src/langues/<langue>/textes/problemes.ts.
-import { definir, choix, cases, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, choix, cases, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 import { CATEGORIES_CE1, CATEGORIES_CE2 } from './donnees.ts'
 
@@ -17,7 +17,7 @@ export default definir({
   niveauDefaut: 'ce1',
   competences: [K.problemesAdditifs, K.problemesMultiplicatifs, K.problemesEtapes],
 
-  reglages: { nbQ: choix([3, 5, 10, 15], { defaut: 5 }) },
+  reglages: { nbQ: choix([3, 5, 10, 15], { defaut: 5, libre: NB_LIBRE }) },
 
   niveaux: {
     ce1: { reglages: { categories: cases(CATEGORIES_CE1), plage: choix(['petits', 'moyens', 'grands'], { defaut: 'moyens' }) } },

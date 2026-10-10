@@ -10,7 +10,7 @@
 // Les valeurs des réglages (« add », « sou », « mul », « mix » ; la taille en chaîne « '1' » à « '4' » ; « non », « oui », « mix ») sont aussi
 // celles des réglages mémorisés des visiteurs : elles ne changent pas (les libellés affichés sont dans l'interface).
 //   taille : nombre de chiffres des nombres posés ; retenue : sans, avec, ou mélangée.
-import { definir, choix, pourClasses, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, choix, pourClasses, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 const RETENUE = choix(['non', 'oui', 'mix'], { defaut: 'mix' })
@@ -28,7 +28,7 @@ export default definir({
 
   // nbQ : exercices à l'écran ; nbFiche : exercices sur la fiche
   reglages: {
-    nbQ: choix([3, 5, 10, 20], { defaut: 5 }),
+    nbQ: choix([3, 5, 10, 20], { defaut: 5, libre: NB_LIBRE }),
     nbFiche: choix([5, 10, 15, 20, 30], { defaut: 10 }),
   },
 

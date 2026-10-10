@@ -8,7 +8,7 @@
 // Par défaut, « Contraires » seul à chaque niveau (le bilan publié exercices-vocabulaire-<niveau>).
 // Contenu toujours en français (exercice de français), même avec l'interface en breton.
 // Les valeurs de `types` et la clé `nb` sont aussi celles des réglages mémorisés des visiteurs : elles ne changent pas.
-import { definir, cases, choix } from '../../noyau/definir.ts'
+import { definir, cases, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 import type { Classe } from '../../data/classes.ts'
 
@@ -64,7 +64,7 @@ export default definir({
   niveauDefaut: 'ce1',
   competences: [K.ordreAlphabetique, K.synonymesAntonymes, K.famillesMots],
 
-  reglages: { nb: choix([5, 10, 15], { defaut: 10 }) },
+  reglages: { nb: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }) },
 
   niveaux: {
     ce1: { reglages: { types: cases(typesDuNiveau('ce1'), { defaut: ['contraires'] }) } },

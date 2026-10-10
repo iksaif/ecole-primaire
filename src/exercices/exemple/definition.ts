@@ -4,7 +4,7 @@
 // Programme : un exercice rattache ses niveaux à des compétences de src/data/programme.ts. Ici, des compétences
 // FICTIVES (K.exemple…, domaine D.exemple), qui n'existent qu'en développement : un exercice réel prend les vraies
 // (K.ajouterDizaines, K.suitesNombres… : l'éditeur les complète). `npm run nouveau` les remplace par celles qu'on lui donne.
-import { definir, choix, cases, herite } from '../../noyau/definir.ts'
+import { definir, choix, cases, herite, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -19,7 +19,7 @@ export default definir({
   // Réglages communs à tous les niveaux. Un réglage = un `choix` (une valeur, la première par défaut) ou des `cases`
   // (plusieurs valeurs, toutes cochées par défaut) : valeurs, défaut et écarts au programme au même endroit.
   reglages: {
-    nbQ: choix([5, 10, 15], { defaut: 10 }),
+    nbQ: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }),
   },
 
   // Réglages qui changent avec le niveau. Le type de `config` s'en déduit : `config.pas` est (1 | 2 | 5 | 10 | 100 | 1000)[].

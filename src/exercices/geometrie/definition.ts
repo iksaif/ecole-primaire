@@ -6,7 +6,7 @@
 // Un exercice de la liste = un type de question (symétrie, reproduction, repérage, figures, solides, angles droits, propriétés, cercle,
 // patrons) ; les niveaux ne diffèrent que par la liste des exercices et la taille des quadrillages (donnees.ts).
 // Les valeurs des réglages (`exercices`, `axeHorizontal`…) sont aussi celles des réglages mémorisés des visiteurs : elles ne changent pas.
-import { definir, cases, choix, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, cases, choix, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -18,7 +18,7 @@ export default definir({
   competences: [K.figuresPlanes, K.solides, K.tracerFigures, K.reperageDeplacements, K.symetrie, K.angleDroit, K.patrons],
 
   // axeHorizontal : commun (le réglage mémorisé garde sa clé quel que soit le niveau), proposé au CE2 seulement
-  reglages: { nbQ: choix([4, 8, 12], { defaut: 8 }), axeHorizontal: false as boolean },
+  reglages: { nbQ: choix([4, 8, 12], { defaut: 8, libre: NB_LIBRE }), axeHorizontal: false as boolean },
 
   niveaux: {
     ce1: { reglages: { exercices: cases(['reproduction', 'reperage', 'figures', 'solides']) } },

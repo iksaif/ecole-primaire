@@ -5,7 +5,7 @@
 // reprend les tables de 2, 3, 4, 5 et 10 (programme du CE1), ailleurs les tables de 2 à 9 (choix d'avant).
 // Les valeurs du réglage `mode` sont aussi celles des réglages mémorisés des visiteurs : elles ne changent pas.
 //   mode : 'entrainement' (voir la table, puis répondre dans l'ordre), 'aleatoire', 'chrono' (1 minute).
-import { definir, cases, choix, pourClasses } from '../../noyau/definir.ts'
+import { definir, cases, choix, pourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 const PROGRAMME = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
@@ -26,7 +26,7 @@ export default definir({
   // nbQ : questions (mode aléatoire) ; ordreFiche et nbFiche : la fiche papier (nbFiche 0 = tous les calculs des tables choisies)
   reglages: {
     mode: choix(['entrainement', 'aleatoire', 'chrono'], { defaut: 'aleatoire' }),
-    nbQ: choix([10, 20, 30], { defaut: 20 }),
+    nbQ: choix([10, 20, 30], { defaut: 20, libre: NB_LIBRE }),
     ordreFiche: choix(['ordre', 'melange'], { defaut: 'melange' }),
     nbFiche: choix([0, 20, 30, 40], { defaut: 0 }),
   },

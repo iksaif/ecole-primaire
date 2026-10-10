@@ -2,7 +2,7 @@
 // Programme (src/data/programme.ts), repris dans la compétence « comparer deux quantités » de chaque niveau :
 //   PS : comparer « à vue » deux collections dont l'une a au moins deux fois plus d'objets (jusqu'à 10), sans égalité,
 //        en touchant le groupe ; MS : nombres jusqu'à 5 (programme : 6), avec égalité ; GS : jusqu'à 10.
-import { definir, choix } from '../../noyau/definir.ts'
+import { definir, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -13,11 +13,11 @@ export default definir({
   niveauDefaut: 'ms',
   competences: [K.comparerQuantites],
 
-  reglages: { nbQ: choix([5, 10], { defaut: 10 }) },
+  reglages: { nbQ: choix([5, 10], { defaut: 10, libre: NB_LIBRE }) },
 
   niveaux: {
     // PS : 5 questions (enfants de 3 ans)
-    ps: { reglages: { nbQ: choix([5, 10], { defaut: 5 }) } },
+    ps: { reglages: { nbQ: choix([5, 10], { defaut: 5, libre: NB_LIBRE }) } },
     ms: {},
     gs: {},
   },

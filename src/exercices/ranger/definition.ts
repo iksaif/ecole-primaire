@@ -5,7 +5,7 @@
 // L'identifiant est « ranger » et non « ordonner » : c'est celui des fiches déjà publiées (`exercices-ranger-ms`, `exercices-ranger-gs`,
 // pages /telechargements/), qui ne changent pas ; la route reste /maternelle/ordonner. Les réglages mémorisés gardent leur clé
 // historique `ordonner_config` (la vue la donne à useReglages). Les valeurs de `sens` sont aussi celles des réglages mémorisés.
-import { definir, choix } from '../../noyau/definir.ts'
+import { definir, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -20,7 +20,7 @@ export default definir({
   reglages: {
     sens: choix(['croissant', 'decroissant', 'mix'], { defaut: 'croissant' }),
     taille: choix([3, 4, 5], { defaut: 4 }),
-    nbQ: choix([5, 10], { defaut: 10 }),
+    nbQ: choix([5, 10], { defaut: 10, libre: NB_LIBRE }),
   },
 
   niveaux: { ms: {}, gs: {} },

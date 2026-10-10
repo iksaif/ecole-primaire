@@ -11,7 +11,7 @@
 // Défaut : CE1, thème Accords (le bilan d'une classe est la fiche « Accords »).
 // Contenu toujours en français (exercice de français), même avec l'interface en breton.
 // Les valeurs de `theme` et la clé `nb` sont aussi celles des réglages mémorisés des visiteurs : elles ne changent pas.
-import { definir, choix } from '../../noyau/definir.ts'
+import { definir, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 /** Thèmes, dans l'ordre des boutons, avec leur icône et le niveau d'entrée par défaut de leurs questions. */
@@ -36,7 +36,7 @@ export default definir({
   // cycle 2 : orthographe lexicale et accords ; cours moyen : les accords (la couverture annoncée jusqu'ici)
   competences: [K.orthographeLexicale, K.accordsGn],
 
-  reglages: { nb: choix([5, 10, 15], { defaut: 10 }) },
+  reglages: { nb: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }) },
 
   niveaux: {
     cp: { reglages: { theme: SANS } },

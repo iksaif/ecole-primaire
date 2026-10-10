@@ -18,7 +18,7 @@ import type { ClassesDe, NotationClasses } from '../data/classes.ts'
 import type { Classe, CompetenceId, Config, DefinitionExercice, DomaineId, FicheExercice } from './types.ts'
 
 // `choix`, `cases`, `herite`, `decrireChoix`… s'importent d'ici comme avant : la déclaration commune est dans declaration.ts
-export { choix, cases, estChoix, decrireChoix } from './declaration.ts'
+export { choix, cases, estChoix, decrireChoix, NB_LIBRE } from './declaration.ts'
 export type { Choix, ReglagesDe, SpecReglages } from './declaration.ts'
 
 // ── Déclaration ──
@@ -121,7 +121,7 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
 
   // Les réglages communs (défauts, options), puis chaque niveau (compétences d'après le programme, réglages hérités, écarts)
   const reservees = ['niveau']
-  const { reglages, options } = decrireReglagesCommuns(spec.reglages as SpecReglages, { reservees, champs: false, ecartsDans: 'un niveau', erreur })
+  const { reglages, options, libres } = decrireReglagesCommuns(spec.reglages as SpecReglages, { reservees, champs: false, ecartsDans: 'un niveau', erreur })
   const niveaux: DefinitionExercice['niveaux'] = {}
   for (const n of classes) {
     const s = declares[n] as SpecNiveau
@@ -155,7 +155,9 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
       if (v === undefined) continue
       const offertes = niv?.options?.[cle] ?? options[cle]
       if (offertes) {
-        for (const x of Array.isArray(v) ? v : [v]) if (!offertes.includes(x)) erreur(`${ou} : ${cle} = « ${x} » n'est pas proposé (${JSON.stringify(offertes)})`)
+        const libre = niv?.libres?.[cle] ?? libres[cle]
+        const dansLesBornes = (x: unknown): boolean => !!libre && Number.isInteger(x) && (x as number) >= libre.min && (x as number) <= libre.max
+        for (const x of Array.isArray(v) ? v : [v]) if (!offertes.includes(x) && !dansLesBornes(x)) erreur(`${ou} : ${cle} = « ${x} » n'est pas proposé (${JSON.stringify(offertes)})`)
         continue
       }
       // un réglage sans choix (texte ou nombre libre) : il doit exister, et garder le type de son défaut
@@ -169,7 +171,7 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
   return {
     id: spec.id, route: spec.route, domaine: spec.domaine, emoji: spec.emoji, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, niveauDefaut,
     aleatoire: spec.aleatoire ?? true, bilanParClasse: spec.bilanParClasse ?? true, corrige: spec.corrige ?? true,
-    reglages, options, niveaux, fiches,
+    reglages, options, ...(Object.keys(libres).length ? { libres } : {}), niveaux, fiches,
   } as unknown as DefinitionTypee<ReglagesDe<C, N>>
 }
 

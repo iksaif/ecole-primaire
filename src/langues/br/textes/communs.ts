@@ -43,4 +43,6 @@ export default {
   tempsRestant: 'Amzer chomet : {n} eilenn', // br: à relire
   bonus: 'bonus', // br: à relire
   horsProgramme: 'er-maez ar programm', // br: à relire
+  nombreAutre: 'Unan all…', // br: à relire
+  nombreLibre: 'Niver, eus {min} da {max}', // br: à relire
 } satisfies Traductions<typeof fr>

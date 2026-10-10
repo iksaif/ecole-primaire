@@ -6,7 +6,7 @@
 //   CE2 : heures et minutes, durées, 1 h = 60 min (p. 31) ; pas de secondes au cycle 2.
 // Les identifiants des réglages (`exercices`, `precisions`, `saisie`…) sont aussi les valeurs mémorisées chez les visiteurs
 // (clé « heure_config ») : ils ne changent pas ; les libellés affichés sont dans src/langues/<langue>/textes/heure.ts.
-import { definir, cases, choix } from '../../noyau/definir.ts'
+import { definir, cases, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -23,7 +23,7 @@ export default definir({
   reglages: {
     saisie: choix(['choix', 'clavier']),
     aideMinutes: true as boolean,   // un interrupteur, pas une liste de valeurs : le type est `boolean`, pas `true`
-    nbQ: choix([5, 10, 15], { defaut: 10 }),
+    nbQ: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }),
     nbHorloges: choix([4, 8, 12], { defaut: 8 }),
   },
 

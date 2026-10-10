@@ -6,7 +6,7 @@
 // changerait les fiches publiées, un lot à part, voir docs/TODO.md) ; les fractions > 1, la comparaison à 1 et la fraction d'une
 // quantité (tiers, quart) sont du CM1 : pas proposées.
 // Les identifiants des types (« identifier »…) sont aussi les valeurs des réglages mémorisés des visiteurs (clé « fractions_config »).
-import { definir, cases, choix, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, cases, choix, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 const CE1 = ['identifier', 'colorier', 'lettres', 'partDe'] as const
@@ -22,7 +22,7 @@ export default definir({
 
   // réglages communs à tous les niveaux : nombre de questions à l'écran et sur la fiche
   reglages: {
-    nbQ: choix([5, 10, 15, 20], { defaut: 10 }),
+    nbQ: choix([5, 10, 15, 20], { defaut: 10, libre: NB_LIBRE }),
     nbFiche: choix([5, 10, 15, 20, 30], { defaut: 10 }),
   },
 

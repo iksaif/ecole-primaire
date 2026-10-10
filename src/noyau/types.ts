@@ -49,6 +49,8 @@ export interface NiveauExercice<R extends object = Reglages> {
   options?: OptionsDe<R>
   /** valeurs proposées hors programme (sous-ensemble de `options`), jamais par défaut */
   bonus?: OptionsDe<R>
+  /** réglages à choix qui acceptent aussi un nombre entier libre, entre deux bornes incluses (le nombre de questions) */
+  libres?: Readonly<Record<string, { readonly min: number, readonly max: number }>>
   /** écarts assumés au programme, avec leur raison : une valeur de réglage (affichée « hors programme ») ou une compétence */
   horsProgramme?: readonly (EcartValeur | EcartCompetence)[]
 }
@@ -127,6 +129,8 @@ export interface DefinitionExercice<R extends object = Reglages> {
   reglages?: Partial<R>
   /** valeurs proposées pour un réglage commun à choix (ex. `nbQ: [5, 10, 15]`) */
   options?: OptionsDe<R>
+  /** réglages communs qui acceptent aussi un nombre entier libre (bornes incluses) ; ceux d'un niveau l'emportent */
+  libres?: Readonly<Record<string, { readonly min: number, readonly max: number }>>
   niveaux: Partial<Record<Classe, NiveauExercice<R>>>
   fiches: readonly FicheExercice<R>[]
 }

@@ -11,6 +11,8 @@
   de la définition (`options: { nbQ: [5, 10, 15] }`) ; `valeurs` pour un réglage propre à la vue. Choix multiple si la
   valeur est une liste (au moins une valeur reste cochée, l'ordre suit celui des options), choix unique sinon. Une
   valeur `bonus` ou `horsProgramme` du niveau porte la marque « (bonus) » / « (hors programme) », la raison en infobulle.
+  Nombre libre (`choix([5, 10, 15], { libre: { min: 1, max: 60 } })`) : un bouton « Autre… » ouvre un champ nombre, borné ; une valeur
+  hors des choix est un nombre libre (bouton « Autre… » enfoncé, champ visible). data-valeur="autre" pour les tests.
   Libellé enrichi d'une valeur : <template #valeur="{ valeur, texte }">…</template>. Pour les tests : la section porte
   data-reglage="<cle>", chaque bouton data-valeur="<valeur>".
   Valeurs en groupes sous des sous-titres (Grammaire : « La phrase », « Nature des mots »…) :
@@ -37,6 +39,12 @@
         <button v-for="v in section.valeurs" :key="String(v)" type="button" class="level-btn" :class="{ active: actif(v) }" :data-valeur="String(v)"
           :aria-pressed="actif(v)" :title="raison(v)"
           @click="choisir(v)"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></button>
+        <template v-if="libre && k === sections.length - 1">
+          <button type="button" class="level-btn" :class="{ active: autreActif }" data-valeur="autre" :aria-pressed="autreActif" @click="ouvrirAutre">{{ t('communs.nombreAutre') }}</button>
+          <input v-if="autreOuvert || autreActif" ref="champAutre" class="nombre-libre" type="number" inputmode="numeric" :min="libre.min" :max="libre.max" step="1"
+            :value="autreActif ? Number(props.modelValue) : ''" :aria-label="t('communs.nombreLibre', { min: libre.min, max: libre.max })"
+            :placeholder="`${libre.min}–${libre.max}`" @change="saisirAutre">
+        </template>
       </div>
     </template>
     <slot />
@@ -45,10 +53,10 @@
 
 <script setup lang="ts" generic="R extends object, K extends (keyof R & string) | 'niveau'">
 // textes : section `communs` (bonus, horsProgramme) ; marques lues dans la définition (src/noyau/reglages.ts)
-import { computed, useId } from 'vue'
+import { computed, nextTick, ref, useId } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { classeVerrouillee } from '../contexte/useContexte.ts'
-import { estBonus, raisonHorsProgramme, valeursDe } from './reglages.ts'
+import { estBonus, nombreLibre, raisonHorsProgramme, valeursDe } from './reglages.ts'
 import type { Classe, DefinitionExercice, ValeurOption } from './types.ts'
 
 /** Type de la valeur d'un réglage : les classes pour « niveau », sinon celui de la clé dans les réglages de la définition. */
@@ -110,7 +118,31 @@ const marque = (v: Valeur) => (estBonus(def.value, props.niveau, props.cle, brut
   : raisonHorsProgramme(def.value, props.niveau, props.cle, brut(v)) ? 'communs.horsProgramme' as const : null)
 const actif = (v: Valeur) => (choisies.value ? choisies.value.includes(v) : (props.modelValue as unknown) === v)
 
+// ── nombre libre ──
+// les bornes du nombre libre de ce réglage (choix unique seulement), ou null
+const libre = computed(() => (props.cle === 'niveau' || choisies.value ? null : nombreLibre(def.value, props.niveau, props.cle)))
+// une valeur qui n'est pas parmi les choix : c'est un nombre libre
+const autreActif = computed(() => !!libre.value && !liste.value.includes(props.modelValue as unknown as Valeur))
+const autreOuvert = ref(false)
+const champAutre = ref<HTMLInputElement | null>(null)
+
+async function ouvrirAutre() {
+  autreOuvert.value = true
+  await nextTick()
+  champAutre.value?.focus()
+}
+
+/** Le nombre saisi, arrondi et ramené dans les bornes ; un champ vide ou illisible ne change rien. */
+function saisirAutre(e: Event) {
+  const bornes = libre.value
+  const lu = Math.round(Number((e.target as HTMLInputElement).value))
+  if (!bornes || !Number.isFinite(lu)) return
+  const borne = Math.min(bornes.max, Math.max(bornes.min, lu))
+  emit('update:modelValue', borne as unknown as Modele)
+}
+
 function choisir(v: Valeur) {
+  autreOuvert.value = false
   const courantes = choisies.value
   if (!courantes) return emit('update:modelValue', v as unknown as Modele)
   if (courantes.includes(v)) {
@@ -137,4 +169,5 @@ function choisir(v: Valeur) {
 .carte-icone { font-size: 1.75rem; }
 .carte-titre { font-weight: 800; font-size: .95rem; margin: .3rem 0 .15rem; }
 .carte-desc  { font-size: .78rem; color: #666; }
+.nombre-libre { width: 5.5rem; padding: .35rem .5rem; border: 2px solid var(--bleu); border-radius: var(--radius); font: inherit; font-weight: 700; }
 </style>

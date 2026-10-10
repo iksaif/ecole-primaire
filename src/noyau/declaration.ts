@@ -25,7 +25,15 @@ interface ChoixQuelconque {
   readonly bonus: readonly ValeurOption[]
   /** valeurs proposées en plus, hors programme, avec la raison (infobulle), affichées « (hors programme) » */
   readonly horsProgramme: readonly { option: ValeurOption, raison: string }[]
+  /** un nombre entier libre en plus des valeurs (bouton « Autre »), bornes incluses : le nombre de questions */
+  readonly libre?: Libre
 }
+
+/** Un nombre entier libre, entre deux bornes incluses. */
+export interface Libre { readonly min: number, readonly max: number }
+
+/** Le nombre de questions libre de tous les exercices : de 1 à 50, en plus des choix proposés (bouton « Autre… »). */
+export const NB_LIBRE: Libre = { min: 1, max: 50 }
 
 // Sans `defaut` : s'il y était, TypeScript en tirerait un `T` élargi à ValeurOption pour chaque appel de choix().
 type ChoixLu = ChoixQuelconque & { readonly defaut: ValeurOption | ValeurOption[] }
@@ -41,6 +49,8 @@ interface Ecarts<B, H> {
 }
 
 type OptionsChoix<V, B, H> = { defaut?: NoInfer<V> } & Ecarts<B, H>
+/** Un choix de nombres peut aussi proposer un nombre libre : `choix([5, 10, 15], { libre: { min: 1, max: 60 } })`. */
+type OptionsChoixNombre<V, B, H> = OptionsChoix<V, B, H> & { libre?: Libre }
 type OptionsCases<V, B, H> = { defaut?: readonly NoInfer<V>[] } & Ecarts<B, H>
 
 /**
@@ -49,10 +59,11 @@ type OptionsCases<V, B, H> = { defaut?: readonly NoInfer<V>[] } & Ecarts<B, H>
  * valeur par réglage : chaînes, nombres ou booléens (les surcharges refusent `choix([1, 'a'])`).
  */
 export function choix<const V extends string, const B extends string = never, const H extends string = never>(valeurs: readonly V[], options?: OptionsChoix<V, B, H>): Choix<V | B | H>
+export function choix<const V extends number, const B extends number = never, const H extends number = never>(valeurs: readonly V[], options: OptionsChoixNombre<V, B, H> & { libre: Libre }): Choix<number>
 export function choix<const V extends number, const B extends number = never, const H extends number = never>(valeurs: readonly V[], options?: OptionsChoix<V, B, H>): Choix<V | B | H>
 export function choix<const V extends boolean, const B extends boolean = never, const H extends boolean = never>(valeurs: readonly V[], options?: OptionsChoix<V, B, H>): Choix<V | B | H>
-export function choix(valeurs: readonly ValeurOption[], { defaut = valeurs[0], bonus = [], horsProgramme = [] }: { defaut?: ValeurOption } & Ecarts<ValeurOption, ValeurOption> = {}): Choix<ValeurOption> {
-  return { [MARQUE]: true, valeurs, defaut, bonus, horsProgramme }
+export function choix(valeurs: readonly ValeurOption[], { defaut = valeurs[0], bonus = [], horsProgramme = [], libre }: { defaut?: ValeurOption, libre?: Libre } & Ecarts<ValeurOption, ValeurOption> = {}): Choix<ValeurOption> {
+  return { [MARQUE]: true, valeurs, defaut, bonus, horsProgramme, ...(libre ? { libre } : {}) }
 }
 
 /** Choix multiple (cases à cocher) : `cases(['lire', 'placer'])`, tout coché par défaut (`defaut` pour une partie). Chaînes OU nombres. */
@@ -131,9 +142,20 @@ export function decrireChoix(cle: string, choix: ChoixQuelconque, ou: string, er
   }
   if (Array.isArray(v.defaut) && !v.defaut.length) erreur(`${lieu} : défaut vide`)
   for (const h of v.horsProgramme) if (!h.raison) erreur(`${lieu} : horsProgramme « ${h.option} » sans raison`)
-  return { defaut: v.defaut as ValeurReglage, options: proposees as ValeurOption[] }
+  if (v.libre) verifierLibre(v.libre, proposees, lieu, erreur)
+  return { defaut: v.defaut as ValeurReglage, options: proposees as ValeurOption[], libre: v.libre }
 }
 
+
+/** Un nombre libre : des bornes entières, min ≤ max, et toutes les valeurs proposées (des nombres entiers) entre les deux. */
+function verifierLibre(libre: Libre, proposees: readonly ValeurOption[], lieu: string, erreur: (message: string) => never): void {
+  const { min, max } = libre
+  if (!Number.isInteger(min) || !Number.isInteger(max) || min > max) erreur(`${lieu} : libre { min: ${min}, max: ${max} } : deux entiers, min ≤ max`)
+  for (const x of proposees) {
+    if (typeof x !== 'number' || !Number.isInteger(x)) erreur(`${lieu} : un nombre libre ne va qu'avec des valeurs entières (« ${x} »)`)
+    else if (x < min || x > max) erreur(`${lieu} : « ${x} » hors des bornes du nombre libre (${min} à ${max})`)
+  }
+}
 
 /** Un champ libre, vérifié : son défaut (dans `reglages`) et sa description (dans `champs`). */
 export function decrireChamp(cle: string, c: ChampTexte | ChampNombre, ou: string, erreur: (message: string) => never): { defaut: string | number, champ: Champ } {
@@ -184,7 +206,7 @@ export function verifierClasses(classes: readonly string[], nature: string, erre
 
 type Options = Record<string, ValeurOption[]>
 /** Ce que décrit un ensemble de réglages : défauts, options des réglages à choix, champs libres. */
-export interface ReglagesDecrits { reglages: Reglages, options: Options, champs: Record<string, Champ> }
+export interface ReglagesDecrits { reglages: Reglages, options: Options, champs: Record<string, Champ>, libres: Record<string, Libre> }
 
 /**
  * Réglages d'un ensemble (communs, ou d'un niveau) : une valeur simple est un défaut ; un `choix` ou `cases` donne défaut et
@@ -194,7 +216,7 @@ export interface ReglagesDecrits { reglages: Reglages, options: Options, champs:
 function decrireReglages(spec: SpecReglages, ou: string, { reservees, champs, ecartsDans, erreur }: {
   reservees: readonly string[], champs: boolean, ecartsDans: string | null, erreur: (message: string) => never
 }, bonus?: Record<string, ValeurOption[]>, hors?: Record<string, unknown>[]): ReglagesDecrits {
-  const res: ReglagesDecrits = { reglages: {}, options: {}, champs: {} }
+  const res: ReglagesDecrits = { reglages: {}, options: {}, champs: {}, libres: {} }
   for (const [cle, v] of Object.entries(spec)) {
     if (reservees.includes(cle)) erreur(`« ${cle} » est réservé`)
     if (estChamp(v)) {
@@ -209,6 +231,7 @@ function decrireReglages(spec: SpecReglages, ou: string, { reservees, champs, ec
     const d = decrireChoix(cle, v, ou, erreur)
     res.reglages[cle] = d.defaut
     res.options[cle] = d.options
+    if (d.libre) res.libres[cle] = d.libre
     if (bonus && v.bonus.length) bonus[cle] = [...v.bonus]
     for (const h of v.horsProgramme) hors?.push({ reglage: cle, ...h })
   }
@@ -263,6 +286,7 @@ export function decrireNiveau(p: ParamsNiveau, erreur: (message: string) => neve
   const bonus: Record<string, ValeurOption[]> = {}
   const d = decrireReglages(p.reglages, ou, { reservees: p.reservees, champs: p.champs, ecartsDans: null, erreur }, bonus, hors)
   const niveau: NiveauExercice = { competences, reglages: d.reglages, options: d.options }
+  if (Object.keys(d.libres).length) niveau.libres = d.libres
   if (Object.keys(bonus).length) niveau.bonus = bonus
   if (hors.length) niveau.horsProgramme = hors as never
   return { niveau, champs: d.champs }

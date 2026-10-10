@@ -67,6 +67,19 @@ try { definir({ ...base, domaine: D.nombresCalcul, autresDomaines: [D.exemple], 
 echoue('compétence fictive citée comme inconnue', { ...base, competences: ['exemple-fantome'], niveaux: { cp: {} } }, 'fictives')
 try { K.inconnue; verifier(false, 'K.inconnue devrait lever une erreur') } catch (e) { verifier(e.message.includes('K.inconnue'), 'K.inconnue : erreur claire') }
 
+console.log('Nombre libre (le nombre de questions « Autre… »)')
+{
+  const libre = definir({ ...base, reglages: { nbQ: choix([5, 10], { defaut: 10, libre: { min: 1, max: 50 } }) }, niveaux: { cp: {} } })
+  verifier(JSON.stringify(libre.libres) === '{"nbQ":{"min":1,"max":50}}', 'les bornes du nombre libre sont dans la définition')
+  verifier(reglagesDuNiveau(libre, { nbQ: 7 }).nbQ === 7, 'un nombre libre dans les bornes est gardé')
+  verifier(reglagesDuNiveau(libre, { nbQ: 51 }).nbQ === 10 && reglagesDuNiveau(libre, { nbQ: 2.5 }).nbQ === 10 && reglagesDuNiveau(libre, { nbQ: '7' }).nbQ === 10,
+    'hors bornes, non entier ou texte : le défaut')
+  verifier(reglagesDuNiveau(exemple, { nbQ: 7 }).nbQ === 7, 'les exercices réels acceptent le nombre libre (NB_LIBRE)')
+  const refus = (spec, message) => { try { definir(spec); verifier(false, message) } catch { verifier(true, message) } }
+  refus({ ...base, reglages: { nbQ: choix([5, 100], { libre: { min: 1, max: 50 } }) }, niveaux: { cp: {} } }, 'une valeur hors des bornes du nombre libre est refusée')
+  refus({ ...base, reglages: { nbQ: choix([5, 10], { libre: { min: 20, max: 10 } }) }, niveaux: { cp: {} } }, 'des bornes à l\'envers sont refusées')
+}
+
 console.log('Plages de classes')
 const egal = (a, b) => JSON.stringify(a) === JSON.stringify(b)
 verifier(egal(plageDeClasses('cp'), ['cp']) && egal(plageDeClasses('cp+'), ['cp', 'ce1', 'ce2', 'cm1', 'cm2']) && egal(plageDeClasses('-gs'), ['ps', 'ms', 'gs'])

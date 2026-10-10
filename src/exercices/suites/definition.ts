@@ -6,7 +6,7 @@
 //   CM1, CM2 : les mêmes, avec 250 et 500 (le champ numérique ne borne plus les suites).
 // Les identifiants des exercices (« poursuivre »…), des sens et des pas sont aussi les valeurs des réglages mémorisés des visiteurs
 // (clé « suites_config ») : ils ne changent pas ; les libellés affichés sont dans src/langues/<langue>/textes/suites.ts.
-import { definir, choix, cases, pourClasses, fichesPourClasses } from '../../noyau/definir.ts'
+import { definir, choix, cases, pourClasses, fichesPourClasses, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 
 export default definir({
@@ -19,7 +19,7 @@ export default definir({
 
   // nbQ : questions du jeu ; nbFiche : suites d'une fiche
   reglages: {
-    nbQ: choix([5, 10, 15], { defaut: 10 }),
+    nbQ: choix([5, 10, 15], { defaut: 10, libre: NB_LIBRE }),
     nbFiche: choix([10, 15, 20], { defaut: 15 }),
   },
 

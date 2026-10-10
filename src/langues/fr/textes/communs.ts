@@ -45,4 +45,7 @@ export default {
   // marques d'un réglage hors du programme du niveau, après son libellé
   bonus: 'bonus',
   horsProgramme: 'hors programme',
+  // un nombre libre en plus des choix (le nombre de questions)
+  nombreAutre: 'Autre…',
+  nombreLibre: 'Nombre, de {min} à {max}',
 } as const

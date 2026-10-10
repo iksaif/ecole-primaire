@@ -21,10 +21,23 @@ export const estBonus = (niv: NiveauExercice | undefined, cle: string, valeur: u
 export const raisonHorsProgramme = (niv: NiveauExercice | undefined, cle: string, valeur: unknown): string | null =>
   niv?.horsProgramme?.find(h => 'reglage' in h && h.reglage === cle && h.option === valeur)?.raison ?? null
 
-/** Un réglage à choix lu (mémorisé, lien, test…) ramené à une valeur valide d'après ses options. */
-export function valeurValide(defaut: ValeurReglage, offertes: readonly ValeurOption[], lue: unknown): ValeurReglage {
-  // choix unique : la valeur lue si elle est proposée, sinon le défaut
-  if (!Array.isArray(defaut)) return offertes.includes(lue as ValeurOption) ? lue as ValeurOption : defaut
+/** Un nombre entier libre accepté par un réglage à choix, bornes incluses. */
+export interface Libre { readonly min: number, readonly max: number }
+
+/** Le nombre lu est-il un entier dans les bornes du nombre libre ? */
+const dansLesBornes = (libre: Libre | undefined, lue: unknown): lue is number =>
+  !!libre && typeof lue === 'number' && Number.isInteger(lue) && lue >= libre.min && lue <= libre.max
+
+/**
+ * Un réglage à choix lu (mémorisé, lien, test…) ramené à une valeur valide d'après ses options ; `libre` : un nombre entier entre ses
+ * bornes est valide lui aussi (le nombre de questions « Autre »).
+ */
+export function valeurValide(defaut: ValeurReglage, offertes: readonly ValeurOption[], lue: unknown, libre?: Libre): ValeurReglage {
+  // choix unique : la valeur lue si elle est proposée (ou un nombre libre dans les bornes), sinon le défaut
+  if (!Array.isArray(defaut)) {
+    if (offertes.includes(lue as ValeurOption) || dansLesBornes(libre, lue)) return lue as ValeurOption
+    return defaut
+  }
   // choix multiple : les valeurs lues qui sont proposées ; aucune : le défaut
   const choisies = Array.isArray(lue) ? lue.filter(v => offertes.includes(v)) : []
   return (choisies.length ? choisies : [...defaut]) as string[] | number[]

@@ -79,7 +79,77 @@ function dessinDefinition({ W, H }: { W: number, H: number }, T: (cle: string) =
   return `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${exempleHtml}${reglesHtml}${pasHtml}</div>`
 }
 
+/**
+ * « La phrase » expliquée (CE1, sans types ni formes), en cinq bandes : la définition et son exemple ; les trois vérifications (majuscule,
+ * point, sens), chacune dans un rond de couleur ; deux suites de mots qui ne sont pas des phrases, vérifiées pas à pas (✓ ✓ ✗) ; « de qui on
+ * parle / ce qu'on en dit » sur deux exemples (le groupe sujet en bleu, le reste en vert) ; une phrase peut être courte ou longue.
+ */
+function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
+  const police = ctx.nomPolice()
+  const taille = (textes: readonly string[], largeur: number, plafond: number): number => tailleQuiTient(textes, police, largeur, plafond, ctx)
+
+  // 1. la définition et l'exemple
+  const definition = (w: number, h: number): string => `<div class="bande-exp" style="width:${w}mm;height:${h}mm">
+    <p style="font-size:${taille([T('exp.definition')], w * 0.95, h * 0.3)}mm"><b>${echapper(T('exp.definition'))}</b></p>
+    <p class="exemple" style="font-size:${taille([T('exp.exemple')], w * 0.75, h * 0.38)}mm">${echapper(T('exp.exemple'))}</p></div>`
+
+  // 2. les trois vérifications, chacune dans un rond de couleur
+  const verifs = [
+    { couleur: ROUGE, nom: T('exp.v.majuscule'), detail: '' },
+    { couleur: BLEU, nom: T('exp.v.point'), detail: T('exp.v.point.detail') },
+    { couleur: VERT, nom: T('exp.v.sens'), detail: T('exp.v.sens.detail') },
+  ]
+  const verifier = (w: number, h: number): string => {
+    const lV = (w - 8) / 3
+    const tNom = taille(verifs.map(v => v.nom), lV * 0.9, h * 0.15)
+    const tDetail = taille(verifs.map(v => v.detail).filter(Boolean), lV * 0.92, h * 0.12)
+    const rond = Math.min(h * 0.3, lV * 0.3)
+    return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.verifier')], w * 0.9, h * 0.13)}mm">${echapper(T('exp.verifier'))}</p>
+    <div class="verifs">${verifs.map((v, i) => `<div class="verif" style="width:${lV}mm;border-color:${v.couleur}">
+      <span class="rond" style="width:${rond}mm;height:${rond}mm;background:${v.couleur};font-size:${rond * 0.6}mm">${i + 1}</span>
+      <b style="font-size:${tNom}mm;color:${v.couleur}">${echapper(v.nom)}</b>${v.detail ? `<span style="font-size:${tDetail}mm">${echapper(v.detail)}</span>` : ''}</div>`).join('')}</div></div>`
+  }
+
+  // 3. deux suites de mots qui ne sont pas des phrases, vérifiées : ✓ ou ✗ pour chacune des trois vérifications
+  const pas = [
+    { texte: T('exp.pas.1'), coches: [true, true, false], raison: T('exp.pas.1.raison') },
+    { texte: T('exp.pas.2'), coches: [false, false, false], raison: T('exp.pas.2.raison') },
+  ]
+  const coche = (ok: boolean, i: number): string => `<span class="coche-exp" style="color:${ok ? VERT : ROUGE}">${i + 1} ${ok ? '✓' : '✗'}</span>`
+  const contreExemples = (w: number, h: number): string => {
+    const tPas = taille(pas.map(p => p.texte), w * 0.55, h * 0.13)
+    const tRaison = taille(pas.map(p => p.raison), w * 0.9, h * 0.09)
+    return `<div class="bande-exp pas-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.pas.titre')], w * 0.9, h * 0.12)}mm;color:${ROUGE}">${echapper(T('exp.pas.titre'))}</p>
+    ${pas.map(p => `<div class="ligne-exp"><s style="font-size:${tPas}mm">${echapper(p.texte)}</s><span class="coches" style="font-size:${tPas * 0.8}mm">${p.coches.map(coche).join('')}</span></div>
+      <p class="raison" style="font-size:${tRaison}mm">→ ${echapper(p.raison)}</p>`).join('')}</div>`
+  }
+
+  // 4. de qui on parle, ce qu'on en dit : le groupe sujet en bleu, le reste en vert
+  const exemples = [1, 2].map(n => ({ sujet: T(`exp.qui.${n}.sujet`), reste: T(`exp.qui.${n}.reste`) }))
+  const quiOnParle = (w: number, h: number): string => {
+    const tQui = taille(exemples.map(e => `${e.sujet} ${e.reste}`), w * 0.8, h * 0.18)
+    const tEtiq = Math.min(tQui * 0.45, 5.5)
+    const groupe = (texte: string, couleur: string, etiquette: string): string =>
+      `<span class="groupe-exp" style="border-color:${couleur}"><span>${echapper(texte)}</span><small style="color:${couleur};font-size:${tEtiq}mm">${echapper(etiquette)}</small></span>`
+    return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.qui.titre')], w * 0.95, h * 0.12)}mm">${echapper(T('exp.qui.titre'))}</p>
+    ${exemples.map(e => `<p class="phrase-exp" style="font-size:${tQui}mm">${groupe(e.sujet, BLEU, T('exp.qui.sujet'))}${groupe(e.reste, VERT, T('exp.qui.reste'))}</p>`).join('')}</div>`
+  }
+
+  // 5. courte ou longue
+  const longueur = (w: number, h: number): string => `<div class="bande-exp" style="width:${w}mm;height:${h}mm">
+    <p class="longueur-exp" style="font-size:${taille([T('exp.longueur')], w * 0.95, h * 0.32)}mm">${echapper(T('exp.longueur'))}</p></div>`
+
+  const contenu = (html: string): string => `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${html}</div>`
+  // portrait : les cinq bandes l'une sous l'autre ; paysage : deux colonnes (ce qu'est une phrase / ce qui n'en est pas une, et ses groupes)
+  if (H >= W) return contenu(definition(W, H * 0.16) + verifier(W, H * 0.24) + contreExemples(W, H * 0.24) + quiOnParle(W, H * 0.26) + longueur(W, H * 0.1))
+  const l = (W - 6) / 2
+  const gauche = `<div class="colonne-exp">${definition(l, H * 0.34)}${verifier(l, H * 0.46)}${longueur(l, H * 0.2)}</div>`
+  const droite = `<div class="colonne-exp">${contreExemples(l, H * 0.48)}${quiOnParle(l, H * 0.52)}</div>`
+  return contenu(`<div class="colonnes-exp">${gauche}${droite}</div>`)
+}
+
 export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
+  if (r.variante === 'explication') return [{ corps: dessinExplication({ W, H }, T, ctx), titre: r.titre || GRAMMAIRE.groupe_phrase }]
   if (r.variante === 'definition') return [{ corps: dessinDefinition({ W, H }, T, ctx), titre: r.titre || T('variante.definition.court') }]
   return [{ corps: dessinTypes(r, { W, H }, T, ctx), titre: r.titre || T('titre.ce1') }]
 }
@@ -152,6 +222,21 @@ export const css = `
   .groupes { display: flex; justify-content: center; align-items: center; gap: 3mm; flex: none; }
   .groupe { display: inline-flex; flex-direction: column; align-items: center; border-bottom: 1.2mm solid; padding: 0 1mm 1mm; line-height: 1.2; }
   .groupe small { font-weight: 700; }
+  .colonnes-exp { display: flex; gap: 6mm; }
+  .colonne-exp { display: flex; flex-direction: column; }
+  .bande-exp { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5mm; flex: none; text-align: center; }
+  .bande-exp p { margin: 0; }
+  .titre-exp { font-weight: 700; color: #444; }
+  .verifs { display: flex; gap: 4mm; }
+  .verif { display: flex; flex-direction: column; align-items: center; gap: 1mm; border: .5mm solid; border-radius: 3mm; padding: 2mm 1mm; box-sizing: border-box; }
+  .pas-exp { border: .5mm dashed ${ROUGE}; border-radius: 3mm; box-sizing: border-box; }
+  .ligne-exp { display: flex; align-items: baseline; gap: 5mm; }
+  .ligne-exp s { text-decoration-color: ${ROUGE}; text-decoration-thickness: .5mm; }
+  .coches { display: inline-flex; gap: 3mm; font-weight: 700; }
+  .phrase-exp { display: flex; gap: 2mm; justify-content: center; }
+  .groupe-exp { display: inline-flex; flex-direction: column; align-items: center; border-bottom: 1.2mm solid; padding: 0 1mm .5mm; line-height: 1.2; }
+  .groupe-exp small { font-weight: 700; white-space: nowrap; }
+  .longueur-exp { color: #444; font-style: italic; }
   .lien-formes { margin: 1mm 0 0; color: #444; text-align: center; font-style: italic; flex: none; }
   .exemple-def { display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none; padding-bottom: 6mm; box-sizing: border-box; }
   .espace { width: .3em; }

@@ -19,7 +19,10 @@ const definition = definirAffiche({
   variantes: {
     // ce qu'est une phrase, sans les types : la majuscule, le point (. ? !), des mots dans l'ordre, un sens, un verbe ; et ce qui n'en est pas une
     // (CP : « notion de phrase simple : majuscule, ponctuation, sens », BO n° 41 p. 92 ; CE1 p. 93)
-    definition: { classes: ['cp', 'ce1'], slug: 'affiche-qu-est-ce-qu-une-phrase', reglages: { groupes: false } },
+    definition: { classes: ['cp'], slug: 'affiche-qu-est-ce-qu-une-phrase', reglages: { groupes: false } },
+    // CE1, sans les types ni les formes, plus expliquée : la définition (une suite de mots qui a du sens), les trois vérifications (majuscule,
+    // point, sens), deux contre-exemples vérifiés pas à pas, « de qui on parle / ce qu'on en dit » (le groupe sujet et le reste, BO p. 93)
+    explication: { classes: ['ce1'], slug: 'affiche-la-phrase-expliquee', orientation: 'portrait', reglages: { groupes: false } },
     ce1: { classes: ['ce1'], slug: 'affiche-la-phrase' },
   },
 })

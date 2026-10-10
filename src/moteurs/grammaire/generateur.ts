@@ -9,18 +9,17 @@
 // traducteur de l'interface (jeu, `grammaire.<clé>`) ou celui de la fiche (catalogue textes.ts, toujours en français).
 // L'ordre des tirages est celui de l'ancienne version : même flux de hasard, mêmes fiches (instantanés). Corpus : src/data/grammaire.js.
 import type { Classe, Contraintes, ParamsGenerateur, Rng, Verdict } from '../../noyau/types.ts'
-import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
 import { cleQuestion } from '../../noyau/uniques.ts'
 import { DONNEES, ADJECTIFS } from '../../data/grammaire.js'
 import { verdictSaisie } from '../../utils/reponses.ts'
-import type DEFINITION from './definition.ts'
-import { PAGES_FICHE, typesDuNiveau } from './definition.ts'
-import type { TypeGrammaire } from './definition.ts'
-import type { CONTENU } from './textes.ts'
+import { typesDuNiveau } from './types.ts'
+import type { TypeGrammaire } from './types.ts'
+import type { ContenuGrammaire } from './textes.ts'
 
-type Reglages = ReglagesDeDefinition<typeof DEFINITION>
-type Cle = CleContenu<typeof CONTENU>
+/** Les réglages d'un exercice de grammaire : les types de questions cochés et leur nombre. */
+export type Reglages = { types?: readonly string[], nb: number }
+type Cle = CleContenu<ContenuGrammaire>
 
 /** Un traducteur : une clé (sans section) et ses paramètres → le texte. */
 export type Tr = (cle: string, params?: Record<string, unknown>) => string
@@ -373,11 +372,7 @@ export interface Question {
 /** La réponse de l'élève. */
 export type Reponse = { choix: number } | { selection: number[] } | { ordre: number[] } | { texte: string }
 /** Ce que tire la fiche. */
-/**
- * Ce que tire la fiche. `pages` : quand les types cochés sont de plusieurs compétences (La phrase, Nature des mots…), une page par compétence,
- * chacune avec le nombre de questions demandé ; `questions` les réunit alors toutes (contrôle du programme).
- */
-export interface TirageFiche { niveau: Classe, questions: Question[], pages?: { groupe: string, questions: Question[] }[] }
+export interface TirageFiche { niveau: Classe, questions: Question[] }
 
 type Base = Pick<Question, 'type' | 'cle' | 'consigne'>
 // Question à choix : propositions { label } (traduites par la vue avec tc), indice de la bonne ; `attendu` : la bonne proposition
@@ -627,19 +622,9 @@ function genererQuestions(rng: Rng, niveau: Classe, types: readonly string[], nb
 export const questions = ({ niveau, reglages, rng, nb = reglages.nb }: ParamsGenerateur<Reglages, Cle>): Question[] =>
   genererQuestions(rng, niveau, reglages.types ?? [], nb)
 
-/** Questions de la fiche : { niveau, questions }. */
+/** Questions de la fiche : { niveau, questions } (un exercice = une compétence = une page). */
 export function questionsFiche({ niveau, reglages, rng }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb' | 'T'>): TirageFiche {
-  const types = reglages.types ?? []
-  // les compétences des types cochés et disponibles au niveau, dans l'ordre des pages (PAGES_FICHE)
-  const dispo = typesDuNiveau(niveau) as readonly string[]
-  const groupes = PAGES_FICHE
-    .map(g => ({ groupe: g.id, types: g.types.filter(id => types.includes(id) && dispo.includes(id)) }))
-    .filter(g => g.types.length)
-  // une seule compétence (toutes les fiches publiées) : une page, comme toujours
-  if (groupes.length <= 1) return { niveau, questions: genererQuestions(rng, niveau, types, reglages.nb) }
-  // plusieurs groupes : une page par groupe, chacune avec `nb` questions de ses types
-  const pages = groupes.map(g => ({ groupe: g.groupe, questions: genererQuestions(rng, niveau, g.types, reglages.nb) }))
-  return { niveau, questions: pages.flatMap(p => p.questions), pages }
+  return { niveau, questions: genererQuestions(rng, niveau, reglages.types ?? [], reglages.nb) }
 }
 
 export function verifier(q: Question, rep: Reponse): Verdict {

@@ -28,7 +28,11 @@ function occurrences(): Map<string, string[]> {
   }
   for (const l of CODES) parcourir((LANGUES[l] as { textes: unknown }).textes, `interface:${l}`)
   for (const a of AFFICHES) for (const [l, t] of Object.entries(a.textes)) parcourir(t, `affiche:${a.definition.id}:${l}`)
+  // un catalogue partagé par plusieurs exercices (les cinq de grammaire) n'est compté qu'une fois : ce n'est pas un texte écrit plusieurs fois
+  const catalogues = new Set<unknown>()
   for (const e of EXERCICES) {
+    if (catalogues.has(e.textes)) continue
+    catalogues.add(e.textes)
     const catalogue = e.textes as { source: unknown, traductions?: Record<string, unknown> }
     parcourir(catalogue.source, `exercice:${e.definition.id}:fr`)
     for (const [l, t] of Object.entries(catalogue.traductions ?? {})) parcourir(t, `exercice:${e.definition.id}:${l}`)

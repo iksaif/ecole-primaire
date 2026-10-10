@@ -28,7 +28,11 @@ import { module as orthographe } from './orthographe/index.ts'
 import { module as vocabulaire } from './vocabulaire/index.ts'
 import { module as conjugaison } from './conjugaison/index.ts'
 import { module as dictee } from './dictee/index.ts'
-import { module as grammaire } from './grammaire/index.ts'
+import { module as grammairePhrase } from './grammaire-phrase/index.ts'
+import { module as grammaireMots } from './grammaire-mots/index.ts'
+import { module as grammaireSujetVerbe } from './grammaire-sujet-verbe/index.ts'
+import { module as grammaireAccords } from './grammaire-accords/index.ts'
+import { module as grammaireComplements } from './grammaire-complements/index.ts'
 import { module as ecriture } from './ecriture/index.ts'
 import { module as lecture } from './lecture/index.ts'
 import { module as quiz } from './quiz/index.ts'
@@ -64,7 +68,11 @@ const BASE: readonly EntreeRegistre[] = [
   vocabulaire,
   conjugaison,
   dictee,
-  grammaire,
+  grammairePhrase,
+  grammaireMots,
+  grammaireSujetVerbe,
+  grammaireAccords,
+  grammaireComplements,
   ecriture,
   lecture,
   quiz,

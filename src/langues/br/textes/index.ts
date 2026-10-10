@@ -58,10 +58,15 @@ import lecture from './lecture.ts'
 import quiz from './quiz.ts'
 import mentions from './mentions.ts'
 import grammaire from './grammaire.ts'
+import grammairePhrase from './grammairePhrase.ts'
+import grammaireMots from './grammaireMots.ts'
+import grammaireSujetVerbe from './grammaireSujetVerbe.ts'
+import grammaireAccords from './grammaireAccords.ts'
+import grammaireComplements from './grammaireComplements.ts'
 import { AVEC_DEV } from '../../../dev.ts'
 
 // Textes des exemples et des pages /dev : absents d'un build de production (AVEC_DEV, src/dev.ts). Le type les garde : en production
 // aucun code ne les lit (les exemples n'y sont pas).
 const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev, relecture } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev, relecture: typeof relecture }
 
-export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, confiance, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, ecriture, lecture, quiz, mentions, assistant, ...sectionsDev } satisfies Traductions<typeof fr>
+export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, confiance, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, grammairePhrase, grammaireMots, grammaireSujetVerbe, grammaireAccords, grammaireComplements, ecriture, lecture, quiz, mentions, assistant, ...sectionsDev } satisfies Traductions<typeof fr>

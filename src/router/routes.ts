@@ -61,6 +61,7 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     // anciennes pages de l'app (production avant la base saine) : la page qui les remplace (anciennesAdresses.ts)
     { path: '/imprimer/ecriture', component: aVenir, beforeEnter: to => versEcriture(to.query), meta: { titre: 'routeur.titre.affiche' } },
     { path: '/imprimer', redirect: { path: '/telechargements' } },
+    { path: '/francais/grammaire', redirect: to => ({ path: '/francais', query: to.query }) },
     { path: '/lecture', redirect: to => ({ path: '/francais/lecture', query: to.query }) },
     { path: '/autres', redirect: to => ({ path: '/monde/quiz', query: to.query }) },
     { path: '/maternelle', redirect: to => ({ path: '/maths', query: { classes: 'ps,ms,gs', ...to.query } }) },

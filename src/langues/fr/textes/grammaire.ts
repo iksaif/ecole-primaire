@@ -1,9 +1,7 @@
 // Textes de l'interface — grammaire (français) : la page et le jeu, et les textes calculés des questions (consignes, explications,
 // libellés des choix) que le générateur demande avec leur clé seule (`grammaire.<clé>`). La fiche lit les mêmes textes en français
-// (src/exercices/grammaire/textes.ts). Source des clés : br/textes/grammaire.ts doit avoir exactement les mêmes.
+// (src/moteurs/grammaire/textes.ts). Source des clés : br/textes/grammaire.ts doit avoir exactement les mêmes.
 export default {
-  description: 'Phrase, nature des mots, sujet, accords',
-  titre: 'Grammaire',
   astuce: 'Tu peux choisir plusieurs exercices : ils seront mélangés.',
   ecouterPhrase: 'Écouter la phrase',
   cliqueEtiquettes: 'Clique sur les étiquettes dans l\'ordre…',
@@ -17,12 +15,6 @@ export default {
   accents: 'Attention aux accents : {r}',
   pasToutAFait: 'Pas tout à fait…',
   // Groupes et types d'exercices (réglages)
-  // titres des pages d'une fiche à plusieurs compétences (PAGES_FICHE)
-  pageFiche_nature: 'La nature des mots',
-  pageFiche_sujetVerbe: 'Le sujet et le verbe',
-  pageFiche_accords: 'Genre, nombre et accords',
-  pageFiche_complements: 'Les compléments',
-  groupe_phrase: 'La phrase',
   type_ordre: 'Mots dans l\'ordre',
   type_phrase: 'Phrase ou pas ?',
   type_majuscule: 'Majuscule et point',
@@ -31,26 +23,22 @@ export default {
   type_complexe: 'Phrase simple / complexe',
   type_negation: 'Mettre à la forme négative',
   type_negReconnaitre: 'Affirmative ou négative ?',
-  groupe_nature: 'Nature des mots',
   type_verbe: 'Trouver le verbe',
   type_nom: 'Trouver les noms',
   type_det: 'Trouver les déterminants',
   type_adj: 'Trouver les adjectifs',
   type_nature: 'Nature d\'un mot',
   type_gnNoyau: 'Nom principal du GN',
-  groupe_fonctions: 'Les fonctions',
   type_sujet: 'Trouver le sujet',
   type_pronom: 'Il, elle, ils, elles',
   type_pronomPersonne: 'Je, tu, nous, vous…',
   type_cplt: 'Trouver le complément de phrase',
   type_cpltQ: 'Où ? Quand ?',
   type_cpltNature: 'Complément du verbe ou de phrase ?',
-  groupe_genreNombre: 'Genre et nombre',
   type_genre: 'Masculin / féminin',
   type_nombre: 'Singulier / pluriel',
   type_pluriel: 'Mettre au pluriel',
   type_accordGN: 'Accorder l\'adjectif',
-  groupe_accordSV: 'Accord sujet-verbe',
   type_accordSV: 'Il chante / ils chantent',
   // Choix de réponse « métalangage » (les choix en français étudié restent tels quels)
   choix_ouiPhrase: 'Oui, c\'est une phrase',

@@ -4,8 +4,6 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/grammaire.ts'
 
 export default {
-  description: 'Frazenn, natur ar gerioù, sujed, kenglotadurioù (e galleg)',
-  titre: 'Yezhadur',
   astuce: 'Gallout a rez dibab meur a boelladenn : mesket e vint.',
   ecouterPhrase: 'Selaou ar frazenn',
   cliqueEtiquettes: 'Klik war an tikedennoù en urzh…', // br: à relire (étiquette = tikedenn)
@@ -20,11 +18,6 @@ export default {
   pasToutAFait: 'N\'eo ket mat penn-da-benn…',
   // Groupes et types d'exercices (réglages)
   // br: à relire
-  pageFiche_nature: 'Natur ar gerioù', // br: à relire
-  pageFiche_sujetVerbe: 'Ar sujed hag ar verb', // br: à relire
-  pageFiche_accords: 'Reizh, niver ha kenglotadurioù', // br: à relire
-  pageFiche_complements: 'Ar renadoù', // br: à relire
-  groupe_phrase: 'Ar frazenn',
   type_ordre: 'Gerioù en urzh',
   type_phrase: 'Ur frazenn pe get ?',
   type_majuscule: 'Pennlizherenn ha poent',
@@ -33,26 +26,22 @@ export default {
   type_complexe: 'Frazenn eeun / kemplezh',
   type_negation: 'Lakaat er stumm nac\'hus',
   type_negReconnaitre: 'Kadarnaus pe nac\'hus ?',
-  groupe_nature: 'Rummad ar gerioù', // br: à relire (nature = rummad)
   type_verbe: 'Kavout ar verb',
   type_nom: 'Kavout an anvioù',
   type_det: 'Kavout ar gerioù-mont',
   type_adj: 'Kavout an anvioù-gwan',
   type_nature: 'Rummad ur ger',
   type_gnNoyau: 'Anv pennañ ar strollad anv',
-  groupe_fonctions: 'An arc\'hwelioù', // br: à relire
   type_sujet: 'Kavout ar sujed',
   type_pronom: 'Il, elle, ils, elles',
   type_pronomPersonne: 'Raganvioù : je, tu, nous, vous…', // br: à relire (raganvioù gallek : ar poellad a zo e galleg)
   type_cplt: 'Kavout klokaenn ar frazenn',
   type_cpltQ: 'Pelec\'h ? Pegoulz ?',
   type_cpltNature: 'Klokaenn ar verb pe ar frazenn ?',
-  groupe_genreNombre: 'Reizh ha niver',
   type_genre: 'Gourel / benel',
   type_nombre: 'Unander / liester',
   type_pluriel: 'Lakaat el liester',
   type_accordGN: 'Kenglotañ an anv-gwan',
-  groupe_accordSV: 'Kenglotadur sujed-verb', // br: à relire (accord = kenglotadur)
   type_accordSV: 'Il chante / ils chantent',
   // Choix de réponse « métalangage » (les choix en français étudié restent tels quels)
   choix_ouiPhrase: 'Ya, ur frazenn eo',

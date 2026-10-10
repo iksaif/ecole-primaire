@@ -2,15 +2,14 @@
 // français) : les textes calculés des questions sont lus avec T, le catalogue de contenu (textes.ts).
 import { documentFiche, ligneNomDate } from '../../impression/document.ts'
 import type { ParamsFiche } from '../../noyau/types.ts'
-import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
-import type DEFINITION from './definition.ts'
-import { ORDRE_FICHE } from './definition.ts'
-import type { CONTENU } from './textes.ts'
+import { ORDRE_FICHE, TYPES_DE } from './types.ts'
+import type { ExerciceGrammaire } from './types.ts'
+import type { ContenuGrammaire } from './textes.ts'
 import { texteTokens, valeur, tc, consigneFiche } from './generateur.ts'
-import type { Question, TirageFiche, Tr } from './generateur.ts'
+import type { Question, Reglages, TirageFiche, Tr } from './generateur.ts'
 
-type Cle = CleContenu<typeof CONTENU>
+type Cle = CleContenu<ContenuGrammaire>
 
 const CSS = `
       h2 { font-size: 1rem; margin: 1.4rem 0 .4rem; background: #f0f3f7; padding: .3rem .6rem; border-radius: 6px; }
@@ -31,13 +30,14 @@ const CSS = `
       u { text-decoration-thickness: 2px; }
       em { color: #555; }`
 
-// une page par groupe : le titre du groupe en tête de page, et dans le corrigé
-const CSS_PAGES = `
-      .titre-groupe { font-size: 1.25rem; background: none; padding: 0; margin: .6rem 0 .2rem; border-bottom: 2px solid #333; border-radius: 0; }
-      .corrige-groupe { font-size: 1rem; margin: .8rem 0 .2rem; }`
-
 const LIGNE = '<span class="ligne"></span>'
 const CASE = '<span class="case"></span>'
+/** Le titre de la fiche : celui de l'exercice dont viennent les questions (tous les types d'un tirage sont d'un seul exercice). */
+function titreDeLaFiche(T: Tr, qs: readonly Question[]): string {
+  const exercices = Object.keys(TYPES_DE) as ExerciceGrammaire[]
+  const exercice = exercices.find(e => (TYPES_DE[e] as readonly string[]).includes(qs[0]?.type ?? ''))
+  return T(exercice ? `titreFiche_${exercice}` : 'titre')
+}
 const minuscule = (s: string): string => s.charAt(0).toLowerCase() + s.slice(1)
 
 // Rendu d'une question sur papier
@@ -108,32 +108,12 @@ function pageDeQuestions(qs: readonly Question[], T: Tr, niveau: TirageFiche['ni
   return { corps, corrige }
 }
 
-/** Plusieurs groupes : une page par groupe (son titre, le prénom et la date), le corrigé de chaque page sous le nom de son groupe. */
-function fichePages(x: TirageFiche, T: Tr, langue: string): { corps: string, corrige: string } {
-  // « La phrase » a déjà son texte (le titre du groupe de boutons) ; les autres pages, le leur
-  const titreDe = (groupe: string): string => T(groupe === 'phrase' ? 'groupe_phrase' : `pageFiche_${groupe}`)
-  const pages = (x.pages ?? []).map(p => ({ titre: titreDe(p.groupe), ...pageDeQuestions(p.questions, T, x.niveau) }))
-  const corps = pages.map((p, i) => `<div class="page-groupe"${i ? ' style="break-before: page"' : ''}>
-    ${i ? ligneNomDate(langue) : ''}<h2 class="titre-groupe">${p.titre}</h2>${p.corps}</div>`).join('')
-  const corrige = pages.map(p => `<h3 class="corrige-groupe">${p.titre}</h3>${p.corrige}`).join('')
-  return { corps, corrige }
-}
-
-export function fiche({ questions: x, T: TC, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, T: TC, langue, police, cssPolices }: ParamsFiche<Reglages, TirageFiche, Cle>): string {
   const T = TC as Tr
-  if (x.pages && x.pages.length > 1) {
-    const { corps, corrige } = fichePages(x, T, langue)
-    return documentFiche({
-      titre: `${T('titre')} — ${x.niveau.toUpperCase()}`, langue, police, cssPolices, css: CSS + CSS_PAGES, largeur: '700px',
-      corps: `${ligneNomDate(langue)}
-    ${corps}
-    <section class="corrige"><h2>${T('corrige')}</h2>${corrige}</section>`,
-    })
-  }
   const { niveau, questions: qs } = x
   const { corps, corrige } = pageDeQuestions(qs, T, niveau)
   return documentFiche({
-    titre: `${T('titre')} — ${niveau.toUpperCase()}`, langue, police, cssPolices, css: CSS, largeur: '700px',
+    titre: `${titreDeLaFiche(T, qs)} — ${niveau.toUpperCase()}`, langue, police, cssPolices, css: CSS, largeur: '700px',
     corps: `${ligneNomDate(langue)}
     ${corps}
     <section class="corrige"><h2>${T('corrige')}</h2>${corrige}</section>`,

@@ -1,16 +1,16 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('grammaire.titre') }}</h1>
+    <h1 class="section-heading">{{ definition.emoji }} {{ titrePage }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types" :titre="t('communs.exercices')"
-        :libelle="ty => tr(`type_${ty}`)" :groupes="groupes">
-        <template #valeur="{ valeur: ty, texte }"><span class="theme-icon">{{ ICONES[ty] }}</span> {{ texte }}</template>
+      <ChoixReglage :definition="definition" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
+      <ChoixReglage :definition="definition" :niveau="config.niveau" cle="types" v-model="config.types" :titre="t('communs.exercices')"
+        :libelle="ty => tr(`type_${ty}`)">
+        <template #valeur="{ valeur: ty, texte }"><span class="theme-icon">{{ icone(ty) }}</span> {{ texte }}</template>
         <p class="astuce">{{ t('grammaire.astuce') }}</p>
       </ChoixReglage>
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('communs.nbQuestions')" />
+      <ChoixReglage :definition="definition" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
@@ -67,11 +67,13 @@
 </template>
 
 <script setup lang="ts">
-// Grammaire : la vue ne fait que les réglages et le rendu d'une question (choix, clic sur des mots, étiquettes à ranger, saisie).
-// Niveaux, générateur et fiche : src/exercices/grammaire/ (definition.ts, generateur.ts, fiche.ts) ; corpus : src/data/grammaire.js.
+// Grammaire : la vue ne fait que les réglages et le rendu d'une question (choix, clic sur des mots, étiquettes à ranger, saisie). C'est le même
+// composant pour les cinq exercices de grammaire (une vue mince par exercice : GrammairePhraseView.vue…), qui lui donnent leur définition, leur
+// catalogue de contenu et le nom de leur section de textes (titre de la page). Niveaux et types : src/exercices/grammaire-*/definition.ts ;
+// générateur et fiche, communs : src/moteurs/grammaire/ ; corpus : src/data/grammaire.js.
 // Exercice de français : la fiche est toujours en français, l'interface (consignes, explications) suit la langue choisie ; les textes
 // calculés des questions sont lus avec `tr` (section grammaire).
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
@@ -88,21 +90,30 @@ import TableauCorrection from '../../noyau/TableauCorrection.vue'
 import { useReglages } from '../../noyau/useReglages.ts'
 import { useJeu } from '../../noyau/useJeu.ts'
 import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
+import type { DefinitionTypee } from '../../noyau/definir.ts'
 import { estVide } from '../../utils/reponses.ts'
-import DEFINITION, { GROUPES } from '../../exercices/grammaire/definition.ts'
-import { CONTENU } from '../../exercices/grammaire/textes.ts'
-import { questions as tirer, questionsFiche, verifier, valeur, tc } from '../../exercices/grammaire/generateur.ts'
-import type { Question, Reponse, Tr } from '../../exercices/grammaire/generateur.ts'
-import { fiche as ficheGrammaire } from '../../exercices/grammaire/fiche.ts'
+import { GROUPES } from '../../moteurs/grammaire/types.ts'
+import type { ContenuGrammaire } from '../../moteurs/grammaire/textes.ts'
+import { questions as tirer, questionsFiche, verifier, valeur, tc } from '../../moteurs/grammaire/generateur.ts'
+import type { Question, Reglages, Reponse, Tr } from '../../moteurs/grammaire/generateur.ts'
+import { fiche as ficheGrammaire } from '../../moteurs/grammaire/fiche.ts'
 
+const props = defineProps<{
+  definition: DefinitionTypee<Reglages>
+  contenu: ContenuGrammaire
+  /** la section de textes de l'interface de l'exercice (`grammairePhrase` : son titre) */
+  section: string
+}>()
 const { t } = useLangue()
-const { config, langueContenu } = useReglages(DEFINITION)
-// T : les textes de la fiche (CONTENU, textes.ts), toujours en français ; tr : les textes calculés des questions, dans la langue de l'interface
-const T = traducteur(CONTENU, () => langueContenu.value)
+const { config, langueContenu } = useReglages(props.definition)
+// T : les textes de la fiche (le catalogue de l'exercice), toujours en français ; tr : les textes calculés des questions, dans la langue de l'interface
+const T = traducteur(props.contenu, () => langueContenu.value)
 const tr: Tr = (cle, params) => t(`grammaire.${cle}` as Parameters<typeof t>[0], params as Parameters<typeof t>[1])
 
-const groupes = computed(() => GROUPES.map(g => ({ titre: tr(`groupe_${g.id}`), valeurs: g.types.map(x => x.id) })))
 const ICONES: Readonly<Record<string, string>> = Object.fromEntries(GROUPES.flatMap(g => g.types.map(x => [x.id, x.icone])))
+const icone = (type: unknown): string => ICONES[String(type)] ?? ''
+/** le titre de la page : celui de la section de textes de l'exercice */
+const titrePage = computed(() => (t as (cle: string) => string)(`${props.section}.titre`))
 
 // retour après une erreur : la bonne réponse (l'explication de la question suit)
 function messageErreur(qu: Question): string {

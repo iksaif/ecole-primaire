@@ -136,8 +136,8 @@ export const DONNEES = {
       { t: 'Comme le ciel est beau', s: '!' },
       { t: 'Comme il fait chaud', s: '!' },
       { t: 'Que tu es grand', s: '!' },
-      { t: 'Bravo, tu as gagné', s: '!' },
-      { t: 'Oh, regarde le joli papillon', s: '!' },
+      { t: 'Que tu cours vite', s: '!' },
+      { t: 'Comme ce papillon est joli', s: '!' },
       { t: 'Que ce gâteau est bon', s: '!' },
       { t: 'Attention, une voiture arrive', s: '!' },
       { t: 'Comme cette fleur sent bon', s: '!' },
@@ -161,18 +161,24 @@ export const DONNEES = {
       { t: 'Pourquoi pleures-tu ?', type: 'interrogative' }, { t: 'Combien de frères as-tu ?', type: 'interrogative' },
       { t: 'Range ta chambre.', type: 'imperative' }, { t: 'Ferme la porte, s\'il te plaît.', type: 'imperative' },
       { t: 'Écoute bien la maîtresse.', type: 'imperative' }, { t: 'Prends ton cahier rouge.', type: 'imperative' },
-      { t: 'Viens vite !', type: 'imperative' }, { t: 'Lave-toi les mains.', type: 'imperative' },
-      { t: 'Ne cours pas dans le couloir.', type: 'imperative' }, { t: 'Asseyez-vous en silence.', type: 'imperative' },
+      { t: 'Viens vite !', type: 'imperative' }, { t: 'Lave tes mains avant de manger.', type: 'imperative' },
+      { t: 'Ne cours pas dans le couloir.', type: 'imperative' }, { t: 'Sortez vos cahiers.', type: 'imperative' },
       { t: 'Mange ta soupe.', type: 'imperative' }, { t: 'Regardez le tableau.', type: 'imperative' },
     ],
 
-    // Les pronoms personnels sujets (BO n° 41 p. 93) : par quel pronom remplacer ces mots ? [mots, pronom]
+    // Les pronoms personnels sujets (BO n° 41 p. 93), dans une phrase : le verbe aide à trouver la personne (« … allons au parc » → nous).
+    // [groupe sujet remplacé, suite de la phrase avec le verbe conjugué, pronom]. Je et tu : quelqu'un parle de lui, ou à quelqu'un
+    // (« Léo dit : … ») ; le groupe vide ('') veut dire que la phrase est déjà dite à la bonne personne. Trois phrases par pronom : un
+    // tirage de huit questions ou plus a toutes les personnes (generateur.ts, tirage équilibré).
     pronomsPersonnes: [
-      ['moi', 'je'], ['toi', 'tu'], ['Léo', 'il'], ['Léa', 'elle'], ['le chat', 'il'], ['la maîtresse', 'elle'],
-      ['Léa et moi', 'nous'], ['toi et moi', 'nous'], ['ma famille et moi', 'nous'], ['mes copains et moi', 'nous'],
-      ['toi et Sami', 'vous'], ['toi et ta sœur', 'vous'], ['Papa et toi', 'vous'], ['toi et tes amis', 'vous'],
-      ['Léo et Tom', 'ils'], ['les garçons', 'ils'], ['Léo et Léa', 'ils'], ['les oiseaux', 'ils'],
-      ['Léa et Zoé', 'elles'], ['les filles', 'elles'], ['les fleurs', 'elles'], ['ma sœur et ma cousine', 'elles'],
+      ['', 'Léo dit : « … ai faim. »', 'je'], ['', 'Zoé dit : « … aime les fraises. »', 'je'], ['', 'Sami dit : « … suis content. »', 'je'],
+      ['', 'Léa dit à Tom : « … as un joli dessin. »', 'tu'], ['', 'La maîtresse dit à Lina : « … lis très bien. »', 'tu'], ['', 'Papa dit à Léo : « … ranges ta chambre. »', 'tu'],
+      ['Léo', 'joue au ballon.', 'il'], ['Le chat', 'dort sur le canapé.', 'il'], ['Mon frère', 'mange une pomme.', 'il'],
+      ['Léa', 'chante une chanson.', 'elle'], ['La maîtresse', 'raconte une histoire.', 'elle'], ['Ma tortue', 'avance lentement.', 'elle'],
+      ['Léa et moi', 'allons au parc.', 'nous'], ['Mes copains et moi', 'jouons dans la cour.', 'nous'], ['Ma famille et moi', 'partons en vacances.', 'nous'],
+      ['Toi et Sami', 'dessinez un bateau.', 'vous'], ['Ta sœur et toi', 'êtes en retard.', 'vous'], ['Papa et toi', 'préparez le repas.', 'vous'],
+      ['Léo et Tom', 'regardent un film.', 'ils'], ['Léo et Léa', 'courent vite.', 'ils'], ['Les oiseaux', 'chantent le matin.', 'ils'],
+      ['Léa et Zoé', 'sautent à la corde.', 'elles'], ['Les fleurs', 'poussent au printemps.', 'elles'], ['Ma sœur et ma cousine', 'lisent un livre.', 'elles'],
     ],
 
     // Forme négative avec ne… pas : [avant le verbe, verbe, après le verbe]

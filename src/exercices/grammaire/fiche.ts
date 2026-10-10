@@ -54,7 +54,8 @@ function questionFiche(q: Question, T: Tr): string {
     case 'typePhrase':
       return `<div>${html}</div><div class="cases">${CASE} ${tc(T, 'déclarative')} &nbsp; ${CASE} ${tc(T, 'interrogative')} &nbsp; ${CASE} ${tc(T, 'impérative')}</div>`
     case 'pronomPersonne':
-      return `<div>${html} &nbsp;→ <span class="ligne moyenne"></span></div>`
+      // une ligne courte pour le pronom seul (pas de phrase à recopier)
+      return `<div>${html.replace('<span class="trou">…</span>', '<span class="ligne courte"></span>')} &nbsp;→ <span class="ligne courte"></span></div>`
     case 'complexe':
       return `<div class="grand">${html}</div><div class="cases">${CASE} ${tc(T, 'phrase simple')} &nbsp;&nbsp; ${CASE} ${tc(T, 'phrase complexe')}</div>`
     case 'negation':

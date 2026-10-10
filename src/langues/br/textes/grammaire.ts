@@ -166,7 +166,7 @@ export default {
   // br: à relire
   expl_typePhrase_declarative: 'Lavarout a ra un dra, reiñ a ra un titour : ur frazenn disklêriañ eo. Echuiñ a ra gant ur poent.',
   expl_typePhrase_interrogative: 'Goulenn a ra un dra : ur frazenn goulenn eo. Echuiñ a ra gant ur poent goulenn.', // br: à relire
-  expl_typePhrase_imperative: 'Goulenn a ra ober un dra (n\'en deus ket ar verb a sujed) : ur frazenn gourc\'hemenn eo.', // br: à relire
+  expl_typePhrase_imperative: 'Reiñ a ra un urzh pe ur c\'huzul, hep lavarout piv a ra : ur frazenn gourc\'hemenn eo. Echuiñ a ra gant ur poent, pe ur poent estlamm.', // br: à relire
   expl_complexe: '{n} verb displeget a zo ({verbes}) : ur frazenn gemplezh eo.',
   expl_simple: 'N\'eus nemet ur verb displeget ({verbes}) : ur frazenn eeun eo.',
   expl_negation: 'Lakaat a reer « {ne} … {mot} » en-dro d\'ar verb{elision}.',
@@ -196,8 +196,8 @@ export default {
   expl_conjugue: ' displeget',
   expl_nature: 'Rummad ar ger « {mot} » : {nature}{precision}.',
   expl_pronom: '« {sujet} » a zo {gn} → « {phrase} »',
-  expl_pronomPersonne_je: '« {mots} » eo an hini a gomz : je.', // br: à relire
-  expl_pronomPersonne_tu: '« {mots} » eo an hini a gomzer outañ : tu.', // br: à relire
+  expl_pronomPersonne_je: 'An hini a gomz eo a ra an ober : je.', // br: à relire
+  expl_pronomPersonne_tu: 'An hini a gomzer outañ eo a ra an ober : tu.', // br: à relire
   expl_pronomPersonne_il: '« {mots} » : unan hepken, gourel → il.', // br: à relire
   expl_pronomPersonne_elle: '« {mots} » : unan hepken, benel → elle.', // br: à relire
   expl_pronomPersonne_nous: '« {mots} » : an hini a gomz, gant re all → nous.', // br: à relire

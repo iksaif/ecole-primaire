@@ -270,7 +270,7 @@ interface Corpus {
   phraseOuPas?: { t: string, ok: boolean, r?: string }[]
   typesPhrases?: { t: string, s: '.' | '?' | '!' }[]
   typesNommes?: { t: string, type: TypeNomme }[]
-  pronomsPersonnes?: [string, PronomSujet][]
+  pronomsPersonnes?: [string, string, PronomSujet][]
   negations?: string[][]
   genre?: [string, 'm' | 'f'][]
   pluriels?: [string, string, string?][]
@@ -526,10 +526,13 @@ function construireQuestion(rng: Rng, type: TypeGrammaire, entree: unknown, nive
         solution: nouvelle }
     }
     case 'pronomPersonne': {
-      const [mots, pronom] = entree as [string, PronomSujet]
-      return { ...choix(q, [...PRONOMS_SUJETS], pronom), html: `<b>${mots}</b>`, lecture: mots,
-        explication: tr => tr(`expl_pronomPersonne_${pronom}`, { mots }),
-        solution: `${mots} → ${b(pronom)}` }
+      // un groupe sujet souligné, à remplacer ; ou une phrase dite (je, tu), où le pronom manque (« … ai faim »)
+      const [sujet, suite, pronom] = entree as [string, string, PronomSujet]
+      const avecPronom = sujet ? `${majuscule(pronom)} ${suite}` : suite.replace('…', pronom)
+      const html = sujet ? `<u>${sujet}</u> ${suite}` : suite.replace('…', '<span class="trou">…</span>')
+      return { ...choix(q, [...PRONOMS_SUJETS], pronom), html, lecture: sujet ? `${sujet} ${suite}` : suite.replace('…', ''),
+        explication: tr => tr(`expl_pronomPersonne_${pronom}`, { mots: sujet || pronom }),
+        solution: avecPronom.replace(new RegExp(`\\b${pronom}\\b`, 'i'), m => b(m)) }
     }
     case 'genre': {
       const [nom, g] = entree as [string, 'm' | 'f']
@@ -575,6 +578,22 @@ function construireQuestion(rng: Rng, type: TypeGrammaire, entree: unknown, nive
   }
 }
 
+/**
+ * Les pronoms dans un ordre équilibré : chaque pronom revient à son tour (je, puis tu… dans un ordre tiré au hasard), si bien que huit
+ * questions de suite les montrent tous. Le tableau se lit par la fin (`pop`).
+ */
+function pronomsEquilibres(rng: Rng, entrees: readonly unknown[]): unknown[] {
+  const parPronom = new Map<string, unknown[]>()
+  for (const e of rng.melanger([...entrees])) {
+    const pronom = (e as [string, string, string])[2]
+    parPronom.set(pronom, [...(parPronom.get(pronom) ?? []), e])
+  }
+  const groupes = rng.melanger([...parPronom.values()])
+  const suite: unknown[] = []
+  for (let tour = 0; groupes.some(g => g.length > tour); tour++) for (const g of groupes) if (g.length > tour) suite.push(g[tour])
+  return suite.reverse()
+}
+
 // nb questions réparties entre les types choisis (disponibles au niveau), jamais deux fois la même
 function genererQuestions(rng: Rng, niveau: Classe, types: readonly string[], nb: number): Question[] {
   const res = construireReservoirs(niveau)
@@ -589,7 +608,7 @@ function genererQuestions(rng: Rng, niveau: Classe, types: readonly string[], nb
   return rng.melanger(ordreTypes).flatMap(type => {
     let q: Question | null = null
     for (let k = 0; k < 20; k++) {
-      if (!pools[type] || pools[type].length === 0) pools[type] = rng.melanger(res[type])
+      if (!pools[type] || pools[type].length === 0) pools[type] = type === 'pronomPersonne' ? pronomsEquilibres(rng, res[type]) : rng.melanger(res[type])
       q = construireQuestion(rng, type, pools[type].pop(), niveau)
       if (!deja.has(cleQuestion(q))) break
     }

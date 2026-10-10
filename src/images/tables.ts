@@ -18,6 +18,8 @@ export const EMOJIS = {
   mainOuverte: '1F590', main: '270B', bras: '1F4AA', jambe: '1F9B5', pied: '1F9B6',
   // dessins maison : OpenMoji n'a ni le cou, ni le tronc, ni le ventre
   cou: 'maison:cou', tronc: 'maison:tronc', ventre: 'maison:ventre',
+  // les pronoms personnels sujets
+  leveLaMain: '1F64B', montreDuDoigt: '1F449', petitEnfant: '1F9D2', garcon: '1F466', fille: '1F467',
   // l'hygiène
   mainsOuvertes: '1F450', goutte: '1F4A7', savon: '1F9FC', bulles: '1FAE7', eclaboussures: '1F4A6', papier: '1F9FB', coureur: '1F3C3', salade: '1F957', eternuement: '1F927',
   // les cycles de vie, l'eau

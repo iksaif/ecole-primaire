@@ -24,6 +24,8 @@ import { module as cycles } from './cycles/index.ts'
 import { module as eau } from './eau/index.ts'
 import { module as espace } from './espace/index.ts'
 import { module as bandeNumerique } from './bande-numerique/index.ts'
+import { module as pronoms } from './pronoms/index.ts'
+import { module as phrase } from './phrase/index.ts'
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'
@@ -49,6 +51,8 @@ export const REGISTRE: ModuleAffiche<Reglages>[] = [
   eau,
   espace,
   bandeNumerique,
+  pronoms,
+  phrase,
   // nouveau:registre
 ]
 

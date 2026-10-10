@@ -17,6 +17,11 @@ export default {
   accents: 'Attention aux accents : {r}',
   pasToutAFait: 'Pas tout à fait…',
   // Groupes et types d'exercices (réglages)
+  // titres des pages d'une fiche à plusieurs compétences (PAGES_FICHE)
+  pageFiche_nature: 'La nature des mots',
+  pageFiche_sujetVerbe: 'Le sujet et le verbe',
+  pageFiche_accords: 'Genre, nombre et accords',
+  pageFiche_complements: 'Les compléments',
   groupe_phrase: 'La phrase',
   type_ordre: 'Mots dans l\'ordre',
   type_phrase: 'Phrase ou pas ?',

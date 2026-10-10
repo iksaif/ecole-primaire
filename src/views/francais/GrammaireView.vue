@@ -40,7 +40,7 @@
       </template>
 
       <!-- ordre : ranger les étiquettes -->
-      <OrdonnerClics v-else-if="q.mode === 'ordre'" v-model="ordre" mots :elements="q.etiquettes ?? []" :verrou="repondu" :etat="etat" @valider="validerOrdre">
+      <OrdonnerClics v-else-if="q.mode === 'ordre'" v-model="ordre" mots :fin="q.fin ?? ''" :elements="q.etiquettes ?? []" :verrou="repondu" :etat="etat" @valider="validerOrdre">
         <p v-if="q.fin" class="fin-phrase">{{ t('grammaire.cliqueEtiquettes') }}</p>
       </OrdonnerClics>
 

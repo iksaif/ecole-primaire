@@ -19,6 +19,11 @@ export default {
   accents: 'Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
   pasToutAFait: 'N\'eo ket mat penn-da-benn…',
   // Groupes et types d'exercices (réglages)
+  // br: à relire
+  pageFiche_nature: 'Natur ar gerioù', // br: à relire
+  pageFiche_sujetVerbe: 'Ar sujed hag ar verb', // br: à relire
+  pageFiche_accords: 'Reizh, niver ha kenglotadurioù', // br: à relire
+  pageFiche_complements: 'Ar renadoù', // br: à relire
   groupe_phrase: 'Ar frazenn',
   type_ordre: 'Gerioù en urzh',
   type_phrase: 'Ur frazenn pe get ?',

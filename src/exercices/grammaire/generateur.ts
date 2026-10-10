@@ -15,7 +15,7 @@ import { cleQuestion } from '../../noyau/uniques.ts'
 import { DONNEES, ADJECTIFS } from '../../data/grammaire.js'
 import { verdictSaisie } from '../../utils/reponses.ts'
 import type DEFINITION from './definition.ts'
-import { typesDuNiveau } from './definition.ts'
+import { PAGES_FICHE, typesDuNiveau } from './definition.ts'
 import type { TypeGrammaire } from './definition.ts'
 import type { CONTENU } from './textes.ts'
 
@@ -373,7 +373,11 @@ export interface Question {
 /** La réponse de l'élève. */
 export type Reponse = { choix: number } | { selection: number[] } | { ordre: number[] } | { texte: string }
 /** Ce que tire la fiche. */
-export interface TirageFiche { niveau: Classe, questions: Question[] }
+/**
+ * Ce que tire la fiche. `pages` : quand les types cochés sont de plusieurs compétences (La phrase, Nature des mots…), une page par compétence,
+ * chacune avec le nombre de questions demandé ; `questions` les réunit alors toutes (contrôle du programme).
+ */
+export interface TirageFiche { niveau: Classe, questions: Question[], pages?: { groupe: string, questions: Question[] }[] }
 
 type Base = Pick<Question, 'type' | 'cle' | 'consigne'>
 // Question à choix : propositions { label } (traduites par la vue avec tc), indice de la bonne ; `attendu` : la bonne proposition
@@ -624,8 +628,19 @@ export const questions = ({ niveau, reglages, rng, nb = reglages.nb }: ParamsGen
   genererQuestions(rng, niveau, reglages.types ?? [], nb)
 
 /** Questions de la fiche : { niveau, questions }. */
-export const questionsFiche = ({ niveau, reglages, rng }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb' | 'T'>): TirageFiche =>
-  ({ niveau, questions: genererQuestions(rng, niveau, reglages.types ?? [], reglages.nb) })
+export function questionsFiche({ niveau, reglages, rng }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb' | 'T'>): TirageFiche {
+  const types = reglages.types ?? []
+  // les compétences des types cochés et disponibles au niveau, dans l'ordre des pages (PAGES_FICHE)
+  const dispo = typesDuNiveau(niveau) as readonly string[]
+  const groupes = PAGES_FICHE
+    .map(g => ({ groupe: g.id, types: g.types.filter(id => types.includes(id) && dispo.includes(id)) }))
+    .filter(g => g.types.length)
+  // une seule compétence (toutes les fiches publiées) : une page, comme toujours
+  if (groupes.length <= 1) return { niveau, questions: genererQuestions(rng, niveau, types, reglages.nb) }
+  // plusieurs groupes : une page par groupe, chacune avec `nb` questions de ses types
+  const pages = groupes.map(g => ({ groupe: g.groupe, questions: genererQuestions(rng, niveau, g.types, reglages.nb) }))
+  return { niveau, questions: pages.flatMap(p => p.questions), pages }
+}
 
 export function verifier(q: Question, rep: Reponse): Verdict {
   if ('choix' in rep) return rep.choix === q.bonne

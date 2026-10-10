@@ -11,7 +11,7 @@
   - slots : #element="{ element, index, rang }" contenu d'un bouton (rang : position dans la réponse, -1 si pas
     touché) ; #place="{ element, index, rang }" contenu d'une case de la réponse (par défaut, celui de #element) ;
     le slot par défaut s'affiche entre la réponse et les boutons (flèche d'aide « du plus petit au plus grand »).
-  - props de forme : separateur (texte entre deux cases, ex. « → ») ; mots (des mots, pas des nombres : étiquettes larges) ; sansZone (pas de cases : le rang est montré
+  - props de forme : separateur (texte entre deux cases, ex. « → ») ; fin (un signe fixe après la dernière case : le point de la phrase à remettre dans l'ordre) ; mots (des mots, pas des nombres : étiquettes larges) ; sansZone (pas de cases : le rang est montré
     dans le bouton, voir #element) ; sansBouton (pas de Valider : l'appelant valide seul quand `complet`).
   - événement valider : clic sur « Valider » (actif quand tous les éléments sont placés). « Annuler » retire le
     dernier élément. La vue vide `ordre` à chaque nouvelle question (surQuestion de useJeu) ; elements doit garder la
@@ -32,6 +32,7 @@
           <span v-else aria-hidden="true">_</span>
         </span>
       </template>
+      <span v-if="fin" class="ordre-fin">{{ fin }}</span>
     </div>
 
     <slot />
@@ -62,11 +63,13 @@ const props = withDefaults(defineProps<{
   // '' | 'ok' | 'erreur' (jeu.etat)
   etat?: string
   separateur?: string
+  // un signe fixe après la dernière case (le point final d'une phrase)
+  fin?: string
   sansZone?: boolean
   sansBouton?: boolean
   // des mots (Vocabulaire, Grammaire) : étiquettes à la largeur du mot au lieu de pastilles rondes
   mots?: boolean
-}>(), { verrou: false, etat: '', separateur: '', sansZone: false, sansBouton: false, mots: false })
+}>(), { verrou: false, etat: '', separateur: '', fin: '', sansZone: false, sansBouton: false, mots: false })
 const emit = defineEmits<{ 'update:modelValue': [ordre: number[]], valider: [] }>()
 type PropsElement = { element: E, index: number, rang: number }
 defineSlots<{
@@ -109,6 +112,7 @@ function envoyer() {
 .ordre-clics { text-align: center; }
 .ordre-zone { display: flex; gap: .75rem; justify-content: center; align-items: center; margin-bottom: .5rem; flex-wrap: wrap; }
 .ordre-sep { color: #767676; font-weight: 700; }
+.ordre-fin { font-weight: 800; font-size: 1.4em; align-self: flex-end; margin-left: -.2rem; }
 .ordre-slot {
   width: 4rem; height: 4rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;
   font-size: 2rem; font-weight: 900; border: 3px solid var(--gris-brd);

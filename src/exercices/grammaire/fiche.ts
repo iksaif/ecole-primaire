@@ -31,6 +31,11 @@ const CSS = `
       u { text-decoration-thickness: 2px; }
       em { color: #555; }`
 
+// une page par groupe : le titre du groupe en tête de page, et dans le corrigé
+const CSS_PAGES = `
+      .titre-groupe { font-size: 1.25rem; background: none; padding: 0; margin: .6rem 0 .2rem; border-bottom: 2px solid #333; border-radius: 0; }
+      .corrige-groupe { font-size: 1rem; margin: .8rem 0 .2rem; }`
+
 const LIGNE = '<span class="ligne"></span>'
 const CASE = '<span class="case"></span>'
 const minuscule = (s: string): string => s.charAt(0).toLowerCase() + s.slice(1)
@@ -89,9 +94,8 @@ function questionFiche(q: Question, T: Tr): string {
   return ''
 }
 
-export function fiche({ questions: x, T: TC, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
-  const T = TC as Tr
-  const { niveau, questions: qs } = x
+/** Les sections d'une page (une par type, dans l'ordre de la fiche) et son corrigé, numérotés à partir de 1. */
+function pageDeQuestions(qs: readonly Question[], T: Tr, niveau: TirageFiche['niveau']): { corps: string, corrige: string } {
   const ordre = [...new Set(qs.map(q => q.type))].sort((a, b) => ORDRE_FICHE.indexOf(a) - ORDRE_FICHE.indexOf(b))
   const parType = ordre.map(ty => ({ t: ty, qs: qs.filter(q => q.type === ty) }))
   let num = 0
@@ -101,6 +105,33 @@ export function fiche({ questions: x, T: TC, langue, police, cssPolices }: Param
   `).join('')
   num = 0
   const corrige = parType.map(g => g.qs.map(q => { num++; return `<div class="corr"><span class="num">${num}.</span> ${valeur(q.solution, T)}</div>` }).join('')).join('')
+  return { corps, corrige }
+}
+
+/** Plusieurs groupes : une page par groupe (son titre, le prénom et la date), le corrigé de chaque page sous le nom de son groupe. */
+function fichePages(x: TirageFiche, T: Tr, langue: string): { corps: string, corrige: string } {
+  // « La phrase » a déjà son texte (le titre du groupe de boutons) ; les autres pages, le leur
+  const titreDe = (groupe: string): string => T(groupe === 'phrase' ? 'groupe_phrase' : `pageFiche_${groupe}`)
+  const pages = (x.pages ?? []).map(p => ({ titre: titreDe(p.groupe), ...pageDeQuestions(p.questions, T, x.niveau) }))
+  const corps = pages.map((p, i) => `<div class="page-groupe"${i ? ' style="break-before: page"' : ''}>
+    ${i ? ligneNomDate(langue) : ''}<h2 class="titre-groupe">${p.titre}</h2>${p.corps}</div>`).join('')
+  const corrige = pages.map(p => `<h3 class="corrige-groupe">${p.titre}</h3>${p.corrige}`).join('')
+  return { corps, corrige }
+}
+
+export function fiche({ questions: x, T: TC, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  const T = TC as Tr
+  if (x.pages && x.pages.length > 1) {
+    const { corps, corrige } = fichePages(x, T, langue)
+    return documentFiche({
+      titre: `${T('titre')} — ${x.niveau.toUpperCase()}`, langue, police, cssPolices, css: CSS + CSS_PAGES, largeur: '700px',
+      corps: `${ligneNomDate(langue)}
+    ${corps}
+    <section class="corrige"><h2>${T('corrige')}</h2>${corrige}</section>`,
+    })
+  }
+  const { niveau, questions: qs } = x
+  const { corps, corrige } = pageDeQuestions(qs, T, niveau)
   return documentFiche({
     titre: `${T('titre')} — ${niveau.toUpperCase()}`, langue, police, cssPolices, css: CSS, largeur: '700px',
     corps: `${ligneNomDate(langue)}

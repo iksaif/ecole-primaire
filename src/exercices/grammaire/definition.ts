@@ -72,6 +72,18 @@ export const typesDuNiveau = (niveau: Classe): TypeGrammaire[] => GROUPES.flatMa
 export const ORDRE_FICHE: readonly TypeGrammaire[] = ['ordre', 'phrase', 'majuscule', 'ponctuation', 'typePhrase', 'complexe', 'negation', 'negReconnaitre', 'verbe', 'nom',
   'det', 'adj', 'nature', 'gnNoyau', 'sujet', 'pronom', 'pronomPersonne', 'cplt', 'cpltQ', 'cpltNature', 'genre', 'nombre', 'pluriel', 'accordGN', 'accordSV']
 
+/**
+ * Les pages d'une fiche faite à la demande : une page par compétence (titre : `pageFiche_<id>`), quand les types cochés en touchent
+ * plusieurs. Chaque fiche publiée est d'une seule compétence : elle reste sur une page.
+ */
+export const PAGES_FICHE: readonly { readonly id: string, readonly types: readonly TypeGrammaire[] }[] = [
+  { id: 'phrase', types: ['ordre', 'phrase', 'majuscule', 'ponctuation', 'typePhrase', 'negation', 'negReconnaitre', 'complexe'] },
+  { id: 'nature', types: ['nom', 'det', 'adj', 'nature', 'gnNoyau'] },
+  { id: 'sujetVerbe', types: ['verbe', 'sujet', 'pronom', 'pronomPersonne', 'accordSV'] },
+  { id: 'accords', types: ['genre', 'nombre', 'pluriel', 'accordGN'] },
+  { id: 'complements', types: ['cplt', 'cpltQ', 'cpltNature'] },
+]
+
 // Fiches par compétence : les types de la compétence qui existent au niveau. Les fiches déjà publiées gardent leurs types (elles ne changent
 // pas) ; les types du CE1 ajoutés depuis ont leurs propres fiches : les types de phrases, les pronoms personnels sujets.
 const FICHES = [

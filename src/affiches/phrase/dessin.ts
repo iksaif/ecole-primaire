@@ -46,7 +46,46 @@ function rangee(cartes: readonly Carte[], W: number, h: number, ctx: ContexteDes
 /** Un titre de bande. */
 const titre = (texte: string, taille: number): string => `<h2 class="titre-bande" style="font-size:${taille}mm">${echapper(texte)}</h2>`
 
+/**
+ * « Qu'est-ce qu'une phrase ? » (sans les types) : l'exemple en grand, la majuscule, le verbe et le point repérés dessous ; les cinq règles
+ * (une coche verte chacune) ; trois exemples de ce qui n'est pas une phrase, barrés en rouge, avec la raison.
+ */
+function dessinDefinition({ W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
+  const police = ctx.nomPolice()
+  const hExemple = H * 0.22, hRegles = H * 0.44, hPas = H * 0.3
+  // 1. l'exemple : chaque mot dans sa boîte ; la majuscule, le verbe et le point repérés de leur couleur, leur nom dessous
+  const exemple = T('def.exemple')
+  const mots = exemple.slice(0, -1).split(' ')
+  const tEx = tailleQuiTient([exemple], police, W * 0.8, hExemple * 0.42, ctx)
+  const tRep = Math.min(tEx * 0.42, 6)
+  const motHtml = (m: string, i: number): string => {
+    if (i === 0) return `<span class="mot-def"><span><span class="marque">${echapper(m[0])}</span>${echapper(m.slice(1))}</span><small style="color:${ROUGE};font-size:${tRep}mm">${echapper(T('def.majuscule'))}</small></span>`
+    if (i === 2) return `<span class="mot-def"><span style="color:${ORANGE};border-bottom:1mm solid ${ORANGE}">${echapper(m)}</span><small style="color:${ORANGE};font-size:${tRep}mm">${echapper(T('def.verbe'))}</small></span>`
+    return `<span class="mot-def"><span>${echapper(m)}</span><small style="font-size:${tRep}mm">&nbsp;</small></span>`
+  }
+  // le point, collé au dernier mot (sans espace), son nom dessous
+  const point = `<span class="mot-def point-def"><span class="marque">.</span><small style="color:${ROUGE};font-size:${tRep}mm">${echapper(T('def.point'))}</small></span>`
+  const exempleHtml = `<div class="exemple-def" style="height:${hExemple}mm;font-size:${tEx}mm">${mots.map(motHtml).join('<span class="espace"> </span>')}${point}</div>`
+  // 2. les règles
+  const regles = ['majuscule', 'point', 'ordre', 'sens', 'verbe'].map(id => T(`def.regle.${id}`))
+  const tRegle = tailleQuiTient(regles, police, W * 0.82, (hRegles / regles.length) * 0.5, ctx)
+  const reglesHtml = `<ul class="regles-def" style="height:${hRegles}mm;font-size:${tRegle}mm">${regles.map(r => `<li><span class="coche">✓</span>${echapper(r)}</li>`).join('')}</ul>`
+  // 3. ce qui n'est pas une phrase
+  const pas = ['ordre', 'verbe', 'sens'].map(id => ({ texte: T(`def.pas.${id}`), raison: T(`def.pas.${id}.raison`) }))
+  const tPas = tailleQuiTient(pas.map(p => p.texte), police, W * 0.5, (hPas / 4) * 0.5, ctx)
+  const tRaison = tailleQuiTient(pas.map(p => p.raison), police, W * 0.4, (hPas / 4) * 0.42, ctx)
+  const pasHtml = `<div class="pas-def" style="height:${hPas}mm"><h2 class="titre-bande" style="font-size:${tPas}mm;color:${ROUGE}">${echapper(T('def.pas.titre'))}</h2>${pas.map(p => `
+    <div class="ligne-pas"><span class="croix">✗</span><s style="font-size:${tPas}mm">${echapper(p.texte)}</s><span class="raison" style="font-size:${tRaison}mm">→ ${echapper(p.raison)}</span></div>`).join('')}</div>`
+  return `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${exempleHtml}${reglesHtml}${pasHtml}</div>`
+}
+
 export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
+  if (r.variante === 'definition') return [{ corps: dessinDefinition({ W, H }, T, ctx), titre: r.titre || T('variante.definition.court') }]
+  return [{ corps: dessinTypes(r, { W, H }, T, ctx), titre: r.titre || T('titre.ce1') }]
+}
+
+/** La phrase au CE1 : la règle, les trois types, les deux formes, les groupes (réglage). */
+function dessinTypes(r: Reglages, { W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
   const police = ctx.nomPolice()
   const tTitre = Math.min(6.5, H * 0.03)
   const hTitre = tTitre * 1.7
@@ -59,7 +98,7 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
   const exemple = T('regle.exemple')
   const marque = (s: string): string => `<span class="marque">${echapper(s)}</span>`
   const exempleHtml = `${marque(exemple[0])}${echapper(exemple.slice(1, -1))}${marque(exemple.slice(-1))}`
-  const tRegle = tailleQuiTient([`${T('regle.titre')} ${T('regle.texte')}`], police, W * 0.95, hRegle * 0.22, ctx)
+  const tRegle = tailleQuiTient([`${T('regle.titre')} ${T('regle.texte')}`], police, W * 0.98, hRegle * 0.3, ctx)
   const tExRegle = tailleQuiTient([exemple], police, W * 0.6, hRegle * 0.4, ctx)
   const regle = `<div class="regle" style="height:${hRegle}mm"><p style="font-size:${tRegle}mm"><b>${echapper(T('regle.titre'))}</b> ${echapper(T('regle.texte'))}</p>
     <p class="exemple-regle" style="font-size:${tExRegle}mm">${exempleHtml}</p></div>`
@@ -89,9 +128,9 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
 
   const corps = `${regle}
     ${titre(T('types.titre'), tTitre)}${rangee(types, W, hTypes, ctx)}
-    ${titre(T('formes.titre'), tTitre)}${rangee(formes, W, hFormes, ctx)}
+    ${titre(T('formes.titre'), tTitre)}${rangee(formes, W, hFormes * 0.82, ctx)}<p class="lien-formes" style="font-size:${Math.min(tTitre * 0.75, hFormes * 0.08)}mm">${echapper(T('formes.lien'))}</p>
     ${r.groupes ? `${titre(T('groupes.titre'), tTitre)}${groupesHtml()}` : ''}`
-  return [`<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${corps}</div>`]
+  return `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${corps}</div>`
 }
 
 export const css = `
@@ -112,4 +151,19 @@ export const css = `
   .rond { gap: .6mm; }
   .groupes { display: flex; justify-content: center; align-items: center; gap: 3mm; flex: none; }
   .groupe { display: inline-flex; flex-direction: column; align-items: center; border-bottom: 1.2mm solid; padding: 0 1mm 1mm; line-height: 1.2; }
-  .groupe small { font-weight: 700; }`
+  .groupe small { font-weight: 700; }
+  .lien-formes { margin: 1mm 0 0; color: #444; text-align: center; font-style: italic; flex: none; }
+  .exemple-def { display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none; padding-bottom: 6mm; box-sizing: border-box; }
+  .espace { width: .3em; }
+  .point-def { margin-left: .05em; }
+  /* le nom (majuscule, verbe, point) sous le mot, sans élargir le mot : les espaces restent ceux de la phrase */
+  .mot-def { position: relative; display: inline-block; line-height: 1.15; }
+  .mot-def small { position: absolute; top: 128%; left: 50%; transform: translateX(-50%); font-weight: 700; white-space: nowrap; }
+  .regles-def { list-style: none; margin: 0; padding: 0 4mm; display: flex; flex-direction: column; justify-content: space-around; flex: none; }
+  .regles-def li { display: flex; align-items: center; gap: 3mm; }
+  .coche { color: ${VERT}; font-weight: 700; }
+  .pas-def { display: flex; flex-direction: column; justify-content: space-around; padding: 0 4mm; border: .5mm dashed ${ROUGE}; border-radius: 3mm; flex: none; box-sizing: border-box; }
+  .ligne-pas { display: flex; align-items: baseline; gap: 3mm; flex-wrap: wrap; }
+  .croix { color: ${ROUGE}; font-weight: 700; font-size: 1.4em; }
+  .ligne-pas s { text-decoration-color: ${ROUGE}; text-decoration-thickness: .5mm; }
+  .raison { color: #555; }`

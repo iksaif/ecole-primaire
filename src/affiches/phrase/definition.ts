@@ -17,6 +17,9 @@ const definition = definirAffiche({
   // les groupes de la phrase (sujet, verbe, complément) : une bande de plus en bas de l'affiche
   reglages: { groupes: choix([true, false]) },
   variantes: {
+    // ce qu'est une phrase, sans les types : la majuscule, le point (. ? !), des mots dans l'ordre, un sens, un verbe ; et ce qui n'en est pas une
+    // (CP : « notion de phrase simple : majuscule, ponctuation, sens », BO n° 41 p. 92 ; CE1 p. 93)
+    definition: { classes: ['cp', 'ce1'], slug: 'affiche-qu-est-ce-qu-une-phrase', reglages: { groupes: false } },
     ce1: { classes: ['ce1'], slug: 'affiche-la-phrase' },
   },
 })

@@ -8,6 +8,7 @@ import { echapper } from '../../utils/html.js'
 import { tailleQuiTient } from '../listeMots.ts'
 import type { ContexteDessin, Rendu } from '../types.ts'
 import GRAMMAIRE from '../../langues/fr/textes/grammaire.ts'
+import PHRASE from '../../langues/fr/textes/grammairePhrase.ts'
 import type { Reglages } from './definition.ts'
 
 const BLEU = '#1d4e9e', ORANGE = '#d9480f', VERT = '#2b8a3e', VIOLET = '#862e9c', ROUGE = '#c2255c'
@@ -25,7 +26,7 @@ function rangee(cartes: readonly Carte[], W: number, h: number, ctx: ContexteDes
   const police = ctx.nomPolice()
   // carte étroite (portrait) : le rond au-dessus du nom, qui a alors toute la largeur
   const tNom = tailleQuiTient(cartes.map(c => c.nom), police, l * (l < 75 ? 0.9 : 0.6), h * 0.15, ctx)
-  const tRole = tailleQuiTient(cartes.map(c => c.role), police, l * 0.9, h * 0.11, ctx)
+  const tRole = tailleQuiTient(cartes.map(c => c.role), police, l * 0.92, h * 0.14, ctx)
   const tExemple = tailleQuiTient(cartes.map(c => c.exemple.replace(/<[^>]+>/g, '')), police, l * 0.9, h * 0.14, ctx)
   const rond = Math.min(h * 0.3, l * 0.3)
   // le contenu du rond : les signes côte à côte (« . ! » pour l'impérative), « ne pas » en plus petit
@@ -60,22 +61,22 @@ function dessinDefinition({ W, H }: { W: number, H: number }, T: (cle: string) =
   const tRep = Math.min(tEx * 0.42, 6)
   const motHtml = (m: string, i: number): string => {
     if (i === 0) return `<span class="mot-def"><span><span class="marque">${echapper(m[0])}</span>${echapper(m.slice(1))}</span><small style="color:${ROUGE};font-size:${tRep}mm">${echapper(T('def.majuscule'))}</small></span>`
-    if (i === 2) return `<span class="mot-def"><span style="color:${ORANGE};border-bottom:1mm solid ${ORANGE}">${echapper(m)}</span><small style="color:${ORANGE};font-size:${tRep}mm">${echapper(T('def.verbe'))}</small></span>`
     return `<span class="mot-def"><span>${echapper(m)}</span><small style="font-size:${tRep}mm">&nbsp;</small></span>`
   }
   // le point, collé au dernier mot (sans espace), son nom dessous
   const point = `<span class="mot-def point-def"><span class="marque">.</span><small style="color:${ROUGE};font-size:${tRep}mm">${echapper(T('def.point'))}</small></span>`
   const exempleHtml = `<div class="exemple-def" style="height:${hExemple}mm;font-size:${tEx}mm">${mots.map(motHtml).join('<span class="espace"> </span>')}${point}</div>`
   // 2. les règles
-  const regles = ['majuscule', 'point', 'ordre', 'sens', 'verbe'].map(id => T(`def.regle.${id}`))
+  const regles = ['majuscule', 'point', 'ordre', 'sens'].map(id => T(`def.regle.${id}`))
   const tRegle = tailleQuiTient(regles, police, W * 0.82, (hRegles / regles.length) * 0.5, ctx)
   const reglesHtml = `<ul class="regles-def" style="height:${hRegles}mm;font-size:${tRegle}mm">${regles.map(r => `<li><span class="coche">✓</span>${echapper(r)}</li>`).join('')}</ul>`
   // 3. ce qui n'est pas une phrase
-  const pas = ['ordre', 'verbe', 'sens'].map(id => ({ texte: T(`def.pas.${id}`), raison: T(`def.pas.${id}.raison`) }))
+  // une seule faute par exemple : l'ordre, la majuscule et le point, le sens
+  const pas = ['ordre', 'majuscule', 'sens'].map(id => ({ texte: T(`def.pas.${id}`), raison: T(`def.pas.${id}.raison`) }))
   const tPas = tailleQuiTient(pas.map(p => p.texte), police, W * 0.5, (hPas / 4) * 0.5, ctx)
   const tRaison = tailleQuiTient(pas.map(p => p.raison), police, W * 0.4, (hPas / 4) * 0.42, ctx)
   const pasHtml = `<div class="pas-def" style="height:${hPas}mm"><h2 class="titre-bande" style="font-size:${tPas}mm;color:${ROUGE}">${echapper(T('def.pas.titre'))}</h2>${pas.map(p => `
-    <div class="ligne-pas"><span class="croix">✗</span><s style="font-size:${tPas}mm">${echapper(p.texte)}</s><span class="raison" style="font-size:${tRaison}mm">→ ${echapper(p.raison)}</span></div>`).join('')}</div>`
+    <div class="ligne-pas"><span class="croix">✗</span><span class="faux" style="font-size:${tPas}mm">${echapper(p.texte)}</span><span class="raison" style="font-size:${tRaison}mm">→ ${echapper(p.raison)}</span></div>`).join('')}</div>`
   return `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${exempleHtml}${reglesHtml}${pasHtml}</div>`
 }
 
@@ -84,6 +85,9 @@ function dessinDefinition({ W, H }: { W: number, H: number }, T: (cle: string) =
  * point, sens), chacune dans un rond de couleur ; une suite de mots qui n'est pas une phrase, vérifiée pas à pas (✓ ✓ ✗) ; « de qui on
  * parle / ce qu'on en dit » sur un exemple (le groupe sujet en bleu, le reste en vert). Peu de texte, en grand : c'est une affiche.
  */
+/** Un exemple dont la majuscule et le point sont entourés (les vérifications 1 et 2). */
+const exempleEntoure = (s: string): string => `<span class="marque">${echapper(s[0])}</span>${echapper(s.slice(1, -1))}<span class="marque">${echapper(s.slice(-1))}</span>`
+
 function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) => string, ctx: ContexteDessin): string {
   const police = ctx.nomPolice()
   const taille = (textes: readonly string[], largeur: number, plafond: number): number => tailleQuiTient(textes, police, largeur, plafond, ctx)
@@ -91,23 +95,24 @@ function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) 
   // 1. la définition et l'exemple
   const definition = (w: number, h: number): string => `<div class="bande-exp" style="width:${w}mm;height:${h}mm">
     <p style="font-size:${taille([T('exp.definition')], w * 0.95, h * 0.3)}mm"><b>${echapper(T('exp.definition'))}</b></p>
-    <p class="exemple" style="font-size:${taille([T('exp.exemple')], w * 0.75, h * 0.38)}mm">${echapper(T('exp.exemple'))}</p></div>`
+    <p class="exemple" style="font-size:${taille([T('exp.exemple')], w * 0.75, h * 0.38)}mm">${exempleEntoure(T('exp.exemple'))}</p></div>`
 
   // 2. les trois vérifications, chacune dans un rond de couleur
   const verifs = [
-    { couleur: ROUGE, nom: T('exp.v.majuscule'), detail: '' },
+    // la carte 1 montre la majuscule de l'exemple, entourée comme dans l'exemple
+    { couleur: ROUGE, nom: T('exp.v.majuscule'), detail: T('exp.exemple')[0] },
     { couleur: BLEU, nom: T('exp.v.point'), detail: T('exp.v.point.detail') },
     { couleur: VERT, nom: T('exp.v.sens'), detail: T('exp.v.sens.detail') },
   ]
   const verifier = (w: number, h: number): string => {
     const lV = (w - 8) / 3
-    const tNom = taille(verifs.map(v => v.nom), lV * 0.9, h * 0.16)
-    const tDetail = taille(verifs.map(v => v.detail).filter(Boolean), lV * 0.92, h * 0.13)
+    const tNom = taille(verifs.map(v => v.nom), lV * 0.92, h * 0.2)
+    const tDetail = Math.min(tNom * 0.85, taille(verifs.map(v => v.detail).filter(Boolean), lV * 0.92, h * 0.13))
     const rond = Math.min(h * 0.3, lV * 0.3)
     return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.verifier')], w * 0.9, h * 0.13)}mm">${echapper(T('exp.verifier'))}</p>
     <div class="verifs">${verifs.map((v, i) => `<div class="verif" style="width:${lV}mm;border-color:${v.couleur}">
       <span class="rond" style="width:${rond}mm;height:${rond}mm;background:${v.couleur};font-size:${rond * 0.6}mm">${i + 1}</span>
-      <b style="font-size:${tNom}mm;color:${v.couleur}">${echapper(v.nom)}</b>${v.detail ? `<span style="font-size:${tDetail}mm">${echapper(v.detail)}</span>` : ''}</div>`).join('')}</div></div>`
+      <b style="font-size:${tNom}mm;color:${v.couleur}">${echapper(v.nom)}</b>${v.detail ? `<span style="font-size:${i === 0 ? tDetail * 1.6 : tDetail}mm">${i === 0 ? `<span class="marque">${echapper(v.detail)}</span>` : echapper(v.detail)}</span>` : ''}</div>`).join('')}</div></div>`
   }
 
   // 3. une suite de mots qui n'est pas une phrase, vérifiée : ✓ ou ✗ pour chacune des trois vérifications
@@ -119,7 +124,7 @@ function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) 
     const tPas = taille(pas.map(p => p.texte), w * 0.6, h * 0.2)
     const tRaison = taille(pas.map(p => p.raison), w * 0.92, h * 0.14)
     return `<div class="bande-exp pas-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.pas.titre')], w * 0.9, h * 0.12)}mm;color:${ROUGE}">${echapper(T('exp.pas.titre'))}</p>
-    ${pas.map(p => `<div class="ligne-exp"><s style="font-size:${tPas}mm">${echapper(p.texte)}</s><span class="coches" style="font-size:${tPas * 0.8}mm">${p.coches.map(coche).join('')}</span></div>
+    ${pas.map(p => `<div class="ligne-exp"><span class="faux" style="font-size:${tPas}mm">${echapper(p.texte)}</span><span class="coches" style="font-size:${tPas * 0.8}mm">${p.coches.map(coche).join('')}</span></div>
       <p class="raison" style="font-size:${tRaison}mm">→ ${echapper(p.raison)}</p>`).join('')}</div>`
   }
 
@@ -131,7 +136,7 @@ function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) 
     const groupe = (texte: string, couleur: string, etiquette: string): string =>
       `<span class="groupe-exp" style="border-color:${couleur}"><span>${echapper(texte)}</span><small style="color:${couleur};font-size:${tEtiq}mm">${echapper(etiquette)}</small></span>`
     return `<div class="bande-exp" style="width:${w}mm;height:${h}mm"><p class="titre-exp" style="font-size:${taille([T('exp.qui.titre')], w * 0.95, h * 0.12)}mm">${echapper(T('exp.qui.titre'))}</p>
-    ${exemples.map(e => `<p class="phrase-exp" style="font-size:${tQui}mm">${groupe(e.sujet, BLEU, T('exp.qui.sujet'))}${groupe(e.reste, VERT, T('exp.qui.reste'))}</p>`).join('')}</div>`
+    ${exemples.map(e => `<p class="phrase-exp" style="font-size:${tQui}mm">${groupe(e.sujet, BLEU, `${T('exp.qui.sujet')} · ${T('exp.qui.sujet.nom')}`)}${groupe(e.reste, VERT, T('exp.qui.reste'))}</p>`).join('')}</div>`
   }
 
   const contenu = (html: string): string => `<div class="phrase" style="width:${W}mm;height:${H}mm;font-family:${ctx.police()}">${html}</div>`
@@ -144,7 +149,7 @@ function dessinExplication({ W, H }: { W: number, H: number }, T: (cle: string) 
 }
 
 export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
-  if (r.variante === 'explication') return [{ corps: dessinExplication({ W, H }, T, ctx), titre: r.titre || GRAMMAIRE.groupe_phrase }]
+  if (r.variante === 'explication') return [{ corps: dessinExplication({ W, H }, T, ctx), titre: r.titre || PHRASE.titre }]
   if (r.variante === 'definition') return [{ corps: dessinDefinition({ W, H }, T, ctx), titre: r.titre || T('variante.definition.court') }]
   return [{ corps: dessinTypes(r, { W, H }, T, ctx), titre: r.titre || T('titre.ce1') }]
 }
@@ -163,7 +168,7 @@ function dessinTypes(r: Reglages, { W, H }: { W: number, H: number }, T: (cle: s
   const exemple = T('regle.exemple')
   const marque = (s: string): string => `<span class="marque">${echapper(s)}</span>`
   const exempleHtml = `${marque(exemple[0])}${echapper(exemple.slice(1, -1))}${marque(exemple.slice(-1))}`
-  const tRegle = tailleQuiTient([`${T('regle.titre')} ${T('regle.texte')}`], police, W * 0.98, hRegle * 0.3, ctx)
+  const tRegle = tailleQuiTient([`${T('regle.titre')} ${T('regle.texte')}`], police, W * 0.9, hRegle * 0.34, ctx)
   const tExRegle = tailleQuiTient([exemple], police, W * 0.6, hRegle * 0.4, ctx)
   const regle = `<div class="regle" style="height:${hRegle}mm"><p style="font-size:${tRegle}mm"><b>${echapper(T('regle.titre'))}</b> ${echapper(T('regle.texte'))}</p>
     <p class="exemple-regle" style="font-size:${tExRegle}mm">${exempleHtml}</p></div>`
@@ -172,8 +177,8 @@ function dessinTypes(r: Reglages, { W, H }: { W: number, H: number }, T: (cle: s
   const types: Carte[] = [
     { signe: ['point'], couleur: BLEU, nom: GRAMMAIRE.choix_declarative, role: T('type.declarative.role'), exemple: echapper(T('type.declarative.exemple')) },
     { signe: ['?'], couleur: ORANGE, nom: GRAMMAIRE.choix_interrogative, role: T('type.interrogative.role'), exemple: echapper(T('type.interrogative.exemple')) },
-    // l'impérative finit par un point, ou par un point d'exclamation quand on insiste
-    { signe: ['point', '!'], couleur: VERT, nom: GRAMMAIRE.choix_imperative, role: T('type.imperative.role'), exemple: echapper(T('type.imperative.exemple')) },
+    // l'impérative au point seul sur l'affiche : le « ! » est celui de l'exclamative (deux sens pour un signe embrouillent au CE1)
+    { signe: ['point'], couleur: VERT, nom: GRAMMAIRE.choix_imperative, role: T('type.imperative.role'), exemple: echapper(T('type.imperative.exemple')) },
   ]
   // 3. les deux formes : « ne … pas » en couleur dans l'exemple
   const negative = echapper(T('forme.negative.exemple')).replace(/\bne\b(.*?)\bpas\b/, '<b class="negation">ne</b>$1<b class="negation">pas</b>')
@@ -226,7 +231,7 @@ export const css = `
   .verif { display: flex; flex-direction: column; align-items: center; gap: 1mm; border: .5mm solid; border-radius: 3mm; padding: 2mm 1mm; box-sizing: border-box; }
   .pas-exp { border: .5mm dashed ${ROUGE}; border-radius: 3mm; box-sizing: border-box; }
   .ligne-exp { display: flex; align-items: baseline; gap: 5mm; }
-  .ligne-exp s { text-decoration-color: ${ROUGE}; text-decoration-thickness: .5mm; }
+  .faux { color: #333; }
   .coches { display: inline-flex; gap: 3mm; font-weight: 700; }
   .phrase-exp { display: flex; gap: 2mm; justify-content: center; }
   .groupe-exp { display: inline-flex; flex-direction: column; align-items: center; border-bottom: 1.2mm solid; padding: 0 1mm .5mm; line-height: 1.2; }
@@ -245,5 +250,5 @@ export const css = `
   .pas-def { display: flex; flex-direction: column; justify-content: space-around; padding: 0 4mm; border: .5mm dashed ${ROUGE}; border-radius: 3mm; flex: none; box-sizing: border-box; }
   .ligne-pas { display: flex; align-items: baseline; gap: 3mm; flex-wrap: wrap; }
   .croix { color: ${ROUGE}; font-weight: 700; font-size: 1.4em; }
-  .ligne-pas s { text-decoration-color: ${ROUGE}; text-decoration-thickness: .5mm; }
+
   .raison { color: #555; }`

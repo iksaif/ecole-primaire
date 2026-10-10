@@ -21,12 +21,18 @@ const TABLEAU: readonly (readonly (readonly Pronom[])[])[] = [
   [[{ pronom: 'tu', images: ['montreDuDoigt', 'petitEnfant'], exemple: 'tu chantes', remplace: 'toi' }], [{ pronom: 'vous', images: ['montreDuDoigt', 'petitEnfant', 'petitEnfant'], exemple: 'vous chantez', remplace: 'toi + d’autres' }]],
   // la 3e personne remplace aussi des choses et des animaux (le chat → il, la fleur → elle). On : une seule silhouette sans visage, quelqu'un
   // qu'on ne nomme pas (« on frappe à la porte ») ; il se conjugue comme il (on chante), alors que nous a la main levée de moi (nous chantons)
-  [[{ pronom: 'il', images: ['garcon'], exemple: 'il chante', remplace: 'Léo, le chat' }, { pronom: 'elle', images: ['fille'], exemple: 'elle chante', remplace: 'Léa, la fleur' },
-    { pronom: 'on', images: ['quelquun'], exemple: 'on chante', remplace: 'quelqu’un' }],
+  [[{ pronom: 'il', images: ['garcon'], exemple: 'il chante', remplace: 'Léo ou le chat' }, { pronom: 'elle', images: ['fille'], exemple: 'elle chante', remplace: 'Léa ou la fleur' },
+    { pronom: 'on', images: ['quelquun'], exemple: 'on chante', remplace: 'quelqu’un, ou nous' }],
     [{ pronom: 'ils', images: ['garcon', 'fille'], exemple: 'ils chantent', remplace: 'Léo et Léa' }, { pronom: 'elles', images: ['fille', 'fille'], exemple: 'elles chantent', remplace: 'les filles' }]],
 ]
 
 const COULEURS = ['#1d4e9e', '#d9480f', '#2b8a3e']
+
+/** « nous chantons » : la terminaison du verbe (ce qui suit « chant ») dans la couleur de la personne. */
+function exempleColore(exemple: string, couleur: string): string {
+  const i = exemple.lastIndexOf('chant') + 'chant'.length
+  return `${echapper(exemple.slice(0, i))}<b style="color:${couleur}">${echapper(exemple.slice(i))}</b>`
+}
 
 export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
   const lEntete = Math.min(W * 0.2, 46), hEntete = Math.min(H * 0.1, 14)
@@ -38,14 +44,14 @@ export const dessin: Rendu<Reglages>['dessin'] = (r, { W, H }, T, ctx) => {
   const lPronom = lInterieur / parCase
   const police = ctx.nomPolice()
   const tPronom = tailleQuiTient(['elles', 'nous', 'vous'], police, lPronom * 0.8, hCase * 0.22, ctx)
-  const tExemple = tailleQuiTient(['elles chantent', 'nous chantons'], police, lPronom * 0.92, hCase * 0.1, ctx)
-  const tRemplace = tailleQuiTient(TABLEAU.flat(2).map(p => p.remplace), police, lPronom * 0.92, hCase * 0.09, ctx)
+  const tExemple = tailleQuiTient(['elles chantent', 'nous chantons'], police, lPronom * 0.92, hCase * 0.13, ctx)
+  const tRemplace = tailleQuiTient(TABLEAU.flat(2).map(p => p.remplace), police, lPronom * 0.92, hCase * 0.11, ctx)
   const tEntete = tailleQuiTient([T('personne.3'), '3e personne'], police, lEntete * 0.92, hEntete * 0.45, ctx)
   const tColonne = tailleQuiTient([T('singulier'), T('pluriel')], police, lCase * 0.9, hEntete * 0.5, ctx)
   const image = Math.min(hCase * (r.exemple ? 0.34 : 0.42), lPronom * 0.4)
 
   const pronomHtml = (p: Pronom, couleur: string): string =>
-    `<div class="pronom" style="width:${lPronom}mm"><span class="images">${p.images.map(n => emojiHtml(n, `${image}mm`)).join('')}</span><b style="font-size:${tPronom}mm;color:${couleur}">${echapper(p.pronom)}</b><em style="font-size:${tRemplace}mm">${echapper(p.remplace)}</em>${r.exemple ? `<span style="font-size:${tExemple}mm">${echapper(p.exemple)}</span>` : ''}</div>`
+    `<div class="pronom" style="width:${lPronom}mm"><span class="images">${p.images.map(n => emojiHtml(n, `${image}mm`)).join('')}</span><b style="font-size:${tPronom}mm;color:${couleur}">${echapper(p.pronom)}</b><em style="font-size:${tRemplace}mm">${echapper(p.remplace)}</em>${r.exemple ? `<span style="font-size:${tExemple}mm">${exempleColore(p.exemple, couleur)}</span>` : ''}</div>`
   const entete = `<div class="entete" style="height:${hEntete}mm"><span style="width:${lEntete}mm"></span>${['singulier', 'pluriel'].map(c => `<span style="width:${lCase}mm;font-size:${tColonne}mm">${echapper(T(c))}</span>`).join('')}</div>`
   const rangees = TABLEAU.map((cases, i) => {
     const couleur = COULEURS[i]
@@ -68,5 +74,5 @@ export const css = `
   .pronom { display: flex; flex-direction: column; align-items: center; gap: 1mm; line-height: 1.05; }
   .pronom b { font-weight: 700; }
   .pronom span { color: #333; }
-  .pronom em { color: #666; font-style: italic; white-space: nowrap; }
+  .pronom em { color: #333; font-style: normal; white-space: nowrap; }
   .pronom svg { display: block; flex: none; }`

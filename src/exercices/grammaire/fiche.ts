@@ -51,6 +51,10 @@ function questionFiche(q: Question, T: Tr): string {
     }
     case 'ponctuation':
       return `<div>${html.replace('<span class="trou">…</span>', CASE)}</div>`
+    case 'typePhrase':
+      return `<div>${html}</div><div class="cases">${CASE} ${tc(T, 'déclarative')} &nbsp; ${CASE} ${tc(T, 'interrogative')} &nbsp; ${CASE} ${tc(T, 'impérative')}</div>`
+    case 'pronomPersonne':
+      return `<div>${html} &nbsp;→ <span class="ligne moyenne"></span></div>`
     case 'complexe':
       return `<div class="grand">${html}</div><div class="cases">${CASE} ${tc(T, 'phrase simple')} &nbsp;&nbsp; ${CASE} ${tc(T, 'phrase complexe')}</div>`
     case 'negation':

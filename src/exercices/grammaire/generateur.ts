@@ -56,6 +56,9 @@ const CHOIX: Readonly<Record<string, string>> = {
   '. (point)': 'choix_point',
   "? (point d'interrogation)": 'choix_interrogation',
   "! (point d'exclamation)": 'choix_exclamation',
+  'déclarative': 'choix_declarative',
+  'interrogative': 'choix_interrogative',
+  'impérative': 'choix_imperative',
 }
 /** Le libellé d'un choix dans la langue du traducteur (un mot français étudié reste tel quel). */
 export const tc = (tr: Tr, c: string): string => (CHOIX[c] ? tr(CHOIX[c]) : c)
@@ -266,12 +269,21 @@ interface Corpus {
   groupesNominaux?: string[]
   phraseOuPas?: { t: string, ok: boolean, r?: string }[]
   typesPhrases?: { t: string, s: '.' | '?' | '!' }[]
+  typesNommes?: { t: string, type: TypeNomme }[]
+  pronomsPersonnes?: [string, PronomSujet][]
   negations?: string[][]
   genre?: [string, 'm' | 'f'][]
   pluriels?: [string, string, string?][]
   accordsGN?: [string, string, string, Genre][]
   accordsSV?: [string, string, string, string, string, 's' | 'p'][]
 }
+/** Les trois types de phrases du CE1 (l'exclamative est une forme, pas un type). */
+type TypeNomme = 'declarative' | 'interrogative' | 'imperative'
+const LIB_TYPE: Readonly<Record<TypeNomme, string>> = { declarative: 'déclarative', interrogative: 'interrogative', imperative: 'impérative' }
+/** Les pronoms personnels sujets du CE1, dans l'ordre des personnes (on ne figure pas au corpus : il remplace souvent « nous » à l'oral). */
+const PRONOMS_SUJETS = ['je', 'tu', 'il', 'elle', 'nous', 'vous', 'ils', 'elles'] as const
+type PronomSujet = (typeof PRONOMS_SUJETS)[number]
+
 const CORPUS = DONNEES as unknown as Record<'ce1' | 'ce2', Corpus>
 const FORMES_ADJECTIF = ADJECTIFS as Record<string, string[]>
 
@@ -299,6 +311,7 @@ function construireReservoirs(niveau: Classe): Reservoirs {
     phrase: d.phraseOuPas || [],
     majuscule: phrases.filter(p => p.tokens[p.tokens.length - 1].m === '.' && aSujet(p)),
     ponctuation: d.typesPhrases || [],
+    typePhrase: d.typesNommes || [],
     complexe: phrases,
     negation: negations,
     negReconnaitre: negations.flatMap(n => [{ n, neg: true }, { n, neg: false }]),
@@ -310,6 +323,7 @@ function construireReservoirs(niveau: Classe): Reservoirs {
     gnNoyau: gns,
     sujet: phrases.filter(aSujet),
     pronom: phrases.filter(p => p.gn && !sujetInverse(p) && !p.tokens.some(t => t.sujet && t.n === 'pronom')),
+    pronomPersonne: d.pronomsPersonnes || [],
     cplt: phrases.filter(p => p.cp),
     cpltQ: phrases.filter(p => p.cp),
     cpltNature,
@@ -434,6 +448,13 @@ function construireQuestion(rng: Rng, type: TypeGrammaire, entree: unknown, nive
         explication: tr => tr('expl_ponctuation', { type: typ(tr) }),
         solution: tr => `${e.t}${e.s === '.' ? '' : ' '}${b(e.s)} (${typ(tr)})` }
     }
+    case 'typePhrase': {
+      const e = entree as { t: string, type: TypeNomme }
+      const bonne = LIB_TYPE[e.type]
+      return { ...choix(q, Object.values(LIB_TYPE), bonne), html: e.t, lecture: e.t,
+        explication: tr => tr(`expl_typePhrase_${e.type}`),
+        solution: tr => `${e.t} → ${b(tc(tr, bonne))}` }
+    }
     case 'complexe': {
       const e = entree as Phrase
       const iv = indicesOu(e.tokens, t => t.n === 'verbe')
@@ -503,6 +524,12 @@ function construireQuestion(rng: Rng, type: TypeGrammaire, entree: unknown, nive
       return { ...choix(q, ['il', 'elle', 'ils', 'elles'], bonne), html: surlignerSujet(e), lecture: texteTokens(e.tokens),
         explication: tr => tr('expl_pronom', { sujet: texteSujet(e), gn: libGN(tr, e.gn as string), phrase: nouvelle }),
         solution: nouvelle }
+    }
+    case 'pronomPersonne': {
+      const [mots, pronom] = entree as [string, PronomSujet]
+      return { ...choix(q, [...PRONOMS_SUJETS], pronom), html: `<b>${mots}</b>`, lecture: mots,
+        explication: tr => tr(`expl_pronomPersonne_${pronom}`, { mots }),
+        solution: `${mots} → ${b(pronom)}` }
     }
     case 'genre': {
       const [nom, g] = entree as [string, 'm' | 'f']

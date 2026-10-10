@@ -24,6 +24,7 @@ export default {
   type_phrase: 'Ur frazenn pe get ?',
   type_majuscule: 'Pennlizherenn ha poent',
   type_ponctuation: 'Seurtoù frazennoù . ? !',
+  type_typePhrase: 'Disklêriañ, goulenn, gourc\'hemenn', // br: à relire
   type_complexe: 'Frazenn eeun / kemplezh',
   type_negation: 'Lakaat er stumm nac\'hus',
   type_negReconnaitre: 'Kadarnaus pe nac\'hus ?',
@@ -37,6 +38,7 @@ export default {
   groupe_fonctions: 'An arc\'hwelioù', // br: à relire
   type_sujet: 'Kavout ar sujed',
   type_pronom: 'Il, elle, ils, elles',
+  type_pronomPersonne: 'Raganvioù : je, tu, nous, vous…', // br: à relire (raganvioù gallek : ar poellad a zo e galleg)
   type_cplt: 'Kavout klokaenn ar frazenn',
   type_cpltQ: 'Pelec\'h ? Pegoulz ?',
   type_cpltNature: 'Klokaenn ar verb pe ar frazenn ?',
@@ -70,6 +72,9 @@ export default {
   choix_point: '. (poent)',
   choix_interrogation: '? (pik goulenn)', // br: à relire
   choix_exclamation: '! (pik estlammañ)', // br: à relire
+  choix_declarative: 'disklêriañ', // br: à relire
+  choix_interrogative: 'goulenn', // br: à relire
+  choix_imperative: 'gourc\'hemenn', // br: à relire
   // Genre et nombre dans les explications
   gn_ms: 'gourel unander',
   gn_fs: 'benel unander',
@@ -86,6 +91,7 @@ export default {
   consigne_phrase: 'Ur frazenn eo ?',
   consigne_majuscule: 'Peseurt frazenn a zo skrivet mat ?',
   consigne_ponctuation: 'Peseurt arouez a vez lakaet e dibenn ar frazenn ?',
+  consigne_typePhrase: 'Peseurt seurt frazenn eo ?', // br: à relire
   consigne_complexe: 'Frazenn eeun pe frazenn gemplezh eo ?',
   consigne_negation: 'Peseurt frazenn a zo er stumm nac\'hus ?',
   consigne_negReconnaitre: 'Kadarnaus pe nac\'hus eo ar frazenn-mañ ?',
@@ -97,6 +103,7 @@ export default {
   consigne_gnNoyau: 'Klik war anv pennañ ar strollad anv.',
   consigne_sujet: 'Klik war holl c\'herioù ar strollad sujed.',
   consigne_pronom: 'Gant peseurt raganv e c\'haller erlec\'hiañ ar sujed islinennet ?',
+  consigne_pronomPersonne: 'Peseurt raganv-gour sujed a erlec\'h ar gerioù-se ?', // br: à relire
   consigne_cplt: 'Klik war holl c\'herioù klokaenn ar frazenn.',
   consigne_cpltQ: 'Ouzh peseurt goulenn e respont klokaenn ar frazenn islinennet ?',
   consigne_cpltNature: 'Klokaenn ar verb pe klokaenn ar frazenn eo ar strollad islinennet ?',
@@ -122,6 +129,7 @@ export default {
   fiche_phrase: 'Lak ur groaz er voest vat : ur frazenn eo ?',
   fiche_majuscule: 'Adskriv ar frazenn gant ur bennlizherenn hag ur poent.',
   fiche_ponctuation: 'Ouzhpenn an arouez vat en dibenn : . ? pe !',
+  fiche_typePhrase: 'Kroazit seurt ar frazenn : disklêriañ, goulenn pe gourc\'hemenn.', // br: à relire
   fiche_complexe: 'Islinenn ar verboù displeget, ha lak ur groaz : frazenn eeun pe gemplezh ?',
   fiche_negation: 'Skriv ar frazenn er stumm nac\'hus.',
   fiche_negReconnaitre: 'Lak ur groaz : kadarnaus pe nac\'hus eo ar frazenn ?',
@@ -133,6 +141,7 @@ export default {
   fiche_gnNoyau: 'Islinenn anv pennañ ar strollad anv.',
   fiche_sujet: 'Lak ur c\'helc\'h en-dro d\'ar strollad sujed.',
   fiche_pronom: 'Adskriv ar frazenn en ur lakaat il, elle, ils pe elles e plas ar sujed islinennet.',
+  fiche_pronomPersonne: 'Skrivit ar raganv a erlec\'h ar gerioù-se : je, tu, il, elle, nous, vous, ils pe elles.', // br: à relire
   fiche_cplt: 'Lak ur c\'helc\'h en-dro da glokaenn ar frazenn.',
   fiche_cpltQ: 'Diskouez a ra ar glokaenn islinennet pelec\'h pe pegoulz ? Lak ur groaz.',
   fiche_cpltNature: 'Klokaenn ar verb (V) pe klokaenn ar frazenn (F) eo ar strollad islinennet ?',
@@ -154,6 +163,10 @@ export default {
   expl_phraseOrdre: 'N\'emañ ket ar gerioù en urzh mat : ne gomprener ket.',
   expl_majuscule: 'Ur frazenn a grog gant ur bennlizherenn hag a echu gant ur poent.', // br: à relire (majuscule = pennlizherenn)
   expl_ponctuation: 'Ur {type} eo.',
+  // br: à relire
+  expl_typePhrase_declarative: 'Lavarout a ra un dra, reiñ a ra un titour : ur frazenn disklêriañ eo. Echuiñ a ra gant ur poent.',
+  expl_typePhrase_interrogative: 'Goulenn a ra un dra : ur frazenn goulenn eo. Echuiñ a ra gant ur poent goulenn.', // br: à relire
+  expl_typePhrase_imperative: 'Goulenn a ra ober un dra (n\'en deus ket ar verb a sujed) : ur frazenn gourc\'hemenn eo.', // br: à relire
   expl_complexe: '{n} verb displeget a zo ({verbes}) : ur frazenn gemplezh eo.',
   expl_simple: 'N\'eus nemet ur verb displeget ({verbes}) : ur frazenn eeun eo.',
   expl_negation: 'Lakaat a reer « {ne} … {mot} » en-dro d\'ar verb{elision}.',
@@ -183,6 +196,14 @@ export default {
   expl_conjugue: ' displeget',
   expl_nature: 'Rummad ar ger « {mot} » : {nature}{precision}.',
   expl_pronom: '« {sujet} » a zo {gn} → « {phrase} »',
+  expl_pronomPersonne_je: '« {mots} » eo an hini a gomz : je.', // br: à relire
+  expl_pronomPersonne_tu: '« {mots} » eo an hini a gomzer outañ : tu.', // br: à relire
+  expl_pronomPersonne_il: '« {mots} » : unan hepken, gourel → il.', // br: à relire
+  expl_pronomPersonne_elle: '« {mots} » : unan hepken, benel → elle.', // br: à relire
+  expl_pronomPersonne_nous: '« {mots} » : an hini a gomz, gant re all → nous.', // br: à relire
+  expl_pronomPersonne_vous: '« {mots} » : an hini a gomzer outañ, gant re all → vous.', // br: à relire
+  expl_pronomPersonne_ils: '« {mots} » : meur a hini, gant unan gourel d\'an nebeutañ → ils.', // br: à relire
+  expl_pronomPersonne_elles: '« {mots} » : meur a hini, holl benel → elles.', // br: à relire
   expl_genre: 'Lavaret a reer « {det} {nom} » : « {nom} » a zo {genre}.',
   expl_nombre: '« {det} » a ziskouez emañ {nombre}.',
   expl_accordGN: '« {nom} » a zo {gn} → {bonne}.',

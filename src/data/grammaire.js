@@ -147,6 +147,34 @@ export const DONNEES = {
       { t: 'Comme ce chat est mignon', s: '!' },
     ],
 
+    // Les trois types de phrases du CE1 (BO n° 41 p. 93) : déclarative, interrogative, impérative (on demande de faire quelque chose ; elle
+    // finit par un point, ou un point d'exclamation quand on insiste). Phrase complète, ponctuation comprise. L'exclamative est une forme, pas un type.
+    // Phrases différentes de `typesPhrases` : une même fiche peut avoir les deux exercices.
+    typesNommes: [
+      { t: 'Le chien court dans le jardin.', type: 'declarative' }, { t: 'Zoé mange une pomme.', type: 'declarative' },
+      { t: 'Il pleut depuis ce matin.', type: 'declarative' }, { t: 'Maman prépare le repas.', type: 'declarative' },
+      { t: 'Ma cousine habite à Brest.', type: 'declarative' }, { t: 'Les élèves chantent en classe.', type: 'declarative' },
+      { t: 'Le bus part à huit heures.', type: 'declarative' }, { t: 'Nous allons à la piscine.', type: 'declarative' },
+      { t: 'Où habites-tu ?', type: 'interrogative' }, { t: 'Aimes-tu le chocolat ?', type: 'interrogative' },
+      { t: 'Quel âge as-tu ?', type: 'interrogative' }, { t: 'Est-ce que tu viens demain ?', type: 'interrogative' },
+      { t: 'Qui a pris mon crayon ?', type: 'interrogative' }, { t: 'As-tu vu mon chat ?', type: 'interrogative' },
+      { t: 'Pourquoi pleures-tu ?', type: 'interrogative' }, { t: 'Combien de frères as-tu ?', type: 'interrogative' },
+      { t: 'Range ta chambre.', type: 'imperative' }, { t: 'Ferme la porte, s\'il te plaît.', type: 'imperative' },
+      { t: 'Écoute bien la maîtresse.', type: 'imperative' }, { t: 'Prends ton cahier rouge.', type: 'imperative' },
+      { t: 'Viens vite !', type: 'imperative' }, { t: 'Lave-toi les mains.', type: 'imperative' },
+      { t: 'Ne cours pas dans le couloir.', type: 'imperative' }, { t: 'Asseyez-vous en silence.', type: 'imperative' },
+      { t: 'Mange ta soupe.', type: 'imperative' }, { t: 'Regardez le tableau.', type: 'imperative' },
+    ],
+
+    // Les pronoms personnels sujets (BO n° 41 p. 93) : par quel pronom remplacer ces mots ? [mots, pronom]
+    pronomsPersonnes: [
+      ['moi', 'je'], ['toi', 'tu'], ['Léo', 'il'], ['Léa', 'elle'], ['le chat', 'il'], ['la maîtresse', 'elle'],
+      ['Léa et moi', 'nous'], ['toi et moi', 'nous'], ['ma famille et moi', 'nous'], ['mes copains et moi', 'nous'],
+      ['toi et Sami', 'vous'], ['toi et ta sœur', 'vous'], ['Papa et toi', 'vous'], ['toi et tes amis', 'vous'],
+      ['Léo et Tom', 'ils'], ['les garçons', 'ils'], ['Léo et Léa', 'ils'], ['les oiseaux', 'ils'],
+      ['Léa et Zoé', 'elles'], ['les filles', 'elles'], ['les fleurs', 'elles'], ['ma sœur et ma cousine', 'elles'],
+    ],
+
     // Forme négative avec ne… pas : [avant le verbe, verbe, après le verbe]
     // (compléments avec le/la/les uniquement : pas de « un/des → de » au CE1)
     negations: [

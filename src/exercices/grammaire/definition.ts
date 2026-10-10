@@ -11,9 +11,9 @@ import { definir, cases, choix } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 import type { Classe } from '../../data/classes.ts'
 
-export type TypeGrammaire = 'ordre' | 'phrase' | 'majuscule' | 'ponctuation' | 'negation' | 'negReconnaitre' | 'complexe'
+export type TypeGrammaire = 'ordre' | 'phrase' | 'majuscule' | 'ponctuation' | 'typePhrase' | 'negation' | 'negReconnaitre' | 'complexe'
   | 'verbe' | 'nom' | 'det' | 'adj' | 'nature' | 'gnNoyau'
-  | 'sujet' | 'pronom' | 'cplt' | 'cpltQ' | 'cpltNature'
+  | 'sujet' | 'pronom' | 'pronomPersonne' | 'cplt' | 'cpltQ' | 'cpltNature'
   | 'genre' | 'nombre' | 'pluriel' | 'accordGN' | 'accordSV'
 interface TypeExercice { readonly id: TypeGrammaire, readonly icone: string, readonly niveaux: readonly Classe[] }
 
@@ -31,6 +31,8 @@ export const GROUPES: readonly { readonly id: string, readonly types: readonly T
     { id: 'phrase', icone: '🤔', niveaux: ['ce1'] },
     { id: 'majuscule', icone: '🔠', niveaux: ['ce1'] },
     { id: 'ponctuation', icone: '❓', niveaux: ['ce1'] },
+    // CE1 : nommer le type de phrase (déclarative, interrogative, impérative), BO n° 41 p. 93
+    { id: 'typePhrase', icone: '🗣️', niveaux: ['ce1'] },
     { id: 'negation', icone: '🚫', niveaux: TOUS },
     { id: 'negReconnaitre', icone: '🔍', niveaux: TOUS },
     { id: 'complexe', icone: '🔗', niveaux: ['cm2'] },
@@ -46,6 +48,8 @@ export const GROUPES: readonly { readonly id: string, readonly types: readonly T
   { id: 'fonctions', types: [
     { id: 'sujet', icone: '👤', niveaux: TOUS },
     { id: 'pronom', icone: '🔁', niveaux: TOUS },
+    // CE1 : tous les pronoms personnels sujets (je, tu, il, elle, nous, vous, ils, elles), BO n° 41 p. 93
+    { id: 'pronomPersonne', icone: '👥', niveaux: ['ce1'] },
     { id: 'cplt', icone: '📍', niveaux: CM },
     { id: 'cpltQ', icone: '⏰', niveaux: ['cm2'] },
     { id: 'cpltNature', icone: '⚖️', niveaux: CM },
@@ -65,11 +69,14 @@ export const GROUPES: readonly { readonly id: string, readonly types: readonly T
 export const typesDuNiveau = (niveau: Classe): TypeGrammaire[] => GROUPES.flatMap(g => g.types).filter(t => t.niveaux.includes(niveau)).map(t => t.id)
 
 /** Ordre des sections d'une fiche (l'ancien ordre, où « complexe » suit « ponctuation »). */
-export const ORDRE_FICHE: readonly TypeGrammaire[] = ['ordre', 'phrase', 'majuscule', 'ponctuation', 'complexe', 'negation', 'negReconnaitre', 'verbe', 'nom',
-  'det', 'adj', 'nature', 'gnNoyau', 'sujet', 'pronom', 'cplt', 'cpltQ', 'cpltNature', 'genre', 'nombre', 'pluriel', 'accordGN', 'accordSV']
+export const ORDRE_FICHE: readonly TypeGrammaire[] = ['ordre', 'phrase', 'majuscule', 'ponctuation', 'typePhrase', 'complexe', 'negation', 'negReconnaitre', 'verbe', 'nom',
+  'det', 'adj', 'nature', 'gnNoyau', 'sujet', 'pronom', 'pronomPersonne', 'cplt', 'cpltQ', 'cpltNature', 'genre', 'nombre', 'pluriel', 'accordGN', 'accordSV']
 
-// Fiches par compétence : les types de la compétence qui existent au niveau
+// Fiches par compétence : les types de la compétence qui existent au niveau. Les fiches déjà publiées gardent leurs types (elles ne changent
+// pas) ; les types du CE1 ajoutés depuis ont leurs propres fiches : les types de phrases, les pronoms personnels sujets.
 const FICHES = [
+  { id: 'types-phrases', competence: K.phrase, types: ['ponctuation', 'typePhrase'], niveaux: ['ce1'] },
+  { id: 'pronoms', competence: K.classesMots, types: ['pronom', 'pronomPersonne'], niveaux: ['ce1'] },
   { id: 'phrase', competence: K.phrase, types: ['ordre', 'phrase', 'majuscule', 'ponctuation', 'negation', 'negReconnaitre', 'complexe'], niveaux: TOUS },
   { id: 'nature', competence: K.classesMots, types: ['nom', 'det', 'adj', 'nature', 'gnNoyau'], niveaux: TOUS },
   { id: 'sujet-verbe', competence: K.sujetVerbe, types: ['verbe', 'sujet', 'pronom', 'accordSV'], niveaux: TOUS },

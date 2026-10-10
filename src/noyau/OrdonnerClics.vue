@@ -45,13 +45,14 @@
     </div>
 
     <div class="ordre-actions">
-      <button type="button" class="btn btn-ghost" :aria-disabled="verrou || !ordre.length || undefined" @click="annuler">{{ t('communs.annuler') }}</button>
+      <button type="button" class="btn btn-ghost" :aria-disabled="verrou || !ordre.length || undefined" @click="annuler"><Icone nom="annuler" /> {{ t('communs.annuler') }}</button>
       <button v-if="!sansBouton" ref="valider" type="button" class="btn btn-primary" :aria-disabled="verrou || !complet || undefined" @click="envoyer">{{ t('communs.valider') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts" generic="E">
+import Icone from '../images/Icone.vue'
 import { computed, ref, nextTick } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 

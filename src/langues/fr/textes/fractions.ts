@@ -10,7 +10,7 @@ export default {
   laBonne: '❌ La bonne réponse : {r}',
   passer: 'Passer ⏭',
   passe: '(passé)',
-  effacer: '🧽 Effacer',
+  effacer: 'Effacer',
   types: {
     identifier: '👀 Quelle fraction ?',
     colorier: '🖍️ Colorier',

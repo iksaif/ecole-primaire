@@ -6,13 +6,13 @@ import type fr from '../../fr/textes/communs.ts'
 export default {
   // les deux polices d'une affiche à polices par type (traducteurAffiche s'y rabat quand l'affiche n'a pas les siens)
   police: { script: 'Nodrezh ar skript', attache: 'Nodrezh an a-stag' }, // br: à relire
-  commencer: '▶ Kregiñ',
+  commencer: 'Kregiñ',
   valider: 'Gwiriañ ✔',
   suivant: "Da-heul ➜",
-  quitter: '✕ Kuitaat',
+  quitter: 'Kuitaat',
   quitterTitre: 'Kuitaat ar boelladenn',
-  rejouer: "🔄 C'hoari en-dro",
-  parametres: '⚙️ Arventennoù',
+  rejouer: "C'hoari en-dro",
+  parametres: 'Arventennoù',
   niveau: 'Live',
   exercices: 'Poelladennoù',
   nbQuestions: "Niver a c'houlennoù",
@@ -38,7 +38,7 @@ export default {
   // retour de réponse lu par les lecteurs d'écran (QCM, tableau de correction)
   juste: 'Reizh', // br: à relire
   faux: 'Fazi', // br: à relire
-  annuler: '↩ Nullañ',
+  annuler: 'Nullañ',
   ecouter: "Selaou ar c'hemenn", // br: à relire
   tempsRestant: 'Amzer chomet : {n} eilenn', // br: à relire
   bonus: 'bonus', // br: à relire

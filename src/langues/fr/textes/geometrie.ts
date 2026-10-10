@@ -16,7 +16,7 @@ export default {
   legEnTrop: 'en trop',
   passer: 'Passer ⏭',
   passe: '(passé)',
-  effacer: '🧽 Effacer',
+  effacer: 'Effacer',
   // les exercices (réglage `exercices`)
   exercices: {
     symetrie: '🦋 Symétrie',

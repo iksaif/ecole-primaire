@@ -35,7 +35,7 @@
     <!-- ══ APPRENTISSAGE (mode entraînement : affiche la table avant) ══ -->
     <div v-if="phase === 'jeu' && apprendre && q" class="exercise-box" style="text-align:center;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;">
-        <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')">{{ t('communs.quitter') }}</button>
+        <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')"><Icone nom="fermer" /> {{ t('communs.quitter') }}</button>
         <span style="font-size:.85rem;color:#666;font-weight:600;">{{ t('tables.tableN', { n: tableN, total: config.tables.length }) }}</span>
       </div>
       <h2 class="table-title">{{ t('tables.tableDe', { n: q.a }) }}</h2>
@@ -54,7 +54,7 @@
       <!-- défi chrono : le temps, pas la question -->
       <template v-if="config.mode === 'chrono'">
         <div class="score-bar">
-          <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')">{{ t('communs.quitter') }}</button>
+          <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')"><Icone nom="fermer" /> {{ t('communs.quitter') }}</button>
           <Chronometre :restant="restant" :duree="DUREE_CHRONO" />
           <span role="img" :aria-label="t('communs.scoreSur', { bonnes, total: historique.length })">✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
         </div>
@@ -87,8 +87,8 @@
       <h2 ref="titreChrono" class="result-score" tabindex="-1">{{ bonnes }}</h2>
       <div class="result-msg">{{ t('tables.bonnesEn1Min') }} {{ messageChrono }}</div>
       <div class="btn-group actions" style="justify-content:center;">
-        <button type="button" class="btn btn-primary" @click="jeu.recommencer">{{ t('communs.rejouer') }}</button>
-        <button type="button" class="btn btn-ghost" @click="jeu.quitter">{{ t('communs.parametres') }}</button>
+        <button type="button" class="btn btn-primary" @click="jeu.recommencer"><Icone nom="rejouer" /> {{ t('communs.rejouer') }}</button>
+        <button type="button" class="btn btn-ghost" @click="jeu.quitter"><Icone nom="reglages" /> {{ t('communs.parametres') }}</button>
       </div>
     </div>
     <ResultatsJeu v-else-if="phase === 'resultats'" :bonnes="bonnes" :total="questions.length" :cle-fin="cleFin"
@@ -102,6 +102,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Tables de multiplication : la vue ne fait que les réglages, le minuteur du défi et le rendu d'une question. Niveaux,
 // générateur et fiche : src/exercices/tables/ (definition.ts, generateur.ts, fiche.ts).
 import { ref, computed, watch, nextTick } from 'vue'

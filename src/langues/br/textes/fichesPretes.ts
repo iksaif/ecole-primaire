@@ -16,15 +16,13 @@ export default {
   rechercher: 'Klask', // br: à relire
   exemple: 'sk. eur, taolennoù, boas', // br: à relire
   classe: 'Klas', // br: à relire
-  toutesClasses: '🌐 An holl glasoù', // br: à relire
+  toutesClasses: 'An holl glasoù', // br: à relire
   usage: 'Implij', // br: à relire
-  tous: '🌐 An holl', // br: à relire
-  apprendre: '🖼️ Da ziskouez', // br: à relire
-  sentrainer: '✏️ Evit en em ober', // br: à relire
+  tous: 'An holl', // br: à relire
   domaine: 'Domani', // br: à relire
-  tousDomaines: '🌐 An holl zomanioù', // br: à relire
+  tousDomaines: 'An holl zomanioù', // br: à relire
   langue: 'Yezh', // br: à relire
-  toutesLangues: '🌐 An holl', // br: à relire
+  toutesLangues: 'An holl', // br: à relire
   bilingue: 'Divyezhek', // br: à relire
   compteurClasses: { other: '{n} fichenn evit {classes}' }, // br: à relire
   compteurToutes: { other: '{n} fichenn, an holl glasoù' }, // br: à relire

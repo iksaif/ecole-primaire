@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="legal-box">
-      <h1 class="section-heading">{{ t('mentions.titre') }}</h1>
+      <h1 class="section-heading"><Icone nom="mentions" /> {{ t('mentions.titre') }}</h1>
 
       <h2>{{ t('mentions.editeur') }}</h2>
       <p>{{ t('mentions.editeurTexte') }} Corentin Chary — <Icone nom="courriel" /> <a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a></p>

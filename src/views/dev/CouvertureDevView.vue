@@ -31,7 +31,7 @@
       <h2>{{ t(NOM_COURT[m.id]) }} <small>{{ pct(m.base, m.cases) }}</small></h2>
       <table class="grille">
         <thead>
-          <tr><th scope="col">{{ t('dev.couvertureCompetence') }}</th><th v-for="c in NIVEAUX" :key="c" scope="col">{{ c.toUpperCase() }}<small>{{ pct(m.parClasse[c].base, m.parClasse[c].cases) }}</small></th></tr>
+          <tr><th scope="col">{{ t('programme.tableau.competence') }}</th><th v-for="c in NIVEAUX" :key="c" scope="col">{{ c.toUpperCase() }}<small>{{ pct(m.parClasse[c].base, m.parClasse[c].cases) }}</small></th></tr>
         </thead>
         <tbody v-for="d in m.domaines" :key="d.id">
           <tr class="domaine"><th :colspan="NIVEAUX.length + 1" scope="rowgroup">{{ t(`domaines.${d.id}` as 'domaines.lecture') }} <small>{{ pct(d.base, d.cases) }}</small></th></tr>

@@ -85,8 +85,8 @@
           <span v-if="config.aideTotal" class="total-aide">{{ t('monnaie.total') }} : <strong>{{ f(totalDe(selection)) }}</strong></span>
           <span v-else></span>
           <span class="btn-group">
-            <button type="button" class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection.pop()">{{ t('communs.annuler') }}</button>
-            <button type="button" class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection = []">{{ t('monnaie.toutEnlever') }}</button>
+            <button type="button" class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection.pop()"><Icone nom="annuler" /> {{ t('communs.annuler') }}</button>
+            <button type="button" class="btn btn-ghost petit" :disabled="repondu || !selection.length" @click="selection = []"><Icone nom="vider" /> {{ t('monnaie.toutEnlever') }}</button>
           </span>
         </div>
 
@@ -187,6 +187,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // La monnaie : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/monnaie/ (definition.ts, generateur.ts, fiche.ts) ; les pièces et les billets : src/dessins/argent.ts. Sommes en centimes.
 import { ref, computed } from 'vue'

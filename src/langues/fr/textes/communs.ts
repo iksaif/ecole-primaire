@@ -4,13 +4,13 @@
 export default {
   // les deux polices d'une affiche à polices par type (traducteurAffiche s'y rabat quand l'affiche n'a pas les siens)
   police: { script: 'Police du script', attache: 'Police de l’attaché' },
-  commencer: '▶ Commencer',
+  commencer: 'Commencer',
   valider: 'Valider ✔',
   suivant: 'Suivant ➜',
-  quitter: '✕ Quitter',
+  quitter: 'Quitter',
   quitterTitre: "Quitter l'exercice",
-  rejouer: '🔄 Rejouer',
-  parametres: '⚙️ Paramètres',
+  rejouer: 'Rejouer',
+  parametres: 'Paramètres',
   niveau: 'Niveau',
   exercices: 'Exercices',
   nbQuestions: 'Nombre de questions',
@@ -35,7 +35,7 @@ export default {
   // retour de réponse lu par les lecteurs d'écran (QCM, tableau de correction)
   juste: 'Juste',
   faux: 'Faux',
-  annuler: '↩ Annuler',
+  annuler: 'Annuler',
   ecouter: 'Écouter la consigne',
   tempsRestant: 'Temps restant : {n} secondes',
   // mots des fiches

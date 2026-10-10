@@ -100,4 +100,16 @@ let messageIcone = ''
 try { iconeHtml('recherche', { pleine: !REMPLIES.includes('recherche') }) } catch (e) { messageIcone = String(e.message) }
 verifier(REMPLIES.includes('recherche') || messageIcone.includes('recherche'), 'une version pleine absente échoue en disant laquelle')
 
+// un composant inconnu passe pour un élément HTML (ni vue-tsc ni ESLint ne le voient) : chaque gabarit qui utilise <Icone> ou <Emoji> l'importe
+const fichiersVue = dossier => readdirSync(new URL(`../${dossier}/`, import.meta.url), { withFileTypes: true }).flatMap(e => {
+  if (e.isDirectory()) return fichiersVue(`${dossier}/${e.name}`)
+  return e.name.endsWith('.vue') ? [`${dossier}/${e.name}`] : []
+})
+const sansImport = fichiersVue('src').filter(f => !f.startsWith('src/images/')).flatMap(f => {
+  const texte = readFileSync(new URL(`../${f}`, import.meta.url), 'utf8')
+  const gabarit = texte.replace(/<script[\s\S]*?<\/script>/g, '')
+  return ['Icone', 'Emoji'].filter(nom => new RegExp(`<${nom}[\\s/>]`).test(gabarit) && !texte.includes(`import ${nom} from`)).map(nom => `${f} (${nom})`)
+})
+verifier(!sansImport.length, `chaque gabarit qui utilise <Icone> ou <Emoji> l’importe${sansImport.length ? ` : ${sansImport.join(', ')}` : ''}`)
+
 process.exit(nbEchecs() ? 1 : 0)

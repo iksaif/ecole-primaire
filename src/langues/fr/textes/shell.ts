@@ -8,7 +8,6 @@ export default {
     menuTelephone: 'Menu',
     ouvrirMenu: 'Ouvrir le menu',
     fermerMenu: 'Fermer le menu',
-    reglages: 'Réglages',
     rechercher: 'Rechercher',
     dev: 'Développement',
     accueil: 'Accueil',

@@ -11,7 +11,6 @@ export default {
     menuTelephone: 'Lañser', // br: à relire
     ouvrirMenu: 'Digeriñ al lañser', // br: à relire
     fermerMenu: 'Serriñ al lañser', // br: à relire
-    reglages: 'Arventennoù',
     rechercher: 'Klask', // br: à relire
     dev: 'Diorren', // br: à relire
     accueil: 'Degemer',

@@ -61,7 +61,7 @@
             :disabled="repondu || ordre.includes(n)" @click="ajouterOrdre(n)">{{ fmt(n) }}</button>
         </div>
         <div style="text-align:center;margin-top:.5rem;">
-          <button type="button" class="btn btn-ghost" :disabled="repondu || !ordre.length" @click="ordre.pop()">{{ t('communs.annuler') }}</button>
+          <button type="button" class="btn btn-ghost" :disabled="repondu || !ordre.length" @click="ordre.pop()"><Icone nom="annuler" /> {{ t('communs.annuler') }}</button>
         </div>
       </div>
 
@@ -87,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Les nombres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question)
 // et fiche : src/exercices/numeration/ ; le matériel et la droite graduée : src/dessins/.
 import { ref, computed, nextTick } from 'vue'

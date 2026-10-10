@@ -48,5 +48,4 @@ export default {
   couvertureSorte: { tout: 'An holl zanvezioù', exercice: 'Poelladennoù', affiche: 'Skritelloù', fiche: 'Fichennoù prest' }, // br: à relire
   couvertureTrousSeuls: 'Ar barregezhioù gant toulloù hepken', // br: à relire
   couvertureLegende: { couvert: 'golo gant an diazez', trou: 'netra', hors: 'n’emañ ket e programm ar c’hlas' }, // br: à relire
-  couvertureCompetence: 'Barregezh', // br: à relire
 } satisfies Traductions<typeof fr>

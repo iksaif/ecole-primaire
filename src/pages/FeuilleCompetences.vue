@@ -2,18 +2,19 @@
   <!-- Les compétences du programme que la fiche travaille : chacune mène à sa page (/competence/<id>) ; le libellé est le texte officiel
        (en français), avec le lien vers le programme officiel à la bonne page du PDF. -->
   <section v-if="feuille.entree?.competences.length" class="boite" :aria-labelledby="idTitre">
-    <h2 :id="idTitre">{{ t('feuille.competence', { n: feuille.entree.competences.length }) }}</h2>
+    <h2 :id="idTitre"><Icone nom="competence" /> {{ t('feuille.competence', { n: feuille.entree.competences.length }) }}</h2>
     <ul>
       <li v-for="k in feuille.entree.competences" :key="k.id">
         <RouterLink :to="`/competence/${k.id}`" lang="fr"><strong>{{ k.libelle }}</strong></RouterLink>
         <span v-if="feuille.domaine" class="domaine"> · {{ feuille.domaine.id ? EMOJI_DOMAINE[feuille.domaine.id] : '' }} {{ texteDe(feuille.domaine.nom, langueAffichee) }} · {{ texteClasses(k.niveaux) }}</span>
-        <template v-if="k.source"> · <a :href="k.source.url" target="_blank" rel="noopener" :aria-label="`${t('feuille.programmePage', { page: k.source.page })} ${t('feuille.nouvelOnglet')}`">{{ t('feuille.programmeOfficiel') }} ↗</a></template>
+        <template v-if="k.source"> · <a :href="k.source.url" target="_blank" rel="noopener" :aria-label="`${t('feuille.programmePage', { page: k.source.page })} ${t('feuille.nouvelOnglet')}`"><Icone nom="programme" /> {{ t('feuille.programmeOfficiel') }} ↗</a></template>
       </li>
     </ul>
   </section>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { useId } from 'vue'
 import { texteClasses } from '../data/classes.ts'
 import { useLangue } from '../langues/useLangue.ts'

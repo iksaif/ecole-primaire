@@ -15,25 +15,25 @@ export default {
   suivante: 'Pajenn war-lerc’h', // br: à relire
   fiche: 'Skouerenn {n}', // br: à relire
   fiches: 'Skouerennoù eus ar fichenn', // br: à relire
-  telecharger: '⬇️ Pellgargañ', // br: à relire
-  imprimer: '🖨️ Moullañ', // br: à relire
+  telecharger: 'Pellgargañ', // br: à relire
+  imprimer: 'Moullañ', // br: à relire
   format: 'Ment', // br: à relire
   sens: 'Tu', // br: à relire
   portrait: 'Barzh hed', // br: à relire
   landscape: 'Led', // br: à relire
   detailPdf: { other: 'PDF {format} {sens} · {n} pajenn · {taille}' }, // br: à relire
   imprimerAide: 'Moullit e « ment wirion » (100 %), hep « ober e ment gant ar bajenn ».', // br: à relire
-  personnaliser: '🛠️ Personelaat', // br: à relire
+  personnaliser: 'Personelaat', // br: à relire
   personnaliserAide: '« Personelaat » a zigor an ekzersiz gant e arventennoù : cheñchit anezho, ha grit kement a fichennoù ha ma karit.', // br: à relire
-  enLigne: '🎮 C’hoari war-linenn', // br: à relire
+  enLigne: 'C’hoari war-linenn', // br: à relire
   memeFiche: 'Memes fichenn :', // br: à relire
   bilingue: 'divyezhek', // br: à relire
   classes: 'Klasoù', // br: à relire
   imprimable: 'da voullañ', // br: à relire
   exemple: 'skouer', // br: à relire
-  competence: { other: '🎯 Barregezhioù' }, // br: à relire
+  competence: { other: 'Barregezhioù' }, // br: à relire
   competenceToutes: 'An holl danvezioù eus ar varregezh-mañ', // br: à relire
-  programmeOfficiel: '📚 programm ofisiel', // br: à relire
+  programmeOfficiel: 'programm ofisiel', // br: à relire
   programmePage: 'programm ofisiel, pajenn {page}', // br: à relire
   nouvelOnglet: '(a zigor en un ivinell nevez)', // br: à relire
   voisines: 'Fichennoù tost', // br: à relire

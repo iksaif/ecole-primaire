@@ -53,7 +53,7 @@
             <h2 :id="ID_TITRE" ref="titre" tabindex="-1">{{ t('assistant.fin.titre') }}</h2>
             <p>{{ t('assistant.fin.texte') }}</p>
             <!-- un raccourci vers la suite logique : le Programme pour l'enseignant·e, le mode enfant pour le parent -->
-            <button v-if="enseignant" type="button" class="btn btn-ghost" @click="ouvrirProgramme">{{ t('assistant.fin.programme') }}</button>
+            <button v-if="enseignant" type="button" class="btn btn-ghost" @click="ouvrirProgramme"><Icone nom="programme" /> {{ t('assistant.fin.programme') }}</button>
             <button v-else type="button" class="btn btn-ghost" @click="passerEnModeEnfant">{{ t('assistant.fin.enfant') }}</button>
           </template>
 

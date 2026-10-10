@@ -3,10 +3,9 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/apropos.ts'
 
 export default {
-  titre: '📚 Diwar-benn',
   avertissementTitre: 'Graet eo bet al lec\'hienn-mañ gant tadoù ha mammoù, ha n\'eo ket gant kelennerien.',
   avertissement: 'Diazezet eo ar poelladennoù war ar programmoù ofisiel, met n\'int ket bet gwiriet gant tud a vicher. Ma vez un douetañs war ur reolenn pe ur respont, goulennit digant kelenner ho pugel.',
-  traductionAuto: '🤖 Graet eo bet an droidigezh e {langue} ent emgefre ha n\'eo ket bet adlennet c\'hoazh : degemeret eo pep evezhiadenn war {contact}.', // br: à relire
+  traductionAuto: 'Graet eo bet an droidigezh e {langue} ent emgefre ha n\'eo ket bet adlennet c\'hoazh : degemeret eo pep evezhiadenn war {contact}.', // br: à relire
   intro: 'Poelladennoù etrewezhiat digoust ha fichennoù da voullañ evit ambroug ar vugale eus ar skol-vamm (PS, MS, GS) betek fin an elfennel (CP → CM2). Pep tra a dro er merdeer : hep kont, hep bruderezh, hep dastum roadennoù.', // br: à relire
   comment: 'Penaos e ya en-dro ?',
   commentListe: [

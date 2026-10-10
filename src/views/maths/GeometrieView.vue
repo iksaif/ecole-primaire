@@ -99,7 +99,7 @@
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
           <template v-if="!repondu">
             <button type="button" class="btn btn-ghost" @click="passer">{{ t('geometrie.passer') }}</button>
-            <button v-if="estGrille" type="button" class="btn btn-ghost" @click="effacer">{{ t('geometrie.effacer') }}</button>
+            <button v-if="estGrille" type="button" class="btn btn-ghost" @click="effacer"><Icone nom="effacer" /> {{ t('geometrie.effacer') }}</button>
             <button v-if="!('options' in q)" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
           </template>
           <BoutonSuivant v-else :jeu="jeu" />
@@ -116,6 +116,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // La géométrie : la vue ne fait que les réglages et le rendu d'une question (cases à colorier, figures, lettres).
 // Niveaux, générateur, dessins et fiche : src/exercices/geometrie/ (definition.ts, generateur.ts, dessins.ts, fiche.ts…) ; les figures et
 // les solides se dessinent avec src/dessins/.

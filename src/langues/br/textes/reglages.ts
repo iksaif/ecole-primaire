@@ -3,7 +3,6 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/reglages.ts'
 
 export default {
-  titre: '⚙️ Arventennoù',
   intro: 'Enrollet eo an arventennoù-mañ war an drobarzhell-mañ, er merdeer. Netra n\'a er-maez.', // br: à relire
   interface: {
     titre: 'Yezh an etrefas', // br: à relire
@@ -46,7 +45,7 @@ export default {
     plusLente: 'goustatoc\'h', // br: à relire
     plusRapide: 'buanoc\'h', // br: à relire
     pourcent: '{n} %',
-    ecouter: '▶️ Selaou ur skouer', // br: à relire
+    ecouter: 'Selaou ur skouer', // br: à relire
     exemple: 'Demat ! Selaou mat : diskouez din al lizherenn B, evel bolotenn.', // br: à relire
     sansVoix: 'N\'eus mouezh ebet c\'hoazh evit : {langues}. Skrivet e chom an destennoù-se, evit ma vint lennet gant an oadour.', // br: à relire
     sansSynthese: 'Ne oar ket ar merdeer-mañ lenn a vouezh uhel : skrivet e chom ar c\'hemennoù.', // br: à relire
@@ -60,10 +59,10 @@ export default {
   },
   onglets: {
     aria: 'Rubrikoù an arventennoù', // br: à relire
-    langues: '🌍 Yezhoù', // br: à relire
-    moi: '🎒 Klas ha profil', // br: à relire
-    fiches: '🖨️ Fichennoù ha mouezh', // br: à relire
-    appareil: '🧰 Trobarzhell', // br: à relire
+    langues: 'Yezhoù', // br: à relire
+    moi: 'Klas ha profil', // br: à relire
+    fiches: 'Fichennoù ha mouezh', // br: à relire
+    appareil: 'Trobarzhell', // br: à relire
   },
   retour: '← Distreiñ d\'an degemer',
 } satisfies Traductions<typeof fr>

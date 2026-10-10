@@ -10,8 +10,8 @@
       <button v-for="o in sens" :key="o" type="button" class="puce" :aria-pressed="o === feuille.pdf.orientation" @click="feuille.choisirSens(o)">{{ t(`feuille.${o}`) }}</button>
     </div>
     <div class="actions">
-      <a class="btn btn-primary" :href="urlFiches(feuille.pdf.chemin)" download>{{ t('feuille.telecharger') }}</a>
-      <button type="button" class="btn btn-ghost" @click="imprimerPdf(urlFiches(feuille.pdf.chemin), feuille.entree.slug)">{{ t('feuille.imprimer') }}</button>
+      <a class="btn btn-primary" :href="urlFiches(feuille.pdf.chemin)" download><Icone nom="telecharger" /> {{ t('feuille.telecharger') }}</a>
+      <button type="button" class="btn btn-ghost" @click="imprimerPdf(urlFiches(feuille.pdf.chemin), feuille.entree.slug)"><Icone nom="imprimer" /> {{ t('feuille.imprimer') }}</button>
     </div>
     <p class="detail">{{ t('feuille.detailPdf', { n: feuille.pdf.nbPages, format: feuille.pdf.format, sens: t(`feuille.${feuille.pdf.orientation}`), taille: taille(feuille.pdf.taille) }) }}</p>
     <p class="detail">{{ t('feuille.imprimerAide') }}</p>
@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { urlFiches } from '../telechargements/chargement.ts'

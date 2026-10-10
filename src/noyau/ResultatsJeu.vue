@@ -13,13 +13,14 @@
     <div v-if="cleFin" class="result-msg">{{ t(`communs.${cleFin}`) }}</div>
     <slot />
     <div class="btn-group actions">
-      <button type="button" class="btn btn-primary" @click="$emit('rejouer')">{{ t('communs.rejouer') }}</button>
-      <button type="button" class="btn btn-ghost" @click="$emit('reglages')">{{ t('communs.parametres') }}</button>
+      <button type="button" class="btn btn-primary" @click="$emit('rejouer')"><Icone nom="rejouer" /> {{ t('communs.rejouer') }}</button>
+      <button type="button" class="btn btn-ghost" @click="$emit('reglages')"><Icone nom="reglages" /> {{ t('communs.parametres') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // textes : section `communs` (resultat100…, rejouer, parametres, scoreSur), partagé avec les vues pas encore migrées
 import { ref, onMounted } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'

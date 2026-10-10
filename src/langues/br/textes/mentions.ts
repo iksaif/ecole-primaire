@@ -4,7 +4,7 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/mentions.ts'
 
 export default {
-  titre: '⚖️ Notennoù lezennel ha prevezded',
+  titre: 'Notennoù lezennel ha prevezded',
   editeur: 'Embanner', editeurTexte: "Lec'hienn bersonel ha n'eo ket kenwerzhel, embannet gant",
   hebergeur: 'Herberc\'hier',
   donnees: 'Roadennoù personel ha toupinoù',

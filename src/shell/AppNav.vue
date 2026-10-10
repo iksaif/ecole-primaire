@@ -20,7 +20,7 @@
       <SelecteurLangue v-if="!enfant" class="grand-ecran" data-repere="langue" />
       <SelecteurClasse data-repere="classe" />
       <PastilleProfil :class="{ 'grand-ecran': !enfant }" data-repere="profil" />
-      <RouterLink v-if="!enfant" to="/parametres" class="nbtn grand-ecran" :aria-label="t('shell.barre.reglages')" :title="t('shell.barre.reglages')"><Icone nom="reglages" /></RouterLink>
+      <RouterLink v-if="!enfant" to="/parametres" class="nbtn grand-ecran" :aria-label="t('nav.reglages')" :title="t('nav.reglages')"><Icone nom="reglages" /></RouterLink>
       <MenuMobile v-if="!enfant" :rubriques="liens" data-repere="menu" />
     </div>
   </header>

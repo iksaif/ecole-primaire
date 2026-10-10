@@ -7,7 +7,7 @@
 -->
 <template>
   <details class="aide">
-    <summary>{{ t('cadre.aideTitre') }}</summary>
+    <summary><Icone nom="ajouter" /> {{ t('cadre.aideTitre') }}</summary>
     <div v-if="liens.length" class="manquantes">
       <p>
         <template v-for="(s, i) in aideSegments" :key="i"><strong v-if="s.fort">{{ s.texte }}</strong><template v-else>{{ s.texte }}</template></template>
@@ -18,7 +18,7 @@
       </ul>
     </div>
     <div class="actions">
-      <label class="btn btn-ghost">{{ t('cadre.ajouterFichier') }}
+      <label class="btn btn-ghost"><Icone nom="dossier" /> {{ t('cadre.ajouterFichier') }}
         <input type="file" accept=".ttf,.otf,.woff,.woff2" class="sr-only" @change="ajouterFichier">
       </label>
       <button v-if="peutLister" type="button" class="btn btn-ghost" @click="lister">{{ t('cadre.toutesPolices') }}</button>
@@ -34,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { ref, computed, useId } from 'vue'
 import type { TypePolice } from '../utils/impression.js'
 import { LIENS_POLICES, ajouterPolicePerso } from '../utils/impression.js'

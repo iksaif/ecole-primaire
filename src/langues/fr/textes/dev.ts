@@ -45,5 +45,4 @@ export default {
   couvertureSorte: { tout: 'Toutes les ressources', exercice: 'Exercices', affiche: 'Affiches', fiche: 'Fiches prêtes' },
   couvertureTrousSeuls: 'Seulement les compétences avec des trous',
   couvertureLegende: { couvert: 'couvert par la base', trou: 'rien', hors: 'pas au programme de la classe' },
-  couvertureCompetence: 'Compétence',
 } as const

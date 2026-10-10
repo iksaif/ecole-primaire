@@ -7,7 +7,7 @@
 <template>
   <div class="config-section cle-mistral">
     <div class="config-section-title">{{ t('cadre.mistral.titre') }} <span class="cle-opt">{{ utilite }}</span></div>
-    <p class="api-etat" :class="{ aucune: !cleSaisie }">{{ cleSaisie ? t('cadre.mistral.ok') : sansCle }}</p>
+    <p class="api-etat" :class="{ aucune: !cleSaisie }"><template v-if="cleSaisie"><Icone nom="valide" /> {{ t('cadre.mistral.ok') }}</template><template v-else>{{ sansCle }}</template></p>
     <form class="api-row" @submit.prevent="enregistrer">
       <label class="sr-only" :for="id">{{ t('cadre.mistral.saisie') }}</label>
       <input :id="id" v-model="champ" type="password" autocomplete="off" :placeholder="t('cadre.mistral.saisie')">
@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { ref, useId } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { cleMistral, enregistrerCleMistral } from './mistral.ts'

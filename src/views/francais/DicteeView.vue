@@ -39,7 +39,7 @@
     <!-- Dictée : un mot (ou une phrase) à écouter, puis à écrire -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div v-if="q.mode === 'phrases' && q.phrase" class="phrase-ctx-container">
-        <button v-if="!afficherIndice" type="button" class="btn btn-ghost btn-sm indice" @click="afficherIndice = true">{{ t('dictee.afficherIndice') }}</button>
+        <button v-if="!afficherIndice" type="button" class="btn btn-ghost btn-sm indice" @click="afficherIndice = true"><Icone nom="indice" /> {{ t('dictee.afficherIndice') }}</button>
         <div v-else class="phrase-ctx">
           <span v-html="phraseAvecBlanc"></span>
           <button type="button" class="btn-masquer-indice" :title="t('dictee.masquerIndice')" :aria-label="t('dictee.masquerIndice')" @click="afficherIndice = false">🙈</button>
@@ -59,7 +59,7 @@
 
       <div class="btn-group actions">
         <template v-if="!repondu">
-          <button type="button" class="btn btn-ghost" @click="ecouter">{{ t('dictee.reecouter') }}</button>
+          <button type="button" class="btn btn-ghost" @click="ecouter"><Icone nom="ecouter" /> {{ t('dictee.reecouter') }}</button>
           <button type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
           <button type="button" class="btn btn-ghost" @click="passer">{{ t('dictee.passer') }}</button>
         </template>
@@ -77,6 +77,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Dictée : la vue ne fait que les réglages, la voix et le rendu. Niveaux, générateur et fiche : src/exercices/dictee/ (definition.ts,
 // generateur.ts, fiche.ts) ; phrases générées (facultatif, clé saisie par l'utilisateur) : mistral.ts ; mots : src/data/dicteeMots.js.
 // Exercice de français : la fiche et la voix sont toujours en français, l'interface suit la langue choisie.

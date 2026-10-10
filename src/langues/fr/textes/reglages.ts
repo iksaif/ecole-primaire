@@ -1,6 +1,5 @@
 // Textes de l'interface — page des réglages (français).
 export default {
-  titre: '⚙️ Réglages',
   intro: 'Ces réglages sont mémorisés sur cet appareil, dans le navigateur. Rien n’est envoyé.',
   interface: {
     titre: 'Langue de l’interface',
@@ -44,7 +43,7 @@ export default {
     plusLente: 'plus lente',
     plusRapide: 'plus rapide',
     pourcent: '{n} %',
-    ecouter: '▶️ Écouter un exemple',
+    ecouter: 'Écouter un exemple',
     exemple: 'Bonjour ! Écoute bien : montre-moi la lettre B, comme ballon.',
     sansVoix: 'Pas encore de voix pour : {langues}. Ces textes restent écrits, pour que l’adulte les lise.',
     sansSynthese: 'Ce navigateur ne sait pas lire à voix haute : les consignes restent écrites.',
@@ -58,10 +57,10 @@ export default {
   },
   onglets: {
     aria: 'Rubriques des réglages',
-    langues: '🌍 Langues',
-    moi: '🎒 Classe et profil',
-    fiches: '🖨️ Fiches et voix',
-    appareil: '🧰 Appareil',
+    langues: 'Langues',
+    moi: 'Classe et profil',
+    fiches: 'Fiches et voix',
+    appareil: 'Appareil',
   },
   retour: '← Retour à l’accueil',
 } as const

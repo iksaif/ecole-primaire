@@ -25,7 +25,7 @@ export default {
   enlever: 'Enlever',
   ajouter: 'Ajouter',
   total: 'Total',
-  toutEnlever: '🗑 Tout enlever',
+  toutEnlever: 'Tout enlever',
   rappel: 'Rappel',
   quiPlus: "Qui a le plus d'argent ?",
   autantDeux: 'Autant tous les deux',

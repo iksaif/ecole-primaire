@@ -114,7 +114,7 @@ for (const langue of ['fr', 'br']) {
   verifier(await champ.getAttribute('aria-describedby') === await page.locator('.feedback').getAttribute('id') && !!(await page.locator('.feedback').textContent()), 'le champ est relié au message de retour (aria-describedby)')
   verifier(await page.evaluate(() => document.activeElement?.classList.contains('exercise-input')), 'après l\'erreur, le focus reste dans le champ')
   await page.keyboard.press('Enter')
-  await page.waitForFunction(() => document.querySelector('.score-bar span')?.textContent?.includes('2'))
+  await page.waitForFunction(() => document.querySelector('.score-bar > span')?.textContent?.includes('2'))
   verifier(true, 'Entrée sur un champ répondu passe à la question suivante')
   verifier(await page.evaluate(() => document.activeElement?.classList.contains('exercise-input')), 'question suivante : le focus est dans le champ')
 

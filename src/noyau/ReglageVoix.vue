@@ -18,7 +18,7 @@
               <option v-for="v in g.voix" :key="idVoix(v)" :value="idVoix(v)">{{ libelleVoix(v) }}</option>
             </optgroup>
           </select>
-          <button type="button" class="btn btn-ghost" :disabled="!peutParler(l.code)" @click="ecouter(l.code)">{{ t('reglages.voix.ecouter') }}</button>
+          <button type="button" class="btn btn-ghost" :disabled="!peutParler(l.code)" @click="ecouter(l.code)"><Icone nom="ecouter" /> {{ t('reglages.voix.ecouter') }}</button>
         </div>
         <p v-if="voixDe(l.code).length === 0 && voixChargees" class="note">{{ t('reglages.voix.aucune') }}</p>
         <p v-if="enLigne(l.code)" class="note avertissement" data-voix-en-ligne>{{ t('reglages.voix.noteEnLigne') }}</p>
@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed, onUnmounted } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { CODES, langue as definition, nomDeLangue } from '../langues/registre.ts'

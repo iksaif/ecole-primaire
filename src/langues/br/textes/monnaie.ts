@@ -26,7 +26,7 @@ export default {
   enlever: 'Tennañ',
   ajouter: 'Ouzhpennañ',
   total: 'Sammad',
-  toutEnlever: '🗑 Tennañ pep tra',
+  toutEnlever: 'Tennañ pep tra',
   rappel: "Dalc'h soñj",
   quiPlus: "Piv en deus ar muiañ a arc'hant ?",
   autantDeux: 'Kement o-daou',

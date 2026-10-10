@@ -1,9 +1,8 @@
 // Textes de l'interface — page « À propos » (français).
 export default {
-  titre: '📚 À propos',
   avertissementTitre: 'Ce site est fait par des parents, pas par des enseignants.',
   avertissement: 'Les exercices s’appuient sur les programmes officiels mais n’ont pas été validés par des professionnels de l’éducation. En cas de doute sur une règle ou une réponse, demandez à l’enseignant de votre enfant.',
-  traductionAuto: '🤖 La traduction en {langue} a été faite automatiquement et n’a pas encore été relue : tout retour est le bienvenu à {contact}.',
+  traductionAuto: 'La traduction en {langue} a été faite automatiquement et n’a pas encore été relue : tout retour est le bienvenu à {contact}.',
   intro: 'Des exercices interactifs gratuits et des fiches à imprimer pour accompagner les enfants de la maternelle (PS, MS, GS) à la fin de l’élémentaire (CP → CM2). Tout fonctionne dans le navigateur : sans compte, sans publicité, sans données collectées.',
   comment: 'Comment ça marche ?',
   commentListe: [

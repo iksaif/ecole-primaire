@@ -26,7 +26,7 @@
       <button v-for="m in MODES" :key="m" :id="`${id}-onglet-${m}`" ref="onglets" type="button" role="tab" :aria-selected="modeCourant === m"
         :aria-controls="`${id}-panneau`" :tabindex="modeCourant === m ? 0 : -1" :class="{ actif: modeCourant === m }"
         @click="$emit('update:mode', m)">
-        {{ t(m === 'jouer' ? 'cadre.jouer' : 'cadre.imprimer') }}
+        <Icone :nom="m === 'jouer' ? 'exercice' : 'imprimer'" /> {{ t(m === 'jouer' ? 'cadre.jouer' : 'cadre.imprimer') }}
       </button>
     </div>
 
@@ -39,11 +39,11 @@
       <div class="signalement"><SignalerErreur :reglages="config ?? undefined" /></div>
 
       <div v-if="modeCourant === 'jouer'" class="actions">
-        <button type="button" class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')">{{ t('communs.commencer') }}</button>
+        <button type="button" class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')"><Icone nom="commencer" /> {{ t('communs.commencer') }}</button>
       </div>
       <ApercuImpression v-else :html="ficheFinale" :fluide="true" :reglages="reglages">
         <template v-if="aleatoire" #actions>
-          <button type="button" class="btn btn-ghost" @click="$emit('regenerer')">{{ t('cadre.nouvelle') }}</button>
+          <button type="button" class="btn btn-ghost" @click="$emit('regenerer')"><Icone nom="nouvelle" /> {{ t('cadre.nouvelle') }}</button>
         </template>
       </ApercuImpression>
     </div>
@@ -51,6 +51,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed, ref, useId, nextTick } from 'vue'
 import ApercuImpression from './ApercuImpression.vue'
 import SignalerErreur from './SignalerErreur.vue'

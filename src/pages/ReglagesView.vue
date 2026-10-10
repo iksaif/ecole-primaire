@@ -1,13 +1,13 @@
 <template>
   <div class="container reglages" data-page="reglages">
-    <h1>{{ t('reglages.titre') }}</h1>
+    <h1><Icone nom="reglages" /> {{ t('nav.reglages') }}</h1>
     <p class="intro">{{ t('reglages.intro') }}</p>
 
     <!-- Rubriques en onglets (motif WAI-ARIA tablist / tab / tabpanel, flèches et Début / Fin) ; `?onglet=langues|moi|fiches|appareil` ouvre une rubrique -->
     <div class="onglets" role="tablist" :aria-label="t('reglages.onglets.aria')" @keydown="toucheOnglet">
       <button v-for="o in onglets" :key="o" :id="`reglages-onglet-${o}`" ref="boutons" type="button" role="tab" :aria-selected="ongletCourant === o"
         aria-controls="reglages-panneau" :tabindex="ongletCourant === o ? 0 : -1" :class="{ actif: ongletCourant === o }" @click="choisirOnglet(o)">
-        {{ t(`reglages.onglets.${o}`) }}
+        <Icone :nom="ICONE_ONGLET[o]" /> {{ t(`reglages.onglets.${o}`) }}
       </button>
     </div>
 
@@ -86,7 +86,7 @@
         <section class="bloc">
           <h2>🧭 {{ t('assistant.revoir.titre') }}</h2>
           <p class="aide">{{ t('assistant.revoir.aide') }}</p>
-          <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)">{{ t('assistant.revoir.bouton') }}</button>
+          <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)"><Icone nom="visite" /> {{ t('assistant.revoir.bouton') }}</button>
         </section>
 
         <section class="bloc">
@@ -105,6 +105,7 @@
 
 <script setup lang="ts">
 import Icone from '../images/Icone.vue'
+import type { NomIcone } from '../images/icones.ts'
 // Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police,
 // voix et vitesse de la lecture à voix haute (ReglageVoix, mémorisés par useTTS).
 import { computed, nextTick, ref } from 'vue'
@@ -136,6 +137,8 @@ const route = useRoute()
 const ONGLETS = ['langues', 'moi', 'fiches', 'appareil'] as const
 type Onglet = (typeof ONGLETS)[number]
 const estOnglet = (v: unknown): v is Onglet => ONGLETS.includes(v as Onglet)
+/** L'icône de chaque onglet. */
+const ICONE_ONGLET: Readonly<Record<Onglet, NomIcone>> = { langues: 'langue', moi: 'classe', fiches: 'imprimer', appareil: 'appareil' }
 /** la rubrique « Langues » n'a rien à montrer si le site ne propose ni autre langue d'interface ni langue régionale */
 const onglets = computed<readonly Onglet[]>(() => (langues.length > 1 || regionale.proposees.length ? ONGLETS : ONGLETS.filter(o => o !== 'langues')))
 const demande = Array.isArray(route.query.onglet) ? route.query.onglet[0] : route.query.onglet

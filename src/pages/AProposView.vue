@@ -10,7 +10,7 @@
         {{ contenuSource.t('apropos.traductionAuto', { langue: l.nom[LANGUE_SOURCE], contact: SITE.contact }) }}
       </p>
 
-      <h1 class="section-heading titre">{{ t('apropos.titre') }}</h1>
+      <h1 class="section-heading titre"><Icone nom="info" /> {{ t('shell.pied.apropos') }}</h1>
       <p class="about-para">{{ t('apropos.intro') }}</p>
 
       <h2 class="about-h2"><Icone nom="outils" /> {{ t('apropos.comment') }}</h2>
@@ -19,16 +19,16 @@
       </ul>
       <p class="about-para revoir">
         {{ t('assistant.revoir.aide') }}
-        <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)">{{ t('assistant.revoir.bouton') }}</button>
+        <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)"><Icone nom="visite" /> {{ t('assistant.revoir.bouton') }}</button>
       </p>
 
-      <h2 class="about-h2">🖼️ {{ t('apropos.images') }}</h2>
+      <h2 class="about-h2"><Icone nom="affiche" /> {{ t('apropos.images') }}</h2>
       <p class="about-para">{{ t('apropos.imagesTexte') }}</p>
 
-      <h2 class="about-h2">🔤 {{ t('apropos.polices') }}</h2>
+      <h2 class="about-h2"><Icone nom="police" /> {{ t('apropos.polices') }}</h2>
       <p class="about-para">{{ t('apropos.policesTexte') }}</p>
 
-      <h2 class="about-h2">🤝 {{ t('apropos.contribuer') }}</h2>
+      <h2 class="about-h2"><Icone nom="contribuer" /> {{ t('apropos.contribuer') }}</h2>
       <p class="about-para">{{ depot[0] }}<a :href="SITE.depot" target="_blank" rel="noopener">{{ DEPOT_TEXTE }}</a>{{ depot[1] }}</p>
       <ul class="about-list">
         <li><Icone nom="bug" /> {{ erreur[0] }}<a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a>{{ erreur[1] }}

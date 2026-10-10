@@ -1,8 +1,8 @@
 // Textes de l'interface — cadre d'un exercice ou d'une affiche (CadreExercice, OptionsFiche, ChoixPolice, AjoutPolice du noyau), français.
 export default {
-  jouer: '🎯 Faire l’exercice',
-  imprimer: '🖨️ Imprimer une fiche',
-  nouvelle: '🎲 Nouvelle fiche',
+  jouer: 'Faire l’exercice',
+  imprimer: 'Imprimer une fiche',
+  nouvelle: 'Nouvelle fiche',
   surLaFiche: 'Sur la fiche',
   entete: 'Prénom et date',
   corrige_non: 'Sans corrigé',
@@ -12,7 +12,7 @@ export default {
   exempleAttache: 'belle école',
   exempleScript: 'a b g école',
   retirer: 'Retirer cette police',
-  aideTitre: '➕ Ajouter une police…',
+  aideTitre: 'Ajouter une police…',
   aideTexte: 'Ces polices scolaires sont gratuites pour la classe et la maison, mais leur licence ne permet pas de les livrer avec le site. Deux solutions : les <strong>installer</strong> sur l’ordinateur (elles apparaîtront dans la liste après rechargement de la page), ou <strong>ajouter le fichier</strong> ici (il reste mémorisé dans ce navigateur).',
   modes: 'Mode de l’exercice',
   installee: 'installée',
@@ -22,7 +22,7 @@ export default {
   groupeInstallees: 'Installées sur cet ordinateur',
   groupeAjoutees: 'Ajoutées depuis un fichier',
   aideLiens: 'À obtenir (pas encore installées sur cet ordinateur) :',
-  ajouterFichier: '📂 Ajouter un fichier de police',
+  ajouterFichier: 'Ajouter un fichier de police',
   toutesPolices: 'Afficher toutes les polices de cet ordinateur',
   toutesTrouvees: 'Polices de cet ordinateur ajoutées à la liste : {n}.',
   toutesRefusees: 'L’accès aux polices de l’ordinateur n’a pas été accordé.',
@@ -50,11 +50,11 @@ export default {
     conseil: 'Conseil : dans la fenêtre d’impression, choisis « Taille réelle / 100 % » et désactive « Ajuster à la page ».',
   },
   // « Signaler une erreur » (SignalerErreur.vue)
-  signaler: { lien: '💬 Signaler une erreur', titre: 'Signaler une erreur sur cette page (ouvre votre messagerie)' },
+  signaler: { lien: 'Signaler une erreur', titre: 'Signaler une erreur sur cette page (ouvre votre messagerie)' },
   // la clé Mistral, facultative (CleMistral.vue)
   mistral: {
     titre: 'Clé API Mistral',
-    ok: '✓ Clé configurée',
+    ok: 'Clé configurée',
     saisie: 'Ta clé Mistral',
     enregistrer: 'Enregistrer',
     effacer: 'Effacer la clé',

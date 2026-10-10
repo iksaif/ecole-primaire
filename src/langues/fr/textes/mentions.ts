@@ -1,7 +1,7 @@
 // Textes de l'interface — mentions légales et confidentialité (français). Source des clés : br/textes/mentions.ts.
 // Repris de l'ancienne page (src/views/MentionsLegalesView.vue, supprimée le 2026-10-07 sans avoir été reportée).
 export default {
-  titre: '⚖️ Mentions légales et confidentialité',
+  titre: 'Mentions légales et confidentialité',
   editeur: 'Éditeur', editeurTexte: 'Site personnel et non commercial, édité par',
   hebergeur: 'Hébergeur',
   donnees: 'Données personnelles et cookies',

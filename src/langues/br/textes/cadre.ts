@@ -3,9 +3,9 @@ import type { Traductions } from '../../types.ts'
 import type fr from '../../fr/textes/cadre.ts'
 
 export default {
-  jouer: '🎯 Ober ar boelladenn',
-  imprimer: '🖨️ Moullañ ur fichenn',
-  nouvelle: '🎲 Fichenn nevez',
+  jouer: 'Ober ar boelladenn',
+  imprimer: 'Moullañ ur fichenn',
+  nouvelle: 'Fichenn nevez',
   surLaFiche: 'War ar fichenn', // br: à relire
   entete: 'Anv-bihan ha deiziad', // br: à relire
   corrige_non: 'Hep reizhadenn', // br: à relire
@@ -15,7 +15,7 @@ export default {
   exempleAttache: 'skol vrav',
   exempleScript: 'a b g skol',
   retirer: 'Lemel an nodrezh-mañ', // br: à relire
-  aideTitre: '➕ Ouzhpennañ un nodrezh…', // br: à relire
+  aideTitre: 'Ouzhpennañ un nodrezh…', // br: à relire
   aideTexte: 'An nodrezhoù-skol-se a zo digoust evit ar c\'hlas hag ar gêr, met n\'eo ket aotreet gant o lañvaz o lakaat gant al lec\'hienn. Daou zoare a zo : o <strong>staliañ</strong> war an urzhiataer (war wel e vint er roll goude bezañ adkarget ar bajenn), pe <strong>ouzhpennañ ar restr</strong> amañ (miret e vo er merdeer-mañ).', // br: à relire
   modes: 'Mod ar boelladenn', // br: à relire
   installee: 'staliet',
@@ -25,7 +25,7 @@ export default {
   groupeInstallees: 'Staliet war an urzhiataer-mañ', // br: à relire
   groupeAjoutees: 'Ouzhpennet diwar ur restr', // br: à relire
   aideLiens: 'Da gaout (n\'int ket staliet c\'hoazh war an urzhiataer-mañ) :', // br: à relire
-  ajouterFichier: '📂 Ouzhpennañ ur restr nodrezh', // br: à relire
+  ajouterFichier: 'Ouzhpennañ ur restr nodrezh', // br: à relire
   toutesPolices: 'Diskouez holl nodrezhoù an urzhiataer-mañ', // br: à relire
   toutesTrouvees: 'Nodrezhoù an urzhiataer ouzhpennet d\'ar roll : {n}.', // br: à relire
   toutesRefusees: 'N\'eo ket bet aotreet ar moned da nodrezhoù an urzhiataer.', // br: à relire
@@ -53,11 +53,11 @@ export default {
     conseil: 'Alioù : er prenestr moullañ, dibab ar ment gwir (100 %) ha na azasait ket ouzh ar bajenn.',
   },
   // « Signaler une erreur » (SignalerErreur.vue)
-  signaler: { lien: '💬 Kemenn ur fazi', titre: 'Kemenn ur fazi war ar bajenn-mañ (digeriñ a ra ho posterioù)' }, // br: à relire
+  signaler: { lien: 'Kemenn ur fazi', titre: 'Kemenn ur fazi war ar bajenn-mañ (digeriñ a ra ho posterioù)' }, // br: à relire
   // la clé Mistral, facultative (CleMistral.vue)
   mistral: {
     titre: "Alc'hwez API Mistral",
-    ok: "✓ Alc'hwez kefluniet",
+    ok: "Alc'hwez kefluniet",
     saisie: "Da alc'hwez Mistral", // br: à relire
     enregistrer: 'Enrollañ', // br: à relire
     effacer: "Diverkañ an alc'hwez", // br: à relire

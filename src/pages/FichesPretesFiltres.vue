@@ -10,13 +10,13 @@
     <div class="ligne" role="group" :aria-label="t('fichesPretes.classe')">
       <span class="lab" aria-hidden="true">{{ t('fichesPretes.classe') }}</span>
       <button v-for="c in NIVEAUX" :key="c" type="button" class="puce" :aria-pressed="page.classeActive(c)" :disabled="page.verrouillee" @click="page.choisirClasse(c)">{{ c.toUpperCase() }}</button>
-      <button type="button" class="puce" :aria-pressed="page.toutes" :disabled="page.verrouillee" @click="page.choisirToutes()">{{ t('fichesPretes.toutesClasses') }}</button>
+      <button type="button" class="puce" :aria-pressed="page.toutes" :disabled="page.verrouillee" @click="page.choisirToutes()"><Icone nom="tous" /> {{ t('fichesPretes.toutesClasses') }}</button>
     </div>
 
     <div class="ligne" role="group" :aria-label="t('fichesPretes.usage')">
       <span class="lab" aria-hidden="true">{{ t('fichesPretes.usage') }}</span>
-      <button type="button" class="puce" :aria-pressed="page.saisis.usage === ''" @click="page.regler({ usage: '' })">{{ t('fichesPretes.tous') }}</button>
-      <button v-for="u in USAGES" :key="u" type="button" class="puce" :aria-pressed="page.saisis.usage === u" @click="page.regler({ usage: u })">{{ t(u === 'apprendre' ? 'fichesPretes.apprendre' : 'fichesPretes.sentrainer') }}</button>
+      <button type="button" class="puce" :aria-pressed="page.saisis.usage === ''" @click="page.regler({ usage: '' })"><Icone nom="tous" /> {{ t('fichesPretes.tous') }}</button>
+      <button v-for="u in USAGES" :key="u" type="button" class="puce" :aria-pressed="page.saisis.usage === u" @click="page.regler({ usage: u })"><Icone :nom="u === 'apprendre' ? 'affiche' : 'crayon'" /> {{ t(u === 'apprendre' ? 'ressource.apprendre' : 'ressource.sentrainer') }}</button>
     </div>
 
     <div class="ligne">
@@ -29,7 +29,7 @@
       </template>
       <div v-if="page.langues.length" class="groupe" role="group" :aria-label="t('fichesPretes.langue')">
         <span class="lab" aria-hidden="true">{{ t('fichesPretes.langue') }}</span>
-        <button type="button" class="puce" :aria-pressed="page.criteres.langue === ''" @click="page.regler({ langue: '' })">{{ t('fichesPretes.toutesLangues') }}</button>
+        <button type="button" class="puce" :aria-pressed="page.criteres.langue === ''" @click="page.regler({ langue: '' })"><Icone nom="tous" /> {{ t('fichesPretes.toutesLangues') }}</button>
         <button v-for="l in page.langues" :key="l" type="button" class="puce" :aria-pressed="page.criteres.langue === l" @click="page.regler({ langue: l })">
           <FichesPretesLangues :langues="languesDuChoix(l)" toujours /><span aria-hidden="true">{{ codeDuChoix(l) }}</span><span class="sr-only">{{ nomDuChoix(l) }}</span>
         </button>
@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { useId } from 'vue'
 import { NIVEAUX } from '../data/classes.ts'
 import { LANGUE_SOURCE, estLangue, nomDeLangue } from '../langues/registre.ts'

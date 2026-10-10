@@ -77,7 +77,7 @@
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
           <button type="button" class="btn btn-ghost" @click="passer">{{ t('fractions.passer') }}</button>
-          <button v-if="q.kind === 'parts'" type="button" class="btn btn-ghost" :disabled="!coloriees.length" @click="coloriees = []">{{ t('fractions.effacer') }}</button>
+          <button v-if="q.kind === 'parts'" type="button" class="btn btn-ghost" :disabled="!coloriees.length" @click="coloriees = []"><Icone nom="effacer" /> {{ t('fractions.effacer') }}</button>
           <button v-if="q.kind !== 'choix'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
         </template>
         <BoutonSuivant v-else :jeu="jeu" />
@@ -94,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Les fractions : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question),
 // formes, droite graduée (dessin partagé : src/dessins/droite.ts) et fiche : src/exercices/fractions/.
 import { ref, computed } from 'vue'

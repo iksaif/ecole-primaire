@@ -36,12 +36,12 @@ export default {
     titre: 'C’est parti !',
     texte: 'Tout se change à tout moment dans la barre du haut ou sur la page des réglages ⚙️, où vous pourrez aussi revoir cette visite. Rien n’est envoyé : vos choix restent sur cet appareil.',
     enfant: '🧒 Passer en mode enfant',
-    programme: '📚 Ouvrir le programme',
+    programme: 'Ouvrir le programme',
     commencer: 'Découvrir le site',
   },
   revoir: {
     titre: 'Visite guidée',
     aide: 'Les conseils de la première visite : profil, classes, langue, programme.',
-    bouton: '🧭 Revoir la visite guidée',
+    bouton: 'Revoir la visite guidée',
   },
 } as const

@@ -16,13 +16,14 @@
       <span v-for="i in 5" :key="i" aria-hidden="true">{{ i <= etoiles ? '⭐' : '☆' }}</span>
     </div>
     <div class="btn-group actions">
-      <button type="button" class="btn btn-primary" @click="$emit('rejouer')">{{ t('communs.rejouer') }}</button>
-      <button type="button" class="btn btn-ghost" @click="$emit('reglages')">{{ t('communs.parametres') }}</button>
+      <button type="button" class="btn btn-primary" @click="$emit('rejouer')"><Icone nom="rejouer" /> {{ t('communs.rejouer') }}</button>
+      <button type="button" class="btn btn-ghost" @click="$emit('reglages')"><Icone nom="reglages" /> {{ t('communs.parametres') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // textes : section `communs` (rejouer, parametres, scoreSur, etoiles5…etoilesSur)
 import { ref, computed, onMounted } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'

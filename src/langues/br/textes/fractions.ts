@@ -12,7 +12,7 @@ export default {
   laBonne: '❌ Ar respont mat : {r}',
   passer: 'Tremen ⏭',
   passe: '(tremenet)',
-  effacer: '🧽 Diverkañ',
+  effacer: 'Diverkañ',
   types: {
     identifier: '👀 Peseurt darnaouenn ?',
     colorier: '🖍️ Livañ',

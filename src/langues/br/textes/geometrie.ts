@@ -18,7 +18,7 @@ export default {
   legEnTrop: 're',
   passer: 'Tremen ⏭',
   passe: '(tremenet)',
-  effacer: '🧽 Diverkañ',
+  effacer: 'Diverkañ',
   exercices: {
     symetrie: '🦋 Kemparzhded',
     reproduction: '✏️ Adtresañ', // br: à relire

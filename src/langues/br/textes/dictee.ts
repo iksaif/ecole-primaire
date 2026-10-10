@@ -18,13 +18,13 @@ export default {
   tous: 'An holl',
   vitesse: 'Tizh ar vouezh',
   generation: 'O krouiñ…',
-  afficherIndice: '👁️ Diskouez ar frazenn gant toulloù (tun)', // br: à relire (indice)
+  afficherIndice: 'Diskouez ar frazenn gant toulloù (tun)', // br: à relire (indice)
   masquerIndice: 'Kuzhat an tun',
   arreter: 'Paouez',
   ecouterPhrase: 'Selaou ar frazenn',
   ecouterMot: 'Selaou ar ger',
   consigne: "Selaou mat, ha skriv ar pezh a glevez :",
-  reecouter: '🔁 Adselaou',
+  reecouter: 'Adselaou',
   accents: 'Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
   feedbackErr: '❌ Ar respont mat a oa : « {r} »',
   pagesFiche: 'Pajennoù ar fichenn', // br: à relire

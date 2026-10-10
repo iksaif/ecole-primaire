@@ -1,8 +1,9 @@
 <template>
-  <a class="signaler" :href="lien" :title="t('cadre.signaler.titre')">{{ t('cadre.signaler.lien') }}</a>
+  <a class="signaler" :href="lien" :title="t('cadre.signaler.titre')"><Icone nom="bug" /> {{ t('cadre.signaler.lien') }}</a>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // « Signaler une erreur » : prépare un mail (pas de formulaire, rien n'est stocké) avec ce qu'il faut pour retrouver l'erreur. Le corps
 // du mail reste en français (destinataire : nous). `reglages` : réglages de l'exercice en cours ; `detail` : texte en plus.
 import { computed } from 'vue'

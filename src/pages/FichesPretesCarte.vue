@@ -12,7 +12,7 @@
       <PastillesClasses :classes="entree.niveaux" :choisies="selection" />
       <p class="badges">
         <FichesPretesLangues :langues="entree.langues" regionales />
-        <span class="badge">{{ t(entree.usage === 'apprendre' ? 'fichesPretes.apprendre' : 'fichesPretes.sentrainer') }}</span>
+        <span class="badge"><Icone :nom="entree.usage === 'apprendre' ? 'affiche' : 'crayon'" /> {{ t(entree.usage === 'apprendre' ? 'ressource.apprendre' : 'ressource.sentrainer') }}</span>
         <PastilleConfiance :niveau="entree.confiance ?? null" />
         <span v-if="entree.exemple" class="badge exemple">{{ t('fichesPretes.badgeExemple') }}</span>
       </p>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { urlFiches } from '../telechargements/chargement.ts'
 import { langueDuTexte, texteDe } from '../telechargements/recherche.ts'

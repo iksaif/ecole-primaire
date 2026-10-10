@@ -8,7 +8,7 @@
 -->
 <template>
   <div class="score-bar">
-    <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')">{{ t('communs.quitter') }}</button>
+    <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')"><Icone nom="fermer" /> {{ t('communs.quitter') }}</button>
     <span>{{ t('communs.question', { n: index + 1, total: questions.length }) }}</span>
     <span role="img" :aria-label="t('communs.scoreSur', { bonnes, total: historique.length })">✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
   </div>
@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts" generic="Q, Rep">
+import Icone from '../images/Icone.vue'
 // textes : section `communs` (quitter, quitterTitre, question) ; points : ok, presque (nuance, orange), erreur
 import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'

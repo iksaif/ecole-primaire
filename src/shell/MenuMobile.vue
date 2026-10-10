@@ -17,7 +17,7 @@
       </template>
       <h3>{{ t('shell.profil.titre') }}</h3>
       <OptionsProfil />
-      <RouterLink to="/parametres" class="grand"><span aria-hidden="true"><Icone nom="reglages" /></span> {{ t('shell.barre.reglages') }}</RouterLink>
+      <RouterLink to="/parametres" class="grand"><span aria-hidden="true"><Icone nom="reglages" /></span> {{ t('nav.reglages') }}</RouterLink>
       <RouterLink v-if="AVEC_DEV" to="/dev" class="grand"><span aria-hidden="true"><Icone nom="outils" /></span> {{ t('shell.barre.dev') }}</RouterLink>
     </div>
   </div>

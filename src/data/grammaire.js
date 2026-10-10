@@ -168,10 +168,11 @@ export const DONNEES = {
 
     // Les pronoms personnels sujets (BO n° 41 p. 93), dans une phrase : le verbe aide à trouver la personne (« … allons au parc » → nous).
     // [groupe sujet remplacé, suite de la phrase avec le verbe conjugué, pronom]. Je et tu : quelqu'un parle de lui, ou à quelqu'un
-    // (« Léo dit : … ») ; le groupe vide ('') veut dire que la phrase est déjà dite à la bonne personne. Trois phrases par pronom : un
+    // (« Léo dit : … ») ; le groupe vide ('') veut dire que la phrase est déjà dite à la bonne personne. Avec je, un verbe qui commence
+    // par une consonne (sinon « j'ai », « j'aime » : l'élision n'est pas ce qu'on travaille ici). Trois phrases par pronom : un
     // tirage de huit questions ou plus a toutes les personnes (generateur.ts, tirage équilibré).
     pronomsPersonnes: [
-      ['', 'Léo dit : « … ai faim. »', 'je'], ['', 'Zoé dit : « … aime les fraises. »', 'je'], ['', 'Sami dit : « … suis content. »', 'je'],
+      ['', 'Léo dit : « … mange une pomme. »', 'je'], ['', 'Zoé dit : « … cours vite. »', 'je'], ['', 'Sami dit : « … suis content. »', 'je'],
       ['', 'Léa dit à Tom : « … as un joli dessin. »', 'tu'], ['', 'La maîtresse dit à Lina : « … lis très bien. »', 'tu'], ['', 'Papa dit à Léo : « … ranges ta chambre. »', 'tu'],
       ['Léo', 'joue au ballon.', 'il'], ['Le chat', 'dort sur le canapé.', 'il'], ['Mon frère', 'mange une pomme.', 'il'],
       ['Léa', 'chante une chanson.', 'elle'], ['La maîtresse', 'raconte une histoire.', 'elle'], ['Ma tortue', 'avance lentement.', 'elle'],

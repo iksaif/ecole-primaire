@@ -140,7 +140,7 @@ export default {
   fiche_nature: 'Skriv rummad ar ger e tev : anv, verb, ger-mont, anv-gwan pe raganv.',
   fiche_gnNoyau: 'Islinenn anv pennañ ar strollad anv.',
   fiche_sujet: 'Lak ur c\'helc\'h en-dro d\'ar strollad sujed.',
-  fiche_pronom: 'Adskriv ar frazenn en ur lakaat il, elle, ils pe elles e plas ar sujed islinennet.',
+  fiche_pronom: 'Skrivit ar raganv a erlec\'h ar sujed islinennet : il, elle, ils pe elles.', // br: à relire
   fiche_pronomPersonne: 'Skrivit ar raganv a erlec\'h ar gerioù-se : je, tu, il, elle, nous, vous, ils pe elles.', // br: à relire
   fiche_cplt: 'Lak ur c\'helc\'h en-dro da glokaenn ar frazenn.',
   fiche_cpltQ: 'Diskouez a ra ar glokaenn islinennet pelec\'h pe pegoulz ? Lak ur groaz.',

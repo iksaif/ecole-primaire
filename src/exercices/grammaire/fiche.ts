@@ -55,7 +55,9 @@ function questionFiche(q: Question, T: Tr): string {
       return `<div>${html}</div><div class="cases">${CASE} ${tc(T, 'déclarative')} &nbsp; ${CASE} ${tc(T, 'interrogative')} &nbsp; ${CASE} ${tc(T, 'impérative')}</div>`
     case 'pronomPersonne':
       // une ligne courte pour le pronom seul (pas de phrase à recopier)
-      return `<div>${html.replace('<span class="trou">…</span>', '<span class="ligne courte"></span>')} &nbsp;→ <span class="ligne courte"></span></div>`
+      // une phrase dite (je, tu) : le pronom s'écrit à sa place ; un groupe souligné : le pronom après la flèche
+      if (html.includes('<span class="trou">…</span>')) return `<div>${html.replace('<span class="trou">…</span>', '<span class="ligne courte"></span>')}</div>`
+      return `<div>${html} &nbsp;→ <span class="ligne courte"></span></div>`
     case 'complexe':
       return `<div class="grand">${html}</div><div class="cases">${CASE} ${tc(T, 'phrase simple')} &nbsp;&nbsp; ${CASE} ${tc(T, 'phrase complexe')}</div>`
     case 'negation':
@@ -69,7 +71,8 @@ function questionFiche(q: Question, T: Tr): string {
     case 'nature':
       return `<div>${html} &nbsp;→ ${LIGNE}</div>`
     case 'pronom':
-      return `<div>${html}</div><div class="lignebloc">${LIGNE}</div>`
+      // le pronom seul sur une ligne courte : pas de phrase à recopier (la tâche est de choisir le pronom)
+      return `<div>${html} &nbsp;→ <span class="ligne courte"></span></div>`
     case 'cpltQ':
       return `<div>${html} &nbsp;&nbsp; ${CASE} ${tc(T, 'Où ?').toLowerCase()} &nbsp; ${CASE} ${tc(T, 'Quand ?').toLowerCase()}</div>`
     case 'cpltNature':

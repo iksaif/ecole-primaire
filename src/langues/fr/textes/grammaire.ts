@@ -138,7 +138,7 @@ export default {
   fiche_nature: 'Écris la nature du mot en gras : nom, verbe, déterminant, adjectif ou pronom.',
   fiche_gnNoyau: 'Souligne le nom principal du groupe nominal.',
   fiche_sujet: 'Entoure le groupe sujet.',
-  fiche_pronom: 'Récris la phrase en remplaçant le sujet souligné par il, elle, ils ou elles.',
+  fiche_pronom: 'Écris le pronom qui remplace le sujet souligné : il, elle, ils ou elles.',
   fiche_pronomPersonne: 'Écris le pronom qui remplace le groupe souligné, ou qui manque : je, tu, il, elle, nous, vous, ils ou elles.',
   fiche_cplt: 'Entoure le complément de phrase.',
   fiche_cpltQ: 'Le complément souligné indique-t-il où ou quand ? Coche.',

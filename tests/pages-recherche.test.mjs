@@ -92,7 +92,7 @@ console.log('Résultats groupés, filtre de classe')
   await attendreOption(page, 'nombres')
   const groupes = await page.locator(`${FENETRE} [role=group]`).evaluateAll(gs => gs.map(g => {
     const entete = document.getElementById(g.getAttribute('aria-labelledby'))
-    return { nom: entete?.textContent?.trim(), type: entete?.id.split('-').pop(), icone: !!entete?.querySelector('svg.icone'), n: g.querySelectorAll('[role=option]').length }
+    return { nom: entete?.textContent?.trim(), type: entete?.id.split('-').pop(), icone: !!entete?.querySelector('.icone'), n: g.querySelectorAll('[role=option]').length }
   }))
   verifier(groupes.length >= 1 && groupes.every(g => g.nom && g.n > 0), `résultats groupés par type, chaque groupe nommé et non vide (${groupes.map(g => g.nom).join(' | ')})`)
   const ordre = ['exercice', 'affiche', 'fiche', 'competence', 'page']
@@ -109,7 +109,7 @@ console.log('Résultats groupés, filtre de classe')
   await attendreOption(page, 'nombres')
   const bouton = page.locator(`${FENETRE} .contexte button`)
   verifier(await bouton.getAttribute('aria-pressed') === 'false', '« Toutes les classes » : aria-pressed=false au départ')
-  verifier(await page.locator(`${FENETRE} .contexte span`).first().locator('svg.icone').count() === 1, '« Classe : … » porte son icône')
+  verifier(await page.locator(`${FENETRE} .contexte span`).first().locator('.icone').count() === 1, '« Classe : … » porte son icône')
   const annonce = await page.locator(`${FENETRE} [role=status]`).innerText()
   verifier(/résultat/.test(annonce), `le nombre de résultats est annoncé (« ${annonce} »)`)
 

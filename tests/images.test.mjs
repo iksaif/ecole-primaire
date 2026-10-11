@@ -9,9 +9,9 @@ import { CONTOUR } from '../src/images/donnees/contour.ts'
 import { creerRenduImages } from '../src/images/rendu.ts'
 import { assainirImages, DEFAUT_IMAGES } from '../src/images/preference.ts'
 import { caractereDe } from '../src/images/systeme.ts'
-import { ICONES, REMPLIES } from '../src/images/icones.ts'
-import { BOLD, FILL } from '../src/images/donnees/icones.ts'
-import { iconeHtml } from '../src/images/icone.ts'
+import { ICONES } from '../src/images/icones.ts'
+import { INTERFACE } from '../src/images/donnees/interface.ts'
+import { iconeHtml, iconeSvg } from '../src/images/icone.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const noms = Object.keys(EMOJIS)
@@ -87,18 +87,21 @@ verifier(JSON.stringify(assainirImages(undefined)) === JSON.stringify(DEFAUT_IMA
 verifier(JSON.stringify(assainirImages({ famille: 'systeme', style: 'bleu' })) === '{"famille":"systeme","style":"couleur"}', 'un champ inconnu reprend son défaut, l’autre est gardé')
 verifier(JSON.stringify(assainirImages('contour')) === JSON.stringify(DEFAUT_IMAGES), 'une valeur corrompue : le défaut')
 
-console.log('Icônes d’interface (Phosphor)')
+console.log('Icônes d’interface (OpenMoji, lot léger)')
 const nomsIcones = Object.keys(ICONES)
-verifier(nomsIcones.every(n => !!BOLD[n]) && Object.keys(BOLD).every(n => n in ICONES), `chaque icône a son dessin, aucun de trop (${nomsIcones.length} ; relancer scripts/generer/icones.ts)`)
-verifier(REMPLIES.every(n => !!FILL[n]) && Object.keys(FILL).every(n => REMPLIES.includes(n)), 'les icônes pleines sont celles de REMPLIES')
-verifier(new Set(Object.values(ICONES)).size === nomsIcones.length, 'une icône Phosphor ne sert qu’à un rôle')
-verifier([...Object.values(BOLD), ...Object.values(FILL)].every(d => !/\sid="|url\(#|<script|fill="#/.test(d)), 'dessins autonomes, de la couleur du texte (aucune couleur écrite)')
-const icone = iconeHtml('recherche')
-verifier(icone.includes('aria-hidden="true"') && icone.includes('width="1.25em"') && icone.includes('fill="currentColor"'), 'icône décorative par défaut, 1.25em, couleur du texte')
-verifier(iconeHtml('fermer', { libelle: 'Fermer "x"', taille: '24px' }).includes('role="img" aria-label="Fermer &quot;x&quot;"'), 'icône seule : libellé lu, échappé')
-let messageIcone = ''
-try { iconeHtml('recherche', { pleine: !REMPLIES.includes('recherche') }) } catch (e) { messageIcone = String(e.message) }
-verifier(REMPLIES.includes('recherche') || messageIcone.includes('recherche'), 'une version pleine absente échoue en disant laquelle')
+const codesIcones = Object.values(ICONES)
+verifier(codesIcones.every(c => !!INTERFACE[c]) && Object.keys(INTERFACE).every(c => codesIcones.includes(c)), `chaque icône a son dessin, aucun de trop (${nomsIcones.length} ; relancer scripts/generer/icones.ts)`)
+verifier(new Set(codesIcones).size === nomsIcones.length, 'un emoji ne sert qu’à un rôle de l’interface')
+verifier(Object.values(INTERFACE).every(d => !/\sid="|url\(#|<script|href=/.test(d)), 'dessins autonomes, sans identifiant, renvoi ni script')
+const ko = gzipSync(readFileSync(new URL('../src/images/donnees/interface.ts', import.meta.url))).length / 1024
+verifier(ko <= 40, `lot de l’interface : ${ko.toFixed(0)} Ko gzip, sous 40 Ko (il est dans le paquet principal)`)
+const appareil = iconeHtml('recherche')
+verifier(appareil === '<span aria-hidden="true" class="icone">🔍</span>', 'par défaut : l’emoji de l’appareil, à la taille du texte, décoratif')
+verifier(iconeHtml('menu') === '<span aria-hidden="true" class="icone">☰</span>', 'le menu, sans emoji, garde son caractère ☰')
+verifier(iconeHtml('fermer', { libelle: 'Fermer "x"' }).includes('role="img" aria-label="Fermer &quot;x&quot;"'), 'icône seule : libellé lu, échappé')
+const dessinee = iconeHtml('recherche', { famille: 'openmoji' })
+verifier(dessinee.includes('width="1.4em"') && dessinee.includes('data-image="openmoji"') && dessinee.includes(INTERFACE[ICONES.recherche]), 'dessins du site : le dessin OpenMoji, 1.4em (sa marge le rend plus petit)')
+verifier(iconeSvg('verrou', 1, 2, 24, 'openmoji').startsWith('<svg x="1" y="2" width="24"') && iconeSvg('verrou', 1, 2, 24).startsWith('<text'), 'icône dans un SVG : dessin à sa place, ou le caractère')
 
 // un composant inconnu passe pour un élément HTML (ni vue-tsc ni ESLint ne le voient) : chaque gabarit qui utilise <Icone> ou <Emoji> l'importe
 const fichiersVue = dossier => readdirSync(new URL(`../${dossier}/`, import.meta.url), { withFileTypes: true }).flatMap(e => {

@@ -25,6 +25,11 @@ export default {
     case: 'Diskouez mod ar gelennerien war an ardivink-mañ', // br: à relire
     parSite: 'Kinniget eo gant al lec’hienn-mañ.', // br: à relire
   },
+  // les icônes de l'interface (onglet « Appareil »)
+  icones: {
+    titre: 'Arlunioù al lec’hienn', // br: à relire
+    aide: 'Skeudennigoù al lañserioù hag ar boutonoù : re an ardivink-mañ, pe tresadennoù al lec’hienn, ar re memes war an holl ardivinkoù.', // br: à relire
+  },
   police: {
     titre: 'Nodrezh ar fichennoù', // br: à relire
     aide: 'Ar skritur implijet war ar fichennoù da voullañ.', // br: à relire

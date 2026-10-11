@@ -10,7 +10,7 @@
 <script setup lang="ts">
 // État vide expliqué : jamais une page cassée quand une liste n'a (encore) rien à montrer. Les textes sont déjà traduits ; le
 // contenu par défaut (slot) accueille un lien ou un bouton. `emoji` : un contenu (domaine, « à venir ») ; `icone` : une notion de
-// l'interface (le verrou d'une langue inactive), dessinée par Phosphor.
+// l'interface (le verrou d'une langue inactive), dessinée par <Icone>.
 import { useId } from 'vue'
 import Icone from '../../images/Icone.vue'
 import type { NomIcone } from '../../images/icones.ts'

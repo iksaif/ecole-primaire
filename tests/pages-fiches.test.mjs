@@ -6,6 +6,12 @@
 import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, appDev, titreQui } from './outils.mjs'
 import { verifierAxe } from './outils-axe.mjs'
 
+// le texte d'un élément sans son icône (<Icone> : emoji de l'appareil ou dessin)
+const texteSansIcone = el => el.evaluate(e => {
+  const copie = e.cloneNode(true)
+  copie.querySelectorAll('.icone-interface').forEach(i => i.remove())
+  return copie.textContent.trim()
+})
 const nav = await lancerNavigateur()
 async function ouvrir({ langue = 'fr', largeur = 1280, regionale } = {}) {
   const ctx = await contexte(nav, { langue, regionale, viewport: { width: largeur, height: 900 } })
@@ -105,7 +111,7 @@ console.log('Feuille ouverte à froid')
   verifier(fil.length === 4 && /Accueil/.test(fil[0]) && /Maths/.test(fil[1]) && /Fiches toutes prêtes/.test(fil[2]) && /Suites de nombres/.test(fil[3]), `fil d'Ariane : Accueil › Matière › Fiches toutes prêtes › titre (${fil.join(' › ')})`)
   verifier(await page.locator('nav.fil li a', { hasText: 'Fiches toutes prêtes' }).getAttribute('href').then(h => h.endsWith('/maths/fiches')), 'le maillon « Fiches toutes prêtes » mène à la sous-page de la matière')
   const personnaliser = page.getByRole('link', { name: /Personnaliser/ })
-  verifier((await personnaliser.textContent()).trim() === 'Personnaliser' && await personnaliser.locator('svg.icone').count() === 1, 'Personnaliser : son icône, devant le texte')
+  verifier(await texteSansIcone(personnaliser) === 'Personnaliser' && await personnaliser.locator('.icone').count() === 1, 'Personnaliser : son icône, devant le texte')
   verifier(await page.getByRole('group', { name: 'Exemplaires de la fiche' }).getByRole('button').first().textContent().then(s => /Exemplaire 1/.test(s)), 'les variantes s’appellent « Exemplaire n »')
   const dl = page.getByRole('link', { name: /Télécharger/ }), imp = page.getByRole('button', { name: /Imprimer/ })
   const href = await dl.getAttribute('href')

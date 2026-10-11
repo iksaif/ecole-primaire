@@ -6,6 +6,12 @@ import { COMPETENCES } from '../src/data/programme.ts'
 import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, appDev, URL_SITE } from './outils.mjs'
 import { verifierAxe } from './outils-axe.mjs'
 
+// le texte d'un élément sans son icône (<Icone> : emoji de l'appareil ou dessin)
+const texteSansIcone = el => el.evaluate(e => {
+  const copie = e.cloneNode(true)
+  copie.querySelectorAll('.icone-interface').forEach(i => i.remove())
+  return copie.textContent.trim()
+})
 const URL_SKOOLIK = process.env.TEST_URL_SKOOLIK && process.env.TEST_URL_SKOOLIK.replace(/\/?$/, '/')
 const BASE = new URL(URL_SITE).pathname
 const ou = page => { const u = new URL(page.url()); return `${u.pathname.slice(BASE.length - 1)}${u.search}` }
@@ -121,7 +127,7 @@ console.log('Programme : titre, fil d’Ariane, liste par défaut, adresse de la
   const { ctx, page } = await ouvrir()
   await page.goto(app('/programme?classes=ce1,ce2'))
   await pret(page)
-  verifier(await page.locator('h1').count() === 1 && (await page.locator('h1').textContent()).trim() === 'Programme' && await page.locator('h1 svg.icone').count() === 1, 'titre « Programme », avec son icône')
+  verifier(await page.locator('h1').count() === 1 && await texteSansIcone(page.locator('h1')) === 'Programme' && await page.locator('h1 .icone').count() === 1, 'titre « Programme », avec son icône')
   const fil = await page.locator('nav.fil li').allTextContents()
   verifier(fil.length === 2 && /Accueil/.test(fil[0]) && /Programme/.test(fil[1]) && await page.locator('nav.fil li a').count() === 1, 'fil d’Ariane : Accueil › Programme')
   verifier(await presse(page, 'Liste') && await page.locator('table.prog').count() === 0, 'la liste est la présentation par défaut (comme la maquette)')
@@ -130,7 +136,7 @@ console.log('Programme : titre, fil d’Ariane, liste par défaut, adresse de la
   await page.getByRole('button', { name: 'Tableau', exact: true }).click()
   await page.waitForSelector('table.prog')
   const entete = page.locator('table.prog thead th').last()
-  verifier(await entete.locator('[aria-hidden="true"] svg.icone').count() === 1 && await entete.locator('.sr-only').textContent() === 'Ressources', 'colonne « Ressources » : une icône décorative et un libellé accessible')
+  verifier(await entete.locator('[aria-hidden="true"] .icone').count() === 1 && await entete.locator('.sr-only').textContent() === 'Ressources', 'colonne « Ressources » : une icône décorative et un libellé accessible')
   verifier((await page.locator('p.adresse code').textContent()).includes('affichage=tableau'), 'l’adresse suit la vue')
   await ctx.close()
 }

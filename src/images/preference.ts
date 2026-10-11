@@ -18,6 +18,17 @@ export const STYLES_IMAGES: readonly StyleImages[] = ['couleur', 'contour']
 
 export const DEFAUT_IMAGES: ImagesFiche = { famille: 'openmoji', style: 'couleur' }
 
+/**
+ * Les icônes de l'interface (barre, menus, boutons) : un réglage à part, des emojis de l'appareil par défaut (décision du 2026-10-11 :
+ * OpenMoji pour les fiches, l'interface comme l'appareil la dessine), ou les dessins OpenMoji du site.
+ */
+export const DEFAUT_ICONES: FamilleImages = 'systeme'
+
+/** Le réglage des icônes lu avec méfiance : une valeur inconnue reprend le défaut. */
+export function assainirIcones(valeur: unknown): FamilleImages {
+  return FAMILLES_IMAGES.find(f => f === valeur) ?? DEFAUT_ICONES
+}
+
 /** Une préférence lue avec méfiance (stockage, adresse) : chaque champ inconnu reprend sa valeur par défaut. */
 export function assainirImages(valeur: unknown): ImagesFiche {
   const lue = (typeof valeur === 'object' && valeur !== null ? valeur : {}) as Partial<Record<keyof ImagesFiche, unknown>>

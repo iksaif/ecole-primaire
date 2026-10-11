@@ -63,21 +63,24 @@ Au-delà du budget, il faudra découper le générateur : le contour à la deman
 pas, puisqu'ils ne voient que le rendu. Pour l'interface (domaines, retours), prévoir un lot séparé et court, sinon les dessins
 entreraient dans le paquet principal.
 
-## Les icônes d'interface (Phosphor)
+## Les icônes d'interface
 
 Ce qui se clique ou qui nomme une notion de l'interface (barre, menu, pied de page, fil d'Ariane, boutons d'action, libellés du
-programme, types de la recherche) n'est pas un contenu : c'est une icône [Phosphor](https://phosphoricons.com) (MIT), de la couleur du
-texte, et non un emoji.
+programme, types de la recherche, titres des réglages) passe par `<Icone>`, avec un nom par rôle : une action = une icône, la même
+partout. Décision du 2026-10-11 (après un essai de Phosphor, au trait, jugé terne pour des enfants) :
 
-- `icones.ts` : `ICONES`, nom → icône Phosphor (`imprimer: 'printer'`). Une action = une icône, la même partout. `REMPLIES` : les
-  icônes qui ont aussi leur version pleine (état actif ou sélectionné). Graisse bold.
-- `donnees/icones.ts` : les dessins, **générés** par `node scripts/generer/icones.ts` (Phosphor v2.0.8, cache hors du dépôt).
-  25 à 30 icônes pèsent moins de 5 Ko gzip : elles sont dans le paquet principal.
-- `<Icone nom="imprimer" />` : décorative à côté d'un texte ; seule dans un bouton, `libelle` (lu par les lecteurs d'écran). Taille
-  1.25em par défaut : elle suit le texte. Dans du HTML construit en chaîne : `iconeHtml(nom)` ; dans un SVG : `iconeSvg(nom, x, y, taille)`
-  (`icone.ts`).
+- **par défaut, les emojis de l'appareil**, à la taille du texte, comme avant ;
+- au choix, **les dessins OpenMoji du site** (les mêmes sur tous les appareils) : réglage « Icônes du site », onglet « Appareil » de la
+  page des réglages (`useIconesInterface`, clé `icones`). Ce réglage est à part de celui des fiches (« Images », OpenMoji par défaut).
+
+- `icones.ts` : `ICONES`, nom → code OpenMoji (`imprimer: '1F5A8'`), une table à part des contenus (`tables.ts`) ; `CARACTERES` : le
+  caractère d'une icône qui n'a pas d'emoji (le menu : ☰).
+- `donnees/interface.ts` : les dessins OpenMoji, **générés** par `node scripts/generer/icones.ts`. Un lot à part, dans le paquet
+  principal (environ 24 Ko gzip, budget de 40 Ko dans `tests/images.test.mjs`), sans les dessins des fiches.
+- `<Icone nom="imprimer" />` : décorative à côté d'un texte ; seule dans un bouton, `libelle` (lu par les lecteurs d'écran). Sans
+  `taille`, l'emoji suit le texte (le dessin OpenMoji, 1.4em, car sa marge le rend plus petit). Dans du HTML construit en chaîne :
+  `iconeHtml(nom, { famille })` ; dans un SVG : `iconeSvg(nom, x, y, taille, famille)` (`icone.ts`).
 - Fil d'Ariane, état vide, rubriques : un champ `icone` (une page de l'interface) à côté du champ `emoji` (un contenu).
-- Jamais une icône et un emoji côte à côte à la même taille : les grandes tuiles de l'accueil et les matières restent des emojis.
 
 ## Garde-fous
 

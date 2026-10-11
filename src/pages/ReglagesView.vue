@@ -53,13 +53,13 @@
         </section>
 
         <section class="bloc">
-          <h2>👤 {{ t('reglages.profil.titre') }}</h2>
+          <h2><Icone nom="profil" /> {{ t('reglages.profil.titre') }}</h2>
           <OptionsProfil />
         </section>
 
         <!-- le mode enseignant est caché par défaut : une idée en construction, pas encore validée (src/contexte/enseignant.ts) -->
         <section class="bloc" data-section="enseignant">
-          <h2>🚧 {{ t('reglages.enseignant.titre') }}</h2>
+          <h2><Icone nom="chantier" /> {{ t('reglages.enseignant.titre') }}</h2>
           <p class="aide">{{ t('reglages.enseignant.aide') }}</p>
           <label class="case"><input type="checkbox" :checked="modeEnseignantActif" :disabled="SITE.enseignantVisible" @change="basculerEnseignant"> {{ t('reglages.enseignant.case') }}</label>
           <p v-if="SITE.enseignantVisible" class="aide">{{ t('reglages.enseignant.parSite') }}</p>
@@ -69,13 +69,13 @@
 
       <template v-else-if="ongletCourant === 'fiches'">
         <section class="bloc">
-          <h2>✏️ {{ t('reglages.police.titre') }}</h2>
+          <h2><Icone nom="crayon" /> {{ t('reglages.police.titre') }}</h2>
           <p class="aide">{{ t('reglages.police.aide') }}</p>
           <ChoixPolice />
         </section>
 
         <section class="bloc" data-section="voix">
-          <h2>🔊 {{ t('reglages.voix.titre') }}</h2>
+          <h2><Icone nom="ecouter" /> {{ t('reglages.voix.titre') }}</h2>
           <p class="aide">{{ t('reglages.voix.aide') }}</p>
           <ReglageVoix />
         </section>
@@ -84,13 +84,23 @@
 
       <template v-else>
         <section class="bloc">
-          <h2>🧭 {{ t('assistant.revoir.titre') }}</h2>
+          <h2><Icone nom="menu" /> {{ t('reglages.icones.titre') }}</h2>
+          <p class="aide">{{ t('reglages.icones.aide') }}</p>
+          <div class="choix" role="group" :aria-label="t('reglages.icones.titre')">
+            <button v-for="f in CHOIX_ICONES" :key="f" type="button" class="level-btn" :class="{ active: icones === f }" :aria-pressed="icones === f" :data-valeur="f" @click="icones = f">
+              <span class="apercu-icones" aria-hidden="true" v-html="apercuIcones(f)" /> {{ t(`cadre.images.${f}`) }}
+            </button>
+          </div>
+        </section>
+
+        <section class="bloc">
+          <h2><Icone nom="visite" /> {{ t('assistant.revoir.titre') }}</h2>
           <p class="aide">{{ t('assistant.revoir.aide') }}</p>
           <button type="button" class="btn btn-ghost" @click="revoirAssistant(router)"><Icone nom="visite" /> {{ t('assistant.revoir.bouton') }}</button>
         </section>
 
         <section class="bloc">
-          <h2>🗑️ {{ t('reglages.remise.titre') }}</h2>
+          <h2><Icone nom="vider" /> {{ t('reglages.remise.titre') }}</h2>
           <p class="aide">{{ t('reglages.remise.aide') }}</p>
           <button class="btn btn-danger" @click="toutReinitialiser">{{ t('reglages.remise.bouton') }}</button>
           <p v-if="message" class="succes" role="status">{{ message }}</p>
@@ -106,6 +116,9 @@
 <script setup lang="ts">
 import Icone from '../images/Icone.vue'
 import type { NomIcone } from '../images/icones.ts'
+import { iconeHtml } from '../images/icone.ts'
+import type { FamilleImages } from '../images/preference.ts'
+import { useIconesInterface } from '../images/useImagesFiche.ts'
 // Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police,
 // voix et vitesse de la lecture à voix haute (ReglageVoix, mémorisés par useTTS).
 import { computed, nextTick, ref } from 'vue'
@@ -131,6 +144,11 @@ import { SITE } from '../sites.ts'
 
 const { t, langue, langues } = useLangue()
 const router = useRouter()
+// les icônes de l'interface : emojis de l'appareil (défaut) ou dessins du site ; chaque bouton montre trois icônes dans son rendu
+const icones = useIconesInterface()
+// le défaut (les emojis de l'appareil) d'abord
+const CHOIX_ICONES: readonly FamilleImages[] = ['systeme', 'openmoji']
+const apercuIcones = (famille: FamilleImages): string => (['accueil', 'imprimer', 'reglages'] as const).map(nom => iconeHtml(nom, { famille })).join(' ')
 const route = useRoute()
 
 // ── les onglets ──

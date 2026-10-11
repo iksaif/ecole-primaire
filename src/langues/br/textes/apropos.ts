@@ -14,7 +14,7 @@ export default {
     'Digor eo ar c\'hod mammenn.', // br: à relire
   ],
   images: 'Skeudennoù', // br: à relire
-  imagesTexte: 'Skeudennoù ar skritelloù a zo emojioù OpenMoji (openmoji.org), gant aotre CC BY-SA 4.0 : ar raktres digor evit emojioù hag arlunioù. Enno emaint er lec’hienn hag e vezont moullet evel m’emaint ; o zanvez a zo skrivet e perzhioù ar PDFoù. Arlunioù ar boutonoù hag al lañserioù a zeu eus Phosphor Icons (phosphoricons.com), gant aotre MIT.', // br: à relire
+  imagesTexte: 'Skeudennoù ar skritelloù a zo emojioù OpenMoji (openmoji.org), gant aotre CC BY-SA 4.0 : ar raktres digor evit emojioù hag arlunioù. Enno emaint er lec’hienn hag e vezont moullet evel m’emaint ; o zanvez a zo skrivet e perzhioù ar PDFoù. Arlunioù ar boutonoù hag al lañserioù a zo emojioù OpenMoji ivez.', // br: à relire
   polices: 'Nodrezhioù', // br: à relire
   policesTexte: 'Enno emañ Playwrite FR Trad, Andika, OpenDyslexic (aotre OFL) ha Luciole (CC BY 4.0). Evit ar skritur a-stag e kuzulier Belle Allure pe Écolier : n\'hall ket bezañ kinniget gant al lec\'hienn abalamour d\'an aotre-implijout, ret eo o staliañ pe ouzhpennañ ar restr e dibab an nodrezh.', // br: à relire
   contribuer: 'Kemer perzh',

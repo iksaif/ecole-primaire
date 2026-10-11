@@ -1,6 +1,7 @@
 // Le caractère emoji d'un code OpenMoji, pour la famille « emojis du système ». Les codes de tables.ts sont ceux des fichiers
 // OpenMoji : points de code en hexadécimal séparés par `-`, sans le sélecteur de variante FE0F. Un emoji n'a pas de caractère
-// quand il n'existe pas dans Unicode : dessin maison (`maison:…`) ou extra d'OpenMoji (zone d'usage privé, E000 à F8FF).
+// quand il n'existe pas dans Unicode : dessin maison (`maison:…`) ou extra d'OpenMoji (zone d'usage privé, E000 à F8FF). Et le rendu
+// d'un tel caractère, dans un SVG ou du HTML, partagé par les contenus (rendu.ts) et l'interface (icone.ts) : ce module n'importe aucun dessin.
 
 /** Le sélecteur de variante « présentation emoji » : sans lui, ☀ ou 🍽 s'affichent parfois en noir, comme du texte. */
 const SELECTEUR_EMOJI = 0xfe0f
@@ -26,4 +27,30 @@ export function caractereDe(code: string): string | null {
     if (texteParDefaut(point) && suivant !== SELECTEUR_EMOJI) avecSelecteur.push(SELECTEUR_EMOJI)
   })
   return String.fromCodePoint(...avecSelecteur)
+}
+
+/** Les polices d'emojis des systèmes courants, pour la famille « système ». */
+export const POLICES_EMOJI = `'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Twemoji Mozilla', sans-serif`
+/** Un emoji du système occupe un peu plus que sa taille de police : il tient dans le carré à ce corps-là. */
+export const CORPS_SYSTEME = 0.84
+
+export const arrondi = (n: number): number => Math.round(n * 100) / 100
+
+export const echapperAttribut = (texte: string): string => texte.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+
+/** Les attributs d'accessibilité : lu par les lecteurs d'écran (`alt`), ou décoratif. */
+export const accessibilite = (alt: string | undefined): string => (alt ? `role="img" aria-label="${echapperAttribut(alt)}"` : 'aria-hidden="true"')
+
+/** Un emoji du système dans un SVG : le caractère centré dans le carré. */
+export function systemeSvg(caractere: string, x: number, y: number, taille: number): string {
+  const centre = (debut: number): number => arrondi(debut + taille / 2)
+  return `<text x="${centre(x)}" y="${centre(y)}" font-size="${arrondi(taille * CORPS_SYSTEME)}" text-anchor="middle" dominant-baseline="central" font-family="${POLICES_EMOJI.replace(/'/g, '&apos;')}">${caractere}</text>`
+}
+
+/** Un emoji du système dans du HTML : le caractère seul s'il suit le texte, sinon centré dans un carré de la taille demandée. */
+export function systemeHtml(caractere: string, taille: string | undefined, alt: string | undefined): string {
+  if (taille === undefined && !alt) return caractere
+  if (taille === undefined) return `<span ${accessibilite(alt)}>${caractere}</span>`
+  const style = `display:inline-block;width:${taille};height:${taille};line-height:${taille};text-align:center;vertical-align:middle;font-size:calc(${taille} * ${CORPS_SYSTEME});font-family:${POLICES_EMOJI}`
+  return `<span ${accessibilite(alt)} style="${style.replace(/"/g, '&quot;')}">${caractere}</span>`
 }

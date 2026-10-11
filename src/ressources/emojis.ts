@@ -33,7 +33,7 @@ export const EMOJI_DOMAINE: Readonly<Record<DomaineId, string>> = {
   exemple: '⭐',   // domaine fictif des exemples (développement)
 }
 
-/** Icône d'un type de ressource (une notion de l'interface, Phosphor) : l'en-tête de ses résultats dans la recherche. */
+/** Icône d'un type de ressource (une notion de l'interface, <Icone>) : l'en-tête de ses résultats dans la recherche. */
 export const ICONE_TYPE: Readonly<Record<TypeRessource, NomIcone>> = {
   exercice: 'exercice',
   affiche: 'affiche',

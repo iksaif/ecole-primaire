@@ -23,6 +23,11 @@ export default {
     case: 'Afficher le mode enseignant sur cet appareil',
     parSite: 'Ce site le propose d’office.',
   },
+  // les icônes de l'interface (onglet « Appareil »)
+  icones: {
+    titre: 'Icônes du site',
+    aide: 'Les petites images des menus et des boutons : celles de cet appareil, ou les dessins du site, les mêmes sur tous les appareils.',
+  },
   police: {
     titre: 'Police des fiches',
     aide: 'L’écriture utilisée sur les fiches à imprimer.',

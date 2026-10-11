@@ -1,6 +1,6 @@
 <template>
   <!-- Fil d'Ariane : des liens, puis la page courante (sans lien, aria-current). Un maillon sans `vers` est du texte ;
-       `icone` (une page de l'interface : accueil, programme, fiches, dessinée par Phosphor) et `emoji` (un contenu : domaine,
+       `icone` (une page de l'interface : accueil, programme, fiches : <Icone>) et `emoji` (un contenu : domaine,
        exercice) sont décoratifs ; `matiere` : l'icône de la matière à la place (le drapeau dessiné pour la langue régionale). -->
   <nav class="fil" :aria-label="etiquette">
     <ol>

@@ -7,9 +7,9 @@
 //   const images = useImagesFiche()            // Ref<ImagesFiche>, passée à la fiche (ParamsFiche.images) ou à l'affiche (config.images)
 import { ref, watch } from 'vue'
 import type { Ref } from 'vue'
-import { chargerReglages, sauvegarder } from '../utils/index.js'
-import { assainirImages, DEFAUT_IMAGES } from './preference.ts'
-import type { ImagesFiche } from './preference.ts'
+import { charger, chargerReglages, sauvegarder } from '../utils/index.js'
+import { assainirIcones, assainirImages, DEFAUT_IMAGES } from './preference.ts'
+import type { FamilleImages, ImagesFiche } from './preference.ts'
 
 const CLE = 'images'
 
@@ -20,4 +20,13 @@ watch(preference, v => sauvegarder(CLE, v), { deep: true })
 /** La préférence « Images », partagée par toutes les pages. */
 export function useImagesFiche(): Ref<ImagesFiche> {
   return preference
+}
+
+// les icônes de l'interface : un réglage à part (clé `icones`), les emojis de l'appareil par défaut
+const icones: Ref<FamilleImages> = ref(assainirIcones(charger('icones', null)))
+watch(icones, v => sauvegarder('icones', v))
+
+/** Le réglage des icônes de l'interface, partagé par toutes les pages (Icone.vue, page des réglages). */
+export function useIconesInterface(): Ref<FamilleImages> {
+  return icones
 }

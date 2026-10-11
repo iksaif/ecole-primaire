@@ -9,9 +9,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { EMOJIS } from '../../src/images/tables.ts'
 import type { StyleImages } from '../../src/images/preference.ts'
-
-const VERSION = '15.1.0'
-const CACHE = join(import.meta.dirname, '../../node_modules/.cache/openmoji', VERSION)
+import { chargerOpenMoji, ligneDessin, nettoyer, VERSION_OPENMOJI } from './openmoji.ts'
 const SORTIE = join(import.meta.dirname, '../../src/images/donnees')
 const MAISON = join(import.meta.dirname, '../../src/images/maison')
 const PREFIXE_MAISON = 'maison:'
@@ -61,29 +59,6 @@ function chargerMaison(code: string, style: StyleImages): string {
   return contourDe(couleur)
 }
 
-/** Le fichier OpenMoji d'un code, téléchargé si le cache ne l'a pas encore (essai avec le sélecteur FE0F si le code seul n'existe pas). */
-async function chargerOpenMoji(code: string): Promise<string> {
-  const cache = join(CACHE, 'color')
-  mkdirSync(cache, { recursive: true })
-  const fichier = join(cache, `${code}.svg`)
-  if (existsSync(fichier)) return readFileSync(fichier, 'utf8')
-  for (const nom of [code, `${code}-FE0F`]) {
-    const reponse = await fetch(`https://raw.githubusercontent.com/hfg-gmuend/openmoji/${VERSION}/color/svg/${nom}.svg`)
-    if (!reponse.ok) continue
-    const svg = await reponse.text()
-    writeFileSync(fichier, svg)
-    return svg
-  }
-  throw new Error(`OpenMoji ${VERSION} n'a pas l'emoji ${code}`)
-}
-
-/** Le contenu du <svg> sans l'enveloppe : plus d'identifiants (copies multiples dans une page), pas d'espaces entre balises. */
-function nettoyer(code: string, svg: string): string {
-  if (svg.includes('url(#')) throw new Error(`${code} : renvoi à un identifiant (dégradé, masque) : à traiter avant de retirer les id`)
-  const interieur = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '')
-  return interieur.replace(/\sid="[^"]*"/g, '').replace(/>\s+</g, '><').trim()
-}
-
 mkdirSync(SORTIE, { recursive: true })
 const codes = [...new Set(Object.values(EMOJIS))].sort()
 /** Un emoji dans un style : maison (couleur, retouche ou contour déduit), ou OpenMoji (couleur, ou son contour déduit). */
@@ -97,10 +72,10 @@ for (const [style, { table, description }] of Object.entries(STYLES) as [StyleIm
   const dessins: string[] = []
   for (const code of codes) {
     const svg = await charger(code, style)
-    dessins.push(`  '${code}': '${nettoyer(code, svg).replace(/'/g, "\\'")}',`)
+    dessins.push(ligneDessin(code, nettoyer(code, svg)))
   }
   writeFileSync(join(SORTIE, `${style}.ts`), `// GÉNÉRÉ par scripts/generer/images.ts d'après src/images/tables.ts : ne pas modifier à la main.
-// Dessins SVG des emojis OpenMoji ${VERSION} (${description}), CC BY-SA 4.0 — https://openmoji.org ; et des dessins maison (« maison:… »,
+// Dessins SVG des emojis OpenMoji ${VERSION_OPENMOJI} (${description}), CC BY-SA 4.0 — https://openmoji.org ; et des dessins maison (« maison:… »,
 // src/images/maison/), au même style et sous la même licence.
 export const ${table}: Readonly<Record<string, string>> = {
 ${dessins.join('\n')}

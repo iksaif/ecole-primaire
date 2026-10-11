@@ -5,6 +5,8 @@ import type { ParamsFiche } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
 import { htmlCollection } from '../../dessins/collections.ts'
+import { imagesDe } from '../../images/rendu.ts'
+import type { NomEmoji } from '../../images/tables.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import type { Question } from './generateur.ts'
@@ -20,8 +22,10 @@ const CSS = `
       .corr { columns: 3; font-size: 1.1rem; line-height: 2; }
     `
 
-export function fiche({ questions: qs, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
-  const groupe = (n: number, emoji: string): string => `<div class="groupe">${htmlCollection(n, emoji)}</div>`
+export function fiche({ questions: qs, T, langue, police, cssPolices, images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
+  // les objets : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
+  const images = imagesDe({ images: preference })
+  const groupe = (n: number, emoji: NomEmoji): string => `<div class="groupe">${htmlCollection(n, emoji, images)}</div>`
   const lignes = qs.map((q, i) => `<div class="ligne"><span class="num">${i + 1}.</span>
     ${groupe(q.gauche, q.emoji)}${groupe(q.droite, q.emoji)}</div>`).join('')
   const titre = T('titre')

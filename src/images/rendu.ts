@@ -18,6 +18,9 @@ import type { ImagesFiche, StyleImages } from './preference.ts'
 /** Le dessin d'un emoji tient dans un carré de 72 × 72. */
 const COTE = 72
 
+/** La taille d'un dessin OpenMoji qui suit le texte : celle où il paraît aussi grand qu'un emoji du système. */
+const TAILLE_DANS_LE_TEXTE = '1.25em'
+
 
 const DONNEES: Record<StyleImages, Readonly<Record<string, string>>> = { couleur: COULEUR, contour: CONTOUR }
 
@@ -27,7 +30,8 @@ export interface RenduImages {
   /** Un emoji dans un SVG : carré de côté `taille` (unités du SVG) dont le coin haut gauche est en (x, y). */
   svg(nom: NomEmoji, x: number, y: number, taille: number): string
   /**
-   * Un emoji dans du HTML, de côté `taille` (n'importe quelle unité CSS : `8mm`, `1.2em`). Sans `taille`, il suit le texte (1em) ; en
+   * Un emoji dans du HTML, de côté `taille` (n'importe quelle unité CSS : `8mm`, `1.2em`). Sans `taille`, il suit le texte (1.25em : un dessin OpenMoji laisse une marge dans son carré, un emoji du système déborde un
+   * peu de son corps ; à 1.25em, ils paraissent de la même taille) ; en
    * famille « système », c'est alors le caractère seul, sans balise. `alt` : le mot visé, lu par les lecteurs d'écran ; sans `alt`,
    * l'image est décorative (le mot est écrit à côté).
    */
@@ -91,7 +95,7 @@ export function creerRenduImages(preference: ImagesFiche = DEFAUT_IMAGES): Rendu
     html(nom, taille, alt) {
       const caractere = caractereSysteme(nom)
       if (caractere) return systemeHtml(caractere, taille, alt)
-      return openmojiHtml(nom, style, taille ?? '1em', alt)
+      return openmojiHtml(nom, style, taille ?? TAILLE_DANS_LE_TEXTE, alt)
     },
     get employe() { return employe },
   }

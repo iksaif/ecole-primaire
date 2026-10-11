@@ -7,6 +7,10 @@
 //   npm run instantanes -- heure/ce1             seulement les cas qui commencent ainsi
 //   npm run instantanes -- --maj [préfixe]       réécrire les empreintes (+ HTML complets dans /tmp/instantanes/)
 //   npm run instantanes -- --diff <cas|préfixe>  HTML recalculé et diff avec celui d'avant (/tmp/instantanes/)
+//   npm run instantanes -- <préfixe> --famille systeme
+//                                                les fiches avec les emojis de l'appareil (préférence « Images ») : pour migrer un
+//                                                exercice vers le rendu des images (src/images/), elles doivent rester identiques
+//                                                aux empreintes d'avant ; ensuite seulement, --maj accepte l'écart dû à OpenMoji
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
@@ -22,14 +26,17 @@ const args = process.argv.slice(2)
 const maj = args.includes('--maj')
 const iDiff = args.indexOf('--diff')
 const diff = iDiff >= 0 ? args[iDiff + 1] : null
-const prefixe = diff ?? args.find((a, i) => !a.startsWith('--') && (iDiff < 0 || i !== iDiff + 1)) ?? ''
+const prefixe = diff ?? args.find((a, i) => !a.startsWith('--') && (iDiff < 0 || i !== iDiff + 1) && args[i - 1] !== '--famille') ?? ''
 const retenu = cle => cle.startsWith(prefixe)
+// --famille systeme : la préférence « Images » passée à la fiche (sans elle, le défaut : OpenMoji en couleur)
+const iFamille = args.indexOf('--famille')
+const images = iFamille >= 0 ? { famille: args[iFamille + 1], style: 'couleur' } : undefined
 
 // HTML d'un cas : exactement ce que la vue met dans l'aperçu (avant les options prénom/corrigé du cadre)
 function htmlDe({ generateur, fiche, textes }, { niveau, reglages, graine, langue }) {
   const T = traducteurExercice(textes, langue)
   const questions = generateur.questionsFiche({ niveau, reglages, rng: creerRng(graine), T, langue })
-  return fiche.fiche({ questions, reglages, T, langue })
+  return fiche.fiche({ questions, reglages, T, langue, images })
 }
 
 // HTML lisible en diff : une balise par ligne, espaces normalisés

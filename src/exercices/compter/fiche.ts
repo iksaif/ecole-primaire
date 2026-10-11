@@ -5,6 +5,7 @@ import type { ParamsFiche } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
 import { htmlCollection, htmlConstellation } from '../../dessins/collections.ts'
+import { imagesDe } from '../../images/rendu.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import type { TirageFiche } from './generateur.ts'
@@ -24,13 +25,15 @@ const CSS = `
       .choix.ps { grid-template-columns: 1fr; gap: .5rem; } .pts { font-size: 1.1rem; letter-spacing: .15rem; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, T, langue, police, cssPolices, images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  // les objets : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
+  const images = imagesDe({ images: preference })
   const qs = x.questions
   // PS : on entoure toujours la bonne constellation (jamais de chiffre à écrire)
   const ps = x.niveau === 'ps'
   const ecrire = !ps && x.reponse === 'ecrire'
   const cases = qs.map((q, i) => `<div class="item"><span class="num">${i + 1}</span>
-    <div class="objets">${htmlCollection(q.nb, q.emoji)}</div>
+    <div class="objets">${htmlCollection(q.nb, q.emoji, images)}</div>
     ${ecrire ? '<div class="case"></div>'
       : `<div class="choix${ps ? ' ps' : ''}">${[...q.choix].sort((a, b) => a - b).map(c => `<span>${ps ? htmlConstellation(c) : c}</span>`).join('')}</div>`}
   </div>`).join('')

@@ -39,6 +39,9 @@ export const EMOJIS = {
   vague: '1F30A', nid: '1FABA', oignon: '1F9C5', poisson: '1F41F', roue: '1F6DE', chiffreUn: '0031-FE0F-20E3', calendrier: '1F4C5',
   // la météo et les saisons (soleil, nuage, flocon et pousse sont plus haut)
   pluie: '1F327', vent: '1F4A8', feuillesMortes: '1F342',
+  // les objets à compter et comparer (src/dessins/collections.ts) ; pomme, étoile, chat, fleur, grenouille, fraise, lune, goûter
+  // (le biscuit) et ballon de baudruche sont plus haut
+  voiture: '1F697', papillon: '1F98B', poissonTropical: '1F420',
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */

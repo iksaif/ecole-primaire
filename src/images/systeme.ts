@@ -3,6 +3,9 @@
 // quand il n'existe pas dans Unicode : dessin maison (`maison:…`) ou extra d'OpenMoji (zone d'usage privé, E000 à F8FF). Et le rendu
 // d'un tel caractère, dans un SVG ou du HTML, partagé par les contenus (rendu.ts) et l'interface (icone.ts) : ce module n'importe aucun dessin.
 
+import { EMOJIS } from './tables.ts'
+import type { NomEmoji } from './tables.ts'
+
 /** Le sélecteur de variante « présentation emoji » : sans lui, ☀ ou 🍽 s'affichent parfois en noir, comme du texte. */
 const SELECTEUR_EMOJI = 0xfe0f
 const USAGE_PRIVE = { debut: 0xe000, fin: 0xf8ff }
@@ -54,3 +57,9 @@ export function systemeHtml(caractere: string, taille: string | undefined, alt: 
   const style = `display:inline-block;width:${taille};height:${taille};line-height:${taille};text-align:center;vertical-align:middle;font-size:calc(${taille} * ${CORPS_SYSTEME});font-family:${POLICES_EMOJI}`
   return `<span ${accessibilite(alt)} style="${style.replace(/"/g, '&quot;')}">${caractere}</span>`
 }
+
+/**
+ * Le caractère d'un emoji du vocabulaire, pour l'écrire dans une phrase (un message, une lecture à voix haute) : là, seul du texte va.
+ * Vide pour un emoji qui n'en a pas (dessin maison, extra d'OpenMoji).
+ */
+export const caractereEmoji = (nom: NomEmoji): string => caractereDe(EMOJIS[nom]) ?? ''

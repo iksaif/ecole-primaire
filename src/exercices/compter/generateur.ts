@@ -12,6 +12,7 @@ import { tirerUniques } from '../../noyau/uniques.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
 import { EMOJI_OBJETS } from '../../dessins/collections.ts'
 import type { ObjetCollection } from '../../dessins/collections.ts'
+import type { NomEmoji } from '../../images/tables.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 
@@ -39,7 +40,7 @@ export interface Proposition { label: string, valeur: number }
 export interface Question {
   cle: string
   nb: number
-  emoji: string
+  emoji: NomEmoji
   objet: ObjetCollection
   choix: number[]
   reponse: number

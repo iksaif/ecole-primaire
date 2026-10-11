@@ -12,6 +12,7 @@ import type { Rng } from '../../utils/hasard.ts'
 import { tirerUniques } from '../../noyau/uniques.ts'
 import { EMOJI_OBJETS } from '../../dessins/collections.ts'
 import type { ObjetCollection } from '../../dessins/collections.ts'
+import type { NomEmoji } from '../../images/tables.ts'
 import type DEFINITION from './definition.ts'
 
 type Reglages = ReglagesDeDefinition<typeof DEFINITION>
@@ -25,11 +26,11 @@ export const NOMBRE_MAX: Readonly<Partial<Record<Classe, number>>> = { ps: 10, m
 /** Le groupe qui en a le plus, ou « egal » (jamais en PS ni sur la fiche). */
 export type Choix = 'gauche' | 'droite' | 'egal'
 /** Deux groupes d'`emoji` ; `cle` : ce qui fait deux questions « la même » (les nombres, pas le dessin). */
-export interface Question { cle: string, gauche: number, droite: number, emoji: string, reponse: Choix }
+export interface Question { cle: string, gauche: number, droite: number, emoji: NomEmoji, reponse: Choix }
 /** La réponse de l'élève : le groupe touché (ou « egal »). */
 export interface Reponse { choix: Choix }
 
-const emojiAuHasard = (rng: Rng): string => EMOJI_OBJETS[OBJETS[rng.entier(0, OBJETS.length - 1)]]
+const emojiAuHasard = (rng: Rng): NomEmoji => EMOJI_OBJETS[OBJETS[rng.entier(0, OBJETS.length - 1)]]
 
 // PS : comparer « à vue » deux collections dont l'une a au moins deux fois plus d'objets, jusqu'à 10, sans égalité
 // (programme.ts, contraintes PS : comparaisonGlobale)

@@ -53,7 +53,7 @@ verifier(defaut.employe, 'il sait qu’il a rendu un emoji (choix des images dan
 verifier(html.startsWith('<svg') && html.includes('width="8mm"') && html.includes('viewBox="0 0 72 72"') && html.includes('data-image="openmoji"'), 'HTML : un svg de la taille demandée, marqué openmoji')
 verifier(html.includes(COULEUR[EMOJIS.pomme]), 'HTML : le dessin en couleur')
 verifier(html.includes('aria-hidden="true"') && !html.includes('role="img"'), 'HTML sans alt : image décorative')
-verifier(defaut.html('pomme').includes('width="1em"'), 'HTML sans taille : il suit le texte (1em)')
+verifier(defaut.html('pomme').includes('width="1.25em"'), 'HTML sans taille : il suit le texte (1.25em, aussi grand qu’un emoji du système)')
 verifier(defaut.html('pomme', '8mm', 'une "pomme"').includes('aria-label="une &quot;pomme&quot;"'), 'HTML avec alt : lu par les lecteurs d’écran, guillemets échappés')
 verifier(defaut.html('tronc', '8mm').includes('data-image="maison"'), 'la balise dit la source : maison ou openmoji')
 verifier(SCENES.every(n => defaut.html(n, '8mm').includes('border-radius')), 'une scène en carré plein a les coins arrondis')

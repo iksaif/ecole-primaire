@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('comparer.titre') }}</h1>
 
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
@@ -21,7 +21,7 @@
             :disabled="ps ? repondu : undefined" :aria-label="ps ? t('comparer.groupe', { g: lettre(k) }) : undefined"
             @click="ps && repondre(cote)">
             <span class="groupe-label">{{ lettre(k) }}</span>
-            <span class="groupe-objets" v-html="htmlCollection(q[cote], q.emoji, 'objet')"></span>
+            <span class="groupe-objets" v-html="htmlCollection(q[cote], q.emoji, images, 'objet')"></span>
             <!-- le nombre seulement après la réponse : on compare sans compter d'abord -->
             <span class="groupe-nb" :class="{ cache: !repondu }">{{ q[cote] }}</span>
           </component>
@@ -71,6 +71,10 @@ import { questions as tirer, questionsFiche, verifier, NOMBRE_MAX } from '../../
 import type { Choix, Question, Reponse } from '../../exercices/comparer/generateur.ts'
 import { fiche as ficheComparer } from '../../exercices/comparer/fiche.ts'
 import { htmlCollection } from '../../dessins/collections.ts'
+import { useRenduEcran } from '../../images/useRenduEcran.ts'
+
+// les objets à l'écran : la famille choisie (préférence « Images »), en couleur
+const images = useRenduEcran()
 
 const { t } = useLangue()
 // niveau : celui de la barre du haut s'il est de maternelle ; PS : on touche le groupe qui a le plus

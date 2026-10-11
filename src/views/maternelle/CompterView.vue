@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('compter.titre') }}</h1>
 
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
@@ -16,7 +16,7 @@
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <!-- Objets à compter -->
       <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t('compter.combien', { nom: nomObjet(q.objet, T) })" />
-      <div :key="jeu.index.value" class="objets-grille" v-html="htmlCollection(q.nb, q.emoji, 'objet')"></div>
+      <div :key="jeu.index.value" class="objets-grille" v-html="htmlCollection(q.nb, q.emoji, images, 'objet')"></div>
 
       <!-- Choix de réponse ; PS : la quantité en constellation de points (pas de chiffre seul) -->
       <ChoixReponses grand :titre="t('compter.combien', { nom: nomObjet(q.objet, T) })" :options="q.options" :bonne="q.bonne" :repondu="repondu" :libelle="ps ? libelleChoix : null" @choisir="i => jeu.repondre({ choix: i })">
@@ -57,6 +57,11 @@ import { questions as tirer, questionsFiche, verifier, nomObjet, NOMBRE_MAX } fr
 import type { Question, Reponse } from '../../exercices/compter/generateur.ts'
 import { fiche as ficheCompter } from '../../exercices/compter/fiche.ts'
 import { htmlCollection, htmlConstellation } from '../../dessins/collections.ts'
+import { useRenduEcran } from '../../images/useRenduEcran.ts'
+import { caractereEmoji } from '../../images/systeme.ts'
+
+// les objets à l'écran : la famille choisie (préférence « Images »), en couleur
+const images = useRenduEcran()
 
 const { t } = useLangue()
 // niveau : celui de la barre du haut s'il est de maternelle
@@ -73,7 +78,7 @@ const libelleChoix = (i: number): string => String(q.value?.options[i]?.valeur ?
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => t('compter.ilYAvait', { n: q.reponse, emoji: q.emoji }),
+  messageErreur: q => t('compter.ilYAvait', { n: q.reponse, emoji: caractereEmoji(q.emoji) }),
   apresErreur: 1200,
   delai: 1200,
 })

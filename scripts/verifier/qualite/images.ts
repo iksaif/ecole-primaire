@@ -7,8 +7,13 @@ import { compter, lire } from '../../lib/fichiers.ts'
 import type { Compteur } from './compteur.ts'
 import { fichiersDe } from './sources.ts'
 
-/** Un emoji : un pictogramme (Extended_Pictographic), avec ses éventuels sélecteur FE0F et liaisons (🐈‍⬛ compte pour un). */
-const EMOJI = /\p{Extended_Pictographic}️?(?:‍\p{Extended_Pictographic}️?)*/gu
+/**
+ * Un emoji tel qu'il s'affiche : un caractère emoji par défaut (Emoji_Presentation : 🍎), ou un pictogramme suivi du sélecteur FE0F
+ * (☀️), avec ses liaisons (🐈‍⬛ compte pour un). Pas `\p{Extended_Pictographic}` seul : ses données changent avec la version d'Unicode
+ * de Node (★ et ☰ en font partie sous Node 22, plus sous Node 26) et le compte local différait de celui de la CI ; ces caractères
+ * s'affichent d'ailleurs comme du texte. Vérifié le 2026-10-11 : même compte, caractère par caractère, sous Node 22.18 et 26.
+ */
+const EMOJI = /(?:\p{Emoji_Presentation}|\p{Extended_Pictographic}\uFE0F)(?:\u200D(?:\p{Emoji_Presentation}|\p{Extended_Pictographic}\uFE0F?))*/gu
 
 /** Le code typé de src/, hors du socle des images (ses tables nomment les emojis par leur code, pas par leur caractère). */
 const codeTypeHorsImages = (): string[] =>

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ definition.emoji }} {{ titrePage }}</h1>
+    <h1 class="section-heading"><Icone v-if="definition.emoji" :nom="definition.emoji" /> {{ titrePage }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -67,6 +67,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Grammaire : la vue ne fait que les réglages et le rendu d'une question (choix, clic sur des mots, étiquettes à ranger, saisie). C'est le même
 // composant pour les cinq exercices de grammaire (une vue mince par exercice : GrammairePhraseView.vue…), qui lui donnent leur définition, leur
 // catalogue de contenu et le nom de leur section de textes (titre de la page). Niveaux et types : src/exercices/grammaire-*/definition.ts ;

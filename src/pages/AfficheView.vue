@@ -22,7 +22,7 @@
     <template v-if="courant">
       <div class="etroit"><FilAriane :maillons="maillons" :etiquette="t('matiere.fil')" /></div>
       <div class="entete etroit">
-        <h1 class="titre"><span class="emoji" aria-hidden="true">{{ emoji }}</span> {{ titre }}</h1>
+        <h1 class="titre"><Icone v-if="emoji" class="emoji" :nom="emoji" /> {{ titre }}</h1>
         <button type="button" class="btn btn-ghost copier" @click="copierLien"><Icone nom="lien" /> {{ copie ? t('formulaireAffiche.lienCopie') : t('formulaireAffiche.copierLien') }}</button>
       </div>
       <FormulaireAffiche :key="cleFormulaire" :module="courant" :depart="depart" @reglages="ecrireAdresse" />
@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import Icone from '../images/Icone.vue'
+import type { NomIcone } from '../images/icones.ts'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FormulaireAffiche from '../affiches/FormulaireAffiche.vue'
@@ -83,12 +84,15 @@ async function copierLien(): Promise<void> {
 const titre = computed(() => (courant.value ? traducteurAffiche(courant.value.textes, langue.value)('titre') : ''))
 useTitreDePage(() => titre.value)
 // l'icône de l'affiche (celle de sa définition, sinon celle de son domaine) et le fil d'Ariane : Accueil › la matière › l'affiche
-const emoji = computed(() => courant.value?.definition.emoji ?? (courant.value ? EMOJI_DOMAINE[courant.value.definition.domaine] : ''))
+const emoji = computed((): NomIcone | null => {
+  if (!courant.value) return null
+  return courant.value.definition.emoji ?? EMOJI_DOMAINE[courant.value.definition.domaine]
+})
 const matiere = computed(() => (courant.value ? domaineDe(courant.value.definition.domaine)?.matiere ?? null : null))
 const maillons = computed((): Maillon[] => [
   { texte: t('matiere.accueil'), vers: '/', icone: 'accueil' },
   ...(matiere.value && matiere.value in NOM_COURT ? [{ texte: t(NOM_COURT[matiere.value as keyof typeof NOM_COURT]), vers: cheminMatiere(matiere.value) ?? undefined, emoji: EMOJI_MATIERE[matiere.value] }] : []),
-  { texte: titre.value, emoji: emoji.value },
+  { texte: titre.value, emoji: emoji.value ?? undefined },
 ])
 </script>
 

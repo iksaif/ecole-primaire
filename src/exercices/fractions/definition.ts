@@ -16,7 +16,7 @@ export default definir({
   id: 'fractions',
   route: '/maths/fractions',
   domaine: D.nombresCalcul,
-  emoji: '🍕',
+  emoji: 'pizza',
   niveauDefaut: 'ce1',
   competences: [K.fractionsUnitaires, K.fractionsInferieures1, K.fractionsEgales, K.fractionsMesure, K.doublesMoities],
 

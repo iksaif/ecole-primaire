@@ -17,7 +17,7 @@ const SANS_REPRESENTATION = choix(['aucune'])
 const definition = definirAffiche({
   id: 'bande-numerique',
   domaine: D.nombresCalcul,
-  emoji: '🔢',
+  emoji: 'chiffres',
   autresDomaines: [D.regionaleMots],
   langues: CODES,
   bilingue: true,

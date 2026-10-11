@@ -12,7 +12,7 @@ export default definir({
   id: 'ranger',
   route: '/maternelle/ordonner',
   domaine: D.nombresCalcul,
-  emoji: '📶',
+  emoji: 'barres',
   niveauDefaut: 'ms',
   competences: [K.bandeNumerique],
 

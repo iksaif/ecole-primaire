@@ -1,6 +1,6 @@
 <template>
   <div class="ligne" :data-ressource="ressource.id">
-    <span class="emoji" aria-hidden="true">{{ ressource.emoji }}</span>
+    <span class="emoji" aria-hidden="true"><Icone :nom="ressource.emoji" /></span>
     <RouterLink :to="lien" class="titre" :lang="langueTitre">{{ titre }}</RouterLink>
     <span class="genre">{{ t(cleGenre(genreDe(ressource))) }}</span>
     <span v-if="domaine" class="domaine">{{ nomDomaine(ressource.domaine, langueAffichee) }}</span>
@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Une ressource en ligne compacte (vue liste) : emoji, titre, genre, [domaine], classes en pastilles, badges, actions Ouvrir / Imprimer.
 import { computed } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'

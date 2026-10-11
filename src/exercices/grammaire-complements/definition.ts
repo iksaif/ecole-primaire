@@ -15,7 +15,7 @@ export default definir({
   route: '/francais/grammaire-complements',
   domaine: D.grammaire,
   contenu: 'fr',
-  emoji: '📍',
+  emoji: 'punaise',
   niveauDefaut: 'cm1',
   competences: [K.complements],
   bilanParClasse: false,

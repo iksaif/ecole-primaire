@@ -1,11 +1,12 @@
 <template>
   <ul class="badges">
-    <li v-if="badges.jeu" class="badge jeu"><span aria-hidden="true">{{ EMOJI_BADGE.jeu }}</span> {{ t('ressource.enLigne') }}</li>
-    <li v-if="badges.imprimable" class="badge imprimable"><span aria-hidden="true">{{ EMOJI_BADGE.imprimable }}</span> {{ t('ressource.imprimable') }}</li>
+    <li v-if="badges.jeu" class="badge jeu"><span aria-hidden="true"><Icone :nom="EMOJI_BADGE.jeu" /></span> {{ t('ressource.enLigne') }}</li>
+    <li v-if="badges.imprimable" class="badge imprimable"><span aria-hidden="true"><Icone :nom="EMOJI_BADGE.imprimable" /></span> {{ t('ressource.imprimable') }}</li>
   </ul>
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Ce qu'on peut faire d'une ressource : la jouer en ligne, l'imprimer. Les deux badges sont sur la même carte.
 import { useLangue } from '../../langues/useLangue.ts'
 import type { Badges } from '../types.ts'

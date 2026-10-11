@@ -10,7 +10,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'pronoms',
   domaine: D.grammaire,
-  emoji: '👥',
+  emoji: 'silhouettes',
   // paysage seulement : le tableau a deux colonnes larges (trois pronoms dans la case il, elle, on)
   orientations: ['landscape'],
   formats: ['A4', 'A3'],

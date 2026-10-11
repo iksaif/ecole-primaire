@@ -12,7 +12,7 @@ export default definir({
   id: 'lecture',
   route: '/francais/lecture',
   domaine: D.lecture,
-  emoji: '📖',
+  emoji: 'livreOuvert',
   contenu: 'fr',
   // la lecture à voix haute n'a rien à corriger
   corrige: reglages => reglages.mode !== 'texte',

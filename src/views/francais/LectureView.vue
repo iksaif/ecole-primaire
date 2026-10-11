@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('lecture.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('lecture.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
@@ -49,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Lecture : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/lecture/
 // (definition.ts, generateur.ts, fiche.ts) ; textes générés (facultatif, clé saisie par l'utilisateur) : mistral.ts. Exercice de français :
 // le contenu est toujours en français.

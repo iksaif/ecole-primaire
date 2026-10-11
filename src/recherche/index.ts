@@ -17,6 +17,7 @@ import type { Classe, Langue, Ressource, RessourceCompetence, RessourcePage, Typ
 import { LANGUE_SOURCE, LANGUES } from '../langues/registre.ts'
 import { lireFeuille } from '../langues/traduire.ts'
 import { competenceDe, domaineDe } from '../data/programme.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 /** Minuscules, sans accents ; apostrophes, tirets et ponctuation en espaces ; espaces simples ; « c'h » → « ch ». */
 export function normaliser(texte: string): string {
@@ -33,7 +34,8 @@ export interface EntreeRecherche {
   /** titre dans la langue de l'index */
   readonly titre: string
   /** icône de la ressource (celle de son domaine) */
-  readonly emoji: string
+  /** l'icône de la ressource (src/images/icones.ts) */
+  readonly emoji: NomIcone
   /** description dans la langue de l'index ; vide quand la ressource n'en a pas */
   readonly sousTitre: string
   readonly classes: readonly Classe[]

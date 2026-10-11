@@ -13,7 +13,7 @@ export default definir({
   id: 'heure',
   route: '/maths/heure',
   domaine: D.grandeursMesures,
-  emoji: '🕐',   // celui de l'ancien catalogue (l'emoji du domaine, 📏, ne parle pas)
+  emoji: 'horloge',   // celui de l'ancien catalogue (l'emoji du domaine, 📏, ne parle pas)
   niveauDefaut: 'ce1',
   competences: [K.heureEntiere, K.heureDemiQuart, K.heureMinutes, K.durees],
 

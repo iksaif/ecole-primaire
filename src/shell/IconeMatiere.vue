@@ -3,11 +3,12 @@
        le drapeau noir). Décorative : le nom de la matière est écrit à côté. -->
   <span class="icone-matiere" aria-hidden="true">
     <Drapeau v-if="drapeau" :langue="drapeau" />
-    <template v-else>{{ EMOJI_MATIERE[matiere] }}</template>
+    <template v-else><Icone :nom="EMOJI_MATIERE[matiere]" /></template>
   </span>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed } from 'vue'
 import Drapeau from './Drapeau.vue'
 import { SITE } from '../sites.ts'

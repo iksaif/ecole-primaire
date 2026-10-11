@@ -1,6 +1,6 @@
 <template>
   <RouterLink :to="to" class="tuile" :class="{ grande }" :style="{ '--teinte': couleur }">
-    <span class="icone" aria-hidden="true"><Drapeau v-if="drapeau" :langue="drapeau" /><template v-else>{{ emoji }}</template></span>
+    <span class="icone" aria-hidden="true"><Drapeau v-if="drapeau" :langue="drapeau" /><Icone v-else-if="emoji" :nom="emoji" /></span>
     <span class="titre">{{ titre }}</span>
     <span v-if="sous" class="sous" :lang="langueSous">{{ sous }}</span>
     <span v-if="description" class="description">{{ description }}</span>
@@ -8,6 +8,8 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
+import type { NomIcone } from '../images/icones.ts'
 // Une tuile de l'accueil : un lien en grande carte (icône, titre, une ligne). `grande` : la disposition enfant (très grosses
 // tuiles, peu de texte).
 import type { RouteLocationRaw } from 'vue-router'
@@ -17,7 +19,7 @@ import Drapeau from '../shell/Drapeau.vue'
 withDefaults(defineProps<{
   to: RouteLocationRaw
   titre: string
-  emoji?: string
+  emoji?: NomIcone
   drapeau?: Langue
   description?: string
   /** le nom dans la langue régionale, et son code BCP 47 pour l'attribut `lang` */

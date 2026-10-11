@@ -15,7 +15,7 @@ export default definir({
   route: '/francais/grammaire-phrase',
   domaine: D.grammaire,
   contenu: 'fr',
-  emoji: '💬',
+  emoji: 'bulle',
   niveauDefaut: 'ce1',
   competences: [K.phrase],
   bilanParClasse: false,

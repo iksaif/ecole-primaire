@@ -5,7 +5,7 @@
     <h1 class="section-heading" :lang="LANGUE_SOURCE"><span aria-hidden="true"><Icone nom="competence" /></span> {{ competence.libelle }}</h1>
 
     <p class="meta">
-      <span>{{ EMOJI_DOMAINE[competence.domaine] }} {{ t('competence.domaine') }} : <strong>{{ nomDuDomaine(competence.domaine, langueAffichee) }}</strong></span>
+      <span><Icone :nom="EMOJI_DOMAINE[competence.domaine]" /> {{ t('competence.domaine') }} : <strong>{{ nomDuDomaine(competence.domaine, langueAffichee) }}</strong></span>
       <RouterLink v-if="matiere" :to="`/${matiere}`">{{ t('competence.voirMatiere') }}</RouterLink>
     </p>
     <p class="meta classes">

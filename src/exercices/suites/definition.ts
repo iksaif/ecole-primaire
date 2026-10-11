@@ -13,7 +13,7 @@ export default definir({
   id: 'suites',
   route: '/maths/suites',
   domaine: D.nombresCalcul,
-  emoji: '🔢',
+  emoji: 'chiffres',
   niveauDefaut: 'ce1',
   competences: [K.suitesNombres],
 

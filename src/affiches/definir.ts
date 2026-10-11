@@ -13,6 +13,7 @@ import type { Classe, CompetenceId, DomaineId, ValeurReglage } from '../noyau/ty
 import { CODES } from '../langues/registre.ts'
 import { reglagesDeCondition } from './outils.ts'
 import type { DefinitionAffiche, Format, Offertes, Orientation, PlanFormulaire, PoliceAffiche, VarianteAffiche } from './types.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 export { choix, cases, texte, nombre } from '../noyau/declaration.ts'
 
@@ -65,8 +66,8 @@ export interface SpecAffiche<C extends SpecReglages, V extends Record<string, Sp
   prereglages?: Readonly<Record<string, Readonly<Record<string, ValeurReglage>>>>
   /** défaut : /imprimer/affiches */
   route?: string
-  /** emoji de la carte du catalogue (💶 pour les pièces et billets) ; défaut : celui du domaine */
-  emoji?: string
+  /** emoji de la carte du catalogue (une icône de src/images/icones.ts : 'billets' pour les pièces et billets) ; défaut : celui du domaine */
+  emoji?: NomIcone
   marge?: number
   hTitre?: number
   /** toutes les compétences de l'affiche (K.…) */

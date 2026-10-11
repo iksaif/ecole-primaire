@@ -8,7 +8,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'hygiene',
   domaine: D.corpsSante,
-  emoji: '🧼',
+  emoji: 'savon',
   langues: CODES,
   bilingue: true,
   orientations: ['landscape', 'portrait'],

@@ -44,7 +44,7 @@ function variantes() {
 const definition = definirAffiche({
   id: 'conjugaison',
   domaine: D.grammaire,
-  emoji: '✍️',
+  emoji: 'mainQuiEcrit',
   orientations: ['portrait', 'landscape'],
   langues: ['fr'],
   competences: COMPETENCES,

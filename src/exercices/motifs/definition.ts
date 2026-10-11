@@ -9,7 +9,7 @@ export default definir({
   id: 'motifs',
   route: '/maternelle/motifs',
   domaine: D.motifs,
-  emoji: '🔁',
+  emoji: 'boucle',
   niveauDefaut: 'ms',
   competences: [K.motifsMaternelle],
 

@@ -19,7 +19,7 @@ export default definir({
   id: 'mesures',
   route: '/maths/mesures',
   domaine: D.grandeursMesures,
-  emoji: '📏',
+  emoji: 'regle',
   niveauDefaut: 'ce1',
   competences: [K.longueurs, K.masses, K.contenances],
 

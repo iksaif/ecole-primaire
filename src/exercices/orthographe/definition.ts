@@ -31,7 +31,7 @@ export default definir({
   domaine: D.vocabulaire,
   autresDomaines: [D.grammaire],
   contenu: 'fr',
-  emoji: '🔤',
+  emoji: 'lettres',
   niveauDefaut: 'ce1',
   // cycle 2 : orthographe lexicale et accords ; cours moyen : les accords (la couverture annoncée jusqu'ici)
   competences: [K.orthographeLexicale, K.accordsGn],

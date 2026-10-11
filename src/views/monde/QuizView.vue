@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('quiz.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('quiz.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
@@ -34,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Quiz : la vue ne fait que les réglages et le rendu d'une question. Thèmes par classe, générateur et fiche : src/exercices/quiz/ ;
 // questions : src/exercices/quiz/questions/ (une banque par langue de contenu).
 import { computed } from 'vue'

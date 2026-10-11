@@ -10,7 +10,7 @@
       <ul role="group" :aria-labelledby="`${ID_LISTE}-${g.type}`">
         <li v-for="l in g.lignes" :id="idOption(l.position)" :key="l.entree.id" class="option" role="option"
           :aria-selected="l.position === actif" @click="emit('choisir', l.entree)" @mousemove="emit('survol', l.position)">
-          <span class="option-emoji" aria-hidden="true"><Icone v-if="l.entree.type === 'page'" nom="page" /><template v-else>{{ l.entree.emoji }}</template></span>
+          <span class="option-emoji" aria-hidden="true"><Icone :nom="l.entree.emoji" /></span>
           <span class="option-texte">
             <strong><TexteSurligne :texte="l.entree.titre" :requete="requete" /></strong>
             <small v-if="l.entree.sousTitre">{{ l.entree.sousTitre }}</small>

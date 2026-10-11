@@ -21,7 +21,7 @@ const HORS_CE2_REGIONALE = [{
 const definition = definirAffiche({
   id: 'nombres',
   domaine: D.nombresCalcul,
-  emoji: '🔢',
+  emoji: 'chiffres',
   langues: CODES,
   bilingue: true,
   orientations: ['portrait', 'landscape'],

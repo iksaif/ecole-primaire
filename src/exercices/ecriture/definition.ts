@@ -36,7 +36,7 @@ export default definir({
   id: 'ecriture',
   route: '/francais/ecriture',
   domaine: D.ecriture,
-  emoji: '✏️',
+  emoji: 'crayon',
   jeu: false,
   aleatoire: false,
   bilanParClasse: false,

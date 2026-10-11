@@ -120,7 +120,7 @@ const activer = (): Promise<boolean> => choisirMode('bilingue', code.value ?? un
 .fiches-pretes p { flex: 1 1 16rem; }
 .gros-bouton {
   background: var(--bleu-fort); color: white; text-decoration: none; font-weight: 800; border-radius: 8px; padding: .6rem 1rem;
-  min-height: 2.75rem; display: inline-flex; align-items: center;
+  min-height: 2.75rem; display: inline-flex; align-items: center; gap: .4rem;
 }
 button.gros-bouton { border: none; font: inherit; font-weight: 800; padding: .7rem 1.2rem; cursor: pointer; }
 .intro { color: var(--texte-doux); max-width: 640px; margin: -.5rem 0 1rem; }

@@ -1,6 +1,6 @@
 <template>
   <section class="vide" :aria-labelledby="id">
-    <p class="emoji" aria-hidden="true"><Icone v-if="icone" :nom="icone" taille="2.5rem" /><template v-else>{{ emoji }}</template></p>
+    <p class="emoji" aria-hidden="true"><Icone :nom="icone ?? emoji ?? 'travaux'" /></p>
     <h2 :id="id">{{ titre }}</h2>
     <p v-if="texte" class="texte">{{ texte }}</p>
     <div class="actions"><slot /></div>
@@ -9,13 +9,13 @@
 
 <script setup lang="ts">
 // État vide expliqué : jamais une page cassée quand une liste n'a (encore) rien à montrer. Les textes sont déjà traduits ; le
-// contenu par défaut (slot) accueille un lien ou un bouton. `emoji` : un contenu (domaine, « à venir ») ; `icone` : une notion de
-// l'interface (le verrou d'une langue inactive), dessinée par <Icone>.
+// contenu par défaut (slot) accueille un lien ou un bouton. `emoji` ou `icone` : son icône
+// (src/images/icones.ts : « à venir », le verrou d'une langue inactive), dessinée par <Icone>.
 import { useId } from 'vue'
 import Icone from '../../images/Icone.vue'
 import type { NomIcone } from '../../images/icones.ts'
 
-defineProps<{ emoji?: string, icone?: NomIcone, titre: string, texte?: string }>()
+defineProps<{ emoji?: NomIcone, icone?: NomIcone, titre: string, texte?: string }>()
 const id = useId()
 </script>
 

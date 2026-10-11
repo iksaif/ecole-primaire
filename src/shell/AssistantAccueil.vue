@@ -20,7 +20,7 @@
             <div v-if="choixDeProfil" role="group" aria-labelledby="assistant-question">
               <p id="assistant-question" class="question">{{ t('assistant.profil.question') }}</p>
               <button v-for="p in profilsAssistant" :key="p" type="button" class="option" :aria-pressed="contexte.profil === p" @click="choisirProfilEtAvancer(p)">
-                <span class="icone" aria-hidden="true">{{ EMOJI_PROFIL[p] }}</span>
+                <span class="icone" aria-hidden="true"><Icone :nom="EMOJI_PROFIL[p]" /></span>
                 <span><strong>{{ t(`shell.profil.${p}`) }}</strong><small>{{ t(`assistant.profil.${p}Desc`) }}</small></span>
               </button>
             </div>

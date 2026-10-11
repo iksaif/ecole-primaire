@@ -1,13 +1,14 @@
 <template>
   <div role="group" :aria-label="t('shell.profil.titre')">
     <button v-for="p in proposes" :key="p" type="button" class="option" :aria-pressed="contexte.profil === p" @click="choisir(p)">
-      <span class="icone" aria-hidden="true">{{ EMOJI_PROFIL[p] }}</span>
+      <span class="icone" aria-hidden="true"><Icone :nom="EMOJI_PROFIL[p]" /></span>
       <span><strong>{{ t(`shell.profil.${p}`) }}</strong><small>{{ t(`shell.profil.${p}Desc`) }}</small></span>
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Le choix du profil (pastille de la barre, menu mobile, réglages). Passer à « enfant » change presque tout (classe verrouillée, pages
 // simplifiées) : depuis une page quelconque, on revient à l'accueil, sauf là où l'on choisit son profil (accueil, réglages).
 import { computed } from 'vue'

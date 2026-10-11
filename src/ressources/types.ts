@@ -14,6 +14,7 @@ import type { CleTexte } from '../langues/traduire.ts'
 import type { Langue } from '../langues/registre.ts'
 import type { NiveauConfiance } from '../langues/confiance.ts'
 import type { Texte, Usage } from '../telechargements/types.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 export type { Classe, CompetenceId, DomaineId, Matiere, Langue, Usage }
 
@@ -31,7 +32,8 @@ interface Commun {
   readonly titre: Libelle
   /** une phrase, ou `null` quand la ressource n'en a pas (rien n'est inventé) */
   readonly description: Libelle | null
-  readonly emoji: string
+  /** son icône (src/images/icones.ts) : celle de sa définition, sinon celle de son domaine */
+  readonly emoji: NomIcone
   /** classes concernées (une ressource multi-classes y est une seule fois) ; vide pour une page : toutes les classes */
   readonly classes: readonly Classe[]
   readonly competences: readonly CompetenceId[]

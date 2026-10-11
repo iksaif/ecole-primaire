@@ -1,12 +1,13 @@
 <template>
   <nav v-if="groupes.length > 1" class="saut" :aria-label="t('matiere.domaines')">
     <button v-for="g in groupes" :key="g.domaine" type="button" class="pastille" @click="aller(g.domaine)">
-      <span aria-hidden="true">{{ emojiGroupe(g.domaine, EMOJI_DOMAINE) }}</span> {{ nomGroupe(g.domaine, langueAffichee) }}
+      <span aria-hidden="true"><Icone :nom="emojiGroupe(g.domaine, EMOJI_DOMAINE)" /></span> {{ nomGroupe(g.domaine, langueAffichee) }}
     </button>
   </nav>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Pastilles de saut vers les domaines de la page (seulement s'il y en a plusieurs d'affichés) : ouvre le domaine, y fait défiler
 // la page et y place le focus (sans animation si le lecteur demande moins de mouvement).
 import { nextTick } from 'vue'

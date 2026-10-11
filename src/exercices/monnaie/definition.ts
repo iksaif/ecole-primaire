@@ -17,7 +17,7 @@ export default definir({
   id: 'monnaie',
   route: '/maths/monnaie',
   domaine: D.grandeursMesures,
-  emoji: '💶',   // la carte du catalogue : de l'argent, pas la règle du domaine « grandeurs et mesures »
+  emoji: 'billets',   // la carte du catalogue : de l'argent, pas la règle du domaine « grandeurs et mesures »
   niveauDefaut: 'ce1',
   competences: [K.monnaieEuros, K.monnaieCentimes],
 

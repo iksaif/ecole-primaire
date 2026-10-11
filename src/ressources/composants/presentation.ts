@@ -1,4 +1,4 @@
-// Présentation commune des ressources : emojis (une seule table par notion), genre affiché, noms de domaine, adresses d'action.
+// Présentation commune des ressources : icônes (src/images/icones.ts, une seule table par notion), genre affiché, noms de domaine, adresses d'action.
 // Pur (lisible par node).
 import type { RouteLocationRaw } from 'vue-router'
 import type { Vue } from '../../contexte/types.ts'
@@ -10,11 +10,11 @@ import type { Classe, DomaineId, Langue, Matiere, RessourceDeContenu, Usage } fr
 import type { NomIcone } from '../../images/icones.ts'
 
 // langue régionale : 🗣️ quand il faut du texte ; les pages montrent son drapeau dessiné (IconeMatiere : le Gwenn-ha-du n'existe pas en emoji)
-export const EMOJI_MATIERE: Readonly<Record<Matiere, string>> = { maths: '🔢', francais: '📝', monde: '🌍', regionale: '🗣️' }
-export const EMOJI_BADGE = { jeu: '🎮', imprimable: '🖨️' } as const
-export const EMOJI_USAGE: Readonly<Record<Usage, string>> = { apprendre: '🖼️', sentrainer: '✏️' }
+export const EMOJI_MATIERE: Readonly<Record<Matiere, NomIcone>> = { maths: 'chiffres', francais: 'blocNotes', monde: 'terre', regionale: 'parole' }
+export const EMOJI_BADGE = { jeu: 'manette', imprimable: 'imprimante' } as const satisfies Readonly<Record<string, NomIcone>>
+export const EMOJI_USAGE: Readonly<Record<Usage, NomIcone>> = { apprendre: 'tableau', sentrainer: 'crayon' }
 export const ICONE_VUE: Readonly<Record<Vue, NomIcone>> = { cartes: 'vueCartes', liste: 'vueListe' }
-export const EMOJI_ACCUEIL = { programme: '📚', fiches: '📄', aVenir: '🚧' } as const
+export const EMOJI_ACCUEIL = { programme: 'livres', fiches: 'feuille', aVenir: 'travaux' } as const satisfies Readonly<Record<string, NomIcone>>
 
 /**
  * L'école d'une classe, qui choisit l'article quand on lit une plage en entier (`ressource.plage`) : « de la PS » (maternelle),
@@ -36,8 +36,11 @@ export function nomGroupe(id: string, langue: Langue): string {
   const feuille = lireFeuille(LANGUES[langue].textes, 'ressource.plusieursDomaines') ?? lireFeuille(LANGUES[LANGUE_SOURCE].textes, 'ressource.plusieursDomaines')
   return typeof feuille === 'string' ? feuille : id
 }
-/** L'emoji d'un groupe : celui du domaine, ou 🧭 pour « Plusieurs domaines ». */
-export const emojiGroupe = (id: string, emojis: Readonly<Record<string, string>>): string => (id === 'plusieurs-domaines' ? '🧭' : emojis[id] ?? '')
+/** L'icône d'un groupe : celle du domaine, ou la boussole pour « Plusieurs domaines » (et un domaine inconnu). */
+export function emojiGroupe(id: string, emojis: Readonly<Record<string, NomIcone>>): NomIcone {
+  if (id === 'plusieurs-domaines') return 'boussole'
+  return emojis[id] ?? 'boussole'
+}
 
 export function nomDomaine(id: DomaineId, langue: Langue): string {
   const feuille = lireFeuille(LANGUES[langue].textes, `domaines.${id}`) ?? lireFeuille(LANGUES[LANGUE_SOURCE].textes, `domaines.${id}`)

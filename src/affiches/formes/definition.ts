@@ -20,7 +20,7 @@ const BONUS = choix([false], { bonus: [true] })
 const definition = definirAffiche({
   id: 'formes',
   domaine: D.espaceGeometrie,
-  emoji: '🔷',   // celui de l'ancienne entrée « Figures et solides » (src/data/activites.js)
+  emoji: 'losange',   // celui de l'ancienne entrée « Figures et solides » (src/data/activites.js)
   // portrait seulement (une grille de cartes), A4 ou A3 ; une langue par feuille
   orientations: ['portrait'],
   langues: CODES,

@@ -11,7 +11,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'horloge',
   domaine: D.grandeursMesures,
-  emoji: '🕐',   // celui de l'ancienne entrée « L'horloge » (src/data/activites.js)
+  emoji: 'horloge',   // celui de l'ancienne entrée « L'horloge » (src/data/activites.js)
   orientations: ['landscape'],
   langues: CODES,
   competences: [K.heureEntiere, K.heureDemiQuart, K.heureMinutes],

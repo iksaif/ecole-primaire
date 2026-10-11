@@ -4,7 +4,7 @@
     <ul>
       <li v-for="e in elements" :key="e.ressource.id">
         <RouterLink :to="e.ressource.route" class="element">
-          <span class="emoji" aria-hidden="true">{{ e.ressource.emoji }}</span>
+          <span class="emoji" aria-hidden="true"><Icone :nom="e.ressource.emoji" /></span>
           <span class="texte">
             <strong>{{ e.titre }}</strong>
             <small v-if="!gros">{{ e.detail }}</small>

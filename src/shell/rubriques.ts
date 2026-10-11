@@ -11,10 +11,8 @@ export type CleRubrique = 'shell.rubriques.maths' | 'shell.rubriques.francais' |
 export interface Rubrique {
   readonly id: 'maths' | 'francais' | 'monde' | 'regionale' | 'programme'
   readonly chemin: string
-  /** emoji devant le nom (une matière) ; absent pour la langue régionale (son drapeau le remplace) */
-  readonly emoji?: string
-  /** icône d'interface à la place de l'emoji (le programme n'est pas une matière) */
-  readonly icone?: NomIcone
+  /** icône devant le nom (une matière, le programme) ; absente pour la langue régionale (son drapeau la remplace) */
+  readonly emoji?: NomIcone
   /** clé du nom ; absente pour la langue régionale (son nom, dans elle-même, vient du registre) */
   readonly cle?: CleRubrique
   readonly langue?: Langue
@@ -24,11 +22,11 @@ export interface Rubrique {
 
 export function rubriques(regionale: Langue | null, profil: Profil): Rubrique[] {
   return [
-    { id: 'maths', chemin: '/maths', emoji: '🔢', cle: 'shell.rubriques.maths', sous: ['/maths'] },
-    { id: 'francais', chemin: '/francais', emoji: '📝', cle: 'shell.rubriques.francais', sous: ['/francais'] },
-    { id: 'monde', chemin: '/monde', emoji: '🌍', cle: 'shell.rubriques.monde', sous: ['/monde'] },
+    { id: 'maths', chemin: '/maths', emoji: 'chiffres', cle: 'shell.rubriques.maths', sous: ['/maths'] },
+    { id: 'francais', chemin: '/francais', emoji: 'blocNotes', cle: 'shell.rubriques.francais', sous: ['/francais'] },
+    { id: 'monde', chemin: '/monde', emoji: 'terre', cle: 'shell.rubriques.monde', sous: ['/monde'] },
     ...(regionale ? [{ id: 'regionale', chemin: cheminRegional(regionale), langue: regionale, sous: [cheminRegional(regionale)] } as const] : []),
-    ...(profil === 'enseignant' ? [{ id: 'programme', chemin: '/programme', icone: 'programme', cle: 'shell.rubriques.programme', sous: ['/programme', '/competence'] } as const] : []),
+    ...(profil === 'enseignant' ? [{ id: 'programme', chemin: '/programme', emoji: 'programme', cle: 'shell.rubriques.programme', sous: ['/programme', '/competence'] } as const] : []),
   ]
 }
 

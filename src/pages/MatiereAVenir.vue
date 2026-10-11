@@ -1,13 +1,13 @@
 <template>
   <section class="a-venir" aria-labelledby="a-venir-titre">
-    <h2 id="a-venir-titre"><span aria-hidden="true">{{ EMOJI_ACCUEIL.aVenir }}</span> {{ t('matiere.aVenirTitre') }}</h2>
+    <h2 id="a-venir-titre"><span aria-hidden="true"><Icone :nom="EMOJI_ACCUEIL.aVenir" /></span> {{ t('matiere.aVenirTitre') }}</h2>
     <p class="texte">{{ t('matiere.aVenirTexte', { classes: texteClasses(classes) }) }}</p>
     <ul class="domaines">
       <li v-for="d in domaines" :key="d" class="domaine" :data-domaine="d">
-        <span class="emoji" aria-hidden="true">{{ EMOJI_DOMAINE[d] }}</span>
+        <span class="emoji" aria-hidden="true"><Icone :nom="EMOJI_DOMAINE[d]" /></span>
         <span class="nom">{{ nomDomaine(d, langueAffichee) }}</span>
         <span class="cycle">{{ cyclesDuDomaine(d, classes).map(n => t('matiere.cycle', { n })).join(', ') }}</span>
-        <span class="badge">{{ EMOJI_ACCUEIL.aVenir }} {{ t('matiere.aVenirBadge') }}</span>
+        <span class="badge"><Icone :nom="EMOJI_ACCUEIL.aVenir" /> {{ t('matiere.aVenirBadge') }}</span>
       </li>
     </ul>
     <p><RouterLink to="/programme" class="programme">{{ t('matiere.programme') }}</RouterLink></p>
@@ -15,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Les domaines du programme (des cycles de la classe) qui n'ont encore aucune ressource : annoncés « à venir », jamais inventés.
 import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'

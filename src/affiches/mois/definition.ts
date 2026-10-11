@@ -12,7 +12,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'mois',
   domaine: D.tempsEspace,
-  emoji: '🗓️',
+  emoji: 'calendrierSpirale',
   autresDomaines: [D.histoire, D.regionaleMots],
   langues: CODES,
   bilingue: true,

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('ranger.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('ranger.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Ranger les nombres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/ranger/ (definition.ts, generateur.ts, fiche.ts). Le rangement par clics : <OrdonnerClics>.
 import { ref } from 'vue'

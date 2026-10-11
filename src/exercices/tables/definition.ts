@@ -19,7 +19,7 @@ export default definir({
   id: 'tables',
   route: '/maths/tables',
   domaine: D.nombresCalcul,
-  emoji: '✖️',
+  emoji: 'multiplication',
   niveauDefaut: 'ce2',
   competences: [K.tablesMultiplication],
 

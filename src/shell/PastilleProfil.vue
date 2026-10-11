@@ -2,7 +2,7 @@
   <!-- pastille « 🧒 / 👨‍👩‍👧 / 🧑‍🏫 » : ouvre le choix du profil (ne change que la disposition, rien n'est verrouillé) -->
   <div ref="racine" class="menu-deroulant" @keydown="touche" @focusout="sortie">
     <button ref="bouton" type="button" class="nbtn avec-pastille" :aria-expanded="ouvert" aria-controls="menu-profil" :aria-label="libelle" @click="basculer">
-      <span aria-hidden="true">{{ EMOJI_PROFIL[contexte.profil] }}</span><span class="nom-profil" :class="{ long: nomProfil.length > 7 }" aria-hidden="true">{{ nomProfil }}</span><!-- mode enseignant : une idée en construction (src/contexte/enseignant.ts) ; le texte visible (« Enseignant bêta ») fait partie du nom accessible -->
+      <span aria-hidden="true"><Icone :nom="EMOJI_PROFIL[contexte.profil]" /></span><span class="nom-profil" :class="{ long: nomProfil.length > 7 }" aria-hidden="true">{{ nomProfil }}</span><!-- mode enseignant : une idée en construction (src/contexte/enseignant.ts) ; le texte visible (« Enseignant bêta ») fait partie du nom accessible -->
       <span v-if="enseignant" class="beta" :title="t('shell.enseignant.pastilleTitre')" aria-hidden="true">{{ t('shell.enseignant.pastille') }}</span><span aria-hidden="true">▾</span>
     </button>
     <div v-if="ouvert" id="menu-profil" class="menu-panneau">
@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { useLangue } from '../langues/useLangue.ts'

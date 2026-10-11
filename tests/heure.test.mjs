@@ -17,7 +17,7 @@ const reglages = (niveau, extra = {}) => reglagesDuNiveau(definition, { niveau, 
 console.log('Les adresses publiées ne changent pas')
 const slugs = [...['cp', 'ce1', 'ce2'].map(n => slugBilan('heure', n)), ...definition.fiches.map(f => slugFiche('heure', f))]
 ok(slugs.join() === 'exercices-heure-cp,exercices-heure-ce1,exercices-heure-ce2,exercices-heure-ce1-lire,exercices-heure-ce2-lire,exercices-heure-ce1-durees,exercices-heure-ce2-durees', 'bilans du CP, du CE1 et du CE2, fiches « lire » et « durées »')
-ok(definition.route === '/maths/heure' && Object.keys(definition.niveaux).join() === 'cp,ce1,ce2' && definition.emoji === '🕐', 'route, niveaux et emoji')
+ok(definition.route === '/maths/heure' && Object.keys(definition.niveaux).join() === 'cp,ce1,ce2' && definition.emoji === 'horloge', 'route, niveaux et icône')
 
 console.log("Les listes du catalogue (séparées par « | ») ont la même taille dans chaque langue")
 for (const l of CODES) {

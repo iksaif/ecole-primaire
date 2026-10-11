@@ -7,7 +7,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'eau',
   domaine: D.matiere,
-  emoji: '💧',
+  emoji: 'goutte',
   langues: CODES,
   bilingue: true,
   orientations: ['landscape', 'portrait'],

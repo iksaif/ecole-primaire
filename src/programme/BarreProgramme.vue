@@ -3,13 +3,13 @@
     <div class="groupe" role="group" :aria-label="t('programme.matiere.legende')">
       <button v-for="m in matieres" :key="m" type="button" class="choix" :aria-pressed="etat.matiere === m" @click="emit('matiere', m)">
         <IconeMatiere v-if="m === 'regionale'" matiere="regionale" />
-        <span v-else aria-hidden="true">{{ EMOJI_MATIERE[m] }}</span> {{ nomMatiere(m) }}
+        <span v-else aria-hidden="true"><Icone :nom="EMOJI_MATIERE[m]" /></span> {{ nomMatiere(m) }}
       </button>
     </div>
     <ChoixClassesProgramme />
     <div v-if="domaines.length" class="groupe" role="group" :aria-label="t('programme.domaine.legende')">
       <button v-for="d in domaines" :key="d" type="button" class="choix" :aria-pressed="etat.domaine === d" @click="emit('domaine', d)">
-        <span aria-hidden="true">{{ EMOJI_DOMAINE[d as DomaineId] }}</span> {{ nomDuDomaine(d, langueAffichee) }}
+        <span aria-hidden="true"><Icone :nom="EMOJI_DOMAINE[d as DomaineId]" /></span> {{ nomDuDomaine(d, langueAffichee) }}
       </button>
     </div>
     <p v-else class="vide">{{ t('programme.domaine.aucun') }}</p>

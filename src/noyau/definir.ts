@@ -16,6 +16,7 @@ import type { ReglagesDe, SpecReglages } from './declaration.ts'
 import { plageDeClasses } from '../data/classes.ts'
 import type { ClassesDe, NotationClasses } from '../data/classes.ts'
 import type { Classe, CompetenceId, Config, DefinitionExercice, DomaineId, FicheExercice } from './types.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 // `choix`, `cases`, `herite`, `decrireChoix`… s'importent d'ici comme avant : la déclaration commune est dans declaration.ts
 export { choix, cases, estChoix, decrireChoix, NB_LIBRE } from './declaration.ts'
@@ -59,8 +60,8 @@ export interface SpecExercice<C extends SpecReglages, N extends Partial<Record<C
   /** route de l'app (« /maths/heure ») */
   route: string
   domaine: DomaineId
-  /** emoji de la carte du catalogue (💶 pour la monnaie) ; défaut : celui du domaine */
-  emoji?: string
+  /** emoji de la carte du catalogue (une icône de src/images/icones.ts : 'billets' pour la monnaie) ; défaut : celui du domaine */
+  emoji?: NomIcone
   /** 'fr' : exercice de français, contenu toujours en français ; 'interface' (défaut) : le contenu suit la langue de l'interface */
   contenu?: 'fr' | 'interface'
   /** `false` : exercice « fiche seule » (pas de jeu en ligne : ni `questions` ni `verifier`, pas d'onglet « Jouer »). Défaut : `true` */

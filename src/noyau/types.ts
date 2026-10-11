@@ -12,6 +12,7 @@ import type { CompetenceId, DomaineId, Contraintes } from '../data/programme.ts'
 import type { Rng } from '../utils/hasard.ts'
 import type { CatalogueContenu } from '../langues/catalogue.ts'
 import type { ImagesFiche } from '../images/preference.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 export type { Classe, CompetenceId, DomaineId, Contraintes, Rng }
 
@@ -103,8 +104,8 @@ export interface DefinitionExercice<R extends object = Reglages> {
   /** route de l'app (« /maths/heure ») */
   route: string
   domaine: DomaineId
-  /** emoji de la carte du catalogue ; défaut : celui du domaine */
-  emoji?: string
+  /** emoji de la carte du catalogue (une icône de src/images/icones.ts) ; défaut : celui du domaine */
+  emoji?: NomIcone
   /** langue du contenu : 'fr' pour un exercice de français (toujours en français), sinon celle de l'interface */
   contenu: 'fr' | 'interface'
   /**

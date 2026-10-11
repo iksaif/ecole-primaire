@@ -10,7 +10,7 @@ export default definir({
   id: 'formes',
   route: '/maternelle/formes',
   domaine: D.espaceGeometrie,
-  emoji: '🔷',
+  emoji: 'losange',
   niveauDefaut: 'ms',
   competences: [K.formesMaternelle],
 

@@ -15,7 +15,7 @@ export default definir({
   route: '/monde/quiz',
   domaine: D.vivant,
   autresDomaines: [D.corpsSante, D.matiere, D.geographie, D.histoire],
-  emoji: '🌍',
+  emoji: 'terre',
   competences: [
     K.observerEnvironnement, K.chainesAlimentaires, K.deplacementsAnimaux, K.croissanceReproduction,
     K.eauEtats, K.electricite, K.besoinsVivants, K.mouvementEffort, K.digestion, K.lumiereOmbres,

@@ -16,7 +16,7 @@ export default definir({
   id: 'lettres',
   route: '/maternelle/lettres',
   domaine: D.lecture,
-  emoji: '🔡',
+  emoji: 'minuscules',
   niveauDefaut: 'gs',
   // dans la langue régionale, l'alphabet de cette langue (T('alphabet'), textes.ts)
   autresDomaines: [D.regionaleSons],

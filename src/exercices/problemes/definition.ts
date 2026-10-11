@@ -13,7 +13,7 @@ export default definir({
   id: 'problemes',
   route: '/maths/problemes',
   domaine: D.nombresCalcul,
-  emoji: '🧩',
+  emoji: 'puzzle',
   niveauDefaut: 'ce1',
   competences: [K.problemesAdditifs, K.problemesMultiplicatifs, K.problemesEtapes],
 

@@ -13,7 +13,7 @@ export default definir({
   id: 'geometrie',
   route: '/maths/geometrie',
   domaine: D.espaceGeometrie,
-  emoji: '📐',
+  emoji: 'equerre',
   niveauDefaut: 'ce1',
   competences: [K.figuresPlanes, K.solides, K.tracerFigures, K.reperageDeplacements, K.symetrie, K.angleDroit, K.patrons],
 

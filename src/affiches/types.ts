@@ -4,6 +4,7 @@ import type { Classe, CompetenceId, DomaineId, NiveauExercice, OptionsDe, Reglag
 import type { Champ } from '../noyau/declaration.ts'
 import type { Format, Orientation } from '../utils/page.ts'
 import type { RenduImages } from '../images/rendu.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 export type { Format, Orientation }
 
@@ -105,8 +106,8 @@ export interface DefinitionAffiche<R extends object = Reglages> {
   formulaire: PlanFormulaire
   /** page du formulaire « Personnaliser » */
   route: string
-  /** emoji de la carte du catalogue ; défaut : celui du domaine */
-  emoji?: string
+  /** emoji de la carte du catalogue (une icône de src/images/icones.ts) ; défaut : celui du domaine */
+  emoji?: NomIcone
   /** marge et hauteur du titre (mm, agrandis en A3) ; défauts du cadre */
   marge?: number
   hTitre?: number

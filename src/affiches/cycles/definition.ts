@@ -7,7 +7,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'cycles',
   domaine: D.vivant,
-  emoji: '🐣',
+  emoji: 'poussin',
   langues: CODES,
   bilingue: true,
   orientations: ['landscape', 'portrait'],

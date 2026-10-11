@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('ecriture.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('ecriture.titre') }}</h1>
     <p class="intro">{{ t('ecriture.intro') }}</p>
 
     <CadreExercice fiche-seule :mode="mode" :fiche="fiche" :config="config" :aleatoire="false" :police="false">
@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Écriture : une fiche seule (pas de partie à l'écran), sans hasard. La vue ne fait que les réglages ; la fiche (lignage Seyès, modèle,
 // copies grises) est dans src/exercices/ecriture/ (definition.ts, generateur.ts, fiche.ts). La mesure du texte est celle du navigateur
 // (canvas), une fois les polices chargées : la fiche est recalculée quand elles le sont.

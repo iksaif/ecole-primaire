@@ -3,7 +3,7 @@
        la classe (verrouillée) et le profil ; au téléphone (≤ 640 px) : logo, recherche, classe, ☰ (le menu porte le reste).
        `data-repere` : les éléments que la visite guidée montre (src/shell/assistant.ts). -->
   <header class="nav" :class="{ enfant, regional: modeRegionalSeul }">
-    <RouterLink to="/" class="logo" :aria-label="t('shell.logoTitre', { nom: SITE.nom })">{{ SITE.emoji }} {{ SITE.nom }}</RouterLink>
+    <RouterLink to="/" class="logo" :aria-label="t('shell.logoTitre', { nom: SITE.nom })"><Icone :nom="SITE.emoji" /> {{ SITE.nom }}</RouterLink>
     <nav v-if="!enfant" class="rubriques" :aria-label="t('shell.barre.rubriques')">
       <ul class="nav-links">
         <li v-for="r in liens" :key="r.id" :data-repere="r.id === 'programme' ? 'programme' : undefined"><LienRubrique :rubrique="r" /></li>

@@ -9,7 +9,7 @@
       @matiere="choisirMatiere" @domaine="choisirDomaine" @affichage="choisirAffichage" />
 
     <section v-if="etat.domaine" class="domaine" aria-labelledby="h-domaine">
-      <h2 id="h-domaine">{{ EMOJI_DOMAINE[etat.domaine] }} {{ nomDuDomaine(etat.domaine, langueAffichee) }}</h2>
+      <h2 id="h-domaine"><Icone :nom="EMOJI_DOMAINE[etat.domaine]" /> {{ nomDuDomaine(etat.domaine, langueAffichee) }}</h2>
       <TableauProgramme v-if="affichage === 'tableau'" :lignes="lignes" :classes="contexte.classes" :domaine="etat.domaine" :refs="contexte.refs" :reportes="reportes" />
       <ListeProgramme v-else :lignes="lignes" :classes="contexte.classes" :refs="contexte.refs" :reportes="reportes" />
     </section>

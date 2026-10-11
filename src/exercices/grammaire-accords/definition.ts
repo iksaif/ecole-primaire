@@ -15,7 +15,7 @@ export default definir({
   route: '/francais/grammaire-accords',
   domaine: D.grammaire,
   contenu: 'fr',
-  emoji: '🤝',
+  emoji: 'poigneeDeMains',
   niveauDefaut: 'ce1',
   competences: [K.accordsGn],
   bilanParClasse: false,

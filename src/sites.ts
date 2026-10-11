@@ -3,13 +3,15 @@
 // réglage de l'utilisateur (langue d'interface, langue régionale) décide, et c'est lui qui est mémorisé.
 // Pur : lisible par node (le script de build passe l'identifiant du site ; `import.meta.env` n'existe que dans Vite).
 import type { Langue } from './langues/registre.ts'
+import type { NomIcone } from './images/icones.ts'
 
 export interface Site {
   /** identifiant (clé de SITES, valeur de VITE_SITE) */
   id: string
   nom: string
   /** icône du logo dans l'en-tête */
-  emoji: string
+  /** l'icône du logo (src/images/icones.ts) */
+  emoji: NomIcone
   /** <title> et titre de partage */
   titre: string
   description: string
@@ -43,7 +45,7 @@ export const SITES = {
   ecoleprimaire: {
     id: 'ecoleprimaire',
     nom: 'École Primaire',
-    emoji: '📚',
+    emoji: 'livres',
     titre: 'École Primaire — Maternelle et élémentaire : exercices et fiches à imprimer',
     description: 'Exercices interactifs et fiches à imprimer gratuites pour la maternelle et l’élémentaire : écriture, alphabet, calcul, maths, français. Sans compte, sans publicité.',
     url: 'https://ecoleprimaire.app/',
@@ -61,7 +63,7 @@ export const SITES = {
   skoolik: {
     id: 'skoolik',
     nom: 'Skoolik',
-    emoji: '📚',
+    emoji: 'livres',
     titre: 'Skoolik — Poelladennoù ha fichennoù da voullañ',
     description: 'Poelladennoù ha fichennoù digoust da voullañ, e galleg hag e brezhoneg — exercices et fiches à imprimer pour les écoles bilingues : écriture, alphabet breton, calcul, nombres.',
     url: 'https://skoolik.app/',

@@ -75,8 +75,8 @@ partout. Décision du 2026-10-11 (après un essai de Phosphor, au trait, jugé t
 
 - `icones.ts` : `ICONES`, nom → code OpenMoji (`imprimer: '1F5A8'`), une table à part des contenus (`tables.ts`) ; `CARACTERES` : le
   caractère d'une icône qui n'a pas d'emoji (le menu : ☰).
-- `donnees/interface.ts` : les dessins OpenMoji, **générés** par `node scripts/generer/icones.ts`. Un lot à part (environ 24 Ko gzip,
-  budget de 40 Ko dans `tests/images.test.mjs`), **chargé seulement si l'on choisit les dessins du site** (`chargerDessinsInterface`,
+- `donnees/interface.ts` : les dessins OpenMoji, **générés** par `node scripts/generer/icones.ts`. Un lot à part (environ 44 Ko gzip avec les identités du catalogue,
+  budget de 60 Ko dans `tests/images.test.mjs`), **chargé seulement si l'on choisit les dessins du site** (`chargerDessinsInterface`,
   `useImagesFiche.ts`) : le paquet principal ne le porte pas. En attendant qu'il arrive, l'icône est l'emoji de l'appareil.
 - `<Icone nom="imprimer" />` : décorative à côté d'un texte ; seule dans un bouton, `libelle` (lu par les lecteurs d'écran). Sans
   `taille`, l'emoji suit le texte (le dessin OpenMoji, 1.4em, car sa marge le rend plus petit). Dans du HTML construit en chaîne :

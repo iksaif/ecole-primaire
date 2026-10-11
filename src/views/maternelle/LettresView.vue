@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('lettres.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('lettres.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -43,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Les lettres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/lettres/
 // (definition.ts, generateur.ts, fiche.ts). Le contenu (alphabet, fiche) suit la langue du contenu (textes.ts : alphabet breton en breton).
 // Revue du 2026-10-07 (plans/critique-lettres-2026-10-07.md) : nom dit à voix haute, écritures par classe, polices scolaires.

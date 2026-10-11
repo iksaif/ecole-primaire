@@ -8,7 +8,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'phrase',
   domaine: D.grammaire,
-  emoji: '✍️',
+  emoji: 'mainQuiEcrit',
   // portrait seulement : ce sont des affiches de texte en bandes, illisibles en deux colonnes étroites
   orientations: ['portrait'],
   formats: ['A4', 'A3'],

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('conjugaison.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('conjugaison.titre') }}</h1>
 
     <!-- Config -->
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
@@ -61,6 +61,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Conjugaison : la vue ne fait que les réglages et le rendu d'un tableau. Niveaux, générateur et fiche : src/exercices/conjugaison/
 // (definition.ts, generateur.ts, fiche.ts) ; formes : src/data/conjugaison.js. Exercice de français : la fiche est toujours en français,
 // l'interface suit la langue choisie.

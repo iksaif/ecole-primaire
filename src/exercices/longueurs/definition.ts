@@ -8,7 +8,7 @@ export default definir({
   id: 'longueurs',
   route: '/maternelle/longueurs',
   domaine: D.grandeursMesures,
-  emoji: '📏',
+  emoji: 'regle',
   niveauDefaut: 'ms',
   competences: [K.comparerLongueursMaternelle],
 

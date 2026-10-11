@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('vocabulaire.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('vocabulaire.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Vocabulaire : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/vocabulaire/
 // (definition.ts, generateur.ts, fiche.ts) ; corpus : src/data/vocabulaire.js. Exercice de français : la fiche est toujours en français,
 // l'interface (consignes, explications) suit la langue choisie ; les textes calculés des questions sont lus avec `tr` (section vocabulaire).

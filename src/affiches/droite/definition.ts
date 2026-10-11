@@ -9,7 +9,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'droite',
   domaine: D.nombresCalcul,
-  emoji: '📏',
+  emoji: 'regle',
   orientations: ['landscape', 'portrait'],
   langues: CODES,
   bilingue: true,

@@ -8,7 +8,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'espace',
   domaine: D.tempsEspace,
-  emoji: '📦',
+  emoji: 'carton',
   langues: CODES,
   bilingue: true,
   orientations: ['landscape', 'portrait'],

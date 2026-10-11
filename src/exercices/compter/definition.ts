@@ -10,7 +10,7 @@ export default definir({
   id: 'compter',
   route: '/maternelle/compter',
   domaine: D.nombresCalcul,
-  emoji: '🔢',
+  emoji: 'chiffres',
   niveauDefaut: 'ms',
   competences: [K.denombrer3, K.denombrer6, K.denombrer10],
 

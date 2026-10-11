@@ -22,7 +22,7 @@ export default definir({
   id: 'numeration',
   route: '/maths/numeration',
   domaine: D.nombresCalcul,
-  emoji: '💯',   // celui de l'ancien catalogue
+  emoji: 'cent',   // celui de l'ancien catalogue
   niveauDefaut: 'ce1',
   competences: [K.numeration100, K.numeration1000, K.numeration10000, K.nombresEnLettres, K.comparerRanger, K.droiteGraduee, K.suitesNombres],
 

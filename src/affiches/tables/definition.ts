@@ -23,7 +23,7 @@ const definition = definirAffiche({
   id: 'tables',
   domaine: D.nombresCalcul,
   // la carte du catalogue (l'emoji de l'ancienne entrée « Affiches des tables », src/data/activites.js)
-  emoji: '🧮',
+  emoji: 'boulier',
   // paysage par défaut ; une seule langue par feuille (une entrée de catalogue par langue)
   orientations: ['landscape', 'portrait'],
   langues: CODES,

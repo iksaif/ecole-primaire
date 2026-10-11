@@ -26,7 +26,7 @@ const definition = definirAffiche({
   id: 'alphabet',
   domaine: D.lecture,
   // la carte du catalogue (l'emoji de l'ancienne entrée « Affiche de l'alphabet », src/data/activites.js)
-  emoji: '🔤',
+  emoji: 'lettres',
   // la cursive est une compétence d'écriture, les accents une compétence de vocabulaire (programme.ts)
   // l'alphabet de la langue régionale (dans cette langue, la même affiche montre son alphabet : src/langues/<langue>/donnees.ts)
   autresDomaines: [D.ecriture, D.vocabulaire, D.regionaleSons],

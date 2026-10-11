@@ -22,7 +22,7 @@ export default definir({
   id: 'calcul-pose',
   route: '/maths/calcul-pose',
   domaine: D.nombresCalcul,
-  emoji: '📐',
+  emoji: 'equerre',
   niveauDefaut: 'ce1',
   competences: [K.additionPosee, K.soustractionPosee, K.multiplicationPosee],
 

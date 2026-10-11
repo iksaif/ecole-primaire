@@ -30,7 +30,7 @@ export default definir({
   route: '/francais/conjugaison',
   domaine: D.grammaire,
   contenu: 'fr',
-  emoji: '✍️',
+  emoji: 'mainQuiEcrit',
   niveauDefaut: 'ce1',
   // fiche : « tableaux » (quatre verbes, six personnes chacun) ou « lignes » (une forme à écrire par ligne, verbes et temps mélangés)
   reglages: { fiche: choix(['tableaux', 'lignes'], { defaut: 'tableaux' }) },

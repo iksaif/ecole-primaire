@@ -6,7 +6,7 @@
     <ul>
       <li v-for="k in feuille.entree.competences" :key="k.id">
         <RouterLink :to="`/competence/${k.id}`" lang="fr"><strong>{{ k.libelle }}</strong></RouterLink>
-        <span v-if="feuille.domaine" class="domaine"> · {{ feuille.domaine.id ? EMOJI_DOMAINE[feuille.domaine.id] : '' }} {{ texteDe(feuille.domaine.nom, langueAffichee) }} · {{ texteClasses(k.niveaux) }}</span>
+        <span v-if="feuille.domaine" class="domaine"> · <Icone v-if="feuille.domaine.id" :nom="EMOJI_DOMAINE[feuille.domaine.id]" /> {{ texteDe(feuille.domaine.nom, langueAffichee) }} · {{ texteClasses(k.niveaux) }}</span>
         <template v-if="k.source"> · <a :href="k.source.url" target="_blank" rel="noopener" :aria-label="`${t('feuille.programmePage', { page: k.source.page })} ${t('feuille.nouvelOnglet')}`"><Icone nom="programme" /> {{ t('feuille.programmeOfficiel') }} ↗</a></template>
       </li>
     </ul>

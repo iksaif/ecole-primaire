@@ -11,7 +11,7 @@ import type { ReglagesDeAffiche } from '../types.ts'
 const definition = definirAffiche({
   id: 'meteo',
   domaine: D.regionaleOral,
-  emoji: '🌦️',
+  emoji: 'meteo',
   langues: CODES,
   bilingue: true,
   orientations: ['portrait', 'landscape'],

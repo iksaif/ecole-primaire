@@ -4,7 +4,7 @@
     <template v-for="(p, i) in proposes" :key="p">
       <span v-if="i" aria-hidden="true"> · </span>
       <button type="button" class="choix" :class="{ actuel: contexte.profil === p }" :aria-pressed="contexte.profil === p" @click="choisirProfil(p)">
-        <span aria-hidden="true">{{ EMOJI_PROFIL[p] }}</span> {{ t(`accueil.profil.${p}`) }}
+        <span aria-hidden="true"><Icone :nom="EMOJI_PROFIL[p]" /></span> {{ t(`accueil.profil.${p}`) }}
       </button>
     </template>
     <span class="facultatif">{{ t('accueil.profil.facultatif') }}</span>
@@ -12,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Le choix du profil, proposé en bas de l'accueil, facultatif (jamais bloquant, jamais sur une page ouverte par un lien) :
 // « Vous êtes plutôt : enfant · parent · enseignant ? ». Il ne change que la disposition (contexte : choisirProfil).
 import { useContexte } from '../contexte/useContexte.ts'

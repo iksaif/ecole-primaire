@@ -14,7 +14,7 @@ export default definir({
   route: '/francais/grammaire-mots',
   domaine: D.grammaire,
   contenu: 'fr',
-  emoji: '🏷️',
+  emoji: 'etiquette',
   niveauDefaut: 'ce1',
   competences: [K.classesMots],
   bilanParClasse: false,

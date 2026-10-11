@@ -1,13 +1,13 @@
 <template>
   <details :id="`domaine-${groupe.domaine}`" class="groupe" :open="ouvert" :data-domaine="groupe.domaine" @toggle="suivre">
     <summary>
-      <h2><span aria-hidden="true">{{ emojiGroupe(groupe.domaine, EMOJI_DOMAINE) }}</span> {{ nomGroupe(groupe.domaine, langueAffichee) }}</h2>
+      <h2><span aria-hidden="true"><Icone :nom="emojiGroupe(groupe.domaine, EMOJI_DOMAINE)" /></span> {{ nomGroupe(groupe.domaine, langueAffichee) }}</h2>
       <span v-if="groupe.ressources.length" class="compte">{{ t('ressource.ressources', { n: groupe.ressources.length }) }}</span>
       <span v-if="groupe.horsClasse" class="hors">{{ t('ressource.horsClasse', { n: classes.length, classes: texteClasses(classes), total: groupe.horsClasse }) }}</span>
     </summary>
     <div class="contenu">
       <section v-for="s in sections" :key="s.usage" class="usage">
-        <h3><span aria-hidden="true">{{ EMOJI_USAGE[s.usage] }}</span> {{ t(s.titre) }}</h3>
+        <h3><span aria-hidden="true"><Icone :nom="EMOJI_USAGE[s.usage]" /></span> {{ t(s.titre) }}</h3>
         <p v-if="!s.liste.length" class="rien">{{ t('ressource.rien') }}</p>
         <ul v-else :class="vue === 'liste' ? 'lignes' : 'cartes'">
           <li v-for="r in s.liste" :key="r.id">
@@ -21,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Un domaine du programme dans une page de matière : titre, « À afficher » / « Pour s'entraîner », en cartes ou en liste.
 // Replié (rien pour les classes choisies) ou ouvert par défaut ; ce que le lecteur plie ou déplie est mémorisé par domaine
 // (`usePlis`). « Hors de la classe CE1 : 3 » annonce les ressources des autres classes : un domaine n'est jamais masqué.

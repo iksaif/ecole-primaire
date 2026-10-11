@@ -60,7 +60,7 @@ export default definir({
   route: '/francais/vocabulaire',
   domaine: D.vocabulaire,
   contenu: 'fr',
-  emoji: '📚',
+  emoji: 'livres',
   niveauDefaut: 'ce1',
   competences: [K.ordreAlphabetique, K.synonymesAntonymes, K.famillesMots],
 

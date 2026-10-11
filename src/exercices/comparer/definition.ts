@@ -9,7 +9,7 @@ export default definir({
   id: 'comparer',
   route: '/maternelle/comparer',
   domaine: D.nombresCalcul,
-  emoji: '⚖️',
+  emoji: 'balance',
   niveauDefaut: 'ms',
   competences: [K.comparerQuantites],
 

@@ -32,7 +32,7 @@ export default definir({
   domaine: D.ecriture,
   autresDomaines: [D.vocabulaire],
   contenu: 'fr',
-  emoji: '🖊️',
+  emoji: 'stylo',
   niveauDefaut: 'cp',
   competences: [K.dictee, K.orthographeLexicale],
 

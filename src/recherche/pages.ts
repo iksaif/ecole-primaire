@@ -16,14 +16,14 @@ export interface RouteDeLaTable {
 
 const TITRE_EXERCICE = 'routeur.titre.exercice'
 
-/** Une page par route retenue, dans l'ordre de la table. Sans emoji : une page est de l'interface, la recherche montre l'icône de son type. */
+/** Une page par route retenue, dans l'ordre de la table ; son icône est celle des pages (la boussole). */
 export function pagesDuSite(routes: readonly RouteDeLaTable[]): readonly RessourcePage[] {
   return routes.flatMap((r): RessourcePage[] => {
     if (r.redirect || r.path.includes(':') || r.path.startsWith('/dev') || r.meta.titre === TITRE_EXERCICE) return []
     const titre = r.meta.titre ? { cle: r.meta.titre } : r.meta.titreLibre ? { texte: { [LANGUE_SOURCE]: r.meta.titreLibre } } : null
     if (!titre) return []
     return [{
-      id: `page:${r.path}`, type: 'page', titre, description: null, emoji: '', classes: [], competences: [],
+      id: `page:${r.path}`, type: 'page', titre, description: null, emoji: 'page', classes: [], competences: [],
       langues: [LANGUE_SOURCE], route: r.path, exemple: false,
     }]
   })

@@ -1,4 +1,5 @@
-// Les icônes d'interface, par rôle : une action ou une notion de l'interface = une icône, la même partout (« imprimer » porte toujours
+// Les icônes d'interface, par rôle : une action ou une notion de l'interface (y compris les identités du catalogue : domaines, matières,
+// exercices, profils) = une icône, la même partout ; deux rôles peuvent montrer le même emoji (📚 : le programme et le vocabulaire) (« imprimer » porte toujours
 // l'imprimante). Ce sont des emojis OpenMoji en couleur (décision du 2026-10-11 : une interface pour enfants en couleur, plutôt que
 // des pictogrammes au trait), dans une table à part de celle des contenus (tables.ts) : leurs dessins sont dans un lot léger
 // (donnees/interface.ts) que charge le paquet principal, sans les dessins des fiches. Le nom de gauche est celui qu'on écrit dans le
@@ -21,6 +22,17 @@ export const ICONES = {
   police: '1F524', contribuer: '1F91D',
   // la page des réglages
   profil: '1F464', chantier: '1F6A7',
+  // les identités du catalogue : domaines, matières, exercices et affiches, badges, profils, site (src/ressources/emojis.ts…)
+  equerre: '1F4D0', balance: '2696', chiffres: '1F522', mainQuiEcrit: '270D', stylo: '1F58A', losange: '1F537', pizza: '1F355',
+  poigneeDeMains: '1F91D', punaise: '1F4CD', etiquette: '1F3F7', bulle: '1F4AC', silhouette: '1F464', horloge: '1F550',
+  regle: '1F4CF', livreOuvert: '1F4D6', minuscules: '1F521', billets: '1F4B6', boucle: '1F501', cent: '1F4AF', lettres: '1F524',
+  puzzle: '1F9E9', terre: '1F30D', barres: '1F4F6', multiplication: '2716', livres: '1F4DA', personneDebout: '1F9CD',
+  palette: '1F3A8', poussin: '1F423', goutte: '1F4A7', carton: '1F4E6', savon: '1F9FC', leverDeSoleil: '1F305',
+  calendrier: '1F4C5', meteo: '1F326', calendrierSpirale: '1F5D3', dix: '1F51F', silhouettes: '1F465', boulier: '1F9EE',
+  graphique: '1F4CA', ordinateur: '1F4BB', boussole: '1F9ED', parole: '1F5E3', pousse: '1F331', coeur: '1FAC0',
+  eprouvette: '1F9EA', engrenage: '2699', monument: '1F3DB', carte: '1F5FA', tableau: '1F5BC', notes: '1F3B6', etoile: '2B50',
+  blocNotes: '1F4DD', manette: '1F3AE', imprimante: '1F5A8', feuille: '1F4C4', travaux: '1F6A7', enfant: '1F9D2',
+  famille: '1F468-200D-1F469-200D-1F467', enseignant: '1F9D1-200D-1F3EB', de: '1F3B2',
 } as const
 
 /** Le nom d'une icône de la table. */

@@ -1,6 +1,6 @@
 <template>
   <article class="carte" :data-ressource="ressource.id">
-    <span class="icone" aria-hidden="true">{{ ressource.emoji }}</span>
+    <span class="icone" aria-hidden="true"><Icone :nom="ressource.emoji" /></span>
     <component :is="`h${niveauTitre}`" class="titre">
       <RouterLink :to="lien" class="lien" :lang="langueTitre">{{ titre }}</RouterLink>
     </component>
@@ -12,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Une ressource en grande carte : icône, titre (le lien, étiré sur toute la carte), description, classes en pastilles (celles des
 // classes choisies en évidence), badges en ligne / imprimable. `niveauTitre` : niveau du titre de la carte dans la page.
 import { computed } from 'vue'

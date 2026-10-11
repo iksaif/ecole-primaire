@@ -22,7 +22,7 @@ const optionsPlanche = (centimes: boolean) => ({
 const definition = definirAffiche({
   id: 'monnaie',
   domaine: D.grandeursMesures,
-  emoji: '💶',
+  emoji: 'billets',
   // paysage par défaut ; une seule langue par feuille (une entrée de catalogue par langue)
   orientations: ['landscape', 'portrait'],
   langues: CODES,

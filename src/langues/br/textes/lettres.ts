@@ -19,5 +19,5 @@ export default {
   trouveEn: 'Kav al lizherenn-mañ {en}.', // br: à relire
   cEst: 'Al lizherenn {l} eo.', // br: à relire
   cetait: '❌ Ar respont mat : {r}',
-  noteFiche: 'Fichenn : lak pep pennlizherenn gant he lizherenn vihan.', // br: à relire
+  noteFiche: 'Fichenn : lak pep lizherenn gant an hevelep lizherenn en ur skritur all.', // br: à relire
 } as const satisfies Traductions<typeof fr>

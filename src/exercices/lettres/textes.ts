@@ -12,11 +12,13 @@ export const CONTENU = catalogue({
   alphabet: 'A|E|I|O|U|Y|B|C|D|F|G|H|J|K|L|M|N|P|Q|R|S|T|V|W|X|Z',
   voyelles: 'A|E|I|O|U|Y',
   consigne: 'Relie chaque majuscule à sa minuscule.',
+  consigneCursive: 'Relie chaque lettre en script à la même lettre en attaché.',
 }, {
   br: {
     titre: 'Al lizherennoù',
     alphabet: donneesBr.alphabet.map(majuscule).join('|'),
     voyelles: 'A|E|I|O|U|Y',
     consigne: 'Lak ul linenn etre pep pennlizherenn hag he lizherenn vihan.', // br: à relire
+    consigneCursive: 'Lak ul linenn etre pep lizherenn skript hag al lizherenn stag hevelep.', // br: à relire
   },
 })

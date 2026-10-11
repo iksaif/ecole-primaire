@@ -13,6 +13,8 @@
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="groupe" v-model="config.groupe" :titre="t('lettres.lettres')"
           :libelle="g => t(`lettres.groupe.${g}`)" />
         <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+        <!-- police de l'attaché : seulement sur la fiche, et seulement si l'attaché y figure -->
+        <ChoixPolice v-if="modeCourant === 'imprimer' && config.ecritures === 'script-cursive'" v-model="choixPolices.attache" type="attache" :libelle="t('communs.police.attache')" />
         <p v-if="modeCourant === 'imprimer'" class="note-fiche">{{ t('lettres.noteFiche') }}</p>
       </template>
     </CadreExercice>
@@ -54,6 +56,8 @@ import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
 import { useTTS } from '../../noyau/useTTS.ts'
 import { chargerPolicesEcran, FAMILLE_CURSIVE, FAMILLE_SCRIPT } from '../../noyau/policesEcran.ts'
+import ChoixPolice from '../../noyau/ChoixPolice.vue'
+import { usePolices } from '../../noyau/polices.ts'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
@@ -91,9 +95,11 @@ const consigne = computed(() => (!q.value ? '' : ecoute.value ? t('lettres.ecout
 watch(repondu, r => { if (r && q.value) parler(t('lettres.cEst', { l: q.value.nom }), langue.value) })
 
 // ── Fiche imprimable (aperçu et impression : CadreExercice) : graine du lien, sinon tirée ──
+// police de l'attaché : le choix mémorisé du site, aussi utilisé par l'exercice d'écriture
+const { choix: choixPolices } = usePolices()
 const { mode, fiche, nouvelle } = useFicheExercice({
   tirer: rng => questionsFiche({ niveau: config.value.niveau, reglages: config.value, rng, T }),
-  mettreEnPage: (tirage, police) => ficheLettres({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police }),
+  mettreEnPage: (tirage, police) => ficheLettres({ questions: tirage, reglages: config.value, T, langue: langueContenu.value, ...police, polices: { attache: choixPolices.value.attache } }),
 })
 </script>
 

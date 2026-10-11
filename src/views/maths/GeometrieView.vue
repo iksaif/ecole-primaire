@@ -3,7 +3,7 @@
     <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('geometrie.titre') }}</h1>
 
     <!-- Config -->
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images images
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />

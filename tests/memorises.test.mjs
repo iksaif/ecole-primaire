@@ -13,7 +13,7 @@ import { cheminsDeLaTable, cheminsDev, adresses, valeursValides } from './outils
 
 // ── les clés : dossiers de la base (l'ancien monde — views, composables, i18n… — n'est pas lu) ──
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')
-const DOSSIERS = ['contexte', 'shell', 'pages', 'ressources', 'noyau', 'telechargements', 'router', 'langues', 'affiches', 'exercices', 'main.ts', 'App.vue']
+const DOSSIERS = ['contexte', 'shell', 'pages', 'ressources', 'noyau', 'telechargements', 'router', 'langues', 'affiches', 'exercices', 'images', 'main.ts', 'App.vue']
 const sources = c => statSync(c).isDirectory() ? readdirSync(c).flatMap(f => sources(join(c, f))) : /\.(js|ts|vue)$/.test(c) ? [c] : []
 const texte = DOSSIERS.flatMap(d => sources(join(src, d))).concat(join(src, 'utils/impression.js')).map(f => readFileSync(f, 'utf8')).join('\n')
 const CLES = [...new Set([
@@ -23,7 +23,7 @@ const CLES = [...new Set([
   ...EXEMPLES.map(e => `${e.definition.id.replaceAll('-', '_')}_config`),
 ])].sort()
 // garde : le balayage doit retrouver au moins ce que le contexte, la langue et les ressources lisent
-const ATTENDUES = ['classes', 'mode', 'reg', 'profil', 'enseignant', 'vue', 'langue_interface', 'langue_regionale', 'polices', 'plis', 'recents']
+const ATTENDUES = ['classes', 'mode', 'reg', 'profil', 'enseignant', 'vue', 'langue_interface', 'langue_regionale', 'polices', 'plis', 'recents', 'images', 'icones']
 const manquantes = ATTENDUES.filter(c => !CLES.includes(c))
 verifier(!manquantes.length, `${CLES.length} clés lues dans les sources${manquantes.length ? ` — manquantes : ${manquantes}` : ''} (${CLES.join(', ')})`)
 

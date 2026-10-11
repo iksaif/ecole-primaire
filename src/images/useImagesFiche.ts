@@ -12,11 +12,9 @@ import { assainirIcones, assainirImages, DEFAUT_IMAGES } from './preference.ts'
 import { fournirDessinsInterface } from './icone.ts'
 import type { FamilleImages, ImagesFiche } from './preference.ts'
 
-const CLE = 'images'
-
 // chargerReglages vérifie le type de chaque champ, assainirImages ses valeurs (une famille inconnue reprend le défaut)
-const preference: Ref<ImagesFiche> = ref(assainirImages(chargerReglages(CLE, DEFAUT_IMAGES)))
-watch(preference, v => sauvegarder(CLE, v), { deep: true })
+const preference: Ref<ImagesFiche> = ref(assainirImages(chargerReglages('images', DEFAUT_IMAGES)))
+watch(preference, v => sauvegarder('images', v), { deep: true })
 
 /** La préférence « Images », partagée par toutes les pages. */
 export function useImagesFiche(): Ref<ImagesFiche> {

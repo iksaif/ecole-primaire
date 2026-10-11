@@ -7,6 +7,7 @@ import type { CleContenu } from '../../langues/catalogue.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import type { Question, Sens } from './generateur.ts'
+import { imagesDe } from '../../images/rendu.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -24,8 +25,13 @@ const CSS = `
       .corr { font-size: 1.1rem; line-height: 2; }
     `
 
-export function fiche({ questions: qs, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
-  const consigne = (sens: Sens): string => (sens === 'croissant' ? '⬆️ ' + T('rangeCroissant') : '⬇️ ' + T('rangeDecroissant'))
+export function fiche({ questions: qs, T, langue, police, cssPolices , images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
+  // la flèche des consignes : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
+  const images = imagesDe({ images: preference })
+  const consigne = (sens: Sens): string => {
+    if (sens === 'croissant') return `${images.html('flecheHaut')} ${T('rangeCroissant')}`
+    return `${images.html('flecheBas')} ${T('rangeDecroissant')}`
+  }
   const lignes = qs.map((q, i) => {
     const cr = q.sens === 'croissant'
     return `<div class="item"><div class="sens">${i + 1}. ${consigne(q.sens)}</div>

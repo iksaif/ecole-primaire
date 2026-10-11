@@ -9,6 +9,7 @@ import type { CONTENU } from './textes.ts'
 import { svgHorloge } from './horloge.ts'
 import { aideMinutesPossible, ecrit, ecritDuree, hm } from './generateur.ts'
 import type { Tirage } from './generateur.ts'
+import { imagesDe } from '../../images/rendu.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -25,7 +26,9 @@ const CSS = `
       table.emploi { border-collapse: collapse; margin: .3cm 0; }
       table.emploi td, table.emploi th { border: 1px solid #555; padding: .15cm .4cm; text-align: left; }`
 
-export function fiche({ questions: x, reglages, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Tirage, Cle>): string {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices , images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Tirage, Cle>): string {
+  // l'horloge du titre : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
+  const images = imagesDe({ images: preference })
   // les minutes autour du cadran : pas au CP, qui ne lit que les heures entières
   const opt = { aideMinutes: reglages.aideMinutes && aideMinutesPossible(x.niveau), taille: '3.8cm', impression: true, libelle: T('horloge') }
   const cellLire = x.aLire.map((t, i) => `<div class="cell">
@@ -69,7 +72,7 @@ export function fiche({ questions: x, reglages, T, langue, police, cssPolices }:
 
   const titre = `${T('titre')} — ${x.niveau.toUpperCase()}`
   return documentFiche({
-    titre, langue, police, cssPolices, h1: `🕐 ${titre}`, css: CSS, largeur: '18cm', marge: '1cm',
+    titre, langue, police, cssPolices, h1: `${images.html('horloge')} ${titre}`, css: CSS, largeur: '18cm', marge: '1cm',
     corps: `${ligneNomDate(langue)}
     ${x.avecLire ? `<h2>${T('quelleHeure')}</h2>
     <p class="consigne">${T('ficheLireConsigne')}</p>

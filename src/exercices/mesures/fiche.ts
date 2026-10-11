@@ -8,6 +8,7 @@ import { cmmm } from './longueurs.ts'
 import type { Tirage } from './generateur.ts'
 import type { Question, Reglages, TypeQuestion } from './types.ts'
 import type { CONTENU } from './textes.ts'
+import { imagesDe } from '../../images/rendu.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -33,7 +34,9 @@ const CSS = `
 const TROU = '<span class="trou"></span>'
 const LETTRES = 'ABCDEFGH'
 
-export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<Reglages, Tirage, Cle>): string {
+export function fiche({ questions: x, T, langue, police, cssPolices , images: preference }: ParamsFiche<Reglages, Tirage, Cle>): string {
+  // les marqueurs des titres : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
+  const images = imagesDe({ images: preference })
   const sections: string[] = []
   // corrigé : une ligne par partie, réponses dans l'ordre de la fiche
   const corrige: string[] = []
@@ -61,7 +64,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
     const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${LETTRES[i]}</span>${segmentReel(L / 10)}<span class="rep">${TROU} cm ${TROU} mm</span></div>`).join('')
     const traces = aTracer
       .map(L => `<div class="trace">${T('ficheTrace')} <strong>${cmmm(L)}</strong> : <span class="point">×</span></div>`).join('')
-    sections.push(`<h2>📏 ${T('ficheMesureMm')}</h2>${segs}<h2>✏️ ${T('ficheTraceTitre')}</h2>${traces}`)
+    sections.push(`<h2>${images.html('regle')} ${T('ficheMesureMm')}</h2>${segs}<h2>${images.html('crayon')} ${T('ficheTraceTitre')}</h2>${traces}`)
     ligneCorrige(T('ficheMesureMm'), lettres(choisis.map(L => `${Math.floor(L / 10)} cm ${L % 10} mm`)))
     ligneCorrige(T('ficheTraceTitre'), T('corrigeTrace', { liste: numeros(aTracer.map(cmmm)) }))
   } else if (x.regle) {
@@ -69,19 +72,19 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
     const segs = choisis.map((L, i) => `<div class="seg"><span class="lettre">${LETTRES[i]}</span>${segmentReel(L)}<span class="rep">${TROU} cm</span></div>`).join('')
     const traces = aTracer
       .map(L => `<div class="trace">${T('ficheTrace')} <strong>${L} cm</strong> : <span class="point">×</span></div>`).join('')
-    sections.push(`<h2>📏 ${T('ficheMesure')}</h2>${segs}<h2>✏️ ${T('ficheTraceTitre')}</h2>${traces}`)
+    sections.push(`<h2>${images.html('regle')} ${T('ficheMesure')}</h2>${segs}<h2>${images.html('crayon')} ${T('ficheTraceTitre')}</h2>${traces}`)
     ligneCorrige(T('ficheMesure'), lettres(choisis.map(L => `${L} cm`)))
     ligneCorrige(T('ficheTraceTitre'), T('corrigeTrace', { liste: numeros(aTracer.map(L => `${L} cm`)) }))
   }
 
   // titre sur la fiche, puis titre court dans le corrigé (par défaut le même)
   const TITRES: Readonly<Partial<Record<TypeQuestion, readonly [string] | readonly [string, string]>>> = {
-    conversion: [T('ficheConversion')],
-    unite: [`🤔 ${T('ficheUnite')} : ${x.unites.slice(0, -1).join(', ')} ${T('ou')} ${x.unites[x.unites.length - 1]}`, `🤔 ${T('ficheUnite')}`],
-    comparer: [T('ficheComparer')],
-    masse: [T('ficheMasse')],
-    contenance: [T('ficheContenance')],
-    calendrier: [T('ficheCalendrier')],
+    conversion: [`${images.html('repetition')} ${T('ficheConversion')}`],
+    unite: [`${images.html('reflexion')} ${T('ficheUnite')} : ${x.unites.slice(0, -1).join(', ')} ${T('ou')} ${x.unites[x.unites.length - 1]}`, `${images.html('reflexion')} ${T('ficheUnite')}`],
+    comparer: [`${images.html('egal')} ${T('ficheComparer')}`],
+    masse: [`${images.html('balance')} ${T('ficheMasse')}`],
+    contenance: [`${images.html('verreDeLait')} ${T('ficheContenance')}`],
+    calendrier: [`${images.html('calendrier')} ${T('ficheCalendrier')}`],
   }
   for (const { type, questions } of x.blocs) {
     const [titre, titreCorrige = titre] = TITRES[type] ?? ['']
@@ -92,7 +95,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
 
   const titre = `${T('titre')} — ${x.niveau.toUpperCase()}`
   return documentFiche({
-    titre, langue, police, cssPolices, h1: `📏 ${titre}`, css: CSS, largeur: '18cm', marge: '1cm',
+    titre, langue, police, cssPolices, h1: `${images.html('regle')} ${titre}`, css: CSS, largeur: '18cm', marge: '1cm',
     corps: `${ligneNomDate(langue)}
     ${x.regle ? `<div class="temoin">${regleTemoin()}<span>${T('ficheTemoin')}</span></div>` : ''}
     ${sections.join('')}

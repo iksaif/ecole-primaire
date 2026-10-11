@@ -48,6 +48,12 @@ export const EMOJIS = {
   // les achats de la monnaie (src/exercices/monnaie/) ; pomme, jus, chocolat, ballon, voiture, doudou et dé sont plus haut
   billetEuro: '1F4B6', crayon: '270F', bonbon: '1F36C', baguette: '1F956', cahier: '1F4D2', feutre: '1F58D', puzzle: '1F9E9',
   livre: '1F4D5', peinture: '1F3A8', trottinette: '1F6F4', rollers: '1F6FC', casque: '1F3A7',
+  // les marqueurs des titres des fiches (géométrie, mesures, heure, ranger) ; papillon, crayon, repère, glaçon, dé, calendrier plus haut
+  losangeBleu: '1F537', equerre: '1F4D0', presseFeuilles: '1F4CB', cercleRouge: '2B55', attention: '26A0', regle: '1F4CF',
+  reflexion: '1F914', repetition: '1F501', egal: '1F7F0', balance: '2696', verreDeLait: '1F95B', horloge: '1F550', flecheHaut: '2B06',
+  flecheBas: '2B07',
+  // les objets de la balance (src/exercices/mesures/masses.ts) ; boîte, doudou, bonbon, orange plus haut
+  cadeau: '1F381', cle: '1F511', pasteque: '1F349', citrouille: '1F383',
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */

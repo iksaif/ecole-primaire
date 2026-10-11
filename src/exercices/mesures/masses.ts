@@ -3,20 +3,22 @@
 import type { Rng } from '../../utils/hasard.ts'
 import { svgBalance, fmtMasse } from './dessins.ts'
 import type { Contexte, Question, T } from './types.ts'
+import type { NomEmoji } from '../../images/tables.ts'
+import { caractereEmoji } from '../../images/systeme.ts'
 
 // Objets posés sur la balance, choisis selon la masse pour rester vraisemblables
 // noms dans le catalogue de contenu (`objetsMasse.<id>`, `boites.<id>`)
 type IdObjet = 'paquet' | 'cadeau' | 'ours' | 'bonbon' | 'cle' | 'clementine' | 'pasteque' | 'citrouille'
-interface Objet { e: string, id: IdObjet, n: string }
-const OBJETS_G: readonly { e: string, id: IdObjet }[] = [{ e: '📦', id: 'paquet' }, { e: '🎁', id: 'cadeau' }, { e: '🧸', id: 'ours' }]   // ≥ 100 g
-const nomObj = (T: T, o: { e: string, id: IdObjet }): Objet => ({ ...o, n: T(`objetsMasse.${o.id}`) })
+interface Objet { e: NomEmoji, id: IdObjet, n: string }
+const OBJETS_G: readonly { e: NomEmoji, id: IdObjet }[] = [{ e: 'boite', id: 'paquet' }, { e: 'cadeau', id: 'cadeau' }, { e: 'doudou', id: 'ours' }]   // ≥ 100 g
+const nomObj = (T: T, o: { e: NomEmoji, id: IdObjet }): Objet => ({ ...o, n: T(`objetsMasse.${o.id}`) })
 function objetPourMasse({ rng, T }: { rng: Rng, T: T }, g: number): Objet {
-  if (g < 10) return nomObj(T, { e: '🍬', id: 'bonbon' })
-  if (g < 50) return nomObj(T, { e: '🔑', id: 'cle' })
-  if (g < 100) return nomObj(T, { e: '🍊', id: 'clementine' })
+  if (g < 10) return nomObj(T, { e: 'bonbon', id: 'bonbon' })
+  if (g < 50) return nomObj(T, { e: 'cle', id: 'cle' })
+  if (g < 100) return nomObj(T, { e: 'orange', id: 'clementine' })
   return nomObj(T, rng.choisir(OBJETS_G))
 }
-const OBJETS_KG: readonly { e: string, id: IdObjet }[] = [{ e: '🍉', id: 'pasteque' }, { e: '🎃', id: 'citrouille' }]
+const OBJETS_KG: readonly { e: NomEmoji, id: IdObjet }[] = [{ e: 'pasteque', id: 'pasteque' }, { e: 'citrouille', id: 'citrouille' }]
 type IdBoite = 'rouge' | 'bleue' | 'verte' | 'jaune'
 const BOITES: readonly { couleur: string, id: IdBoite }[] = [
   { couleur: '#e74c3c', id: 'rouge' },
@@ -45,7 +47,7 @@ export function genMasse(ctx: Contexte): Question {
       consigne: T('masseMixQ', { n: obj.n }),
       svg: svgBalance(0, [{ kind: 'emoji', e: obj.e }], items, T('ariaBalance')),
       mode: 'nombre', unite: 'g', reponse: total, attendu: `${total} g`,
-      texte: `${T('balance')} : ${obj.e} = ${ecrites}`,
+      texte: `${T('balance')} : ${caractereEmoji(obj.e)} = ${ecrites}`,
       explication: `1 kg = 1000 g. ${masses.map(m => `${m} g`).join(' + ')} = ${total} g.`,
     }
   }
@@ -63,7 +65,7 @@ export function genMasse(ctx: Contexte): Question {
       consigne: T('masseEqQ', { n: obj.n }),
       svg: svgBalance(0, [{ kind: 'emoji', e: obj.e }], items, T('ariaBalance')),
       mode: 'nombre', unite: u, reponse: total, attendu: `${total} ${u}`,
-      texte: `${T('balance')} : ${obj.e} = ${masses.map(m => `${m} ${u}`).join(' + ')}`,
+      texte: `${T('balance')} : ${caractereEmoji(obj.e)} = ${masses.map(m => `${m} ${u}`).join(' + ')}`,
       explication: `${T('masseEqExpl', { n: obj.n })} ${masses.map(m => `${m} ${u}`).join(' + ')} = ${total} ${u}.`,
     }
   }
@@ -90,7 +92,7 @@ export function genMasse(ctx: Contexte): Question {
   return {
     type: 'masse', cle: `masse-seuil-${X}-${plus}`,
     consigne: T('seuilQ', { x: fmtMasse(X) }),
-    svg: svgBalance(plus ? 1 : -1, [{ kind: 'emoji', e: '📦' }], [{ kind: 'masse', g: X }], T('ariaBalance')),
+    svg: svgBalance(plus ? 1 : -1, [{ kind: 'emoji', e: 'boite' }], [{ kind: 'masse', g: X }], T('ariaBalance')),
     mode: 'choix', choix, reponse: rep, attendu: rep,
     texte: T('seuilTexte', { x: fmtMasse(X) }),
     explication: T(plus ? 'seuilExplPlus' : 'seuilExplMoins', { x: fmtMasse(X) }),

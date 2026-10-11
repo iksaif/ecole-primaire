@@ -1,9 +1,14 @@
 // Les mesures — dessins SVG (purs : des chaînes, utilisées à l'écran et sur la fiche) : règle graduée, balance à deux
 // plateaux, broc gradué, bouteilles, segment à la taille réelle. `aria` : texte alternatif, dans la langue du contenu.
-const SVG_FONT = 'font-family="Arial, sans-serif"'
+import { imagesDe } from '../../images/rendu.ts'
+import type { NomEmoji } from '../../images/tables.ts'
 
-/** Ce qu'on pose sur un plateau : une masse marquée (en g), une boîte, ou un objet (emoji). */
-export type Item = { kind: 'masse', g: number } | { kind: 'boite', couleur: string, w: number, h: number } | { kind: 'emoji', e: string }
+const SVG_FONT = 'font-family="Arial, sans-serif"'
+/** Le rendu des objets de la balance : le défaut (OpenMoji en couleur). */
+const DESSIN_OBJET = imagesDe({})
+
+/** Ce qu'on pose sur un plateau : une masse marquée (en g), une boîte, ou un objet (emoji du vocabulaire, src/images/tables.ts). */
+export type Item = { kind: 'masse', g: number } | { kind: 'boite', couleur: string, w: number, h: number } | { kind: 'emoji', e: NomEmoji }
 
 /** Masse écrite : « 500 g », « 2 kg » */
 export const fmtMasse = (g: number): string => g >= 1000 ? `${g / 1000} kg` : `${g} g`
@@ -56,7 +61,9 @@ function dessinItem(it: Item): string {
     return `<rect x="0" y="${-it.h}" width="${it.w}" height="${it.h}" rx="3" fill="${it.couleur}" stroke="#333" stroke-width="1.5"/>`
       + `<line x1="0" y1="${-it.h * 0.65}" x2="${it.w}" y2="${-it.h * 0.65}" stroke="rgba(0,0,0,.25)" stroke-width="2"/>`
   }
-  return `<text x="25" y="-4" font-size="44" text-anchor="middle">${it.e}</text>`
+  // l'objet posé sur le plateau, dans le carré qu'occupait l'emoji (corps 44, centré en 25) ; dessiné ici, au tirage, donc toujours
+  // en OpenMoji (le générateur ne connaît pas la préférence « Images »)
+  return DESSIN_OBJET.svg(it.e, 3, -44, 44)
 }
 
 // tilt : 0 = équilibre, 1 = plateau gauche en bas, -1 = plateau droit en bas

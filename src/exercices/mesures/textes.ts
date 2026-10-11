@@ -179,12 +179,12 @@ export const CONTENU = catalogue({
   ficheMesureMm: 'Mesure chaque segment avec ta règle (en cm et mm)',
   ficheMesure: 'Mesure chaque segment avec ta règle',
   ficheTraceTitre: 'Trace avec ta règle',
-  ficheConversion: '🔁 Complète les conversions',
+  ficheConversion: 'Complète les conversions',
   ficheUnite: 'Écris la bonne unité',
-  ficheComparer: '🟰 Compare avec &lt;, = ou &gt;',
-  ficheMasse: '⚖️ Les masses',
-  ficheContenance: '🥛 Les contenances',
-  ficheCalendrier: '📅 Le calendrier',
+  ficheComparer: 'Compare avec &lt;, = ou &gt;',
+  ficheMasse: 'Les masses',
+  ficheContenance: 'Les contenances',
+  ficheCalendrier: 'Le calendrier',
   ficheTemoin: 'Pour le parent : ce trait gradué doit mesurer exactement 10 cm.',
   // corrigé : liste = longueurs à tracer
   corrigeTrace: '{liste} (à vérifier avec la règle)',
@@ -343,12 +343,12 @@ export const CONTENU = catalogue({
     ficheMesureMm: 'Muzulia pep segmant gant da reolenn (e cm hag e mm)', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
     ficheMesure: 'Muzulia pep segmant gant da reolenn', // br: à relire (Termofis via Geriafurch : « segmant », « nadoz » ; académie de Rennes : « Tres »)
     ficheTraceTitre: 'Tres gant da reolenn',
-    ficheConversion: '🔁 Klok an amdroadurioù', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
+    ficheConversion: 'Klok an amdroadurioù', // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheUnite: 'Skriv an unanenn vat',
-    ficheComparer: '🟰 Keñveria gant &lt;, = pe &gt;',
-    ficheMasse: '⚖️ Ar pouezioù',
-    ficheContenance: "🥛 An endalc'hioù",
-    ficheCalendrier: '📅 An deiziadur',
+    ficheComparer: 'Keñveria gant &lt;, = pe &gt;',
+    ficheMasse: 'Ar pouezioù',
+    ficheContenance: "An endalc'hioù",
+    ficheCalendrier: 'An deiziadur',
     ficheTemoin: 'Evit an dud : 10 cm resis a rank muzuliañ al linenn derezennet-mañ.',
     corrigeTrace: '{liste} (da wiriañ gant ar reolenn)', // br: à relire
   },

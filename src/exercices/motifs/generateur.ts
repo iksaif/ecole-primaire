@@ -14,17 +14,22 @@ import { TYPES_DU_NIVEAU, nbElements, questionMotif } from './motifs.ts'
 import type { ModeMotif, QuestionMotif } from './motifs.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
+import type { NomEmoji } from '../../images/tables.ts'
+import { caractereEmoji } from '../../images/systeme.ts'
 
 type Reglages = ReglagesDeDefinition<typeof DEFINITION>
 type Cle = CleContenu<typeof CONTENU>
 
-// Éléments des frises : couleurs, formes et images (4 par thème : ABCD au plus)
-export const THEMES: readonly (readonly string[])[] = [
-  ['🔴', '🔵', '🟡', '🟢'], ['⭐', '🌙', '☀️', '☁️'], ['🍎', '🍌', '🍇', '🍓'],
-  ['🐱', '🐶', '🐰', '🐻'], ['🟥', '🟦', '🟨', '🟩'], ['🌸', '🍀', '🍄', '🌻'],
+// Éléments des frises : couleurs, formes et images (4 par thème : ABCD au plus), des emojis du vocabulaire (src/images/tables.ts)
+export const THEMES: readonly (readonly NomEmoji[])[] = [
+  ['rondRouge', 'rondBleu', 'rondJaune', 'rondVert'], ['etoile', 'lune', 'soleil', 'nuage'], ['pomme', 'banane', 'raisin', 'fraise'],
+  ['chat', 'chiot', 'lapin', 'ours'], ['carreRouge', 'carreBleu', 'carreJaune', 'carreVert'], ['fleur', 'trefle', 'champignon', 'tournesol'],
 ]
 
-/** Une proposition de réponse : l'élément (en emoji) et son indice dans la liste d'éléments de la question. */
+/**
+ * Une proposition de réponse : son libellé (le caractère de l'élément : le nom du bouton, lu par les lecteurs d'écran ; le jeu dessine
+ * l'élément) et son indice dans la liste d'éléments de la question.
+ */
 export interface Proposition { label: string, valeur: number }
 
 /**
@@ -34,7 +39,7 @@ export interface Proposition { label: string, valeur: number }
  */
 export interface Question extends QuestionMotif {
   cle: string
-  elements: string[]
+  elements: NomEmoji[]
   /** indices des éléments proposés */
   choix: number[]
   options: Proposition[]
@@ -56,8 +61,8 @@ export function question({ niveau, mode, rng }: { niveau: Classe, mode: ModeMoti
   const vus = elements.slice(0, dans.length).join('')
   return {
     ...m, cle: `${m.type}${m.place}${vus}/${propositions.map(c => elements[c]).sort().join('')}`, elements, choix: propositions,
-    // propositions pour <ChoixReponses> (l'élément en emoji) ; bonne : indice de l'élément attendu
-    options: propositions.map(c => ({ label: elements[c], valeur: c })), bonne: propositions.indexOf(m.attendu),
+    // propositions pour <ChoixReponses> (libellé : le caractère de l'élément) ; bonne : indice de l'élément attendu
+    options: propositions.map(c => ({ label: caractereEmoji(elements[c]), valeur: c })), bonne: propositions.indexOf(m.attendu),
   }
 }
 

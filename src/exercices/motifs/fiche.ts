@@ -5,6 +5,7 @@ import type { ParamsFiche } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
 import { suite } from './motifs.ts'
+import { imagesDe } from '../../images/rendu.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import type { TirageFiche } from './generateur.ts'
@@ -20,19 +21,21 @@ const CSS = `
       .corr { columns: 3; font-size: 1.3rem; line-height: 1.9; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, T, langue, police, cssPolices, images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  // les éléments : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
+  const images = imagesDe({ images: preference })
   const ps = x.niveau === 'ps'
   const lignes = x.questions.map((q, i) => {
     const vus = q.place >= q.motif.length ? q.motif : q.motif.map((e, j) => (j === q.place ? null : e))
-    const cases = vus.map(e => (e === null ? '<span class="case"></span>' : `<span>${q.elements[e]}</span>`)).join('')
-    const fin = q.place >= q.motif.length ? (ps ? `<span class="fleche">→</span>${[...q.choix].map(c => `<span class="choix">${q.elements[c]}</span>`).join('')}` : '<span class="case"></span><span class="case"></span>') : ''
+    const cases = vus.map(e => (e === null ? '<span class="case"></span>' : `<span>${images.html(q.elements[e])}</span>`)).join('')
+    const fin = q.place >= q.motif.length ? (ps ? `<span class="fleche">→</span>${[...q.choix].map(c => `<span class="choix">${images.html(q.elements[c])}</span>`).join('')}` : '<span class="case"></span><span class="case"></span>') : ''
     return `<div class="ligne" data-type="${q.type}"><span class="num">${i + 1}.</span>${cases}${fin}</div>`
   }).join('')
   // corrigé : les deux éléments qui continuent la frise, ou l'élément du trou (PS : celui à entourer)
   const corr = x.questions.map((q, i) => {
     const deux = q.place >= q.motif.length && !ps
     const attendus = deux ? suite(q.type, q.place + 2).slice(q.place) : [q.attendu]
-    return `<div>${i + 1}. ${attendus.map(e => q.elements[e]).join(' ')}</div>`
+    return `<div>${i + 1}. ${attendus.map(e => images.html(q.elements[e])).join(' ')}</div>`
   }).join('')
   const titre = T('titre')
   return documentFiche({

@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="section-heading">{{ DEFINITION.emoji }} {{ t('motifs.titre') }}</h1>
 
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('motifs.exercice')"
@@ -15,12 +15,14 @@
       <!-- la frise ; la case « ? » à la place attendue -->
       <div class="frise">
         <template v-for="(e, i) in frise" :key="i">
-          <span v-if="i === q.place" class="perle vide" :class="{ trouvee: repondu }">{{ repondu ? q.elements[q.attendu] : '?' }}</span>
-          <span v-else class="perle">{{ e === null ? '' : q.elements[e] }}</span>
+          <span v-if="i === q.place" class="perle vide" :class="{ trouvee: repondu }"><Emoji v-if="repondu" :nom="q.elements[q.attendu]" /><template v-else>?</template></span>
+          <span v-else class="perle"><Emoji v-if="e !== null" :nom="q.elements[e]" /></span>
         </template>
       </div>
       <ChoixReponses grand :titre="t(config.mode === 'trou' ? 'motifs.consigneTrou' : 'motifs.consigneApres')" :options="q.options" :bonne="q.bonne" :repondu="repondu"
-        @choisir="i => jeu.repondre({ choix: i })" />
+        @choisir="i => jeu.repondre({ choix: i })">
+        <template #default="{ option }"><Emoji :nom="q.elements[option.valeur]" /></template>
+      </ChoixReponses>
       <RetourReponse :message="retour?.message" :etat="etat" />
     </QuestionJeu>
 
@@ -40,6 +42,7 @@ import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
+import Emoji from '../../images/Emoji.vue'
 import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
 import ResultatsEtoiles from '../../noyau/ResultatsEtoiles.vue'

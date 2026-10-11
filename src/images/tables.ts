@@ -42,6 +42,9 @@ export const EMOJIS = {
   // les objets à compter et comparer (src/dessins/collections.ts) ; pomme, étoile, chat, fleur, grenouille, fraise, lune, goûter
   // (le biscuit) et ballon de baudruche sont plus haut
   voiture: '1F697', papillon: '1F98B', poissonTropical: '1F420',
+  // les frises à continuer (src/exercices/motifs/) ; étoile, lune, soleil, nuage, pomme, raisin, fraise, chat, fleur, tournesol sont plus haut
+  rondRouge: '1F534', rondBleu: '1F535', rondJaune: '1F7E1', rondVert: '1F7E2', carreRouge: '1F7E5', carreBleu: '1F7E6', carreJaune: '1F7E8',
+  carreVert: '1F7E9', banane: '1F34C', chiot: '1F436', lapin: '1F430', ours: '1F43B', trefle: '1F340', champignon: '1F344',
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */

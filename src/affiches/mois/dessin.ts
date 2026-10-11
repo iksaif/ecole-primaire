@@ -44,7 +44,7 @@ function dessinerSaisons(zone: { W: number, H: number }, ctx: ContexteDessin, la
     const lignes = s.mois.map(i => `<div class="mois-saison" style="height:${rangee.h}mm">${motsDuMois(i, langues, types, tailles, largeurMot, hauteurMot, ctx, !paysage)}</div>`).join('')
     const noms = nomsSaison(s.id).map((n, k) => `<span class="nom-saison l${k}" style="font-family:${ctx.police('script')};font-size:${tNom}mm">${echapper(n)}</span>`).join('')
     return `<section class="saison" style="width:${bande.l}mm;height:${bande.h}mm;background:${s.fond}">
-      <div class="bloc-saison" style="width:${bloc.l}mm;height:${bloc.h}mm;background:${s.accent}"><span class="image-saison" style="font-size:${tImage}mm">${s.emoji}</span>${noms}</div>
+      <div class="bloc-saison" style="width:${bloc.l}mm;height:${bloc.h}mm;background:${s.accent}"><span class="image-saison">${ctx.images.html(s.emoji, `${tImage}mm`)}</span>${noms}</div>
       <div class="mois-de-la-saison" style="width:${moisZone.l}mm;height:${moisZone.h}mm">${lignes}</div></section>`
   }).join('')
   return `<div class="saisons ${paysage ? 'paysage' : 'portrait'}" style="width:${W}mm;height:${H}mm;gap:${ECART}mm">${bandes}</div>`

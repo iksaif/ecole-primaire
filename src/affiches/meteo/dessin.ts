@@ -3,8 +3,11 @@
 import type { Rendu } from '../types.ts'
 import { CSS_LISTE, dessinerListe } from '../listeMots.ts'
 import type { Reglages } from './definition.ts'
+import type { NomEmoji } from '../../images/tables.ts'
 
-const TEMPS = [{ id: 'soleil', emoji: '☀️' }, { id: 'pluie', emoji: '🌧️' }, { id: 'vent', emoji: '💨' }, { id: 'neige', emoji: '❄️' }, { id: 'nuages', emoji: '☁️' }]
+const TEMPS: readonly { id: string, emoji: NomEmoji }[] = [
+  { id: 'soleil', emoji: 'soleil' }, { id: 'pluie', emoji: 'pluie' }, { id: 'vent', emoji: 'vent' }, { id: 'neige', emoji: 'flocon' }, { id: 'nuages', emoji: 'nuage' },
+]
 
 export const dessin: Rendu<Reglages>['dessin'] = (r, zone, _T, ctx) => {
   const elements = TEMPS.map(t => ({ emoji: t.emoji, mot: (l: string) => ctx.Tde(l)(`temps.${t.id}`) }))

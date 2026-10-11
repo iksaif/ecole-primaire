@@ -4,10 +4,10 @@
 
 /** Les saisons dans l'ordre des repères de l'académie de Rennes (« nevez-amzer, hañv, diskar-amzer, goañv »). `mois` : 0 = janvier. */
 export const SAISONS = [
-  { id: 'printemps', emoji: '🌱', mois: [2, 3, 4], fond: '#eaf7e4', accent: '#a5d98f' },
-  { id: 'ete', emoji: '☀️', mois: [5, 6, 7], fond: '#fff7d9', accent: '#ffd966' },
-  { id: 'automne', emoji: '🍂', mois: [8, 9, 10], fond: '#fdeede', accent: '#f4aa6c' },
-  { id: 'hiver', emoji: '❄️', mois: [11, 0, 1], fond: '#e8f2fc', accent: '#9fc9f0' },
+  { id: 'printemps', emoji: 'pousse', mois: [2, 3, 4], fond: '#eaf7e4', accent: '#a5d98f' },
+  { id: 'ete', emoji: 'soleil', mois: [5, 6, 7], fond: '#fff7d9', accent: '#ffd966' },
+  { id: 'automne', emoji: 'feuillesMortes', mois: [8, 9, 10], fond: '#fdeede', accent: '#f4aa6c' },
+  { id: 'hiver', emoji: 'flocon', mois: [11, 0, 1], fond: '#e8f2fc', accent: '#9fc9f0' },
 ] as const
 
 export type IdSaison = (typeof SAISONS)[number]['id']

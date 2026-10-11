@@ -35,7 +35,7 @@ export function dessinerCalendrier(zone: { W: number, H: number }, ctx: Contexte
     const s = saisonDe(t.saison)
     const haut = (t.fin - t.debut) * rh
     const contenu = haut >= rh * 1.5
-      ? `<span class="image-saison" style="font-size:${tImage}mm">${s.emoji}</span>${langues.map((l, k) => `<span class="nom-saison l${k}" style="font-family:${ctx.police('script')};font-size:${tNom}mm">${echapper(ctx.Tde(l)(`saison.${t.saison}`))}</span>`).join('')}`
+      ? `<span class="image-saison">${ctx.images.html(s.emoji, `${tImage}mm`)}</span>${langues.map((l, k) => `<span class="nom-saison l${k}" style="font-family:${ctx.police('script')};font-size:${tNom}mm">${echapper(ctx.Tde(l)(`saison.${t.saison}`))}</span>`).join('')}`
       : ''
     return `<div class="troncon-saison" style="top:${(t.debut * rh).toFixed(2)}mm;height:${haut.toFixed(2)}mm;width:${bande}mm;background:${s.accent}">${contenu}</div>`
   }).join('')

@@ -4,10 +4,11 @@
 // saisons) passe sous la liste, en cases côte à côte. Une seule page. Pur : la mesure du texte vient du contexte.
 import type { ContexteDessin, TextesAffiche } from './types.ts'
 import { echapper } from '../utils/html.js'
+import type { NomEmoji } from '../images/tables.ts'
 
-/** Un élément : son image (emoji, facultative) et son mot dans une langue. */
+/** Un élément : son image (un emoji de src/images/tables.ts, facultative) et son mot dans une langue. */
 export interface ElementListe {
-  emoji?: string
+  emoji?: NomEmoji
   mot: (langue: string) => string
 }
 
@@ -50,7 +51,11 @@ export function dessinerListe(elements: readonly ElementListe[], { W, H }: { W: 
 
   const cellules = (e: ElementListe): string => langues.map((l, i) => types.map((type, j) =>
     `<span class="mot l${i} ${type}" style="width:${lColonne}mm;font-family:${ctx.police(type)};font-size:${tailles[i][j]}mm">${echapper(e.mot(l))}</span>`).join('')).join('')
-  const image = (e: ElementListe): string => (avecImages ? `<span class="image" style="width:${lImage}mm;font-size:${ligne * 0.6}mm">${e.emoji ?? ''}</span>` : '')
+  const image = (e: ElementListe): string => {
+    if (!avecImages) return ''
+    const dessin = e.emoji ? ctx.images.html(e.emoji, `${ligne * 0.6}mm`) : ''
+    return `<span class="image" style="width:${lImage}mm">${dessin}</span>`
+  }
   const lignes = elements.map(e => `<div class="ligne-mot" style="height:${ligne}mm">${image(e)}${cellules(e)}</div>`).join('')
 
   const haut = entete ? dessinerEntete(entete, W, hEntete, langues, ctx) : ''
@@ -72,7 +77,7 @@ function dessinerBandeau(cases: readonly ElementListe[], W: number, h: number, l
   const hMot = (h * 0.45) / langues.length
   const taille = Math.min(hMot * 0.8, ...langues.map(l => tailleQuiTient(cases.map(c => c.mot(l)), ctx.nomPolice('script'), lCase, hMot * 0.8, ctx)))
   const contenu = cases.map(c => `<div class="case-bandeau" style="width:${lCase}mm;height:${h}mm">
-    <span class="image" style="font-size:${h * 0.35}mm">${c.emoji ?? ''}</span>
+    <span class="image">${c.emoji ? ctx.images.html(c.emoji, `${h * 0.35}mm`) : ''}</span>
     ${langues.map((l, i) => `<span class="mot l${i}" style="font-family:${ctx.police('script')};font-size:${taille}mm">${echapper(c.mot(l))}</span>`).join('')}</div>`).join('')
   return `<div class="bandeau">${contenu}</div>`
 }

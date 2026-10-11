@@ -37,6 +37,8 @@ export const EMOJIS = {
   myrtilles: '1FAD0', medaille: '1F947',
   pain: '1F35E', chocolat: '1F36B', scarabee: '1FAB2', flocon: '2744', chevre: '1F410', eglise: '26EA', girafe: '1F992', chien: '1F415',
   vague: '1F30A', nid: '1FABA', oignon: '1F9C5', poisson: '1F41F', roue: '1F6DE', chiffreUn: '0031-FE0F-20E3', calendrier: '1F4C5',
+  // la météo et les saisons (soleil, nuage, flocon et pousse sont plus haut)
+  pluie: '1F327', vent: '1F4A8', feuillesMortes: '1F342',
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */

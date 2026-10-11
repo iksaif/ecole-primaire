@@ -18,7 +18,6 @@ const SCRIPT = 'Andika'
 const ATTACHE = 'Playwrite FR Trad'
 
 const CSS = (attache: string): string => `
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }
       .blocs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 2.5rem; }
       .bloc { display: flex; justify-content: space-between; border: 2px solid #ccc; border-radius: 14px; padding: .6rem 1rem; page-break-inside: avoid; }

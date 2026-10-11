@@ -27,8 +27,7 @@ const CSS = `
       .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .75rem; }
       .duo { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: .4rem; }
       .duo > div { border: 1px dashed #ccc; border-radius: 6px; padding: .3rem .5rem; }
-      .lettre { font-size: 1.1rem; }
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }`
+      .lettre { font-size: 1.1rem; }`
 
 export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const { niveau, centimes, decimale, parties } = x

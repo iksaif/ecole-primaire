@@ -14,7 +14,6 @@ import type { TirageFiche } from './generateur.ts'
 type Cle = CleContenu<typeof CONTENU>
 
 const CSS_PS = `
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .8rem 0 .6rem; display: flex; align-items: center; gap: 1rem; }
       .modele { border: 3px solid #333; border-radius: 14px; padding: .4rem; display: inline-flex; }
       .grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin: 1rem 0; }
@@ -22,7 +21,6 @@ const CSS_PS = `
       .corr { font-size: 1.15rem; line-height: 2; }
     `
 const CSS = `
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .8rem 0 .6rem; }
       .legende { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem 2rem; border: 2px solid #ccc; border-radius: 12px; padding: .5rem 1rem; }
       .leg { display: flex; align-items: center; gap: .6rem; font-size: 1.1rem; font-weight: 700; }

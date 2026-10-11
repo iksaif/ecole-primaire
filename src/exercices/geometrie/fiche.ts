@@ -10,7 +10,6 @@ import type DEFINITION from './definition.ts'
 
 const CSS = `
       @page { size: A4; margin: 1.2cm; }
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       h1 { font-size: 1.25rem; }
       h2 { font-size: 1.05rem; margin: .6cm 0 .2cm; break-after: avoid; }
       .avertissement { font-size: .8rem; color: #a00; margin-bottom: .4cm; }

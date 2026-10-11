@@ -44,12 +44,16 @@ export interface OptionsDocumentFiche {
   marge?: string
 }
 
-/** Document HTML complet d'une fiche d'exercice. */
+/**
+ * Document HTML complet d'une fiche d'exercice. Les couleurs et les fonds s'impriment tels qu'à l'écran (`print-color-adjust: exact`,
+ * hérité par toute la fiche) : sans cela, le navigateur les retire à l'impression (les PDF du build, eux, gardent les fonds).
+ */
 export function documentFiche({ titre, langue, corps, css = '', h1, police = POLICE_SCOLAIRE, cssPolices = '', largeur = '720px', marge = '1.5cm' }: OptionsDocumentFiche): string {
   return `<!DOCTYPE html><html lang="${langue}"><head>
     <meta charset="UTF-8"><title>${echapper(titre)}</title>
     <style>${cssPolices ? `\n${cssPolices}` : ''}
-      body { font-family: ${police}; max-width: ${largeur}; margin: ${marge} auto; color: #222; }
+      body { font-family: ${police}; max-width: ${largeur}; margin: ${marge} auto; color: #222;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
 ${css}
     </style></head><body>

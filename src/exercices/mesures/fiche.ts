@@ -28,8 +28,7 @@ const CSS = `
       .affiche { font-size: 1.05rem; font-weight: 700; margin: .15cm 0; }
       .consigne { font-size: .9rem; margin-bottom: .1cm; }
       .illus svg { width: 6.5cm; height: auto; }
-      .choix span { display: inline-block; margin: 0 .3cm; padding: .05cm .2cm; }
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }`
+      .choix span { display: inline-block; margin: 0 .3cm; padding: .05cm .2cm; }`
 
 const TROU = '<span class="trou"></span>'
 const LETTRES = 'ABCDEFGH'

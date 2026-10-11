@@ -15,6 +15,8 @@ import type { CleContenu } from '../../langues/catalogue.ts'
 import type { ValeurArgent } from '../../dessins/argent.ts'
 import DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
+import type { NomEmoji } from '../../images/tables.ts'
+import { caractereEmoji } from '../../images/systeme.ts'
 
 type Reglages = ReglagesDeDefinition<typeof DEFINITION>
 type Cle = CleContenu<typeof CONTENU>
@@ -25,8 +27,8 @@ export type TypeExercice = Reglages['exercices'][number]
 export const VALEURS: readonly ValeurArgent[] = [20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1]
 type Valeurs = readonly ValeurArgent[]
 
-/** Un objet à acheter : son emoji, le nom (`objet.<id>` du catalogue) et son pluriel (« des bonbons qui coûtent »). */
-export interface Objet { e: string, id: string, pluriel: boolean }
+/** Un objet à acheter : son emoji (nom de src/images/tables.ts), le nom (`objet.<id>` du catalogue) et son pluriel (« des bonbons qui coûtent »). */
+export interface Objet { e: NomEmoji, id: string, pluriel: boolean }
 
 // ── Les questions ──
 // `cle` : ce qui fait deux questions « la même » (jamais deux fois dans une partie ou sur une fiche) ; `texte` et `attendu` :
@@ -164,13 +166,13 @@ const DONNEES: Partial<Record<Classe, DonneesNiveau>> = {
   },
 }
 
-/** Les objets à acheter, rangés par prix plausible : [emoji, id (nom : `objet.<id>` de textes.ts), pluriel]. */
+/** Les objets à acheter, rangés par prix plausible : [emoji (src/images/tables.ts), id (nom : `objet.<id>` de textes.ts), pluriel]. */
 const OBJETS = {
-  pasCher:  [['🍎', 'pomme'], ['✏️', 'crayon'], ['🍬', 'bonbons', true], ['🧃', 'jus'], ['🥖', 'baguette']],
-  moyen:    [['🍫', 'chocolat'], ['📒', 'cahier'], ['⚽', 'ballon'], ['🖍️', 'feutres', true], ['🚗', 'voiture']],
-  cher:     [['🧸', 'ours'], ['🧩', 'puzzle'], ['📕', 'livre'], ['🎨', 'peinture']],
-  tresCher: [['🛴', 'trottinette'], ['🛼', 'rollers', true], ['🎲', 'jeu'], ['🎧', 'casque']],
-} as const satisfies Record<string, readonly (readonly [string, string, true?])[]>
+  pasCher:  [['pomme', 'pomme'], ['crayon', 'crayon'], ['bonbon', 'bonbons', true], ['jus', 'jus'], ['baguette', 'baguette']],
+  moyen:    [['chocolat', 'chocolat'], ['cahier', 'cahier'], ['ballon', 'ballon'], ['feutre', 'feutres', true], ['voiture', 'voiture']],
+  cher:     [['doudou', 'ours'], ['puzzle', 'puzzle'], ['livre', 'livre'], ['peinture', 'peinture']],
+  tresCher: [['trottinette', 'trottinette'], ['rollers', 'rollers', true], ['de', 'jeu'], ['casque', 'casque']],
+} as const satisfies Record<string, readonly (readonly [NomEmoji, string, true?])[]>
 
 /** Une donnée absente est une erreur de déclaration, jamais un repli silencieux. */
 function requis<T>(valeur: T | undefined, quoi: string): T {
@@ -326,7 +328,7 @@ function genMoins(ctx: Contexte, centimes: boolean): QMoins {
 
 function objetPour(rng: Rng, prix: number): Objet {
   const liste = prix <= 200 ? OBJETS.pasCher : prix <= 1000 ? OBJETS.moyen : prix <= 2000 ? OBJETS.cher : OBJETS.tresCher
-  const [e, id, pluriel] = rng.choisir<readonly [string, string, true?]>(liste)
+  const [e, id, pluriel] = rng.choisir<readonly [NomEmoji, string, true?]>(liste)
   return { e, id, pluriel: !!pluriel }
 }
 /** Le nom de l'objet (« une pomme »), dans la langue du contenu. */
@@ -341,7 +343,7 @@ function genRendre(ctx: Contexte, centimes: boolean): QRendre {
   return {
     type: 'rendre', cle: `rendre:${prix}/${cas.paye}`, paye: cas.paye, prix, cible: rendu, objet,
     solution: glouton(rendu),
-    texte: T('rendreQ', { e: objet.e, prix: fmt(prix, niveau), paye: formatSomme(cas.paye) }),
+    texte: T('rendreQ', { e: caractereEmoji(objet.e), prix: fmt(prix, niveau), paye: formatSomme(cas.paye) }),
     attendu: fmt(rendu, niveau),
   }
 }

@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="section-heading">💶 {{ t('monnaie.titre') }}</h1>
 
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
@@ -63,7 +63,7 @@
         </div>
         <template v-else>
           <div class="consigne">
-            <span class="objet">{{ q.objet.e }}</span>
+            <span class="objet"><Emoji :nom="q.objet.e" /></span>
             {{ T('tuAchetes') }} {{ nomObjet(q.objet, T) }} {{ T(q.objet.pluriel ? 'coutent' : 'coute') }} <strong class="somme">{{ f(q.prix) }}</strong>.
           </div>
           <div class="consigne petite">
@@ -188,6 +188,7 @@
 
 <script setup lang="ts">
 import Icone from '../../images/Icone.vue'
+import Emoji from '../../images/Emoji.vue'
 // La monnaie : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/monnaie/ (definition.ts, generateur.ts, fiche.ts) ; les pièces et les billets : src/dessins/argent.ts. Sommes en centimes.
 import { ref, computed } from 'vue'

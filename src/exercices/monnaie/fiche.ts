@@ -5,6 +5,7 @@ import type { ParamsFiche } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
 import { svgArgent } from '../../dessins/argent.ts'
+import { imagesDe } from '../../images/rendu.ts'
 import type { ValeurArgent } from '../../dessins/argent.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
@@ -29,7 +30,9 @@ const CSS = `
       .duo > div { border: 1px dashed #ccc; border-radius: 6px; padding: .3rem .5rem; }
       .lettre { font-size: 1.1rem; }`
 
-export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, T, langue, police, cssPolices, images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  // les objets à acheter et le billet du titre : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
+  const images = imagesDe({ images: preference })
   const { niveau, centimes, decimale, parties } = x
   const f = (c: number): string => fmt(c, niveau)
   let numPartie = 0
@@ -70,7 +73,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
   const blocRendre = x.rendre.map((qu, i) => `
     <div class="ligne-rendre">
       <span class="num">${i + 1}.</span>
-      ${qu.objet.e} ${T('tuAchetes')} ${nomObjet(qu.objet, T)} ${T('ficheA')} <strong>${f(qu.prix)}</strong>.
+      ${images.html(qu.objet.e)} ${T('tuAchetes')} ${nomObjet(qu.objet, T)} ${T('ficheA')} <strong>${f(qu.prix)}</strong>.
       ${T('tuDonnes')} <strong>${formatSomme(qu.paye)}</strong>. ${T('ficheOnTeRend')} : ${centimes ? '______________' : '______ €'}
     </div>`).join('')
 
@@ -92,7 +95,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
 
   const titre = `${T('titre')} — ${niveau.toUpperCase()}`
   return documentFiche({
-    titre, langue, police, cssPolices, h1: `💶 ${titre}`, css: CSS, largeur: '720px', marge: '1.2cm',
+    titre, langue, police, cssPolices, h1: `${images.html('billetEuro')} ${titre}`, css: CSS, largeur: '720px', marge: '1.2cm',
     corps: `<p class="infos">${centimes ? T('ficheEurosCentimes') : T('ficheEuros')}</p>
     ${ligneNomDate(langue)}
     ${parties.compter ? `${titrePartie(`${T('ficheCompterTitre')}${decimale ? ` <small>${T('ficheExempleVirgule')}</small>` : ''}`)}

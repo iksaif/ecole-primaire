@@ -1,7 +1,8 @@
 // Le rendu d'une icône d'interface (src/images/icones.ts) : le caractère de l'appareil (par défaut), ou l'emoji OpenMoji en couleur, en
-// SVG en ligne, si le réglage des icônes le demande (useIconesInterface). Pur : lisible par node comme par le navigateur. Les dessins viennent du
-// lot léger de l'interface (donnees/interface.ts), jamais de celui des fiches. À l'écran, on passe par <Icone> (Icone.vue).
-import { INTERFACE } from './donnees/interface.ts'
+// SVG en ligne, si le réglage des icônes le demande (useIconesInterface). Pur : lisible par node comme par le navigateur. Les dessins
+// (donnees/interface.ts) ne sont pas importés ici : on les fournit quand ils sont chargés (fournirDessinsInterface, appelé par
+// chargerDessinsInterface de useImagesFiche.ts), pour que le paquet principal ne les porte pas tant que personne ne les choisit ; en
+// attendant, l'icône est l'emoji de l'appareil. À l'écran, on passe par <Icone> (Icone.vue).
 import { CARACTERES, ICONES } from './icones.ts'
 import type { NomIcone } from './icones.ts'
 import type { FamilleImages } from './preference.ts'
@@ -25,16 +26,27 @@ export interface OptionsIcone {
  */
 const CADRE = '3 3 66 66'
 
-/** Le dessin d'une icône ; une icône inconnue échoue en disant laquelle. */
+/** Les dessins OpenMoji de l'interface, une fois fournis ; null tant qu'ils ne sont pas chargés. */
+let dessins: Readonly<Record<string, string>> | null = null
+
+/** Donne les dessins de l'interface (le module donnees/interface.ts, chargé à la demande). */
+export function fournirDessinsInterface(donnees: Readonly<Record<string, string>>): void {
+  dessins = donnees
+}
+
+/** Le dessin d'une icône (les dessins sont fournis) ; une icône inconnue échoue en disant laquelle. */
 function dessinDe(nom: NomIcone): string {
-  const dessin = INTERFACE[ICONES[nom]]
+  const dessin = dessins?.[ICONES[nom]]
   if (!dessin) throw new Error(`Icône « ${nom} » absente de src/images/donnees/interface.ts : l'écrire dans icones.ts, puis node scripts/generer/icones.ts`)
   return dessin
 }
 
-/** Le caractère de l'appareil pour cette icône, ou null pour dessiner l'OpenMoji (famille du site, ou pas de caractère). */
+/**
+ * Le caractère de l'appareil pour cette icône, ou null pour dessiner l'OpenMoji : famille du site avec ses dessins fournis (en attendant
+ * qu'ils arrivent, c'est l'emoji de l'appareil), ou pas de caractère.
+ */
 function caractereSysteme(nom: NomIcone, famille: FamilleImages): string | null {
-  if (famille !== 'systeme') return null
+  if (famille !== 'systeme' && dessins) return null
   return CARACTERES[nom] ?? caractereDe(ICONES[nom])
 }
 

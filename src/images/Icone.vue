@@ -12,13 +12,17 @@
 import { computed } from 'vue'
 import type { NomIcone } from './icones.ts'
 import { iconeHtml } from './icone.ts'
-import { useIconesInterface } from './useImagesFiche.ts'
+import { dessinsInterfacePrets, useIconesInterface } from './useImagesFiche.ts'
 
 const props = defineProps<{ nom: NomIcone, taille?: string, libelle?: string }>()
 const famille = useIconesInterface()
 
 // le rendu ne produit que des dessins de la table et des attributs échappés : v-html est sûr ici
-const html = computed(() => iconeHtml(props.nom, { taille: props.taille, libelle: props.libelle, famille: famille.value }))
+const html = computed(() => {
+  // lu pour que l'icône se redessine quand les dessins du site arrivent (ils sont chargés à la demande)
+  void dessinsInterfacePrets.value
+  return iconeHtml(props.nom, { taille: props.taille, libelle: props.libelle, famille: famille.value })
+})
 </script>
 
 <style scoped>

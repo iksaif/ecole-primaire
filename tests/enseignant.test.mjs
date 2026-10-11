@@ -29,6 +29,8 @@ const rubriques = page => page.locator('nav.rubriques a').allTextContents()
   console.log('Appareil neuf')
   const { ctx, page, erreurs } = await ouvrir('/')
   verifier((await optionsProfil(page)).join() === 'Enfant,Parent', 'le menu du profil ne propose que Enfant et Parent')
+  // attendre que l'accueil ait rendu le choix du profil : compté trop tôt sous charge (npm test), il est vide
+  await page.locator('.profil .choix').first().waitFor({ timeout: 5000 }).catch(() => {})
   verifier(await page.getByRole('button', { name: /^enseignant$/ }).count() === 0 && await page.locator('.profil .choix').count() === 2, 'le choix du profil de l\'accueil ne propose pas « enseignant »')
   verifier(await page.locator('[data-bandeau-enseignant]').count() === 0, 'aucun bandeau')
   verifier(!erreurs.length, 'sans erreur JavaScript')

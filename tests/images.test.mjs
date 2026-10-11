@@ -11,7 +11,7 @@ import { assainirImages, DEFAUT_IMAGES } from '../src/images/preference.ts'
 import { caractereDe } from '../src/images/systeme.ts'
 import { ICONES } from '../src/images/icones.ts'
 import { INTERFACE } from '../src/images/donnees/interface.ts'
-import { iconeHtml, iconeSvg } from '../src/images/icone.ts'
+import { fournirDessinsInterface, iconeHtml, iconeSvg } from '../src/images/icone.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 const noms = Object.keys(EMOJIS)
@@ -99,6 +99,8 @@ const appareil = iconeHtml('recherche')
 verifier(appareil === '<span aria-hidden="true" class="icone">🔍</span>', 'par défaut : l’emoji de l’appareil, à la taille du texte, décoratif')
 verifier(iconeHtml('menu') === '<span aria-hidden="true" class="icone">☰</span>', 'le menu, sans emoji, garde son caractère ☰')
 verifier(iconeHtml('fermer', { libelle: 'Fermer "x"' }).includes('role="img" aria-label="Fermer &quot;x&quot;"'), 'icône seule : libellé lu, échappé')
+verifier(iconeHtml('recherche', { famille: 'openmoji' }) === appareil, 'dessins du site pas encore chargés : l’emoji de l’appareil en attendant')
+fournirDessinsInterface(INTERFACE)
 const dessinee = iconeHtml('recherche', { famille: 'openmoji' })
 verifier(dessinee.includes('width="1.4em"') && dessinee.includes('data-image="openmoji"') && dessinee.includes(INTERFACE[ICONES.recherche]), 'dessins du site : le dessin OpenMoji, 1.4em (sa marge le rend plus petit)')
 verifier(iconeSvg('verrou', 1, 2, 24, 'openmoji').startsWith('<svg x="1" y="2" width="24"') && iconeSvg('verrou', 1, 2, 24).startsWith('<text'), 'icône dans un SVG : dessin à sa place, ou le caractère')

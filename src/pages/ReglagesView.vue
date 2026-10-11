@@ -118,7 +118,7 @@ import Icone from '../images/Icone.vue'
 import type { NomIcone } from '../images/icones.ts'
 import { iconeHtml } from '../images/icone.ts'
 import type { FamilleImages } from '../images/preference.ts'
-import { useIconesInterface } from '../images/useImagesFiche.ts'
+import { chargerDessinsInterface, dessinsInterfacePrets, useIconesInterface } from '../images/useImagesFiche.ts'
 // Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police,
 // voix et vitesse de la lecture à voix haute (ReglageVoix, mémorisés par useTTS).
 import { computed, nextTick, ref } from 'vue'
@@ -148,7 +148,12 @@ const router = useRouter()
 const icones = useIconesInterface()
 // le défaut (les emojis de l'appareil) d'abord
 const CHOIX_ICONES: readonly FamilleImages[] = ['systeme', 'openmoji']
-const apercuIcones = (famille: FamilleImages): string => (['accueil', 'imprimer', 'reglages'] as const).map(nom => iconeHtml(nom, { famille })).join(' ')
+// l'aperçu des dessins du site les charge (s'ils ne le sont pas déjà) et se refait quand ils arrivent
+void chargerDessinsInterface()
+function apercuIcones(famille: FamilleImages): string {
+  void dessinsInterfacePrets.value
+  return (['accueil', 'imprimer', 'reglages'] as const).map(nom => iconeHtml(nom, { famille })).join(' ')
+}
 const route = useRoute()
 
 // ── les onglets ──

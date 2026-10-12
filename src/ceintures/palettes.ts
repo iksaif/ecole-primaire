@@ -3,7 +3,7 @@
 //   judo-rouge   la même, plus la rouge (livrets de calcul mental de collège)
 //   rose-violet  rose, jaune, orange, verte, bleue, violette (ceintures de calcul CM1)
 //   paliers      cinq paliers sans couleur (gris de plus en plus foncés) : contraste, daltonisme, impression économe
-// Le nom d'une couleur est toujours écrit à côté de la ceinture (texte `ceintures.couleur.<id>`) : la couleur ne porte jamais seule l'information.
+// Le nom d'une couleur est toujours écrit à côté de la ceinture (texte `ceintures.ceinture.<id>`) : la couleur ne porte jamais seule l'information.
 import type { CouleurCeinture, Motif, Palette, PaletteId } from './types.ts'
 
 const c = (id: string, hex: string, motif: Motif): CouleurCeinture => ({ id, hex, motif })

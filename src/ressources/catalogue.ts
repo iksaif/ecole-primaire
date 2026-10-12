@@ -58,6 +58,9 @@ export interface SourcesCatalogue {
 }
 
 /** `exemple-corpus` → `exempleCorpus` : le nom de la section de textes d'un exercice. */
+/** Les exercices réservés à une option cachée par défaut : l'activité des ceintures (src/contexte/ceintures.ts). */
+const optionDe = (id: string): { option: 'ceintures' } | Record<string, never> => (id === 'ceintures' ? { option: 'ceintures' } : {})
+
 const sectionDe = (id: string): string => id.replace(/-(\w)/g, (_, c: string) => c.toUpperCase())
 
 const union = <T>(listes: readonly (readonly T[])[]): T[] => [...new Set(listes.flat())]
@@ -95,6 +98,7 @@ function ressourceExercice({ definition, textes, exemple }: EntreeRegistre, site
     badges: { jeu: aUnJeu(definition), imprimable: true }, usage: 'sentrainer', langues, route: definition.route,
     exemple: estExemple(exemple === true, domaine),
     confiance: confianceFiche(langues, 'exercice', definition.id),
+    ...optionDe(definition.id),
   }
 }
 

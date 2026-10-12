@@ -36,6 +36,7 @@ import { module as grammaireComplements } from './grammaire-complements/index.ts
 import { module as ecriture } from './ecriture/index.ts'
 import { module as lecture } from './lecture/index.ts'
 import { module as quiz } from './quiz/index.ts'
+import { module as ceintures } from './ceintures/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -76,6 +77,7 @@ const BASE: readonly EntreeRegistre[] = [
   ecriture,
   lecture,
   quiz,
+  ceintures,
   // nouveau:registre
 ]
 

@@ -1,12 +1,14 @@
 // « Peut-on afficher X ? » : LE point d'entrée des listes (matières, accueil, compétences, programme, recherche, fiches voisines…) pour savoir si une
 // ressource est montrée. Aujourd'hui une seule raison de cacher : sa traduction n'est pas assez sûre pour le réglage de l'utilisateur
-// (src/langues/confianceReglage.ts), et seulement si le mode de langue montre la traduction. D'autres raisons s'ajouteront ici, pas dans les pages.
+// (src/langues/confianceReglage.ts), et seulement si le mode de langue montre la traduction ; ou elle relève d'une option cachée par défaut (les ceintures,
+// src/contexte/ceintures.ts) qui n'est pas active. D'autres raisons s'ajouteront ici, pas dans les pages.
 //   const { affichables, affichable, filtrer, masque, traduite } = useAffichable()
 // En développement (AVEC_DEV), tout est affichable : `masque(r)` dit ce que le réglage aurait caché (pour la pastille).
 import { computed } from 'vue'
 import type { ComputedRef } from 'vue'
 import { useContexte } from '../contexte/useContexte.ts'
 import { AVEC_DEV } from '../dev.ts'
+import { ceinturesActives } from '../contexte/ceintures.ts'
 import { confianceMin } from '../langues/confianceReglage.ts'
 import type { NiveauConfiance } from '../langues/confiance.ts'
 import { traductionAssezSure, traductionMontree } from './filtres.ts'
@@ -34,7 +36,9 @@ export function useAffichable(): UtilisationAffichable {
   const { contexte } = useContexte()
   const { catalogue } = useRessources()
   const verifie = (x: Affichable, seuil: number): boolean => traductionAssezSure(x, contexte.value.mode, contexte.value.regionale, seuil)
-  const affichable = (x: Affichable): boolean => AVEC_DEV || verifie(x, confianceMin.value)
+  // une ressource d'une option cachée (les ceintures) n'est montrée que si l'option est active
+  const optionActive = (x: Affichable): boolean => x.option !== 'ceintures' || ceinturesActives.value
+  const affichable = (x: Affichable): boolean => AVEC_DEV || (optionActive(x) && verifie(x, confianceMin.value))
   const masque = (x: Affichable): boolean => !verifie(x, confianceMin.value)
   const traduite = (x: Affichable): NiveauConfiance | null => (traductionMontree(x, contexte.value.mode, contexte.value.regionale) ? (x.confiance ?? null) : null)
   const filtrer = <T extends Affichable>(liste: readonly T[]): T[] => liste.filter(affichable)

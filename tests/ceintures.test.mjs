@@ -4,6 +4,10 @@ import { ceintureSvg } from '../src/ceintures/dessin.ts'
 import { DEFAUT_CEINTURES, BORNES, STYLES_CEINTURE, assainirCeintures, brevetReussi } from '../src/ceintures/reglages.ts'
 import { demandeCeintures, ceinturesActives, ceinturesActivesPour } from '../src/contexte/ceintures.ts'
 import { SITES } from '../src/sites.ts'
+import { module as activite } from '../src/exercices/ceintures/index.ts'
+import { traducteur } from '../src/langues/catalogue.ts'
+import { SUPPORTS } from '../src/exercices/ceintures/donnees.ts'
+import { CHOIX_PISTE, objectifsDe } from '../src/ceintures/pistes.ts'
 import { LANGUES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -26,7 +30,7 @@ verifier(couleursDe('paliers', 8).length === 5 && couleursDe('judo', 0).length =
 console.log('Noms des couleurs (fr et br)')
 const toutes = new Set(IDS_PALETTES.flatMap(id => PALETTES[id].couleurs.map(c => c.id)))
 for (const code of ['fr', 'br']) {
-  const noms = LANGUES[code].textes.ceintures.couleur
+  const noms = LANGUES[code].textes.ceintures.ceinture
   const manquants = [...toutes].filter(id => !noms[id])
   verifier(!manquants.length, `${code} : un nom pour chaque couleur ${manquants.join(', ')}`)
   const palettes = LANGUES[code].textes.ceintures.palette
@@ -59,6 +63,29 @@ console.log('Brevet')
 verifier(brevetReussi(9, 10, 90) && !brevetReussi(8, 10, 90) && brevetReussi(10, 10, 100) && !brevetReussi(9, 10, 100), 'seuil 90 et 100 %')
 verifier(brevetReussi(18, 20, 90) && !brevetReussi(17, 20, 90), 'le seuil suit le nombre de questions')
 verifier(!brevetReussi(0, 0, 50), 'aucune question : jamais réussi')
+
+console.log('Activité : chaque support, chaque piste, fr et br')
+const base = { niveau: 'ce1', support: 'livret', piste: 'tables', intitule: '', objectifs: 'Un\nDeux\nTrois', copies: 2, ceinture: 3, prenom: '' }
+for (const langue of ['fr', 'br']) {
+  const T = traducteur(activite.textes, langue)
+  for (const support of SUPPORTS) for (const piste of CHOIX_PISTE) {
+    const reglages = { ...base, support, piste }
+    const x = activite.generateur.questionsFiche({ niveau: 'ce1', reglages, T })
+    const html = activite.fiche.fiche({ questions: x, reglages, T, langue })
+    const manque = html.match(/\b(piste|couleur|support|ceinture)\.[a-z-]+/)
+    verifier(x.objectifs.length >= 3 && html.includes('<svg') && html.includes('class="entete"') && !manque, `${langue} ${support} / ${piste} : ${x.objectifs.length} ceintures, aucune clé de texte brute${manque ? ' (' + manque[0] + ')' : ''}`)
+  }
+}
+{
+  const T = traducteur(activite.textes, 'fr')
+  const reglages = { ...base, support: 'bandes' }
+  const x = activite.generateur.questionsFiche({ niveau: 'ce1', reglages, T })
+  const nb = activite.fiche.fiche({ questions: x, reglages, T, langue: 'fr', ceintures: { ...DEFAUT_CEINTURES, noirEtBlanc: true } })
+  verifier(nb.includes('<pattern') && !nb.includes('#3aa655'), 'noir et blanc : des motifs, aucune teinte')
+  const libre = activite.generateur.questionsFiche({ niveau: 'ce1', reglages: { ...base, piste: 'libre', intitule: ' Mon titre ', objectifs: 'a\n\n b |c' }, T })
+  verifier(libre.titreLibre === 'Mon titre' && libre.objectifs.join() === 'a,b,c', 'piste libre : titre et objectifs nettoyés')
+  verifier(objectifsDe(Array.from({ length: 20 }, (_, i) => i).join('\n')).length === 8, 'au plus huit objectifs')
+}
 
 console.log('Option (cachée par défaut)')
 verifier(demandeCeintures({ ceintures: 'oui' }) === true && demandeCeintures({ ceintures: 'non' }) === false && demandeCeintures({ ceintures: '1' }) === null && demandeCeintures({}) === null, 'demandeCeintures : oui, non, ou rien')

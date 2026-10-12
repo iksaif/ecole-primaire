@@ -34,5 +34,6 @@ export const VUES: Readonly<Record<string, VueExercice>> = {
   '/francais/ecriture': () => import('./francais/EcritureView.vue'),
   '/francais/lecture': () => import('./francais/LectureView.vue'),
   '/monde/quiz': () => import('./monde/QuizView.vue'),
+  '/monde/ceintures': () => import('./monde/CeinturesView.vue'),
   // nouveau:vues
 }

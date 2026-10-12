@@ -12,6 +12,7 @@ import type { CompetenceId, DomaineId, Contraintes } from '../data/programme.ts'
 import type { Rng } from '../utils/hasard.ts'
 import type { CatalogueContenu } from '../langues/catalogue.ts'
 import type { ImagesFiche } from '../images/preference.ts'
+import type { ReglagesCeintures } from '../ceintures/types.ts'
 import type { ChoixPictogrammes } from '../images/consignes.ts'
 import type { NomIcone } from '../images/icones.ts'
 
@@ -223,6 +224,8 @@ export interface ParamsFiche<R extends object = Reglages, F = unknown, Cle exten
    * (src/images/consignes.ts), qui n'en montre aucun quand il est absent : build des PDF publiés, instantanés
    */
   pictogrammes?: ChoixPictogrammes
+  /** les réglages communs des ceintures (palette, dessin, noir et blanc : useFicheExercice) ; absents : DEFAUT_CEINTURES (build des PDF publiés, instantanés) */
+  ceintures?: ReglagesCeintures
   /**
    * mesure du texte, pour une fiche qui ajuste le texte à la place (taille par la hauteur d'x, coupure des lignes) : canvas dans le
    * navigateur (mesureNavigateur), largeurs tabulées au build (mesureEstimee). La même que celle des affiches.

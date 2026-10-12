@@ -27,6 +27,8 @@ import { pictogrammesPrets, useImagesFiche } from '../images/useImagesFiche.ts'
 import type { ImagesFiche } from '../images/preference.ts'
 import type { ChoixPictogrammes } from '../images/consignes.ts'
 import { useOptionsFiche } from './optionsFiche.ts'
+import { useCeintures } from '../ceintures/useCeintures.ts'
+import type { ReglagesCeintures } from '../ceintures/types.ts'
 import type { Rng } from '../utils/hasard.ts'
 
 /** 'jouer' : faire l'exercice à l'écran ; 'imprimer' : fiche papier. */
@@ -42,7 +44,7 @@ export function useModeExercice(): WritableComputedRef<ModeExercice> {
 }
 
 /** Ce que reçoit la mise en page en plus des questions : la police, les images et les pictogrammes choisis dans « Sur la fiche ». */
-export type MiseEnPageFiche = PoliceFiche & { images: ImagesFiche, pictogrammes: ChoixPictogrammes }
+export type MiseEnPageFiche = PoliceFiche & { images: ImagesFiche, pictogrammes: ChoixPictogrammes, ceintures: ReglagesCeintures }
 
 /**
  * Q : ce que tire `tirer` (les questions de la fiche). mettreEnPage rend le document HTML complet.
@@ -64,6 +66,8 @@ export function useFicheExercice<Q>({ tirer, mettreEnPage, ficheSeule = false }:
   const images = useImagesFiche()
   // pictogrammes des consignes (selon la classe par défaut) ; leurs images arrivent à la demande (consignes.ts)
   const options = useOptionsFiche()
+  // palette, dessin et noir et blanc des ceintures (réglages communs : src/ceintures/)
+  const ceintures = useCeintures()
   const tirage = computed<Q | null>(() => {
     if (mode.value !== 'imprimer') return null
     return tirer(creerRng(graine.value))   // lit graine.value : le tirage est relancé quand elle change
@@ -72,7 +76,7 @@ export function useFicheExercice<Q>({ tirer, mettreEnPage, ficheSeule = false }:
     if (!tirage.value) return ''
     // lu pour que la fiche se redessine quand les pictogrammes arrivent
     void pictogrammesPrets.value
-    return mettreEnPage(tirage.value, { ...police.value, images: images.value, pictogrammes: options.value.pictogrammes })
+    return mettreEnPage(tirage.value, { ...police.value, images: images.value, pictogrammes: options.value.pictogrammes, ceintures: ceintures.value })
   })
   return { mode, fiche, nouvelle, graine }
 }

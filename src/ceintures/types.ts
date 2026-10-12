@@ -4,7 +4,7 @@
 /** Les motifs qui remplacent la couleur à l'impression en noir et blanc : chaque ceinture se reconnaît sans couleur (le nom reste écrit à côté). */
 export type Motif = 'uni' | 'rayures' | 'hachures' | 'points' | 'lignes' | 'gris' | 'plein' | 'quadrillage'
 
-/** Une couleur de ceinture : son identifiant (clé de texte `ceintures.couleur.<id>`), sa teinte et son motif. */
+/** Une couleur de ceinture : son identifiant (clé de texte `ceintures.ceinture.<id>`), sa teinte et son motif. */
 export interface CouleurCeinture {
   id: string
   hex: string

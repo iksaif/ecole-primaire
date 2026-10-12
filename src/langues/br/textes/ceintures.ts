@@ -18,4 +18,23 @@ export default {
     paliers: 'Hep liv : pemp live', // br: à relire
   },
   style: { ruban: 'Gouriz stag', bandeau: 'Bandenn', rond: 'Kelc’h (gomedenn)' }, // br: à relire
+  activer: {
+    titre: 'Gourizioù barregezhioù (dibabus)', // br: à relire
+    aide: 'Live liv evit heuliañ e brogres : fichennoù da voullañ (levrig, brevedoù, gourizioù da droc’hañ, taolenn ar glasad) hag, diwezhatoc’h, brevedoù da ober war ar skramm. Kuzh e chomont keit ha ma n’int ket gweredekaet.', // br: à relire
+    case: 'Kinnig ar gourizioù war an trevnad-mañ', // br: à relire
+    parSite: 'Kinniget e vez gant al lec’hienn-mañ da gentañ.', // br: à relire
+  },
+  reglage: {
+    titre: 'Gourizioù', // br: à relire
+    aide: 'Ar baletenn hag an treuzskrivadur eus ar gourizioù, evit an holl fichennoù gourizioù. Skrivet eo bepred anv al liv e-kichen.', // br: à relire
+    palette: 'Livioù', // br: à relire
+    style: 'Tresadenn', // br: à relire
+    noirEtBlanc: 'Du ha gwenn (kinnigoù e plas al livioù)', // br: à relire
+    nb: 'Niver a c’hourizioù', // br: à relire
+    seuil: 'Evit tapout ur brevet', // br: à relire
+    seuilValeur: '{n} % a respontoù mat', // br: à relire
+    questions: 'Goulennoù ur brevet', // br: à relire
+    chronometre: 'Kronometr', // br: à relire
+    chrono: { aucun: 'Hini ebet', doux: 'Dous', strict: 'Strizh' }, // br: à relire
+  },
 } as const satisfies Traductions<typeof fr>

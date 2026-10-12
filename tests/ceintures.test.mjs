@@ -2,6 +2,8 @@
 import { PALETTES, IDS_PALETTES, couleursDe } from '../src/ceintures/palettes.ts'
 import { ceintureSvg } from '../src/ceintures/dessin.ts'
 import { DEFAUT_CEINTURES, BORNES, STYLES_CEINTURE, assainirCeintures, brevetReussi } from '../src/ceintures/reglages.ts'
+import { demandeCeintures, ceinturesActives, ceinturesActivesPour } from '../src/contexte/ceintures.ts'
+import { SITES } from '../src/sites.ts'
 import { LANGUES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -57,5 +59,11 @@ console.log('Brevet')
 verifier(brevetReussi(9, 10, 90) && !brevetReussi(8, 10, 90) && brevetReussi(10, 10, 100) && !brevetReussi(9, 10, 100), 'seuil 90 et 100 %')
 verifier(brevetReussi(18, 20, 90) && !brevetReussi(17, 20, 90), 'le seuil suit le nombre de questions')
 verifier(!brevetReussi(0, 0, 50), 'aucune question : jamais réussi')
+
+console.log('Option (cachée par défaut)')
+verifier(demandeCeintures({ ceintures: 'oui' }) === true && demandeCeintures({ ceintures: 'non' }) === false && demandeCeintures({ ceintures: '1' }) === null && demandeCeintures({}) === null, 'demandeCeintures : oui, non, ou rien')
+verifier(demandeCeintures({ ceintures: ['oui', 'non'] }) === true, 'demandeCeintures : le premier de plusieurs paramètres')
+verifier(Object.values(SITES).every(s => s.ceinturesVisibles === false), 'aucun site ne propose les ceintures d’office')
+verifier(ceinturesActives.value === false && Object.values(SITES).every(s => !ceinturesActivesPour(s)), 'sans réglage d’appareil : les ceintures sont cachées')
 
 process.exit(nbEchecs() ? 1 : 0)

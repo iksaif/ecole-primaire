@@ -36,6 +36,8 @@ export interface Site {
    * activé par l'adresse spéciale `?enseignant=oui` (src/contexte/enseignant.ts). `true` : proposé d'office.
    */
   enseignantVisible: boolean
+  /** Les ceintures de compétences (plan 15) sont proposées en option : cachées (`false`) tant que l'appareil ne les a pas activées (`?ceintures=oui`, src/contexte/ceintures.ts). */
+  ceinturesVisibles: boolean
 }
 
 const DEPOT = 'https://github.com/iksaif/ecole-primaire'
@@ -58,6 +60,7 @@ export const SITES = {
     contact: CONTACT,
     depot: DEPOT,
     enseignantVisible: false,
+    ceinturesVisibles: false,
   },
   // Version bretonne : interface en breton (français disponible) et breton actif d'office
   skoolik: {
@@ -75,6 +78,7 @@ export const SITES = {
     contact: CONTACT,
     depot: DEPOT,
     enseignantVisible: false,
+    ceinturesVisibles: false,
   },
 } as const satisfies Record<string, Site>
 

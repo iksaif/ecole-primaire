@@ -15,4 +15,25 @@ export default {
     paliers: 'Sans couleur : cinq niveaux',
   },
   style: { ruban: 'Ruban noué', bandeau: 'Bandeau', rond: 'Rond (gommette)' },
+  // l'option (onglet « Appareil » des réglages) : cachée par défaut, comme le mode enseignant
+  activer: {
+    titre: 'Ceintures de compétences (en option)',
+    aide: 'Des paliers de couleur pour suivre ses progrès : des fiches à imprimer (livret, brevets, ceintures à découper, tableau de la classe) et, plus tard, des brevets à passer à l’écran. Cachées tant qu’on ne les active pas.',
+    case: 'Proposer les ceintures sur cet appareil',
+    parSite: 'Ce site les propose d’office.',
+  },
+  // les réglages communs : page des réglages (onglet « Fiches ») et « Sur la fiche » des exercices
+  reglage: {
+    titre: 'Ceintures',
+    aide: 'La palette et le dessin des ceintures, pour toutes les fiches de ceintures. Le nom de la couleur est toujours écrit à côté.',
+    palette: 'Couleurs',
+    style: 'Dessin',
+    noirEtBlanc: 'Noir et blanc (des motifs à la place des couleurs)',
+    nb: 'Nombre de ceintures',
+    seuil: 'Pour réussir un brevet',
+    seuilValeur: '{n} % de bonnes réponses',
+    questions: 'Questions d’un brevet',
+    chronometre: 'Chronomètre',
+    chrono: { aucun: 'Aucun', doux: 'Doux', strict: 'Strict' },
+  },
 } as const

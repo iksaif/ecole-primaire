@@ -74,6 +74,13 @@
           <ChoixPolice />
         </section>
 
+        <!-- les ceintures (plan 15), en option : le bloc n'existe que si elles sont proposées -->
+        <section v-if="ceinturesActives" class="bloc" data-section="ceintures">
+          <h2><Icone nom="trophee" /> {{ t('ceintures.reglage.titre') }}</h2>
+          <p class="aide">{{ t('ceintures.reglage.aide') }}</p>
+          <ChoixCeintures complet />
+        </section>
+
         <section class="bloc" data-section="voix">
           <h2><Icone nom="ecouter" /> {{ t('reglages.voix.titre') }}</h2>
           <p class="aide">{{ t('reglages.voix.aide') }}</p>
@@ -91,6 +98,13 @@
               <span class="apercu-icones" aria-hidden="true" v-html="apercuIcones(f)" /> {{ t(`cadre.images.${f}`) }}
             </button>
           </div>
+        </section>
+
+        <section class="bloc" data-section="ceintures-option">
+          <h2><Icone nom="trophee" /> {{ t('ceintures.activer.titre') }}</h2>
+          <p class="aide">{{ t('ceintures.activer.aide') }}</p>
+          <label class="case"><input type="checkbox" :checked="ceinturesActives" :disabled="SITE.ceinturesVisibles" @change="basculerCeintures"> {{ t('ceintures.activer.case') }}</label>
+          <p v-if="SITE.ceinturesVisibles" class="aide">{{ t('ceintures.activer.parSite') }}</p>
         </section>
 
         <section class="bloc">
@@ -125,6 +139,8 @@ import { computed, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
+import ChoixCeintures from '../ceintures/ChoixCeintures.vue'
+import { ceinturesActives, changerCeintures } from '../contexte/ceintures.ts'
 import ReglageVoix from '../noyau/ReglageVoix.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import JaugeConfiance from '../ressources/composants/JaugeConfiance.vue'
@@ -196,6 +212,11 @@ const majuscule = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1)
 /** la case « Afficher le mode enseignant » : le réglage de l'appareil (le même que l'adresse spéciale `?enseignant=oui`) */
 function basculerEnseignant(e: Event): void {
   changerModeEnseignant((e.target as HTMLInputElement).checked)
+}
+
+/** la case « Proposer les ceintures » : le réglage de l'appareil (le même que l'adresse spéciale `?ceintures=oui`) */
+function basculerCeintures(e: Event): void {
+  changerCeintures((e.target as HTMLInputElement).checked)
 }
 
 const message = ref('')

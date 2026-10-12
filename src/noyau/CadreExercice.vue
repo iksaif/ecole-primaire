@@ -36,7 +36,7 @@
       <ChoixLangueContenu />
       <slot :mode="modeCourant" />
 
-      <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" :pictogrammes="pictogrammes" />
+      <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" :pictogrammes="pictogrammes" :ceintures="ceintures" />
 
       <div class="signalement"><SignalerErreur :reglages="config ?? undefined" /></div>
 
@@ -81,9 +81,11 @@ const props = withDefaults(defineProps<{
   images?: boolean
   // le choix des pictogrammes des consignes est proposé dans « Sur la fiche »
   pictogrammes?: boolean
+  // le choix des ceintures (palette, dessin, noir et blanc) est proposé dans « Sur la fiche » : fiche de ceintures
+  ceintures?: boolean
   // pas de partie à l'écran : une fiche seulement (pas d'onglets)
   ficheSeule?: boolean
-}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, pictogrammes: false, ficheSeule: false })
+}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, pictogrammes: false, ceintures: false, ficheSeule: false })
 const emit = defineEmits<{ 'update:mode': [mode: ModeExercice], commencer: [], regenerer: [] }>()
 // le formulaire de réglages reçoit le mode courant
 defineSlots<{ default?(props: { mode: ModeExercice }): unknown }>()

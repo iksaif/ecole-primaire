@@ -27,6 +27,7 @@
     <ChoixPolice v-if="police" class="police-fiche" />
     <ChoixImages v-if="images" />
     <ChoixPictogrammes v-if="pictogrammes" />
+    <ChoixCeintures v-if="ceintures" />
   </div>
 </template>
 
@@ -35,6 +36,7 @@ import { defineAsyncComponent, useId } from 'vue'
 import ChoixPolice from './ChoixPolice.vue'
 import { useOptionsFiche, CHOIX_CORRIGE } from './optionsFiche.ts'
 import ChoixPictogrammes from './ChoixPictogrammes.vue'
+import ChoixCeintures from '../ceintures/ChoixCeintures.vue'
 import { useLangue } from '../langues/useLangue.ts'
 
 // chargé à la demande : ses aperçus tirent les dessins des emojis (src/images/donnees/), inutiles aux fiches sans image
@@ -49,7 +51,9 @@ withDefaults(defineProps<{
   images?: boolean
   // le choix des pictogrammes des consignes (selon la classe, toujours, jamais) et de leur ligne de crédit est proposé
   pictogrammes?: boolean
-}>(), { avecCorrige: true, police: true, images: false, pictogrammes: false })
+  // le choix des ceintures (palette, dessin, noir et blanc : src/ceintures/) est proposé : fiche de ceintures
+  ceintures?: boolean
+}>(), { avecCorrige: true, police: true, images: false, pictogrammes: false, ceintures: false })
 defineSlots<{ default?(): unknown }>()
 
 const { t } = useLangue()

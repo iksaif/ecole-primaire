@@ -225,3 +225,17 @@ Critères : l'impression est utile sur de vraies fiches imprimées (noir et blan
 ### Ordre des commits sur la branche
 1. socle (`src/ceintures/`, tests) → 2. réglages communs → 3. activité générale : livret, bandes (D), diplôme (E) → 4. passeport (F) et tableau (C) → 5. brevet papier « tables » →
 6. autres pistes → 7. breton → 8. version en ligne (si retenue).
+
+## 12. Avancement (2026-10-12, sur `main` : pas de branche, décision de l'utilisateur)
+
+Fait (commits `63f513d`, `6a6116c`, `01d9e37`, `2cc63a0`, non poussés) :
+- **Socle** `src/ceintures/` : types, palettes (4) avec motifs noir et blanc, dessin SVG (ruban, bandeau, rond), réglages communs lus avec méfiance (`reglages.ts`, `useCeintures.ts`),
+  supports pur HTML (`supports.ts` : livret, ceintures à découper, diplôme, passeport, brevet), questions des brevets (`brevets.ts`), `tests/ceintures.test.mjs`.
+- **Réglages communs** : page des réglages (onglet « Fiches », bloc « Ceintures » : palette, dessin, N&B, nombre, seuil, questions, chronomètre) et « Sur la fiche » (`<CadreExercice ceintures>`).
+- **Option cachée** : `?ceintures=oui|non`, case dans « Appareil », `ceinturesVisibles` dans `src/sites.ts` ; les activités n'apparaissent dans les listes que si elle est active (`useAffichable`, critère `option`).
+- **Activité `ceintures`** (`/monde/ceintures`, EMC CP à CM2) : livret, ceintures à découper, diplôme, passeport ; pistes tables, calcul mental, lettres, libre.
+- **Activité `ceintures-brevet`** (`/maths/ceintures-brevet`, tables CE1 à CM2) : brevet papier tiré de la graine, seuil et nombre de questions des réglages communs, corrigé.
+- Écart au plan : le brevet est une activité à part (le test des exercices interdit un corrigé « parfois »), et il suit la compétence qu'il évalue (tables) ; l'activité générale reste en EMC (même matière que les
+  pistes de comportement), sans GS faute de compétence EMC au cycle 1.
+
+Reste : tableau de la classe (affiche A3), brevets des autres pistes (calcul mental, lettres), fiches publiées (slugs `/telechargements/`, voir §10), breton (table de confiance), regards critiques, version en ligne (§6).

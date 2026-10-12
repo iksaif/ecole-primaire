@@ -8,6 +8,7 @@ import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import type { Question, Sens } from './generateur.ts'
 import { imagesDe } from '../../images/rendu.ts'
+import { consignesDe } from '../../images/consignes.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -25,7 +26,9 @@ const CSS = `
       .corr { font-size: 1.1rem; line-height: 2; }
     `
 
-export function fiche({ questions: qs, T, langue, police, cssPolices , images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
+export function fiche({ questions: qs, reglages, T, langue, police, cssPolices, images: preference, pictogrammes }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Question[], Cle>): string {
+  // les pictogrammes des consignes, selon « Sur la fiche » (aucun dans les PDF publiés : src/images/consignes.ts)
+  const consigneFiche = consignesDe({ reglages, images: preference, pictogrammes })
   // la flèche des consignes : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
   const images = imagesDe({ images: preference })
   const consigne = (sens: Sens): string => {
@@ -42,7 +45,7 @@ export function fiche({ questions: qs, T, langue, police, cssPolices , images: p
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '700px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T('consigne')}</p>
+    <p class="consigne">${consigneFiche(['ecris'], T('consigne'))}</p>
     ${lignes}
     <section class="corrige"><h2>${T('corrige')} — ${titre}</h2>
       <div class="corr">${qs.map((q, i) => `<div>${i + 1}. ${q.bonne.join(q.sens === 'croissant' ? ' &lt; ' : ' &gt; ')}</div>`).join('')}</div></section>`,

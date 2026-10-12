@@ -13,6 +13,8 @@
     - `:aleatoire="false"` : la fiche ne dépend pas du hasard (table, liste fixe) : pas de bouton « Nouvelle fiche » ;
     - `:police="false"` : l'exercice n'a pas de texte à mettre en police : pas de choix de police dans « Sur la fiche » ;
     - `images` : la fiche dessine des emojis avec le rendu reçu (ParamsFiche.images) : choix des images dans « Sur la fiche » ;
+    - `pictogrammes` : les consignes de la fiche passent par consignesDe (src/images/consignes.ts) : choix des pictogrammes des
+      consignes et de leur ligne de crédit dans « Sur la fiche » ;
     - `fiche-seule` : exercice sans partie à l'écran (une fiche à imprimer) : ni onglets ni « Commencer », le mode est
       toujours « imprimer » (le tirage de la fiche se fait alors quel que soit `?mode=`, voir useFicheExercice).
   Pour une partie chronométrée, le temps restant s'affiche avec <Chronometre> (dans la question : useMinuteur).
@@ -34,7 +36,7 @@
       <ChoixLangueContenu />
       <slot :mode="modeCourant" />
 
-      <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" />
+      <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" :pictogrammes="pictogrammes" />
 
       <div class="signalement"><SignalerErreur :reglages="config ?? undefined" /></div>
 
@@ -77,9 +79,11 @@ const props = withDefaults(defineProps<{
   police?: boolean
   // le choix des images (famille, style) est proposé dans « Sur la fiche »
   images?: boolean
+  // le choix des pictogrammes des consignes est proposé dans « Sur la fiche »
+  pictogrammes?: boolean
   // pas de partie à l'écran : une fiche seulement (pas d'onglets)
   ficheSeule?: boolean
-}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, ficheSeule: false })
+}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, pictogrammes: false, ficheSeule: false })
 const emit = defineEmits<{ 'update:mode': [mode: ModeExercice], commencer: [], regenerer: [] }>()
 // le formulaire de réglages reçoit le mode courant
 defineSlots<{ default?(props: { mode: ModeExercice }): unknown }>()
@@ -90,7 +94,7 @@ const modeCourant = computed<ModeExercice>(() => (props.ficheSeule ? 'imprimer' 
 
 const options = useOptionsFiche()
 const avecCorrige = computed(() => aUnCorrige(props.fiche))
-const ficheFinale = computed(() => appliquerOptionsFiche(props.fiche, options.value))
+const ficheFinale = computed(() => appliquerOptionsFiche(props.fiche, options.value, t('cadre.mentionPictos')))
 const reglages = computed(() => (props.config ? { ...props.config, ...options.value } : options.value))
 
 // Onglets au clavier : flèches (avec retour au début), Début, Fin ; le focus suit l'onglet activé

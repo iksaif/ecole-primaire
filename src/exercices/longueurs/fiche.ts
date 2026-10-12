@@ -9,6 +9,7 @@ import type { CONTENU } from './textes.ts'
 import type { Tirage } from './generateur.ts'
 import { rangsAttendus } from './generateur.ts'
 import { svgCrayon } from './crayon.ts'
+import { consignesDe } from '../../images/consignes.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -22,15 +23,23 @@ const CSS = `
       .ligne { height: 15mm; } .liste { min-width: 0; } .quoi { flex: none; white-space: nowrap; min-width: 0; } .corr { columns: 3; font-size: 1.1rem; line-height: 1.8; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Tirage, Cle>): string {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices, images: preference, pictogrammes }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, Tirage, Cle>): string {
+  // les pictogrammes des consignes, selon « Sur la fiche » (aucun dans les PDF publiés : src/images/consignes.ts)
+  const consigne = consignesDe({ reglages, images: preference, pictogrammes })
   const { ranger, questions: qs } = x
   const ps = x.niveau === 'ps'
+  /** La consigne de la fiche : numéroter les crayons (ranger), ou entourer le crayon demandé. */
+  const consigneLongueurs = (): string => {
+    if (ranger) return consigne(['ecris'], T('fConsigneRanger'))
+    if (ps) return consigne(['entoure'], T('fConsignePS'))
+    return consigne(['entoure'], T('fConsigne'))
+  }
   const blocs = qs.map((q, i) => `<div class="bloc"><span class="num">${i + 1}.</span><div class="liste">${q.crayons.map(c => `<div class="ligne">${ranger ? '<span class="case"></span>' : ''}${svgCrayon(c, { impression: true })}</div>`).join('')}</div>${ranger || ps ? '' : `<span class="quoi">${T(q.cherche === 'long' ? 'fLong' : 'fCourt')}</span>`}</div>`).join('')
   const titre = T('titre')
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '720px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T(ranger ? 'fConsigneRanger' : ps ? 'fConsignePS' : 'fConsigne')}</p>
+    <p class="consigne">${consigneLongueurs()}</p>
     ${blocs}
     <section class="corrige"><h2>${T('corrige')} — ${titre}</h2>
       <div class="corr">${qs.map((q, i) => {

@@ -9,6 +9,7 @@ import { imagesDe } from '../../images/rendu.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import type { TirageFiche } from './generateur.ts'
+import { consignesDe } from '../../images/consignes.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -21,10 +22,18 @@ const CSS = `
       .corr { columns: 3; font-size: 1.3rem; line-height: 1.9; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices, images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices, images: preference, pictogrammes }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  // les pictogrammes des consignes, selon « Sur la fiche » (aucun dans les PDF publiés : src/images/consignes.ts)
+  const consigne = consignesDe({ reglages, images: preference, pictogrammes })
   // les éléments : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
   const images = imagesDe({ images: preference })
   const ps = x.niveau === 'ps'
+  /** La consigne de la fiche : entourer ce qui suit (PS), ou dessiner ou coller les éléments qui manquent. */
+  const consigneMotifs = (): string => {
+    if (ps) return consigne(['entoure'], T('consignePS'))
+    if (x.mode === 'trou') return consigne(['dessine', 'colle'], T('consigneTrou'))
+    return consigne(['dessine', 'colle'], T('consigne'))
+  }
   const lignes = x.questions.map((q, i) => {
     const vus = q.place >= q.motif.length ? q.motif : q.motif.map((e, j) => (j === q.place ? null : e))
     const cases = vus.map(e => (e === null ? '<span class="case"></span>' : `<span>${images.html(q.elements[e])}</span>`)).join('')
@@ -41,7 +50,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices, images: pre
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '720px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T(ps ? 'consignePS' : x.mode === 'trou' ? 'consigneTrou' : 'consigne')}</p>
+    <p class="consigne">${consigneMotifs()}</p>
     ${lignes}
     <section class="corrige"><h2>${T('corrige')} — ${titre}</h2><div class="corr">${corr}</div></section>`,
   })

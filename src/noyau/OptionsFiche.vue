@@ -1,7 +1,8 @@
 <!--
   Bloc « Sur la fiche » : options communes à toutes les fiches d'exercice du noyau (optionsFiche.ts, dernier choix
   mémorisé) — une ligne par préoccupation : « Prénom et date » (case à cocher, le slot ajoute des boutons à côté), le
-  corrigé (sans / sur une autre page / en bas à l'envers : un seul choix, en boutons radio d'une seule pièce), puis la police et les images.
+  corrigé (sans / sur une autre page / en bas à l'envers : un seul choix, en boutons radio d'une seule pièce), puis la police, les images et
+  les pictogrammes des consignes (`pictogrammes` : selon la classe / toujours / jamais, et la ligne de crédit qu'impose leur licence).
   Affiché par CadreExercice en mode impression. `police` : false pour un exercice sans texte à mettre en police ; `images` : true pour
   une fiche qui dessine des emojis avec le rendu reçu (ParamsFiche.images), qui propose alors leur famille et leur style (ChoixImages).
   Accessibilité : éléments natifs (case à cocher, radios dans un <fieldset> nommé : flèches du clavier natives), focus visible
@@ -25,6 +26,7 @@
     </fieldset>
     <ChoixPolice v-if="police" class="police-fiche" />
     <ChoixImages v-if="images" />
+    <ChoixPictogrammes v-if="pictogrammes" />
   </div>
 </template>
 
@@ -32,6 +34,7 @@
 import { defineAsyncComponent, useId } from 'vue'
 import ChoixPolice from './ChoixPolice.vue'
 import { useOptionsFiche, CHOIX_CORRIGE } from './optionsFiche.ts'
+import ChoixPictogrammes from './ChoixPictogrammes.vue'
 import { useLangue } from '../langues/useLangue.ts'
 
 // chargé à la demande : ses aperçus tirent les dessins des emojis (src/images/donnees/), inutiles aux fiches sans image
@@ -44,7 +47,9 @@ withDefaults(defineProps<{
   police?: boolean
   // le choix des images (famille, style) est proposé
   images?: boolean
-}>(), { avecCorrige: true, police: true, images: false })
+  // le choix des pictogrammes des consignes (selon la classe, toujours, jamais) et de leur ligne de crédit est proposé
+  pictogrammes?: boolean
+}>(), { avecCorrige: true, police: true, images: false, pictogrammes: false })
 defineSlots<{ default?(): unknown }>()
 
 const { t } = useLangue()

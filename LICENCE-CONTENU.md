@@ -36,8 +36,9 @@ Les **images** que contiennent les fiches (emojis, pictogrammes) restent sous la
 | Emojis [OpenMoji](https://openmoji.org) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr) | permis |
 | Pictogrammes de consigne [ARASAAC](https://arasaac.org) (Sergio Palao, Gouvernement d'Aragon) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr) | **interdit** |
 
-- Les pictogrammes de consigne sont facultatifs (réglage « Pictogrammes des consignes » quand on imprime une fiche depuis le navigateur) ; les PDF à télécharger n'en contiennent
-  pas. Une fiche qui en contient le signale par une mention en bas de feuille et dans les propriétés du PDF.
+- Les pictogrammes de consigne sont facultatifs (réglage « Pictogrammes des consignes » quand on imprime une fiche depuis le navigateur ; par défaut en
+  maternelle seulement) ; les PDF à télécharger n'en contiennent pas. Une fiche qui en contient le signale par une mention en bas de feuille
+  (« Pictogrammes : Sergio Palao, ARASAAC (arasaac.org), CC BY-NC-SA »). Si vous la retirez, citez l'auteur quand vous partagez la fiche.
 - Ne modifiez pas les images (couleur, fusion, détourage) : gardez-les telles quelles, avec leur mention.
 
 Le site lui-même est non commercial : gratuit, sans publicité, sans vente ni abonnement.

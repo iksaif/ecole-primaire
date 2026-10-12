@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('compter.titre') }}</h1>
 
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" pictogrammes images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />

@@ -10,6 +10,7 @@ import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import { COULEURS_FICHE, formesDuNiveau, nomForme } from './generateur.ts'
 import type { TirageFiche } from './generateur.ts'
+import { consignesDe } from '../../images/consignes.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -37,7 +38,9 @@ const CSS = `
 // une forme au trait, à colorier
 const contour = (forme: FormeMaternelle, taille: number, angle = 0): string => svgForme(forme, { taille, angle, contour: true })
 
-export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices, images: preference, pictogrammes }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  // les pictogrammes des consignes, selon « Sur la fiche » (aucun dans les PDF publiés : src/images/consignes.ts)
+  const consigne = consignesDe({ reglages, images: preference, pictogrammes })
   const titre = T('titre')
   const cases = x.formes.map(f => `<div class="cell">${contour(f.forme, f.taille, f.angle)}</div>`).join('')
   const pied = (corr: string): string => `<section class="corrige"><h2>${T('corrige')} — ${titre}</h2>\n      <div class="corr">${corr}</div></section>`
@@ -45,7 +48,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
     return documentFiche({
       titre, langue, police, cssPolices, css: CSS_PS, largeur: '700px', marge: '1.2cm',
       corps: `${ligneNomDate(langue)}
-    <p class="consigne"><span class="modele">${contour(x.modele, 70)}</span> ${T('consignePS')}</p>
+    <p class="consigne"><span class="modele">${contour(x.modele, 70)}</span> ${consigne(['colorie'], T('consignePS'))}</p>
     <div class="grille">${cases}</div>
     ${pied(`${nomForme(T, x.modele)} : <b>${x.formes.filter(f => f.forme === x.modele).length}</b>`)}`,
     })
@@ -57,10 +60,10 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '700px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T('consigne')}</p>
+    <p class="consigne">${consigne(['colorie'], T('consigne'))}</p>
     <div class="legende">${legende}</div>
     <div class="grille">${cases}</div>
-    <p class="consigne">${T('compte')}</p>
+    <p class="consigne">${consigne(['compte', 'ecris'], T('compte'))}</p>
     <div class="comptes">${comptes}</div>
     ${pied(couleurs.map(c => `<div>${nomForme(T, c.forme)} (${T(`couleur.${c.couleur}` as Cle)}) : <b>${x.formes.filter(f => f.forme === c.forme).length}</b></div>`).join(''))}`,
   })

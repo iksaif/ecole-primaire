@@ -9,6 +9,7 @@ import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import { couple, ecrire } from './generateur.ts'
 import type { Ecriture, TirageFiche } from './generateur.ts'
+import { consignesDe } from '../../images/consignes.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -29,7 +30,9 @@ const CSS = (attache: string): string => `
       .l i { width: .5rem; height: .5rem; border-radius: 50%; background: #333; display: inline-block; }
       .corr { font-size: 1.15rem; line-height: 2.2; }`
 
-export function fiche({ questions: x, reglages, T, langue, police, cssPolices, polices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices, polices, images: preference, pictogrammes }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  // les pictogrammes des consignes, selon « Sur la fiche » (aucun dans les PDF publiés : src/images/consignes.ts)
+  const consigne = consignesDe({ reglages, images: preference, pictogrammes })
   // les deux colonnes sont dans les écritures du réglage : capitale et script (A, a), ou script et attaché (a, a)
   const [gauche, droiteEcr] = couple(reglages.ecritures)
   const lettre = (l: string, ecriture: Ecriture): string => `<span class="${ecriture}">${e(ecrire(l, ecriture))}</span>`
@@ -43,7 +46,7 @@ export function fiche({ questions: x, reglages, T, langue, police, cssPolices, p
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS(polices?.attache ?? ATTACHE), largeur: '700px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T(droiteEcr === 'cursive' ? 'consigneCursive' : 'consigne')}</p>
+    <p class="consigne">${consigne(['relie'], T(droiteEcr === 'cursive' ? 'consigneCursive' : 'consigne'))}</p>
     <div class="blocs">${html}</div>
     <section class="corrige"><h2>${T('corrige')} — ${e(titre)}</h2>
       <div class="corr">${corrige}</div></section>`,

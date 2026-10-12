@@ -5,7 +5,8 @@
 //     mettreEnPage: (questions, police) => ficheHeure({ questions, reglages: config.value, T, langue: langueContenu.value, ...police }),
 //   })
 // `police` porte aussi `images`, la préférence « Images » (ParamsFiche.images) ; une fiche qui dessine des emojis (imagesDe) demande
-// le choix dans « Sur la fiche » avec <CadreExercice images>.
+// le choix dans « Sur la fiche » avec <CadreExercice images>. Il porte aussi `pictogrammes` (ParamsFiche.pictogrammes) : une fiche dont
+// les consignes passent par consignesDe (src/images/consignes.ts) le demande avec <CadreExercice pictogrammes>.
 //   <CadreExercice v-model:mode="mode" :fiche="fiche" @regenerer="nouvelle" …>
 //
 // Le tirage n'est calculé qu'en mode « imprimer ». C'est une FONCTION de la graine et des réglages : un `rng` neuf, créé
@@ -22,8 +23,10 @@ import { useGraine } from './useGraine.ts'
 import { creerRng } from '../utils/hasard.ts'
 import { usePoliceFiche } from './polices.ts'
 import type { PoliceFiche } from './polices.ts'
-import { useImagesFiche } from '../images/useImagesFiche.ts'
+import { pictogrammesPrets, useImagesFiche } from '../images/useImagesFiche.ts'
 import type { ImagesFiche } from '../images/preference.ts'
+import type { ChoixPictogrammes } from '../images/consignes.ts'
+import { useOptionsFiche } from './optionsFiche.ts'
 import type { Rng } from '../utils/hasard.ts'
 
 /** 'jouer' : faire l'exercice à l'écran ; 'imprimer' : fiche papier. */
@@ -38,8 +41,8 @@ export function useModeExercice(): WritableComputedRef<ModeExercice> {
   })
 }
 
-/** Ce que reçoit la mise en page en plus des questions : la police et les images choisies dans « Sur la fiche ». */
-export type MiseEnPageFiche = PoliceFiche & { images: ImagesFiche }
+/** Ce que reçoit la mise en page en plus des questions : la police, les images et les pictogrammes choisis dans « Sur la fiche ». */
+export type MiseEnPageFiche = PoliceFiche & { images: ImagesFiche, pictogrammes: ChoixPictogrammes }
 
 /**
  * Q : ce que tire `tirer` (les questions de la fiche). mettreEnPage rend le document HTML complet.
@@ -59,13 +62,17 @@ export function useFicheExercice<Q>({ tirer, mettreEnPage, ficheSeule = false }:
   const police = usePoliceFiche()
   // images choisies dans « Sur la fiche » (OpenMoji en couleur par défaut)
   const images = useImagesFiche()
+  // pictogrammes des consignes (selon la classe par défaut) ; leurs images arrivent à la demande (consignes.ts)
+  const options = useOptionsFiche()
   const tirage = computed<Q | null>(() => {
     if (mode.value !== 'imprimer') return null
     return tirer(creerRng(graine.value))   // lit graine.value : le tirage est relancé quand elle change
   })
   const fiche = computed(() => {
     if (!tirage.value) return ''
-    return mettreEnPage(tirage.value, { ...police.value, images: images.value })
+    // lu pour que la fiche se redessine quand les pictogrammes arrivent
+    void pictogrammesPrets.value
+    return mettreEnPage(tirage.value, { ...police.value, images: images.value, pictogrammes: options.value.pictogrammes })
   })
   return { mode, fiche, nouvelle, graine }
 }

@@ -83,6 +83,26 @@ partout. Décision du 2026-10-11 (après un essai de Phosphor, au trait, jugé t
   `iconeHtml(nom, { famille })` ; dans un SVG : `iconeSvg(nom, x, y, taille, famille)` (`icone.ts`).
 - Fil d'Ariane, état vide, rubriques : un champ `icone` (une page de l'interface) à côté du champ `emoji` (un contenu).
 
+## Les pictogrammes des consignes (ARASAAC)
+
+Un verbe de consigne = un pictogramme ARASAAC (Sergio Palao, CC BY-NC-SA 4.0, non commercial), le même partout, à gauche du texte
+de la consigne, qui reste toujours écrit. Guide : `brouillons/iconographie/GUIDE.md`, § 2.
+
+- `consignes.ts` : `VERBES`, le lexique fermé (verbe → numéro ARASAAC ; provisoire, à relire par une personne), et
+  `consignesDe(params)`. Une fiche écrit `${consigne(['compte', 'ecris'], T('consigneEcrire'))}` dans son `<p class="consigne">`, et
+  sa vue passe `pictogrammes` à `<CadreExercice>` (le choix apparaît alors dans « Sur la fiche » : `ChoixPictogrammes.vue`).
+- Le réglage (`options_fiche`, `optionsFiche.ts`) : **en maternelle** (défaut, d'après `reglages.niveau`), toujours, jamais.
+  **Réglage absent = aucun pictogramme** : les PDF publiés et les instantanés n'en ont jamais (le texte revient à l'identique).
+- La ligne de crédit qu'impose leur licence est ajoutée par le cadre (`appliquerOptionsFiche`) dès qu'un pictogramme est sur la
+  feuille (`data-image="arasaac"`), avant le corrigé. On peut la retirer (« Mention des pictogrammes ») : un avis rappelle alors de
+  citer l'auteur en partageant la fiche.
+- `donnees/pictogrammes.ts` : **généré** par `node scripts/generer/pictogrammes.ts` (télécharge les PNG de 500 px dans
+  `node_modules/.cache/arasaac`, les réduit à 200 px et les encode en WebP avec Chrome). Couleur, et « nocolor » d'ARASAAC pour le
+  style contour. Environ 85 Ko gzip, **chargé seulement quand une fiche montre un pictogramme** (`chargerPictogrammes`). Le site ne
+  fait aucune requête vers ARASAAC.
+- Un verbe de plus : l'écrire dans `VERBES`, lancer le générateur, **regarder** l'image (un pictogramme peut porter un mot
+  espagnol : « barre », 6223, « TACHAR », est écarté pour cela).
+
 ## Garde-fous
 
 - `tests/images.test.mjs` vérifie les données, le budget, les dessins maison, les quatre combinaisons et la préférence corrompue.

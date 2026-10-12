@@ -49,6 +49,16 @@ export default {
     titreCadre: 'Aperçu avant impression',
     conseil: 'Conseil : dans la fenêtre d’impression, choisis « Taille réelle / 100 % » et désactive « Ajuster à la page ».',
   },
+  // les pictogrammes des consignes (OptionsFiche.vue, src/images/consignes.ts) ; la mention est celle qu'impose leur licence
+  pictos: {
+    titre: 'Pictogrammes des consignes',
+    classe: 'En maternelle',
+    oui: 'Toujours',
+    non: 'Jamais',
+    mention: 'Mention des pictogrammes',
+    avis: 'Si vous partagez cette fiche (classe, parents, internet), citez l’auteur des pictogrammes : Sergio Palao, ARASAAC (arasaac.org), CC BY-NC-SA.',
+  },
+  mentionPictos: 'Pictogrammes : Sergio Palao, ARASAAC (arasaac.org), CC BY-NC-SA',
   // « Signaler une erreur » (SignalerErreur.vue)
   signaler: { lien: 'Signaler une erreur', titre: 'Signaler une erreur sur cette page (ouvre votre messagerie)' },
   // la clé Mistral, facultative (CleMistral.vue)

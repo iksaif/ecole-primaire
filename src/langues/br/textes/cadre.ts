@@ -53,6 +53,15 @@ export default {
     conseil: 'Alioù : er prenestr moullañ, dibab ar ment gwir (100 %) ha na azasait ket ouzh ar bajenn.',
   },
   // « Signaler une erreur » (SignalerErreur.vue)
+  pictos: {
+    titre: 'Piktogrammoù ar c’hemennoù', // br: à relire
+    classe: 'Er skol-vamm', // br: à relire
+    oui: 'Atav', // br: à relire
+    non: 'Biken', // br: à relire
+    mention: 'Meneg ar piktogrammoù', // br: à relire
+    avis: 'Ma rannit ar fichenn-mañ (klas, kerent, internet), meneget aozer ar piktogrammoù : Sergio Palao, ARASAAC (arasaac.org), CC BY-NC-SA.', // br: à relire
+  },
+  mentionPictos: 'Piktogrammoù : Sergio Palao, ARASAAC (arasaac.org), CC BY-NC-SA', // br: à relire
   signaler: { lien: 'Kemenn ur fazi', titre: 'Kemenn ur fazi war ar bajenn-mañ (digeriñ a ra ho posterioù)' }, // br: à relire
   // la clé Mistral, facultative (CleMistral.vue)
   mistral: {

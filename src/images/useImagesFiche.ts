@@ -10,6 +10,7 @@ import type { Ref } from 'vue'
 import { charger, chargerReglages, sauvegarder } from '../utils/index.js'
 import { assainirIcones, assainirImages, DEFAUT_IMAGES } from './preference.ts'
 import { fournirDessinsInterface } from './icone.ts'
+import { fournirPictogrammes, quandPictogrammesManquent } from './consignes.ts'
 import type { FamilleImages, ImagesFiche } from './preference.ts'
 
 // chargerReglages vérifie le type de chaque champ, assainirImages ses valeurs (une famille inconnue reprend le défaut)
@@ -47,3 +48,22 @@ watch(icones, v => { if (v === 'openmoji') void chargerDessinsInterface() }, { i
 export function useIconesInterface(): Ref<FamilleImages> {
   return icones
 }
+
+// les pictogrammes des consignes (consignes.ts) : chargés la première fois qu'une fiche en demande un ; `pictosPrets` la redessine
+const pictosPrets = ref(false)
+let chargementPictos: Promise<void> | null = null
+
+/** Charge les pictogrammes des consignes, une seule fois. */
+export function chargerPictogrammes(): Promise<void> {
+  chargementPictos ??= import('./donnees/pictogrammes.ts').then(module => {
+    fournirPictogrammes(module.PICTOGRAMMES)
+    pictosPrets.value = true
+  })
+  return chargementPictos
+}
+
+/** Vrai quand les pictogrammes sont arrivés : lu par la fiche, qui se redessine avec eux (useFicheExercice). */
+export const pictogrammesPrets = readonly(pictosPrets)
+
+// une fiche qui demande un pictogramme avant leur arrivée les fait charger
+quandPictogrammesManquent(() => { void chargerPictogrammes() })

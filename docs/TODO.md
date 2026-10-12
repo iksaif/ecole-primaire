@@ -14,6 +14,14 @@ clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du progr
 
 ## Demandes du 2026-10-12
 
+- [ ] **Pictogrammes ARASAAC des consignes** (étape 6 du guide d'iconographie, demande du 2026-10-12) — fait : lexique de 11 verbes (`src/images/consignes.ts`),
+  images WebP générées (`scripts/generer/pictogrammes.ts`, chargées à la demande), réglage « Pictogrammes des consignes » dans « Sur la fiche » (en maternelle /
+  toujours / jamais) et ligne de crédit retirable, sur les sept fiches de maternelle (compter, comparer, formes, lettres, longueurs, motifs, ranger) ; jamais dans
+  les PDF publiés (`tests/pictogrammes.test.mjs`). **Reste** : (1) faire relire le lexique par une personne (écoute 6572 et colorie 2348 sont des approximations) ;
+  (2) « barre » et « souligne » écartés (6223 porte « TACHAR », 6219 une écriture espagnole, 30851 se confond avec « coche ») : à chercher le jour où une fiche
+  en a besoin ; (3) les consignes à l'écran (`ConsigneParlee`, maternelle) n'ont pas encore leur pictogramme ; (4) les fiches d'élémentaire n'ont pas de verbes
+  (en « toujours », elles n'en montrent pas).
+
 - [x] **Menu : les emojis de l'appareil sont mal alignés** (les dessins OpenMoji le sont bien) — fait : `<Icone>` passe de `vertical-align: -0.25em` (réglé pour le dessin de 1.4em) à `middle`, juste pour les deux familles (3 px trop bas → aligné, mesuré dans le menu).
 
 ## Demandes du 2026-10-09
@@ -175,3 +183,4 @@ clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du progr
 - [x] **Grammaire et breton** (2026-10-10) : la grammaire reste en français seulement (exercices et affiches), pas de version bretonne pour l'instant (la grammaire bretonne serait spécifique).
 - [x] **Affiche des pronoms : ajouter « on »** (demande du 2026-10-10) — fait : il, elle, on (une silhouette sans visage, « quelqu'un »), avec ce que chaque pronom remplace ; paysage seulement.
 - [x] **Affiche de la phrase : une version sans les types de phrases, plus complète sur ce qu'est une phrase** — fait : variante « Qu'est-ce qu'une phrase ? » (CP, CE1) (majuscule, point, suite de mots dans l'ordre, qui a du sens…) (demande du 2026-10-10).
+- [ ] **Ceintures de compétences** (demande du 2026-10-12) : paliers de couleur validés par un brevet, portée configurable (exercice, compétence, domaine, matière), seuils réglables, suivi sur l'appareil + export/import d'un fichier. Réflexion : `plans/15-ceintures.md` et maquettes `brouillons/ceintures/maquettes.html` ; rien n'est codé, questions ouvertes à trancher d'abord.

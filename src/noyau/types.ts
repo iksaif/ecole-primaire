@@ -12,6 +12,7 @@ import type { CompetenceId, DomaineId, Contraintes } from '../data/programme.ts'
 import type { Rng } from '../utils/hasard.ts'
 import type { CatalogueContenu } from '../langues/catalogue.ts'
 import type { ImagesFiche } from '../images/preference.ts'
+import type { ChoixPictogrammes } from '../images/consignes.ts'
 import type { NomIcone } from '../images/icones.ts'
 
 export type { Classe, CompetenceId, DomaineId, Contraintes, Rng }
@@ -217,6 +218,11 @@ export interface ParamsFiche<R extends object = Reglages, F = unknown, Cle exten
    * (src/images/rendu.ts), qui prend le défaut (OpenMoji en couleur) quand elle est absente : build des PDF publiés, instantanés
    */
   images?: ImagesFiche
+  /**
+   * le réglage des pictogrammes des consignes (useFicheExercice) ; la fiche écrit ses consignes avec `consignesDe(params)`
+   * (src/images/consignes.ts), qui n'en montre aucun quand il est absent : build des PDF publiés, instantanés
+   */
+  pictogrammes?: ChoixPictogrammes
   /**
    * mesure du texte, pour une fiche qui ajuste le texte à la place (taille par la hauteur d'x, coupure des lignes) : canvas dans le
    * navigateur (mesureNavigateur), largeurs tabulées au build (mesureEstimee). La même que celle des affiches.

@@ -9,6 +9,7 @@ import { imagesDe } from '../../images/rendu.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import type { TirageFiche } from './generateur.ts'
+import { consignesDe } from '../../images/consignes.ts'
 
 type Cle = CleContenu<typeof CONTENU>
 
@@ -25,7 +26,9 @@ const CSS = `
       .choix.ps { grid-template-columns: 1fr; gap: .5rem; } .pts { font-size: 1.1rem; letter-spacing: .15rem; }
     `
 
-export function fiche({ questions: x, T, langue, police, cssPolices, images: preference }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices, images: preference, pictogrammes }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+  // les pictogrammes des consignes, selon « Sur la fiche » (aucun dans les PDF publiés : src/images/consignes.ts)
+  const consigne = consignesDe({ reglages, images: preference, pictogrammes })
   // les objets : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
   const images = imagesDe({ images: preference })
   const qs = x.questions
@@ -41,7 +44,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices, images: pre
   return documentFiche({
     titre, langue, police, cssPolices, css: CSS, largeur: '700px', marge: '1.2cm',
     corps: `${ligneNomDate(langue)}
-    <p class="consigne">${T(ecrire ? 'consigneEcrire' : 'consigneEntourer')}</p>
+    <p class="consigne">${ecrire ? consigne(['compte', 'ecris'], T('consigneEcrire')) : consigne(['compte', 'entoure'], T('consigneEntourer'))}</p>
     <div class="grille">${cases}</div>
     <section class="corrige"><h2>${T('corrige')} — ${titre}</h2>
       <div class="corr">${qs.map((q, i) => `<div>${i + 1}. <b>${q.nb}</b></div>`).join('')}</div></section>`,

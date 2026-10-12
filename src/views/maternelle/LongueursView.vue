@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('longueurs.titre') }}</h1>
 
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" pictogrammes
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="n => t(`longueurs.niveaux.${n as 'ps' | 'ms' | 'gs'}`)" :icone="iconeNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('communs.exercices')"

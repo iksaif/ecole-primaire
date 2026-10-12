@@ -10,7 +10,7 @@
 
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(ps ? 'comparer.consignePS' : 'comparer.consigne')" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(ps ? 'comparer.consignePS' : 'comparer.consigne')" :verbes="ps ? ['montre'] : ['compte', 'montre']" :niveau="config.niveau" />
 
       <div class="groupes">
         <div v-for="(cote, k) in COTES" :key="cote" class="groupe-et-vs">

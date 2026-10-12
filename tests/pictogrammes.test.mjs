@@ -3,7 +3,7 @@
 // jamais) et n'en montre AUCUN quand le réglage est absent (PDF publiés, instantanés) : le texte de la consigne revient alors à l'identique.
 import { gzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
-import { VERBES, assainirPictogrammes, consignesDe, fournirPictogrammes, quandPictogrammesManquent, DEFAUT_PICTOGRAMMES } from '../src/images/consignes.ts'
+import { VERBES, assainirPictogrammes, consignesDe, pictogrammesDe, fournirPictogrammes, quandPictogrammesManquent, DEFAUT_PICTOGRAMMES } from '../src/images/consignes.ts'
 import { PICTOGRAMMES } from '../src/images/donnees/pictogrammes.ts'
 import { fiche as ficheCompter } from '../src/exercices/compter/fiche.ts'
 import { verifier, nbEchecs } from './outils.mjs'
@@ -40,6 +40,9 @@ verifier(contour.includes(PICTOGRAMMES[VERBES.compte].contour) && !contour.inclu
 const systeme = rendu('oui', 'ms', { famille: 'systeme', style: 'contour' })
 verifier(systeme.includes(PICTOGRAMMES[VERBES.compte].couleur), 'emojis de l’appareil : les pictogrammes restent en couleur')
 verifier(assainirPictogrammes('peut-etre') === DEFAUT_PICTOGRAMMES && assainirPictogrammes('non') === 'non', 'réglage mémorisé lu avec méfiance')
+const ecran = pictogrammesDe({ reglages: { niveau: 'ms' }, pictogrammes: 'classe' }, ['ecoute', 'montre'])
+verifier(marques(ecran) === 2 && !ecran.includes(TEXTE), 'à l’écran (ConsigneParlee) : les pictogrammes seuls, à côté du texte')
+verifier(pictogrammesDe({ reglages: { niveau: 'ms' }, pictogrammes: 'classe' }, []) === '', 'à l’écran, sans verbe : rien')
 let erreur = ''
 try { consignesDe({ pictogrammes: 'oui' })(['saute'], TEXTE) } catch (e) { erreur = String(e) }
 verifier(/saute/.test(erreur), 'un verbe inconnu (JavaScript non vérifié) échoue en le nommant')

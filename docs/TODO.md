@@ -14,13 +14,12 @@ clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du progr
 
 ## Demandes du 2026-10-12
 
-- [ ] **Pictogrammes ARASAAC des consignes** (étape 6 du guide d'iconographie, demande du 2026-10-12) — fait : lexique de 11 verbes (`src/images/consignes.ts`),
-  images WebP générées (`scripts/generer/pictogrammes.ts`, chargées à la demande), réglage « Pictogrammes des consignes » dans « Sur la fiche » (en maternelle /
-  toujours / jamais) et ligne de crédit retirable, sur les sept fiches de maternelle (compter, comparer, formes, lettres, longueurs, motifs, ranger) ; jamais dans
-  les PDF publiés (`tests/pictogrammes.test.mjs`). **Reste** : (1) faire relire le lexique par une personne (écoute 6572 et colorie 2348 sont des approximations) ;
-  (2) « barre » et « souligne » écartés (6223 porte « TACHAR », 6219 une écriture espagnole, 30851 se confond avec « coche ») : à chercher le jour où une fiche
-  en a besoin ; (3) les consignes à l'écran (`ConsigneParlee`, maternelle) n'ont pas encore leur pictogramme ; (4) les fiches d'élémentaire n'ont pas de verbes
-  (en « toujours », elles n'en montrent pas).
+- [x] **Pictogrammes ARASAAC des consignes** (étape 6 du guide d'iconographie, demande du 2026-10-12) — fait : lexique de 13 verbes relu le 2026-10-12
+  (`src/images/consignes.ts` : chaque numéro porte le verbe dans ses mots-clés français d'ARASAAC ; « écoute » = 2381, en couleur, plutôt que 6572 ;
+  `montre` 6612 et `range` 2872 ajoutés pour l'écran), images WebP générées (`scripts/generer/pictogrammes.ts`, chargées à la demande), réglage
+  « Pictogrammes des consignes » dans « Sur la fiche » (en maternelle / toujours / jamais) et ligne de crédit retirable, sur les sept fiches de maternelle,
+  et à l'écran dans leurs consignes parlées (`ConsigneParlee`) ; jamais dans les PDF publiés (`tests/pictogrammes.test.mjs`). Écartés : « barre » (6223
+  porte « TACHAR », 30851 se confond avec « coche ») et « souligne » (6219, écriture espagnole) : à chercher le jour où une fiche en a besoin.
 
 - [x] **Menu : les emojis de l'appareil sont mal alignés** (les dessins OpenMoji le sont bien) — fait : `<Icone>` passe de `vertical-align: -0.25em` (réglé pour le dessin de 1.4em) à `middle`, juste pour les deux familles (3 px trop bas → aligné, mesuré dans le menu).
 

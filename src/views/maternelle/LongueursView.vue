@@ -10,7 +10,7 @@
     </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="consigne" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="consigne" :verbes="verbesConsigne" :niveau="config.niveau" />
       <!-- comparer : on touche le crayon ; ranger : on touche les crayons du plus court au plus long -->
       <div class="crayons">
         <button v-for="(c, i) in q.crayons" :key="i" type="button" class="crayon-btn" :class="etatCrayon(i)" :disabled="repondu"
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import type { VerbeConsigne } from '../../images/consignes.ts'
 import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
 // Plus long, plus court : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
@@ -69,6 +70,8 @@ const jeu = useJeu<Question, Reponse>({
   surQuestion: () => { ordre.value = [] },
 })
 const { phase, questions, q, bonnes, retour, repondu, etat } = jeu
+/** Les verbes de la consigne à l'écran (pictogrammes) : ranger les crayons, sinon montrer le crayon demandé. */
+const verbesConsigne = computed<VerbeConsigne[]>(() => (q.value?.mode === 'ranger' ? ['range'] : ['montre']))
 const consigne = computed(() => (!q.value ? '' : q.value.mode === 'ranger' ? t('longueurs.consigneRanger') : t(q.value.cherche === 'long' ? 'longueurs.consigneLong' : 'longueurs.consigneCourt')))
 
 function etatCrayon(i: number): string {

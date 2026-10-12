@@ -14,7 +14,7 @@
     </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="question-label" :texte="consigne" />
+      <ConsigneParlee :key="jeu.index.value" class="question-label" :texte="consigne" :verbes="verbesConsigne" :niveau="config.niveau" />
 
       <!-- Même forme (PS) : un modèle, trois formes de tailles, couleurs et orientations différentes -->
       <div v-if="config.mode === 'meme'" class="forme-display modele" v-html="q.svg"></div>
@@ -48,6 +48,7 @@
 </template>
 
 <script setup lang="ts">
+import type { VerbeConsigne } from '../../images/consignes.ts'
 import type { NomIcone } from '../../images/icones.ts'
 import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
@@ -97,6 +98,8 @@ const { phase, questions, q, bonnes, retour, repondu, etat } = jeu
 const repondre = (i: number): void => { jeu.repondre({ mode: config.value.mode, choix: i }) }
 // nom accessible des formes à choisir (sans trahir la réponse)
 const libelleForme = (i: number): string => t('formes.choixForme', { n: i + 1 })
+/** Les verbes de la consigne à l'écran (pictogrammes) : compter les côtés, sinon montrer la bonne réponse. */
+const verbesConsigne = computed<VerbeConsigne[]>(() => (config.value.mode === 'compter' ? ['compte', 'montre'] : ['montre']))
 const consigne = computed(() => {
   const nom = q.value ? nomForme(T, q.value.id) : ''
   return {

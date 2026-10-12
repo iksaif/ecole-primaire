@@ -11,7 +11,7 @@
     </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(config.mode === 'trou' ? 'motifs.consigneTrou' : 'motifs.consigneApres')" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(config.mode === 'trou' ? 'motifs.consigneTrou' : 'motifs.consigneApres')" :verbes="['montre']" :niveau="config.niveau" />
       <!-- la frise ; la case « ? » à la place attendue -->
       <div class="frise">
         <template v-for="(e, i) in frise" :key="i">

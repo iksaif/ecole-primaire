@@ -91,6 +91,9 @@ de la consigne, qui reste toujours écrit. Guide : `brouillons/iconographie/GUID
 - `consignes.ts` : `VERBES`, le lexique fermé (verbe → numéro ARASAAC ; provisoire, à relire par une personne), et
   `consignesDe(params)`. Une fiche écrit `${consigne(['compte', 'ecris'], T('consigneEcrire'))}` dans son `<p class="consigne">`, et
   sa vue passe `pictogrammes` à `<CadreExercice>` (le choix apparaît alors dans « Sur la fiche » : `ChoixPictogrammes.vue`).
+- **À l'écran** : `<ConsigneParlee :texte :verbes="['compte']" :niveau="config.niveau">` (maternelle) place les pictogrammes entre
+  le bouton « Écouter » et le texte, selon le même réglage (`pictogrammesDe`). Les verbes de l'écran : `montre` (toucher la bonne
+  réponse), `range`, `compte`, `ecoute`.
 - Le réglage (`options_fiche`, `optionsFiche.ts`) : **en maternelle** (défaut, d'après `reglages.niveau`), toujours, jamais.
   **Réglage absent = aucun pictogramme** : les PDF publiés et les instantanés n'en ont jamais (le texte revient à l'identique).
 - La ligne de crédit qu'impose leur licence est ajoutée par le cadre (`appliquerOptionsFiche`) dès qu'un pictogramme est sur la

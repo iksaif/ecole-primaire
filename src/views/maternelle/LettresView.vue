@@ -22,9 +22,9 @@
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="question">
         <!-- Écoute et trouve : la voix dit le nom, l'écran ne montre pas la lettre ; sans voix (breton), on montre la lettre dans l'autre écriture -->
-        <ConsigneParlee v-if="ecoute" :key="jeu.index.value" class="question-label" :texte="t('lettres.montreMoi', { l: q.nom })">{{ t('lettres.ecouteEtTrouve') }}</ConsigneParlee>
+        <ConsigneParlee v-if="ecoute" :key="jeu.index.value" class="question-label" :texte="t('lettres.montreMoi', { l: q.nom })" :verbes="['ecoute', 'montre']" :niveau="config.niveau">{{ t('lettres.ecouteEtTrouve') }}</ConsigneParlee>
         <template v-else>
-          <ConsigneParlee :key="jeu.index.value" class="question-label" :texte="t('lettres.trouveEn', { en: t(`lettres.en.${q.ecriture}`) })" />
+          <ConsigneParlee :key="jeu.index.value" class="question-label" :texte="t('lettres.trouveEn', { en: t(`lettres.en.${q.ecriture}`) })" :verbes="['montre']" :niveau="config.niveau" />
           <div class="lettre-display" :class="q.montre.ecriture">{{ q.montre.texte }}</div>
         </template>
 

@@ -15,7 +15,7 @@
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <!-- Objets à compter -->
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t('compter.combien', { nom: nomObjet(q.objet, T) })" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t('compter.combien', { nom: nomObjet(q.objet, T) })" :verbes="['compte']" :niveau="config.niveau" />
       <div :key="jeu.index.value" class="objets-grille" v-html="htmlCollection(q.nb, q.emoji, images, 'objet')"></div>
 
       <!-- Choix de réponse ; PS : la quantité en constellation de points (pas de chiffre seul) -->

@@ -2,7 +2,7 @@
   Les pictogrammes des consignes (src/images/consignes.ts, options de fiche : optionsFiche.ts) : en maternelle seulement (défaut :
   l'élève ne lit pas encore), toujours ou jamais ; puis la ligne de crédit qu'impose leur licence (Sergio Palao, ARASAAC), qu'on peut
   retirer en sachant qu'il faut alors citer l'auteur en partageant la fiche. Dans « Sur la fiche » (OptionsFiche), si les consignes de
-  l'exercice passent par consignesDe. Accessibilité : comme ChoixImages, des groupes de boutons nommés, l'état dans aria-pressed.
+  l'exercice passent par consignesDe. Le même réglage vaut pour les consignes parlées à l'écran (ConsigneParlee). Accessibilité : comme ChoixImages, des groupes de boutons nommés, l'état dans aria-pressed.
 -->
 <template>
   <div class="config-section choix-pictogrammes" data-reglage="pictogrammes" role="group" :aria-labelledby="idTitre">

@@ -13,7 +13,7 @@
 
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
-      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(q.sens === 'croissant' ? 'ranger.rangeCroissant' : 'ranger.rangeDecroissant')" />
+      <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="t(q.sens === 'croissant' ? 'ranger.rangeCroissant' : 'ranger.rangeDecroissant')" :verbes="['range']" :niveau="config.niveau" />
 
       <OrdonnerClics v-model="ordre" :elements="q.nombres" :verrou="repondu" :etat="etat" @valider="valider">
         <div class="fleche-hint">{{ q.sens === 'croissant' ? '→ ' + t('ranger.petitGrandMin') : '→ ' + t('ranger.grandPetitMin') }}</div>

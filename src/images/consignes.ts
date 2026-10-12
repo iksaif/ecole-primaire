@@ -12,14 +12,17 @@
 import type { ImagesFiche } from './preference.ts'
 
 /**
- * Le lexique fermé : un verbe, le numéro de son pictogramme ARASAAC. Lexique provisoire du 2026-10-07 (à relire par une personne) ;
- * « écoute » (6572, « entendre ») et « colorie » (2348, « peindre ») sont des approximations. Pas encore de « barre » ni de
+ * Le lexique fermé : un verbe, le numéro de son pictogramme ARASAAC. Relu le 2026-10-12 : chaque numéro porte le verbe dans ses mots-clés
+ * français d'ARASAAC (2348 : « peindre, colorier », catégorie tâche éducative) ; « écoute » est le 2381 (« entendre, écouter » : un enfant,
+ * la main en cornet, en couleur comme les autres), plutôt que le 6572 du vocabulaire de base, noir et blanc. Pas encore de « barre » ni de
  * « souligne » : le 6223 porte le mot espagnol « TACHAR », le 6219 une écriture espagnole, et le 30851 (une case barrée) se confond
  * avec « coche » ; aucune fiche ne les demande. Un verbe de plus : l'écrire ici, puis `node scripts/generer/pictogrammes.ts`.
  */
 export const VERBES = {
-  ecoute: 6572, lis: 7141, ecris: 2380, entoure: 6285, colorie: 2348, relie: 8243, coche: 39451, compte: 2714,
+  ecoute: 2381, lis: 7141, ecris: 2380, entoure: 6285, colorie: 2348, relie: 8243, coche: 39451, compte: 2714,
   decoupe: 2547, colle: 2511, dessine: 8088,
+  // à l'écran, l'enfant montre (touche) la bonne réponse ou range : 6612 « indiquer, montrer », 2872 « ranger, mettre dans l'ordre »
+  montre: 6612, range: 2872,
 } as const
 
 /** Un verbe de consigne du lexique. */
@@ -100,18 +103,22 @@ function pictogrammes(verbes: readonly VerbeConsigne[], contour: boolean): strin
   }).join('')
 }
 
+/** Les pictogrammes seuls d'une consigne (à l'écran : ConsigneParlee les place à côté de son texte), ou '' s'il n'y en a pas. */
+export function pictogrammesDe(params: ParamsConsignes, verbes: readonly VerbeConsigne[]): string {
+  if (!avecPictogrammes(params) || !verbes.length) return ''
+  const contour = params.images?.famille === 'openmoji' && params.images.style === 'contour'
+  const dessins = pictogrammes(verbes, contour)
+  if (!dessins) return ''
+  return `<span class="pictos-consigne">${dessins}</span>`
+}
+
 /** Une consigne : ses pictogrammes (selon le réglage), puis son texte. */
 export type RenduConsigne = (verbes: readonly VerbeConsigne[], texte: string) => string
 
 /** Le rendu des consignes d'une fiche, selon ses paramètres (le réglage, la classe, le style des images). */
 export function consignesDe(params: ParamsConsignes): RenduConsigne {
   if (!avecPictogrammes(params)) return (_verbes, texte) => texte
-  const contour = params.images?.famille === 'openmoji' && params.images.style === 'contour'
-  return (verbes, texte) => {
-    const dessins = pictogrammes(verbes, contour)
-    if (!dessins) return texte
-    return `<span class="pictos-consigne">${dessins}</span>${texte}`
-  }
+  return (verbes, texte) => pictogrammesDe(params, verbes) + texte
 }
 
 /** Styles des pictogrammes de consigne : ceux de appliquerOptionsFiche (optionsFiche.ts). */

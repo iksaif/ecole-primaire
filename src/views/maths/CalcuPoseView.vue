@@ -48,8 +48,8 @@
       <RetourReponse id="pose-retour" :message="retour?.message" :etat="etat" />
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-        <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('calculPose.passer') }}</button>
-        <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }}</button>
+        <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+        <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
       </div>
     </QuestionJeu>
 
@@ -62,6 +62,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Calcul posé : la vue ne fait que les réglages et la grille de saisie (une case par chiffre). Niveaux, générateur et
 // fiche : src/exercices/calcul-pose/ (definition.ts, generateur.ts, fiche.ts).
 import { ref, computed, nextTick } from 'vue'

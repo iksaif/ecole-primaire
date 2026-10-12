@@ -26,7 +26,6 @@ export default {
   pagesFiche: 'Pages de la fiche',
   pageListe: 'Mots à apprendre',
   pageDictee: 'Dictée à faire avec un adulte',
-  passer: 'Passer',
   passe: '(passé)',
   cat: {
     mots_outils: 'Mots outils',

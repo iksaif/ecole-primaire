@@ -2,11 +2,12 @@
 import fr from './questions/fr.ts'
 import br from './questions/br.ts'
 import type { Banque, QuestionBanque } from './questions/types.ts'
+import type { NomIcone } from '../../images/icones.ts'
 
 export const THEMES = ['animaux', 'sciences', 'geo-france', 'geo-monde', 'histoire'] as const
 export type Theme = (typeof THEMES)[number]
 
-export const ICONES: Readonly<Record<Theme, string>> = { animaux: '🦁', sciences: '🔬', 'geo-france': '🗺️', 'geo-monde': '🌍', histoire: '📜' }
+export const ICONES: Readonly<Record<Theme, NomIcone>> = { animaux: 'lion', sciences: 'microscope', 'geo-france': 'carte', 'geo-monde': 'terre', histoire: 'parchemin' }
 
 /** Les banques, par langue de contenu ; une langue sans banque, ou un thème non traduit, prend les questions françaises. */
 const BANQUES: Readonly<Record<string, Banque>> = { fr, br }

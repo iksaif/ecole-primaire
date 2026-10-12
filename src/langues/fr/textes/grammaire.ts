@@ -7,7 +7,6 @@ export default {
   cliqueEtiquettes: 'Clique sur les étiquettes dans l\'ordre…',
   effacerOrdre: '↺ Effacer',
   ecrisReponse: 'Écris ta réponse…',
-  validerCourt: 'Valider',
   suivantFleche: 'Suivant →',
   correction: 'Correction',
   bonnePhrase: 'La bonne phrase est : « {r} »',

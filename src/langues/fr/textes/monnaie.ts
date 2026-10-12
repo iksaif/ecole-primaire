@@ -47,13 +47,11 @@ export default {
   deTrop: "Tu as fait {t} : c'est {m} de trop.",
   autantArgent: "Ils ont autant d'argent tous les deux : {s}.",
   lePlus: "C'est {nom} qui a le plus d'argent.",
-  passer: 'Passer ⏭',
   passe: '(passé)',
   // types d'exercices (réglages)
-  type_compter: '🔢 Compter une somme',
-  type_composer: '🧩 Faire une somme',
-  type_moins: '🪙 Le moins de pièces',
-  type_rendre: '🛒 Rendre la monnaie',
-  type_comparer: '👛 Comparer',
-  type_convertir: '🔁 1 € = 100 c',
+  type_compter: 'Compter une somme',
+  type_composer: 'Faire une somme',
+  type_moins: 'Le moins de pièces',
+  type_rendre: 'Rendre la monnaie',
+  type_convertir: '1 € = 100 c',
 } as const

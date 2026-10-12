@@ -5,9 +5,9 @@ export default {
   titre: 'Les formes',
   description: 'Trier, reconnaître puis nommer le disque, le carré, le triangle et le rectangle',
   niveau: {
-    ps: '🐣 PS — trier',
-    ms: '🌱 MS — reconnaître',
-    gs: '🌳 GS — nommer',
+    ps: 'PS — trier',
+    ms: 'MS — reconnaître',
+    gs: 'GS — nommer',
   },
   exercice: 'Exercice',
   // les quatre exercices : nom et description

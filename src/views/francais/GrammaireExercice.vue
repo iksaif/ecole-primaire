@@ -7,7 +7,7 @@
       <ChoixReglage :definition="definition" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="definition" :niveau="config.niveau" cle="types" v-model="config.types" :titre="t('communs.exercices')"
         :libelle="ty => tr(`type_${ty}`)">
-        <template #valeur="{ valeur: ty, texte }"><span class="theme-icon">{{ icone(ty) }}</span> {{ texte }}</template>
+        <template #valeur="{ valeur: ty, texte }"><Icone class="theme-icon" :nom="icone(ty)" /> {{ texte }}</template>
         <p class="astuce">{{ t('grammaire.astuce') }}</p>
       </ChoixReglage>
       <ChoixReglage :definition="definition" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('communs.nbQuestions')" />
@@ -35,7 +35,7 @@
           </template>
         </div>
         <div v-if="!repondu" class="actions">
-          <button type="button" class="btn btn-primary" :disabled="!selection.length" @click="validerClic">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-primary" :disabled="!selection.length" @click="validerClic">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </div>
       </template>
 
@@ -47,7 +47,7 @@
       <div v-else class="saisie-row">
         <SaisieReponse v-model="saisie" class="saisie-input" :etat="etat" :disabled="repondu" focus :placeholder="t('grammaire.ecrisReponse')"
           @entree="repondu ? jeu.suivante() : validerSaisie()" />
-        <button v-if="!repondu" type="button" class="btn btn-primary" @click="validerSaisie">{{ t('grammaire.validerCourt') }}</button>
+        <button v-if="!repondu" type="button" class="btn btn-primary" @click="validerSaisie">{{ t('communs.valider') }}</button>
       </div>
 
       <RetourReponse :message="retour?.message" :etat="etat" />
@@ -67,6 +67,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Grammaire : la vue ne fait que les réglages et le rendu d'une question (choix, clic sur des mots, étiquettes à ranger, saisie). C'est le même
 // composant pour les cinq exercices de grammaire (une vue mince par exercice : GrammairePhraseView.vue…), qui lui donnent leur définition, leur
@@ -111,8 +112,8 @@ const { config, langueContenu } = useReglages(props.definition)
 const T = traducteur(props.contenu, () => langueContenu.value)
 const tr: Tr = (cle, params) => t(`grammaire.${cle}` as Parameters<typeof t>[0], params as Parameters<typeof t>[1])
 
-const ICONES: Readonly<Record<string, string>> = Object.fromEntries(GROUPES.flatMap(g => g.types.map(x => [x.id, x.icone])))
-const icone = (type: unknown): string => ICONES[String(type)] ?? ''
+const ICONES: Readonly<Record<string, NomIcone>> = Object.fromEntries(GROUPES.flatMap(g => g.types.map(x => [x.id, x.icone])))
+const icone = (type: unknown): NomIcone => ICONES[String(type)] ?? 'puzzle'
 /** le titre de la page : celui de la section de textes de l'exercice */
 const titrePage = computed(() => (t as (cle: string) => string)(`${props.section}.titre`))
 

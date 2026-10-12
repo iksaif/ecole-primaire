@@ -28,7 +28,7 @@
 
       <RetourReponse id="exemple-retour" :message="retour?.message" :etat="etat" />
       <div class="btn-group">
-        <button v-if="!repondu" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+        <button v-if="!repondu" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Exemple d'exercice — la vue : mince. Elle règle, pose et affiche ; les niveaux, les questions, la correction et la
 // fiche sont dans src/exercices/exemple/. Hors du noyau (src/noyau/), elle n'importe que le site (i18n).
 // Cadre de la page : réglages et fiche (CadreExercice), une question (QuestionJeu), la fin de partie (ResultatsJeu).

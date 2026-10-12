@@ -6,7 +6,7 @@
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
         <!-- PS : trier (même forme) ; MS : reconnaître (montre le…) ; GS : nommer, compter les côtés -->
-        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />
         <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode"
           cartes :titre="t('formes.exercice')" :libelle="m => t(`formes.mode.${m}`)" :icone="m => ICONES[m]" :description="m => t(`formes.modeDesc.${m}`)" />
         <p v-if="modeCourant === 'imprimer'" class="note-fiche">{{ t(config.niveau === 'ps' ? 'formes.noteFichePS' : 'formes.noteFiche') }}</p>
@@ -48,6 +48,8 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
+import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
 // Les formes : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/formes/
 // (definition.ts, generateur.ts, fiche.ts) ; le dessin des formes : src/dessins/figures.ts.
@@ -76,7 +78,7 @@ const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true }
 // T : les textes du contenu (CONTENU, textes.ts : nom des formes, couleurs, fiche), dans la langue du contenu
 const T = traducteur(CONTENU, () => langueContenu.value)
 const libelleNiveau = (n: string): string => t(`formes.niveau.${n as 'ps' | 'ms' | 'gs'}`)
-const ICONES: Readonly<Record<ModeForme, string>> = { meme: '🧩', reconnaitre: '👁️', compter: '🔢', trouver: '🔍' }
+const ICONES: Readonly<Record<ModeForme, NomIcone>> = { meme: 'puzzle', reconnaitre: 'indice', compter: 'chiffres', trouver: 'recherche' }
 
 // ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──
 const jeu = useJeu<Question, Reponse>({

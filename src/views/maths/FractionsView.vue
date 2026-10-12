@@ -6,7 +6,7 @@
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types"
-        :titre="t('communs.exercices')" :libelle="ty => t(`fractions.types.${ty}`)" />
+        :titre="t('communs.exercices')" :libelle="ty => t(`fractions.types.${ty}`)" :icone="ty => ICONE_TYPE[String(ty)]" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode"
         :titre="t('fractions.fractions')" :libelle="m => t(`fractions.modes.${m}`)" />
       <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
@@ -76,9 +76,9 @@
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
-          <button type="button" class="btn btn-ghost" @click="passer">{{ t('fractions.passer') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
           <button v-if="q.kind === 'parts'" type="button" class="btn btn-ghost" :disabled="!coloriees.length" @click="coloriees = []"><Icone nom="effacer" /> {{ t('fractions.effacer') }}</button>
-          <button v-if="q.kind !== 'choix'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+          <button v-if="q.kind !== 'choix'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </template>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
@@ -94,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Les fractions : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question),
 // formes, droite graduée (dessin partagé : src/dessins/droite.ts) et fiche : src/exercices/fractions/.
@@ -119,6 +120,9 @@ import type { Question, Reponse } from '../../exercices/fractions/generateur.ts'
 import type { QChoix } from '../../exercices/fractions/questions.ts'
 import { svgDroiteFraction } from '../../exercices/fractions/droite.ts'
 import { fiche as ficheFractions } from '../../exercices/fractions/fiche.ts'
+
+/** L'icône de chaque choix du réglage (src/images/icones.ts). */
+const ICONE_TYPE: Readonly<Record<string, NomIcone>> = { identifier: 'yeux', colorier: 'crayonCire', lettres: 'lettres', partDe: 'biscuit', egales: 'egal', droite: 'regle', placer: 'punaise' }
 
 const { t } = useLangue()
 // Réglages mémorisés, ajustés au changement de niveau (useReglages) ; le contenu (fractions en lettres, fiche) suit la langue de l'interface

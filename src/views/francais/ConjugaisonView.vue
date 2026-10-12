@@ -13,7 +13,7 @@
         :libelle="nomTemps" />
 
       <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('conjugaison.mode')"
-        :libelle="m => t(`conjugaison.modes.${m}`)" :icone="m => (m === 'lacunes' ? '✏️' : '📝')" :description="m => t(`conjugaison.modesDesc.${m}`)" />
+        :libelle="m => t(`conjugaison.modes.${m}`)" :icone="m => (m === 'lacunes' ? 'crayon' : 'blocNotes')" :description="m => t(`conjugaison.modesDesc.${m}`)" />
       <ChoixReglage v-if="mode === 'imprimer'" :definition="DEFINITION" :niveau="config.niveau" cle="fiche" v-model="config.fiche" :titre="t('conjugaison.ficheFormat')"
         :libelle="f => t(`conjugaison.ficheFormats.${f}`)" />
     </CadreExercice>
@@ -41,7 +41,7 @@
       </div>
 
       <div class="btn-group actions">
-        <button v-if="!repondu" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+        <button v-if="!repondu" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>

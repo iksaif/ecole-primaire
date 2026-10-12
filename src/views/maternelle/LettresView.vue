@@ -43,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Les lettres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/lettres/
 // (definition.ts, generateur.ts, fiche.ts). Le contenu (alphabet, fiche) suit la langue du contenu (textes.ts : alphabet breton en breton).
@@ -78,7 +79,7 @@ const { peutParler, parler } = useTTS()
 const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true })
 // T : les textes du contenu (CONTENU, textes.ts : alphabet, fiche), dans la langue du contenu
 const T = traducteur(CONTENU, () => langueContenu.value)
-const ICONES = { reconnaitre: '👂', majuscule: '🔠' } as const
+const ICONES = { reconnaitre: 'oreille', majuscule: 'majuscules' } as const satisfies Readonly<Record<string, NomIcone>>
 
 // ── Jeu : passage automatique après chaque réponse (le nom de la lettre est dit) ──
 const jeu = useJeu<Question, Reponse>({

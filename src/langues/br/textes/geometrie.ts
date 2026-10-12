@@ -16,18 +16,17 @@ export default {
   legJuste: 'mat',
   legOubliee: 'ankouaet',
   legEnTrop: 're',
-  passer: 'Tremen ⏭',
   passe: '(tremenet)',
   effacer: 'Diverkañ',
   exercices: {
-    symetrie: '🦋 Kemparzhded',
-    reproduction: '✏️ Adtresañ', // br: à relire
-    reperage: "📍 Lec'hiañ",
-    figures: '🔷 Stummoù',
-    solides: '🧊 Soludoù', // br: à relire
-    angles: '📐 Kornioù skouer',
-    proprietes: '📋 Perzhioù',
-    cercle: "⭕ Kelc'h",
-    patrons: "🎲 Patromoù ar c'hub", // br: à relire
+    symetrie: 'Kemparzhded',
+    reproduction: 'Adtresañ', // br: à relire
+    reperage: "Lec'hiañ",
+    figures: 'Stummoù',
+    solides: 'Soludoù', // br: à relire
+    angles: 'Kornioù skouer',
+    proprietes: 'Perzhioù',
+    cercle: "Kelc'h",
+    patrons: "Patromoù ar c'hub", // br: à relire
   },
 } as const satisfies Traductions<typeof fr>

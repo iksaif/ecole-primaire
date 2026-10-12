@@ -6,7 +6,7 @@
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="theme" v-model="config.theme" :titre="t('quiz.theme')"
         :libelle="th => t(`quiz.themes.${th}`)">
-        <template #valeur="{ valeur: th, texte }"><span aria-hidden="true">{{ ICONES[th] }}</span> {{ texte }}</template>
+        <template #valeur="{ valeur: th, texte }"><Icone class="theme-icon" :nom="ICONES[th]" /> {{ texte }}</template>
       </ChoixReglage>
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('quiz.nbQuestions')" />
     </CadreExercice>

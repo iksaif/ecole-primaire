@@ -47,7 +47,7 @@ export default {
   langueContenu: 'Yezh ar poelladenn hag ar fichenn', // br: à relire
   // l'aperçu avant impression (ApercuImpression.vue)
   apercu: {
-    titre: 'Rakwel', paysage: 'gweledva', portrait: 'poltred', imprimer: '🖨️ Moullañ', // br: à relire (gweledva = paysage)
+    titre: 'Rakwel', paysage: 'gweledva', portrait: 'poltred', // br: à relire (gweledva = paysage)
     titreCadre: 'Rakwel a-raok moullañ',
     // br: à relire — les libellés exacts de la fenêtre d'impression dépendent de la langue du navigateur
     conseil: 'Alioù : er prenestr moullañ, dibab ar ment gwir (100 %) ha na azasait ket ouzh ar bajenn.',

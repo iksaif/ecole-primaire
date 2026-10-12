@@ -33,7 +33,6 @@ export default {
   lisEmploi: 'Lenn an implij-amzer.',
   heures: 'Eurioù', // br: à relire
   minutes: 'Munutoù', // br: à relire
-  passer: 'Tremen ⏭',
   passe: '(tremenet)',
   exercices: {
     lire: 'Lenn an eur',

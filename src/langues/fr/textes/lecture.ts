@@ -19,7 +19,7 @@ export default {
   consigneTexte: "Lis ce texte à haute voix. Touche un mot pour l'écouter :",
   ecouterTout: 'Écouter tout',
   arreter: 'Arrêter',
-  jaiLu: "J'ai lu ! 👍",
+  jaiLu: "J'ai lu !",
   erreurSyllabes: '« {mot} » a {n} syllabes : {syll}',
   erreurOrdre: 'Le bon ordre était : {syll} → {mot}',
 } as const

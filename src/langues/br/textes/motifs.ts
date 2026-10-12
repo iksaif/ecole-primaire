@@ -7,9 +7,9 @@ export default {
   titre: 'Ar patromoù', // br: à relire
   description: "Kenderc'hel ur c'holier a en em adlavar", // br: à relire
   niveau: {
-    ps: '🐣 PS — daou dra', // br: à relire
-    ms: '🌱 MS — patromoù eeun', // br: à relire
-    gs: '🌳 GS — patromoù hiroc’h', // br: à relire
+    ps: 'PS — daou dra', // br: à relire
+    ms: 'MS — patromoù eeun', // br: à relire
+    gs: 'GS — patromoù hiroc’h', // br: à relire
   },
   exercice: 'Poelladenn', // br: à relire
   apres: 'Ha goude ?', // br: à relire

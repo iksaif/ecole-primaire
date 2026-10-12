@@ -60,7 +60,7 @@ export default {
     aide: 'Diverkañ an holl arventennoù hag ar skorioù enrollet war an drobarzhell-mañ.', // br: à relire
     bouton: 'Adderaouekaat pep tra',
     confirmer: 'Ha sur oc\'h ? Diverket e vo pep tra a zo enrollet war an drobarzhell-mañ.', // br: à relire
-    fait: { one: '✅ {n} arventenn dilamet.', other: '✅ {n} arventenn dilamet.' }, // br: à relire
+    fait: { one: '{n} arventenn dilamet.', other: '{n} arventenn dilamet.' }, // br: à relire
   },
   onglets: {
     aria: 'Rubrikoù an arventennoù', // br: à relire

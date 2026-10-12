@@ -37,7 +37,7 @@ export default {
   fin: {
     titre: 'Deomp dezhi !', // br: à relire
     texte: 'Pep tra a c’haller cheñch forzh pegoulz er varrenn a-us pe war pajenn an arventennoù ⚙️, ma c’hallot ivez gwelet ar weladenn-mañ en-dro. Netra n’a er-maez : ho tibaboù a chom war an drobarzhell-mañ.', // br: à relire
-    enfant: '🧒 Tremen er mod bugel', // br: à relire
+    enfant: 'Tremen er mod bugel', // br: à relire
     programme: 'Digeriñ ar programm', // br: à relire
     commencer: 'Dizoleiñ al lec’hienn', // br: à relire
   },

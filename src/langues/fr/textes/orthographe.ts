@@ -7,7 +7,6 @@ export default {
   theme: 'Thème',
   themes: { homophones: 'Homophones', accords: 'Accords', lettres: 'Lettres manquantes' },
   ecrisReponse: 'Écris le mot…',
-  validerCourt: 'Valider',
   aRetravailler: 'À retravailler :',
   erreur: 'La bonne réponse est « {r} ».',
   explications: {

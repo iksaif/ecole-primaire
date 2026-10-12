@@ -14,7 +14,7 @@
       </ChoixReglage>
 
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="contenu" v-model="config.contenu" :titre="t('ecriture.contenu')"
-        :libelle="c => t(`ecriture.contenus.${c}`)" />
+        :libelle="c => t(`ecriture.contenus.${c}`)" :icone="c => ICONE_CONTENU[String(c)]" />
 
       <!-- lettres : familles de la progression, alphabet de la langue régionale, puis la grille (l'ordre des lettres choisies est gardé) -->
       <div v-if="config.contenu === 'lettres'" class="config-section" role="group" :aria-labelledby="`${id}-lettres`">
@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Écriture : une fiche seule (pas de partie à l'écran), sans hasard. La vue ne fait que les réglages ; la fiche (lignage Seyès, modèle,
 // copies grises) est dans src/exercices/ecriture/ (definition.ts, generateur.ts, fiche.ts). La mesure du texte est celle du navigateur
@@ -97,6 +98,9 @@ import { questionsFiche } from '../../exercices/ecriture/generateur.ts'
 import { fiche as ficheEcriture } from '../../exercices/ecriture/fiche.ts'
 import { FAMILLES, LETTRES_REGIONALES, LISTES_MOTS, TOUTES_LETTRES, estAttache, estMajuscule } from '../../exercices/ecriture/donnees.ts'
 import type { CleTexte } from '../../langues/traduire.ts'
+
+/** L'icône de chaque choix du réglage (src/images/icones.ts). */
+const ICONE_CONTENU: Readonly<Record<string, NomIcone>> = { lettres: 'lettres', mots: 'blocNotes', texte: 'feuille' }
 
 type CleInterligne = Extract<CleTexte, `ecriture.interligne.${string}`>
 

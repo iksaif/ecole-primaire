@@ -4,9 +4,9 @@
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="n => t(`longueurs.niveaux.${n as 'ps' | 'ms' | 'gs'}`)" />
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="n => t(`longueurs.niveaux.${n as 'ps' | 'ms' | 'gs'}`)" :icone="iconeNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('communs.exercices')"
-        :libelle="m => (m === 'comparer' ? '↔️ ' : '📶 ') + t(`longueurs.modes.${m}`)" />
+        :libelle="m => t(`longueurs.modes.${m}`)" :icone="m => (m === 'comparer' ? 'flecheDouble' : 'barres')" />
     </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
 // Plus long, plus court : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/longueurs/ (definition.ts, generateur.ts, fiche.ts, crayon.ts). Ici on touche les crayons eux-mêmes (rang affiché

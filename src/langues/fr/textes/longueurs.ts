@@ -4,7 +4,7 @@
 export default {
   titre: 'Plus long, plus court',
   description: 'Comparer et ranger des crayons',
-  niveaux: { ps: '🐣 PS — très différents', ms: '🌱 MS — 4 crayons', gs: '🌳 GS — 5 crayons' },
+  niveaux: { ps: 'PS — très différents', ms: 'MS — 4 crayons', gs: 'GS — 5 crayons' },
   modes: { comparer: 'Le plus long, le plus court', ranger: 'Ranger' },
   consigneLong: 'Touche le crayon le plus long.',
   consigneCourt: 'Touche le crayon le plus court.',

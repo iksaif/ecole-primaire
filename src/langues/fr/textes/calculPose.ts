@@ -18,7 +18,6 @@ export default {
   avecRetenue: 'Avec retenue',
   nbExercices: "Nombre d'exercices",
   chiffreN: 'Chiffre {n}',
-  passer: 'Passer ⏭',
   passe: '(passé)',
   laBonneReponse: 'La bonne réponse était {r}',
 } as const

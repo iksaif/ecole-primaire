@@ -8,7 +8,7 @@
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="cats" v-model="config.cats"
         :titre="t('dictee.categories', { n: etiquetteNiveau })" :libelle="cat => `${nomCategorie(cat)} (${corpus.categories[cat]?.length ?? 0})`" />
       <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('dictee.mode')"
-        :libelle="m => t(m === 'mots' ? 'dictee.motsSeuls' : 'dictee.phrases')" :icone="m => (m === 'mots' ? '🔤' : '💬')"
+        :libelle="m => t(m === 'mots' ? 'dictee.motsSeuls' : 'dictee.phrases')" :icone="m => (m === 'mots' ? 'lettres' : 'bulle')"
         :description="m => t(m === 'mots' ? 'dictee.motsSeulsDesc' : 'dictee.phrasesDesc')" />
 
       <!-- phrases générées par Mistral : facultatif, avec la clé que l'utilisateur saisit lui-même (src/noyau/mistral.ts) -->
@@ -60,8 +60,8 @@
       <div class="btn-group actions">
         <template v-if="!repondu">
           <button type="button" class="btn btn-ghost" @click="ecouter"><Icone nom="ecouter" /> {{ t('dictee.reecouter') }}</button>
-          <button type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
-          <button type="button" class="btn btn-ghost" @click="passer">{{ t('dictee.passer') }}</button>
+          <button type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
         </template>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>

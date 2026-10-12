@@ -5,7 +5,9 @@ export default {
   // les deux polices d'une affiche à polices par type (traducteurAffiche s'y rabat quand l'affiche n'a pas les siens)
   police: { script: 'Police du script', attache: 'Police de l’attaché' },
   commencer: 'Commencer',
-  valider: 'Valider ✔',
+  valider: 'Valider',
+  passer: 'Passer',
+  comparer: 'Comparer',
   suivant: 'Suivant ➜',
   quitter: 'Quitter',
   quitterTitre: "Quitter l'exercice",

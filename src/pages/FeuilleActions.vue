@@ -11,7 +11,7 @@
     </div>
     <div class="actions">
       <a class="btn btn-primary" :href="urlFiches(feuille.pdf.chemin)" download><Icone nom="telecharger" /> {{ t('feuille.telecharger') }}</a>
-      <button type="button" class="btn btn-ghost" @click="imprimerPdf(urlFiches(feuille.pdf.chemin), feuille.entree.slug)"><Icone nom="imprimer" /> {{ t('feuille.imprimer') }}</button>
+      <button type="button" class="btn btn-ghost" @click="imprimerPdf(urlFiches(feuille.pdf.chemin), feuille.entree.slug)"><Icone nom="imprimer" /> {{ t('ressource.imprimer') }}</button>
     </div>
     <p class="detail">{{ t('feuille.detailPdf', { n: feuille.pdf.nbPages, format: feuille.pdf.format, sens: t(`feuille.${feuille.pdf.orientation}`), taille: taille(feuille.pdf.taille) }) }}</p>
     <p class="detail">{{ t('feuille.imprimerAide') }}</p>

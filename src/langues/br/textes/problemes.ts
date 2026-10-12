@@ -10,14 +10,13 @@ export default {
   nombres: 'Niveroù', // br: à relire
   jusqua: 'Betek {n}', // br: à relire
   nbProblemes: 'Niver a gudennoù', // br: à relire
-  passer: 'Tremen ⏭', // br: à relire
   passe: '(tremenet)', // br: à relire
   laBonneReponse: 'Ar respont mat a oa {r}', // br: à relire
-  cat_ajoutRetrait: '➕➖ Ouzhpennañ / lemel', // br: à relire
-  cat_comparaison: '⚖️ Keñveriañ', // br: à relire
-  cat_partiesTout: '🧺 Lodennoù hag an holl', // br: à relire
-  cat_multiplication: '✖️ Liesadenn', // br: à relire
-  cat_partage: '🍰 Rannañ / strollañ', // br: à relire
-  cat_foisPlus: '🔁 « Gwech kement »', // br: à relire
-  cat_deuxEtapes: '🪜 Meur a bazenn', // br: à relire
+  cat_ajoutRetrait: 'Ouzhpennañ / lemel', // br: à relire
+  cat_comparaison: 'Keñveriañ', // br: à relire
+  cat_partiesTout: 'Lodennoù hag an holl', // br: à relire
+  cat_multiplication: 'Liesadenn', // br: à relire
+  cat_partage: 'Rannañ / strollañ', // br: à relire
+  cat_foisPlus: '« Gwech kement »', // br: à relire
+  cat_deuxEtapes: 'Meur a bazenn', // br: à relire
 } satisfies Traductions<typeof fr>

@@ -11,6 +11,7 @@
 import { definir, cases, choix, NB_LIBRE } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 import type { Classe } from '../../data/classes.ts'
+import type { NomIcone } from '../../images/icones.ts'
 
 /**
  * Groupes de types d'exercice (titres : `vocabulaire.g_<id>`, libellés : `vocabulaire.type_<id>`), avec l'icône du bouton et les niveaux
@@ -18,28 +19,28 @@ import type { Classe } from '../../data/classes.ts'
  */
 export type TypeVocabulaire = 'alpha' | 'lettre' | 'dictionnaire' | 'definitions' | 'contexte' | 'contraires' | 'synonymes' | 'homonymes'
   | 'sensFigure' | 'familles' | 'prefixes' | 'suffixes' | 'categorie' | 'intrus'
-interface TypeExercice { readonly id: TypeVocabulaire, readonly icone: string, readonly niveaux: readonly Classe[] }
+interface TypeExercice { readonly id: TypeVocabulaire, readonly icone: NomIcone, readonly niveaux: readonly Classe[] }
 
 export const GROUPES: readonly { readonly id: string, readonly types: readonly TypeExercice[] }[] = [
   { id: 'dico', types: [
-    { id: 'alpha', icone: '🔤', niveaux: ['ce1', 'ce2'] },
-    { id: 'lettre', icone: '🅰️', niveaux: ['ce1'] },
-    { id: 'dictionnaire', icone: '📕', niveaux: ['ce2'] },
-    { id: 'definitions', icone: '📖', niveaux: ['ce1', 'ce2'] },
-    { id: 'contexte', icone: '🔎', niveaux: ['ce2'] },
+    { id: 'alpha', icone: 'lettres', niveaux: ['ce1', 'ce2'] },
+    { id: 'lettre', icone: 'lettreA', niveaux: ['ce1'] },
+    { id: 'dictionnaire', icone: 'livreFerme', niveaux: ['ce2'] },
+    { id: 'definitions', icone: 'livreOuvert', niveaux: ['ce1', 'ce2'] },
+    { id: 'contexte', icone: 'loupeDroite', niveaux: ['ce2'] },
   ] },
   { id: 'sens', types: [
-    { id: 'contraires', icone: '↔️', niveaux: ['ce1', 'ce2'] },
-    { id: 'synonymes', icone: '🟰', niveaux: ['ce1', 'ce2'] },
-    { id: 'homonymes', icone: '👂', niveaux: ['ce2'] },
-    { id: 'sensFigure', icone: '🎭', niveaux: ['ce2'] },
+    { id: 'contraires', icone: 'flecheDouble', niveaux: ['ce1', 'ce2'] },
+    { id: 'synonymes', icone: 'egal', niveaux: ['ce1', 'ce2'] },
+    { id: 'homonymes', icone: 'oreille', niveaux: ['ce2'] },
+    { id: 'sensFigure', icone: 'masques', niveaux: ['ce2'] },
   ] },
   { id: 'construction', types: [
-    { id: 'familles', icone: '👨‍👩‍👧', niveaux: ['ce1', 'ce2'] },
-    { id: 'prefixes', icone: '🧩', niveaux: ['ce1', 'ce2'] },
-    { id: 'suffixes', icone: '🔚', niveaux: ['ce2'] },
-    { id: 'categorie', icone: '🏷️', niveaux: ['ce1'] },
-    { id: 'intrus', icone: '🕵️', niveaux: ['ce1'] },
+    { id: 'familles', icone: 'famille', niveaux: ['ce1', 'ce2'] },
+    { id: 'prefixes', icone: 'puzzle', niveaux: ['ce1', 'ce2'] },
+    { id: 'suffixes', icone: 'fin', niveaux: ['ce2'] },
+    { id: 'categorie', icone: 'etiquette', niveaux: ['ce1'] },
+    { id: 'intrus', icone: 'detective', niveaux: ['ce1'] },
   ] },
 ]
 

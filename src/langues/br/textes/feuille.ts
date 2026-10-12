@@ -16,7 +16,6 @@ export default {
   fiche: 'Skouerenn {n}', // br: à relire
   fiches: 'Skouerennoù eus ar fichenn', // br: à relire
   telecharger: 'Pellgargañ', // br: à relire
-  imprimer: 'Moullañ', // br: à relire
   format: 'Ment', // br: à relire
   sens: 'Tu', // br: à relire
   portrait: 'Barzh hed', // br: à relire

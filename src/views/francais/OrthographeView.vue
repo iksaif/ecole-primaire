@@ -7,7 +7,7 @@
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="theme" v-model="config.theme" :titre="t('orthographe.theme')"
         :libelle="th => t(`orthographe.themes.${th}`)">
-        <template #valeur="{ valeur: th, texte }"><span class="theme-icon">{{ ICONES[th] }}</span> {{ texte }}</template>
+        <template #valeur="{ valeur: th, texte }"><Icone class="theme-icon" :nom="ICONES[th]" /> {{ texte }}</template>
       </ChoixReglage>
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
@@ -20,7 +20,7 @@
       <div v-else class="saisie-row">
         <SaisieReponse v-model="saisie" class="saisie-input" :etat="etat" :disabled="repondu" focus :placeholder="q.indice || t('orthographe.ecrisReponse')"
           @entree="repondu ? jeu.suivante() : validerSaisie()" />
-        <button v-if="!repondu" type="button" class="btn btn-primary" @click="validerSaisie">{{ t('orthographe.validerCourt') }}</button>
+        <button v-if="!repondu" type="button" class="btn btn-primary" @click="validerSaisie">{{ t('communs.valider') }}</button>
       </div>
 
       <RetourReponse :message="retour?.message" :etat="etat" />
@@ -42,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Orthographe : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/orthographe/
 // (definition.ts, generateur.ts, fiche.ts) ; corpus : src/data/orthographe.js. Exercice de français : la fiche est toujours en français,
@@ -71,7 +72,7 @@ const { t } = useLangue()
 const { config, langueContenu } = useReglages(DEFINITION)
 // T : les textes de la fiche (CONTENU, textes.ts), toujours en français
 const T = traducteur(CONTENU, () => langueContenu.value)
-const ICONES: Readonly<Record<string, string>> = Object.fromEntries(THEMES.map(th => [th.id, th.icone]))
+const ICONES: Readonly<Record<string, NomIcone>> = Object.fromEntries(THEMES.map(th => [th.id, th.icone]))
 
 // ── Jeu : passage automatique ; après une erreur, le temps de lire la correction et l'explication ──
 const saisie = ref<string | number>('')

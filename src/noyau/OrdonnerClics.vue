@@ -46,7 +46,7 @@
 
     <div class="ordre-actions">
       <button type="button" class="btn btn-ghost" :aria-disabled="verrou || !ordre.length || undefined" @click="annuler"><Icone nom="annuler" /> {{ t('communs.annuler') }}</button>
-      <button v-if="!sansBouton" ref="valider" type="button" class="btn btn-primary" :aria-disabled="verrou || !complet || undefined" @click="envoyer">{{ t('communs.valider') }}</button>
+      <button v-if="!sansBouton" ref="valider" type="button" class="btn btn-primary" :aria-disabled="verrou || !complet || undefined" @click="envoyer">{{ t('communs.valider') }} <Icone nom="valide" /></button>
     </div>
   </div>
 </template>

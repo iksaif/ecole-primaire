@@ -6,7 +6,7 @@ import type fr from '../../fr/textes/longueurs.ts'
 export default {
   titre: 'Hiroc’h, berroc’h', // br: à relire
   description: 'Keñveriañ ha renkañ kreionoù', // br: à relire
-  niveaux: { ps: '🐣 PS — disheñvel-mat', ms: '🌱 MS — 4 kreion', gs: '🌳 GS — 5 kreion' }, // br: à relire
+  niveaux: { ps: 'PS — disheñvel-mat', ms: 'MS — 4 kreion', gs: 'GS — 5 kreion' }, // br: à relire
   modes: { comparer: 'An hirañ, ar berrañ', ranger: 'Renkañ' }, // br: à relire
   consigneLong: 'Stok ouzh ar c’hreion hirañ.', // br: à relire
   consigneCourt: 'Stok ouzh ar c’hreion berrañ.', // br: à relire

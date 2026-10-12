@@ -12,7 +12,7 @@ export default {
     'attache-min': 'Attaché minuscule',
   },
   contenu: 'Contenu',
-  contenus: { lettres: '🔤 Lettres et chiffres', mots: '📝 Mots', texte: '📄 Phrases' },
+  contenus: { lettres: 'Lettres et chiffres', mots: 'Mots', texte: 'Phrases' },
   lettres: 'Lettres',
   familles: 'Familles de lettres',
   famille: {

@@ -103,7 +103,7 @@
           <h2><Icone nom="vider" /> {{ t('reglages.remise.titre') }}</h2>
           <p class="aide">{{ t('reglages.remise.aide') }}</p>
           <button class="btn btn-danger" @click="toutReinitialiser">{{ t('reglages.remise.bouton') }}</button>
-          <p v-if="message" class="succes" role="status">{{ message }}</p>
+          <p v-if="message" class="succes" role="status"><Icone nom="coche" /> {{ message }}</p>
         </section>
 
       </template>

@@ -48,12 +48,10 @@ export default {
   deTrop: "Graet ec'h eus {t} : {m} re a zo.", // br: à relire
   autantArgent: "Kement a arc'hant o deus o-daou : {s}.",
   lePlus: "Gant {nom} emañ ar muiañ a arc'hant.",
-  passer: 'Tremen ⏭',
   passe: '(tremenet)',
-  type_compter: '🔢 Kontañ ur sammad',
-  type_composer: '🧩 Ober ur sammad',
-  type_moins: '🪙 An nebeutañ a bezhioù',
-  type_rendre: '🛒 Distreiñ ar moneiz',
-  type_comparer: '👛 Keñveriañ',
-  type_convertir: '🔁 1 € = 100 c',
+  type_compter: 'Kontañ ur sammad',
+  type_composer: 'Ober ur sammad',
+  type_moins: 'An nebeutañ a bezhioù',
+  type_rendre: 'Distreiñ ar moneiz',
+  type_convertir: '1 € = 100 c',
 } satisfies Traductions<typeof fr>

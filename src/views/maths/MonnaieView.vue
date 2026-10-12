@@ -7,7 +7,7 @@
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
-          :titre="t('communs.exercices')" :libelle="e => t(`monnaie.type_${e}`)" />
+          :titre="t('communs.exercices')" :libelle="e => libelleExercice(e as TypeExercice)" :icone="e => ICONE_TYPE[String(e)]" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="centimes" v-model="config.centimes"
           :titre="t('monnaie.options')" :libelle="c => t(c ? 'monnaie.avecCentimes' : 'monnaie.eurosEntiers')">
           <div v-if="modeCourant === 'jouer'" class="btn-group" style="margin-top:.5rem;">
@@ -172,8 +172,8 @@
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
-          <button type="button" class="btn btn-ghost" @click="passer">{{ t('monnaie.passer') }}</button>
-          <button v-if="q.type !== 'comparer'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+          <button v-if="q.type !== 'comparer'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </template>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
@@ -187,6 +187,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 import Emoji from '../../images/Emoji.vue'
 // La monnaie : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
@@ -210,10 +211,18 @@ import { CONTENU } from '../../exercices/monnaie/textes.ts'
 import {
   questions as tirer, questionsFiche, verifier, sommeDonnee, donnees, palette, fmt, formatSomme, totalDe, trierDesc, nomArgent, nomObjet,
 } from '../../exercices/monnaie/generateur.ts'
-import type { Choix, Question, Reponse } from '../../exercices/monnaie/generateur.ts'
+import type { Choix, Question, Reponse, TypeExercice } from '../../exercices/monnaie/generateur.ts'
 import { fiche as ficheMonnaie } from '../../exercices/monnaie/fiche.ts'
 import { svgArgent } from '../../dessins/argent.ts'
 import type { ValeurArgent } from '../../dessins/argent.ts'
+
+/** L'icône de chaque choix du réglage (src/images/icones.ts). */
+const ICONE_TYPE: Readonly<Record<string, NomIcone>> = { compter: 'chiffres', composer: 'puzzle', moins: 'piece', rendre: 'caddie', comparer: 'portemonnaie', convertir: 'boucle' }
+/** Le nom d'un exercice dans les réglages : « Comparer » est un mot commun à plusieurs exercices. */
+function libelleExercice(e: TypeExercice): string {
+  if (e === 'comparer') return t('communs.comparer')
+  return t(`monnaie.type_${e}`)
+}
 
 const { t } = useLangue()
 // Réglages mémorisés, ajustés au changement de niveau ; maths : le contenu (énoncés, fiche) suit la langue de l'interface

@@ -8,7 +8,7 @@
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types"
-          :titre="t('communs.exercices')" :libelle="ty => t(`numeration.type_${ty}`)" />
+          :titre="t('communs.exercices')" :libelle="e => libelleExercice(e as TypeQuestion)" :icone="ty => ICONE_TYPE[String(ty)]" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="plage" v-model="config.plage"
           :titre="t('numeration.nombresJusqua')" :libelle="fmt" />
         <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
@@ -69,8 +69,8 @@
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
-          <button type="button" class="btn btn-ghost" @click="passer">{{ t('numeration.passer') }}</button>
-          <button v-if="q.kind !== 'choix'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+          <button v-if="q.kind !== 'choix'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </template>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
@@ -87,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Les nombres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question)
 // et fiche : src/exercices/numeration/ ; le matériel et la droite graduée : src/dessins/.
@@ -108,8 +109,16 @@ import { useJeu } from '../../noyau/useJeu.ts'
 import DEFINITION from '../../exercices/numeration/definition.ts'
 import { CONTENU } from '../../exercices/numeration/textes.ts'
 import { questions as tirer, questionsFiche, verifier, fmt, LIBELLES_CDU, libCdu } from '../../exercices/numeration/generateur.ts'
-import type { Champ, Question, Reponse } from '../../exercices/numeration/generateur.ts'
+import type { Champ, Question, Reponse, TypeQuestion } from '../../exercices/numeration/generateur.ts'
 import { fiche as ficheNumeration } from '../../exercices/numeration/fiche.ts'
+
+/** L'icône de chaque choix du réglage (src/images/icones.ts). */
+const ICONE_TYPE: Readonly<Record<string, NomIcone>> = { decomposer: 'briques', representation: 'carreBleu', lettresChiffres: 'crayon', chiffresLettres: 'lettres', comparer: 'balance', suites: 'flecheDroite', droite: 'regle', ranger: 'barres' }
+/** Le nom d'un exercice dans les réglages : « Comparer » est un mot commun à plusieurs exercices. */
+function libelleExercice(e: TypeQuestion): string {
+  if (e === 'comparer') return t('communs.comparer')
+  return t(`numeration.type_${e}`)
+}
 
 const { t } = useLangue()
 // Réglages mémorisés, ajustés au changement de niveau ; maths : le contenu (nombres en lettres, fiche) suit la langue de l'interface

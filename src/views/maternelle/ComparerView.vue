@@ -31,13 +31,13 @@
       <!-- Boutons réponse (PS : on touche le groupe) -->
       <div v-if="!ps" class="reponses">
         <button type="button" class="rep-btn rep-a" :class="{ bonne: repondu && q.reponse === 'gauche' }" :disabled="repondu" @click="repondre('gauche')">
-          👈 {{ t('comparer.aPlus', { g: 'A' }) }}
+          <Icone nom="doigtGauche" /> {{ t('comparer.aPlus', { g: 'A' }) }}
         </button>
         <button type="button" class="rep-btn rep-egal" :class="{ bonne: repondu && q.reponse === 'egal' }" :disabled="repondu" @click="repondre('egal')">
           = {{ t('comparer.pareil') }}
         </button>
         <button type="button" class="rep-btn rep-b" :class="{ bonne: repondu && q.reponse === 'droite' }" :disabled="repondu" @click="repondre('droite')">
-          {{ t('comparer.aPlus', { g: 'B' }) }} 👉
+          {{ t('comparer.aPlus', { g: 'B' }) }} <Icone nom="doigtDroite" />
         </button>
       </div>
 

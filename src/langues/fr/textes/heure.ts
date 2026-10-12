@@ -32,7 +32,6 @@ export default {
   lisEmploi: "Lis l'emploi du temps.",
   heures: 'Heures',
   minutes: 'Minutes',
-  passer: 'Passer ⏭',
   passe: '(passé)',
   // exercices et précisions (réglages)
   exercices: {

@@ -3,6 +3,7 @@
 // « hors programme ». Même politique que l'ancien src/exercices/outils.js (les deux mondes se lisent entre eux).
 import { defautsDe as defautsDuNiveau, optionsDe as optionsDuNiveau, estBonus as estBonusDe, raisonHorsProgramme as raisonDe, reglagesReportes, valeurValide } from './politique.ts'
 import type { Classe, Config, DefinitionExercice, NiveauExercice, Reglages, ValeurOption, ValeurReglage, Verdict, VerdictLu } from './types.ts'
+import type { NomIcone } from '../images/icones.ts'
 
 // Un niveau de la définition par son id (une clé lue d'un réglage mémorisé ou d'un lien peut être n'importe quoi)
 const niveauDe = (definition: DefinitionExercice, niveau: unknown): NiveauExercice | undefined =>
@@ -130,3 +131,8 @@ export const valeursDe = (definition: DefinitionExercice, niveau: string, cle: s
   return (niv?.options as Record<string, readonly ValeurOption[]> | undefined)?.[cle]
     ?? (definition.options as Record<string, readonly ValeurOption[]> | undefined)?.[cle] ?? []
 }
+
+/** L'icône de chaque niveau de maternelle dans les réglages des exercices : la petite, la moyenne, la grande section qui grandissent. */
+export const ICONE_NIVEAU_MATERNELLE: Readonly<Record<'ps' | 'ms' | 'gs', NomIcone>> = { ps: 'poussin', ms: 'pousse', gs: 'arbre' }
+/** L'icône d'un niveau, s'il en a une (maternelle). */
+export const iconeNiveau = (n: unknown): NomIcone | undefined => ICONE_NIVEAU_MATERNELLE[n as 'ps' | 'ms' | 'gs']

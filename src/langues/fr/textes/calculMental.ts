@@ -9,7 +9,6 @@ export default {
   nbCalculsFiche: 'Nombre de calculs sur la fiche',
   tempsParQuestion: 'Temps par question',
   sansLimite: 'Sans limite',
-  passer: 'Passer ⏭',
   passe: '(passé)',
   laBonneReponse: 'La bonne réponse était {r}',
   tempsEcoule: 'Temps écoulé ! La réponse était {r}',

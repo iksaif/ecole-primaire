@@ -46,7 +46,7 @@
           <span class="table-cell-r">{{ q.a * i }}</span>
         </div>
       </div>
-      <button type="button" class="btn btn-primary" style="margin-top:1.5rem;" @click="apprendre = false">{{ t('tables.jeLaConnais') }}</button>
+      <button type="button" class="btn btn-primary" style="margin-top:1.5rem;" @click="apprendre = false">{{ t('tables.jeLaConnais') }} <Icone nom="valide" /></button>
     </div>
 
     <!-- ══ EXERCICE ══ -->
@@ -67,8 +67,8 @@
           focus aria-describedby="tables-retour" @entree="valider" />
         <RetourReponse id="tables-retour" :message="retour?.message" :etat="etat" />
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('tables.passer') }}</button>
-          <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+          <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </div>
       </QuestionJeu>
       <div v-else class="exercise-box">
@@ -77,7 +77,7 @@
           focus aria-describedby="tables-retour" @entree="valider" />
         <RetourReponse id="tables-retour" :message="retour?.message" :etat="etat" />
         <div class="btn-group" style="justify-content:center;margin-top:1rem;">
-          <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-primary" :disabled="repondu" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </div>
       </div>
     </template>
@@ -95,7 +95,7 @@
       @rejouer="jeu.recommencer" @reglages="jeu.quitter">
       <TableauCorrection :historique="historique" />
       <div v-if="mauvaises" class="btn-group" style="justify-content:center;margin-bottom:1rem;">
-        <button type="button" class="btn btn-warning" @click="revoirErreurs">{{ t('tables.revoirErreurs') }}</button>
+        <button type="button" class="btn btn-warning" @click="revoirErreurs"><Icone nom="croix" /> {{ t('tables.revoirErreurs') }}</button>
       </div>
     </ResultatsJeu>
   </div>
@@ -132,7 +132,7 @@ const { t } = useLangue()
 // Réglages mémorisés, ajustés au changement de niveau ; maths : le contenu (fiche) suit la langue de l'interface
 const { config, langueContenu } = useReglages(DEFINITION)
 const T = traducteur(CONTENU, () => langueContenu.value)
-const ICONES = { entrainement: '📖', aleatoire: '🎲', chrono: '⏱️' } as const
+const ICONES = { entrainement: 'livreOuvert', aleatoire: 'de', chrono: 'chrono' } as const satisfies Readonly<Record<string, NomIcone>>
 const DUREE_CHRONO = 60 // secondes
 
 // « Toutes » : les tables du programme, de 1 à 10 (11 et 12 en bonus)

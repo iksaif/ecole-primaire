@@ -9,7 +9,6 @@ export default {
   cliqueEtiquettes: 'Klik war an tikedennoù en urzh…', // br: à relire (étiquette = tikedenn)
   effacerOrdre: '↺ Diverkañ',
   ecrisReponse: 'Skriv da respont…',
-  validerCourt: 'Gwiriañ',
   suivantFleche: 'Da-heul →',
   correction: 'Reizhadenn',
   bonnePhrase: 'Ar frazenn vat eo : « {r} »',

@@ -15,7 +15,6 @@ export default {
   fiches: 'Exemplaires de la fiche',
   // actions
   telecharger: 'Télécharger',
-  imprimer: 'Imprimer',
   format: 'Format',
   sens: 'Sens',
   portrait: 'Portrait',

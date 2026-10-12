@@ -23,6 +23,14 @@ export const ICONES = {
   // les retours : juste, faux, presque, bravos, messages de fin
   coche: '2705', croix: '274C', attention: '26A0', fete: '1F389', applaudissements: '1F44F', etoileBrillante: '1F31F', trophee: '1F3C6',
   muscle: '1F4AA', intello: '1F913',
+  // les modes, niveaux et types des exercices, les boutons du jeu
+  arbre: '1F333', passer: '23ED', pouce: '1F44D', clin: '1F609', yeux: '1F440', crayonCire: '1F58D', biscuit: '1F36A', egal: '1F7F0',
+  glacon: '1F9CA', cercle: '2B55', presseFeuilles: '1F4CB', reflexion: '1F914', verreDeLait: '1F95B', briques: '1F9F1', carreBleu: '1F7E6',
+  flecheDroite: '27A1', piece: '1FA99', caddie: '1F6D2', portemonnaie: '1F45B', panier: '1F9FA', gateau: '1F370', echelle: '1FA9C',
+  flecheDouble: '2194', chrono: '23F1', majuscules: '1F520', oreille: '1F442', question: '2753', interdit: '1F6AB', coureur: '1F3C3',
+  doigtDroite: '1F449', doigtGauche: '1F448', reveil: '23F0', feminin: '2640', lettreA: '1F170', livreFerme: '1F4D5', loupeDroite: '1F50E',
+  masques: '1F3AD', fin: '1F51A', detective: '1F575', tortue: '1F422', lievre: '1F407', singeYeux: '1F648', stop: '23F9', pincee: '1F90F',
+  ampoule: '1F4A1', papillon: '1F98B', lion: '1F981', microscope: '1F52C', parchemin: '1F4DC',
   // la page des réglages
   profil: '1F464', chantier: '1F6A7',
   // les identités du catalogue : domaines, matières, exercices et affiches, badges, profils, site (src/ressources/emojis.ts…)

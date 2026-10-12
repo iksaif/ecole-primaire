@@ -8,12 +8,13 @@
 // Chaque type de question porte les niveaux où il est proposé ; tout ce qu'un niveau propose est au programme.
 // Les valeurs des types et la clé `nb` sont aussi celles des réglages mémorisés des visiteurs : elles ne changent pas.
 import type { Classe } from '../../data/classes.ts'
+import type { NomIcone } from '../../images/icones.ts'
 
 export type TypeGrammaire = 'ordre' | 'phrase' | 'majuscule' | 'ponctuation' | 'typePhrase' | 'negation' | 'negReconnaitre' | 'complexe'
   | 'verbe' | 'nom' | 'det' | 'adj' | 'nature' | 'gnNoyau'
   | 'sujet' | 'pronom' | 'pronomPersonne' | 'cplt' | 'cpltQ' | 'cpltNature'
   | 'genre' | 'nombre' | 'pluriel' | 'accordGN' | 'accordSV'
-interface TypeExercice { readonly id: TypeGrammaire, readonly icone: string, readonly niveaux: readonly Classe[] }
+interface TypeExercice { readonly id: TypeGrammaire, readonly icone: NomIcone, readonly niveaux: readonly Classe[] }
 
 const CE: readonly Classe[] = ['ce1', 'ce2']
 const CM: readonly Classe[] = ['cm1', 'cm2']
@@ -25,41 +26,41 @@ const TOUS: readonly Classe[] = [...CE, ...CM]
  */
 export const GROUPES: readonly { readonly id: string, readonly types: readonly TypeExercice[] }[] = [
   { id: 'phrase', types: [
-    { id: 'ordre', icone: '🧩', niveaux: ['ce1'] },
-    { id: 'phrase', icone: '🤔', niveaux: ['ce1'] },
-    { id: 'majuscule', icone: '🔠', niveaux: ['ce1'] },
-    { id: 'ponctuation', icone: '❓', niveaux: ['ce1'] },
+    { id: 'ordre', icone: 'puzzle', niveaux: ['ce1'] },
+    { id: 'phrase', icone: 'reflexion', niveaux: ['ce1'] },
+    { id: 'majuscule', icone: 'majuscules', niveaux: ['ce1'] },
+    { id: 'ponctuation', icone: 'question', niveaux: ['ce1'] },
     // CE1 : nommer le type de phrase (déclarative, interrogative, impérative), BO n° 41 p. 93
-    { id: 'typePhrase', icone: '🗣️', niveaux: ['ce1'] },
-    { id: 'negation', icone: '🚫', niveaux: TOUS },
-    { id: 'negReconnaitre', icone: '🔍', niveaux: TOUS },
-    { id: 'complexe', icone: '🔗', niveaux: ['cm2'] },
+    { id: 'typePhrase', icone: 'parole', niveaux: ['ce1'] },
+    { id: 'negation', icone: 'interdit', niveaux: TOUS },
+    { id: 'negReconnaitre', icone: 'recherche', niveaux: TOUS },
+    { id: 'complexe', icone: 'lien', niveaux: ['cm2'] },
   ] },
   { id: 'nature', types: [
-    { id: 'verbe', icone: '🏃', niveaux: TOUS },
-    { id: 'nom', icone: '🏠', niveaux: TOUS },
-    { id: 'det', icone: '👉', niveaux: TOUS },
-    { id: 'adj', icone: '🎨', niveaux: TOUS },
-    { id: 'nature', icone: '🏷️', niveaux: TOUS },
-    { id: 'gnNoyau', icone: '🎯', niveaux: CM },
+    { id: 'verbe', icone: 'coureur', niveaux: TOUS },
+    { id: 'nom', icone: 'accueil', niveaux: TOUS },
+    { id: 'det', icone: 'doigtDroite', niveaux: TOUS },
+    { id: 'adj', icone: 'palette', niveaux: TOUS },
+    { id: 'nature', icone: 'etiquette', niveaux: TOUS },
+    { id: 'gnNoyau', icone: 'competence', niveaux: CM },
   ] },
   { id: 'fonctions', types: [
-    { id: 'sujet', icone: '👤', niveaux: TOUS },
-    { id: 'pronom', icone: '🔁', niveaux: TOUS },
+    { id: 'sujet', icone: 'silhouette', niveaux: TOUS },
+    { id: 'pronom', icone: 'boucle', niveaux: TOUS },
     // CE1 : tous les pronoms personnels sujets (je, tu, il, elle, nous, vous, ils, elles), BO n° 41 p. 93
-    { id: 'pronomPersonne', icone: '👥', niveaux: ['ce1'] },
-    { id: 'cplt', icone: '📍', niveaux: CM },
-    { id: 'cpltQ', icone: '⏰', niveaux: ['cm2'] },
-    { id: 'cpltNature', icone: '⚖️', niveaux: CM },
+    { id: 'pronomPersonne', icone: 'silhouettes', niveaux: ['ce1'] },
+    { id: 'cplt', icone: 'punaise', niveaux: CM },
+    { id: 'cpltQ', icone: 'reveil', niveaux: ['cm2'] },
+    { id: 'cpltNature', icone: 'balance', niveaux: CM },
   ] },
   { id: 'genreNombre', types: [
-    { id: 'genre', icone: '♀️', niveaux: ['ce1'] },
-    { id: 'nombre', icone: '🔢', niveaux: ['ce1'] },
-    { id: 'pluriel', icone: '➕', niveaux: TOUS },
-    { id: 'accordGN', icone: '🤝', niveaux: TOUS },
+    { id: 'genre', icone: 'feminin', niveaux: ['ce1'] },
+    { id: 'nombre', icone: 'chiffres', niveaux: ['ce1'] },
+    { id: 'pluriel', icone: 'ajouter', niveaux: TOUS },
+    { id: 'accordGN', icone: 'poigneeDeMains', niveaux: TOUS },
   ] },
   { id: 'accordSV', types: [
-    { id: 'accordSV', icone: '🔗', niveaux: TOUS },
+    { id: 'accordSV', icone: 'lien', niveaux: TOUS },
   ] },
 ]
 

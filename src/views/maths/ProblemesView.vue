@@ -6,7 +6,7 @@
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="categories" v-model="config.categories"
-        :titre="t('problemes.typesProblemes')" :libelle="c => t(`problemes.cat_${c}`)" />
+        :titre="t('problemes.typesProblemes')" :libelle="c => t(`problemes.cat_${c}`)" :icone="c => ICONE_CATEGORIE[String(c)]" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="plage" v-model="config.plage"
         :titre="t('problemes.nombres')" :libelle="jusqua" />
       <ChoixReglage :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('problemes.nbProblemes')" />
@@ -30,8 +30,8 @@
       <div v-if="repondu && !retour?.ok" class="calcul-correction">{{ q.calcul }}</div>
 
       <div class="btn-group actions-question">
-        <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('problemes.passer') }}</button>
-        <button v-if="!repondu" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+        <button type="button" class="btn btn-ghost" :disabled="repondu" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+        <button v-if="!repondu" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
     </QuestionJeu>
@@ -46,6 +46,8 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
+import type { NomIcone } from '../../images/icones.ts'
 // Problèmes : la vue ne fait que les réglages et le rendu d'un problème. Niveaux, générateur, modèles d'énoncés et fiche :
 // src/exercices/problemes/ (definition.ts, generateur.ts, modeles-*.ts, fiche.ts) ; les textes : textes.ts.
 import { ref } from 'vue'
@@ -70,6 +72,9 @@ import type { Plage } from '../../exercices/problemes/donnees.ts'
 import { questions as tirer, questionsFiche, verifier, unite, avecUnite } from '../../exercices/problemes/generateur.ts'
 import type { Question, Reponse } from '../../exercices/problemes/generateur.ts'
 import { fiche as mettreEnPage } from '../../exercices/problemes/fiche.ts'
+
+/** L'icône de chaque choix du réglage (src/images/icones.ts). */
+const ICONE_CATEGORIE: Readonly<Record<string, NomIcone>> = { ajoutRetrait: 'ajouter', comparaison: 'balance', partiesTout: 'panier', multiplication: 'multiplication', partage: 'gateau', foisPlus: 'boucle', deuxEtapes: 'echelle' }
 
 const { t } = useLangue()
 const { config, langueContenu } = useReglages(DEFINITION)

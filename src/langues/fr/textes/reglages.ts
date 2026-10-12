@@ -58,7 +58,7 @@ export default {
     aide: 'Efface tous les réglages et les scores mémorisés sur cet appareil.',
     bouton: 'Tout réinitialiser',
     confirmer: 'Êtes-vous sûr ? Tout ce qui est mémorisé sur cet appareil sera effacé.',
-    fait: { one: '✅ {n} réglage supprimé.', other: '✅ {n} réglages supprimés.' },
+    fait: { one: '{n} réglage supprimé.', other: '{n} réglages supprimés.' },
   },
   onglets: {
     aria: 'Rubriques des réglages',

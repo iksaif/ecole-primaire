@@ -18,7 +18,9 @@
   Valeurs en groupes sous des sous-titres (Grammaire : « La phrase », « Nature des mots »…) :
     <ChoixReglage … :groupes="[{ titre: 'La phrase', valeurs: ['ordre', 'phrase'] }, …]" />
   Variante « cartes » (un choix qui change la nature de l'exercice : mode lacunes / complet, entraînement / chrono…) :
-    <ChoixReglage cartes … :icone="m => m === 'lacunes' ? '✏️' : '📝'" :description="m => t(m + 'Desc')" />
+    <ChoixReglage cartes … :icone="m => m === 'lacunes' ? 'crayon' : 'blocNotes'" :description="m => t(m + 'Desc')" />
+  `icone` (cartes et boutons) : l'icône de chaque valeur (src/images/icones.ts), dessinée devant le libellé par <Icone> ; le
+  libellé reste du texte, sans emoji.
   Accessibilité : la section est un `role="group"` nommé par son titre ; chaque bouton porte `aria-pressed` (choix
   multiple : plusieurs boutons enfoncés) ; la marque « (bonus) » fait partie du nom du bouton.
 -->
@@ -28,7 +30,7 @@
     <div v-if="cartes" class="cartes-reglage" :class="{ nombreuses: liste.length > 2 }" :style="{ '--nb-cartes': liste.length }">
       <button v-for="v in liste" :key="String(v)" type="button" class="carte-reglage" :class="{ active: actif(v) }" :data-valeur="String(v)"
         :aria-pressed="actif(v)" :title="raison(v)" @click="choisir(v)">
-        <div v-if="icone" class="carte-icone" aria-hidden="true">{{ icone(v) }}</div>
+        <div v-if="icone?.(v)" class="carte-icone" aria-hidden="true"><Icone :nom="icone(v)!" /></div>
         <div class="carte-titre"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></div>
         <div v-if="description" class="carte-desc">{{ description(v) }}</div>
       </button>
@@ -38,7 +40,7 @@
       <div class="btn-group" role="group" :aria-label="section.titre || undefined">
         <button v-for="v in section.valeurs" :key="String(v)" type="button" class="level-btn" :class="{ active: actif(v) }" :data-valeur="String(v)"
           :aria-pressed="actif(v)" :title="raison(v)"
-          @click="choisir(v)"><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></button>
+          @click="choisir(v)"><template v-if="icone?.(v)"><Icone :nom="icone(v)!" />&nbsp;</template><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></button>
         <template v-if="libre && k === sections.length - 1">
           <button type="button" class="level-btn" :class="{ active: autreActif }" data-valeur="autre" :aria-pressed="autreActif" @click="ouvrirAutre">{{ t('communs.nombreAutre') }}</button>
           <input v-if="autreOuvert || autreActif" ref="champAutre" class="nombre-libre" type="number" inputmode="numeric" :min="libre.min" :max="libre.max" step="1"
@@ -52,6 +54,8 @@
 </template>
 
 <script setup lang="ts" generic="R extends object, K extends (keyof R & string) | 'niveau'">
+import Icone from '../images/Icone.vue'
+import type { NomIcone } from '../images/icones.ts'
 // textes : section `communs` (bonus, horsProgramme) ; marques lues dans la définition (src/noyau/reglages.ts)
 import { computed, nextTick, ref, useId } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
@@ -83,7 +87,7 @@ const props = withDefaults(defineProps<{
   groupes?: { titre: string, valeurs: readonly Valeur[] }[] | null
   // variante en cartes (icône, titre, description) plutôt qu'en rangée de boutons
   cartes?: boolean
-  icone?: ((v: Valeur) => string) | null
+  icone?: ((v: Valeur) => NomIcone | undefined) | null
   description?: ((v: Valeur) => string) | null
 }>(), { niveau: '', titre: '', libelle: null, libelles: null, valeurs: null, groupes: null, cartes: false, icone: null, description: null })
 // profil « enfant » : le niveau est figé sur la classe verrouillée (useReglages) : pas de choix à montrer

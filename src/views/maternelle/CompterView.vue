@@ -8,7 +8,7 @@
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
         <ChoixReglage v-if="modeCourant === 'imprimer' && config.niveau !== 'ps'" :definition="DEFINITION" :niveau="config.niveau"
-          cle="reponse" v-model="config.reponse" :titre="t('compter.reponseFiche')" :libelle="r => (r === 'ecrire' ? '✏️ ' + t('compter.ecrire') : '⭕ ' + t('compter.entourer'))" />
+          cle="reponse" v-model="config.reponse" :titre="t('compter.reponseFiche')" :libelle="r => (r === 'ecrire' ? t('compter.ecrire') : t('compter.entourer'))" :icone="r => (r === 'ecrire' ? 'crayon' : 'cercle')" />
       </template>
     </CadreExercice>
 

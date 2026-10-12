@@ -20,7 +20,6 @@ export default {
   avecRetenue: "Gant dalc'h", // br: à relire
   nbExercices: 'Niver a boelladennoù',
   chiffreN: 'Sifr {n}', // br: à relire
-  passer: 'Tremen ⏭',
   passe: '(tremenet)',
   laBonneReponse: 'Ar respont mat a oa {r}',
 } satisfies Traductions<typeof fr>

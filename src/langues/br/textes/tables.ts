@@ -18,9 +18,9 @@ export default {
   multiplierJusqua: 'Liesaat betek',
   tableN: 'Taolenn {n} / {total}',
   tableDe: 'Taolenn × {n}',
-  jeLaConnais: 'Gouzout a ran anezhi → Amprouiñ ! ✔',
+  jeLaConnais: 'Gouzout a ran anezhi → Amprouiñ !',
   bonnesEn1Min: 'respont mat e 1 munutenn !',
-  revoirErreurs: '❌ Adwelet ar fazioù',
+  revoirErreurs: 'Adwelet ar fazioù',
   chrono50: 'Souezhus !',
   chrono30: 'Dispar !',
   chronoBas: "Kendalc'h da embreger !",
@@ -28,7 +28,6 @@ export default {
   dansLOrdre: 'En urzh',
   melange: 'Kemmesket',
   nbCalculs: 'Niver a jedadurioù', // br: à relire
-  passer: 'Tremen ⏭',
   passe: '(tremenet)',
   laBonneReponse: '{a} × {b} = {r}',
 } satisfies Traductions<typeof fr>

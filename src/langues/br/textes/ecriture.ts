@@ -16,7 +16,7 @@ export default {
     'attache-min': 'A-stag, lizherennoù bihan',
   },
   contenu: 'Danvez', // br: à relire
-  contenus: { lettres: '🔤 Lizherennoù ha sifroù', mots: '📝 Gerioù', texte: '📄 Frazennoù' },
+  contenus: { lettres: 'Lizherennoù ha sifroù', mots: 'Gerioù', texte: 'Frazennoù' },
   lettres: 'Lizherennoù',
   familles: 'Familhoù lizherennoù', // br: à relire
   famille: {

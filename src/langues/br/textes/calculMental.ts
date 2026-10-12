@@ -11,7 +11,6 @@ export default {
   nbCalculsFiche: 'Niver a jedadurioù war ar fichenn', // br: à relire
   tempsParQuestion: 'Amzer evit pep goulenn',
   sansLimite: 'Hep bevenn',
-  passer: 'Tremen ⏭',
   passe: '(tremenet)',
   laBonneReponse: 'Ar respont mat a oa {r}',
   tempsEcoule: 'Echu eo an amzer ! Ar respont a oa {r}',

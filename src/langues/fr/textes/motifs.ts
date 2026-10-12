@@ -4,9 +4,9 @@ export default {
   titre: 'Les motifs',
   description: 'Continuer un collier qui se répète',
   niveau: {
-    ps: '🐣 PS — deux éléments',
-    ms: '🌱 MS — motifs simples',
-    gs: '🌳 GS — motifs plus longs',
+    ps: 'PS — deux éléments',
+    ms: 'MS — motifs simples',
+    gs: 'GS — motifs plus longs',
   },
   exercice: 'Exercice',
   apres: 'Et après ?',

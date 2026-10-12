@@ -28,8 +28,8 @@
       <RetourReponse id="calcul-retour" :message="retour?.message" :etat="etat" />
 
       <div v-if="!repondu" class="btn-group actions-question">
-        <button type="button" class="btn btn-ghost" @click="passer">{{ t('calculMental.passer') }}</button>
-        <button type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+        <button type="button" class="btn btn-ghost" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+        <button type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
       </div>
     </QuestionJeu>
 
@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Calcul mental : la vue ne fait que les réglages, le minuteur et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/calcul-mental/ (definition.ts, generateur.ts, fiche.ts).
 import { computed, ref, watch } from 'vue'

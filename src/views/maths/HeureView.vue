@@ -160,8 +160,8 @@
 
       <div class="btn-group actions-question">
         <template v-if="!repondu">
-          <button type="button" class="btn btn-ghost" @click="jeu.passer({ donne: t('heure.passe') })">{{ t('heure.passer') }}</button>
-          <button v-if="!estChoix" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="jeu.passer({ donne: t('heure.passe') })">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+          <button v-if="!estChoix" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </template>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
@@ -181,6 +181,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Lire l'heure : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur, dessin de l'horloge et fiche :
 // src/exercices/heure/ (definition.ts, generateur.ts, horloge.ts, fiche.ts).
 import { ref, computed } from 'vue'

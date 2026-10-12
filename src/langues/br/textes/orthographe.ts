@@ -9,7 +9,6 @@ export default {
   theme: 'Tem',
   themes: { homophones: 'Heñvelsonioù', accords: 'Kenglotadurioù', lettres: 'Lizherennoù a vank' }, // br: à relire
   ecrisReponse: 'Skriv ar ger…',
-  validerCourt: 'Gwiriañ',
   aRetravailler: "Da labourat c'hoazh :",
   erreur: 'Ar respont mat eo « {r} ».',
   // br: à relire — préposition = araogenn, conjonction = stagell, déterminant = ger-mont (incertain), pronom réfléchi = raganv emober (incertain)

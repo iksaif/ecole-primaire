@@ -54,13 +54,13 @@
             <p>{{ t('assistant.fin.texte') }}</p>
             <!-- un raccourci vers la suite logique : le Programme pour l'enseignant·e, le mode enfant pour le parent -->
             <button v-if="enseignant" type="button" class="btn btn-ghost" @click="ouvrirProgramme"><Icone nom="programme" /> {{ t('assistant.fin.programme') }}</button>
-            <button v-else type="button" class="btn btn-ghost" @click="passerEnModeEnfant">{{ t('assistant.fin.enfant') }}</button>
+            <button v-else type="button" class="btn btn-ghost" @click="passerEnModeEnfant"><Icone nom="enfant" /> {{ t('assistant.fin.enfant') }}</button>
           </template>
 
           <p v-if="repere === 'menu'" class="telephone">{{ t('assistant.menu') }}</p>
 
           <div class="actions">
-            <button v-if="etape.id !== 'fin'" type="button" class="passer" @click="fermer">{{ t('assistant.passer') }}</button>
+            <button v-if="etape.id !== 'fin'" type="button" class="passer" @click="fermer">{{ t('assistant.passer') }} <Icone nom="passer" /></button>
             <!-- « Précédent » et « Suivant » restent côte à côte (au téléphone, ils passent ensemble à la ligne) -->
             <span class="pas">
               <button v-if="index > 0" type="button" class="btn btn-ghost" @click="aller(index - 1)">{{ t('assistant.precedent') }}</button>

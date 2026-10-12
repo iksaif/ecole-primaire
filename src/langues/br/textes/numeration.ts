@@ -10,15 +10,13 @@ export default {
   nombresJusqua: 'Niveroù betek',
   legendeMillier: '1 kub bras = 1000',
   legende: '1 plakenn = 100 · 1 barrenn = 10 · 1 kub = 1',
-  cliqueTous: 'Klik war an holl niveroù 😉',
-  passer: 'Tremen ⏭',
+  cliqueTous: 'Klik war an holl niveroù',
   passe: '(tremenet)',
-  type_decomposer: '🧱 Dispenn', // br: à relire
-  type_representation: '🟦 Skeudenn', // br: à relire
-  type_lettresChiffres: '✏️ Skrivañ e sifroù',
-  type_chiffresLettres: '🔤 Skrivañ e lizherennoù',
-  type_comparer: '⚖️ Keñveriañ',
-  type_suites: '➡️ Da-heul / heuliadoù',
-  type_droite: '📏 Linenn dereziet', // br: à relire
-  type_ranger: '📶 Renkañ',
+  type_decomposer: 'Dispenn', // br: à relire
+  type_representation: 'Skeudenn', // br: à relire
+  type_lettresChiffres: 'Skrivañ e sifroù',
+  type_chiffresLettres: 'Skrivañ e lizherennoù',
+  type_suites: 'Da-heul / heuliadoù',
+  type_droite: 'Linenn dereziet', // br: à relire
+  type_ranger: 'Renkañ',
 } satisfies Traductions<typeof fr>

@@ -7,7 +7,9 @@ export default {
   // les deux polices d'une affiche à polices par type (traducteurAffiche s'y rabat quand l'affiche n'a pas les siens)
   police: { script: 'Nodrezh ar skript', attache: 'Nodrezh an a-stag' }, // br: à relire
   commencer: 'Kregiñ',
-  valider: 'Gwiriañ ✔',
+  valider: 'Gwiriañ',
+  passer: 'Tremen',
+  comparer: 'Keñveriañ',
   suivant: "Da-heul ➜",
   quitter: 'Kuitaat',
   quitterTitre: 'Kuitaat ar boelladenn',

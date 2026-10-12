@@ -5,7 +5,7 @@
         <template v-if="nbPages > 1"> · {{ t('fichesPretes.pages', { n: nbPages }) }}</template></template></span>
       <span class="apercu-actions">
         <slot name="actions" />
-        <button type="button" class="btn btn-primary" :disabled="!html" @click="imprimer">{{ t('cadre.apercu.imprimer') }}</button>
+        <button type="button" class="btn btn-primary" :disabled="!html" @click="imprimer"><Icone nom="imprimer" /> {{ t('ressource.imprimer') }}</button>
       </span>
     </div>
     <div ref="cadre" class="apercu-cadre" :style="{ height: hauteurCadre + 'px' }">
@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // L'aperçu d'un document à imprimer (fiche d'exercice, affiche) et son bouton Imprimer. L'iframe d'aperçu est en bac à sable sans
 // allow-scripts : la fiche n'exécute aucun script ; allow-same-origin laisse charger les polices du site (l'impression passe par un
 // autre iframe : imprimerDocument). Imprimer envoie un signal anonyme (journal.js : la page et les réglages, jamais d'identifiant).

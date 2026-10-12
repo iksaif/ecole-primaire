@@ -22,7 +22,7 @@ export default {
   consigneTexte: 'Lenn an destenn-mañ a vouezh uhel. Klik war ur ger evit e selaou :',
   ecouterTout: 'Selaou pep tra',
   arreter: 'Paouez',
-  jaiLu: 'Lennet em eus ! 👍',
+  jaiLu: 'Lennet em eus !',
   erreurSyllabes: '{n} silabenn a zo e « {mot} » : {syll}',
   erreurOrdre: 'An urzh mat a oa : {syll} → {mot}',
 } satisfies Traductions<typeof fr>

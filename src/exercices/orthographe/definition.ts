@@ -16,9 +16,9 @@ import { K, D } from '../../noyau/ids.ts'
 
 /** Thèmes, dans l'ordre des boutons, avec leur icône et le niveau d'entrée par défaut de leurs questions. */
 export const THEMES = [
-  { id: 'accords', icone: '🤝', niv: 'cp' },
-  { id: 'lettres', icone: '🔡', niv: 'cp' },
-  { id: 'homophones', icone: '👂', niv: 'ce2' },
+  { id: 'accords', icone: 'poigneeDeMains', niv: 'cp' },
+  { id: 'lettres', icone: 'minuscules', niv: 'cp' },
+  { id: 'homophones', icone: 'oreille', niv: 'ce2' },
 ] as const
 
 const RAISON_HOMOPHONES = 'Les homophones grammaticaux ne figurent dans aucun texte du programme en vigueur : pour aller plus loin'

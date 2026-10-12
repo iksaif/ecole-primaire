@@ -29,7 +29,6 @@ export default {
   pagesFiche: 'Pajennoù ar fichenn', // br: à relire
   pageListe: 'Gerioù da zeskiñ', // br: à relire
   pageDictee: 'Skrivadeg da ober gant un oadour', // br: à relire
-  passer: 'Tremen', // br: à relire
   passe: '(tremenet)', // br: à relire
   cat: {
     mots_outils: 'Gerioù-benveg',

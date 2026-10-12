@@ -45,7 +45,7 @@ export default {
   langueContenu: 'Langue de l’exercice et de la fiche',
   // l'aperçu avant impression (ApercuImpression.vue)
   apercu: {
-    titre: 'Aperçu', paysage: 'paysage', portrait: 'portrait', imprimer: '🖨️ Imprimer',
+    titre: 'Aperçu', paysage: 'paysage', portrait: 'portrait',
     titreCadre: 'Aperçu avant impression',
     conseil: 'Conseil : dans la fenêtre d’impression, choisis « Taille réelle / 100 % » et désactive « Ajuster à la page ».',
   },

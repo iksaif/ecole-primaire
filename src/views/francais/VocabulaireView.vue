@@ -7,7 +7,7 @@
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="types" v-model="config.types" :titre="t('vocabulaire.exercices')"
         :libelle="ty => tr(`type_${ty}`)" :groupes="groupes">
-        <template #valeur="{ valeur: ty, texte }"><span class="theme-icon">{{ ICONES[ty] }}</span> {{ texte }}</template>
+        <template #valeur="{ valeur: ty, texte }"><Icone class="theme-icon" :nom="ICONES[ty]" /> {{ texte }}</template>
         <p class="astuce">{{ t('vocabulaire.astuce') }}</p>
       </ChoixReglage>
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nb" v-model="config.nb" :titre="t('communs.nbQuestions')" />
@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Vocabulaire : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/vocabulaire/
 // (definition.ts, generateur.ts, fiche.ts) ; corpus : src/data/vocabulaire.js. Exercice de français : la fiche est toujours en français,
@@ -74,7 +75,7 @@ const T = traducteur(CONTENU, () => langueContenu.value)
 const tr: Tr = (cle, params) => t(`vocabulaire.${cle}` as Parameters<typeof t>[0], params as Parameters<typeof t>[1])
 
 const groupes = computed(() => GROUPES.map(g => ({ titre: tr(`g_${g.id}`), valeurs: g.types.map(x => x.id) })))
-const ICONES: Readonly<Record<string, string>> = Object.fromEntries(GROUPES.flatMap(g => g.types.map(x => [x.id, x.icone])))
+const ICONES: Readonly<Record<string, NomIcone>> = Object.fromEntries(GROUPES.flatMap(g => g.types.map(x => [x.id, x.icone])))
 
 // ── Jeu : passage automatique ; après une erreur, le temps de lire la correction et l'explication ──
 const ordre = ref<number[]>([])

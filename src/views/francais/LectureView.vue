@@ -35,7 +35,7 @@
         </p>
         <div v-if="!repondu && !enGeneration" class="actions">
           <button type="button" class="btn btn-warning" @click="ecouterTout">{{ enLecture ? '⏹ ' + t('lecture.arreter') : '🔊 ' + t('lecture.ecouterTout') }}</button>
-          <button type="button" class="btn btn-success" @click="jeu.repondre({ lu: true }, { donne: '' })">{{ t('lecture.jaiLu') }}</button>
+          <button type="button" class="btn btn-success" @click="jeu.repondre({ lu: true }, { donne: '' })">{{ t('lecture.jaiLu') }} <Icone nom="pouce" /></button>
         </div>
       </template>
 
@@ -49,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Lecture : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/lecture/
 // (definition.ts, generateur.ts, fiche.ts) ; textes générés (facultatif, clé saisie par l'utilisateur) : mistral.ts. Exercice de français :
@@ -76,7 +77,7 @@ import type { Question, Reponse } from '../../exercices/lecture/generateur.ts'
 import { fiche as ficheLecture } from '../../exercices/lecture/fiche.ts'
 import { texteGenere } from '../../exercices/lecture/mistral.ts'
 
-const ICONES: Readonly<Record<string, string>> = { syllabes: '🔠', mots: '🧩', texte: '📖' }
+const ICONES: Readonly<Record<string, NomIcone>> = { syllabes: 'majuscules', mots: 'puzzle', texte: 'livreOuvert' }
 
 const { t } = useLangue()
 const { config, langueContenu } = useReglages(DEFINITION)

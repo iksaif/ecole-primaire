@@ -7,7 +7,7 @@
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
-          :titre="t('communs.exercices')" :libelle="e => t(`mesures.exercices.${e}`)" />
+          :titre="t('communs.exercices')" :libelle="e => libelleExercice(e as TypeQuestion)" :icone="e => ICONE_EXERCICE[String(e)]" />
         <ChoixReglage v-if="modeCourant === 'jouer' && config.exercices.includes('regle')" :definition="DEFINITION" cle="decale"
           v-model="config.decale" :titre="t('mesures.segmentsRegle')" :libelle="d => t(d ? 'mesures.pasToujours0' : 'mesures.commencent0')" />
         <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
@@ -40,8 +40,8 @@
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">
-          <button type="button" class="btn btn-ghost" @click="passer">{{ t('mesures.passer') }}</button>
-          <button v-if="q.mode === 'nombre'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }}</button>
+          <button type="button" class="btn btn-ghost" @click="passer">{{ t('communs.passer') }} <Icone nom="passer" /></button>
+          <button v-if="q.mode === 'nombre'" type="button" class="btn btn-primary" @click="valider">{{ t('communs.valider') }} <Icone nom="valide" /></button>
         </template>
         <BoutonSuivant v-else :jeu="jeu" />
       </div>
@@ -55,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
 // Les mesures : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur (un module par type de question) et
 // fiche : src/exercices/mesures/.
@@ -77,7 +78,16 @@ import DEFINITION from '../../exercices/mesures/definition.ts'
 import { CONTENU } from '../../exercices/mesures/textes.ts'
 import { questions as tirer, questionsFiche, verifier } from '../../exercices/mesures/generateur.ts'
 import type { Question, Reponse } from '../../exercices/mesures/generateur.ts'
+import type { TypeQuestion } from '../../exercices/mesures/types.ts'
 import { fiche as ficheMesures } from '../../exercices/mesures/fiche.ts'
+
+/** L'icône de chaque choix du réglage (src/images/icones.ts). */
+const ICONE_EXERCICE: Readonly<Record<string, NomIcone>> = { regle: 'regle', unite: 'reflexion', conversion: 'boucle', comparer: 'egal', masse: 'balance', contenance: 'verreDeLait', calendrier: 'calendrier' }
+/** Le nom d'un exercice dans les réglages : « Comparer » est un mot commun à plusieurs exercices. */
+function libelleExercice(e: TypeQuestion): string {
+  if (e === 'comparer') return t('communs.comparer')
+  return t(`mesures.exercices.${e}`)
+}
 
 const { t } = useLangue()
 // Réglages mémorisés, ajustés au changement de niveau (useReglages) ; le contenu (énoncés, fiche) suit la langue de l'interface

@@ -4,9 +4,9 @@
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('motifs.exercice')"
-        :libelle="m => (m === 'apres' ? '➡️ ' + t('motifs.apres') : '🔍 ' + t('motifs.trou'))" />
+        :libelle="m => (m === 'apres' ? t('motifs.apres') : t('motifs.trou'))" :icone="m => (m === 'apres' ? 'flecheDroite' : 'recherche')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
 
@@ -33,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
 // Les motifs : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche : src/exercices/motifs/
 // (definition.ts, generateur.ts, fiche.ts) ; les motifs eux-mêmes (types par niveau, suites) : motifs.ts.

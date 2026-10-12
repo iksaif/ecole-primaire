@@ -13,7 +13,7 @@ import { cheminsDeLaTable, cheminsDev, adresses, valeursValides } from './outils
 
 // ── les clés : dossiers de la base (l'ancien monde — views, composables, i18n… — n'est pas lu) ──
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')
-const DOSSIERS = ['contexte', 'shell', 'pages', 'ressources', 'noyau', 'telechargements', 'router', 'langues', 'affiches', 'exercices', 'images', 'main.ts', 'App.vue']
+const DOSSIERS = ['contexte', 'shell', 'pages', 'ressources', 'noyau', 'telechargements', 'router', 'langues', 'affiches', 'exercices', 'images', 'ceintures', 'main.ts', 'App.vue']
 const sources = c => statSync(c).isDirectory() ? readdirSync(c).flatMap(f => sources(join(c, f))) : /\.(js|ts|vue)$/.test(c) ? [c] : []
 const texte = DOSSIERS.flatMap(d => sources(join(src, d))).concat(join(src, 'utils/impression.js')).map(f => readFileSync(f, 'utf8')).join('\n')
 const CLES = [...new Set([

@@ -69,6 +69,17 @@ export const CSS_CEINTURES = `
       .diplome { border: 1.4mm double #222; padding: 10mm; text-align: center; min-height: 190mm; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6mm; }
       .diplome .mot { font-size: 1.1rem; letter-spacing: .25em; text-transform: uppercase; }
       .diplome .gros { font-size: 2rem; font-weight: 800; }
+      .brevet-entete { display: flex; align-items: center; gap: 4mm; margin: 0 0 3mm; }
+      .brevet-entete .nom-ceinture { font-size: 1.15rem; }
+      .consigne { font-size: .95rem; margin: 2mm 0 4mm; }
+      .questions { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm 12mm; margin-top: 3mm; font-size: 1.25rem; }
+      .questions .q { display: flex; align-items: baseline; gap: 3mm; }
+      .questions .n { width: 8mm; font-size: .8rem; color: #666; }
+      .questions .enonce { white-space: nowrap; font-weight: 700; font-family: monospace; }
+      .questions .reponse { flex: 1; border-bottom: .4mm solid #222; height: 8mm; }
+      .observation { margin: 3mm 0; font-size: 1rem; }
+      .observation .objectif { margin: 2mm 0; font-size: 1.05rem; }
+      .resultat { display: flex; flex-wrap: wrap; gap: 4mm 10mm; align-items: center; margin-top: 8mm; padding: 4mm; border: .5mm dashed #222; border-radius: 2mm; font-size: .95rem; }
       .passeports { display: grid; grid-template-columns: 86mm 86mm; gap: 4mm; justify-content: center; margin-top: 4mm; }
       .passeport { border: .4mm solid #222; border-radius: 3mm; padding: 2.5mm 3.5mm; font-size: .8rem; break-inside: avoid; height: 54mm; overflow: hidden; }
       .passeport .rangee { display: flex; align-items: center; gap: 1.5mm; margin-top: 1.4mm; }
@@ -110,4 +121,30 @@ export function passeportHtml(d: DonneesSupport): string {
       ${ligne(d.libelles.prenom, d.prenom)}
       ${d.ceintures.map(c => `<div class="rangee"><span class="case"></span>${dessin(c, d, '12mm')}<span>${e(c.nom)}</span></div>`).join('')}</div>`
   return `<div class="passeports">${Array.from({ length: 8 }, () => carte).join('')}</div>`
+}
+
+/** Les mots d'un brevet papier. */
+export interface LibellesBrevet {
+  /** « Brevet » */
+  brevet: string
+  /** « {n} questions… Pour réussir : {bonnes} bonnes réponses sur {n}. » : déjà écrit avec ses nombres */
+  consigne: string
+  resultat: string
+  validee: string
+  pasEncore: string
+  corrige: string
+}
+
+/**
+ * Le brevet papier de la ceinture `indice` : les questions et leurs lignes de réponse, le cadre du résultat, et le corrigé (`section.corrige` : le cadre de la
+ * fiche le place selon l'option choisie).
+ */
+export function brevetHtml(d: DonneesSupport, indice: number, lignes: readonly { enonce: string, reponse: string }[], l: LibellesBrevet): string {
+  const c = d.ceintures[Math.min(Math.max(indice, 0), d.ceintures.length - 1)]
+  const entete = `<div class="brevet-entete">${dessin(c, d, '22mm')}<div><div class="nom-ceinture">${e(l.brevet)} — ${e(c.nom)}</div><div class="objectif">${e(d.titre)}</div></div></div>`
+  const resultat = `<div class="resultat"><span>${e(l.resultat)} : ____ / ${lignes.length}</span><span><span class="case"></span>${e(l.validee)}</span><span><span class="case"></span>${e(l.pasEncore)}</span></div>`
+  const questions = lignes.map((q, i) => `<div class="q"><span class="n">${i + 1}</span><span class="enonce">${e(q.enonce)}</span><i class="reponse"></i></div>`).join('')
+  const corrige = lignes.map((q, i) => `${i + 1}) ${e(q.reponse)}`).join(' · ')
+  return `${entete}<p class="consigne">${e(l.consigne)}</p><div class="questions">${questions}</div>${resultat}
+    <section class="corrige"><h2>${e(l.corrige)} — ${e(l.brevet)} ${e(c.nom)}</h2><p>${corrige}</p></section>`
 }

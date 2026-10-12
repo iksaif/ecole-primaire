@@ -1,6 +1,6 @@
 // Les ceintures — activité de FICHES (pas de partie à l'écran) : livret, ceintures à découper, diplôme, passeport, d'une piste fournie ou libre
 // (plans/15-ceintures.md §3). Les couleurs, le dessin et le noir et blanc viennent des réglages communs des ceintures (src/ceintures/reglages.ts :
-// page des réglages et « Sur la fiche »). Sans hasard : la même configuration donne la même fiche.
+// page des réglages et « Sur la fiche »). Sans hasard : la même configuration donne la même fiche (le brevet papier, qui tire ses questions, est l'activité `ceintures-brevet`).
 // Programme : ce n'est pas une compétence des programmes ; l'activité s'appuie sur l'EMC (même matière que ses pistes de comportement et la piste libre) :
 // les règles de l'école (CP à CE2), les émotions et le respect (CP, CE1, CM1), la participation aux décisions (CE2 à CM2). Pas de GS : l'EMC commence au cycle 2
 // (à reprendre quand les pistes dépendront d'un exercice : tables, lettres… voir plans/15-ceintures.md §11).

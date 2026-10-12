@@ -14,8 +14,9 @@ type Cle = CleContenu<typeof CONTENU>
 export interface TirageFiche { piste: Reglages['piste'], titreLibre: string, objectifs: string[] }
 
 export function questionsFiche({ reglages, T }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): TirageFiche {
-  if (reglages.piste === 'libre') return { piste: 'libre', titreLibre: reglages.intitule.trim(), objectifs: objectifsDe(reglages.objectifs) }
-  return { piste: reglages.piste, titreLibre: '', objectifs: objectifsDe(T(`piste.${reglages.piste}.objectifs` as Cle)) }
+  const objectifs = reglages.piste === 'libre' ? objectifsDe(reglages.objectifs) : objectifsDe(T(`piste.${reglages.piste}.objectifs` as Cle))
+  const titreLibre = reglages.piste === 'libre' ? reglages.intitule.trim() : ''
+  return { piste: reglages.piste, titreLibre, objectifs }
 }
 
 /** Écarts au programme : aucun (outil de classe, hors programme : voir definition.ts). */

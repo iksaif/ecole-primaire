@@ -58,8 +58,8 @@ export interface SourcesCatalogue {
 }
 
 /** `exemple-corpus` → `exempleCorpus` : le nom de la section de textes d'un exercice. */
-/** Les exercices réservés à une option cachée par défaut : l'activité des ceintures (src/contexte/ceintures.ts). */
-const optionDe = (id: string): { option: 'ceintures' } | Record<string, never> => (id === 'ceintures' ? { option: 'ceintures' } : {})
+/** Les exercices réservés à une option cachée par défaut : les activités des ceintures (src/contexte/ceintures.ts). */
+const optionDe = (id: string): { option: 'ceintures' } | Record<string, never> => (id === 'ceintures' || id === 'ceintures-brevet' ? { option: 'ceintures' } : {})
 
 const sectionDe = (id: string): string => id.replace(/-(\w)/g, (_, c: string) => c.toUpperCase())
 

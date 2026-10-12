@@ -8,6 +8,9 @@ import { module as activite } from '../src/exercices/ceintures/index.ts'
 import { traducteur } from '../src/langues/catalogue.ts'
 import { SUPPORTS } from '../src/exercices/ceintures/donnees.ts'
 import { CHOIX_PISTE, objectifsDe } from '../src/ceintures/pistes.ts'
+import { creerRng } from '../src/utils/hasard.ts'
+import { brevetDe, PISTES_AVEC_BREVET, NB_CEINTURES_BREVET } from '../src/ceintures/brevets.ts'
+import { module as brevet } from '../src/exercices/ceintures-brevet/index.ts'
 import { LANGUES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -70,7 +73,7 @@ for (const langue of ['fr', 'br']) {
   const T = traducteur(activite.textes, langue)
   for (const support of SUPPORTS) for (const piste of CHOIX_PISTE) {
     const reglages = { ...base, support, piste }
-    const x = activite.generateur.questionsFiche({ niveau: 'ce1', reglages, T })
+    const x = activite.generateur.questionsFiche({ niveau: 'ce1', reglages, T, rng: creerRng(7) })
     const html = activite.fiche.fiche({ questions: x, reglages, T, langue })
     const manque = html.match(/\b(piste|couleur|support|ceinture)\.[a-z-]+/)
     verifier(x.objectifs.length >= 3 && html.includes('<svg') && html.includes('class="entete"') && !manque, `${langue} ${support} / ${piste} : ${x.objectifs.length} ceintures, aucune clé de texte brute${manque ? ' (' + manque[0] + ')' : ''}`)
@@ -79,12 +82,41 @@ for (const langue of ['fr', 'br']) {
 {
   const T = traducteur(activite.textes, 'fr')
   const reglages = { ...base, support: 'bandes' }
-  const x = activite.generateur.questionsFiche({ niveau: 'ce1', reglages, T })
+  const x = activite.generateur.questionsFiche({ niveau: 'ce1', reglages, T, rng: creerRng(7) })
   const nb = activite.fiche.fiche({ questions: x, reglages, T, langue: 'fr', ceintures: { ...DEFAUT_CEINTURES, noirEtBlanc: true } })
   verifier(nb.includes('<pattern') && !nb.includes('#3aa655'), 'noir et blanc : des motifs, aucune teinte')
-  const libre = activite.generateur.questionsFiche({ niveau: 'ce1', reglages: { ...base, piste: 'libre', intitule: ' Mon titre ', objectifs: 'a\n\n b |c' }, T })
+  const libre = activite.generateur.questionsFiche({ niveau: 'ce1', reglages: { ...base, piste: 'libre', intitule: ' Mon titre ', objectifs: 'a\n\n b |c' }, T, rng: creerRng(7) })
   verifier(libre.titreLibre === 'Mon titre' && libre.objectifs.join() === 'a,b,c', 'piste libre : titre et objectifs nettoyés')
   verifier(objectifsDe(Array.from({ length: 20 }, (_, i) => i).join('\n')).length === 8, 'au plus huit objectifs')
+}
+
+console.log('Brevets')
+const tablesDe = lignes => [...new Set(lignes.map(l => Number(l.enonce.split(/ [×÷] /)[0])))]
+for (const [indice, attendues] of [[0, [2, 5, 10]], [1, [3, 4]], [2, [6, 7]], [3, [8, 9]]]) {
+  const lignes = brevetDe('tables', indice, creerRng(3))
+  const ok = lignes.length === Math.min(30, attendues.length * 10) && lignes.every(l => /^\d+ × \d+ =$/.test(l.enonce) && Number(l.enonce.split(' × ')[0]) * Number(l.enonce.split(' × ')[1].replace(' =', '')) === Number(l.reponse))
+  verifier(ok && tablesDe(lignes).every(t => attendues.includes(t)) && attendues.every(t => tablesDe(lignes).includes(t)), `tables, ceinture ${indice + 1} : ${attendues.join(', ')} seulement, réponses justes, tous les calculs de ces tables (au plus 30)`)
+}
+const dernieres = brevetDe('tables', 5, creerRng(3))
+verifier(dernieres.some(l => l.enonce.includes('÷')) && dernieres.every(l => (l.enonce.includes('÷') ? Number(l.enonce.split(' ÷ ')[0].replace(' =', '')) / Number(l.enonce.split(' ÷ ')[1].replace(' =', '')) : Number(l.enonce.split(' × ')[0]) * Number(l.enonce.split(' × ')[1].replace(' =', ''))) === Number(l.reponse)), 'tables, dernière ceinture : des divisions, réponses justes')
+verifier(JSON.stringify(brevetDe('tables', 2, creerRng(9))) === JSON.stringify(brevetDe('tables', 2, creerRng(9))) && JSON.stringify(brevetDe('tables', 2, creerRng(9))) !== JSON.stringify(brevetDe('tables', 2, creerRng(10))), 'brevet : la même graine, le même brevet ; une autre, un autre')
+verifier(PISTES_AVEC_BREVET.every(p => NB_CEINTURES_BREVET[p] >= 3), 'chaque piste avec brevet a ses ceintures')
+for (const langue of ['fr', 'br']) {
+  const T = traducteur(brevet.textes, langue)
+  const reglages = { niveau: 'ce2', piste: 'tables', ceinture: 4, prenom: '' }
+  const x = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages, rng: creerRng(5) })
+  const html = brevet.fiche.fiche({ questions: x, reglages, T, langue, ceintures: { ...DEFAUT_CEINTURES, questions: 10, seuil: 90 } })
+  const manque = html.match(/\b(ceintures|ceinture|tables)\.[a-z-]+/)
+  verifier(x.indice === 3 && (html.match(/class="q"/g) ?? []).length === 10 && html.includes('class="corrige"') && html.includes('class="entete"') && !manque, `${langue} brevet papier : 10 questions, corrigé, aucune clé brute${manque ? ' (' + manque[0] + ')' : ''}`)
+  if (langue === 'fr') {
+    verifier(html.includes('9 bonnes réponses sur 10') && html.includes('Ceinture verte'), 'brevet papier : 9 bonnes réponses sur 10, ceinture verte')
+    const html20 = brevet.fiche.fiche({ questions: x, reglages, T, langue, ceintures: { ...DEFAUT_CEINTURES, questions: 20, seuil: 80 } })
+    verifier(html20.includes('16 bonnes réponses sur 20'), 'brevet papier : 80 % de 20 = 16')
+  }
+}
+{
+  const hors = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages: { niveau: 'ce2', piste: 'tables', ceinture: 8, prenom: '' }, rng: creerRng(5) })
+  verifier(hors.indice === NB_CEINTURES_BREVET.tables - 1, 'numéro de ceinture au-delà de la piste : ramené à la dernière')
 }
 
 console.log('Option (cachée par défaut)')

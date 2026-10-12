@@ -25,8 +25,7 @@ export default {
   ecouterMot: 'Selaou ar ger',
   consigne: "Selaou mat, ha skriv ar pezh a glevez :",
   reecouter: 'Adselaou',
-  accents: 'Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
-  feedbackErr: '❌ Ar respont mat a oa : « {r} »',
+  feedbackErr: 'Ar respont mat a oa : « {r} »',
   pagesFiche: 'Pajennoù ar fichenn', // br: à relire
   pageListe: 'Gerioù da zeskiñ', // br: à relire
   pageDictee: 'Skrivadeg da ober gant un oadour', // br: à relire

@@ -58,7 +58,6 @@ export default {
   exContexte: 'Ici, « {m} » veut dire : {s}.',
   sensPropre: 'sens propre',
   sensFigure: 'sens figuré',
-  fbOrdre: '❌ Le bon ordre est : {r}',
-  fbChoix: '❌ La bonne réponse est « {r} »',
+  fbOrdre: 'Le bon ordre est : {r}',
   cliqueEtiquettes: "Clique sur les mots dans l'ordre alphabétique…",
 } as const

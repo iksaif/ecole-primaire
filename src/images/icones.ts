@@ -20,6 +20,9 @@ export const ICONES = {
   automatique: '1F916', valide: '2714', crayon: '270F', visite: '1F5FA',
   // les rubriques de « À propos »
   police: '1F524', contribuer: '1F91D',
+  // les retours : juste, faux, presque, bravos, messages de fin
+  coche: '2705', croix: '274C', attention: '26A0', fete: '1F389', applaudissements: '1F44F', etoileBrillante: '1F31F', trophee: '1F3C6',
+  muscle: '1F4AA', intello: '1F913',
   // la page des réglages
   profil: '1F464', chantier: '1F6A7',
   // les identités du catalogue : domaines, matières, exercices et affiches, badges, profils, site (src/ressources/emojis.ts…)

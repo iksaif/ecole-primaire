@@ -11,8 +11,6 @@ export default {
   suivantFleche: 'Suivant →',
   correction: 'Correction',
   bonnePhrase: 'La bonne phrase est : « {r} »',
-  bonneReponseEst: 'La bonne réponse est « {r} »',
-  accents: 'Attention aux accents : {r}',
   pasToutAFait: 'Pas tout à fait…',
   // Groupes et types d'exercices (réglages)
   type_ordre: 'Mots dans l\'ordre',

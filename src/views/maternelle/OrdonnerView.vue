@@ -63,7 +63,7 @@ const ordre = ref<number[]>([])   // indices des nombres touchés, dans l'ordre 
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => `❌ ${t('ranger.ordreCorrect', { ordre: q.bonne.join(' → ') })}`,
+  messageErreur: q => `${t('ranger.ordreCorrect', { ordre: q.bonne.join(' → ') })}`,
   apresErreur: 1400,
   delai: 1400,
   surQuestion: () => { ordre.value = [] },

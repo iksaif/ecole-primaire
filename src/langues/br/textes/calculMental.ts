@@ -14,5 +14,5 @@ export default {
   passer: 'Tremen ⏭',
   passe: '(tremenet)',
   laBonneReponse: 'Ar respont mat a oa {r}',
-  tempsEcoule: '⏰ Echu eo an amzer ! Ar respont a oa {r}',
+  tempsEcoule: 'Echu eo an amzer ! Ar respont a oa {r}',
 } satisfies Traductions<typeof fr>

@@ -118,10 +118,10 @@ const titrePage = computed(() => (t as (cle: string) => string)(`${props.section
 
 // retour après une erreur : la bonne réponse (l'explication de la question suit)
 function messageErreur(qu: Question): string {
-  if (qu.mode === 'ordre') return `❌ ${tr('bonnePhrase', { r: valeur(qu.solution, tr) })}`
-  if (qu.mode === 'saisie') return `❌ ${tr('bonneReponseEst', { r: qu.attendu })}`
-  if (qu.mode === 'choix') return `❌ ${tr('bonneReponseEst', { r: tc(tr, qu.attendu) })}`
-  return `❌ ${tr('pasToutAFait')}`
+  if (qu.mode === 'ordre') return `${tr('bonnePhrase', { r: valeur(qu.solution, tr) })}`
+  if (qu.mode === 'saisie') return t('communs.bonneReponseEst', { r: qu.attendu })
+  if (qu.mode === 'choix') return t('communs.bonneReponseEst', { r: tc(tr, qu.attendu) })
+  return `${tr('pasToutAFait')}`
 }
 
 // ── Jeu : passage automatique ; après une erreur, le temps de lire la correction et l'explication ──
@@ -133,7 +133,7 @@ const jeu = useJeu<Question, Reponse>({
   verifier,
   messageErreur,
   // pluriel écrit sans les accents : compté faux, avec la bonne graphie
-  messageNuance: qu => `⚠️ ${tr('accents', { r: qu.attendu })}`,
+  messageNuance: qu => t('communs.accents', { r: qu.attendu }),
   surQuestion: () => { selection.value = []; ordre.value = []; saisie.value = '' },
   apresErreur: 5000,
 })

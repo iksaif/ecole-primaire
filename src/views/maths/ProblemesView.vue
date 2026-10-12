@@ -83,7 +83,7 @@ const saisie = ref<number | ''>('')
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: (q, rep) => (rep ? `❌ ${t('problemes.laBonneReponse', { r: avecUnite(q, q.reponse) })}` : ''),
+  messageErreur: (q, rep) => (rep ? `${t('problemes.laBonneReponse', { r: avecUnite(q, q.reponse) })}` : ''),
   delai: 1200,
   surQuestion: () => { saisie.value = '' },
 })

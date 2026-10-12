@@ -14,7 +14,7 @@
         <template v-if="modeCourant === 'imprimer'">
           <ChoixReglage v-if="config.exercices.includes('regle')" :definition="DEFINITION" cle="nbSegments"
             v-model="config.nbSegments" :titre="t('mesures.nbSegments')" />
-          <p class="rappel-100">⚠️ {{ t('mesures.rappel100') }}</p>
+          <p class="rappel-100"><Icone nom="attention" /> {{ t('mesures.rappel100') }}</p>
         </template>
       </template>
     </CadreExercice>
@@ -90,8 +90,8 @@ const reponse = ref<string | number>('')
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
-  // une question passée n'a pas de ❌ : on enchaîne aussitôt
-  messageErreur: (q, rep) => `${rep ? '❌ ' : ''}${t('communs.bonneReponse')} : ${q.attendu}`,
+  // la bonne réponse, après une erreur comme après une question passée (RetourReponse dessine la croix)
+  messageErreur: q => `${t('communs.bonneReponse')} : ${q.attendu}`,
   delai: 900,
   // champ vidé ; le focus : SaisieReponse (attribut focus)
   surQuestion: () => { reponse.value = '' },

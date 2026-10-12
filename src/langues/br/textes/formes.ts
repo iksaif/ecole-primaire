@@ -30,10 +30,10 @@ export default {
   commentSappelle: 'Petra eo anv ar stumm-mañ ?',
   combienCotes: 'Pet kostez en deus ar stumm-mañ ?', // br: à relire
   montre: 'Diskouez : {nom}',
-  erreurMeme: '❌ Sell mat ouzh stumm ar patrom', // br: à relire
-  erreurNom: '❌ Ar respont mat a oa {nom}',
-  erreurForme: '❌ Ar respont mat a oa {nom}',
-  erreurAucunCote: '❌ {nom} : kostez eeun ebet', // br: à relire (« kostez » = côté d'un polygone)
-  erreurCotes: { other: '❌ {nom} : niver a gostezioù = {n}' }, // br: à relire (« kostez » = côté d'un polygone)
+  erreurMeme: 'Sell mat ouzh stumm ar patrom', // br: à relire
+  erreurNom: 'Ar respont mat a oa {nom}',
+  erreurForme: 'Ar respont mat a oa {nom}',
+  erreurAucunCote: '{nom} : kostez eeun ebet', // br: à relire (« kostez » = côté d'un polygone)
+  erreurCotes: { other: '{nom} : niver a gostezioù = {n}' }, // br: à relire (« kostez » = côté d'un polygone)
   choixForme: 'Stumm {n}', // br: à relire
 } as const satisfies Traductions<typeof fr>

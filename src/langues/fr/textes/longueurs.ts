@@ -9,6 +9,6 @@ export default {
   consigneLong: 'Touche le crayon le plus long.',
   consigneCourt: 'Touche le crayon le plus court.',
   consigneRanger: 'Touche les crayons du plus court au plus long.',
-  regarde: '❌ Regarde bien le bout des crayons',
+  regarde: 'Regarde bien le bout des crayons',
   rang: 'Crayon {n}',
 } as const

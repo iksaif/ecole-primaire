@@ -84,7 +84,7 @@ const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
   // rep null : passée ou temps écoulé
-  messageErreur: (q, rep) => (rep === null ? t('calculMental.tempsEcoule', { r: q.attendu }) : `❌ ${t('calculMental.laBonneReponse', { r: q.attendu })}`),
+  messageErreur: (q, rep) => (rep === null ? t('calculMental.tempsEcoule', { r: q.attendu }) : `${t('calculMental.laBonneReponse', { r: q.attendu })}`),
   delai: 800,
   apresErreur: 1200,
   // champ vidé (focus : SaisieReponse) ; le minuteur repart pour la nouvelle question

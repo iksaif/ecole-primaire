@@ -238,11 +238,11 @@ const avis = ref('')          // somme illisible : message, sans compter de rép
 // message après une erreur, selon le type de question (rep : la réponse donnée ; null si passée)
 function messageErreur(q: Question, rep: Reponse | null): string {
   if (!rep) return ''
-  if (q.type === 'comparer') return `❌ ${q.bonne === 'egal' ? t('monnaie.autantArgent', { s: f(q.totalA) }) : t('monnaie.lePlus', { nom: q.attendu })}`
-  if (q.type === 'compter' || q.type === 'convertir') return `❌ ${t('monnaie.pasTout')}`
+  if (q.type === 'comparer') return `${q.bonne === 'egal' ? t('monnaie.autantArgent', { s: f(q.totalA) }) : t('monnaie.lePlus', { nom: q.attendu })}`
+  if (q.type === 'compter' || q.type === 'convertir') return `${t('monnaie.pasTout')}`
   const tot = totalDe(rep.selection ?? [])
-  if (q.type === 'moins') return `❌ ${tot !== q.cible ? t('monnaie.auLieuDe', { t: f(tot), c: f(q.cible) }) : t('monnaie.tropDePieces', { t: f(tot), n: q.solution.length })}`
-  return `❌ ${tot < q.cible ? t('monnaie.ilManque', { t: f(tot), m: f(q.cible - tot) }) : t('monnaie.deTrop', { t: f(tot), m: f(tot - q.cible) })}`
+  if (q.type === 'moins') return `${tot !== q.cible ? t('monnaie.auLieuDe', { t: f(tot), c: f(q.cible) }) : t('monnaie.tropDePieces', { t: f(tot), n: q.solution.length })}`
+  return `${tot < q.cible ? t('monnaie.ilManque', { t: f(tot), m: f(q.cible - tot) }) : t('monnaie.deTrop', { t: f(tot), m: f(tot - q.cible) })}`
 }
 
 const jeu = useJeu<Question, Reponse>({

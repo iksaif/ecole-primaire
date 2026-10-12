@@ -16,6 +16,6 @@ export default {
   ecouteEtTrouve: 'Écoute, et montre la lettre.',
   trouveEn: 'Trouve cette lettre {en}.',
   cEst: 'C’est la lettre {l}.',
-  cetait: "❌ C'était : {r}",
+  cetait: "C'était : {r}",
   noteFiche: 'Fiche : relie chaque lettre à la même lettre dans l’autre écriture.',
 } as const

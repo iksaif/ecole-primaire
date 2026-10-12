@@ -11,6 +11,6 @@ export default {
   consigneLong: 'Stok ouzh ar c’hreion hirañ.', // br: à relire
   consigneCourt: 'Stok ouzh ar c’hreion berrañ.', // br: à relire
   consigneRanger: 'Stok ouzh ar c’hreionoù eus ar berrañ d’an hirañ.', // br: à relire
-  regarde: '❌ Sell mat ouzh penn ar c’hreionoù', // br: à relire
+  regarde: 'Sell mat ouzh penn ar c’hreionoù', // br: à relire
   rang: 'Kreion {n}', // br: à relire
 } as const satisfies Traductions<typeof fr>

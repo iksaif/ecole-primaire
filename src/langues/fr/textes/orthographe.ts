@@ -8,9 +8,8 @@ export default {
   themes: { homophones: 'Homophones', accords: 'Accords', lettres: 'Lettres manquantes' },
   ecrisReponse: 'Écris le mot…',
   validerCourt: 'Valider',
-  accents: '⚠️ Attention aux accents : {r}',
   aRetravailler: 'À retravailler :',
-  erreur: '❌ La bonne réponse est « {r} ».',
+  erreur: 'La bonne réponse est « {r} ».',
   explications: {
     exp_a_avoir_il_a: '"a" = avoir (il a)',
     exp_a_preposition_de_lieu: '"à" = préposition de lieu',

@@ -70,9 +70,9 @@ export const CONTENU = catalogue({
   // ─── Corrections ───
   aucun: 'aucun',
   nCases: '{n} cases',
-  anglesFaux: '❌ Les angles droits sont : {attendu} (marqués en rouge).',
-  anglesAucunFaux: "❌ Cette figure n'a aucun angle droit.",
-  reperageFaux: '❌ Tu as colorié {donne}. La bonne case {nom} est entourée en orange.',
+  anglesFaux: 'Les angles droits sont : {attendu} (marqués en rouge).',
+  anglesAucunFaux: "Cette figure n'a aucun angle droit.",
+  reperageFaux: 'Tu as colorié {donne}. La bonne case {nom} est entourée en orange.',
   casesJustes: '{justes} / {total} cases justes',
   casesEnTrop: ', {n} en trop',
   // « Presque ! 2 cases oubliées et 1 case en trop. Regarde la correction. »
@@ -171,9 +171,9 @@ export const CONTENU = catalogue({
 
     aucun: 'hini ebet',
     nCases: '{n} karrezenn',
-    anglesFaux: "❌ Ar c'hornioù skouer a zo : {attendu} (merket e ruz).",
-    anglesAucunFaux: "❌ N'en deus ar stumm-mañ korn skouer ebet.",
-    reperageFaux: "❌ Livet ec'h eus {donne}. Ar garrezenn vat {nom} a zo kelc'hiet en orañjez.",
+    anglesFaux: "Ar c'hornioù skouer a zo : {attendu} (merket e ruz).",
+    anglesAucunFaux: "N'en deus ar stumm-mañ korn skouer ebet.",
+    reperageFaux: "Livet ec'h eus {donne}. Ar garrezenn vat {nom} a zo kelc'hiet en orañjez.",
     casesJustes: '{justes} / {total} karrezenn mat',
     casesEnTrop: ', {n} re',
     presque: 'Tost ! {morceaux}. Sell ouzh ar reizhadenn.', // br: à relire

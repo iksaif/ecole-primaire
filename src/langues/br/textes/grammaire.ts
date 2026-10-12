@@ -13,8 +13,6 @@ export default {
   suivantFleche: 'Da-heul →',
   correction: 'Reizhadenn',
   bonnePhrase: 'Ar frazenn vat eo : « {r} »',
-  bonneReponseEst: 'Ar respont mat eo « {r} »',
-  accents: 'Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
   pasToutAFait: 'N\'eo ket mat penn-da-benn…',
   // Groupes et types d'exercices (réglages)
   // br: à relire

@@ -7,7 +7,6 @@ export default {
   fractions: 'Fractions',
   aideColorier: 'Touche les parts pour les colorier ({n} / {total})',
   graduation: '{o} graduation',
-  laBonne: '❌ La bonne réponse : {r}',
   passer: 'Passer ⏭',
   passe: '(passé)',
   effacer: 'Effacer',

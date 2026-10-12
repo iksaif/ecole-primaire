@@ -18,6 +18,6 @@ export default {
   ecouteEtTrouve: 'Selaou, ha diskouez al lizherenn.', // br: à relire
   trouveEn: 'Kav al lizherenn-mañ {en}.', // br: à relire
   cEst: 'Al lizherenn {l} eo.', // br: à relire
-  cetait: '❌ Ar respont mat : {r}',
+  cetait: 'Ar respont mat : {r}',
   noteFiche: 'Fichenn : lak pep lizherenn gant an hevelep lizherenn en ur skritur all.', // br: à relire
 } as const satisfies Traductions<typeof fr>

@@ -10,9 +10,8 @@ export default {
   themes: { homophones: 'Heñvelsonioù', accords: 'Kenglotadurioù', lettres: 'Lizherennoù a vank' }, // br: à relire
   ecrisReponse: 'Skriv ar ger…',
   validerCourt: 'Gwiriañ',
-  accents: '⚠️ Diwall ouzh an akcentoù : {r}', // br: à relire (« attention aux accents » : terme à vérifier)
   aRetravailler: "Da labourat c'hoazh :",
-  erreur: '❌ Ar respont mat eo « {r} ».',
+  erreur: 'Ar respont mat eo « {r} ».',
   // br: à relire — préposition = araogenn, conjonction = stagell, déterminant = ger-mont (incertain), pronom réfléchi = raganv emober (incertain)
   explications: {
     exp_a_avoir_il_a: '"a" = ar verb "avoir" (il a)', // br: à relire

@@ -92,7 +92,7 @@ const libelleNiveau = (n: string): string => `${ICONES[n] ?? ''} ${n === 'ps' ? 
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => `❌ ${q.reponse === 'egal' ? t('comparer.memeNombre')
+  messageErreur: q => `${q.reponse === 'egal' ? t('comparer.memeNombre')
     : q.reponse === 'gauche' ? `${t('comparer.aPlus', { g: 'A' })} : ${q.gauche} > ${q.droite}` : `${t('comparer.aPlus', { g: 'B' })} : ${q.droite} > ${q.gauche}`}`,
   apresErreur: 1200,
   delai: 1200,

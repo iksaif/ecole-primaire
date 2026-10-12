@@ -81,7 +81,7 @@ const ordre = ref<number[]>([])
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => (q.mode === 'ordre' ? tr('fbOrdre', { r: q.attendu }) : tr('fbChoix', { r: libelleChoix(tr, q.attendu) })),
+  messageErreur: q => (q.mode === 'ordre' ? tr('fbOrdre', { r: q.attendu }) : t('communs.bonneReponseEst', { r: libelleChoix(tr, q.attendu) })),
   surQuestion: () => { ordre.value = [] },
   apresErreur: 5000,
 })

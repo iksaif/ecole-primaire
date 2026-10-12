@@ -10,7 +10,7 @@
     <h2 ref="titre" class="result-score" tabindex="-1">
       <span aria-hidden="true">{{ bonnes }} / {{ total }}</span><span class="sr-only">{{ t('communs.scoreSur', { bonnes, total }) }}</span>
     </h2>
-    <div v-if="cleFin" class="result-msg">{{ t(`communs.${cleFin}`) }}</div>
+    <div v-if="cleFin" class="result-msg">{{ t(`communs.${cleFin}`) }} <Icone :nom="ICONE_FIN[cleFin]" /></div>
     <slot />
     <div class="btn-group actions">
       <button type="button" class="btn btn-primary" @click="$emit('rejouer')"><Icone nom="rejouer" /> {{ t('communs.rejouer') }}</button>
@@ -25,6 +25,12 @@ import Icone from '../images/Icone.vue'
 import { ref, onMounted } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import type { CleFin } from './useJeu.ts'
+import type { NomIcone } from '../images/icones.ts'
+
+/** L'icône de chaque message de fin, du sans-faute à « pratique encore ». */
+const ICONE_FIN: Readonly<Record<CleFin, NomIcone>> = {
+  resultat100: 'trophee', resultat80: 'etoileBrillante', resultat60: 'muscle', resultat40: 'intello', resultat0: 'livres',
+}
 
 withDefaults(defineProps<{
   bonnes: number

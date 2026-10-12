@@ -9,7 +9,6 @@ export default {
   fractions: 'Darnaouennoù',
   aideColorier: 'Stok al lodennoù evit o livañ ({n} / {total})',
   graduation: '{o} derez',
-  laBonne: '❌ Ar respont mat : {r}',
   passer: 'Tremen ⏭',
   passe: '(tremenet)',
   effacer: 'Diverkañ',

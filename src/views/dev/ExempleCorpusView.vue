@@ -56,7 +56,7 @@ const T = traducteur(CONTENU, () => langueContenu.value)
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => `❌ ${t('exempleCorpus.laReponse', { attendu: q.attendu })}`,
+  messageErreur: q => `${t('exempleCorpus.laReponse', { attendu: q.attendu })}`,
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu
 

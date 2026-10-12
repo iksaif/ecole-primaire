@@ -25,11 +25,11 @@ export default {
   combienCotes: 'Combien de côtés a cette forme ?',
   montre: 'Montre le {nom}',
   // corrections ; {nom} : le nom de la forme dans la langue du contenu
-  erreurMeme: '❌ Regarde bien la forme du modèle',
-  erreurNom: "❌ C'est un {nom}",
-  erreurForme: "❌ C'était le {nom}",
-  erreurAucunCote: "❌ Un {nom} n'a aucun côté droit",
-  erreurCotes: { one: '❌ Un {nom} a {n} côté', other: '❌ Un {nom} a {n} côtés' },
+  erreurMeme: 'Regarde bien la forme du modèle',
+  erreurNom: "C'est un {nom}",
+  erreurForme: "C'était le {nom}",
+  erreurAucunCote: "Un {nom} n'a aucun côté droit",
+  erreurCotes: { one: 'Un {nom} a {n} côté', other: 'Un {nom} a {n} côtés' },
   // nom accessible des formes à choisir (sans trahir la réponse)
   choixForme: 'Forme {n}',
 } as const

@@ -42,7 +42,7 @@ export default {
   pasTout: 'Pas tout à fait… Regarde la correction.',
   ecrisSomme: 'Écris la somme comme « 3,50 € » ou « 3 € 50 c ».',
   auLieuDe: 'Tu as fait {t} au lieu de {c}.',
-  tropDePieces: "C'est bien {t} 👍 mais on peut payer avec seulement {n} pièces et billets.",
+  tropDePieces: "C'est bien {t} mais on peut payer avec seulement {n} pièces et billets.",
   ilManque: 'Tu as fait {t} : il manque {m}.',
   deTrop: "Tu as fait {t} : c'est {m} de trop.",
   autantArgent: "Ils ont autant d'argent tous les deux : {s}.",

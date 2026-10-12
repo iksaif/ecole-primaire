@@ -96,7 +96,7 @@ const cases: (HTMLInputElement | null)[] = []   // les <input>, pour passer d'un
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: (q, rep) => (rep ? '❌ ' + t('calculPose.laBonneReponse', { r: q.reponse }) : ''),
+  messageErreur: (q, rep) => (rep ? t('calculPose.laBonneReponse', { r: q.reponse }) : ''),
   delai: 900,
   apresErreur: 1400,
   surQuestion: q => {

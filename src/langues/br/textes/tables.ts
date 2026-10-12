@@ -21,10 +21,9 @@ export default {
   jeLaConnais: 'Gouzout a ran anezhi → Amprouiñ ! ✔',
   bonnesEn1Min: 'respont mat e 1 munutenn !',
   revoirErreurs: '❌ Adwelet ar fazioù',
-  chrono50: '🏆 Souezhus !',
-  chrono30: '🌟 Dispar !',
-  chrono20: '💪 Mat-tre !',
-  chronoBas: "📚 Kendalc'h da embreger !",
+  chrono50: 'Souezhus !',
+  chrono30: 'Dispar !',
+  chronoBas: "Kendalc'h da embreger !",
   ordreFiche: 'Urzh ar jedadurioù', // br: à relire
   dansLOrdre: 'En urzh',
   melange: 'Kemmesket',

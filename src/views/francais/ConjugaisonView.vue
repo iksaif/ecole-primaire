@@ -36,7 +36,7 @@
               focus placeholder="…" @entree="valider" />
           </template>
           <span v-else-if="i <= index" class="forme-donnee">{{ l.lacunes ? l.debut : '' }}<b>{{ l.lacunes ? l.trou : l.forme }}</b></span>
-          <span class="row-feedback">{{ retourLigne(i) }}</span>
+          <span class="row-feedback"><template v-if="retourLigne(i)"><Icone :nom="retourLigne(i)!.icone" /> {{ retourLigne(i)!.texte }}</template></span>
         </div>
       </div>
 
@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
 import Icone from '../../images/Icone.vue'
+import type { NomIcone } from '../../images/icones.ts'
 // Conjugaison : la vue ne fait que les réglages et le rendu d'un tableau. Niveaux, générateur et fiche : src/exercices/conjugaison/
 // (definition.ts, generateur.ts, fiche.ts) ; formes : src/data/conjugaison.js. Exercice de français : la fiche est toujours en français,
 // l'interface suit la langue choisie.
@@ -105,10 +106,13 @@ const { phase, questions, q, index, bonnes, historique, repondu, cleFin } = jeu
 
 // état d'une ligne déjà validée : ok, presque (accents oubliés : comptée fausse, en orange), erreur
 const etat = (i: number): string => etatDe(historique.value[i])
-function retourLigne(i: number): string {
+/** Le retour d'une ligne validée : juste (une coche), juste aux accents près (l'avertissement), ou faux (la bonne forme). */
+function retourLigne(i: number): { icone: NomIcone, texte: string } | null {
   const h = historique.value[i]
-  if (!h) return ''
-  return h.ok ? '✅' : h.nuance === 'accents' ? `⚠️ ${t('conjugaison.accents', { forme: h.question.forme })}` : `❌ ${h.question.forme}`
+  if (!h) return null
+  if (h.ok) return { icone: 'coche', texte: '' }
+  if (h.nuance === 'accents') return { icone: 'attention', texte: t('conjugaison.accents', { forme: h.question.forme }) }
+  return { icone: 'croix', texte: h.question.forme }
 }
 function valider(): void {
   if (repondu.value) { jeu.suivante(); return }

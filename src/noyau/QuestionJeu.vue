@@ -1,5 +1,5 @@
 <!--
-  Cadre commun d'une question d'exercice (avec useJeu) : barre de score (Quitter, « Question n / total », ✅ ❌),
+  Cadre commun d'une question d'exercice (avec useJeu) : barre de score (Quitter, « Question n / total », bonnes et mauvaises réponses),
   puis la boîte de l'exercice avec les points de progression et la question (slot).
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu"> rendu de la question </QuestionJeu>
   Accessibilité : la boîte de la question est un groupe nommé « Question n / total » qui reçoit le focus quand la
@@ -10,7 +10,7 @@
   <div class="score-bar">
     <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')"><Icone nom="fermer" /> {{ t('communs.quitter') }}</button>
     <span>{{ t('communs.question', { n: index + 1, total: questions.length }) }}</span>
-    <span role="img" :aria-label="t('communs.scoreSur', { bonnes, total: historique.length })">✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
+    <span role="img" :aria-label="t('communs.scoreSur', { bonnes, total: historique.length })"><Icone nom="coche" /> {{ bonnes }} &nbsp; <Icone nom="croix" /> {{ mauvaises }}</span>
   </div>
 
   <div ref="boite" class="exercise-box" role="group" tabindex="-1"

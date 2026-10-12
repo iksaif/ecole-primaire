@@ -60,7 +60,6 @@ export default {
   exContexte: 'Amañ, « {m} » a dalvez : {s}.',
   sensPropre: 'ster rik', // br: à relire
   sensFigure: 'ster skeudennek', // br: à relire
-  fbOrdre: '❌ An urzh mat eo : {r}',
-  fbChoix: '❌ Ar respont mat eo « {r} »',
+  fbOrdre: 'An urzh mat eo : {r}',
   cliqueEtiquettes: 'Klik war ar gerioù dre urzh al lizherenneg…',
 } as const satisfies Traductions<typeof fr>

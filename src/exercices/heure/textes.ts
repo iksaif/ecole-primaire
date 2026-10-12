@@ -100,10 +100,10 @@ export const CONTENU = catalogue({
   },
 
   // ─── Corrections ───
-  lireFaux: '❌ Il est {ecrit}',
-  placerFaux: '❌ Regarde les aiguilles vertes : {ecrit}',
-  dureeApresFaux: '❌ Il sera {attendu}.',
-  dureeCombienFaux: { m: '❌ Il dure {attendu}.', f: '❌ Elle dure {attendu}.' },
+  lireFaux: 'Il est {ecrit}',
+  placerFaux: 'Regarde les aiguilles vertes : {ecrit}',
+  dureeApresFaux: 'Il sera {attendu}.',
+  dureeCombienFaux: { m: 'Il dure {attendu}.', f: 'Elle dure {attendu}.' },
 
   // ─── Fiche ───
   ficheLireConsigne: 'La petite aiguille indique les heures, la grande aiguille indique les minutes.',
@@ -189,10 +189,10 @@ export const CONTENU = catalogue({
     dureeCombienQ: { m: '{nom} a grog da {debut} hag a echu da {fin}. Pegeit e pad ?', f: '{nom} a grog da {debut} hag a echu da {fin}. Pegeit e pad ?' },
 
     // ─── Corrections ───
-    lireFaux: '❌ {ecrit} eo.',
-    placerFaux: '❌ Sell ouzh an nadozioù gwer : {ecrit}',
-    dureeApresFaux: '❌ {attendu} e vo.',
-    dureeCombienFaux: { m: '❌ Padout a ra {attendu}.', f: '❌ Padout a ra {attendu}.' },
+    lireFaux: '{ecrit} eo.',
+    placerFaux: 'Sell ouzh an nadozioù gwer : {ecrit}',
+    dureeApresFaux: '{attendu} e vo.',
+    dureeCombienFaux: { m: 'Padout a ra {attendu}.', f: 'Padout a ra {attendu}.' },
 
     // ─── Fiche ───
     ficheLireConsigne: 'An nadoz vihan a ziskouez an eurioù, an nadoz vras a ziskouez ar munutoù.',

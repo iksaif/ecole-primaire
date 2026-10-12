@@ -43,7 +43,7 @@ export default {
   pasTout: "N'eo ket mat c'hoazh… Sell ouzh ar reizhadenn.",
   ecrisSomme: 'Skriv ar sammad evel « 3,50 € » pe « 3 € 50 c ».',
   auLieuDe: "Graet ec'h eus {t} e-lec'h {c}.",
-  tropDePieces: "{t} eo, mat 👍 met gallout a reer paeañ gant {n} pezh pe bilhed hepken.", // br: à relire
+  tropDePieces: "{t} eo, mat met gallout a reer paeañ gant {n} pezh pe bilhed hepken.", // br: à relire
   ilManque: "Graet ec'h eus {t} : mankout a ra {m}.",
   deTrop: "Graet ec'h eus {t} : {m} re a zo.", // br: à relire
   autantArgent: "Kement a arc'hant o deus o-daou : {s}.",

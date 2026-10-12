@@ -1,6 +1,6 @@
 <!--
   Tableau de correction commun de l'écran de fin (dans <ResultatsJeu>) : une ligne par entrée de l'historique de
-  useJeu — question, réponse donnée (`donne`, rangée par jeu.repondre(rep, { donne })), bonne réponse, ✅ / ❌.
+  useJeu — question, réponse donnée (`donne`, rangée par jeu.repondre(rep, { donne })), bonne réponse, juste ou faux (une icône).
     <TableauCorrection :historique="historique" />
     <TableauCorrection :historique="historique"><template #question="{ entree }">dessin + texte</template></TableauCorrection>
   Par défaut, la question est `question.texte` et la bonne réponse `question.attendu`.
@@ -15,13 +15,14 @@
         <td><slot name="question" :entree="h">{{ h.question.texte }}</slot></td>
         <td>{{ h.donne }}</td>
         <td class="mot-attendu"><slot name="attendu" :entree="h">{{ h.question.attendu }}</slot></td>
-        <td><span role="img" :aria-label="h.ok ? t('communs.juste') : t('communs.faux')">{{ h.ok ? '✅' : '❌' }}</span></td>
+        <td><span role="img" :aria-label="h.ok ? t('communs.juste') : t('communs.faux')"><Icone :nom="h.ok ? 'coche' : 'croix'" /></span></td>
       </tr>
     </tbody>
   </table>
 </template>
 
 <script setup lang="ts" generic="Q extends { texte?: unknown, attendu?: unknown }">
+import Icone from '../images/Icone.vue'
 // textes : section `communs` (colQuestion, taReponse, bonneReponse)
 import { useLangue } from '../langues/useLangue.ts'
 import { etatDe } from './useJeu.ts'

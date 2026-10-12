@@ -79,7 +79,7 @@ const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
   messageErreur: q => t('orthographe.erreur', { r: q.attendu }),
-  messageNuance: q => t('orthographe.accents', { r: q.attendu }),
+  messageNuance: q => t('communs.accents', { r: q.attendu }),
   surQuestion: () => { saisie.value = '' },
   apresErreur: 5000,
 })

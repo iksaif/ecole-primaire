@@ -135,7 +135,7 @@ const placement = ref<number | null>(null)
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T, nb: config.value.nbQ }),
   verifier,
-  messageErreur: (q, rep) => (rep ? t('fractions.laBonne', { r: q.attendu }) : ''),
+  messageErreur: (q, rep) => (rep ? t('communs.laBonne', { r: q.attendu }) : ''),
   delai: 900,
   // champs vidés ; le focus : SaisieReponse (attribut focus)
   surQuestion: () => { reponse.value = ''; coloriees.value = []; placement.value = null },

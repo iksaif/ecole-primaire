@@ -11,7 +11,6 @@ export default {
   legendeMillier: '1 kub bras = 1000',
   legende: '1 plakenn = 100 · 1 barrenn = 10 · 1 kub = 1',
   cliqueTous: 'Klik war an holl niveroù 😉',
-  laBonne: '❌ Ar respont mat : {r}',
   passer: 'Tremen ⏭',
   passe: '(tremenet)',
   type_decomposer: '🧱 Dispenn', // br: à relire

@@ -12,5 +12,5 @@ export default {
   passer: 'Passer ⏭',
   passe: '(passé)',
   laBonneReponse: 'La bonne réponse était {r}',
-  tempsEcoule: '⏰ Temps écoulé ! La réponse était {r}',
+  tempsEcoule: 'Temps écoulé ! La réponse était {r}',
 } as const

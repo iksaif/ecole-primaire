@@ -9,7 +9,6 @@ export default {
   legendeMillier: '1 gros cube = 1000',
   legende: '1 plaque = 100 · 1 barre = 10 · 1 cube = 1',
   cliqueTous: 'Clique sur tous les nombres 😉',
-  laBonne: '❌ La bonne réponse : {r}',
   passer: 'Passer ⏭',
   passe: '(passé)',
   // types d'exercices (boutons de réglage)

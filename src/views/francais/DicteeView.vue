@@ -143,7 +143,7 @@ const jeu = useJeu<Question, Reponse>({
   generer: () => preparees,
   verifier,
   messageErreur: (qu, rep) => (rep ? t('dictee.feedbackErr', { r: qu.attendu }) : ''),
-  messageNuance: qu => `⚠️ ${t('dictee.accents', { r: qu.attendu })}`,
+  messageNuance: qu => t('communs.accents', { r: qu.attendu }),
   surQuestion: () => { reponse.value = ''; afficherIndice.value = false; void nextTick(ecouter) },
   delai: 900,
   apresErreur: 3000,

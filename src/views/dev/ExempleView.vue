@@ -77,7 +77,7 @@ const saisie = ref<number | ''>('')
 const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
-  messageErreur: q => `❌ ${t('exemple.laReponse', { attendu: q.attendu })}`,
+  messageErreur: q => `${t('exemple.laReponse', { attendu: q.attendu })}`,
   messageNuance: q => `🤏 ${t('exemple.presque', { pas: q.pas })}`,
   surQuestion: () => { saisie.value = '' },   // le focus : l'attribut `focus` de SaisieReponse
 })

@@ -56,7 +56,7 @@
         <div class="score-bar">
           <button type="button" class="btn-quitter" @click="jeu.quitter" :title="t('communs.quitterTitre')"><Icone nom="fermer" /> {{ t('communs.quitter') }}</button>
           <Chronometre :restant="restant" :duree="DUREE_CHRONO" />
-          <span role="img" :aria-label="t('communs.scoreSur', { bonnes, total: historique.length })">✅ {{ bonnes }} &nbsp; ❌ {{ mauvaises }}</span>
+          <span role="img" :aria-label="t('communs.scoreSur', { bonnes, total: historique.length })"><Icone nom="coche" /> {{ bonnes }} &nbsp; <Icone nom="croix" /> {{ mauvaises }}</span>
         </div>
       </template>
 
@@ -85,7 +85,7 @@
     <!-- ══ RÉSULTATS ══ -->
     <div v-if="phase === 'resultats' && config.mode === 'chrono'" class="exercise-box resultats-jeu" style="text-align:center;">
       <h2 ref="titreChrono" class="result-score" tabindex="-1">{{ bonnes }}</h2>
-      <div class="result-msg">{{ t('tables.bonnesEn1Min') }} {{ messageChrono }}</div>
+      <div class="result-msg">{{ t('tables.bonnesEn1Min') }} <Icone :nom="messageChrono.icone" /> {{ messageChrono.texte }}</div>
       <div class="btn-group actions" style="justify-content:center;">
         <button type="button" class="btn btn-primary" @click="jeu.recommencer"><Icone nom="rejouer" /> {{ t('communs.rejouer') }}</button>
         <button type="button" class="btn btn-ghost" @click="jeu.quitter"><Icone nom="reglages" /> {{ t('communs.parametres') }}</button>
@@ -103,6 +103,7 @@
 
 <script setup lang="ts">
 import Icone from '../../images/Icone.vue'
+import type { NomIcone } from '../../images/icones.ts'
 // Tables de multiplication : la vue ne fait que les réglages, le minuteur du défi et le rendu d'une question. Niveaux,
 // générateur et fiche : src/exercices/tables/ (definition.ts, generateur.ts, fiche.ts).
 import { ref, computed, watch, nextTick } from 'vue'
@@ -155,7 +156,7 @@ const jeu = useJeu<Question, Reponse>({
     return tirer({ niveau: config.value.niveau, reglages: config.value, rng, T })
   },
   verifier,
-  messageErreur: q => `❌ ${t('tables.laBonneReponse', { a: q.a, b: q.b, r: q.reponse })}`,
+  messageErreur: q => `${t('tables.laBonneReponse', { a: q.a, b: q.b, r: q.reponse })}`,
   apresErreur: 1000,
   delai: 700,
   surQuestion: q => { reponse.value = ''; apprendre.value = !!q.premiere },
@@ -169,7 +170,13 @@ watch(phase, p => {
   if (p === 'jeu' && config.value.mode === 'chrono') minuteur.demarrer(DUREE_CHRONO, { surFin: () => { jeu.phase.value = 'resultats' } })
   else minuteur.arreter()
 })
-const messageChrono = computed(() => t(bonnes.value >= 50 ? 'tables.chrono50' : bonnes.value >= 30 ? 'tables.chrono30' : bonnes.value >= 20 ? 'tables.chrono20' : 'tables.chronoBas'))
+/** Le message du chrono et son icône, selon le nombre de bonnes réponses en une minute. */
+const messageChrono = computed((): { texte: string, icone: NomIcone } => {
+  if (bonnes.value >= 50) return { texte: t('tables.chrono50'), icone: 'trophee' }
+  if (bonnes.value >= 30) return { texte: t('tables.chrono30'), icone: 'etoileBrillante' }
+  if (bonnes.value >= 20) return { texte: t('communs.etoiles4'), icone: 'muscle' }
+  return { texte: t('tables.chronoBas'), icone: 'livres' }
+})
 watch(phase, p => {
   if (p !== 'resultats' || config.value.mode !== 'chrono') return
   confettis(bonnes.value >= 50 ? 50 : bonnes.value >= 30 ? 25 : 0)

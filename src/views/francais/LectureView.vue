@@ -34,7 +34,7 @@
           <template v-for="(m, i) in motsDuTexte" :key="i"><button type="button" class="mot-texte" @click="ecouter(m)">{{ m }}</button>{{ ' ' }}</template>
         </p>
         <div v-if="!repondu && !enGeneration" class="actions">
-          <button type="button" class="btn btn-warning" @click="ecouterTout">{{ enLecture ? '⏹ ' + t('lecture.arreter') : '🔊 ' + t('lecture.ecouterTout') }}</button>
+          <button type="button" class="btn btn-warning" @click="ecouterTout"><Icone :nom="enLecture ? 'stop' : 'ecouter'" /> {{ enLecture ? t('lecture.arreter') : t('lecture.ecouterTout') }}</button>
           <button type="button" class="btn btn-success" @click="jeu.repondre({ lu: true }, { donne: '' })">{{ t('lecture.jaiLu') }} <Icone nom="pouce" /></button>
         </div>
       </template>

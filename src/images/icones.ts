@@ -30,7 +30,8 @@ export const ICONES = {
   flecheDouble: '2194', chrono: '23F1', majuscules: '1F520', oreille: '1F442', question: '2753', interdit: '1F6AB', coureur: '1F3C3',
   doigtDroite: '1F449', doigtGauche: '1F448', reveil: '23F0', feminin: '2640', lettreA: '1F170', livreFerme: '1F4D5', loupeDroite: '1F50E',
   masques: '1F3AD', fin: '1F51A', detective: '1F575', tortue: '1F422', lievre: '1F407', singeYeux: '1F648', stop: '23F9', pincee: '1F90F',
-  ampoule: '1F4A1', papillon: '1F98B', lion: '1F981', microscope: '1F52C', parchemin: '1F4DC',
+  ampoule: '1F4A1', papillon: '1F98B', lion: '1F981', microscope: '1F52C', parchemin: '1F4DC', melanger: '1F500',
+  flecheMonte: '2197', flecheDescend: '2198',
   // la page des réglages
   profil: '1F464', chantier: '1F6A7',
   // les identités du catalogue : domaines, matières, exercices et affiches, badges, profils, site (src/ressources/emojis.ts…)

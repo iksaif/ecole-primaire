@@ -510,10 +510,10 @@ export function mauvaiseReponse(q: Question): Reponse {
 /** Le retour après une erreur, selon le type de question. */
 export function messageErreur(q: Question, T: T): string {
   if (q.type === 'duree' && q.act) return T(`dureeCombienFaux.${q.act.genre}`, { attendu: q.attendu })
-  if (q.type === 'conversion') return `❌ ${q.attendu}`
-  if (q.type === 'emploi') return `❌ ${T('bonneReponse')} : ${q.attendu}`
+  if (q.type === 'conversion') return q.attendu
+  if (q.type === 'emploi') return `${T('bonneReponse')} : ${q.attendu}`
   if (q.type === 'duree') return T('dureeApresFaux', { attendu: q.attendu })
-  if (q.type === 'journee') return `❌ ${T('bonneReponse')} : ${ecrit(q.h24, q.m)}`
+  if (q.type === 'journee') return `${T('bonneReponse')} : ${ecrit(q.h24, q.m)}`
   if (q.type === 'placer') return T('placerFaux', { ecrit: q.ecrit })
   return T('lireFaux', { ecrit: ecrit(q.h, q.m) })
 }

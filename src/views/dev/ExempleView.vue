@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 {{ t('exemple.titre') }}</h1>
+    <h1 class="section-heading"><Icone nom="chiffres" /> {{ t('exemple.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -79,7 +79,7 @@ const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
   messageErreur: q => `${t('exemple.laReponse', { attendu: q.attendu })}`,
-  messageNuance: q => `🤏 ${t('exemple.presque', { pas: q.pas })}`,
+  messageNuance: q => t('exemple.presque', { pas: q.pas }),
   surQuestion: () => { saisie.value = '' },   // le focus : l'attribut `focus` de SaisieReponse
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🔢 {{ t('suites.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('suites.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -79,7 +79,7 @@ const jeu = useJeu<Question, Reponse>({
   generer: rng => tirer({ niveau: config.value.niveau, reglages: config.value, rng, T }),
   verifier,
   messageErreur: q => `${t('suites.laReponse', { attendu: q.attendu })}`,
-  messageNuance: q => `🤏 ${t('suites.presque', { pas: q.pas })}`,
+  messageNuance: q => t('suites.presque', { pas: q.pas }),
   surQuestion: () => { saisie.value = '' },   // le focus : l'attribut `focus` de SaisieReponse
 })
 const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin } = jeu

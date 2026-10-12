@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">💶 {{ t('monnaie.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('monnaie.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -126,7 +126,7 @@
         <div class="porte-monnaies">
           <div v-for="cote in COTES" :key="cote" class="porte-monnaie"
                :class="{ gagnant: repondu && (q.bonne === cote || q.bonne === 'egal') }">
-            <div class="porte-nom">👛 {{ cote === 'A' ? q.nomA : q.nomB }}</div>
+            <div class="porte-nom"><Icone nom="portemonnaie" /> {{ cote === 'A' ? q.nomA : q.nomB }}</div>
             <div class="tas">
               <span v-for="(v, i) in (cote === 'A' ? q.itemsA : q.itemsB)" :key="i"
                     class="argent" v-html="argent(v, 0.75)"></span>

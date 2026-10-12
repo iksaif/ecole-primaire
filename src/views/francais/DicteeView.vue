@@ -19,9 +19,9 @@
       <div v-if="mode === 'jouer'" class="config-section">
         <div class="config-section-title">{{ t('dictee.vitesse') }}</div>
         <div class="slider-row">
-          <span aria-hidden="true">🐢</span>
+          <Icone nom="tortue" />
           <input v-model.number="config.vitesse" type="range" min="0.5" max="1.2" step="0.05" :aria-label="t('dictee.vitesse')">
-          <span aria-hidden="true">🐇</span>
+          <Icone nom="lievre" />
           <span class="slider-val">{{ config.vitesse }}</span>
         </div>
       </div>
@@ -29,8 +29,8 @@
       <div v-if="mode === 'imprimer'" class="config-section">
         <div class="config-section-title">{{ t('dictee.pagesFiche') }}</div>
         <div class="btn-group">
-          <button type="button" class="level-btn" :class="{ active: config.liste }" :aria-pressed="config.liste" @click="basculerPage('liste')">📋 {{ t('dictee.pageListe') }}</button>
-          <button type="button" class="level-btn" :class="{ active: config.dictee }" :aria-pressed="config.dictee" @click="basculerPage('dictee')">✏️ {{ t('dictee.pageDictee') }}</button>
+          <button type="button" class="level-btn" :class="{ active: config.liste }" :aria-pressed="config.liste" @click="basculerPage('liste')"><Icone nom="presseFeuilles" /> {{ t('dictee.pageListe') }}</button>
+          <button type="button" class="level-btn" :class="{ active: config.dictee }" :aria-pressed="config.dictee" @click="basculerPage('dictee')"><Icone nom="crayon" /> {{ t('dictee.pageDictee') }}</button>
         </div>
       </div>
       <div v-if="chargement" class="loading-badge" role="status"><span class="spinner"></span> {{ t('dictee.generation') }}</div>
@@ -42,12 +42,12 @@
         <button v-if="!afficherIndice" type="button" class="btn btn-ghost btn-sm indice" @click="afficherIndice = true"><Icone nom="indice" /> {{ t('dictee.afficherIndice') }}</button>
         <div v-else class="phrase-ctx">
           <span v-html="phraseAvecBlanc"></span>
-          <button type="button" class="btn-masquer-indice" :title="t('dictee.masquerIndice')" :aria-label="t('dictee.masquerIndice')" @click="afficherIndice = false">🙈</button>
+          <button type="button" class="btn-masquer-indice" :title="t('dictee.masquerIndice')" :aria-label="t('dictee.masquerIndice')" @click="afficherIndice = false"><Icone nom="singeYeux" /></button>
         </div>
       </div>
 
       <button type="button" class="btn-ecouter" :class="{ playing: enLecture }" @click="ecouter">
-        <span aria-hidden="true">{{ enLecture ? '⏹' : '🔊' }}</span>
+        <Icone :nom="enLecture ? 'stop' : 'ecouter'" />
         <span>{{ enLecture ? t('dictee.arreter') : (q.mode === 'phrases' ? t('dictee.ecouterPhrase') : t('dictee.ecouterMot')) }}</span>
       </button>
 

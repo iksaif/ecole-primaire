@@ -2,7 +2,7 @@
   <div class="container" data-page="apropos">
     <div class="about-box">
       <div class="disclaimer">
-        <div class="disclaimer-icon">⚠️</div>
+        <div class="disclaimer-icon"><Icone nom="attention" /></div>
         <div><strong>{{ t('apropos.avertissementTitre') }}</strong> {{ t('apropos.avertissement') }}</div>
       </div>
       <!-- les langues dont la traduction n'est pas relue : avis en français (langue source) -->
@@ -33,9 +33,9 @@
       <ul class="about-list">
         <li><Icone nom="bug" /> {{ erreur[0] }}<a :href="`mailto:${SITE.contact}`">{{ SITE.contact }}</a>{{ erreur[1] }}
           (<a :href="`${SITE.depot}/issues/new`" target="_blank" rel="noopener">{{ t('apropos.issue') }}</a>)</li>
-        <li>💡 {{ t('apropos.contribuerProposer') }}</li>
+        <li><Icone nom="ampoule" /> {{ t('apropos.contribuerProposer') }}</li>
         <li><IconeMatiere matiere="regionale" /> {{ t('apropos.contribuerRelire') }}</li>
-        <li>👩‍🏫 {{ t('apropos.contribuerEnseignant') }}</li>
+        <li><Icone nom="enseignant" /> {{ t('apropos.contribuerEnseignant') }}</li>
       </ul>
     </div>
   </div>

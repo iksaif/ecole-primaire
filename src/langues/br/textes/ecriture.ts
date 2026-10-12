@@ -36,7 +36,7 @@ export default {
   mots: 'Gerioù (unan dre linenn : anv-bihan, gerioù ar sizhun…)',
   listes: 'Rolloù prest', // br: à relire
   liste: { jours: 'Deizioù ar sizhun', mois: 'Mizioù ar bloaz', nombres: 'Niveroù 1 → 10', couleurs: 'Livioù', famille: 'Familh' },
-  listeEnFrancais: '🇫🇷 {nom} e galleg', // br: à relire
+  listeEnFrancais: '{nom} e galleg', // br: à relire
   texte: 'Frazennoù pe un destennig (ur rannbennad dre linenn)', // br: à relire
   titreFiche: 'Titl ar fichenn', // br: à relire
   titreAuto: 'Emgefre : « Skrivañ — » hag an doareoù skrivañ dibabet', // br: à relire

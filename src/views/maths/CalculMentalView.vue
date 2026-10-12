@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">🧮 {{ t('calculMental.titre') }}</h1>
+    <h1 class="section-heading"><Icone nom="boulier" /> {{ t('calculMental.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">

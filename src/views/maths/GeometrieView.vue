@@ -73,7 +73,7 @@
         <div v-else-if="dessin" class="dessin" v-html="dessin"></div>
 
         <div v-if="(q.type === 'figure' && q.sous === 'angle') || q.type === 'angles'" class="astuce">
-          💡 {{ t('geometrie.astuceEquerre') }}
+          <Icone nom="ampoule" /> {{ t('geometrie.astuceEquerre') }}
         </div>
 
         <!-- Angles droits : choix multiple de lettres -->

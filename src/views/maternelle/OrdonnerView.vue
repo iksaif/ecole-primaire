@@ -6,7 +6,7 @@
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="sens" v-model="config.sens" :titre="t('ranger.petitGrand')"
-        :libelle="s => `${ICONES_SENS[s]} ${t(`ranger.${s === 'mix' ? 'melange' : s}`)}`" />
+        :libelle="s => t(`ranger.${s === 'mix' ? 'melange' : s}`)" :icone="s => ICONES_SENS[String(s)]" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="taille" v-model="config.taille" :titre="t('ranger.combien')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import type { NomIcone } from '../../images/icones.ts'
 import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
 // Ranger les nombres : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
@@ -56,7 +57,7 @@ const { t } = useLangue()
 // clé historique des réglages mémorisés : l'exercice s'appelle « ranger » (adresse des fiches publiées), pas « ordonner »
 const { config, langueContenu } = useReglages(DEFINITION, { cle: 'ordonner_config', suivreClasse: true })
 const T = traducteur(CONTENU, () => langueContenu.value)
-const ICONES_SENS: Readonly<Record<string, string>> = { croissant: '↗', decroissant: '↘', mix: '🔀' }
+const ICONES_SENS: Readonly<Record<string, NomIcone>> = { croissant: 'flecheMonte', decroissant: 'flecheDescend', mix: 'melanger' }
 const libelleNiveau = (n: string): string => `${t('ranger.nombresDe', { niv: n.toUpperCase(), n: NOMBRE_MAX[n as keyof typeof NOMBRE_MAX] ?? 0 })}`
 
 // ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──

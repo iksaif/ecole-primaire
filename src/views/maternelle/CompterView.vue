@@ -5,7 +5,7 @@
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
-        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
         <ChoixReglage v-if="modeCourant === 'imprimer' && config.niveau !== 'ps'" :definition="DEFINITION" :niveau="config.niveau"
           cle="reponse" v-model="config.reponse" :titre="t('compter.reponseFiche')" :libelle="r => (r === 'ecrire' ? t('compter.ecrire') : t('compter.entourer'))" :icone="r => (r === 'ecrire' ? 'crayon' : 'cercle')" />
@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
 // Compter les objets : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/compter/ (definition.ts, generateur.ts, fiche.ts) ; les objets et les points : src/dessins/collections.ts.
@@ -69,8 +70,7 @@ const { t } = useLangue()
 const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true })
 // T : les textes du contenu (CONTENU, textes.ts : nom des objets, fiche), dans la langue du contenu
 const T = traducteur(CONTENU, () => langueContenu.value)
-const ICONES: Readonly<Record<string, string>> = { ps: '🐣', ms: '🌱', gs: '🌳' }
-const libelleNiveau = (n: string): string => `${ICONES[n] ?? ''} ${t('compter.jusqua', { niv: n.toUpperCase(), n: NOMBRE_MAX[n as keyof typeof NOMBRE_MAX] ?? 0 })}`
+const libelleNiveau = (n: string): string => `${t('compter.jusqua', { niv: n.toUpperCase(), n: NOMBRE_MAX[n as keyof typeof NOMBRE_MAX] ?? 0 })}`
 const ps = computed(() => config.value.niveau === 'ps')
 // PS : le bouton est une constellation, son nom pour les lecteurs d'écran est le nombre
 const libelleChoix = (i: number): string => String(q.value?.options[i]?.valeur ?? '')

@@ -9,7 +9,7 @@
     </ul>
     <!-- les affiches de sa classe, plus discrètes : une tuile simple chacune -->
     <template v-if="affiches.length">
-      <h2 class="sous-titre"><span aria-hidden="true">🖼️</span> {{ t('matiere.enfantAffiches') }}</h2>
+      <h2 class="sous-titre"><Icone nom="affiche" /> {{ t('matiere.enfantAffiches') }}</h2>
       <ul class="tuiles petites">
         <li v-for="r in affiches" :key="r.id">
           <AccueilTuile :to="r.route" :emoji="r.emoji" :titre="texteDe(r.titre, langueAffichee)" couleur="#f39c12" />
@@ -20,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Page d'une matière pour le profil « enfant » : les exercices qui se jouent à l'écran, de sa classe, en très grosses tuiles, puis ses
 // affiches en petites tuiles ; sans domaines, compétences ni fiches (ce qui intéresse l'adulte reste dans la vue complète). Même filtre de
 // langue que la page complète (mode du contexte).

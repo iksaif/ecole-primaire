@@ -11,13 +11,14 @@
 <template>
   <div class="consigne-parlee">
     <button v-if="possible" type="button" class="ecouter" :aria-pressed="enLecture" :aria-label="t('communs.ecouter')" :title="t('communs.ecouter')" @click="basculer">
-      <span aria-hidden="true">🔊</span>
+      <Icone nom="ecouter" />
     </button>
     <span class="texte"><slot>{{ texte }}</slot></span>
   </div>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 import { computed, watch, onUnmounted } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { useTTS } from './useTTS.ts'

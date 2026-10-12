@@ -137,7 +137,7 @@ export function decrire(q: Question, rep: Reponse, T: T): string {
 /** Retour après une erreur (rep : null si la question est passée). */
 export function messageErreur(q: Question, rep: Reponse | null, T: T): string {
   if (!rep) return ''
-  if ('choix' in rep) return `❌ ${T('bonneReponse')} : ${'reponse' in q ? q.reponse : ''}`
+  if ('choix' in rep) return `${T('bonneReponse')} : ${'reponse' in q ? q.reponse : ''}`
   if ('lettres' in rep) return q.type === 'angles' && q.droits.length ? T('anglesFaux', { attendu: q.attendu }) : T('anglesAucunFaux')
   if (q.type === 'reperage') return T('reperageFaux', { donne: decrire(q, rep, T), nom: q.nom })
   const { manquantes, enTrop } = bilanCases(q, rep.selection)

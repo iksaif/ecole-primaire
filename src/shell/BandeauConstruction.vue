@@ -1,12 +1,13 @@
 <template>
   <!-- une ligne discrète sur les pages propres à l'enseignant : le mode est une idée en construction, pas encore validée ni relue -->
   <p v-if="visible" class="construction" role="note" data-construction>
-    <span aria-hidden="true">🚧</span>
+    <Icone nom="chantier" />
     <span>{{ t('shell.enseignant.enConstruction') }} <a :href="lienAvis">{{ t('shell.enseignant.donnerAvis') }}</a></span>
   </p>
 </template>
 
 <script setup lang="ts">
+import Icone from '../images/Icone.vue'
 // Rappel affiché sur les pages de l'enseignant (Programme, compétence, accueil avec « Copier le lien pour les familles ») tant que le mode
 // enseignant est actif ET que c'est le profil choisi : ni pour un parent qui consulte le programme, ni sur un site où le mode est caché.
 import { computed } from 'vue'

@@ -24,7 +24,7 @@
       <span><i class="pastille couvert"></i>{{ t('dev.couvertureLegende.couvert') }}</span>
       <span><i class="pastille trou"></i>{{ t('dev.couvertureLegende.trou') }}</span>
       <span><i class="pastille hors"></i>{{ t('dev.couvertureLegende.hors') }}</span>
-      <span>🎯 {{ t('dev.couvertureSorte.exercice') }} · 🖼️ {{ t('dev.couvertureSorte.affiche') }} · 📄 {{ t('dev.couvertureSorte.fiche') }}</span>
+      <span><Icone nom="competence" /> {{ t('dev.couvertureSorte.exercice') }} · <Icone nom="affiche" /> {{ t('dev.couvertureSorte.affiche') }} · <Icone nom="fiches" /> {{ t('dev.couvertureSorte.fiche') }}</span>
     </div>
 
     <section v-for="m in matieresAffichees" :key="m.id" class="matiere">
@@ -39,9 +39,9 @@
             <th scope="row" class="libelle"><router-link :to="`/competence/${k.id}`">{{ k.libelle }}</router-link><code>{{ k.id }}</code></th>
             <td v-for="c in NIVEAUX" :key="c" :class="k.cases[c].etat" :title="k.cases[c].titre">
               <template v-if="k.cases[c].etat === 'couvert'">
-                <span v-if="k.cases[c].n.exercice">🎯{{ k.cases[c].n.exercice }}</span>
-                <span v-if="k.cases[c].n.affiche">🖼️{{ k.cases[c].n.affiche }}</span>
-                <span v-if="k.cases[c].n.fiche">📄{{ k.cases[c].n.fiche }}</span>
+                <span v-if="k.cases[c].n.exercice"><Icone nom="competence" />{{ k.cases[c].n.exercice }}</span>
+                <span v-if="k.cases[c].n.affiche"><Icone nom="affiche" />{{ k.cases[c].n.affiche }}</span>
+                <span v-if="k.cases[c].n.fiche"><Icone nom="fiches" />{{ k.cases[c].n.fiche }}</span>
               </template>
               <template v-else-if="k.cases[c].etat === 'trou'">—</template>
             </td>
@@ -53,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Couverture du programme (développement seulement, /dev/couverture) : chaque compétence de src/data/programme.ts × chaque classe où elle
 // est au programme, et ce qui la couvre dans le catalogue de la base (src/ressources/ : exercices, affiches, et fiches prêtes si leur
 // index est là, `npm run fiches:dev`). Remplace, pour la base, le rapport `npm run couverture` (qui lit l'ancien monde).

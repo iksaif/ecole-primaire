@@ -36,7 +36,7 @@
       <ChoixReponses v-else :options="options" :bonne="bonne" :repondu="repondu" :titre="q.consigne" @choisir="choisir" />
 
       <RetourReponse :message="retour?.message" :etat="etat" />
-      <div v-if="repondu && retour && !retour.ok && q.explication" class="explication">💡 {{ q.explication }}</div>
+      <div v-if="repondu && retour && !retour.ok && q.explication" class="explication"><Icone nom="ampoule" /> {{ q.explication }}</div>
 
       <div class="btn-group" style="justify-content:center;margin-top:1rem;">
         <template v-if="!repondu">

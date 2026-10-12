@@ -2,7 +2,7 @@
   <!-- Le niveau de confiance de la traduction d'une fiche : DÉVELOPPEMENT SEULEMENT (AVEC_DEV), jamais chez les visiteurs. Une jauge de quatre barres
        (0 à 4 pleines) et le nom du niveau ; une fiche que le réglage cacherait y est tout de même, en rouge, marquée « masquée ». -->
   <span v-if="AVEC_DEV && niveau !== null" class="pastille" :class="[`n${niveau}`, { masquee }]" role="img" :aria-label="libelle" :title="libelle">
-    <span v-if="masquee" aria-hidden="true">🙈</span>
+    <Icone v-if="masquee" nom="singeYeux" />
     <JaugeConfiance :niveau="niveau" />
     <span aria-hidden="true">{{ nom }}</span>
     <span v-if="masquee" aria-hidden="true">· {{ t('confiance.masquee') }}</span>
@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 import { computed } from 'vue'
 import JaugeConfiance from './JaugeConfiance.vue'
 import { AVEC_DEV } from '../../dev.ts'

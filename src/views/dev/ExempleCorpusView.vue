@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="section-heading">📖 {{ t('exempleCorpus.titre') }}</h1>
+    <h1 class="section-heading"><Icone nom="livreOuvert" /> {{ t('exempleCorpus.titre') }}</h1>
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
@@ -27,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import Icone from '../../images/Icone.vue'
 // Exemple d'exercice à corpus — la vue. Même squelette que ExempleView.vue ; ici le QCM (ChoixReponses) remplace la saisie.
 import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'

@@ -4,7 +4,7 @@
 
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
-      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" />
+      <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
 
@@ -51,6 +51,7 @@
 </template>
 
 <script setup lang="ts">
+import { iconeNiveau } from '../../noyau/reglages.ts'
 import Icone from '../../images/Icone.vue'
 // Comparer les quantités : la vue ne fait que les réglages et le rendu d'une question. Niveaux, générateur et fiche :
 // src/exercices/comparer/ (definition.ts, generateur.ts, fiche.ts) ; les objets : src/dessins/collections.ts.
@@ -81,11 +82,10 @@ const { t } = useLangue()
 // niveau : celui de la barre du haut s'il est de maternelle ; PS : on touche le groupe qui a le plus
 const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true })
 const T = traducteur(CONTENU, () => langueContenu.value)
-const ICONES: Readonly<Record<string, string>> = { ps: '🐣', ms: '🌱', gs: '🌳' }
 const COTES = ['gauche', 'droite'] as const
 const lettre = (k: number): string => (k === 0 ? 'A' : 'B')
 const ps = computed(() => config.value.niveau === 'ps')
-const libelleNiveau = (n: string): string => `${ICONES[n] ?? ''} ${n === 'ps' ? t('comparer.beaucoupPlus', { niv: n.toUpperCase() })
+const libelleNiveau = (n: string): string => `${n === 'ps' ? t('comparer.beaucoupPlus', { niv: n.toUpperCase() })
   : t('comparer.jusqua', { niv: n.toUpperCase(), n: NOMBRE_MAX[n as keyof typeof NOMBRE_MAX] ?? 0 })}`
 
 // ── Jeu : une seule tentative, puis on enchaîne (maternelle) ──

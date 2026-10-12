@@ -12,6 +12,10 @@ mentions légales reportées (`/mentions-legales`), anciennes routes de l'app re
 (Search Console, Bing). Important mais pas bloquant : relecture du breton (`AvisTraduction` doit s'afficher sur skoolik), passe
 clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du programme (corriger change les fiches : `--maj` justifié).
 
+## Demandes du 2026-10-12
+
+- [x] **Menu : les emojis de l'appareil sont mal alignés** (les dessins OpenMoji le sont bien) — fait : `<Icone>` passe de `vertical-align: -0.25em` (réglé pour le dessin de 1.4em) à `middle`, juste pour les deux familles (3 px trop bas → aligné, mesuré dans le menu).
+
 ## Demandes du 2026-10-09
 
 - [x] **Grammaire coupée en cinq exercices** (demande du 2026-10-10, adresses publiées libres) — fait : `grammaire-phrase`, `grammaire-mots` (nature des mots, pronoms), `grammaire-sujet-verbe`, `grammaire-accords`, `grammaire-complements` (CM1-CM2), un par compétence du programme ; moteur commun dans `src/moteurs/grammaire/` ; une vue partagée (`GrammaireExercice.vue`) ; plus de bilan par classe, une fiche par compétence et niveau ; `/francais/grammaire` redirige vers `/francais`. Les tirages sont identiques à ceux d'avant (sauf « nature des mots », qui faisait deux pages), vérifié par comparaison des questions tirées. À faire : tester le jeu à la main ; titres bretons (`grammaire*` à relire) ; l'ancienne adresse `exercices-grammaire-<niveau>` n'existe plus.

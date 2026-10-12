@@ -26,6 +26,7 @@ const html = computed(() => {
 </script>
 
 <style scoped>
-/* alignée sur le texte : centrée sur la hauteur des minuscules, sans ligne de plus */
-.icone-interface { display: inline-flex; vertical-align: -0.25em; line-height: 1; flex: none; }
+/* alignée sur le texte : centrée sur le milieu des minuscules (middle), quelle que soit sa hauteur : l'emoji de l'appareil (1em)
+   comme le dessin OpenMoji (1.4em) */
+.icone-interface { display: inline-flex; vertical-align: middle; line-height: 1; flex: none; }
 </style>

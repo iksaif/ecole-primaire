@@ -34,6 +34,15 @@ export default {
     paliers: 'Sans couleur : cinq niveaux',
   },
   style: { ruban: 'Ruban noué', bandeau: 'Bandeau', rond: 'Rond (gommette)' },
+  // le brevet papier (src/ceintures/brevet.ts)
+  brevet: {
+    titre: 'Brevet',
+    consigne: '{n} questions, sans calculatrice. Pour réussir : {bonnes} bonnes réponses sur {n}. Prends ton temps.',
+    consigneDuree: '{n} questions, sans calculatrice, en {minutes} minutes. Pour réussir : {bonnes} bonnes réponses sur {n}.',
+    resultat: 'Résultat',
+    validee: 'Ceinture validée',
+    pasEncore: 'Pas encore',
+  },
   // l'option (onglet « Appareil » des réglages) : cachée par défaut, comme le mode enseignant
   activer: {
     titre: 'Ceintures de compétences (en option)',

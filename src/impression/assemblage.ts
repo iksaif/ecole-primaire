@@ -35,6 +35,8 @@ export interface OptionsAssemblage {
   /** HTML posé après les blocs et avant le corrigé (un cadre de résultat) */
   apres?: string
   css?: string
+  /** titre affiché de la feuille : `null` pour n'en mettre aucun (l'en-tête `avant` en tient lieu) ; absent : `titre` */
+  h1?: string | null
 }
 
 const ENTETE = /<p class="entete">[\s\S]*?<\/p>/g
@@ -68,7 +70,7 @@ function titreDuBloc(b: Bloc): string {
   return b.fragment.h1 ?? echapper(b.fragment.titre)
 }
 
-export function assemblerFiches({ titre, langue, blocs, corrige, police, cssPolices, entete = true, pageParBloc = false, avant = '', apres = '', css: cssEnPlus = '' }: OptionsAssemblage): string {
+export function assemblerFiches({ titre, langue, blocs, corrige, police, cssPolices, entete = true, pageParBloc = false, avant = '', apres = '', css: cssEnPlus = '', h1 }: OptionsAssemblage): string {
   const parties = blocs.map(b => ({ bloc: b, titre: titreDuBloc(b), ...separer(b.fragment.corps) }))
   const html = parties.map((p, i) => `<section class="bloc bloc-${i}${pageParBloc ? ' bloc-page' : ''}">
       ${p.titre ? `<h2 class="titre-bloc">${p.titre}</h2>` : ''}${p.sans}</section>`).join('\n')
@@ -79,7 +81,7 @@ export function assemblerFiches({ titre, langue, blocs, corrige, police, cssPoli
   const polices = [...new Set([cssPolices ?? '', ...blocs.map(b => b.fragment.cssPolices)].filter(Boolean))].join('\n')
   const css = [CSS_ASSEMBLAGE, cssEnPlus, ...blocs.map((b, i) => cssDuBloc(b.fragment.css, i))].join('\n')
   return documentFiche({
-    titre, langue, police, cssPolices: polices, css, largeur: '700px', marge: '1.2cm',
+    titre, langue, h1, police, cssPolices: polices, css, largeur: '700px', marge: '1.2cm',
     corps: `${entete ? ligneNomDate(langue) : ''}${avant}${html}${apres}${sectionCorrige}`,
   })
 }

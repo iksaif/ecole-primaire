@@ -14,6 +14,7 @@ import { module as brevet } from '../src/exercices/ceintures-brevet/index.ts'
 import { PISTES, IDS_PISTES, pisteDeExercice, ceintureDisponible, EXERCICES_AVEC_BREVET as EXERCICES_PISTES } from '../src/ceintures/pistes.ts'
 import { reglagesDuNiveau } from '../src/noyau/reglages.ts'
 import { REGISTRE } from '../src/exercices/index.ts'
+import { brevetPapier, tirageDuBrevet } from '../src/ceintures/brevet.ts'
 import { LANGUES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -192,6 +193,49 @@ for (const piste of Object.values(PISTES).filter(p => p.exercice)) {
   const cm = PISTES['calcul-mental']
   const classes = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
   verifier(!ceintureDisponible(cm, 4, 'cp', classes) && ceintureDisponible(cm, 4, 'ce1', classes) && ceintureDisponible(cm, 0, 'cp', classes) && !ceintureDisponible(cm, 6, 'ce1', classes) && !ceintureDisponible(cm, 0, 'ps', classes), '« × 10 et tables » n’existe pas au CP ; les autres, si ; une ceinture hors piste ou une classe hors exercice : non')
+}
+
+console.log('Brevet papier : un assemblage de la fiche de l’exercice')
+const brevetDe2 = (piste, indice, niveau, extra = {}) => {
+  const p = PISTES[piste]
+  return { module: REGISTRE.find(m => m.definition.id === p.exercice), piste: p, indice, niveau, graine: 5, langue: 'fr', ceintures: DEFAUT_CEINTURES, ...extra }
+}
+for (const piste of Object.values(PISTES).filter(p => p.exercice)) {
+  const classes = Object.keys(REGISTRE.find(m => m.definition.id === piste.exercice).definition.niveaux)
+  for (const niveau of classes) for (const indice of piste.ceintures.keys()) {
+    if (!ceintureDisponible(piste, indice, niveau, classes)) continue
+    const nom = `${piste.id}, ceinture ${indice + 1}, ${niveau}`
+    const d = brevetDe2(piste.id, indice, niveau)
+    const t = tirageDuBrevet(d)
+    const voulues = piste.ceintures[indice].questions ?? DEFAUT_CEINTURES.questions
+    const html = brevetPapier(d)
+    const manque = html.match(/\b(ceintures|ceinture|brevet|communs)\.[a-z-]+/)
+    verifier(t.nbQuestions > 0 && t.nbQuestions <= voulues && t.bonnes === Math.ceil(t.nbQuestions * 0.9)
+      && (html.match(/class="entete"/g) ?? []).length === 1 && (html.match(/<section class="corrige"/g) ?? []).length === 1
+      && html.includes(`${t.bonnes} bonnes réponses sur ${t.nbQuestions}`) && html.includes('<svg') && !manque,
+    `${nom} : ${t.nbQuestions} questions (au plus ${voulues}), ${t.bonnes} bonnes réponses, un entête, un corrigé${manque ? ` — clé brute ${manque[0]}` : ''}`)
+    if (piste.id === 'tables') {
+      const operandes = [...t.fragment.corps.matchAll(/(\d+) × (\d+) =/g)].map(m => Number(m[1]))
+      const tables = piste.ceintures[indice].reglages(niveau).tables
+      verifier(operandes.length > 0 && operandes.every(a => tables.includes(a)), `${nom} : seulement les tables ${tables.join(', ')}`)
+    }
+  }
+}
+{
+  const dernier = tirageDuBrevet(brevetDe2('tables', 5, 'cm1'))
+  verifier(dernier.nbQuestions === 30 && brevetPapier(brevetDe2('tables', 5, 'cm1')).includes('en 3 minutes'), 'tables, dernière ceinture : 30 questions en 3 minutes (réglage de la ceinture, pas du réglage commun)')
+  const reduit = tirageDuBrevet(brevetDe2('tables', 0, 'ce2', { ceintures: { ...DEFAUT_CEINTURES, questions: 5, seuil: 80 } }))
+  verifier(reduit.nbQuestions === 5 && reduit.bonnes === 4, 'réglage commun : 5 questions, 80 % → 4 bonnes réponses')
+  const vingt = tirageDuBrevet(brevetDe2('calcul-mental', 0, 'ce2', { ceintures: { ...DEFAUT_CEINTURES, questions: 20, seuil: 80 } }))
+  verifier(vingt.nbQuestions === 20 && vingt.bonnes === 16 && vingt.config.nbFiche >= 20, 'calcul mental : 20 questions (le nombre de calculs de la fiche suit), 16 bonnes réponses sur 20')
+  const perso = tirageDuBrevet(brevetDe2('tables', 0, 'ce2', { reglages: { tables: [7, 11], jusqu: 12 } }))
+  verifier(perso.config.tables.join() === '7,11' && perso.config.jusqu === 12, 'tables choisies et « jusqu’à 12 » : elles l’emportent sur la ceinture')
+  verifier(brevetPapier(brevetDe2('tables', 1, 'ce1')) === brevetPapier(brevetDe2('tables', 1, 'ce1')) && brevetPapier(brevetDe2('tables', 1, 'ce1')) !== brevetPapier(brevetDe2('tables', 1, 'ce1', { graine: 6 })), 'même graine, même brevet ; une autre, un autre')
+  let refus = ''
+  try { brevetPapier(brevetDe2('calcul-mental', 4, 'cp')) } catch (e) { refus = String(e.message) }
+  verifier(/n’existe pas en cp/.test(refus), '« × 10 et tables » au CP : refusé, pas de repli silencieux')
+  const br = brevetPapier(brevetDe2('calcul-mental', 2, 'ce1', { langue: 'br' }))
+  verifier(br.includes('lang="br"') && !/\b(ceintures|ceinture|brevet)\.[a-z-]+/.test(br), 'en breton : un document complet sans clé brute')
 }
 
 console.log('Option (cachée par défaut)')

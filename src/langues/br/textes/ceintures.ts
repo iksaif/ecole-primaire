@@ -36,6 +36,14 @@ export default {
     paliers: 'Hep liv : pemp live', // br: à relire
   },
   style: { ruban: 'Gouriz stag', bandeau: 'Bandenn', rond: 'Kelc’h (gomedenn)' }, // br: à relire
+  brevet: { // br: à relire
+    titre: 'Brevet',
+    consigne: '{n} goulenn, hep jedoù. Evit tapout anezhañ : {bonnes} respont mat diwar {n}. Kemer da amzer.',
+    consigneDuree: '{n} goulenn, hep jedoù, e {minutes} munut. Evit tapout anezhañ : {bonnes} respont mat diwar {n}.',
+    resultat: 'Disoc’h',
+    validee: 'Gouriz gounezet',
+    pasEncore: 'N’eo ket c’hoazh',
+  },
   activer: {
     titre: 'Gourizioù barregezhioù (dibabus)', // br: à relire
     aide: 'Live liv evit heuliañ e brogres : fichennoù da voullañ (levrig, brevedoù, gourizioù da droc’hañ, taolenn ar glasad) hag, diwezhatoc’h, brevedoù da ober war ar skramm. Kuzh e chomont keit ha ma n’int ket gweredekaet.', // br: à relire

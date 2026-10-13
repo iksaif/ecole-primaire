@@ -148,3 +148,15 @@ export function brevetHtml(d: DonneesSupport, indice: number, lignes: readonly {
   return `${entete}<p class="consigne">${e(l.consigne)}</p><div class="questions">${questions}</div>${resultat}
     <section class="corrige"><h2>${e(l.corrige)} — ${e(l.brevet)} ${e(c.nom)}</h2><p>${corrige}</p></section>`
 }
+
+/** L'en-tête d'un brevet (la ceinture dessinée, son nom, le titre de la piste) suivi de la consigne. */
+export function enteteBrevetHtml(d: DonneesSupport, indice: number, brevet: string, consigne: string): string {
+  const c = d.ceintures[Math.min(Math.max(indice, 0), d.ceintures.length - 1)]
+  return `<div class="brevet-entete">${dessin(c, d, '22mm')}<div><div class="nom-ceinture">${e(brevet)} — ${e(c.nom)}</div><div class="objectif">${e(d.titre)}</div></div></div>
+    <p class="consigne">${e(consigne)}</p>`
+}
+
+/** Le cadre du résultat d'un brevet : « Résultat : ___ / n », ceinture validée, pas encore. */
+export function resultatBrevetHtml(l: { resultat: string, validee: string, pasEncore: string }, nbQuestions: number): string {
+  return `<div class="resultat"><span>${e(l.resultat)} : ____ / ${nbQuestions}</span><span><span class="case"></span>${e(l.validee)}</span><span><span class="case"></span>${e(l.pasEncore)}</span></div>`
+}

@@ -2,7 +2,7 @@
 import { PALETTES, IDS_PALETTES, couleursDe } from '../src/ceintures/palettes.ts'
 import { ceintureSvg } from '../src/ceintures/dessin.ts'
 import { DEFAUT_CEINTURES, BORNES, STYLES_CEINTURE, assainirCeintures, brevetReussi } from '../src/ceintures/reglages.ts'
-import { demandeCeintures, ceinturesActives, ceinturesActivesPour } from '../src/contexte/ceintures.ts'
+import { demandeDeLAdresse, extensionActive, extensionActivePour } from '../src/extensions/activation.ts'
 import { SITES } from '../src/sites.ts'
 import { module as activite } from '../src/exercices/ceintures/index.ts'
 import { traducteur } from '../src/langues/catalogue.ts'
@@ -83,7 +83,7 @@ for (const langue of ['fr', 'br']) {
   const T = traducteur(activite.textes, 'fr')
   const reglages = { ...base, support: 'bandes' }
   const x = activite.generateur.questionsFiche({ niveau: 'ce1', reglages, T, rng: creerRng(7) })
-  const nb = activite.fiche.fiche({ questions: x, reglages, T, langue: 'fr', ceintures: { ...DEFAUT_CEINTURES, noirEtBlanc: true } })
+  const nb = activite.fiche.fiche({ questions: x, reglages, T, langue: 'fr', extensions: { ceintures: { ...DEFAUT_CEINTURES, noirEtBlanc: true } } })
   verifier(nb.includes('<pattern') && !nb.includes('#3aa655'), 'noir et blanc : des motifs, aucune teinte')
   const libre = activite.generateur.questionsFiche({ niveau: 'ce1', reglages: { ...base, piste: 'libre', intitule: ' Mon titre ', objectifs: 'a\n\n b |c' }, T, rng: creerRng(7) })
   verifier(libre.titreLibre === 'Mon titre' && libre.objectifs.join() === 'a,b,c', 'piste libre : titre et objectifs nettoyés')
@@ -117,12 +117,12 @@ for (const langue of ['fr', 'br']) {
   const T = traducteur(brevet.textes, langue)
   const reglages = { ...REGLAGES_BREVET, ceinture: 4 }
   const x = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages, rng: creerRng(5) })
-  const html = brevet.fiche.fiche({ questions: x, reglages, T, langue, ceintures: { ...DEFAUT_CEINTURES, questions: 10, seuil: 90 } })
+  const html = brevet.fiche.fiche({ questions: x, reglages, T, langue, extensions: { ceintures: { ...DEFAUT_CEINTURES, questions: 10, seuil: 90 } } })
   const manque = html.match(/\b(ceintures|ceinture|tables)\.[a-z-]+/)
   verifier(x.indice === 3 && (html.match(/class="q"/g) ?? []).length === 10 && html.includes('class="corrige"') && html.includes('class="entete"') && !manque, `${langue} brevet papier : 10 questions, corrigé, aucune clé brute${manque ? ' (' + manque[0] + ')' : ''}`)
   if (langue === 'fr') {
     verifier(html.includes('9 bonnes réponses sur 10') && html.includes('Ceinture verte'), 'brevet papier : 9 bonnes réponses sur 10, ceinture verte')
-    const html20 = brevet.fiche.fiche({ questions: x, reglages, T, langue, ceintures: { ...DEFAUT_CEINTURES, questions: 20, seuil: 80 } })
+    const html20 = brevet.fiche.fiche({ questions: x, reglages, T, langue, extensions: { ceintures: { ...DEFAUT_CEINTURES, questions: 20, seuil: 80 } } })
     verifier(html20.includes('16 bonnes réponses sur 20'), 'brevet papier : 80 % de 20 = 16')
   }
 }
@@ -132,9 +132,9 @@ for (const langue of ['fr', 'br']) {
 }
 
 console.log('Option (cachée par défaut)')
-verifier(demandeCeintures({ ceintures: 'oui' }) === true && demandeCeintures({ ceintures: 'non' }) === false && demandeCeintures({ ceintures: '1' }) === null && demandeCeintures({}) === null, 'demandeCeintures : oui, non, ou rien')
-verifier(demandeCeintures({ ceintures: ['oui', 'non'] }) === true, 'demandeCeintures : le premier de plusieurs paramètres')
-verifier(Object.values(SITES).every(s => s.ceinturesVisibles === false), 'aucun site ne propose les ceintures d’office')
-verifier(ceinturesActives.value === false && Object.values(SITES).every(s => !ceinturesActivesPour(s)), 'sans réglage d’appareil : les ceintures sont cachées')
+verifier(demandeDeLAdresse({ ceintures: 'oui' }, 'ceintures') === true && demandeDeLAdresse({ ceintures: 'non' }, 'ceintures') === false && demandeDeLAdresse({ ceintures: '1' }, 'ceintures') === null && demandeDeLAdresse({}, 'ceintures') === null, 'demandeDeLAdresse : oui, non, ou rien')
+verifier(demandeDeLAdresse({ ceintures: ['oui', 'non'] }, 'ceintures') === true, 'demandeDeLAdresse : le premier de plusieurs paramètres')
+verifier(Object.values(SITES).every(s => s.extensionsVisibles.length === 0), 'aucun site ne propose d’extension d’office')
+verifier(!extensionActive('ceintures') && Object.values(SITES).every(s => !extensionActivePour('ceintures', s)), 'sans réglage d’appareil : les ceintures sont cachées')
 
 process.exit(nbEchecs() ? 1 : 0)

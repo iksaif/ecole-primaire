@@ -27,22 +27,24 @@
     <ChoixPolice v-if="police" class="police-fiche" />
     <ChoixImages v-if="images" />
     <ChoixPictogrammes v-if="pictogrammes" />
-    <ChoixCeintures v-if="ceintures" />
+    <!-- les choix des extensions actives que l'exercice accepte (src/extensions/) -->
+    <component :is="x.composant" v-for="x in composantsExtensions" :key="x.id" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, useId } from 'vue'
+import { computed, defineAsyncComponent, useId } from 'vue'
+import type { Component } from 'vue'
 import ChoixPolice from './ChoixPolice.vue'
 import { useOptionsFiche, CHOIX_CORRIGE } from './optionsFiche.ts'
 import ChoixPictogrammes from './ChoixPictogrammes.vue'
-import ChoixCeintures from '../ceintures/ChoixCeintures.vue'
+import { extensionsActives } from '../extensions/activation.ts'
 import { useLangue } from '../langues/useLangue.ts'
 
 // chargé à la demande : ses aperçus tirent les dessins des emojis (src/images/donnees/), inutiles aux fiches sans image
 const ChoixImages = defineAsyncComponent(() => import('./ChoixImages.vue'))
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   // la fiche a un corrigé → choix « sans / sur une autre page / en bas à l'envers »
   avecCorrige?: boolean
   // le choix de la police est proposé
@@ -51,15 +53,24 @@ withDefaults(defineProps<{
   images?: boolean
   // le choix des pictogrammes des consignes (selon la classe, toujours, jamais) et de leur ligne de crédit est proposé
   pictogrammes?: boolean
-  // le choix des ceintures (palette, dessin, noir et blanc : src/ceintures/) est proposé : fiche de ceintures
-  ceintures?: boolean
-}>(), { avecCorrige: true, police: true, images: false, pictogrammes: false, ceintures: false })
+  // les extensions que l'exercice accepte (`extensions` de sa définition) : leurs choix communs sont proposés quand elles sont actives
+  extensions?: readonly string[]
+}>(), { avecCorrige: true, police: true, images: false, pictogrammes: false, extensions: () => [] })
 defineSlots<{ default?(): unknown }>()
 
 const { t } = useLangue()
 const idTitre = useId()
 const nomCorrige = useId()
 const options = useOptionsFiche()
+
+// un composant asynchrone par extension, créé une fois (un nouveau à chaque calcul remonterait le choix)
+const parExtension = new Map<string, Component>()
+const composantsExtensions = computed(() => extensionsActives.value
+  .filter(e => e.optionsFiche && props.extensions.includes(e.id))
+  .map(e => {
+    if (!parExtension.has(e.id)) parExtension.set(e.id, defineAsyncComponent(e.optionsFiche!))
+    return { id: e.id, composant: parExtension.get(e.id)! }
+  }))
 </script>
 
 <style scoped>

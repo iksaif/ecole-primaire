@@ -42,7 +42,7 @@ export function traductionAssezSure(r: AvecTraduction, mode: Mode, regionale: La
 }
 
 /** Ce que la règle lit d'une ressource ou d'une entrée de fiche : ses langues et la confiance dans sa traduction. */
-export interface AvecTraduction { readonly langues: readonly string[], readonly confiance?: NiveauConfiance | null, readonly option?: 'ceintures' }
+export interface AvecTraduction { readonly langues: readonly string[], readonly confiance?: NiveauConfiance | null, readonly extension?: string }
 
 /** Le mode montre-t-il une langue régionale de cette ressource ? (français seul : non) */
 export function traductionMontree(r: AvecTraduction, mode: Mode, regionale: Langue | null): boolean {

@@ -74,11 +74,11 @@
           <ChoixPolice />
         </section>
 
-        <!-- les ceintures (plan 15), en option : le bloc n'existe que si elles sont proposées -->
-        <section v-if="ceinturesActives" class="bloc" data-section="ceintures">
-          <h2><Icone nom="trophee" /> {{ t('ceintures.reglage.titre') }}</h2>
-          <p class="aide">{{ t('ceintures.reglage.aide') }}</p>
-          <ChoixCeintures complet />
+        <!-- les blocs des extensions actives (src/extensions/) -->
+        <section v-for="e in extensionsAvecReglages" :key="e.id" class="bloc" :data-section="e.id">
+          <h2><Icone :nom="e.reglages!.icone" /> {{ texte(e.reglages!.titre) }}</h2>
+          <p class="aide">{{ texte(e.reglages!.aide) }}</p>
+          <component :is="blocDe(e)" />
         </section>
 
         <section class="bloc" data-section="voix">
@@ -100,11 +100,12 @@
           </div>
         </section>
 
-        <section class="bloc" data-section="ceintures-option">
-          <h2><Icone nom="trophee" /> {{ t('ceintures.activer.titre') }}</h2>
-          <p class="aide">{{ t('ceintures.activer.aide') }}</p>
-          <label class="case"><input type="checkbox" :checked="ceinturesActives" :disabled="SITE.ceinturesVisibles" @change="basculerCeintures"> {{ t('ceintures.activer.case') }}</label>
-          <p v-if="SITE.ceinturesVisibles" class="aide">{{ t('ceintures.activer.parSite') }}</p>
+        <!-- l'activation de chaque extension : cachée par défaut (src/extensions/activation.ts) -->
+        <section v-for="e in EXTENSIONS" :key="e.id" class="bloc" :data-section="`${e.id}-option`">
+          <h2><Icone nom="reglages" /> {{ texte(e.activation.titre) }}</h2>
+          <p class="aide">{{ texte(e.activation.aide) }}</p>
+          <label class="case"><input type="checkbox" :checked="extensionActive(e.id)" :disabled="proposeeParLeSite(e.id)" @change="basculerExtension(e.id, $event)"> {{ texte(e.activation.case) }}</label>
+          <p v-if="proposeeParLeSite(e.id)" class="aide">{{ texte(e.activation.parSite) }}</p>
         </section>
 
         <section class="bloc">
@@ -135,12 +136,15 @@ import type { FamilleImages } from '../images/preference.ts'
 import { chargerDessinsInterface, dessinsInterfacePrets, useIconesInterface } from '../images/useImagesFiche.ts'
 // Réglages de l'appareil : langue d'interface, mode de langue, classe(s), profil (tous par le contexte, comme la barre), police,
 // voix et vitesse de la lecture à voix haute (ReglageVoix, mémorisés par useTTS).
-import { computed, nextTick, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
+import type { Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
-import ChoixCeintures from '../ceintures/ChoixCeintures.vue'
-import { ceinturesActives, changerCeintures } from '../contexte/ceintures.ts'
+import { EXTENSIONS } from '../extensions/registre.ts'
+import { changerExtension, extensionActive, extensionsActives, proposeeParLeSite } from '../extensions/activation.ts'
+import type { Extension } from '../extensions/types.ts'
+import type { CleTexte } from '../langues/traduire.ts'
 import ReglageVoix from '../noyau/ReglageVoix.vue'
 import { useLangue } from '../langues/useLangue.ts'
 import JaugeConfiance from '../ressources/composants/JaugeConfiance.vue'
@@ -214,9 +218,20 @@ function basculerEnseignant(e: Event): void {
   changerModeEnseignant((e.target as HTMLInputElement).checked)
 }
 
-/** la case « Proposer les ceintures » : le réglage de l'appareil (le même que l'adresse spéciale `?ceintures=oui`) */
-function basculerCeintures(e: Event): void {
-  changerCeintures((e.target as HTMLInputElement).checked)
+/** Un texte de l'interface dont la clé vient d'une extension (src/extensions/types.ts) : sans paramètre. */
+const texte = (cle: CleTexte): string => (t as (c: string) => string)(cle)
+
+/** la case d'une extension : le réglage de l'appareil (le même que l'adresse spéciale `?<id>=oui`) */
+function basculerExtension(id: string, e: Event): void {
+  changerExtension(id, (e.target as HTMLInputElement).checked)
+}
+
+// les blocs de réglages des extensions actives ; leur composant se charge à la demande, une fois par extension
+const extensionsAvecReglages = computed(() => extensionsActives.value.filter(e => e.reglages))
+const blocs = new Map<string, Component>()
+function blocDe(e: Extension): Component {
+  if (!blocs.has(e.id)) blocs.set(e.id, defineAsyncComponent(e.reglages!.composant))
+  return blocs.get(e.id)!
 }
 
 const message = ref('')

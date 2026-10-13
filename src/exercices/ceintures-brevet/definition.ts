@@ -14,6 +14,7 @@ export default definir({
   domaine: D.nombresCalcul,
   emoji: 'trophee',
   jeu: false,
+  extensions: ['ceintures'],
   bilanParClasse: false,
   niveauDefaut: 'ce2',
   competences: [K.tablesMultiplication],

@@ -31,6 +31,7 @@ import type { ModuleAffiche } from '../affiches/types.ts'
 import { traducteurAffiche } from '../affiches/textes.ts'
 import type { EntreeRegistre } from '../exercices/index.ts'
 import { LANGUE_SOURCE, LANGUES, CODES, confianceFiche, estLangue } from '../langues/registre.ts'
+import { extensionDeRessource } from '../extensions/registre.ts'
 import { languesDe } from '../langues/catalogue.ts'
 import { lireFeuille } from '../langues/traduire.ts'
 import type { CleTexte } from '../langues/traduire.ts'
@@ -58,8 +59,11 @@ export interface SourcesCatalogue {
 }
 
 /** `exemple-corpus` → `exempleCorpus` : le nom de la section de textes d'un exercice. */
-/** Les exercices réservés à une option cachée par défaut : les activités des ceintures (src/contexte/ceintures.ts). */
-const optionDe = (id: string): { option: 'ceintures' } | Record<string, never> => (id === 'ceintures' || id === 'ceintures-brevet' ? { option: 'ceintures' } : {})
+/** L'extension (src/extensions/) qui ajoute cette ressource, s'il y en a une : la ressource n'est montrée dans les listes que si elle est active. */
+const extensionDe = (ressource: string): { extension: string } | Record<string, never> => {
+  const e = extensionDeRessource(ressource)
+  return e ? { extension: e.id } : {}
+}
 
 const sectionDe = (id: string): string => id.replace(/-(\w)/g, (_, c: string) => c.toUpperCase())
 
@@ -98,7 +102,7 @@ function ressourceExercice({ definition, textes, exemple }: EntreeRegistre, site
     badges: { jeu: aUnJeu(definition), imprimable: true }, usage: 'sentrainer', langues, route: definition.route,
     exemple: estExemple(exemple === true, domaine),
     confiance: confianceFiche(langues, 'exercice', definition.id),
-    ...optionDe(definition.id),
+    ...extensionDe(`exercice:${definition.id}`),
   }
 }
 

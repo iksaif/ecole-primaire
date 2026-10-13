@@ -15,6 +15,7 @@ export default definir({
   domaine: D.emc,
   emoji: 'trophee',
   jeu: false,
+  extensions: ['ceintures'],
   aleatoire: false,
   bilanParClasse: false,
   corrige: false,

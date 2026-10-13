@@ -66,6 +66,8 @@ export interface SpecExercice<C extends SpecReglages, N extends Partial<Record<C
   contenu?: 'fr' | 'interface'
   /** `false` : exercice « fiche seule » (pas de jeu en ligne : ni `questions` ni `verifier`, pas d'onglet « Jouer »). Défaut : `true` */
   jeu?: boolean
+  /** les extensions (src/extensions/) que l'exercice accepte : leurs choix communs sont proposés dans « Sur la fiche » quand elles sont actives. Défaut : aucune */
+  extensions?: readonly string[]
   /** `false` : la fiche ne tire rien au hasard : un seul exemplaire par fiche publiée. Défaut : `true` */
   aleatoire?: boolean
   /** `false` : pas de fiche « bilan » par classe, seulement celles de `fiches`. Défaut : `true` */
@@ -170,7 +172,7 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
 
   // les types de ReglagesDe décrivent ce que les contrôles ci-dessus viennent de vérifier : un seul point de conversion
   return {
-    id: spec.id, route: spec.route, domaine: spec.domaine, emoji: spec.emoji, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, niveauDefaut,
+    id: spec.id, route: spec.route, domaine: spec.domaine, emoji: spec.emoji, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, extensions: spec.extensions ?? [], niveauDefaut,
     aleatoire: spec.aleatoire ?? true, bilanParClasse: spec.bilanParClasse ?? true, corrige: spec.corrige ?? true,
     reglages, options, ...(Object.keys(libres).length ? { libres } : {}), niveaux, fiches,
   } as unknown as DefinitionTypee<ReglagesDe<C, N>>

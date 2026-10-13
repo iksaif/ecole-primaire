@@ -55,8 +55,8 @@ export interface Badges {
 interface Contenu extends Commun {
   /** confiance dans sa traduction en langue régionale (0 à 4, src/langues/confiance.ts) ; `null` : pas de traduction (français seul) */
   readonly confiance: NiveauConfiance | null
-  /** réservée à une option cachée par défaut (les ceintures : src/contexte/ceintures.ts) : montrée dans les listes seulement quand elle est active */
-  readonly option?: 'ceintures'
+  /** l'extension (src/extensions/) qui ajoute cette ressource : montrée dans les listes seulement quand l'extension est active */
+  readonly extension?: string
   readonly matiere: Matiere
   readonly domaine: DomaineId
   readonly badges: Badges

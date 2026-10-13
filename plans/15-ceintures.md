@@ -285,3 +285,11 @@ Les ceintures en deviennent un **consommateur** : le brevet papier d'une ceintur
 4. Les onglets d'exercice.
 
 Risques : le contrat de fragment touche chaque `fiche()` (ou au moins le gabarit `documentFiche`) et les instantanés des fiches ne doivent pas bouger ; l'ordre des couches doit être vérifié (un test d'imports, comme celui du « noyau n'importe jamais affiches »).
+
+## 15. Étape 1 du §14 faite (2026-10-13)
+
+`src/extensions/` : `types.ts` (une extension : activation, ressources, options de fiche, contexte de fiche, bloc de réglages ; composants chargés à la demande, donc lisible par node), `registre.ts` (l'unique liste),
+`activation.ts` (site `extensionsVisibles` ou appareil : case dans « Appareil », `?<id>=oui|non`, clé `extension_<id>`). `src/ceintures/extension.ts` branche les ceintures. Les parties communes n'ont plus le mot « ceinture » :
+`CadreExercice` / `OptionsFiche` (prop `extensions`, issue de `definition.extensions`), `useFicheExercice` et `ParamsFiche.extensions[<id>]`, `ReglagesView` (blocs génériques), `useAffichable` (`ressource.extension`), `sites.ts`, routeur.
+`tests/extensions.test.mjs` vérifie le registre et balaie les sources (aucune mention hors du dossier des ceintures, de ses deux activités, des registres et des textes). Les instantanés n'ont pas bougé.
+Écart : en développement, une extension inactive masque quand même ses ressources (c'est un choix de l'utilisateur, pas une réserve sur une traduction). Restent : l'assemblage de fiches (§14.4), les onglets d'exercice (§14.3).

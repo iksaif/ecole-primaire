@@ -3,7 +3,7 @@
     <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('ceintures.titre') }}</h1>
     <p class="intro">{{ t('ceintures.intro') }}</p>
 
-    <CadreExercice fiche-seule :mode="mode" :fiche="fiche" :config="config" :police="false" ceintures>
+    <CadreExercice fiche-seule :mode="mode" :fiche="fiche" :config="config" :police="false" :extensions="DEFINITION.extensions">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage cartes :definition="DEFINITION" :niveau="config.niveau" cle="support" v-model="config.support" :titre="t('ceintures.supportTitre')"
         :libelle="s => t(`ceintures.support.${s}`)" :description="s => t(`ceintures.supportDesc.${s}`)" />

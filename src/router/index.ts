@@ -4,7 +4,7 @@
 // Les anciennes adresses `/#/chemin` sont réécrites en `/chemin` avant le démarrage par le script d'index.html.
 import { createRouter, createWebHistory } from 'vue-router'
 import { appliquerAdresseEnseignant } from '../contexte/enseignant.ts'
-import { appliquerAdresseCeintures } from '../contexte/ceintures.ts'
+import { appliquerAdresseExtensions } from '../extensions/activation.ts'
 import type { RouteRecordRaw } from 'vue-router'
 import { SITE } from '../sites.ts'
 import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
@@ -50,8 +50,8 @@ const router = createRouter({
 
 // Le mode enseignant, caché par défaut, s'active ou se désactive par `?enseignant=oui` / `?enseignant=non` (src/contexte/enseignant.ts) : le paramètre est retiré de l'adresse.
 router.beforeEach(to => appliquerAdresseEnseignant(to))
-// Les ceintures, en option : `?ceintures=oui` / `?ceintures=non` (src/contexte/ceintures.ts), même principe
-router.beforeEach(to => appliquerAdresseCeintures(to))
+// Les extensions, en option : `?<id>=oui` / `?<id>=non` (src/extensions/activation.ts), même principe
+router.beforeEach(to => appliquerAdresseExtensions(to))
 
 // Une adresse qui porte son propre contexte (`?classes=cm1`) le garde d'une page à l'autre tant qu'on suit des liens du site :
 // les liens internes n'ont pas à le répéter. Un changement sur la même page (replace) est voulu tel quel : on n'y touche pas.

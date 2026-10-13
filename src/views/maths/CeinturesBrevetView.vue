@@ -3,7 +3,7 @@
     <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('ceinturesBrevet.titre') }}</h1>
     <p class="intro">{{ t('ceinturesBrevet.intro') }}</p>
 
-    <CadreExercice fiche-seule :mode="mode" :fiche="fiche" :config="config" :police="false" ceintures @regenerer="nouvelle">
+    <CadreExercice fiche-seule :mode="mode" :fiche="fiche" :config="config" :police="false" :extensions="DEFINITION.extensions" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="piste" v-model="config.piste" :titre="t('ceinturesBrevet.piste')"
         :libelle="() => t('tables.titre')" />

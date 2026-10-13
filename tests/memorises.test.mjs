@@ -8,17 +8,20 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { EXEMPLES } from '../src/exercices/dev.ts'
+import { EXTENSIONS } from '../src/extensions/registre.ts'
 import { lancerNavigateur, contexte, surveiller, verifier, nbEchecs, app, appDev, URL_SITE } from './outils.mjs'
 import { cheminsDeLaTable, cheminsDev, adresses, valeursValides } from './outils-routes.mjs'
 
 // ── les clés : dossiers de la base (l'ancien monde — views, composables, i18n… — n'est pas lu) ──
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')
-const DOSSIERS = ['contexte', 'shell', 'pages', 'ressources', 'noyau', 'telechargements', 'router', 'langues', 'affiches', 'exercices', 'images', 'ceintures', 'main.ts', 'App.vue']
+const DOSSIERS = ['contexte', 'shell', 'pages', 'ressources', 'noyau', 'telechargements', 'router', 'langues', 'affiches', 'exercices', 'images', 'ceintures', 'extensions', 'main.ts', 'App.vue']
 const sources = c => statSync(c).isDirectory() ? readdirSync(c).flatMap(f => sources(join(c, f))) : /\.(js|ts|vue)$/.test(c) ? [c] : []
 const texte = DOSSIERS.flatMap(d => sources(join(src, d))).concat(join(src, 'utils/impression.js')).map(f => readFileSync(f, 'utf8')).join('\n')
 const CLES = [...new Set([
   ...[...texte.matchAll(/\b(?:charger|chargerValeur|chargerReglages|sauvegarder)(?:<[^>]*>)?\(\s*'([a-z][a-z_]*)'/g)].map(m => m[1]),
   ...[...texte.matchAll(/'ep_([a-z][a-z_]*)'/g)].map(m => m[1]),
+  // activation de chaque extension : `extension_<id>` (src/extensions/activation.ts, clé composée : le balayage ne la voit pas)
+  ...EXTENSIONS.map(e => `extension_${e.id.replaceAll('-', '_')}`),
   // réglages d'un exercice : `<id>_config` (cleReglages, src/noyau/useReglages.ts)
   ...EXEMPLES.map(e => `${e.definition.id.replaceAll('-', '_')}_config`),
 ])].sort()

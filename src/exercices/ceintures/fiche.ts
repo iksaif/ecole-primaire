@@ -1,5 +1,5 @@
 // Les ceintures — la fiche : le support choisi (livret, ceintures à découper, diplôme, passeport) de la piste, aux couleurs et au dessin des réglages communs
-// (ParamsFiche.ceintures, sinon le défaut : build des PDF publiés, instantanés). Pure (lisible par node).
+// (ParamsFiche.extensions.ceintures, sinon le défaut : build des PDF publiés, instantanés). Pure (lisible par node).
 import { documentFiche, ligneNomDate } from '../../impression/document.ts'
 import { estLangue, LANGUE_SOURCE } from '../../langues/registre.ts'
 import type { Langue } from '../../langues/registre.ts'
@@ -7,7 +7,7 @@ import { traduire } from '../../langues/traduire.ts'
 import type { ParamsFiche } from '../../noyau/types.ts'
 import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
-import { DEFAUT_CEINTURES } from '../../ceintures/reglages.ts'
+import { reglagesCeintures } from '../../ceintures/extension.ts'
 import { CSS_CEINTURES, bandesHtml, ceinturesDe, diplomeHtml, livretHtml, passeportHtml } from '../../ceintures/supports.ts'
 import type { DonneesSupport } from '../../ceintures/supports.ts'
 import type DEFINITION from './definition.ts'
@@ -24,8 +24,9 @@ function titreDeLaPiste(piste: TirageFiche['piste'], titreLibre: string, i: (cle
   return titreLibre || i('intituleAuto')
 }
 
-export function fiche({ questions: x, reglages, T, langue, police, cssPolices, ceintures = DEFAUT_CEINTURES }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, reglages, T, langue, police, cssPolices, extensions }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const t = T as (cle: string, params?: Record<string, unknown>) => string
+  const ceintures = reglagesCeintures(extensions)
   // les noms des couleurs, des supports et des pistes sont ceux de l'interface (section `ceintures`), dans la langue du contenu
   const l = estLangue(langue) ? langue : LANGUE_SOURCE
   const i = (cle: string, params?: Record<string, string | number>): string => (traduire as (l: string, c: string, p?: unknown) => string)(l, `ceintures.${cle}`, params)

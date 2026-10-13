@@ -131,6 +131,31 @@ for (const langue of ['fr', 'br']) {
   verifier(hors.indice === NB_CEINTURES_BREVET.tables - 1, 'numéro de ceinture au-delà de la piste : ramené à la dernière')
 }
 
+console.log('Brevets du calcul mental')
+// la réponse attendue d'une question, recalculée d'après son énoncé : « 14 + 10 = », « 20 − 2 = », « 7 × 2 = », « 18 ÷ 2 = », « 35 + … = 100 »
+function attendu(enonce) {
+  let m = enonce.match(/^(\d+) ([+−×÷]) (\d+) =$/)
+  if (m) { const [a, b] = [Number(m[1]), Number(m[3])]; return { '+': a + b, '−': a - b, '×': a * b, '÷': a / b }[m[2]] }
+  m = enonce.match(/^(\d+) \+ … = (\d+)$/)
+  return m ? Number(m[2]) - Number(m[1]) : NaN
+}
+const FAMILLES = [/^\d+ [+−] (1|2|10) =$/, /^\d+ [×÷] 2 =$/, /^\d+ \+ … = (10|100)$/, /^\d+ [+−] \d+ =$/, /^\d+ × (10|100) =$/]
+for (let indice = 0; indice < NB_CEINTURES_BREVET['calcul-mental']; indice++) {
+  const lignes = brevetDe('calcul-mental', indice, creerRng(8 + indice))
+  const justes = lignes.every(l => attendu(l.enonce) === Number(l.reponse) && Number(l.reponse) >= 0 && Number.isInteger(Number(l.reponse)))
+  const dansLaFamille = indice === 5 || lignes.every(l => FAMILLES[indice].test(l.enonce))
+  verifier(lignes.length >= 20 && lignes.length <= 30 && justes && dansLaFamille && new Set(lignes.map(l => l.enonce)).size === lignes.length, `calcul mental, ceinture ${indice + 1} : ${lignes.length} questions justes, sans doublon, de la bonne famille`)
+}
+verifier(new Set(brevetDe('calcul-mental', 5, creerRng(2)).map(l => FAMILLES.findIndex(f => f.test(l.enonce)))).size >= 4, 'calcul mental, dernière ceinture : plusieurs familles mêlées')
+verifier(JSON.stringify(brevetDe('calcul-mental', 1, creerRng(5))) === JSON.stringify(brevetDe('calcul-mental', 1, creerRng(5))), 'calcul mental : même graine, même brevet')
+{
+  const T = traducteur(brevet.textes, 'fr')
+  const reglages = { ...REGLAGES_BREVET, piste: 'calcul-mental', ceinture: 3 }
+  const x = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages, rng: creerRng(5) })
+  const html = brevet.fiche.fiche({ questions: x, reglages, T, langue: 'fr' })
+  verifier(x.tables.length === 0 && html.includes('Calcul mental') && !html.includes('tables :') && html.includes('Ceinture orange') && html.includes('class="corrige"'), 'brevet papier du calcul mental : titre de l’exercice, sans tables, ceinture orange, corrigé')
+}
+
 console.log('Option (cachée par défaut)')
 verifier(demandeDeLAdresse({ ceintures: 'oui' }, 'ceintures') === true && demandeDeLAdresse({ ceintures: 'non' }, 'ceintures') === false && demandeDeLAdresse({ ceintures: '1' }, 'ceintures') === null && demandeDeLAdresse({}, 'ceintures') === null, 'demandeDeLAdresse : oui, non, ou rien')
 verifier(demandeDeLAdresse({ ceintures: ['oui', 'non'] }, 'ceintures') === true, 'demandeDeLAdresse : le premier de plusieurs paramètres')

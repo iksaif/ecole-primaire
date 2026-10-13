@@ -25,8 +25,8 @@ export function fiche({ questions: x, reglages, T, langue, police, cssPolices, e
   const lignes = x.questions.slice(0, ceintures.questions)
   const bonnes = Math.ceil((lignes.length * ceintures.seuil) / 100)
   const donnees: DonneesSupport = {
-    // le titre de la piste et ses tables (« Tables de multiplication — tables : ×6, ×7 »)
-    titre: `${traduire(l, 'tables.titre')} — ${t('tablesDe', { liste: x.tables.map(n => `×${n}`).join(', ') })}`,
+    // le titre de la piste (celui de son exercice), et pour les tables leurs tables (« Tables de multiplication — tables : ×6, ×7 »)
+    titre: x.piste === 'tables' ? `${traduire(l, 'tables.titre')} — ${t('tablesDe', { liste: x.tables.map(n => `×${n}`).join(', ') })}` : traduire(l, 'calculMental.titre'),
     // un nom par ceinture de la piste (les objectifs ne sont pas écrits sur le brevet)
     ceintures: ceinturesDe(Array.from({ length: NB_CEINTURES_BREVET[x.piste] }, () => ''), couleur => i(`ceinture.${couleur.id}`), { ...ceintures, nbCeintures: NB_CEINTURES_BREVET[x.piste] }),
     reglages: ceintures,

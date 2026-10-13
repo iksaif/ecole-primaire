@@ -1,7 +1,7 @@
-// Les brevets de ceintures — activité de FICHES : le brevet papier d'une ceinture d'une piste (les tables de multiplication pour commencer) : des questions
+// Les brevets de ceintures — activité de FICHES : le brevet papier d'une ceinture d'une piste (les tables de multiplication, le calcul mental) : des questions
 // tirées au hasard (graine du lien, « Nouvelle fiche »), le seuil de réussite et le cadre du résultat, avec corrigé (plans/15-ceintures.md §4).
 // Les ceintures (couleurs, dessin, seuil, nombre de questions) viennent des réglages communs (src/ceintures/reglages.ts : page des réglages et « Sur la fiche »).
-// Programme : les tables de multiplication (CE1 à CM2). D'autres pistes (calcul mental, lettres) viendront avec leurs compétences.
+// Programme : les tables de multiplication (CE1 à CM2), et pour le calcul mental les doubles et moitiés, les compléments, la multiplication par 10 et 100. Les lettres viendront avec leur compétence.
 import { definir, cases, choix, pourClasses } from '../../noyau/definir.ts'
 import { K, D } from '../../noyau/ids.ts'
 import { PISTES_AVEC_BREVET } from '../../ceintures/brevets.ts'
@@ -17,7 +17,7 @@ export default definir({
   extensions: ['ceintures'],
   bilanParClasse: false,
   niveauDefaut: 'ce2',
-  competences: [K.tablesMultiplication],
+  competences: [K.tablesMultiplication, K.doublesMoities, K.complementDizaine, K.multiplier10100],
   reglages: {
     piste: choix(PISTES_AVEC_BREVET),
     ceinture: choix([1, 2, 3, 4, 5, 6], { defaut: 1 }),

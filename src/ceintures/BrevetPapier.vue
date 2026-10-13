@@ -1,8 +1,9 @@
 <template>
   <CadreExercice fiche-seule :imbrique="imbrique" :mode="mode" :fiche="fiche" :config="config" :police="false" :extensions="DEFINITION.extensions" @regenerer="nouvelle">
     <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
-    <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="piste" v-model="config.piste" :titre="t('ceinturesBrevet.piste')"
-      :libelle="() => t('tables.titre')" />
+    <!-- la piste : choisie ici sur la page des brevets, imposée par l'exercice dans son onglet -->
+    <ChoixReglage v-if="!piste" :definition="DEFINITION" :niveau="config.niveau" cle="piste" v-model="config.piste" :titre="t('ceinturesBrevet.piste')"
+      :libelle="nomPiste" />
     <!-- la ceinture : son numéro et sa couleur (palette des réglages communs) -->
     <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="ceinture" v-model="config.ceinture" :titre="t('ceinturesBrevet.ceinture')"
       :libelle="n => String(n)">
@@ -30,7 +31,8 @@
 // (OngletCeintures) ; `imbrique` : dans l'onglet, le cadre n'a pas sa propre boîte. Les questions sont dans src/ceintures/brevets.ts, la mise en page dans src/exercices/ceintures-brevet/fiche.ts.
 // Les brevets de ceintures : une activité de fiches (pas de partie à l'écran). La vue ne fait que les réglages ; les questions sont dans src/ceintures/brevets.ts, la mise
 // en page dans src/exercices/ceintures-brevet/fiche.ts et src/ceintures/supports.ts. Seuil, nombre de questions, palette : réglages communs des ceintures.
-import { useId } from 'vue'
+import { useId, watchEffect } from 'vue'
+import type { PisteAvecBrevet } from './brevets.ts'
 import { useLangue } from '../langues/useLangue.ts'
 import { traducteur } from '../langues/catalogue.ts'
 import CadreExercice from '../noyau/CadreExercice.vue'
@@ -43,10 +45,15 @@ import { CONTENU } from '../exercices/ceintures-brevet/textes.ts'
 import { questionsFiche } from '../exercices/ceintures-brevet/generateur.ts'
 import { fiche as ficheBrevet } from '../exercices/ceintures-brevet/fiche.ts'
 
-defineProps<{ imbrique?: boolean }>()
+const props = defineProps<{ imbrique?: boolean, piste?: PisteAvecBrevet }>()
 const id = useId()
 const { t } = useLangue()
 const { config, langueContenu } = useReglages(DEFINITION)
+// dans l'onglet d'un exercice, la piste est celle de l'exercice
+watchEffect(() => { if (props.piste) config.value.piste = props.piste })
+
+/** Le nom d'une piste : le titre de son exercice. */
+const nomPiste = (p: string | number | boolean): string => (p === 'calcul-mental' ? t('calculMental.titre') : t('tables.titre'))
 const T = traducteur(CONTENU, () => langueContenu.value)
 
 const { mode, fiche, nouvelle } = useFicheExercice({

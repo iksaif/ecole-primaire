@@ -19,7 +19,9 @@ export function questionsFiche({ reglages, rng }: Omit<ParamsGenerateur<Reglages
   // la ceinture demandée, ramenée aux ceintures de la piste
   const indice = Math.min(Math.max(reglages.ceinture, 1), NB_CEINTURES_BREVET[reglages.piste]) - 1
   const options: OptionsTables = { tables: reglages.tablesPerso ? reglages.tables.map(Number) : null, divisions: reglages.divisions, jusqu: reglages.jusqu }
-  return { piste: reglages.piste, indice, tables: tablesDuBrevet(indice, options), questions: brevetDe(reglages.piste, indice, rng, options) }
+  // seule la piste des tables a des tables (le titre de la fiche les écrit)
+  const tables = reglages.piste === 'tables' ? tablesDuBrevet(indice, options) : []
+  return { piste: reglages.piste, indice, tables, questions: brevetDe(reglages.piste, indice, rng, options) }
 }
 
 /** Écarts au programme : aucun (les tables de 1 à 10, au programme du CE1 au CM2). */

@@ -31,6 +31,7 @@ verifier(!extensionActive('ceintures') && !ressourceMontree('exercice:ceintures'
 console.log('Onglets d’exercice')
 const ongletsTables = ongletsDe(EXTENSIONS, 'tables')
 verifier(ongletsTables.length === 1 && ongletsTables[0].id === 'ceintures' && ongletsTables[0].extension === 'ceintures', 'les tables reçoivent l’onglet des ceintures')
+verifier(ongletsDe(EXTENSIONS, 'calcul-mental').length === 1 && ongletsDe(EXTENSIONS, 'calcul-mental')[0].id === 'ceintures', 'le calcul mental reçoit aussi l’onglet, avec sa propre piste')
 verifier(ongletsDe(EXTENSIONS, 'heure').length === 0 && ongletsDe([], 'tables').length === 0, 'un autre exercice, ou aucune extension active : pas d’onglet')
 verifier(Object.keys(EXERCICES_AVEC_BREVET).every(id => REGISTRE.some(m => m.definition.id === id)), 'les exercices qui ont un brevet existent au registre')
 verifier(EXTENSIONS.flatMap(e => e.onglets ?? []).every(o => o.id !== 'jouer' && o.id !== 'imprimer'), 'un onglet d’extension ne reprend pas « jouer » ni « imprimer »')

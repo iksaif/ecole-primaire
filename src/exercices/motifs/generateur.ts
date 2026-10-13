@@ -20,11 +20,27 @@ import { caractereEmoji } from '../../images/systeme.ts'
 type Reglages = ReglagesDeDefinition<typeof DEFINITION>
 type Cle = CleContenu<typeof CONTENU>
 
-// Éléments des frises : couleurs, formes et images (4 par thème : ABCD au plus), des emojis du vocabulaire (src/images/tables.ts)
-export const THEMES: readonly (readonly NomEmoji[])[] = [
-  ['rondRouge', 'rondBleu', 'rondJaune', 'rondVert'], ['etoile', 'lune', 'soleil', 'nuage'], ['pomme', 'banane', 'raisin', 'fraise'],
-  ['chat', 'chiot', 'lapin', 'ours'], ['carreRouge', 'carreBleu', 'carreJaune', 'carreVert'], ['fleur', 'trefle', 'champignon', 'tournesol'],
+/**
+ * Un thème de frise : 4 éléments (ABCD au plus), des emojis du vocabulaire (src/images/tables.ts). `sorte` dit ce qu'en fait l'enfant
+ * sur la fiche : « couleur », une forme qu'il colorie (la case a le contour de la forme) ; « dessin », assez simple pour être dessiné ;
+ * « image », trop dure à dessiner pour un GS : elle se découpe en bas de la fiche.
+ */
+export interface Theme { elements: readonly NomEmoji[], sorte: 'couleur' | 'dessin' | 'image', forme: FormeCase }
+/** La forme de la case vide sur la fiche : celle des éléments à colorier, une place carrée aux coins arrondis sinon. */
+export type FormeCase = 'rond' | 'carre' | 'coeur' | 'place'
+
+// l'ordre des trois premiers est celui de l'ancienne liste (jeu à l'écran) ; les thèmes sont tous proposés à l'écran
+export const THEMES: readonly Theme[] = [
+  { elements: ['rondRouge', 'rondBleu', 'rondJaune', 'rondVert'], sorte: 'couleur', forme: 'rond' },
+  { elements: ['etoile', 'lune', 'soleil', 'nuage'], sorte: 'dessin', forme: 'place' },
+  { elements: ['pomme', 'banane', 'raisin', 'fraise'], sorte: 'image', forme: 'place' },
+  { elements: ['chat', 'chiot', 'lapin', 'ours'], sorte: 'image', forme: 'place' },
+  { elements: ['carreRouge', 'carreBleu', 'carreJaune', 'carreVert'], sorte: 'couleur', forme: 'carre' },
+  { elements: ['fleur', 'trefle', 'champignon', 'tournesol'], sorte: 'image', forme: 'place' },
+  { elements: ['coeurRouge', 'coeurBleu', 'coeurJaune', 'coeurVert'], sorte: 'couleur', forme: 'coeur' },
+  { elements: ['rondRouge', 'carreRouge', 'triangleRouge', 'coeurRouge'], sorte: 'dessin', forme: 'place' },
 ]
+const DE_SORTE = (sorte: Theme['sorte']): readonly Theme[] => THEMES.filter(t => t.sorte === sorte)
 
 /**
  * Une proposition de réponse : son libellé (le caractère de l'élément : le nom du bouton, lu par les lecteurs d'écran ; le jeu dessine
@@ -40,6 +56,9 @@ export interface Proposition { label: string, valeur: number }
 export interface Question extends QuestionMotif {
   cle: string
   elements: NomEmoji[]
+  /** ce que l'enfant fait de ces éléments sur la fiche, et la forme de la case vide */
+  sorte: Theme['sorte']
+  forme: FormeCase
   /** indices des éléments proposés */
   choix: number[]
   options: Proposition[]
@@ -48,19 +67,21 @@ export interface Question extends QuestionMotif {
 }
 /** La réponse de l'élève : l'indice de la proposition touchée. */
 export interface Reponse { choix: number }
-/** Ce que tire la fiche : le niveau, le mode et les frises. */
-export interface TirageFiche { niveau: Classe, mode: ModeMotif, questions: Question[] }
+/** Ce que tire la fiche : le niveau, le mode, ce que fait l'enfant (dessine, colorie ; PS : entoure) et les frises. */
+export interface TirageFiche { niveau: Classe, mode: ModeMotif, fiche: 'dessine' | 'colorie', questions: Question[] }
 
-export function question({ niveau, mode, rng }: { niveau: Classe, mode: ModeMotif, rng: Rng }): Question {
+/** Une question ; `themes` : ceux parmi lesquels tirer (tous à l'écran ; sur la fiche, ceux de ce que fait l'enfant). */
+export function question({ niveau, mode, rng, themes = THEMES }: { niveau: Classe, mode: ModeMotif, rng: Rng, themes?: readonly Theme[] }): Question {
   const m = questionMotif(niveau, mode, rng)
-  const elements = rng.melanger(THEMES[rng.entier(0, THEMES.length - 1)])
+  const theme = themes[rng.entier(0, themes.length - 1)]
+  const elements = rng.melanger(theme.elements)
   const dans = Array.from({ length: nbElements(m.type) }, (_, i) => i)
   const nb = niveau === 'ps' ? 2 : 3
   const choix = rng.melanger([...dans, ...[0, 1, 2, 3].filter(i => !dans.includes(i))].slice(0, Math.max(nb, dans.length)))
   const propositions = choix.includes(m.attendu) ? choix : [m.attendu, ...choix.slice(1)]
   const vus = elements.slice(0, dans.length).join('')
   return {
-    ...m, cle: `${m.type}${m.place}${vus}/${propositions.map(c => elements[c]).sort().join('')}`, elements, choix: propositions,
+    ...m, cle: `${m.type}${m.place}${vus}/${propositions.map(c => elements[c]).sort().join('')}`, elements, sorte: theme.sorte, forme: theme.forme, choix: propositions,
     // propositions pour <ChoixReponses> (libellé : le caractère de l'élément) ; bonne : indice de l'élément attendu
     options: propositions.map(c => ({ label: caractereEmoji(elements[c]), valeur: c })), bonne: propositions.indexOf(m.attendu),
   }
@@ -69,10 +90,25 @@ export function question({ niveau, mode, rng }: { niveau: Classe, mode: ModeMoti
 export const questions = ({ niveau, reglages, rng, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] =>
   tirerUniques(nb, () => question({ niveau, mode: reglages.mode, rng }), { cle: q => q.cle })
 
+/**
+ * Les thèmes de la ligne `rang` de la fiche. PS (entourer) : tous. « colorie » : les formes de couleur. « dessine » : des dessins simples
+ * et des formes de couleur, et une ligne sur trois d'images (à découper en bas de la fiche : pas plus de deux lignes, pour que la bande
+ * reste courte).
+ */
+function themesDeLaLigne(niveau: Classe, fiche: TirageFiche['fiche'], rang: number): readonly Theme[] {
+  if (niveau === 'ps') return THEMES
+  if (fiche === 'colorie') return DE_SORTE('couleur')
+  if (rang % 3 === 2) return DE_SORTE('image')
+  return [...DE_SORTE('dessin'), ...DE_SORTE('couleur')]
+}
+
 // Fiche : frises à continuer ; 5 en PS, 6 sinon (nbQ ne compte pas : une page de frises)
-export const questionsFiche = ({ niveau, reglages, rng, T }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): TirageFiche => ({
-  niveau, mode: reglages.mode, questions: questions({ niveau, reglages, rng, T, nb: niveau === 'ps' ? 5 : 6 }),
-})
+export function questionsFiche({ niveau, reglages, rng }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): TirageFiche {
+  const fiche = reglages.fiche
+  const nb = niveau === 'ps' ? 5 : 6
+  const tirees = tirerUniques(nb, rang => question({ niveau, mode: reglages.mode, rng, themes: themesDeLaLigne(niveau, fiche, rang) }), { cle: q => q.cle })
+  return { niveau, mode: reglages.mode, fiche, questions: tirees }
+}
 
 export const verifier = (q: Question, rep: Reponse): Verdict => rep.choix === q.bonne
 

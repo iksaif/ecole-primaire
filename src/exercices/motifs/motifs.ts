@@ -30,6 +30,31 @@ export const nbElements = (type: TypeMotif): number => (type === 'evolutif' ? 2 
 
 export type ModeMotif = 'apres' | 'trou'
 
+/**
+ * Où mettre le trou : après une période entière, et jamais en dernier (il faut voir ce qui suit pour le deviner). L'évolutif (9 éléments
+ * visibles, A B AA BB AAA) : dans les groupes AA, BB ou au début de AAA (places 3 à 7) ; en dernière place, « A B AA BB AA ? » se lirait
+ * aussi bien AABB.
+ */
+function placeDuTrou(type: TypeMotif, visibles: number, rng: Rng): number {
+  if (type === 'evolutif') return rng.entier(3, visibles - 2)
+  return type.length + rng.entier(0, Math.max(1, visibles - 2 * type.length) - 1)
+}
+
+/**
+ * Combien de cases à remplir après la frise, sur la fiche : de quoi finir la période (ou, pour l'évolutif, le groupe qui commence :
+ * après A B AA BB AAA, les trois B), et au moins deux.
+ */
+export function casesAContinuer(type: TypeMotif, visibles: number): number {
+  if (type === 'evolutif') {
+    const s = suite(type, visibles + 20)
+    let n = 1
+    while (s[visibles + n] === s[visibles]) n++
+    return Math.max(2, n)
+  }
+  const reste = type.length - (visibles % type.length)
+  return Math.max(2, reste)
+}
+
 /** Le motif montré, sa « case ? » et l'élément attendu (indice dans la liste d'éléments). */
 export interface QuestionMotif { type: TypeMotif, motif: number[], place: number, attendu: number }
 
@@ -41,7 +66,7 @@ export function questionMotif(niveau: Classe, mode: ModeMotif, rng: Rng): Questi
   const visibles = type === 'evolutif' ? 9 : Math.max(niveau === 'ps' ? 6 : 7, Math.ceil(type.length * 2.5))
   const s = suite(type, visibles + 1)
   if (mode === 'trou') {
-    const place = type.length + rng.entier(0, Math.max(1, visibles - 2 * type.length) - 1)
+    const place = placeDuTrou(type, visibles, rng)
     return { type, motif: s.slice(0, visibles), place, attendu: s[place] }
   }
   return { type, motif: s.slice(0, visibles), place: visibles, attendu: s[visibles] }

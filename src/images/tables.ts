@@ -45,6 +45,7 @@ export const EMOJIS = {
   // les frises à continuer (src/exercices/motifs/) ; étoile, lune, soleil, nuage, pomme, raisin, fraise, chat, fleur, tournesol sont plus haut
   rondRouge: '1F534', rondBleu: '1F535', rondJaune: '1F7E1', rondVert: '1F7E2', carreRouge: '1F7E5', carreBleu: '1F7E6', carreJaune: '1F7E8',
   carreVert: '1F7E9', banane: '1F34C', chiot: '1F436', lapin: '1F430', ours: '1F43B', trefle: '1F340', champignon: '1F344',
+  coeurRouge: '2764', coeurBleu: '1F499', coeurJaune: '1F49B', coeurVert: '1F49A', triangleRouge: '1F53A',
   // les achats de la monnaie (src/exercices/monnaie/) ; pomme, jus, chocolat, ballon, voiture, doudou et dé sont plus haut
   billetEuro: '1F4B6', crayon: '270F', bonbon: '1F36C', baguette: '1F956', cahier: '1F4D2', feutre: '1F58D', puzzle: '1F9E9',
   livre: '1F4D5', peinture: '1F3A8', trottinette: '1F6F4', rollers: '1F6FC', casque: '1F3A7',

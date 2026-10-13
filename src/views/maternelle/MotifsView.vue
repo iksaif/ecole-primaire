@@ -7,7 +7,11 @@
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="mode" v-model="config.mode" :titre="t('motifs.exercice')"
         :libelle="m => (m === 'apres' ? t('motifs.apres') : t('motifs.trou'))" :icone="m => (m === 'apres' ? 'flecheDroite' : 'recherche')" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+      <!-- sur la fiche, MS et GS : l'enfant dessine (et découpe les images) ou colorie des formes ; en PS, il entoure -->
+      <ChoixReglage v-if="mode === 'imprimer' && config.niveau !== 'ps'" :definition="DEFINITION" :niveau="config.niveau" cle="fiche" v-model="config.fiche"
+        :titre="t('motifs.surFiche')" :libelle="f => t(f === 'colorie' ? 'motifs.colorie' : 'motifs.dessine')" :icone="f => (f === 'colorie' ? 'palette' : 'crayon')" />
+      <!-- la fiche a toujours une page de frises (5 en PS, 6 sinon) : le nombre de questions ne vaut que pour le jeu -->
+      <ChoixReglage v-if="mode === 'jouer'" :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
     </CadreExercice>
 
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">

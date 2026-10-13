@@ -2,7 +2,7 @@
 // La fiche (titre, consignes) est dans le catalogue de contenu de l'exercice : src/exercices/motifs/textes.ts. Mots communs : section `communs`.
 export default {
   titre: 'Les motifs',
-  description: 'Continuer un collier qui se répète',
+  description: 'Continuer une frise qui se répète',
   niveau: {
     ps: 'PS — deux éléments',
     ms: 'MS — motifs simples',
@@ -13,6 +13,9 @@ export default {
   trou: 'Il en manque un',
   consigneApres: 'Qu’est-ce qui vient après ?',
   choixImage: 'Image {n}',
-  consigneTrou: 'Qu’est-ce qui manque dans le collier ?',
-  regarde: 'Regarde bien comment le collier se répète',
+  consigneTrou: 'Qu’est-ce qui manque dans la frise ?',
+  regarde: 'Regarde bien ce qui se répète',
+  surFiche: 'Sur la fiche, l’enfant…',
+  dessine: 'Dessine',
+  colorie: 'Colorie',
 } as const

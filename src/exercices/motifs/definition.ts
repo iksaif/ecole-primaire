@@ -13,9 +13,11 @@ export default definir({
   niveauDefaut: 'ms',
   competences: [K.motifsMaternelle],
 
-  // mode : « apres » (qu'est-ce qui vient après ?) ou « trou » (il en manque un)
+  // mode : « apres » (qu'est-ce qui vient après ?) ou « trou » (il en manque un) ; fiche : ce que l'enfant fait sur la fiche, MS et GS
+  // (« dessine » : formes et dessins simples, et des images à découper ; « colorie » : formes de couleur à colorier)
   reglages: {
     mode: choix(['apres', 'trou'], { defaut: 'apres' }),
+    fiche: choix(['dessine', 'colorie'], { defaut: 'dessine' }),
     nbQ: choix([5, 10], { defaut: 10, libre: NB_LIBRE }),
   },
 

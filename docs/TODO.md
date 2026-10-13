@@ -101,6 +101,9 @@
 - [ ] **Lettres** : cursive, son des lettres, confusions b/d, p/q ; fiche à refaire et ouverture à la MS (`plans/critique-lettres-2026-10-07.md`).
 - [ ] Lecture : le mode « Lecture de textes » n'a aucune question (compréhension, CP et CE1 ; plan 10-couverture-elementaire).
 - [ ] Consigne lue à voix haute : reste Ordonner.
+- [x] **Motifs : des frises qu'on ne peut pas deviner** (demande du 2026-10-13) — fait : sur la fiche, les cases à continuer finissent
+  la période ou le groupe (après A B AA BB AAA, trois cases) ; le trou de l'évolutif n'est plus en dernier ; test `motifs` ; le nombre de
+  questions n'est plus proposé à l'impression (la fiche a toujours une page de frises).
 - [ ] Grammaire (coupée en cinq le 2026-10-10) : tester le jeu à la main.
 - [ ] Géométrie : l'avertissement rouge « Imprimer à 100 %… » est aussi sur la fiche imprimée — le passer en orange dans le formulaire et
   le retirer de la fiche, comme pour Mesures ? Le reste : `plans/16-geometrie.md`, § 2.

@@ -1,7 +1,7 @@
 // L'extension « ceintures » : ce qu'elle accroche aux parties communes (src/extensions/types.ts). Tout le reste de la fonctionnalité est dans ce dossier.
 import { assainirCeintures } from './reglages.ts'
 import { useCeintures } from './useCeintures.ts'
-import { EXERCICES_AVEC_BREVET } from './brevets.ts'
+import { EXERCICES_AVEC_BREVET } from './pistes.ts'
 import type { Extension } from '../extensions/types.ts'
 import type { ReglagesCeintures } from './types.ts'
 
@@ -9,11 +9,11 @@ export const extension: Extension = {
   id: 'ceintures',
   activation: { titre: 'ceintures.activer.titre', aide: 'ceintures.activer.aide', case: 'ceintures.activer.case', parSite: 'ceintures.activer.parSite' },
   // les activités que l'extension ajoute au catalogue : masquées des listes tant qu'elle n'est pas active
-  ressources: ['exercice:ceintures', 'exercice:ceintures-brevet'],
+  ressources: ['exercice:ceintures'],
   optionsFiche: () => import('./ChoixCeintures.vue'),
   contexteFiche: () => useCeintures().value,
-  // l'onglet « Ceintures » : les exercices qui ont un brevet (les tables de multiplication)
-  onglets: [{ id: 'ceintures', icone: 'trophee', titre: 'ceintures.titre', pour: exercice => exercice in EXERCICES_AVEC_BREVET, composant: () => import('./OngletCeintures.vue') }],
+  // l'onglet « Ceintures » : les exercices qui ont un brevet (les tables de multiplication, le calcul mental : src/ceintures/pistes.ts)
+  onglets: [{ id: 'ceintures', icone: 'trophee', titre: 'ceintures.titre', pour: exercice => EXERCICES_AVEC_BREVET.includes(exercice), composant: () => import('./OngletCeintures.vue') }],
   reglages: { icone: 'trophee', titre: 'ceintures.reglage.titre', aide: 'ceintures.reglage.aide', composant: () => import('./ReglagesCeintures.vue') },
 }
 

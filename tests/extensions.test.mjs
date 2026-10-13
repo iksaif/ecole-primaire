@@ -8,7 +8,7 @@ import { ressourceMontree, extensionActive } from '../src/extensions/activation.
 import { REGISTRE } from '../src/exercices/index.ts'
 import { ongletsDe } from '../src/extensions/onglets.ts'
 import { routesDesExercices } from '../src/router/routes.ts'
-import { EXERCICES_AVEC_BREVET } from '../src/ceintures/brevets.ts'
+import { EXERCICES_AVEC_BREVET } from '../src/ceintures/pistes.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 console.log('Registre')
@@ -39,7 +39,7 @@ const ongletsTables = ongletsDe(EXTENSIONS, 'tables')
 verifier(ongletsTables.length === 1 && ongletsTables[0].id === 'ceintures' && ongletsTables[0].extension === 'ceintures', 'les tables reçoivent l’onglet des ceintures')
 verifier(ongletsDe(EXTENSIONS, 'calcul-mental').length === 1 && ongletsDe(EXTENSIONS, 'calcul-mental')[0].id === 'ceintures', 'le calcul mental reçoit aussi l’onglet, avec sa propre piste')
 verifier(ongletsDe(EXTENSIONS, 'heure').length === 0 && ongletsDe([], 'tables').length === 0, 'un autre exercice, ou aucune extension active : pas d’onglet')
-verifier(Object.keys(EXERCICES_AVEC_BREVET).every(id => REGISTRE.some(m => m.definition.id === id)), 'les exercices qui ont un brevet existent au registre')
+verifier(EXERCICES_AVEC_BREVET.every(id => REGISTRE.some(m => m.definition.id === id)), 'les exercices qui ont un brevet existent au registre')
 verifier(EXTENSIONS.flatMap(e => e.onglets ?? []).every(o => o.id !== 'jouer' && o.id !== 'imprimer'), 'un onglet d’extension ne reprend pas « jouer » ni « imprimer »')
 const routes = routesDesExercices(REGISTRE.map(m => ({ definition: m.definition })), [])
 verifier(routes.every(r => typeof r.meta.exercice === 'string') && routes.find(r => r.path === '/maths/tables').meta.exercice === 'tables', 'chaque route d’exercice porte son identifiant (meta.exercice)')

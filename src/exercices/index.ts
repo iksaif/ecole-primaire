@@ -37,7 +37,6 @@ import { module as ecriture } from './ecriture/index.ts'
 import { module as lecture } from './lecture/index.ts'
 import { module as quiz } from './quiz/index.ts'
 import { module as ceintures } from './ceintures/index.ts'
-import { module as ceinturesBrevet } from './ceintures-brevet/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -79,7 +78,6 @@ const BASE: readonly EntreeRegistre[] = [
   lecture,
   quiz,
   ceintures,
-  ceinturesBrevet,
   // nouveau:registre
 ]
 

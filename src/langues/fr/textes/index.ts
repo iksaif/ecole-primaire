@@ -62,7 +62,6 @@ import grammaireSujetVerbe from './grammaireSujetVerbe.ts'
 import grammaireAccords from './grammaireAccords.ts'
 import grammaireComplements from './grammaireComplements.ts'
 import ceintures from './ceintures.ts'
-import ceinturesBrevet from './ceinturesBrevet.ts'
 import assemblage from './assemblage.ts'
 import { AVEC_DEV } from '../../../dev.ts'
 
@@ -70,4 +69,4 @@ import { AVEC_DEV } from '../../../dev.ts'
 // aucun code ne les lit (les exemples n'y sont pas).
 const sectionsDev = (AVEC_DEV ? { exemple, exempleCorpus, dev, relecture } : {}) as { exemple: typeof exemple, exempleCorpus: typeof exempleCorpus, dev: typeof dev, relecture: typeof relecture }
 
-export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, confiance, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, grammairePhrase, grammaireMots, grammaireSujetVerbe, grammaireAccords, grammaireComplements, ecriture, lecture, quiz, mentions, assistant, ceintures, ceinturesBrevet, assemblage, ...sectionsDev } as const
+export default { nav, accueil, reglages, regionale, matiere, monde, ressource, apropos, shell, avis, confiance, nouveautes, cadre, formulaireAffiche, communs, domaines, routeur, recherche, programme, competence, fichesPretes, feuille, statique, calculMental, monnaie, heure, numeration, compter, comparer, ranger, tables, calculPose, suites, longueurs, fractions, problemes, mesures, formes, geometrie, motifs, lettres, orthographe, vocabulaire, conjugaison, dictee, grammaire, grammairePhrase, grammaireMots, grammaireSujetVerbe, grammaireAccords, grammaireComplements, ecriture, lecture, quiz, mentions, assistant, ceintures, assemblage, ...sectionsDev } as const

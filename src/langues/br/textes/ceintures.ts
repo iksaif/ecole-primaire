@@ -5,6 +5,11 @@ import type fr from '../../fr/textes/ceintures.ts'
 
 export default {
   titre: 'Gourizioù', // br: à relire
+  choixCeinture: 'Gouriz', // br: à relire
+  tablesTitre: 'Taolennoù', // br: à relire
+  tablesCeinture: 'Re ar gouriz', // br: à relire
+  tablesPerso: 'Dibab a ran an taolennoù', // br: à relire
+  jusquTitre: 'Miliñ betek', // br: à relire
   ongletIntro: 'Brevet war paper an hent-mañ : dibabit ar gouriz da dremen, moullit ar goulennoù hag ar reizhadur.', // br: à relire
   description: 'Levrig, gourizioù da droc’hañ, diplom ha paseporzh : live liv evit heuliañ e brogres', // br: à relire
   intro: 'Live liv, evel er judo : en em ober a reer, un brevet a dremener, ar gouriz a-heul a vez gounezet. Dibabit ar skor da voullañ hag ar skor ; al livioù a zo da reiñ e « Er fichenn » pe er reolennoù.', // br: à relire

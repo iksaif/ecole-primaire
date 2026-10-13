@@ -376,3 +376,11 @@ Sans exercice de brevet, plus de `useReglages(DEFINITION)` ni de `ChoixReglage` 
 - Pas de brevet au CP pour le calcul mental tant que les opérations du CP ne sont pas rangées en ceintures (à décider : 6 ceintures CP différentes, ou seulement CE1 à CM2).
 - La page `/maths/ceintures-brevet` disparaît ; les brevets ne se retrouvent plus que dans l'onglet (donc extension active).
 - Les tirages de `tables` et de `calcul-mental` ne sont pas conçus pour des brevets (tables : ordre mélangé, deux colonnes) : à regarder à l'écran avant de figer.
+
+## 20. Fait : le brevet construit sur l'assemblage (2026-10-13)
+
+Plan du §19 exécuté. `src/ceintures/pistes.ts` dit, pour chaque ceinture d'une piste, les réglages de l'exercice (tables : tables de la ceinture, jusqu'à 10, mélange ; calcul mental : opérations de l'exercice) ;
+`src/ceintures/brevet.ts` assemble un en-tête de ceinture, le fragment de la fiche de l'exercice coupé au nombre de questions des réglages communs (ou celui de la ceinture : 30 en 3 minutes), le cadre du résultat et le corrigé de l'exercice.
+Supprimés : l'exercice `ceintures-brevet` (5 fichiers), sa page, son générateur (`brevets.ts`), ses textes et ses instantanés. L'onglet « Ceintures » (`OngletCeintures.vue`) a la classe de l'exercice, le choix de la ceinture (couleur ; grisée si elle n'existe pas dans la classe),
+et pour les tables leurs options (tables au choix, ×11 ×12 en bonus, jusqu'à 12). Pas de divisions (l'exercice des tables n'en fait pas) ; pas de ceinture « × 10 et tables » au CP du calcul mental. Prénom : la ligne Prénom / Date de la feuille.
+Tests : 100+ cas dans `tests/ceintures.test.mjs` (réglages acceptés tels quels par chaque exercice et chaque classe, tirage coupé, tables de la ceinture, corrigé unique, graine, breton).

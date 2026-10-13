@@ -59,6 +59,8 @@ import type { Piste } from './pistes.ts'
 import type { Classe } from '../data/classes.ts'
 import type { ModuleQuelconque } from '../exercices/index.ts'
 
+// une piste sur mesure a autant de paliers que le plus long jeu de couleurs : le nombre de ceintures choisi les regroupe (ici ils ont tous les mêmes blocs)
+const NB_PALIERS = 7
 const id = useId()
 const { t, langue } = useLangue()
 const { graine, nouvelle } = useGraine()
@@ -85,13 +87,13 @@ const retenus = computed(() => capables.value.filter(choisi))
 const titreDe = (m: ModuleQuelconque): string => (t as (cle: string) => string)(`${m.definition.id.replace(/-(\w)/g, (_: string, c: string) => c.toUpperCase())}.titre`)
 
 // les ceintures montrées : le nombre choisi dans les réglages communs et les couleurs de la palette
-const nbCeintures = computed(() => nbCeinturesDe(reglagesCeintures(contextesDeFiche()), 8))
+const nbCeintures = computed(() => nbCeinturesDe(reglagesCeintures(contextesDeFiche()), NB_PALIERS))
 const indice = computed(() => Math.min(Math.max(choix.value.ceinture, 1), nbCeintures.value) - 1)
 
 const fiche = computed(() => {
   if (!retenus.value.length) return ''
   const blocs = retenus.value.map(m => ({ exercice: m.definition.id }))
-  const piste: Piste = { id: 'sur-mesure', titre: choix.value.titre.trim() || t('ceintures.surMesure.titreAuto'), ceintures: Array.from({ length: 8 }, () => ({ blocs })) }
+  const piste: Piste = { id: 'sur-mesure', titre: choix.value.titre.trim() || t('ceintures.surMesure.titreAuto'), paliers: Array.from({ length: NB_PALIERS }, () => ({ blocs })) }
   const extensions = contextesDeFiche()
   try {
     return brevetPapier({

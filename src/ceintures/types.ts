@@ -17,7 +17,7 @@ export interface Palette {
   couleurs: readonly CouleurCeinture[]
 }
 
-export type PaletteId = 'judo' | 'judo-rouge' | 'rose-violet' | 'paliers'
+export type PaletteId = 'judo' | 'paliers'
 
 /** La forme de la ceinture dessinée : ruban noué, bandeau simple, rond (gommette, case du tableau). */
 export type StyleCeinture = 'ruban' | 'bandeau' | 'rond'
@@ -30,7 +30,7 @@ export type ReglagesCeintures = {
   style: StyleCeinture
   /** impression en noir et blanc : les motifs remplacent les couleurs */
   noirEtBlanc: boolean
-  /** nombre de ceintures d'une piste (3 à 8, borné par la palette) */
+  /** nombre de ceintures d'une piste (3 à 7, borné par la palette) */
   nbCeintures: number
   /** part de bonnes réponses qui valide un brevet (50 à 100) */
   seuil: number

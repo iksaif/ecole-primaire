@@ -40,14 +40,12 @@ export default {
   prenomTitre: 'Anv-bihan (lezel goullo evit e skrivañ gant an dorn)', // br: à relire
   ceinture: {
     blanche: 'Gouriz gwenn', jaune: 'Gouriz melen', orange: 'Gouriz orañjez', verte: 'Gouriz gwer', bleue: 'Gouriz glas',
-    marron: 'Gouriz gell', noire: 'Gouriz du', rouge: 'Gouriz ruz', rose: 'Gouriz roz', violette: 'Gouriz mouk',
-    palier1: 'Live 1', palier2: 'Live 2', palier3: 'Live 3', palier4: 'Live 4', palier5: 'Live 5', // br: à relire
+    marron: 'Gouriz gell', noire: 'Gouriz du',
+    palier1: 'Live 1', palier2: 'Live 2', palier3: 'Live 3', palier4: 'Live 4', palier5: 'Live 5', palier6: 'Live 6', // br: à relire
   },
   palette: {
     judo: 'Judo (7) : eus ar gwenn d’an du', // br: à relire
-    'judo-rouge': 'Judo hag ar ruz (8)', // br: à relire
-    'rose-violet': 'Eus ar roz d’ar mouk (6)', // br: à relire
-    paliers: 'Hep liv : pemp live', // br: à relire
+    paliers: 'Hep liv : c’hwec’h live', // br: à relire
   },
   style: { ruban: 'Gouriz stag', bandeau: 'Bandenn', rond: 'Kelc’h (gomedenn)' }, // br: à relire
   brevet: { // br: à relire

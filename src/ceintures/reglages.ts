@@ -7,7 +7,7 @@ export const STYLES_CEINTURE: readonly StyleCeinture[] = ['ruban', 'bandeau', 'r
 export const CHRONOMETRES: readonly Chronometre[] = ['aucun', 'doux', 'strict']
 
 export const BORNES = {
-  nbCeintures: { min: 3, max: 8 },
+  nbCeintures: { min: 3, max: 7 },
   seuil: { min: 50, max: 100 },
   questions: { min: 5, max: 30 },
 } as const
@@ -16,7 +16,7 @@ export const DEFAUT_CEINTURES: ReglagesCeintures = {
   palette: 'judo',
   style: 'ruban',
   noirEtBlanc: false,
-  nbCeintures: 6,
+  nbCeintures: 7,
   seuil: 90,
   questions: 10,
   chronometre: 'aucun',
@@ -53,7 +53,7 @@ export const brevetReussi = (bonnes: number, total: number, seuil: number): bool
  */
 export const nbCeinturesDe = (reglages: ReglagesCeintures, nbPiste: number): number => Math.max(1, Math.min(nbPiste, reglages.nbCeintures, PALETTES[reglages.palette].couleurs.length))
 
-/** Les réglages quand on choisit une palette : le nombre de ceintures devient celui de la palette (« Judo et rouge (8) » : 8), dans les bornes ; on peut le baisser ensuite. */
+/** Les réglages quand on choisit une palette : le nombre de ceintures devient celui de la palette (« Judo (7) » : 7), dans les bornes ; on peut le baisser ensuite. */
 export function avecPalette(reglages: ReglagesCeintures, palette: PaletteId): ReglagesCeintures {
   const nb = Math.min(BORNES.nbCeintures.max, Math.max(BORNES.nbCeintures.min, PALETTES[palette].couleurs.length))
   return { ...reglages, palette, nbCeintures: Math.min(nb, PALETTES[palette].couleurs.length) }

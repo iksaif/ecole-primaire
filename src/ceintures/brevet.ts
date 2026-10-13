@@ -10,7 +10,7 @@ import { estAssemblable, fragmentDeExercice } from '../exercices/fragment.ts'
 import type { ModuleQuelconque } from '../exercices/index.ts'
 import type { Fragment } from '../impression/fragment.ts'
 import type { Classe } from '../data/classes.ts'
-import { blocsDe, ceintureDisponible } from './pistes.ts'
+import { blocsDe, ceintureDisponible, ceinturesDePiste, partsEgales } from './pistes.ts'
 import type { Piste } from './pistes.ts'
 import { nbCeinturesDe } from './reglages.ts'
 import { CSS_CEINTURES, ceinturesDe, enteteBrevetHtml, resultatBrevetHtml } from './supports.ts'
@@ -93,17 +93,14 @@ function nbFicheOffert(m: ModuleQuelconque, niveau: Classe, n: number): number |
   return offerts.find(v => v >= n) ?? offerts[offerts.length - 1]
 }
 
-/** Le total des questions partagé entre `nb` blocs : parts égales, les premiers blocs prennent le reste. */
-export const partsEgales = (total: number, nb: number): number[] => Array.from({ length: nb }, (_, k) => Math.floor(total / nb) + (k < total % nb ? 1 : 0))
-
 export function tirageDuBrevet(d: DemandeBrevet): TirageBrevet {
-  const ceinture = d.piste.ceintures[d.indice]
   const classesDe = (exercice: string): Classe[] => Object.keys(d.modules.find(m => m.definition.id === exercice)?.definition.niveaux ?? {}) as Classe[]
   // une ceinture au-delà de celles que la palette et le réglage montrent n'existe pas (le choix de la page ne les propose pas)
-  const nbMontrees = nbCeinturesDe(d.ceintures, d.piste.ceintures.length)
+  const nbMontrees = nbCeinturesDe(d.ceintures, d.piste.paliers.length)
   if (d.indice >= nbMontrees) throw new Error(`brevet : la ceinture ${d.indice + 1} n’existe pas avec cette palette (${nbMontrees} ceintures)`)
-  if (!ceintureDisponible(d.piste, d.indice, d.niveau, classesDe)) throw new Error(`brevet : la ceinture ${d.indice + 1} de la piste « ${d.piste.id} » n’existe pas en ${d.niveau}`)
-  const blocs = blocsDe(d.piste, d.indice)
+  if (!ceintureDisponible(d.piste, d.indice, d.niveau, classesDe, nbMontrees)) throw new Error(`brevet : la ceinture ${d.indice + 1} de la piste « ${d.piste.id} » n’existe pas en ${d.niveau}`)
+  const ceinture = ceinturesDePiste(d.piste, nbMontrees)[d.indice]
+  const blocs = blocsDe(d.piste, d.indice, nbMontrees)
   const total = ceinture.questions ?? d.ceintures.questions
   const parts = partsEgales(total, blocs.length)
   const tires = blocs.map((bloc, k): BlocTire => {
@@ -141,12 +138,12 @@ export function brevetPapier(d: DemandeBrevet): string {
   const l = estLangue(d.langue) ? d.langue : LANGUE_SOURCE
   const i = (cle: string, params?: Record<string, string | number>): string => (traduire as (l: string, c: string, p?: unknown) => string)(l, `ceintures.${cle}`, params)
   const { blocs, nbQuestions, bonnes } = tirageDuBrevet(d)
-  const ceinture = d.piste.ceintures[d.indice]
+  const ceinture = ceinturesDePiste(d.piste, nbCeinturesDe(d.ceintures, d.piste.paliers.length))[d.indice]
   const donnees: DonneesSupport = {
     // le titre de la piste : le sien, ou celui de son exercice (ou du premier bloc)
     titre: d.piste.titre ?? titreDeLExercice(l, d.piste.exercice ?? blocs[0].exercice),
     // un nom par ceinture de la piste (les objectifs ne sont pas écrits sur le brevet)
-    ceintures: ceinturesDe(d.piste.ceintures.map(() => ''), couleur => i(`ceinture.${couleur.id}`), d.ceintures),
+    ceintures: ceinturesDe(d.piste.paliers.map(() => ''), couleur => i(`ceinture.${couleur.id}`), d.ceintures),
     reglages: d.ceintures,
     libelles: { prenom: '', classe: '', date: '', signature: '', livret: '', diplome: '', passeport: '', decerne: '', commentFaire: '' },
   }

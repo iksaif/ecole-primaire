@@ -69,7 +69,7 @@ const T = traducteur(CONTENU, () => langueContenu.value)
 
 // les ceintures montrées : celles de la piste (ou les objectifs écrits), le nombre choisi dans les réglages communs et les couleurs de la palette
 const nbCeintures = computed(() => {
-  const nbPiste = config.value.piste === 'libre' ? objectifsDe(config.value.objectifs).length : PISTES[config.value.piste].ceintures.length
+  const nbPiste = config.value.piste === 'libre' ? objectifsDe(config.value.objectifs).length : PISTES[config.value.piste].paliers.length
   return nbCeinturesDe(reglagesCeintures(contextesDeFiche()), nbPiste)
 })
 const ceintureDuDiplome = computed(() => Math.min(config.value.ceinture, nbCeintures.value))

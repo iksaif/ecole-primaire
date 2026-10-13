@@ -1,8 +1,6 @@
-// Les palettes de couleurs des ceintures. Aucun standard : celles qu'on trouve en classe (recherche du 2026-10-12, plans/15-ceintures.md §2).
-//   judo         blanche, jaune, orange, verte, bleue, marron, noire : la plus répandue
-//   judo-rouge   la même, plus la rouge (livrets de calcul mental de collège)
-//   rose-violet  rose, jaune, orange, verte, bleue, violette (ceintures de calcul CM1)
-//   paliers      cinq paliers sans couleur (gris de plus en plus foncés) : contraste, daltonisme, impression économe
+// Les jeux de couleurs des ceintures : deux seulement (plans/15-ceintures.md §22 ; la recherche du 2026-10-12 a montré qu'il n'y a aucun standard, les autres variantes n'apportaient rien).
+//   judo      blanche, jaune, orange, verte, bleue, marron, noire : la plus répandue (7 ceintures)
+//   paliers   six niveaux sans couleur (gris de plus en plus foncés) : contraste, daltonisme, impression économe (6 ceintures)
 // Le nom d'une couleur est toujours écrit à côté de la ceinture (texte `ceintures.ceinture.<id>`) : la couleur ne porte jamais seule l'information.
 import type { CouleurCeinture, Motif, Palette, PaletteId } from './types.ts'
 
@@ -18,9 +16,10 @@ const NOIRE = c('noire', '#222222', 'plein')
 
 export const PALETTES: Readonly<Record<PaletteId, Palette>> = {
   'judo': { id: 'judo', couleurs: [BLANCHE, JAUNE, ORANGE, VERTE, BLEUE, MARRON, NOIRE] },
-  'judo-rouge': { id: 'judo-rouge', couleurs: [BLANCHE, JAUNE, ORANGE, VERTE, BLEUE, MARRON, NOIRE, c('rouge', '#d6372f', 'quadrillage')] },
-  'rose-violet': { id: 'rose-violet', couleurs: [c('rose', '#f4a6c0', 'uni'), JAUNE, ORANGE, VERTE, BLEUE, c('violette', '#8a4fbf', 'gris')] },
-  'paliers': { id: 'paliers', couleurs: [c('palier1', '#e4e4e4', 'uni'), c('palier2', '#bbbbbb', 'rayures'), c('palier3', '#888888', 'points'), c('palier4', '#555555', 'lignes'), c('palier5', '#222222', 'plein')] },
+  'paliers': {
+    id: 'paliers',
+    couleurs: [c('palier1', '#e8e8e8', 'uni'), c('palier2', '#cfcfcf', 'rayures'), c('palier3', '#aaaaaa', 'hachures'), c('palier4', '#808080', 'points'), c('palier5', '#505050', 'lignes'), c('palier6', '#222222', 'plein')],
+  },
 }
 
 export const IDS_PALETTES = Object.keys(PALETTES) as PaletteId[]

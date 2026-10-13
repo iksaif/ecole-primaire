@@ -393,3 +393,13 @@ Tests : 100+ cas dans `tests/ceintures.test.mjs` (réglages acceptés tels quels
   C'est ce qui manquait à `/assemblage` (qui reste générique, sans mention des ceintures : la règle des extensions du §14 tient).
 - **Les choix de ceinture suivent la palette** (`nbCeinturesDe` : la piste, le nombre choisi, les couleurs de la palette) : onglet des exercices, diplôme, brevet sur mesure ; une ceinture au-delà est refusée par `brevetPapier`.
 Limites : les exercices en plusieurs parties (monnaie) ou sans questions (écriture) ne font pas de bloc ; pas de réglages d'exercice par bloc dans le brevet sur mesure (défauts de la classe) ; la piste « sur mesure » n'est pas mémorisée comme piste (seulement ses choix).
+
+## 22. Fait : deux jeux de couleurs et des pistes qui s'adaptent au nombre de ceintures (2026-10-13)
+
+- **Deux jeux de couleurs** : judo (7 ceintures) et sans couleur (6 niveaux, motifs distincts). « Judo et rouge » et « Rose à violette » (venus de la recherche du §2, sans usage réel) sont supprimés ; un réglage mémorisé avec un ancien jeu retombe sur le judo.
+  Choisir un jeu fixe le nombre de ceintures à sa taille (le curseur le baisse ensuite : 3 à 7).
+- **Une piste = un barème fin de paliers (jusqu'à 7), regroupés en autant de ceintures que demandé** (`regrouper`, `ceinturesDePiste` : groupes contigus de tailles presque égales, les premiers prennent le reste ; réglages réunis : listes en union, valeurs scalaires = celles du dernier palier ;
+  questions et durée = le plus grand ; classes = intersection). La dernière ceinture contient toujours le dernier palier (« tout »). Plus de ceinture grisée parce que la piste est « trop courte » : seule une ceinture dont un palier n'existe pas dans la classe l'est.
+  Tables (7 paliers) : ×2 ×5 ×10 · ×3 ×4 · ×6 · ×7 · ×8 · ×9 · toutes (30 en 3 minutes). Calcul mental (7) : + − · doubles et moitiés · compléments · calcul astucieux · × 10 et × 100 · tables · mêlés (calcul mental et tables).
+- Le livret regroupe aussi ses objectifs (une ceinture = plusieurs cases). Tests : regroupement pour 3 à 7 ceintures, réglages acceptés par chaque exercice dans chaque classe, brevets pour 3, 5 et 7 ceintures.
+- Reste (second temps, demandé) : un éditeur « Mes ceintures » par piste dans les réglages (tables, nombre de questions, seuil de chaque ceinture, enregistré sur l'appareil) qui remplace les valeurs par défaut.

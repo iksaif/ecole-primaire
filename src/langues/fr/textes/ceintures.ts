@@ -38,14 +38,12 @@ export default {
   // le nom écrit de chaque ceinture (la couleur ne porte jamais seule l'information) : « Ceinture verte »
   ceinture: {
     blanche: 'Ceinture blanche', jaune: 'Ceinture jaune', orange: 'Ceinture orange', verte: 'Ceinture verte', bleue: 'Ceinture bleue',
-    marron: 'Ceinture marron', noire: 'Ceinture noire', rouge: 'Ceinture rouge', rose: 'Ceinture rose', violette: 'Ceinture violette',
-    palier1: 'Niveau 1', palier2: 'Niveau 2', palier3: 'Niveau 3', palier4: 'Niveau 4', palier5: 'Niveau 5',
+    marron: 'Ceinture marron', noire: 'Ceinture noire',
+    palier1: 'Niveau 1', palier2: 'Niveau 2', palier3: 'Niveau 3', palier4: 'Niveau 4', palier5: 'Niveau 5', palier6: 'Niveau 6',
   },
   palette: {
     judo: 'Judo (7) : blanche à noire',
-    'judo-rouge': 'Judo et rouge (8)',
-    'rose-violet': 'Rose à violette (6)',
-    paliers: 'Sans couleur : cinq niveaux',
+    paliers: 'Sans couleur : six niveaux',
   },
   style: { ruban: 'Ruban noué', bandeau: 'Bandeau', rond: 'Rond (gommette)' },
   // le brevet papier (src/ceintures/brevet.ts)

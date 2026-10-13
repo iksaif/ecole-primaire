@@ -95,9 +95,10 @@ watch(module, m => {
 }, { immediate: true })
 
 const niveau = computed(() => (classes.value.includes(choix.value.niveau as Classe) ? choix.value.niveau as Classe : classes.value[0]))
-// les ceintures montrées : celles de la palette (au plus le nombre choisi dans les réglages communs) ; une ceinture que la piste n'a pas (la 7e des tables) est grisée
-const nbCeintures = computed(() => (piste.value ? nbCeinturesDe(reglagesCeintures(contextesDeFiche()), 8) : 0))
-const disponible = (k: number): boolean => !!piste.value && k < nbCeintures.value && k < nbCeinturesDe(reglagesCeintures(contextesDeFiche()), piste.value.ceintures.length) && ceintureDisponible(piste.value, k, niveau.value, classesDe)
+// les ceintures montrées : celles de la palette, au plus le nombre choisi dans les réglages communs et les paliers de la piste (qui les regroupe s'il y en a moins)
+const nbCeintures = computed(() => (piste.value ? nbCeinturesDe(reglagesCeintures(contextesDeFiche()), piste.value.paliers.length) : 0))
+// une ceinture qui n'existe pas dans cette classe (« × 10 et × 100 » au CP) est grisée
+const disponible = (k: number): boolean => !!piste.value && k < nbCeintures.value && ceintureDisponible(piste.value, k, niveau.value, classesDe, nbCeintures.value)
 // la ceinture choisie, ou la première qui existe dans cette classe
 const indice = computed(() => {
   const voulue = Math.min(Math.max(choix.value.ceinture, 1), Math.max(nbCeintures.value, 1)) - 1

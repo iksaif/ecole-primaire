@@ -45,6 +45,20 @@ export function traductionAssezSure(r: AvecTraduction, mode: Mode, regionale: La
   return !traductionMontree(r, mode, regionale) || assezSure(r.confiance, seuil)
 }
 
+/** Ce que le réglage de fiabilité fait d'une ressource dans le mode courant : rien (`sure`), ne propose que le français (`francais`), ou la cache (`masquee`). */
+export type EtatTraduction = 'sure' | 'francais' | 'masquee'
+
+/**
+ * L'état d'une ressource pour le réglage de fiabilité, selon le mode : une ressource dont on choisit la langue (exercice, affiche) qui a le français reste TOUJOURS là ; si la langue régionale du mode
+ * n'est pas assez sûre, elle n'est pas proposée dans sa page (`francais`) ; elle est cachée seulement quand plus aucune langue du mode n'est sûre (breton seul, ou une ressource qui n'existe qu'en breton).
+ * Un document figé (fiche PDF) est caché dès que sa traduction montrée n'est pas sûre. `masquee` est exactement ce que `traductionAssezSure` refuse.
+ */
+export function etatDeLaTraduction(r: AvecTraduction, mode: Mode, regionale: Langue | null, seuil: number | undefined): EtatTraduction {
+  if (!traductionAssezSure(r, mode, regionale, seuil)) return 'masquee'
+  if (langueAuChoix(r) && traductionMontree(r, mode, regionale) && !languesSures(r, mode, regionale, seuil).some(l => l !== LANGUE_SOURCE)) return 'francais'
+  return 'sure'
+}
+
 /** Ce que la règle lit d'une ressource ou d'une entrée de fiche : ses langues, la confiance dans sa traduction, et son type (ressource du catalogue). */
 export interface AvecTraduction {
   readonly langues: readonly string[]

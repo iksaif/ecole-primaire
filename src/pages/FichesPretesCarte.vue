@@ -13,7 +13,7 @@
       <p class="badges">
         <FichesPretesLangues :langues="entree.langues" regionales />
         <span class="badge"><Icone :nom="entree.usage === 'apprendre' ? 'affiche' : 'crayon'" /> {{ t(entree.usage === 'apprendre' ? 'ressource.apprendre' : 'ressource.sentrainer') }}</span>
-        <PastilleConfiance :niveau="entree.confiance ?? null" />
+        <PastilleConfiance :niveau="entree.confiance ?? null" :etat="etat(entree)" />
         <span v-if="entree.exemple" class="badge exemple">{{ t('fichesPretes.badgeExemple') }}</span>
       </p>
       <p class="meta">{{ t('fichesPretes.pdfPages', { n: entree.nbPages }) }}</p>
@@ -30,6 +30,7 @@ import type { Classe, EntreeIndex } from '../telechargements/types.ts'
 import PastillesClasses from '../ressources/composants/PastillesClasses.vue'
 import FichesPretesLangues from './FichesPretesLangues.vue'
 import PastilleConfiance from '../ressources/composants/PastilleConfiance.vue'
+import { useAffichable } from '../ressources/useAffichable.ts'
 
 withDefaults(defineProps<{
   entree: EntreeIndex
@@ -40,6 +41,7 @@ withDefaults(defineProps<{
   niveauTitre?: 2 | 3 | 4
 }>(), { selection: () => [], niveauTitre: 2 })
 const { t, langueAffichee } = useLangue()
+const { etat } = useAffichable()
 </script>
 
 <style scoped>

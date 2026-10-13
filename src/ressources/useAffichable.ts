@@ -1,7 +1,7 @@
 // « Peut-on afficher X ? » : LE point d'entrée des listes (matières, accueil, compétences, programme, recherche, fiches voisines…) pour savoir si une
 // ressource est montrée. Aujourd'hui une seule raison de cacher : sa traduction n'est pas assez sûre pour le réglage de l'utilisateur
 // (src/langues/confianceReglage.ts), et seulement si le mode de langue montre la traduction ; ou elle relève d'une extension (src/extensions/) qui n'est pas active. D'autres raisons s'ajouteront ici, pas dans les pages.
-//   const { affichables, affichable, filtrer, masque, traduite } = useAffichable()
+//   const { affichables, affichable, filtrer, masque, etat, traduite } = useAffichable()
 // En développement (AVEC_DEV), tout est affichable (sauf une extension inactive) : `masque(r)` dit ce que le réglage aurait caché (pour la pastille).
 import { computed } from 'vue'
 import type { ComputedRef } from 'vue'
@@ -10,7 +10,8 @@ import { AVEC_DEV } from '../dev.ts'
 import { extensionActive } from '../extensions/activation.ts'
 import { confianceMin } from '../langues/confianceReglage.ts'
 import type { NiveauConfiance } from '../langues/confiance.ts'
-import { traductionAssezSure, traductionMontree } from './filtres.ts'
+import { etatDeLaTraduction, traductionAssezSure, traductionMontree } from './filtres.ts'
+import type { EtatTraduction } from './filtres.ts'
 import type { AvecTraduction } from './filtres.ts'
 import { useRessources } from './useRessources.ts'
 import type { RessourceDeContenu } from './types.ts'
@@ -25,6 +26,8 @@ export interface UtilisationAffichable {
   masque: (x: Affichable) => boolean
   /** la liste, sans ce qui n'est pas affichable */
   filtrer: <T extends Affichable>(liste: readonly T[]) => T[]
+  /** ce que le réglage fait de l'élément dans le mode courant : rien, ne propose que le français, ou le cache (pastille, en développement) */
+  etat: (x: Affichable) => EtatTraduction
   /** le niveau à montrer sur l'élément (pastille), `null` si sa traduction n'est pas lue dans ce mode */
   traduite: (x: Affichable) => NiveauConfiance | null
   /** le catalogue complet des ressources, sans ce qui n'est pas affichable : à lire à la place de `catalogue` dans les listes */
@@ -40,7 +43,8 @@ export function useAffichable(): UtilisationAffichable {
   // en développement, tout est montré SAUF ce qui relève d'une extension inactive : cacher une extension est un vrai choix de l'utilisateur, pas une réserve sur une traduction
   const affichable = (x: Affichable): boolean => extensionOk(x) && (AVEC_DEV || verifie(x, confianceMin.value))
   const masque = (x: Affichable): boolean => !verifie(x, confianceMin.value)
+  const etat = (x: Affichable): EtatTraduction => etatDeLaTraduction(x, contexte.value.mode, contexte.value.regionale, confianceMin.value)
   const traduite = (x: Affichable): NiveauConfiance | null => (traductionMontree(x, contexte.value.mode, contexte.value.regionale) ? (x.confiance ?? null) : null)
   const filtrer = <T extends Affichable>(liste: readonly T[]): T[] => liste.filter(affichable)
-  return { affichable, masque, filtrer, traduite, affichables: computed(() => filtrer(catalogue.value)) }
+  return { affichable, masque, etat, filtrer, traduite, affichables: computed(() => filtrer(catalogue.value)) }
 }

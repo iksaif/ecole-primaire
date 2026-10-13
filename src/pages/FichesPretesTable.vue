@@ -17,7 +17,7 @@
         <tr v-for="e in entrees" :key="e.slug">
           <td class="c-titre"><div class="titre">
             <RouterLink :to="`/telechargements/${e.slug}`" :lang="langueDuTexte(e.titre, langueAffichee)"><strong>{{ texteDe(e.titre, langueAffichee) }}</strong></RouterLink>
-            <FichesPretesLangues :langues="e.langues" regionales /> <PastilleConfiance :niveau="e.confiance ?? null" />
+            <FichesPretesLangues :langues="e.langues" regionales /> <PastilleConfiance :niveau="e.confiance ?? null" :etat="etat(e)" />
             <span v-if="e.exemple" class="badge">{{ t('fichesPretes.badgeExemple') }}</span>
           </div></td>
           <td class="c-dom">{{ nomDomaine(e) }}</td>
@@ -37,6 +37,7 @@ import type { Classe, EntreeIndex, IndexFiches } from '../telechargements/types.
 import PastillesClasses from '../ressources/composants/PastillesClasses.vue'
 import FichesPretesLangues from './FichesPretesLangues.vue'
 import PastilleConfiance from '../ressources/composants/PastilleConfiance.vue'
+import { useAffichable } from '../ressources/useAffichable.ts'
 
 const props = withDefaults(defineProps<{
   entrees: readonly EntreeIndex[]
@@ -49,6 +50,7 @@ const nomDomaine = (e: EntreeIndex): string => {
   const d = props.index.filtres.domaines.find(x => x.id === e.domaine)
   return d ? texteDe(d.nom, langueAffichee.value) : ''
 }
+const { etat } = useAffichable()
 </script>
 
 <style scoped>

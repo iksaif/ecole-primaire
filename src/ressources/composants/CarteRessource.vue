@@ -7,7 +7,7 @@
     <p v-if="description" class="description" :lang="langueDescription">{{ description }}</p>
     <PastillesClasses :classes="ressource.classes" :choisies="classesChoisies" />
     <BadgesRessource :badges="ressource.badges" />
-    <PastilleConfiance :niveau="traduite(ressource)" />
+    <PastilleConfiance :niveau="traduite(ressource)" :etat="etat(ressource)" />
   </article>
 </template>
 
@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<{
   langueContenu?: Langue
 }>(), { niveauTitre: 4, langueContenu: undefined })
 const { langueAffichee } = useLangue()
-const { traduite } = useAffichable()
+const { traduite, etat } = useAffichable()
 const titre = computed(() => texteDe(props.ressource.titre, langueAffichee.value))
 // ouverte dans la langue demandée (page de la langue régionale), sinon telle quelle
 const lien = computed(() => lienDansLaLangue(props.ressource, props.langueContenu))

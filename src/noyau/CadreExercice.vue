@@ -23,16 +23,19 @@
   tabulation (celui qui est actif) et le panneau est relié à son onglet.
 -->
 <template>
-  <div class="config-box cadre-exercice">
+  <div class="config-box cadre-exercice" :class="{ imbrique }">
     <div v-if="!ficheSeule" class="modes" role="tablist" :aria-label="t('cadre.modes')" @keydown="touche">
-      <button v-for="m in MODES" :key="m" :id="`${id}-onglet-${m}`" ref="onglets" type="button" role="tab" :aria-selected="modeCourant === m"
-        :aria-controls="`${id}-panneau`" :tabindex="modeCourant === m ? 0 : -1" :class="{ actif: modeCourant === m }"
-        @click="$emit('update:mode', m)">
-        <Icone :nom="m === 'jouer' ? 'exercice' : 'imprimer'" /> {{ t(m === 'jouer' ? 'cadre.jouer' : 'cadre.imprimer') }}
+      <button v-for="o in onglets" :key="o.id" :id="`${id}-onglet-${o.id}`" ref="boutons" type="button" role="tab" :aria-selected="ongletActif === o.id"
+        :aria-controls="`${id}-panneau`" :tabindex="ongletActif === o.id ? 0 : -1" :class="{ actif: ongletActif === o.id }"
+        @click="ouvrirOnglet(o.id)">
+        <Icone :nom="o.icone" /> {{ o.titre }}
       </button>
     </div>
 
-    <div :id="`${id}-panneau`" :role="ficheSeule ? undefined : 'tabpanel'" :aria-labelledby="ficheSeule ? undefined : `${id}-onglet-${modeCourant}`">
+    <div :id="`${id}-panneau`" :role="ficheSeule ? undefined : 'tabpanel'" :aria-labelledby="ficheSeule ? undefined : `${id}-onglet-${ongletActif}`">
+      <!-- l'onglet d'une extension (src/extensions/) prend toute la place du panneau -->
+      <component :is="composantExtension" v-if="ongletOuvert && composantExtension" :exercice="exerciceDeLaPage" />
+      <template v-else>
       <ChoixLangueContenu />
       <slot :mode="modeCourant" />
 
@@ -48,13 +51,17 @@
           <button type="button" class="btn btn-ghost" @click="$emit('regenerer')"><Icone nom="nouvelle" /> {{ t('cadre.nouvelle') }}</button>
         </template>
       </ApercuImpression>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Icone from '../images/Icone.vue'
-import { computed, ref, useId, nextTick } from 'vue'
+import { computed, defineAsyncComponent, ref, useId, nextTick } from 'vue'
+import type { Component } from 'vue'
+import { useOnglets } from '../extensions/onglets.ts'
+import type { NomIcone } from '../images/icones.ts'
 import ApercuImpression from './ApercuImpression.vue'
 import SignalerErreur from './SignalerErreur.vue'
 import OptionsFiche from './OptionsFiche.vue'
@@ -63,7 +70,6 @@ import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige } from './optionsFic
 import type { ModeExercice } from './useFicheExercice.ts'
 import { useLangue } from '../langues/useLangue.ts'
 
-const MODES: readonly ModeExercice[] = ['jouer', 'imprimer']
 
 const props = withDefaults(defineProps<{
   mode: ModeExercice
@@ -85,7 +91,9 @@ const props = withDefaults(defineProps<{
   extensions?: readonly string[]
   // pas de partie à l'écran : une fiche seulement (pas d'onglets)
   ficheSeule?: boolean
-}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, pictogrammes: false, extensions: () => [], ficheSeule: false })
+  // le cadre est dans un autre cadre (le contenu d'un onglet d'extension) : sans sa boîte
+  imbrique?: boolean
+}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, pictogrammes: false, extensions: () => [], ficheSeule: false, imbrique: false })
 const emit = defineEmits<{ 'update:mode': [mode: ModeExercice], commencer: [], regenerer: [] }>()
 // le formulaire de réglages reçoit le mode courant
 defineSlots<{ default?(props: { mode: ModeExercice }): unknown }>()
@@ -99,20 +107,46 @@ const avecCorrige = computed(() => aUnCorrige(props.fiche))
 const ficheFinale = computed(() => appliquerOptionsFiche(props.fiche, options.value, t('cadre.mentionPictos')))
 const reglages = computed(() => (props.config ? { ...props.config, ...options.value } : options.value))
 
+// Les onglets : « Faire l'exercice » et « Imprimer une fiche », puis ceux des extensions actives pour cet exercice (src/extensions/onglets.ts : `?mode=<id>`)
+interface OngletAffiche { id: string, icone: NomIcone, titre: string }
+const { onglets: ongletsExtensions, courant: ongletExtension, exercice: exerciceDeLaPage, ouvrir: ouvrirExtension } = useOnglets()
+const onglets = computed<OngletAffiche[]>(() => [
+  { id: 'jouer', icone: 'exercice', titre: t('cadre.jouer') },
+  { id: 'imprimer', icone: 'imprimer', titre: t('cadre.imprimer') },
+  ...ongletsExtensions.value.map(o => ({ id: o.id, icone: o.icone, titre: (t as (cle: string) => string)(o.titre) })),
+])
+// un cadre sans onglets (fiche seule) ou imbriqué dans un onglet n'ouvre jamais d'onglet d'extension (sinon l'onglet se contiendrait lui-même)
+const ongletOuvert = computed(() => (props.ficheSeule || props.imbrique ? null : ongletExtension.value))
+const ongletActif = computed(() => ongletOuvert.value?.id ?? modeCourant.value)
+// le contenu de l'onglet d'une extension, chargé à la demande (un composant asynchrone par onglet, créé une fois)
+const composants = new Map<string, Component>()
+const composantExtension = computed<Component | null>(() => {
+  const o = ongletOuvert.value
+  if (!o) return null
+  if (!composants.has(o.id)) composants.set(o.id, defineAsyncComponent(o.composant))
+  return composants.get(o.id)!
+})
+function ouvrirOnglet(idOnglet: string): void {
+  if (idOnglet === 'jouer' || idOnglet === 'imprimer') emit('update:mode', idOnglet)
+  else ouvrirExtension(idOnglet)
+}
+
 // Onglets au clavier : flèches (avec retour au début), Début, Fin ; le focus suit l'onglet activé
-const onglets = ref<HTMLButtonElement[]>([])
+const boutons = ref<HTMLButtonElement[]>([])
 function touche(e: KeyboardEvent) {
-  const i = MODES.indexOf(modeCourant.value)
-  const suivant = e.key === 'ArrowRight' ? (i + 1) % MODES.length : e.key === 'ArrowLeft' ? (i + MODES.length - 1) % MODES.length
-    : e.key === 'Home' ? 0 : e.key === 'End' ? MODES.length - 1 : -1
+  const i = onglets.value.findIndex(o => o.id === ongletActif.value)
+  const n = onglets.value.length
+  const suivant = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i + n - 1) % n
+    : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1
   if (suivant < 0) return
   e.preventDefault()
-  emit('update:mode', MODES[suivant])
-  nextTick(() => onglets.value[suivant]?.focus())
+  ouvrirOnglet(onglets.value[suivant].id)
+  nextTick(() => boutons.value[suivant]?.focus())
 }
 </script>
 
 <style scoped>
+.config-box.imbrique { box-shadow: none; padding: 0; border: 0; background: none; }
 .modes {
   display: flex; gap: .25rem; background: var(--gris-bg); border-radius: 12px; padding: 4px;
   margin: -.5rem 0 1.5rem; width: fit-content; max-width: 100%;

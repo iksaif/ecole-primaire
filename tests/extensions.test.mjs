@@ -6,6 +6,9 @@ import { fileURLToPath } from 'node:url'
 import { EXTENSIONS, extensionParId, extensionDeRessource, problemesRegistre } from '../src/extensions/registre.ts'
 import { ressourceMontree, extensionActive } from '../src/extensions/activation.ts'
 import { REGISTRE } from '../src/exercices/index.ts'
+import { ongletsDe } from '../src/extensions/onglets.ts'
+import { routesDesExercices } from '../src/router/routes.ts'
+import { EXERCICES_AVEC_BREVET } from '../src/ceintures/brevets.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 console.log('Registre')
@@ -24,6 +27,15 @@ for (const e of EXTENSIONS) {
   verifier(e.ressources.filter(r => r.startsWith('exercice:')).every(r => REGISTRE.find(x => `exercice:${x.definition.id}` === r).definition.extensions.includes(e.id)), `${e.id} : ses exercices déclarent l’extension (extensions de leur définition)`)
 }
 verifier(!extensionActive('ceintures') && !ressourceMontree('exercice:ceintures') && ressourceMontree('exercice:tables'), 'extension cachée : ses ressources sont masquées, les autres non')
+
+console.log('Onglets d’exercice')
+const ongletsTables = ongletsDe(EXTENSIONS, 'tables')
+verifier(ongletsTables.length === 1 && ongletsTables[0].id === 'ceintures' && ongletsTables[0].extension === 'ceintures', 'les tables reçoivent l’onglet des ceintures')
+verifier(ongletsDe(EXTENSIONS, 'heure').length === 0 && ongletsDe([], 'tables').length === 0, 'un autre exercice, ou aucune extension active : pas d’onglet')
+verifier(Object.keys(EXERCICES_AVEC_BREVET).every(id => REGISTRE.some(m => m.definition.id === id)), 'les exercices qui ont un brevet existent au registre')
+verifier(EXTENSIONS.flatMap(e => e.onglets ?? []).every(o => o.id !== 'jouer' && o.id !== 'imprimer'), 'un onglet d’extension ne reprend pas « jouer » ni « imprimer »')
+const routes = routesDesExercices(REGISTRE.map(m => ({ definition: m.definition })), [])
+verifier(routes.every(r => typeof r.meta.exercice === 'string') && routes.find(r => r.path === '/maths/tables').meta.exercice === 'tables', 'chaque route d’exercice porte son identifiant (meta.exercice)')
 
 console.log('Les parties communes ne nomment aucune extension')
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')

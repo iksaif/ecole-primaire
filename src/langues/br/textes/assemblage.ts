@@ -5,7 +5,6 @@ import type fr from '../../fr/textes/assemblage.ts'
 export default {
   titre: 'Fichenn diouzh ar muzul', // br: à relire
   intro: 'Strollit war ur follenn nemetañ fichennoù meur a ekzerzh : ul linenn Anv-bihan ha Deiziad, ur reizhadur hepken. Pep ekzerzh a ra gant e reolennoù boas evit ar c’hlas dibabet.', // br: à relire
-  classe: 'Klas', // br: à relire
   exercices: 'Ekzerzhioù da strollañ', // br: à relire
   aucun: 'Dibabit un ekzerzh da nebeutañ evit gwelout ar follenn.', // br: à relire
   aucunPourLaClasse: 'Ekzerzh ebet n’en deus fichenn evit ar c’hlas-mañ.', // br: à relire

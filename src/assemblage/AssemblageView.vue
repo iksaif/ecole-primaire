@@ -5,7 +5,7 @@
 
     <CadreExercice fiche-seule mode="imprimer" :fiche="fiche" :police="true" @regenerer="nouvelle">
       <div class="config-section" role="group" :aria-labelledby="`${id}-classe`">
-        <div :id="`${id}-classe`" class="config-section-title">{{ t('assemblage.classe') }}</div>
+        <div :id="`${id}-classe`" class="config-section-title">{{ t('fichesPretes.classe') }}</div>
         <div class="btn-group">
           <button v-for="n in NIVEAUX" :key="n" type="button" class="level-btn" :class="{ active: choix.niveau === n }" :aria-pressed="choix.niveau === n"
             :data-valeur="n" @click="choix.niveau = n">{{ n.toUpperCase() }}</button>

@@ -52,6 +52,9 @@ function brevetTables(indice: number, rng: Rng, options: OptionsTables): LigneBr
 export const PISTES_AVEC_BREVET = ['tables'] as const satisfies readonly IdPiste[]
 export type PisteAvecBrevet = (typeof PISTES_AVEC_BREVET)[number]
 
+/** Les exercices du registre dont une piste a un brevet : leur page reçoit l'onglet « Ceintures ». */
+export const EXERCICES_AVEC_BREVET: Readonly<Record<string, PisteAvecBrevet>> = { tables: 'tables' }
+
 /** Les questions du brevet de la ceinture `indice` (0 pour la première) d'une piste. */
 export function brevetDe(piste: PisteAvecBrevet, indice: number, rng: Rng, options: OptionsTables = OPTIONS_TABLES_DEFAUT): LigneBrevet[] {
   return brevetTables(indice, rng, options)

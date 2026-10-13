@@ -303,3 +303,10 @@ Risques : le contrat de fragment touche chaque `fiche()` (ou au moins le gabarit
 - **Consommateur : l'extension « assemblage »** (`src/assemblage/`, cachée, `?assemblage=oui`, page `/assemblage`) : on choisit une classe et des exercices, l'aperçu réunit leurs fiches. Le mécanisme d'extension a gagné des pages (`routes`, `meta.extension`, garde du routeur).
 - Reste : le brevet des ceintures construit sur l'assemblage (aujourd'hui `src/ceintures/brevets.ts` a son propre générateur, qui sait faire des divisions : l'exercice des tables n'en fait pas), des réglages par bloc (aujourd'hui les défauts du niveau), l'ordre des blocs,
   les exercices dont la fiche demande la mesure du navigateur (écriture : signalés « pas assemblable ici »), puis les onglets d'exercice (§14.3).
+
+## 17. Étape 4 du §14 faite : l'onglet d'exercice (2026-10-13)
+
+Une extension ajoute des **onglets** à la page d'un exercice (`Extension.onglets` : id, icône, titre, `pour(exercice)`, composant). `CadreExercice` affiche « Faire l'exercice », « Imprimer une fiche », puis les onglets des extensions actives
+pour l'exercice de la page (`meta.exercice` de la route ; `?mode=<id>`) et met le composant de l'onglet à la place du panneau. Un cadre sans onglets (fiche seule) ou `imbrique` n'ouvre jamais d'onglet d'extension.
+Les ceintures : l'onglet « Ceintures » des tables de multiplication (`EXERCICES_AVEC_BREVET`) contient le brevet papier (`BrevetPapier.vue`, aussi le corps de la page `ceintures-brevet`). Le brevet garde ses propres réglages (classe, ceinture, tables) : ils ne
+suivent pas ceux de l'exercice. À faire : suivre la classe de l'exercice, le brevet à l'écran (`useJeu`), la ceinture atteinte à côté du score, l'onglet pour le calcul mental et les lettres (il leur faut un brevet), puis retirer la page `ceintures-brevet` si l'onglet suffit.

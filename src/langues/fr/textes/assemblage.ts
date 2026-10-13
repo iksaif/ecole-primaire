@@ -2,7 +2,6 @@
 export default {
   titre: 'Fiche sur mesure',
   intro: 'Réunis sur une seule feuille des fiches de plusieurs exercices : une ligne Prénom et Date, un seul corrigé. Chaque exercice garde ses réglages habituels pour la classe choisie.',
-  classe: 'Classe',
   exercices: 'Exercices à réunir',
   aucun: 'Choisis au moins un exercice pour voir la feuille.',
   aucunPourLaClasse: 'Aucun exercice n’a de fiche pour cette classe.',

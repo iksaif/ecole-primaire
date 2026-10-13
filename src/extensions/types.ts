@@ -26,6 +26,18 @@ export interface BlocReglages {
   composant: ComposantParesseux
 }
 
+/** Un onglet que l'extension ajoute à la page d'un exercice (après « Faire l'exercice » et « Imprimer une fiche »), pour les exercices qu'elle désigne. */
+export interface OngletExercice {
+  /** valeur de `?mode=` quand l'onglet est ouvert ; ni `jouer` ni `imprimer` */
+  id: string
+  icone: NomIcone
+  titre: CleTexte
+  /** l'onglet existe-t-il pour cet exercice (identifiant du registre) ? */
+  pour: (exercice: string) => boolean
+  /** le contenu de l'onglet ; reçoit `exercice` (l'identifiant de l'exercice) */
+  composant: ComposantParesseux
+}
+
 export interface Extension {
   /** minuscules et tirets : c'est aussi le paramètre d'adresse qui l'active (`?<id>=oui`, `?<id>=non`) et la clé du réglage de l'appareil */
   id: string
@@ -38,6 +50,8 @@ export interface Extension {
   contexteFiche?: () => unknown
   /** bloc de la page des réglages */
   reglages?: BlocReglages
+  /** onglets qu'elle ajoute à la page de certains exercices */
+  onglets?: readonly OngletExercice[]
   /** pages qu'elle ajoute au routeur (accessibles seulement quand elle est active : `meta.extension`) */
   routes?: readonly RouteRecordRaw[]
 }

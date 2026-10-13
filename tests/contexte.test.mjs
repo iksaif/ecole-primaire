@@ -207,10 +207,10 @@ const { titreDeDocument } = await import('../src/router/titres.ts')
   verifier(!routesDeBase([]).some(r => r.path === '/brezhoneg'), 'pas de page de langue régionale sur un site qui n’en propose pas')
   const sansTitre = base.filter(r => !r.redirect && !r.meta?.titre && !r.meta?.titreLibre).map(r => r.path)
   verifier(sansTitre.length === 0, `une clé de titre par route${sansTitre.length ? ` (manque : ${sansTitre})` : ''}`)
-  const ex = routesDesExercices([{ definition: { route: '/maths/heure' } }, { definition: { route: '/dev/exemple' }, exemple: true }], base)
+  const ex = routesDesExercices([{ definition: { id: 'heure', route: '/maths/heure' } }, { definition: { id: 'exemple', route: '/dev/exemple' }, exemple: true }], base)
   verifier(ex.length === 1 && ex[0].path === '/maths/heure' && ex[0].meta?.titre === 'routeur.titre.exercice', 'une route par exercice (les exemples ont leurs routes /dev)')
   let leve = 0
-  for (const entrees of [[{ definition: { route: '/maths' } }], [{ definition: { route: '/a' } }, { definition: { route: '/a' } }]]) try { routesDesExercices(entrees, base) } catch { leve++ }
+  for (const entrees of [[{ definition: { id: 'x', route: '/maths' } }], [{ definition: { id: 'a', route: '/a' } }, { definition: { id: 'a', route: '/a' } }]]) try { routesDesExercices(entrees, base) } catch { leve++ }
   verifier(leve === 2, 'une adresse d’exercice déjà prise est refusée')
   verifier(titreDeDocument({ titre: 'routeur.titre.maths' }, 'fr', E) === 'Mathématiques — École Primaire', 'titre : « page — site »')
   verifier(titreDeDocument({ titre: 'routeur.titre.maths' }, 'br', S).endsWith(' — Skoolik') && titreDeDocument({ titre: 'routeur.titre.maths' }, 'br', S).startsWith('Jedoniezh'), 'titre en breton selon la langue de l’interface')

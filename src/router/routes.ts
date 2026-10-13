@@ -71,7 +71,7 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
 
 /** Entrée du registre d'exercices, pour ce dont le routeur a besoin. */
 export interface EntreeExercice {
-  readonly definition: { readonly route: string }
+  readonly definition: { readonly route: string, readonly id: string }
   readonly exemple?: true
 }
 
@@ -90,7 +90,7 @@ export function routesDesExercices(entrees: readonly EntreeExercice[], existante
     if (exemple) continue
     if (prises.has(definition.route)) throw new Error(`route d’exercice « ${definition.route} » déjà prise`)
     prises.add(definition.route)
-    routes.push({ path: definition.route, component: (vues[definition.route] ?? aVenir) as RouteComponent, meta: { titre: 'routeur.titre.exercice' } })
+    routes.push({ path: definition.route, component: (vues[definition.route] ?? aVenir) as RouteComponent, meta: { titre: 'routeur.titre.exercice', exercice: definition.id } })
   }
   return routes
 }

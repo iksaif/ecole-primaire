@@ -1,6 +1,7 @@
 // Textes de l'interface — les ceintures de compétences (français). Source des clés : br/textes/ceintures.ts doit avoir exactement les mêmes.
 export default {
   titre: 'Ceintures',
+  ongletIntro: 'Le brevet papier de cette piste : choisis la ceinture à passer, imprime les questions et le corrigé.',
   description: 'Livret, ceintures à découper, diplôme et passeport : des paliers de couleur pour suivre ses progrès',
   intro: 'Des paliers de couleur, comme au judo : on s’entraîne, on passe un brevet, on gagne la ceinture suivante. Choisis le support à imprimer et la piste ; les couleurs se règlent dans « Sur la fiche » ou dans les réglages.',
   support: { livret: 'Livret', bandes: 'Ceintures à découper', diplome: 'Diplôme', passeport: 'Passeport' },

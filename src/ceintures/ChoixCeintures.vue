@@ -10,7 +10,7 @@
 
     <div class="btn-group" role="group" :aria-label="t('ceintures.reglage.palette')">
       <button v-for="p in IDS_PALETTES" :key="p" type="button" class="level-btn palette" :data-valeur="p"
-        :class="{ active: reglages.palette === p }" :aria-pressed="reglages.palette === p" @click="reglages.palette = p">
+        :class="{ active: reglages.palette === p }" :aria-pressed="reglages.palette === p" @click="choisirPalette(p)">
         <span class="bandes" aria-hidden="true" v-html="bandes(p)" />{{ t(`ceintures.palette.${p}`) }}
       </button>
     </div>
@@ -53,7 +53,7 @@
 import { computed, useId } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { IDS_PALETTES, PALETTES } from './palettes.ts'
-import { BORNES, CHRONOMETRES, STYLES_CEINTURE } from './reglages.ts'
+import { BORNES, CHRONOMETRES, STYLES_CEINTURE, avecPalette } from './reglages.ts'
 import { ceintureSvg } from './dessin.ts'
 import { useCeintures } from './useCeintures.ts'
 import type { PaletteId, StyleCeinture } from './types.ts'
@@ -62,6 +62,9 @@ defineProps<{ complet?: boolean }>()
 const { t } = useLangue()
 const idTitre = useId()
 const reglages = useCeintures()
+
+/** Choisir une palette : son nombre de ceintures devient le nombre choisi (on peut le baisser avec le curseur). */
+const choisirPalette = (p: PaletteId): void => { reglages.value = avecPalette(reglages.value, p) }
 
 // une palette plus courte que le réglage ramène le nombre de ceintures à sa taille
 // le nombre choisi est gardé quand on passe à une palette plus courte (il revient avec une palette plus longue) ; ce qui compte est nbCeinturesDe (reglages.ts)

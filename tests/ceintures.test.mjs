@@ -1,7 +1,7 @@
 // Ceintures de compétences (node) : palettes, dessin (couleur et noir et blanc), réglages communs lus avec méfiance, seuil d'un brevet.
 import { PALETTES, IDS_PALETTES, couleursDe } from '../src/ceintures/palettes.ts'
 import { ceintureSvg } from '../src/ceintures/dessin.ts'
-import { nbCeinturesDe } from '../src/ceintures/reglages.ts'
+import { nbCeinturesDe, avecPalette } from '../src/ceintures/reglages.ts'
 import { DEFAUT_CEINTURES, BORNES, STYLES_CEINTURE, assainirCeintures, brevetReussi } from '../src/ceintures/reglages.ts'
 import { demandeDeLAdresse, extensionActive, extensionActivePour } from '../src/extensions/activation.ts'
 import { SITES } from '../src/sites.ts'
@@ -174,6 +174,11 @@ for (const piste of Object.values(PISTES).filter(p => p.exercice)) {
   const br = brevetPapier(brevetDe2('calcul-mental', 2, 'ce1', { langue: 'br' }))
   verifier(br.includes('lang="br"') && !/\b(ceintures|ceinture|brevet)\.[a-z-]+/.test(br), 'en breton : un document complet sans clé brute')
 }
+
+console.log('Choisir une palette')
+verifier(avecPalette(DEFAUT_CEINTURES, 'judo-rouge').nbCeintures === 8 && avecPalette(DEFAUT_CEINTURES, 'paliers').nbCeintures === 5 && avecPalette(DEFAUT_CEINTURES, 'rose-violet').nbCeintures === 6 && avecPalette(DEFAUT_CEINTURES, 'judo').nbCeintures === 7, 'la palette fixe le nombre de ceintures : 8, 5, 6, 7')
+verifier(avecPalette({ ...DEFAUT_CEINTURES, style: 'rond', seuil: 80 }, 'paliers').style === 'rond' && avecPalette({ ...DEFAUT_CEINTURES, seuil: 80 }, 'paliers').seuil === 80 && avecPalette(DEFAUT_CEINTURES, 'paliers').palette === 'paliers', 'les autres réglages sont gardés')
+verifier(nbCeinturesDe(avecPalette(DEFAUT_CEINTURES, 'judo-rouge'), 8) === 8 && nbCeinturesDe(avecPalette(DEFAUT_CEINTURES, 'judo-rouge'), 6) === 6, 'palette à 8 : 8 choix de ceinture, mais pas plus que les ceintures de la piste pour un brevet')
 
 console.log('Brevet de plusieurs exercices')
 {

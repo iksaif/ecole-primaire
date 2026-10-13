@@ -1,7 +1,7 @@
 // Les réglages communs des ceintures : valeurs par défaut, bornes, et lecture avec méfiance (stockage, adresse). Pur : lu par node comme par le navigateur.
 // Mémorisés par useCeintures (clé `ceintures`) ; les PDF publiés prennent DEFAUT_CEINTURES.
 import { IDS_PALETTES, PALETTES } from './palettes.ts'
-import type { Chronometre, ReglagesCeintures, StyleCeinture } from './types.ts'
+import type { Chronometre, PaletteId, ReglagesCeintures, StyleCeinture } from './types.ts'
 
 export const STYLES_CEINTURE: readonly StyleCeinture[] = ['ruban', 'bandeau', 'rond']
 export const CHRONOMETRES: readonly Chronometre[] = ['aucun', 'doux', 'strict']
@@ -52,3 +52,9 @@ export const brevetReussi = (bonnes: number, total: number, seuil: number): bool
  * (cinq niveaux seulement pour « sans couleur »). Une ceinture au-delà n'existe pas : ni dans les choix, ni sur les fiches.
  */
 export const nbCeinturesDe = (reglages: ReglagesCeintures, nbPiste: number): number => Math.max(1, Math.min(nbPiste, reglages.nbCeintures, PALETTES[reglages.palette].couleurs.length))
+
+/** Les réglages quand on choisit une palette : le nombre de ceintures devient celui de la palette (« Judo et rouge (8) » : 8), dans les bornes ; on peut le baisser ensuite. */
+export function avecPalette(reglages: ReglagesCeintures, palette: PaletteId): ReglagesCeintures {
+  const nb = Math.min(BORNES.nbCeintures.max, Math.max(BORNES.nbCeintures.min, PALETTES[palette].couleurs.length))
+  return { ...reglages, palette, nbCeintures: Math.min(nb, PALETTES[palette].couleurs.length) }
+}

@@ -11,6 +11,9 @@ import { CHOIX_PISTE, objectifsDe } from '../src/ceintures/pistes.ts'
 import { creerRng } from '../src/utils/hasard.ts'
 import { brevetDe, tablesDuBrevet, PISTES_AVEC_BREVET, NB_CEINTURES_BREVET } from '../src/ceintures/brevets.ts'
 import { module as brevet } from '../src/exercices/ceintures-brevet/index.ts'
+import { PISTES, IDS_PISTES, pisteDeExercice, ceintureDisponible, EXERCICES_AVEC_BREVET as EXERCICES_PISTES } from '../src/ceintures/pistes.ts'
+import { reglagesDuNiveau } from '../src/noyau/reglages.ts'
+import { REGISTRE } from '../src/exercices/index.ts'
 import { LANGUES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -154,6 +157,41 @@ verifier(JSON.stringify(brevetDe('calcul-mental', 1, creerRng(5))) === JSON.stri
   const x = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages, rng: creerRng(5) })
   const html = brevet.fiche.fiche({ questions: x, reglages, T, langue: 'fr' })
   verifier(x.tables.length === 0 && html.includes('Calcul mental') && !html.includes('tables :') && html.includes('Ceinture orange') && html.includes('class="corrige"'), 'brevet papier du calcul mental : titre de l’exercice, sans tables, ceinture orange, corrigé')
+}
+
+console.log('Pistes : ceintures, réglages et exercices')
+for (const langue of ['fr', 'br']) {
+  const Tc = traducteur(activite.textes, langue)
+  for (const id of IDS_PISTES) {
+    const nbObjectifs = objectifsDe(Tc(`piste.${id}.objectifs`)).length
+    verifier(PISTES[id].ceintures.length === nbObjectifs, `${langue} ${id} : autant de ceintures (${PISTES[id].ceintures.length}) que d’objectifs écrits (${nbObjectifs})`)
+  }
+}
+verifier(pisteDeExercice('tables')?.id === 'tables' && pisteDeExercice('calcul-mental')?.id === 'calcul-mental' && !pisteDeExercice('heure') && EXERCICES_PISTES.join() === 'tables,calcul-mental', 'pisteDeExercice : les tables et le calcul mental')
+for (const piste of Object.values(PISTES).filter(p => p.exercice)) {
+  const module = REGISTRE.find(m => m.definition.id === piste.exercice)
+  const classes = Object.keys(module.definition.niveaux)
+  verifier(piste.ceintures.length >= 3 && piste.ceintures.length <= 8 && piste.ceintures.every(c => c.reglages), `${piste.id} : de 3 à 8 ceintures, chacune avec ses réglages`)
+  for (const niveau of classes) for (const [indice, c] of piste.ceintures.entries()) {
+    if (!ceintureDisponible(piste, indice, niveau, classes)) continue
+    const demande = c.reglages(niveau)
+    const obtenu = reglagesDuNiveau(module.definition, { ...demande, niveau })
+    const problemes = []
+    for (const [cle, voulu] of Object.entries(demande)) {
+      const recu = obtenu[cle]
+      if (Array.isArray(voulu)) {
+        // une liste : l'exercice garde celles qu'il offre dans ce niveau ; au moins une, et jamais une que l'on n'a pas demandée (pas de repli silencieux sur le défaut)
+        if (!recu.length || !recu.every(v => voulu.includes(v))) problemes.push(`${cle} : ${JSON.stringify(voulu)} → ${JSON.stringify(recu)}`)
+        if (piste.id === 'tables' && recu.join() !== voulu.join()) problemes.push(`${cle} : tables changées ${JSON.stringify(recu)}`)
+      } else if (recu !== voulu) problemes.push(`${cle} : ${voulu} → ${recu}`)
+    }
+    verifier(!problemes.length, `${piste.id}, ceinture ${indice + 1}, ${niveau} : l’exercice accepte les réglages ${problemes.join(' ; ')}`)
+  }
+}
+{
+  const cm = PISTES['calcul-mental']
+  const classes = ['cp', 'ce1', 'ce2', 'cm1', 'cm2']
+  verifier(!ceintureDisponible(cm, 4, 'cp', classes) && ceintureDisponible(cm, 4, 'ce1', classes) && ceintureDisponible(cm, 0, 'cp', classes) && !ceintureDisponible(cm, 6, 'ce1', classes) && !ceintureDisponible(cm, 0, 'ps', classes), '« × 10 et tables » n’existe pas au CP ; les autres, si ; une ceinture hors piste ou une classe hors exercice : non')
 }
 
 console.log('Option (cachée par défaut)')

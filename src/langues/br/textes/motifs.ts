@@ -15,6 +15,7 @@ export default {
   apres: 'Ha goude ?', // br: à relire
   trou: 'Unan a vank', // br: à relire
   consigneApres: 'Petra a zeu goude ?', // br: à relire
+  choixImage: 'Skeudenn {n}', // br: à relire
   consigneTrou: 'Petra a vank er c’holier ?', // br: à relire
   regarde: 'Sell mat penaos en em adlavar ar c’holier', // br: à relire
 } as const satisfies Traductions<typeof fr>

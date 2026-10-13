@@ -20,7 +20,7 @@
         </template>
       </div>
       <ChoixReponses grand :titre="t(config.mode === 'trou' ? 'motifs.consigneTrou' : 'motifs.consigneApres')" :options="q.options" :bonne="q.bonne" :repondu="repondu"
-        @choisir="i => jeu.repondre({ choix: i })">
+        :libelle="i => t('motifs.choixImage', { n: String(i + 1) })" @choisir="i => jeu.repondre({ choix: i })">
         <template #default="{ option }"><Emoji :nom="q.elements[option.valeur]" /></template>
       </ChoixReponses>
       <RetourReponse :message="retour?.message" :etat="etat" />

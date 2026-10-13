@@ -12,6 +12,7 @@ export default {
   apres: 'Et après ?',
   trou: 'Il en manque un',
   consigneApres: 'Qu’est-ce qui vient après ?',
+  choixImage: 'Image {n}',
   consigneTrou: 'Qu’est-ce qui manque dans le collier ?',
   regarde: 'Regarde bien comment le collier se répète',
 } as const

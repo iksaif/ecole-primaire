@@ -61,7 +61,7 @@
 //   - Cycle 1 : le programme est écrit par âge (« avant 4 ans », « à partir de 4 ans », « à partir de 5 ans ou dès que
 //     les apprentissages précédents ont pu être observés »). Nous lisons « avant 4 ans » = PS, « à partir de 4 ans » = MS
 //     et « à partir de 5 ans » = GS : c'est une interprétation (le texte laisse l'enseignant avancer plus tôt). PS
-//     ajoutée le 2026-10-04 (plans/10-couverture-ps.md ; pages vérifiées dans docs/programmes/).
+//     ajoutée le 2026-10-04 (plan 10-couverture-ps, dans l'historique git de plans/ ; pages vérifiées dans docs/programmes/).
 //   - `niveaux` d'une compétence : l'année d'introduction d'abord, puis les années suivantes (jusqu'au CM2) où elle
 //     reste travaillée ou réinvestie.
 //   - Le Monde : chaque domaine est un domaine du programme de sciences, d'histoire-géographie ou d'EMC ; les noms sont

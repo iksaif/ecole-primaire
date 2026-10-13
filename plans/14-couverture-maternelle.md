@@ -5,27 +5,23 @@
 les reportant dans le modèle actuel : `src/exercices/<id>/` (`definir`) et `src/affiches/<id>/` (`definirAffiche`).
 `src/data/programme.ts` fait foi ; chaque idée cite la compétence qu'elle couvre.
 
-## 1. État (relevé du 2026-10-07, `src/ressources/couverture.ts`)
+## 1. État (relevé du 2026-10-13, `npm run couverture`)
 
-Couvert : dénombrer (3, 6, 10), comparer des quantités, bande numérique, comparer des longueurs, formes, motifs, jours et mois
-(MS, GS), nom des lettres (MS, GS), geste d'écriture (GS) ; en breton : alphabet, jours (MS, GS), mois, météo (GS).
+Fait depuis le 2026-10-07 : presque tout le lot A (affiches du corps, des cinq sens, de la journée, de l'hygiène, des cycles de vie, de
+l'eau, des repères d'espace, des couleurs, bande numérique, variante `solides-maternelle` des formes) et la PS (compter, comparer,
+formes, motifs, longueurs). Compétences encore sans aucune ressource :
 
-Vide (∅) :
-
-| Domaine | Compétences sans ressource |
-| --- | --- |
-| Nombres | `composer-decomposer` (PS-GS), `problemes-maternelle` (PS-GS) |
-| Grandeurs | `comparer-masses-maternelle` (MS, GS) |
-| Espace et géométrie | `solides-maternelle` (MS, GS), `assemblages-maternelle` (PS-GS) |
-| Temps et espace | `moments-journee` (PS, MS), `chronologie-maternelle` (PS-GS), `reperes-espace` (PS-GS), `environnement-proche` (PS-GS) |
-| Le vivant | `parties-animaux-plantes`, `cycle-vie-vivants`, `deplacements-animaux`, `besoins-vivants`, `proteger-environnement` |
-| Corps et santé | `parties-corps`, `cinq-sens`, `hygiene-vie`, `croissance-corps` |
-| La matière | `eau-etats`, `air-existe`, `melanges-dissolution` |
-| Objets | `materiaux-objets`, `construire-fabriquer`, `instructions-robot` (GS) |
-| Français | `syllabes-orales` (PS-GS), `nom-lettres` (PS), `son-lettres` (GS), `geste-ecriture-maternelle` (PS, MS), `categories-mots` (PS-GS) |
-| Breton | `nombres-jusqua-10-langue-regionale` (MS) |
-
-Tout « Explorer le monde » est vide : c'est le plus gros trou, et le plus visible (la tuile Le Monde en maternelle).
+| Domaine | PS | MS | GS |
+| --- | --- | --- | --- |
+| Nombres | `composer-decomposer`, `problemes-maternelle` | + `rang-maternelle` | + `rang-maternelle` |
+| Grandeurs | — | `comparer-masses-maternelle` | `comparer-masses-maternelle` |
+| Espace et géométrie | `assemblages-maternelle` | `assemblages-maternelle` | `assemblages-maternelle` |
+| Temps et espace | `environnement-proche` | `environnement-proche` | `environnement-proche` |
+| Le vivant | `parties-animaux-plantes` | + `deplacements-animaux`, `besoins-vivants` | + `proteger-environnement` |
+| Corps et santé | — | `croissance-corps` | `croissance-corps` |
+| La matière | `air-existe`, `melanges-dissolution` | idem | idem |
+| Objets | `materiaux-objets`, `construire-fabriquer` | idem | + `instructions-robot` |
+| Oral, lecture, écriture | `categories-mots`, `syllabes-orales`, `nom-lettres`, `geste-ecriture-maternelle` | `categories-mots`, `syllabes-orales`, `son-lettres`, `geste-ecriture-maternelle` | `categories-mots`, `syllabes-orales`, `phonemes-maternelle`, `son-lettres` |
 
 ## 2. Règles pour la maternelle (rappel, valables pour tout ce qui suit)
 
@@ -38,20 +34,10 @@ Tout « Explorer le monde » est vide : c'est le plus gros trou, et le plus visi
 
 ## 3. Idées, par lot (chaque lot livrable seul)
 
-### Lot A — Explorer le monde : des affiches d'abord (rapide, très visible)
+### Lot A — Explorer le monde : des affiches d'abord
 
-Le modèle `listeMots.ts` (jours, mois, météo) sert déjà de base : une liste illustrée, en français, en breton ou les deux.
-
-1. **Affiche « Les parties du corps »** (`parties-corps`, PS-GS) : un enfant dessiné (SVG simple) avec étiquettes ; variantes PS
-   (tête, bras, jambes, ventre, mains, pieds) et MS-GS (+ coude, genou, épaule, cou, dos). Bilingue.
-2. **Affiche « Les cinq sens »** (`cinq-sens`, PS-GS) : 5 cases (œil, oreille, nez, bouche, main) et un verbe (voir, entendre…).
-3. **Affiche « Les moments de la journée »** (`moments-journee`, PS-MS ; `chronologie-maternelle`) : matin, midi, après-midi,
-   soir, nuit, avec un rituel par moment (petit-déjeuner, cantine, sieste…) ; réutilisable comme frise de la classe.
-4. **Affiche « Les saisons »** (`chronologie-maternelle`, `mois-saisons-langue-regionale`) : 4 cases, arbre qui change ; complète
-   l'affiche des mois.
-5. **Affiche « Se laver les mains »** (`hygiene-vie`) : les étapes en 5 ou 6 images ; c'est une affiche que les classes accrochent vraiment.
-6. **Affiche « Grandir »** (`croissance-corps`, `cycle-vie-vivants`) : bébé → enfant → adulte → personne âgée ; et une variante animal
-   (œuf → poussin → poule ; têtard → grenouille) pour `cycle-vie-vivants`.
+Fait, sauf : **« Grandir »** (`croissance-corps` : bébé → enfant → adulte → personne âgée) et **« Les saisons »** en affiche à part (l'affiche
+des mois les montre déjà en bandes de couleur).
 
 ### Lot B — Explorer le monde : des exercices de tri (un seul moteur, beaucoup de contenu)
 
@@ -138,3 +124,16 @@ lots C et D, une journée chacun ; lot F, une journée ; E et G, une demi-journ�
    les imagiers). Nouvelles cases vides à couvrir : rang (lot D, « le premier, le dernier » sur une file d'animaux), phonèmes et son des
    lettres en MS (lot F), vocabulaire (lots A et B).
 6. **Fiches en PS** : *reco* : seulement du matériel à découper et du graphisme, pas de fiche « à remplir ».
+7. **Repris des plans PS, MS et GS** (recommandations entre parenthèses) :
+   - PS : `nombreMax` 3, avec « jusqu'à 4 » pour aller plus loin (oui) ; chiffres en PS en option désactivée (oui) ; peu de fiches, deux
+     variantes prégénérées au lieu de quatre (oui).
+   - MS : solides et masses en MS sont d'abord manipulés (BO p. 68, p. 70) : un champ `support: 'manipulation'` que `/programme` montrerait
+     « activité de classe » plutôt que vide (oui) ; prénom de l'enfant saisi sur l'appareil seulement, jamais envoyé, bouton « Oublier » ;
+     syllabes et comptine cachées sur skoolik tant qu'il n'y a pas de voix bretonne ; formes en MS : reconnaître et classer, pas nommer
+     (p. 68 ; notre exercice demande le nom) ; `comparer-quantites` en MS : « plus que », « moins que », « autant » vient à 5 ans.
+   - GS : fiches d'écriture « Lettre A… Z » et « Alphabet attaché majuscule » étiquetées GS (les passer CP · CE1, l'attaché majuscule au
+     CE1 seul, et publier des fiches GS en attaché minuscule ; slugs inchangés) ; lignage GS de 5 mm (à valider, plan 07) ; pas de nombres
+     en lettres en GS ; `son-lettres` sans les occlusives, avec une liste testable ; encodage de mots transparents sans compétence ;
+     `cursive: 'minuscules'` identique en GS et au CP (« trace » en GS ?) ; le commentaire « listes cumulatives » de `CONTRAINTES` est faux
+     pour les solides (pyramide en MS-GS, pas au CP).
+

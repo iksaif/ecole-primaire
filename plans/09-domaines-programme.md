@@ -4,19 +4,13 @@ L'organisation par domaine du programme (référentiel `src/data/programme.ts`, 
 compétence et bilans) est **faite** ; les audits d'avril à octobre ont corrigé les options qui sortaient du programme (tests : `tests/exercices.test.mjs`,
 `tests/programme-francais.test.mjs`). Ce plan ne garde que ce qui sert encore : les décisions et leurs sources (les définitions d'exercices y renvoient), le
 tableau de l'audit français pour ses « manquants », et la liste de ce qui n'a pas pu être vérifié. Le suivi de la couverture est dans `npm run couverture` et
-dans les plans `10-couverture-*.md`.
+dans les plans `10-couverture-elementaire.md` et `14-couverture-maternelle.md`.
 
-## Compétences sans activité au CE2-CM2 et « tous niveaux » (relevé du 2026-10-04, à recouper avec `npm run couverture`)
+## Compétences sans activité
 
-PS à CE1 : voir les plans `10-couverture-*.md`.
-
-- **CM1-CM2** : fractions (> 1, d'une quantité), nombres décimaux, grands nombres (6 et 9 chiffres), multiplication
-  et division posées, opérations sur les décimaux, aires, angles, périmètre, proportionnalité, probabilités,
-  diviseurs et critères de divisibilité, compléments (COD/COI, CC), passé simple. Seules les tables, le calcul mental
-  (sans décimaux), la dictée, l'orthographe et la conjugaison montent au CM.
-- **Tous niveaux** : organisation et gestion de données (tableau, diagramme en barres, tableau à double entrée,
-  dès le CP), motifs organisés (cycle 1), multiplication posée (CE2), comparaison et addition de fractions, phrase
-  (ponctuation, types et formes), fluence de lecture.
+Le relevé à jour est `npm run couverture` ; les propositions sont dans les plans `10-couverture-elementaire.md` (CP-CE2) et
+`14-couverture-maternelle.md`. Au CM1-CM2, presque tout manque encore (fractions > 1, décimaux, grands nombres, opérations posées,
+aires, angles, périmètre, proportionnalité, compléments, passé simple…) : pas encore de plan.
 
 ## Étape 2 — audit français (2026-10-04) : niveaux, corrections faites, manquants et points à trancher
 

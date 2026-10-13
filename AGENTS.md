@@ -59,8 +59,7 @@ qui importe des modules du projet doit être placé **dans le dépôt** le temps
 
 ## Où sont les choses
 
-**Tout se fait dans `main`** (depuis le 2026-10-09 : la branche `base-saine` est abandonnée, elle pointe sur le même commit). Rien n'est déployé tant que l'utilisateur ne l'a pas demandé
-(plan 11 : `plans/11-base-saine.md`, la liste « Avant de déployer »). Tout ce qui est nouveau est en TypeScript.
+**Tout se fait dans `main`** (depuis le 2026-10-09 : la branche `base-saine` est abandonnée, elle pointe sur le même commit). Rien n'est déployé tant que l'utilisateur ne l'a pas demandé. Tout ce qui est nouveau est en TypeScript.
 
 - `src/sites.ts` : réglages par site (identité, langues d'interface proposées et par défaut, langue régionale par défaut).
   `src/langues/` : registre typé des langues (`registre.ts`, type `Langue`), règles, nombres, données régionales,

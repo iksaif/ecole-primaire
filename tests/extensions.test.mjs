@@ -26,6 +26,12 @@ for (const e of EXTENSIONS) {
   verifier(!inconnues.length, `${e.id} : ses exercices existent ${inconnues.join(', ')}`)
   verifier(e.ressources.filter(r => r.startsWith('exercice:')).every(r => REGISTRE.find(x => `exercice:${x.definition.id}` === r).definition.extensions.includes(e.id)), `${e.id} : ses exercices déclarent l’extension (extensions de leur définition)`)
 }
+// décision du 2026-10-13 : aucune fiche « toute prête » n'est publiée pour une extension (pas de page /telechargements/, pas de PDF, pas de sitemap) tant qu'on ne l'a pas décidé ;
+// une activité d'extension n'a donc ni fiche publiée (`fiches: []`) ni bilan par classe. Elle reste imprimable depuis sa page, une fois l'extension activée.
+for (const e of EXTENSIONS) for (const r of e.ressources.filter(x => x.startsWith('exercice:'))) {
+  const d = REGISTRE.find(m => `exercice:${m.definition.id}` === r).definition
+  verifier(d.fiches.length === 0 && d.bilanParClasse === false, `${r} : aucune fiche publiée (fiches vide, pas de bilan par classe)`)
+}
 verifier(!extensionActive('ceintures') && !ressourceMontree('exercice:ceintures') && ressourceMontree('exercice:tables'), 'extension cachée : ses ressources sont masquées, les autres non')
 
 console.log('Onglets d’exercice')

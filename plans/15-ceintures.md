@@ -310,3 +310,9 @@ Une extension ajoute des **onglets** à la page d'un exercice (`Extension.onglet
 pour l'exercice de la page (`meta.exercice` de la route ; `?mode=<id>`) et met le composant de l'onglet à la place du panneau. Un cadre sans onglets (fiche seule) ou `imbrique` n'ouvre jamais d'onglet d'extension.
 Les ceintures : l'onglet « Ceintures » des tables de multiplication (`EXERCICES_AVEC_BREVET`) contient le brevet papier (`BrevetPapier.vue`, aussi le corps de la page `ceintures-brevet`). Le brevet garde ses propres réglages (classe, ceinture, tables) : ils ne
 suivent pas ceux de l'exercice. À faire : suivre la classe de l'exercice, le brevet à l'écran (`useJeu`), la ceinture atteinte à côté du score, l'onglet pour le calcul mental et les lettres (il leur faut un brevet), puis retirer la page `ceintures-brevet` si l'onglet suffit.
+
+## 18. Décision : pas de fiches toutes prêtes pour l'instant (2026-10-13)
+
+Les supports des ceintures s'impriment depuis leurs pages (activités `ceintures`, `ceintures-brevet`, onglet « Ceintures » des exercices, `/assemblage`), avec le rendu actuel (rien ne change à l'impression). On **ne publie aucune fiche toute prête** :
+pas de page `/telechargements/<slug>/`, pas de PDF, pas d'entrée au sitemap, donc pas de nouvelle adresse à tenir. Vérifié : `fichesDesRegistres` ne renvoie aucune fiche de ceintures, de brevets ni d'assemblage (745 fiches sur chaque site, comme avant) ;
+`tests/extensions.test.mjs` garde cette règle (`fiches: []`, `bilanParClasse: false` pour chaque activité d'extension). Le §10 (« publier mais masquer » ou non) est donc tranché pour l'instant : on ne publie pas. À rouvrir si on veut un jour des fiches publiées.

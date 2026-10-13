@@ -14,6 +14,7 @@ import { PISTES, IDS_PISTES, pisteDeExercice, ceintureDisponible, blocsDe, ceint
 import { reglagesDuNiveau } from '../src/noyau/reglages.ts'
 import { REGISTRE } from '../src/exercices/index.ts'
 import { brevetPapier, tirageDuBrevet, brevetPossible } from '../src/ceintures/brevet.ts'
+import { CSS_CEINTURES, passeportHtml, ceinturesDe } from '../src/ceintures/supports.ts'
 import { LANGUES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -190,6 +191,15 @@ for (const piste of Object.values(PISTES).filter(p => p.exercice)) for (const n 
   verifier(/n’existe pas en cp/.test(refus), '« × 10 et × 100 » au CP : refusé, pas de repli silencieux')
   const br = brevetPapier(brevetDe2('calcul-mental', 2, 'ce1', { langue: 'br' }))
   verifier(br.includes('lang="br"') && !/\b(ceintures|ceinture|brevet)\.[a-z-]+/.test(br), 'en breton : un document complet sans clé brute')
+}
+
+console.log('Passeport : rien n’est coupé')
+// une carte à hauteur fixe qui cache ce qui dépasse coupait la 7e ceinture (constaté le 2026-10-13) : la carte a une hauteur minimale, jamais fixe, et ne cache rien
+verifier(!/overflow:\s*hidden/.test(CSS_CEINTURES) && !/\.passeport\s*\{[^}]*[^-]height:\s*54mm/.test(CSS_CEINTURES) && /\.passeport\s*\{[^}]*min-height:\s*54mm/.test(CSS_CEINTURES), 'la carte du passeport a une hauteur minimale, pas fixe, et rien n’est caché')
+{
+  const sept = ceinturesDe(['a', 'b', 'c', 'd', 'e', 'f', 'g'], c => c.id, DEFAUT_CEINTURES)
+  const html = passeportHtml({ titre: 'T', ceintures: sept, reglages: DEFAUT_CEINTURES, libelles: { prenom: 'Prénom', classe: '', date: '', signature: '', livret: '', diplome: '', passeport: 'Passeport', decerne: '', commentFaire: '' } })
+  verifier((html.match(/class="passeport"/g) ?? []).length === 8 && (html.match(/class="rangee"/g) ?? []).length === 8 * 7, 'huit cartes, sept ceintures chacune')
 }
 
 console.log('Choisir un jeu de couleurs')

@@ -84,8 +84,9 @@ export const CSS_CEINTURES = `
       .observation .objectif { margin: 2mm 0; font-size: 1.05rem; }
       .resultat { display: flex; flex-wrap: wrap; gap: 4mm 10mm; align-items: center; margin-top: 8mm; padding: 4mm; border: .5mm dashed #222; border-radius: 2mm; font-size: .95rem; }
       .passeports { display: grid; grid-template-columns: 86mm 86mm; gap: 4mm; justify-content: center; margin-top: 4mm; }
-      .passeport { border: .4mm solid #222; border-radius: 3mm; padding: 2.5mm 3.5mm; font-size: .8rem; break-inside: avoid; height: 54mm; overflow: hidden; }
-      .passeport .rangee { display: flex; align-items: center; gap: 1.5mm; margin-top: 1.4mm; }
+      .passeport { border: .4mm solid #222; border-radius: 3mm; padding: 2.2mm 3.2mm; font-size: .75rem; line-height: 1.15; break-inside: avoid; min-height: 54mm; }
+      .passeport .rangee { display: flex; align-items: center; gap: 1.2mm; margin-top: .8mm; }
+      .passeport .case { width: 3.6mm; height: 3.6mm; margin-right: 0; vertical-align: baseline; }
       .passeport .titre { font-weight: 700; margin-bottom: 1mm; }`
 
 /** Le livret : une ligne par ceinture (couleur, nom, objectifs à cocher, date et signature). */
@@ -122,7 +123,7 @@ export function diplomeHtml(d: DonneesSupport, indice: number): string {
 export function passeportHtml(d: DonneesSupport): string {
   const carte = `<div class="passeport"><div class="titre">${e(d.libelles.passeport)} — ${e(d.titre)}</div>
       ${ligne(d.libelles.prenom, d.prenom)}
-      ${d.ceintures.map(c => `<div class="rangee"><span class="case"></span>${dessin(c, d, '12mm')}<span>${e(c.nom)}</span></div>`).join('')}</div>`
+      ${d.ceintures.map(c => `<div class="rangee"><span class="case"></span>${dessin(c, d, '9mm')}<span>${e(c.nom)}</span></div>`).join('')}</div>`
   return `<div class="passeports">${Array.from({ length: 8 }, () => carte).join('')}</div>`
 }
 

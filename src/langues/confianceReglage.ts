@@ -33,3 +33,8 @@ export function choisirConfianceMin(niveau: NiveauConfiance): void {
 export function langueProposable(code: Langue, genre: 'exercice' | 'affiche', id: string): boolean {
   return AVEC_DEV || assezSure(confianceDe(code, genre, id), confianceMin.value)
 }
+
+/** En développement, le bouton d'une langue y est toujours, mais marqué quand le réglage ne le proposerait pas aux visiteurs : cette langue serait-elle cachée ? (la langue source ne l'est jamais) */
+export function langueMasquee(code: Langue, genre: 'exercice' | 'affiche', id: string): boolean {
+  return !assezSure(confianceDe(code, genre, id), confianceMin.value)
+}

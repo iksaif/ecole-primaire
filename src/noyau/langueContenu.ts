@@ -11,7 +11,7 @@ import type { ComputedRef, InjectionKey, Ref } from 'vue'
 import { chargerValeur, sauvegarder } from '../utils/index.js'
 import { langueAffichee } from '../langues/etat.ts'
 import { langueRegionaleActive } from '../langues/useLangueRegionale.ts'
-import { langueProposable } from '../langues/confianceReglage.ts'
+import { langueMasquee, langueProposable } from '../langues/confianceReglage.ts'
 import { estLangue, LANGUE_SOURCE } from '../langues/registre.ts'
 import type { Langue } from '../langues/registre.ts'
 import type { DefinitionExercice } from './types.ts'
@@ -23,6 +23,8 @@ watch(choix, v => sauvegarder('langue_contenu', v))
 /** Ce que le cadre de l'exercice reçoit : les langues proposées, celle du contenu, et de quoi la changer. */
 export interface LangueContenu {
   proposees: ComputedRef<readonly Langue[]>
+  /** en développement : les langues proposées que le réglage de fiabilité cacherait aux visiteurs (leur bouton est marqué) */
+  masquees: ComputedRef<readonly Langue[]>
   langue: ComputedRef<string>
   choisir: (l: Langue) => void
 }
@@ -52,7 +54,8 @@ export function langueContenuProposee(definition: DefinitionExercice): ComputedR
     // la langue affichée n'est pas proposée (traduction pas assez sûre) : le contenu reste en français
     return proposees.value.includes(langueAffichee.value) ? langueAffichee.value : LANGUE_SOURCE
   })
-  provide(CLE, { proposees, langue, choisir: l => { choix.value = l } })
+  const masquees = computed(() => proposees.value.filter(l => langueMasquee(l, 'exercice', definition.id)))
+  provide(CLE, { proposees, masquees, langue, choisir: l => { choix.value = l } })
   return langue
 }
 

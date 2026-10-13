@@ -1,6 +1,7 @@
 // Confiance dans les traductions (node) : l'échelle, la table du breton (clés connues, notes, relecteurs), le filtre des fiches.
 import { NIVEAUX_CONFIANCE, NOMS_NIVEAU, NIVEAU_PAR_DEFAUT, assezSure, problemesTable, estNiveauConfiance, niveauDe, niveauDeFiche, fichesInconnues } from '../src/langues/confiance.ts'
 import { LANGUES, confianceDe, confianceFiche } from '../src/langues/registre.ts'
+import { langueMasquee, choisirConfianceMin } from '../src/langues/confianceReglage.ts'
 import { traductionAssezSure, traductionMontree, etatDeLaTraduction } from '../src/ressources/filtres.ts'
 import { filtrerFiches, CRITERES_PAGE_VIDES } from '../src/telechargements/pages.ts'
 import { clesConnues, ressourcesTraduites } from '../scripts/verifier/confiance/ressources.ts'
@@ -61,6 +62,19 @@ verifier(traductionAssezSure({ ...exercice, type: 'affiche' }, 'bilingue', 'br',
 verifier(!traductionAssezSure(exercice, 'regionale', 'br', 2), 'breton seul, breton sous le seuil : cachée')
 verifier(traductionAssezSure({ ...exercice, confiance: 3 }, 'regionale', 'br', 2), 'breton seul, breton relu : affichée')
 verifier(!traductionAssezSure({ type: 'fiche', langues: ['fr', 'br'], confiance: 0 }, 'bilingue', 'br', 2), 'une fiche PDF bilingue imprime son breton : cachée sous le seuil')
+
+console.log('Boutons de langue en développement : marqués quand le réglage ne les proposerait pas')
+{
+  choisirConfianceMin(2)
+  const idPeuSur = Object.keys(LANGUES.br.confiance).find(k => k.startsWith('exercice:') && LANGUES.br.confiance[k].niveau < 2)?.slice('exercice:'.length)
+  const idSur = Object.keys(LANGUES.br.confiance).find(k => k.startsWith('affiche:') && LANGUES.br.confiance[k].niveau >= 2)?.slice('affiche:'.length)
+  verifier(langueMasquee('fr', 'exercice', 'heure') === false, 'le français n’est jamais marqué')
+  verifier(idSur !== undefined && langueMasquee('br', 'affiche', idSur) === false, `breton assez sûr (${idSur}) : pas de marque au seuil 2`)
+  verifier(langueMasquee('br', 'exercice', 'heure') === true && (idPeuSur === undefined || langueMasquee('br', 'exercice', idPeuSur) === true), 'breton non évalué ou peu sûr : marqué au seuil 2')
+  choisirConfianceMin(0)
+  verifier(langueMasquee('br', 'exercice', 'heure') === false, 'sans seuil : plus rien n’est marqué')
+  choisirConfianceMin(2)
+}
 
 console.log('État d’une ressource selon le réglage et la page (le français a toujours sa place)')
 {

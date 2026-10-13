@@ -13,6 +13,7 @@ export default {
   },
   pastille: 'Traduction {niveau}/4',
   masquee: 'masquée',
+  langueMasquee: 'Pas proposée aux visiteurs : sa traduction n’est pas assez sûre pour le réglage (développement seulement)',
   masquees: '{n} fiches cachées : leur traduction n’est pas assez sûre.',
   regler: 'Régler',
 } as const

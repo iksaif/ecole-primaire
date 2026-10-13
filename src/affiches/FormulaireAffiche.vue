@@ -71,8 +71,8 @@
 
         <GroupeReglages v-else-if="e.sorte === 'langues'" id="langues" :titre="t('formulaireAffiche.langues')" :aide="aide('langues')">
           <div class="btn-group" data-reglage="langues">
-            <button type="button" v-for="l in languesProposees" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langues.includes(l) }" :aria-pressed="config.langues.includes(l)"
-              @click="basculerLangue(l)">{{ l.toUpperCase() }}</button>
+            <button type="button" v-for="l in languesProposees" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langues.includes(l), masquee: masquee(l) }" :aria-pressed="config.langues.includes(l)"
+              @click="basculerLangue(l)">{{ l.toUpperCase() }}<Icone v-if="masquee(l)" nom="singeYeux" :title="t('confiance.langueMasquee')" /></button>
           </div>
         </GroupeReglages>
 
@@ -96,8 +96,8 @@
       <div v-if="!definition.bilingue && languesProposees.length > 1" class="config-section" data-reglage="langue">
         <div class="config-section-title" :id="`${idBase}-langue`">{{ t('formulaireAffiche.langue') }}</div>
         <div class="btn-group" role="group" :aria-labelledby="`${idBase}-langue`">
-          <button type="button" v-for="l in languesProposees" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langue === l }" :aria-pressed="config.langue === l"
-            @click="config.langue = l; config.langues = [l]">{{ l.toUpperCase() }}</button>
+          <button type="button" v-for="l in languesProposees" :key="l" class="level-btn" :data-valeur="l" :class="{ active: config.langue === l, masquee: masquee(l) }" :aria-pressed="config.langue === l"
+            @click="config.langue = l; config.langues = [l]">{{ l.toUpperCase() }}<Icone v-if="masquee(l)" nom="singeYeux" :title="t('confiance.langueMasquee')" /></button>
         </div>
       </div>
       <div v-if="definition.formats.length > 1" class="config-section" data-reglage="format">
@@ -132,7 +132,8 @@ import ChoixPolice from '../noyau/ChoixPolice.vue'
 import ChoixImages from '../noyau/ChoixImages.vue'
 import ChoixReglage from '../noyau/ChoixReglage.vue'
 import GroupeReglages from './GroupeReglages.vue'
-import { langueProposable } from '../langues/confianceReglage.ts'
+import { langueMasquee, langueProposable } from '../langues/confianceReglage.ts'
+import Icone from '../images/Icone.vue'
 import { estLangue } from '../langues/registre.ts'
 import { usePolices, disponiblesDe } from '../noyau/polices.ts'
 import { useImagesFiche } from '../images/useImagesFiche.ts'
@@ -162,6 +163,8 @@ const coteACote = useEcranLarge(LARGEUR_COTE_A_COTE)
 const definition = props.module.definition
 /** les langues de l'affiche dont le bouton est proposé : une traduction pas assez sûre pour le réglage de la fiabilité n'y est pas (sauf en développement) */
 const languesProposees = computed(() => definition.langues.filter(l => estLangue(l) && langueProposable(l, 'affiche', definition.id)))
+/** développement : cette langue est proposée mais le réglage de fiabilité la cacherait aux visiteurs (son bouton est marqué) */
+const masquee = (l: string): boolean => estLangue(l) && langueMasquee(l, 'affiche', definition.id)
 const choix = commeExercice(definition)
 
 // réglages mémorisés par affiche, ramenés à des valeurs valides (reglagesDe)
@@ -238,6 +241,8 @@ const resultat = computed(() => {
 </script>
 
 <style scoped>
+/* développement : une langue que le réglage de fiabilité ne proposerait pas aux visiteurs */
+.level-btn.masquee { outline: 2px solid #b3261e; background: #fde2e2; }
 .axe { margin-bottom: .6rem; }
 .axe-titre { font-size: .8rem; font-weight: 800; text-transform: uppercase; color: var(--texte-doux); margin-bottom: .3rem; }
 .axe-classes { font-size: .85rem; color: var(--texte-doux); margin: .2rem 0 0; }

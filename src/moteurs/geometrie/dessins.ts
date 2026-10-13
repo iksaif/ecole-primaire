@@ -3,7 +3,7 @@
 import { arrondi1, marqueAngleDroit, polygone } from '../../dessins/figures.ts'
 import { svgSolide as svgSolideCommun } from '../../dessins/solides.ts'
 import type { SolideGeo } from './donnees.ts'
-import { dek, LETTRES } from './quadrillage.ts'
+import { dek } from './quadrillage.ts'
 import type { QCercle, QSolide } from './types.ts'
 
 const f1 = arrondi1
@@ -15,8 +15,11 @@ export function svgFigure(q: { forme: string, points: readonly [number, number][
   marquerAngles = false, taille = 220): string {
   let corps = ''
   const lettres = q.lettres || null
-  if (q.forme === 'cercle') {
+  // le disque est la surface (plein) ; le cercle, la ligne seule (c2maths p. 34 : « disque, cercle »)
+  if (q.forme === 'disque') {
     corps = `<circle cx="100" cy="100" r="${q.rayon}" fill="${FOND_FIGURE}" stroke="${TRAIT_FIGURE}" stroke-width="3"/>`
+  } else if (q.forme === 'cercle') {
+    corps = `<circle cx="100" cy="100" r="${q.rayon}" fill="none" stroke="${TRAIT_FIGURE}" stroke-width="4"/>`
   } else {
     const pts = q.points
     corps = polygone(pts, { fond: FOND_FIGURE, trait: TRAIT_FIGURE, epaisseur: 3, arrondi: f1 })
@@ -79,10 +82,10 @@ const FOND_SOLIDE: Readonly<Record<SolideGeo, string>> = { cube: '#cfe2ff', pave
 export const svgSolide = (solide: QSolide['solide'] | SolideGeo, taille = 220): string => svgSolideCommun(solide, taille, FOND_SOLIDE[solide])
 
 /** Quadrillage pour l'impression : 1 unité = 1 cm réel (× echelle : grilles réduites du corrigé). */
-export function svgGrilleCm({ cols, rows, pleines = [], axe = null, repere = null, symboles = {}, entetes = false, echelle = 1 }: {
-  cols: number, rows: number, pleines?: readonly string[], axe?: 'v' | 'h' | null, repere?: string | null, symboles?: Readonly<Record<string, string>>, entetes?: boolean, echelle?: number
+export function svgGrilleCm({ cols, rows, pleines = [], axe = null, echelle = 1 }: {
+  cols: number, rows: number, pleines?: readonly string[], axe?: 'v' | 'h' | null, echelle?: number
 }): string {
-  const m = 0.5, off = entetes ? 1 : 0
+  const m = 0.5, off = 0
   const W = cols + off + 2 * m, H = rows + off + 2 * m
   const x0 = m + off, y0 = m + off
   let s = ''
@@ -92,16 +95,7 @@ export function svgGrilleCm({ cols, rows, pleines = [], axe = null, repere = nul
   }
   for (let c = 0; c <= cols; c++) s += `<line x1="${x0 + c}" y1="${y0}" x2="${x0 + c}" y2="${y0 + rows}" stroke="#555" stroke-width="0.02"/>`
   for (let r = 0; r <= rows; r++) s += `<line x1="${x0}" y1="${y0 + r}" x2="${x0 + cols}" y2="${y0 + r}" stroke="#555" stroke-width="0.02"/>`
-  if (entetes) {
-    for (let c = 0; c < cols; c++) s += `<text x="${x0 + c + 0.5}" y="${y0 - 0.3}" font-size="0.55" font-weight="bold" text-anchor="middle" font-family="Arial">${LETTRES[c]}</text>`
-    for (let r = 0; r < rows; r++) s += `<text x="${x0 - 0.5}" y="${y0 + r + 0.7}" font-size="0.55" font-weight="bold" text-anchor="middle" font-family="Arial">${r + 1}</text>`
-  }
   if (axe === 'v') s += `<line x1="${x0 + cols / 2}" y1="${y0 - 0.4}" x2="${x0 + cols / 2}" y2="${y0 + rows + 0.4}" stroke="#d00" stroke-width="0.09"/>`
   if (axe === 'h') s += `<line x1="${x0 - 0.4}" y1="${y0 + rows / 2}" x2="${x0 + cols + 0.4}" y2="${y0 + rows / 2}" stroke="#d00" stroke-width="0.09"/>`
-  if (repere) { const [c, r] = dek(repere); s += `<circle cx="${x0 + c + 0.5}" cy="${y0 + r + 0.5}" r="0.14" fill="#000"/>` }
-  for (const [cle, sym] of Object.entries(symboles)) {
-    const [c, r] = dek(cle)
-    s += `<text x="${x0 + c + 0.5}" y="${y0 + r + 0.72}" font-size="0.65" text-anchor="middle" font-family="Arial">${sym}</text>`
-  }
   return `<svg width="${f1(W * echelle)}cm" height="${f1(H * echelle)}cm" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`
 }

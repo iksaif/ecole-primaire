@@ -1,29 +1,30 @@
-// La géométrie — générateur : QUOI poser comme questions, et comment les corriger. Pur : aucun import de Vue, aucun Math.random (le hasard
-// vient de `rng`), donc lisible par node, par les tests et par le build des fiches.
+// La géométrie (moteur commun des exercices figures, solides, symétrie…) — générateur : QUOI poser comme questions, et comment les corriger.
+// Pur : aucun import de Vue, aucun Math.random (le hasard vient de `rng`), donc lisible par node, par les tests et par le build des fiches.
+// Chaque exercice (src/exercices/<id>/generateur.ts) reprend les fonctions sans état et appelle `moteurGeometrie(…)` avec sa définition :
 //   questions({ niveau, reglages, rng, T, nb })   questions de l'exercice à l'écran, sans répétition
 //   questionsFiche({ niveau, reglages, rng, T })  tout ce que tire la fiche imprimable (fiche.ts la met en page)
+//   manquesAuProgramme(reglages, contraintes)     ce que le programme demande, dans les familles de l'exercice, et qu'il ne propose pas (tests)
 //   verifier(q, rep)                              la réponse est-elle juste ?
 //   bonneReponse(q) / mauvaiseReponse(q)          une réponse juste / fausse, dans la forme attendue par verifier (tests)
 //   decrire(q, rep, T) / messageErreur(q, rep, T) la réponse donnée en texte (tableau de fin) ; le retour après une erreur
 //   ecartsAuProgramme(questions, contraintes)     ce qui sort du programme du niveau (tests)
-//   manquesAuProgramme(reglages, contraintes)     ce que le programme demande et que « tout » ne propose pas (tests)
-// Un module par famille de questions : quadrillage.ts (symétrie, reproduction, repérage), questionsFigures.ts (figures, solides, angles
+// Un module par famille de questions : quadrillage.ts (symétrie), questionsFigures.ts (figures, solides, angles
 // droits, propriétés, cercle), patrons.ts ; données dans donnees.ts, dessins dans dessins.ts. L'ordre des tirages est celui de l'ancienne vue.
-import type { Config, Contraintes, ParamsGenerateur, Verdict } from '../../noyau/types.ts'
-import type { ReglagesDeDefinition } from '../../noyau/definir.ts'
+import type { Classe, Config, Contraintes, ParamsGenerateur, Verdict } from '../../noyau/types.ts'
 import { tirerUniques } from '../../noyau/uniques.ts'
-import { donneesDe, niveauConnu, PROPRIETES, aChoix, FIGURES, SOLIDES } from './donnees.ts'
+import { donneesDe, niveauConnu, aChoix, FIGURES, SOLIDES } from './donnees.ts'
 import type { TypeExercice } from './donnees.ts'
-import { genSymetrie, genReproduction, genReperage, k, dek, nomCase } from './quadrillage.ts'
-import { genFigure, genSolide, genAngles, genPropriete, genCercle, construireFigure } from './questionsFigures.ts'
+import { genSymetrie } from './quadrillage.ts'
+import { genFigure, genSolide, genAngles, genPropriete, genCercle, construireFigure, proprietesDe } from './questionsFigures.ts'
 import { genPatron, patrons, normaliserCases, SYMETRIES } from './patrons.ts'
+import { genAigu, genJustifier, SORTES as SORTES_ANGLE } from './angles.ts'
 import type { CasePatron } from './patrons.ts'
-import type { Cle, Contexte, Question, QAngles, QSymetrie, QReproduction, Reponse, T, TirageFiche } from './types.ts'
-import type DEFINITION from './definition.ts'
+import type { Cle, Contexte, Question, QAngles, QJustifier, QSymetrie, Reponse, T, TirageFiche } from './types.ts'
 
-export type { Question, QAngles, QSymetrie, QReproduction, Reponse, TirageFiche } from './types.ts'
+export type { Question, QAngles, QSymetrie, Reponse, TirageFiche } from './types.ts'
 export { construireFigure }
-type Reglages = ReglagesDeDefinition<typeof DEFINITION>
+/** Les réglages que lit le moteur (ceux des exercices de géométrie). */
+export type Reglages = { exercices: readonly string[], nbQ: number, axeHorizontal?: boolean }
 
 // Types d'exercices demandés ET offerts par le niveau (sinon tous ceux du niveau)
 const typesDispo = (reglages: Reglages, niv: Contexte['niv']): readonly TypeExercice[] => {
@@ -34,14 +35,15 @@ const typesDispo = (reglages: Reglages, niv: Contexte['niv']): readonly TypeExer
 function genererQuestion(ctx: Contexte, reglages: Reglages, type?: TypeExercice): Question {
   const { rng, niv } = ctx
   const t = type || rng.choisir(typesDispo(reglages, niv))
-  if (t === 'symetrie') return genSymetrie(ctx, reglages.axeHorizontal && rng.vrai(0.5))
-  if (t === 'reproduction') return genReproduction(ctx)
-  if (t === 'reperage') return genReperage(ctx)
+  if (t === 'symetrie') return genSymetrie(ctx, (reglages.axeHorizontal ?? false) && rng.vrai(0.5))
   if (t === 'figures') return genFigure(ctx)
   if (t === 'angles') return genAngles(ctx)
   if (t === 'proprietes') return genPropriete(ctx)
   if (t === 'cercle') return genCercle(ctx)
   if (t === 'patrons') return genPatron(ctx)
+  // CE2 : des angles plus proches de l'angle droit (l'équerre sert) et le losange parmi les figures à justifier
+  if (t === 'aigus') return genAigu(ctx, niv.figures.includes('losange'))
+  if (t === 'justifier') return genJustifier(ctx, niv.figures.includes('losange'))
   return genSolide(ctx)
 }
 
@@ -49,42 +51,56 @@ function genererQuestion(ctx: Contexte, reglages: Reglages, type?: TypeExercice)
 const genererSansRepetition = (ctx: Contexte, reglages: Reglages, nb: number, type?: TypeExercice): Question[] =>
   tirerUniques(nb, () => genererQuestion(ctx, reglages, type), { cle: q => q.cle, essais: nb * 50 })
 
-const contexte = (niveau: Config['niveau'], rng: ParamsGenerateur['rng'], T: T): Contexte => ({ rng, T, niv: donneesDe(niveau) })
+/** Les types de questions qu'un exercice propose à un niveau (sa définition). */
+export type TypesDuNiveau = (niveau: Classe) => readonly TypeExercice[]
 
-export const questions = ({ niveau, reglages, rng, T, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] =>
-  genererSansRepetition(contexte(niveau, rng, T), reglages, nb)
+/** Ce que le moteur lit d'une définition : la liste `exercices` que chaque niveau propose. */
+interface DefinitionLue { niveaux: Partial<Record<Classe, { options?: { exercices?: readonly unknown[] } }>> }
 
-// Symboles du repérage de la fiche (cases à nommer)
-export const SYMBOLES = ['★', '●', '▲', '■']
+/** Les types de questions d'un niveau, lus dans la définition d'un exercice (`niveaux.<n>.options.exercices`). */
+export function typesDeDefinition(definition: DefinitionLue): TypesDuNiveau {
+  return niveau => (definition.niveaux[niveau]?.options?.exercices ?? []) as readonly TypeExercice[]
+}
+
+const contexte = (niveau: Config['niveau'], rng: ParamsGenerateur['rng'], T: T, typesDe: TypesDuNiveau): Contexte =>
+  ({ rng, T, niv: donneesDe(niveau, typesDe(niveauConnu(niveau))) })
+
+const questionsDe = (typesDe: TypesDuNiveau) => ({ niveau, reglages, rng, T, nb = reglages.nbQ }: ParamsGenerateur<Reglages, Cle>): Question[] =>
+  genererSansRepetition(contexte(niveau, rng, T, typesDe), reglages, nb)
 
 /**
  * Tout ce que tire la fiche : une rubrique par exercice coché (et offert par le niveau), dans l'ordre de la fiche.
- * Rubriques : symetrie, reproduction (listes de questions), reperage { cols, rows, aColorier, symboles, lectures },
+ * Rubriques : symetrie (liste de questions),
  * figures [{ forme, … }], solides [id], angles (questions), proprietes [propriété], cercle { rot }, patrons [{ cases, valide }].
  */
-export function questionsFiche({ niveau, reglages, rng, T }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): TirageFiche {
-  const ctx = contexte(niveau, rng, T)
+const questionsFicheDe = (typesDe: TypesDuNiveau) => ({ niveau, reglages, rng, T }: Omit<ParamsGenerateur<Reglages, Cle>, 'nb'>): TirageFiche => {
+  const ctx = contexte(niveau, rng, T, typesDe)
   const { niv } = ctx
   const ex = reglages.exercices as readonly TypeExercice[]
   const a = (id: TypeExercice): boolean => ex.includes(id) && niv.exercices.includes(id)
   const x: TirageFiche = { niveau: niveauConnu(niveau) }
   if (a('symetrie')) x.symetrie = genererSansRepetition(ctx, reglages, 3, 'symetrie') as QSymetrie[]
-  if (a('reproduction')) x.reproduction = genererSansRepetition(ctx, reglages, 2, 'reproduction') as QReproduction[]
-  if (a('reperage')) {
-    const { cols, rows } = niv.reperage
-    const cases = rng.melanger(Array.from({ length: cols * rows }, (_, i) => k(i % cols, Math.floor(i / cols)))).slice(0, 8)
-    x.reperage = {
-      cols, rows,
-      aColorier: cases.slice(0, 4).map(c => nomCase(...dek(c))),
-      symboles: Object.fromEntries(cases.slice(4).map((c, i) => [c, SYMBOLES[i]])),
-      lectures: cases.slice(4).map((c, i) => ({ symbole: SYMBOLES[i], nom: nomCase(...dek(c)) })),
-    }
-  }
-  if (a('figures')) x.figures = rng.melanger(niv.figures).map(forme => ({ forme, ...construireFigure(rng, forme) }))
-  if (a('solides')) x.solides = rng.melanger(niv.solides)
-  if (a('angles')) x.angles = genererSansRepetition(ctx, reglages, 4, 'angles') as QAngles[]
-  if (a('proprietes')) x.proprietes = rng.melanger(PROPRIETES.filter(p => !aChoix(p))).slice(0, 6)
+  // CP : chaque figure deux fois (des orientations et des tailles différentes), et le tableau côtés / sommets
+  const doubler = <F>(liste: readonly F[]): F[] => (niv.ficheGuidee ? [...liste, ...liste] : [...liste])
+  if (a('figures')) x.figures = rng.melanger(doubler(niv.figures)).map(forme => ({ forme, ...construireFigure(rng, forme, niv.ficheGuidee) }))
+  // les noms à écrire : au CP, ceux que le programme fait nommer (cube, pavé, boule)
+  if (a('solides')) x.solides = rng.melanger(doubler(niv.solidesNommes ?? niv.solides))
+  // CP : « entoure les solides qui roulent » (cylindre, cône, boule : à reconnaître)
+  if (a('solides') && niv.ficheGuidee) x.rouler = rng.melanger(niv.solides)
+  if (a('angles')) x.angles = genererSansRepetition(ctx, reglages, 6, 'angles') as QAngles[]
+  if (a('proprietes')) x.proprietes = rng.melanger(proprietesDe(niv).filter(p => !aChoix(p))).slice(0, 6)
   if (a('cercle')) x.cercle = { rot: rng.entier(0, 359) }
+  if (a('aigus')) {
+    // deux angles de chaque sorte, dans le désordre ; au CE2, les aigus et les obtus près de l'angle droit (l'équerre sert)
+    const proches = niv.figures.includes('losange')
+    const sortes = rng.melanger([...SORTES_ANGLE, ...SORTES_ANGLE])
+    x.aigus = sortes.map(s => genAigu(ctx, proches, s, proches && s !== 'droit'))
+  }
+  if (a('justifier')) {
+    x.justifier = genererSansRepetition(ctx, reglages, 4, 'justifier') as QJustifier[]
+    // au CE2, au moins un losange (« Ce n'est pas un carré car l'un de ses angles n'est pas un angle droit », p. 36)
+    if (niv.figures.includes('losange') && !x.justifier.some(q => q.forme === 'losange')) x.justifier[x.justifier.length - 1] = genJustifier(ctx, true, 'losange-carre')
+  }
   if (a('patrons')) {
     const { valides, invalides } = patrons()
     x.patrons = rng.melanger([...rng.melanger(valides).slice(0, 3).map(h => ({ h, valide: true })),
@@ -95,7 +111,7 @@ export function questionsFiche({ niveau, reglages, rng, T }: Omit<ParamsGenerate
 }
 
 // ── Réponses ──
-// rep : { choix: indice } (question à choix) ; { selection: [clés de cases] } (symétrie, reproduction, repérage) ;
+// rep : { choix: indice } (question à choix) ; { selection: [clés de cases] } (symétrie) ;
 // { lettres: ['A', 'C'] ou ['aucun'] } (angles droits)
 const memeEnsemble = (a: readonly string[], b: readonly string[]): boolean => a.length === b.length && a.every(x => b.includes(x))
 const cellulesDe = (q: Question): string[] => ('cellules' in q ? q.cellules : [])
@@ -129,7 +145,6 @@ export function bilanCases(q: Question, selection: readonly string[]): { justes:
 export function decrire(q: Question, rep: Reponse, T: T): string {
   if ('choix' in rep) return 'choix' in q ? q.choix[rep.choix] : ''
   if ('lettres' in rep) return rep.lettres.includes('aucun') ? T('aucun') : [...rep.lettres].sort().join(', ')
-  if (q.type === 'reperage') return nomCase(...dek(rep.selection[0]))
   const { justes, enTrop } = bilanCases(q, rep.selection)
   return T('casesJustes', { justes, total: cellulesDe(q).length }) + (enTrop ? T('casesEnTrop', { n: enTrop }) : '')
 }
@@ -139,7 +154,6 @@ export function messageErreur(q: Question, rep: Reponse | null, T: T): string {
   if (!rep) return ''
   if ('choix' in rep) return `${T('bonneReponse')} : ${'reponse' in q ? q.reponse : ''}`
   if ('lettres' in rep) return q.type === 'angles' && q.droits.length ? T('anglesFaux', { attendu: q.attendu }) : T('anglesAucunFaux')
-  if (q.type === 'reperage') return T('reperageFaux', { donne: decrire(q, rep, T), nom: q.nom })
   const { manquantes, enTrop } = bilanCases(q, rep.selection)
   const morceaux = [...(manquantes ? [T('presqueOubliees', { n: manquantes })] : []), ...(enTrop ? [T('presqueEnTrop', { n: enTrop })] : [])]
   return T('presque', { morceaux: morceaux.join(T('presqueEt')) })
@@ -152,13 +166,12 @@ function elementsDe(x: readonly Question[] | TirageFiche): Element[] {
   if (Array.isArray(x)) return x as Question[]
   const t = x as TirageFiche
   return [
-    ...(t.symetrie ?? []), ...(t.reproduction ?? []), ...(t.angles ?? []),
+    ...(t.symetrie ?? []), ...(t.angles ?? []), ...(t.justifier ?? []),
     ...(t.figures ?? []).map(f => ({ type: 'figure', sous: 'nom', forme: f.forme })),
     ...(t.solides ?? []).map(solide => ({ type: 'solide', sous: 'nom', solide })),
     ...(t.proprietes ?? []).map(p => ({ type: 'proprietes', prop: p.id })),
     ...(t.cercle ? [{ type: 'cercle' }] : []),
     ...(t.patrons ?? []).map(() => ({ type: 'patron' })),
-    ...(t.reperage ? [{ type: 'reperage' }] : []),
   ]
 }
 
@@ -178,20 +191,34 @@ export function ecartsAuProgramme(x: readonly Question[] | TirageFiche, contrain
     }
     if (e.type === 'symetrie' && !contraintes.symetrie) ecarts.push('symétrie hors programme')
     if (e.type === 'patron' && !contraintes.patrons?.includes('cube')) ecarts.push('patron du cube hors programme')
-    if (e.type === 'angles' && e.forme === 'losange') figure('losange')
+    if ((e.type === 'angles' || e.type === 'justifier') && e.forme === 'losange') figure('losange')
   }
   return [...new Set(ecarts)]
 }
 
-export function manquesAuProgramme(reglages: Config<Reglages>, contraintes: Contraintes): string[] {
+/** Les familles du programme qu'un exercice couvre : on ne lui reproche que les manques de ses familles. */
+export type Famille = 'symetrie' | 'patrons' | 'solides' | 'figures'
+
+const manquesDe = (typesDe: TypesDuNiveau, familles: readonly Famille[]) => (reglages: Config<Reglages>, contraintes: Contraintes): string[] => {
   const manques: string[] = []
   const ex = reglages.exercices as readonly string[]
-  const niv = donneesDe(reglages.niveau)
-  if (contraintes.symetrie && !ex.includes('symetrie')) manques.push('symétrie')
-  if (contraintes.patrons?.includes('cube') && !ex.includes('patrons')) manques.push('patron du cube')
-  for (const s of contraintes.solides ?? []) if (!(s in SOLIDES) || !(niv.solides as readonly string[]).includes(s)) manques.push(`solide ${s}`)
-  const offertes = niv.figures.map(f => FIGURES[f].programme)
-  // le disque (maternelle, CP) se nomme « cercle » à partir du CE1
-  for (const f of contraintes.figures ?? []) if (f !== 'disque' && !offertes.includes(f)) manques.push(`figure ${f}`)
+  const niv = donneesDe(reglages.niveau, typesDe(niveauConnu(reglages.niveau)))
+  const couvre = (f: Famille): boolean => familles.includes(f)
+  if (couvre('symetrie') && contraintes.symetrie && !ex.includes('symetrie')) manques.push('symétrie')
+  if (couvre('patrons') && contraintes.patrons?.includes('cube') && !ex.includes('patrons')) manques.push('patron du cube')
+  if (couvre('solides')) for (const s of contraintes.solides ?? []) if (!(s in SOLIDES) || !(niv.solides as readonly string[]).includes(s)) manques.push(`solide ${s}`)
+  if (couvre('figures')) {
+    const offertes = niv.figures.map(f => FIGURES[f].programme)
+    // le disque (maternelle, CP) se nomme « cercle » à partir du CE1
+    for (const f of contraintes.figures ?? []) if (f !== 'disque' && !offertes.includes(f)) manques.push(`figure ${f}`)
+  }
   return manques
+}
+
+/**
+ * Ce qui dépend de l'exercice : les types de questions de ses niveaux (`typesDe`, lu dans sa définition) et les familles du programme
+ * qu'il couvre (`familles`). Les autres fonctions du moteur sont les mêmes pour tous.
+ */
+export function moteurGeometrie(typesDe: TypesDuNiveau, familles: readonly Famille[]) {
+  return { questions: questionsDe(typesDe), questionsFiche: questionsFicheDe(typesDe), manquesAuProgramme: manquesDe(typesDe, familles) }
 }

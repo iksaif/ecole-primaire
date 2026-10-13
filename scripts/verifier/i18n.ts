@@ -16,7 +16,7 @@ const relecture = values.relecture
 const typees = await verifierTypees(relecture)
 console.log(`${typees.sections} sections typées (src/langues), ${typees.textes} textes ; ${typees.aRelire} marqués « à relire »`)
 const contenu = await verifierContenu(relecture)
-console.log(`${contenu.catalogues} catalogues de contenu d'exercice (src/exercices), ${contenu.textes} textes ; ${contenu.aRelire} marqués « à relire »`)
+console.log(`${contenu.catalogues} catalogues de contenu d'exercice (src/exercices, src/moteurs), ${contenu.textes} textes ; ${contenu.aRelire} marqués « à relire »`)
 
 const bilans = [typees, contenu]
 const somme = (champ: 'textes' | 'aRelire' | 'problemes'): number => bilans.reduce((n, b) => n + b[champ], 0)

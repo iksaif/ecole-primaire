@@ -104,7 +104,7 @@ const pret = preparer()
 pret.catch(() => {})   // l'échec est rapporté plus bas, par le test qui l'attend ou par la fin du run
 
 // NODE : tests node de la base (sites, langues, nombres, définitions, noyau, exercices, affiches, réponses, instantanés, fiches).
-const NODE = ['sites', 'langues', 'nombres', 'uniques', 'contexte', 'definir', 'noyau', 'exercices', 'affiches-modele', 'affiches-planche', 'reponses', 'instantanes', 'ressources', 'recherche',
+const NODE = ['sites', 'langues', 'nombres', 'uniques', 'contexte', 'definir', 'noyau', 'exercices', 'tracer-regle', 'reperage', 'geometrie-justifier', 'affiches-modele', 'affiches-planche', 'reponses', 'instantanes', 'ressources', 'recherche',
   'polices', 'fiches', 'statique', 'programme-page', 'recents', 'fiches-pages', 'heure', 'dessins-base10', 'metadonnees-pdf', 'images', 'pictogrammes', 'voix', 'relecture-breton', 'confiance', 'extensions', 'assemblage', 'ceintures']
 // CHROME : pages dans Chrome, du plus long au plus court (durées : tableau de fin de run). Les tests de l'ancien code sont dans
 // tests/ancien/, hors de ces listes.

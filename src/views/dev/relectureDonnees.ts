@@ -13,7 +13,7 @@ const LANGUE_RELUE = CODES.find(c => c !== LANGUE_SOURCE) ?? LANGUE_SOURCE
 
 // Une entrée par fichier ; la clé est son chemin, dont on tire la langue ou l'identifiant.
 const modules = import.meta.glob<{ default: Arbre }>('../../langues/*/textes/*.ts', { eager: true })
-const sources = import.meta.glob<string>(['../../langues/*/textes/*.ts', '../../exercices/*/textes.ts', '../../affiches/*/textes.ts'], { eager: true, query: '?raw', import: 'default' })
+const sources = import.meta.glob<string>(['../../langues/*/textes/*.ts', '../../exercices/*/textes.ts', '../../moteurs/*/textes.ts', '../../affiches/*/textes.ts'], { eager: true, query: '?raw', import: 'default' })
 
 const fichier = (chemin: string): string => chemin.split('/').pop() ?? chemin
 
@@ -29,13 +29,23 @@ function interfaceDuSite(): LigneRelecture[] {
   })
 }
 
-/** Le contenu des exercices : le catalogue `catalogue(…)` de chaque exercice qui en a un. */
+/** Où est écrit le catalogue d'un exercice : son textes.ts, ou celui du moteur commun qu'il reprend (`export { CONTENU } from '../../moteurs/<m>/textes.ts'`). */
+function ouEstLeCatalogue(id: string): { section: string, source: string } {
+  const source = sources[`../../exercices/${id}/textes.ts`] ?? ''
+  const moteur = source.match(/from '\.\.\/\.\.\/moteurs\/([\w-]+)\/textes\.ts'/)?.[1]
+  if (!moteur) return { section: id, source }
+  return { section: moteur, source: sources[`../../moteurs/${moteur}/textes.ts`] ?? '' }
+}
+
+/** Le contenu des exercices : le catalogue `catalogue(…)` de chaque exercice qui en a un ; un catalogue commun (moteur) une seule fois. */
 function contenuDesExercices(): LigneRelecture[] {
+  const vus = new Set<unknown>()
   return EXERCICES.filter(m => !m.exemple).flatMap(m => {
     const catalogue: unknown = m.textes
-    if (!estCatalogue(catalogue)) return []
-    const source = sources[`../../exercices/${m.definition.id}/textes.ts`] ?? ''
-    return lignesContenu(m.definition.id, catalogue.source as Arbre, (catalogue.traductions as Readonly<Record<string, Arbre | undefined>>)[LANGUE_RELUE], source)
+    if (!estCatalogue(catalogue) || vus.has(catalogue)) return []
+    vus.add(catalogue)
+    const { section, source } = ouEstLeCatalogue(m.definition.id)
+    return lignesContenu(section, catalogue.source as Arbre, (catalogue.traductions as Readonly<Record<string, Arbre | undefined>>)[LANGUE_RELUE], source)
   })
 }
 

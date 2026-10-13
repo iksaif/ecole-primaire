@@ -1,14 +1,14 @@
 // La géométrie — textes de CONTENU : les noms des figures et des solides, les questions, les consignes, les corrections et ce que la fiche
 // écrit. Lus par T (générateur, fiche) ; la vue passe par `traducteur(CONTENU, …)`. Les textes de l'INTERFACE (réglages, boutons du jeu,
 // légende des cases) sont dans src/langues/<langue>/textes/geometrie.ts.
-// Paramètres : nom = nom d'une case (« B3 ») ou d'un segment (« [OA] ») ; r, d = longueurs en cm ; n = nombre de cases.
+// Paramètres : nom = nom d'un segment (« [OA] ») ; r, d = longueurs en cm ; n = nombre de cases.
 // Pas de liste dans le catalogue : les listes d'autrefois (noms des figures, choix du cercle, vrai / faux) sont des clés une à une.
 import { catalogue } from '../../langues/catalogue.ts'
 
 export const CONTENU = catalogue({
   titre: 'Géométrie',
   figure: {
-    carre: 'carré', rectangle: 'rectangle', triangle: 'triangle',
+    disque: 'disque', carre: 'carré', rectangle: 'rectangle', triangle: 'triangle',
     triangle_rectangle: 'triangle rectangle', cercle: 'cercle', losange: 'losange',
   },
   solide: { cube: 'cube', pave: 'pavé droit', pyramide: 'pyramide', cylindre: 'cylindre', boule: 'boule', cone: 'cône' },
@@ -18,16 +18,42 @@ export const CONTENU = catalogue({
   // ─── Questions ───
   symetrieV: 'Symétrie (axe vertical)',
   symetrieH: 'Symétrie (axe horizontal)',
-  reproductionQ: 'Reproduction sur quadrillage',
-  colorieQ: 'Colorie la case {nom}',
-  lireCaseQ: 'Quelle case est coloriée ?',
   figureNomQ: 'Quel est le nom de cette figure ?',
   figureCotesQ: 'Combien de côtés a cette figure ?',
+  figureSommetsQ: 'Combien de sommets a cette figure ?',
   figureAngleQ: 'Cette figure a-t-elle au moins un angle droit ?',
   solideNomQ: "Comment s'appelle ce solide ?",
   solideRoulerQ: 'Ce solide peut-il rouler ?',
   solideFacesQ: 'Combien de faces a ce solide ?',
   solideSommetsQ: 'Combien de sommets a ce solide ?',
+  solideAretesQ: 'Combien d’arêtes a ce solide ?',
+  aiguQ: 'Cet angle est-il aigu, droit ou obtus ?',
+  ficheMots: 'Les mots',
+  ficheTableauConsigne: 'Compte et écris le nombre de côtés et de sommets.',
+  ficheCotes: 'côtés',
+  ficheSommets: 'sommets',
+  ficheRoulerConsigne: 'Entoure les solides qui peuvent rouler.',
+  ficheTableau: 'Côtés et sommets',
+  ficheSommetCoin: 'Un sommet, c’est un coin.',
+  ficheFacesConsigne: 'Compte les faces et écris leur forme.',
+  ficheNbFaces: 'nombre de faces',
+  ficheFormeFaces: 'forme des faces',
+  ficheRouler: 'Ils roulent',
+  angle: { aigu: 'aigu', droit: 'droit', obtus: 'obtus' },
+  justifierQ: { carre: 'Est-ce un carré ?', rectangle: 'Est-ce un rectangle ?' },
+  raison: {
+    oui: 'Oui.',
+    angle: 'Non : un de ses angles n’est pas droit.',
+    cotes: 'Non : ses quatre côtés n’ont pas la même longueur.',
+    nbCotes: 'Non : il n’a pas quatre côtés.',
+  },
+  ficheAigus: 'Aigu, droit ou obtus ?',
+  ficheAigusConsigne: 'Pour chaque angle, entoure le bon mot. Si tu hésites, compare avec ton équerre.',
+  ficheJustifier: 'Carré ? Rectangle ?',
+  ficheJustifierConsigne: 'Vérifie avec la règle et l’équerre, puis entoure la bonne réponse.',
+  solideNatureQ: 'De quelle forme sont les faces de ce solide ?',
+  solideLequelQ: 'Lequel est un {nom} ?',
+  nature: { carres: 'des carrés', rectangles: 'des rectangles', triangles: 'des triangles', trianglesCarre: 'des triangles et un carré' },
   anglesQ: 'Quels angles sont droits ?',
   // propriétés des figures : « Vrai ou faux ? » + affirmation, ou question à choix parmi `choixFigure` (dans l'ordre de PROPRIETES, donnees.ts)
   vraiOuFaux: 'Vrai ou faux ?',
@@ -63,16 +89,12 @@ export const CONTENU = catalogue({
 
   // ─── Consignes à l'écran ───
   symetrieConsigne: "Colorie les cases pour compléter la figure : elle doit être symétrique par rapport à l'axe rouge.",
-  reproductionConsigne: "Reproduis la figure dans la grille de droite, au même endroit. L'étoile ★ t'aide à démarrer.",
-  colorieConsigne: 'Colorie la case {nom} (colonne {col}, ligne {ligne}).',
-  lireCaseConsigne: 'Quelle case est coloriée ? (la lettre de la colonne, puis le numéro de la ligne)',
 
   // ─── Corrections ───
   aucun: 'aucun',
   nCases: '{n} cases',
   anglesFaux: 'Les angles droits sont : {attendu} (marqués en rouge).',
   anglesAucunFaux: "Cette figure n'a aucun angle droit.",
-  reperageFaux: 'Tu as colorié {donne}. La bonne case {nom} est entourée en orange.',
   casesJustes: '{justes} / {total} cases justes',
   casesEnTrop: ', {n} en trop',
   // « Presque ! 2 cases oubliées et 1 case en trop. Regarde la correction. »
@@ -84,11 +106,6 @@ export const CONTENU = catalogue({
   // ─── Fiche ───
   ficheSymetrie: 'Symétrie',
   ficheSymetrieConsigne: "Colorie les cases pour que la figure soit symétrique par rapport à l'axe rouge.",
-  ficheReproduction: 'Reproduction',
-  ficheReproductionConsigne: "Reproduis la figure dans la grille de droite, au même endroit. Le point t'aide à démarrer.",
-  ficheReperage: 'Repérage',
-  ficheColorie: 'Colorie les cases',
-  ficheNomCase: 'Écris le nom de chaque case',
   ficheFigures: 'Figures',
   ficheFiguresConsigne: 'Écris le nom de chaque figure.',
   ficheSolides: 'Solides',
@@ -105,14 +122,13 @@ export const CONTENU = catalogue({
   fichePatronsConsigne: 'Entoure les dessins qui sont des patrons du cube. Tu peux les découper pour vérifier !',
   ficheAvertissement: 'Imprimer à 100 %, sans ajustement à la page : chaque carreau mesure alors 1 cm.',
   // corrigé de la fiche (titres des parties : ceux de la fiche) ; liste = numéros des dessins, dans l'ordre de lecture
-  corrigeReproduction: 'la même figure que le modèle, au même endroit (réponse à vérifier sur le quadrillage)',
   corrigeCercle: 'cercle de rayon 3 cm (6 cm de diamètre) — rayon : {rayon} — diamètre : {diametre}',
   corrigePatrons: 'dessins {liste} (en lisant de gauche à droite)',
 }, {
   br: {
     titre: 'Mentoniezh',
     figure: { // br: à relire (rectangle : « skouergorneg », comme l’académie de Rennes)
-      carre: 'karrez', rectangle: 'skouergorneg', triangle: "tric'horn",
+      disque: 'pladenn', carre: 'karrez', rectangle: 'skouergorneg', triangle: "tric'horn",
       triangle_rectangle: "tric'horn skouer", cercle: "kelc'h", losange: 'lozanj', // br: à relire (triangle rectangle)
     },
     // br: à relire (pavé droit : « hirgarrezeg »)
@@ -122,16 +138,42 @@ export const CONTENU = catalogue({
 
     symetrieV: 'Kemparzhded (ahel a-serzh)',
     symetrieH: 'Kemparzhded (ahel a-blaen)',
-    reproductionQ: "Adtresañ war ar c'harrezennoù",
-    colorieQ: 'Liv ar garrezenn {nom}',
-    lireCaseQ: 'Peseurt karrezenn a zo livet ?',
     figureNomQ: 'Petra eo anv ar stumm-mañ ?',
     figureCotesQ: 'Pet kostez en deus ar stumm-mañ ?',
+    figureSommetsQ: 'Pet beg en deus ar stumm-mañ ?', // br: à relire
     figureAngleQ: "Hag-eñ en deus ar stumm-mañ ur c'horn skouer d'an nebeutañ ?",
     solideNomQ: 'Petra eo anv ar solud-mañ ?',
     solideRoulerQ: "Hag-eñ e c'hall ar solud-mañ ruilhal ?",
     solideFacesQ: 'Pet tal en deus ar solud-mañ ?',
     solideSommetsQ: 'Pet beg en deus ar solud-mañ ?',
+    solideAretesQ: 'Pet biñs en deus ar solud-mañ ?', // br: à relire
+    aiguQ: 'Ar c’horn-mañ, ha lemm, skouer pe digor eo ?', // br: à relire
+    ficheMots: 'Ar gerioù', // br: à relire
+    ficheTableauConsigne: 'Kont ha skriv an niver a gostezioù hag a vegoù.', // br: à relire
+    ficheCotes: 'kostezioù', // br: à relire
+    ficheSommets: 'begoù', // br: à relire
+    ficheRoulerConsigne: 'Lak ur c’helc’h en-dro d’ar solidennoù a c’hall ruilhal.', // br: à relire
+    ficheTableau: 'Kostezioù ha begoù', // br: à relire
+    ficheSommetCoin: 'Ur beg, ur c’horn eo.', // br: à relire
+    ficheFacesConsigne: 'Kont an talioù ha skriv o stumm.', // br: à relire
+    ficheNbFaces: 'niver a dalioù', // br: à relire
+    ficheFormeFaces: 'stumm an talioù', // br: à relire
+    ficheRouler: 'Ruilhal a reont', // br: à relire
+    angle: { aigu: 'lemm', droit: 'a-skouer', obtus: 'digor' }, // br: à relire
+    justifierQ: { carre: 'Ha karrez eo ?', rectangle: 'Ha skouergorneg eo ?' }, // br: à relire
+    raison: { // br: à relire
+      oui: 'Ya.',
+      angle: 'Nann : unan eus e gornioù n’eo ket skouer.',
+      cotes: 'Nann : e bevar c’hostez n’o deus ket an hevelep hed.',
+      nbCotes: 'Nann : n’en deus ket pevar c’hostez.',
+    },
+    ficheAigus: 'Lemm, skouer pe digor ?', // br: à relire
+    ficheAigusConsigne: 'Evit pep korn, lak ur c’helc’h en-dro d’ar ger mat. Ma vezez arvarus, keñver gant da skouer.', // br: à relire
+    ficheJustifier: 'Karrez ? Skouergorneg ?', // br: à relire
+    ficheJustifierConsigne: 'Gwiriañ gant ar reolenn hag ar skouer, ha lak ur c’helc’h en-dro d’ar respont mat.', // br: à relire
+    solideNatureQ: 'Peseurt stumm o deus talioù ar solud-mañ ?', // br: à relire
+    solideLequelQ: 'Pehini eo ur {nom} ?', // br: à relire
+    nature: { carres: 'karrezioù', rectangles: 'skouergorneioù', triangles: 'tric’hornioù', trianglesCarre: 'tric’hornioù hag ur c’harrez' }, // br: à relire
     anglesQ: 'Peseurt kornioù a zo skouer ?',
     vraiOuFaux: 'Gwir pe gaou ?',
     vrai: 'Gwir',
@@ -165,15 +207,11 @@ export const CONTENU = catalogue({
     patronQ: "Hag-eñ eo an tresadenn-mañ ur patrom eus ar c'hub ? (Soñj e plegez anezhañ.)", // br: à relire (patrom)
 
     symetrieConsigne: "Liv ar c'harrezennoù evit klokaat ar stumm : kemparzhek e rank bezañ e-keñver an ahel ruz.",
-    reproductionConsigne: "Adtres ar stumm er gael a-zehou, en hevelep lec'h. Ar steredenn ★ a sikour ac'hanout da gregiñ.",
-    colorieConsigne: 'Liv ar garrezenn {nom} (kolonenn {col}, linenn {ligne}).',
-    lireCaseConsigne: 'Peseurt karrezenn a zo livet ? (lizherenn ar golonenn, ha goude niverenn al linenn)',
 
     aucun: 'hini ebet',
     nCases: '{n} karrezenn',
     anglesFaux: "Ar c'hornioù skouer a zo : {attendu} (merket e ruz).",
     anglesAucunFaux: "N'en deus ar stumm-mañ korn skouer ebet.",
-    reperageFaux: "Livet ec'h eus {donne}. Ar garrezenn vat {nom} a zo kelc'hiet en orañjez.",
     casesJustes: '{justes} / {total} karrezenn mat',
     casesEnTrop: ', {n} re',
     presque: 'Tost ! {morceaux}. Sell ouzh ar reizhadenn.', // br: à relire
@@ -183,11 +221,6 @@ export const CONTENU = catalogue({
 
     ficheSymetrie: 'Kemparzhded',
     ficheSymetrieConsigne: "Liv ar c'harrezennoù evit ma vo kemparzhek ar stumm e-keñver an ahel ruz.",
-    ficheReproduction: 'Adtresañ',
-    ficheReproductionConsigne: "Adtres ar stumm er gael a-zehou, en hevelep lec'h. Ar poent a sikour ac'hanout da gregiñ.",
-    ficheReperage: "Lec'hiañ",
-    ficheColorie: "Liv ar c'harrezennoù",
-    ficheNomCase: 'Skriv anv pep karrezenn',
     ficheFigures: 'Stummoù',
     ficheFiguresConsigne: 'Skriv anv pep stumm.',
     ficheSolides: 'Soludoù',
@@ -203,7 +236,6 @@ export const CONTENU = catalogue({
     fichePatrons: "Patromoù ar c'hub",
     fichePatronsConsigne: "Kelc'h an tresadennoù a zo patromoù ar c'hub. Gallout a rez o didroc'hañ evit gwiriañ !", // br: à relire (consigne : forme de l’académie de Rennes, « Kelc’h(it) », « Klok(ait) »)
     ficheAvertissement: "Moullañ da 100 %, hep azasaat d'ar bajenn : neuze e vuzul pep karrezenn 1 cm.",
-    corrigeReproduction: "an hevelep stumm hag ar patrom, en hevelep lec'h (respont da wiriañ war ar gael)", // br: à relire
     corrigeCercle: "kelc'h a skin 3 cm (treuzkiz 6 cm) — skin : {rayon} — treuzkiz : {diametre}", // br: à relire
     corrigePatrons: 'tresadennoù {liste} (o lenn a-gleiz da zehou)', // br: à relire
   },

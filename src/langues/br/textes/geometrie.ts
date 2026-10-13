@@ -9,7 +9,6 @@ export default {
   optionsSym: 'Dibarzhioù ar gemparzhded',
   axeV: 'Ahel a-serzh hepken',
   axeH: 'Ahel a-blaen ivez',
-  modele: 'Skouer',
   aToi: 'Da dro !',
   astuceEquerre: 'Tun : gwiri gant da skouer pe gant korn ur follenn !',
   aucunBtn: 'Hini ebet',
@@ -20,10 +19,10 @@ export default {
   effacer: 'Diverkañ',
   exercices: {
     symetrie: 'Kemparzhded',
-    reproduction: 'Adtresañ', // br: à relire
-    reperage: "Lec'hiañ",
     figures: 'Stummoù',
     solides: 'Soludoù', // br: à relire
+    aigus: 'Lemm, skouer pe digor', // br: à relire
+    justifier: 'Abegiñ', // br: à relire
     angles: 'Kornioù skouer',
     proprietes: 'Perzhioù',
     cercle: "Kelc'h",

@@ -28,8 +28,8 @@ const GENERALES = [
 ]
 
 // Toutes les routes d'exercice et de développement (niveau complet), avec états (fiche, question) pour les exercices.
-const PAGES = ['/dev', '/dev/exemple', '/dev/exemple-corpus', '/dev/affiches', '/dev/composants', '/maths/calcul-mental', '/maths/heure', '/maths/monnaie', '/maths/numeration', '/maths/suites', '/maths/problemes', '/maths/tables', '/maths/calcul-pose', '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner', '/maternelle/formes', '/maternelle/motifs', '/maths/geometrie']
-const SANS_ETATS = new Set(['/dev', '/dev/affiches', '/dev/composants', '/maths/geometrie'])   // pas de fiche ni de partie à ouvrir
+const PAGES = ['/dev', '/dev/exemple', '/dev/exemple-corpus', '/dev/affiches', '/dev/composants', '/maths/calcul-mental', '/maths/heure', '/maths/monnaie', '/maths/numeration', '/maths/suites', '/maths/problemes', '/maths/tables', '/maths/calcul-pose', '/maternelle/compter', '/maternelle/comparer', '/maternelle/ordonner', '/maternelle/formes', '/maternelle/motifs', '/maths/figures', '/maths/solides', '/maths/symetrie', '/maths/reperage', '/maths/tracer-regle']
+const SANS_ETATS = new Set(['/dev', '/dev/affiches', '/dev/composants', '/maths/figures', '/maths/solides', '/maths/symetrie', '/maths/reperage', '/maths/tracer-regle'])   // pas de fiche ni de partie à ouvrir
 
 // Échantillon du niveau rapide : un exercice par famille de rendu (une ligne de raison par choix).
 const ECHANTILLON = [

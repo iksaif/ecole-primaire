@@ -104,6 +104,7 @@ export const K = fort('K', {
   figuresPlanes: 'figures-planes',
   angleDroit: 'angle-droit',
   tracerFigures: 'tracer-figures',
+  alignements: 'alignements',
   solides: 'solides',
   patrons: 'patrons',
   symetrie: 'symetrie',

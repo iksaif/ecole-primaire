@@ -3,9 +3,9 @@
 import type { Rng } from '../../noyau/types.ts'
 import { avecChoix } from './choix.ts'
 import {
-  FIGURES, NOMS_CONCURRENTS, TRIANGLES, ROTATIONS, ROTATIONS_CARRE, FORMES_LIBRES, SOLIDES, PROPRIETES, aChoix,
+  FIGURES, NOMS_CONCURRENTS, TRIANGLES, ROTATIONS, ROTATIONS_CARRE, FORMES_LIBRES, SOLIDES, PROPRIETES, NATURES, aChoix,
 } from './donnees.ts'
-import type { FormeAngles, FormeFigure, FormeLibre, SolideGeo } from './donnees.ts'
+import type { FormeAngles, FormeFigure, FormeLibre, Propriete, SolideGeo } from './donnees.ts'
 import type { Cle, Contexte, Figure, QAngles, QCercle, QFigure, QPropriete, QSolide } from './types.ts'
 
 const LETTRES_POINTS = 'ABCDEFGHKLMN'.split('')
@@ -21,11 +21,18 @@ function angleSommet(pts: readonly Pt[], i: number): number {
 
 const estLibre = (forme: FormeAngles): forme is FormeLibre => forme in FORMES_LIBRES
 
-/** Une figure dessinée dans 200 × 200 : { points, rayon, anglesDroits } (cercle : rayon seul). */
-export function construireFigure(rng: Rng, forme: FormeAngles): Figure {
+/**
+ * Une figure dessinée dans 200 × 200 : { points, rayon, anglesDroits } (cercle : rayon seul). `presqueCarre` (CP) : un rectangle sur deux est
+ * presque un carré (une longueur 1,2 à 1,4 fois la largeur), pour qu'on regarde vraiment les côtés.
+ */
+export function construireFigure(rng: Rng, forme: FormeAngles, presqueCarre = false): Figure {
   let pts: [number, number][]
-  if (forme === 'cercle') return { points: [], rayon: rng.entier(55, 70), anglesDroits: [] }
+  if (forme === 'cercle' || forme === 'disque') return { points: [], rayon: rng.entier(55, 70), anglesDroits: [] }
   if (forme === 'carre') { const s = rng.entier(80, 100) / 2; pts = [[-s, -s], [s, -s], [s, s], [-s, s]] }
+  else if (forme === 'rectangle' && presqueCarre && rng.vrai(0.5)) {
+    const h = rng.entier(70, 85) / 2, w = (h * rng.entier(120, 140)) / 100
+    pts = [[-w, -h], [w, -h], [w, h], [-w, h]]
+  }
   else if (forme === 'rectangle') { const w = rng.entier(120, 145) / 2, h = rng.entier(55, 75) / 2; pts = [[-w, -h], [w, -h], [w, h], [-w, h]] }
   else if (forme === 'losange') { const a = rng.entier(60, 72), b = rng.entier(34, 44); pts = [[0, -a], [b, 0], [0, a], [-b, 0]] }
   else if (forme === 'triangle_rectangle') { const a = rng.entier(90, 130), b = rng.entier(70, 110); pts = [[0, 0], [a, 0], [0, -b]] }
@@ -46,23 +53,33 @@ export function construireFigure(rng: Rng, forme: FormeAngles): Figure {
 const nomFigure = ({ T }: Contexte, id: FormeFigure): string => T(`figure.${id}` as Cle)
 const nomSolide = ({ T }: Contexte, id: SolideGeo): string => T(`solide.${id}` as Cle)
 
-/** Figure : son nom, son nombre de côtés ou si elle a un angle droit. */
+/** Ce qu'on peut demander d'une figure : son nom ; d'un polygone, aussi ses côtés, ses sommets et (à partir du CE1) s'il a un angle droit. */
+function questionsDeFigure(forme: FormeFigure, angleDroit: boolean): QFigure['sous'][] {
+  if (forme === 'cercle' || forme === 'disque') return ['nom']
+  const sous: QFigure['sous'][] = ['nom', 'cotes', 'sommets']
+  if (angleDroit) sous.push('angle')
+  return sous
+}
+
+/** Figure : son nom, son nombre de côtés ou de sommets, ou si elle a un angle droit. */
 export function genFigure(ctx: Contexte): QFigure {
   const { rng, T, niv } = ctx
   const forme = rng.choisir(niv.figures)
-  const sousDispo = forme === 'cercle' ? ['nom' as const] : ['nom' as const, 'cotes' as const, 'angle' as const]
-  const sous = rng.choisir(sousDispo)
+  const sous = rng.choisir(questionsDeFigure(forme, niv.angleDroit))
   const f = FIGURES[forme]
   const nom = (id: FormeFigure): string => nomFigure(ctx, id)
-  const base = { type: 'figure' as const, sous, forme, cle: `fig-${sous}-${forme}`, ...construireFigure(rng, forme) }
+  const base = { type: 'figure' as const, sous, forme, cle: `fig-${sous}-${forme}`, ...construireFigure(rng, forme, niv.ficheGuidee) }
   if (sous === 'nom') {
-    const exclus = NOMS_CONCURRENTS[forme] || []
+    // les noms « aussi justes » (un carré est un rectangle) : écartés, sauf au CP, où l'on distingue le carré du rectangle
+    const exclus = niv.sansInclusion ? [] : NOMS_CONCURRENTS[forme] || []
     const autres = rng.melanger(niv.figures.filter(x => x !== forme && !exclus.includes(x))).slice(0, 3)
     return avecChoix({ ...base, texte: T('figureNomQ'), attendu: nom(forme) },
       rng.melanger([forme, ...autres].map(nom)), nom(forme))
   }
   const attendu = (rep: string): string => `${rep} (${nom(forme)})`
   if (sous === 'cotes') return avecChoix({ ...base, texte: T('figureCotesQ'), attendu: attendu(String(f.cotes)) }, ['3', '4', '5', '6'], String(f.cotes))
+  // un polygone a autant de sommets que de côtés
+  if (sous === 'sommets') return avecChoix({ ...base, texte: T('figureSommetsQ'), attendu: attendu(String(f.cotes)) }, ['3', '4', '5', '6'], String(f.cotes))
   const reponse = f.angleDroit ? T('oui') : T('non')
   return avecChoix({ ...base, texte: T('figureAngleQ'), attendu: attendu(reponse) }, [T('oui'), T('non')], reponse)
 }
@@ -73,8 +90,11 @@ export function genSolide(ctx: Contexte): QSolide {
   const solide = rng.choisir(niv.solides)
   const s = SOLIDES[solide]
   const nom = (id: SolideGeo): string => nomSolide(ctx, id)
-  const sousDispo: ('nom' | 'rouler' | 'faces' | 'sommets')[] = ['nom', 'rouler']
-  if (niv.solidesComptage.includes(solide)) sousDispo.push('faces', 'sommets')
+  const sousDispo: QSolide['sous'][] = ['rouler']
+  if (!niv.solidesNommes || niv.solidesNommes.includes(solide)) sousDispo.unshift('nom')
+  // reconnaître sans nommer (CP : cylindre et cône sont « à reconnaître ») : « Lequel est un cylindre ? », avec des dessins
+  else sousDispo.unshift('lequel')
+  if (niv.solidesComptage.includes(solide)) sousDispo.push(...niv.comptes)
   const sous = rng.choisir(sousDispo)
   const base = { type: 'solide' as const, sous, solide, cle: `sol-${sous}-${solide}` }
   if (sous === 'nom') {
@@ -87,6 +107,15 @@ export function genSolide(ctx: Contexte): QSolide {
     const reponse = s.roule ? T('oui') : T('non')
     return avecChoix({ ...base, texte: T('solideRoulerQ'), attendu: attendu(reponse) }, [T('oui'), T('non')], reponse)
   }
+  if (sous === 'lequel') {
+    const proposes = rng.melanger([solide, ...rng.melanger(niv.solides.filter(x => x !== solide)).slice(0, 3)])
+    return avecChoix({ ...base, proposes, texte: T('solideLequelQ', { nom: nom(solide) }), attendu: nom(solide) }, proposes.map(nom), nom(solide))
+  }
+  if (sous === 'nature') {
+    const reponse = T(`nature.${s.nature!}` as Cle)
+    return avecChoix({ ...base, texte: T('solideNatureQ'), attendu: attendu(reponse) }, NATURES.map(n => T(`nature.${n}` as Cle)), reponse)
+  }
+  if (sous === 'aretes') return avecChoix({ ...base, texte: T('solideAretesQ'), attendu: attendu(String(s.aretes)) }, ['6', '8', '10', '12'], String(s.aretes))
   const reponse = String(sous === 'faces' ? s.faces : s.sommets)
   return avecChoix({ ...base, texte: T(sous === 'faces' ? 'solideFacesQ' : 'solideSommetsQ'), attendu: attendu(reponse) }, ['4', '5', '6', '8'], reponse)
 }
@@ -109,9 +138,13 @@ export function genAngles({ rng, T, niv }: Contexte): QAngles {
 const FIGURES_A_CHOIX = ['carre', 'rectangle', 'losange', 'triangleRectangle'] as const
 const choixFigures = (T: Contexte['T']): string[] => FIGURES_A_CHOIX.map(id => T(`choixFigure.${id}`))
 
-/** CE2 : propriétés des figures (« Vrai ou faux ? » ou question à choix parmi les figures). */
-export function genPropriete({ rng, T }: Contexte): QPropriete {
-  const p = rng.choisir(PROPRIETES)
+/** Les propriétés d'un niveau (au CE1 : celles du carré, du rectangle et du triangle rectangle, sans losange). */
+export const proprietesDe = (niv: Contexte['niv']): readonly Propriete[] =>
+  (niv.proprietes ? PROPRIETES.filter(p => niv.proprietes!.includes(p.id)) : PROPRIETES)
+
+/** Propriétés des figures (« Vrai ou faux ? » ou, au CE2, question à choix parmi les figures). */
+export function genPropriete({ rng, T, niv }: Contexte): QPropriete {
+  const p = rng.choisir(proprietesDe(niv))
   const texte = T(`propriete.${p.id}` as Cle)
   if (aChoix(p)) {
     const choix = choixFigures(T)

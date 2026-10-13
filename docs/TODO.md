@@ -185,3 +185,25 @@ clavier et lecteur d'écran, doubles et moitiés du CP hors des valeurs du progr
 - [ ] **Ceintures de compétences** (demande du 2026-10-12) : paliers de couleur validés par un brevet, portée configurable (exercice, compétence, domaine, matière), seuils réglables, suivi sur l'appareil + export/import d'un fichier. Réflexion : `plans/15-ceintures.md` et maquettes `brouillons/ceintures/maquettes.html` ; rien n'est codé, questions ouvertes à trancher d'abord.
   - [ ] Plus tard (2026-10-13) : voir si les ceintures deviennent un **onglet de l'exercice** qui évalue déjà la compétence (tables de multiplication…) plutôt que des activités à part : `plans/15-ceintures.md` §13.
   - [x] Décision (2026-10-13) : **pas de fiches toutes prêtes** pour les ceintures pour l'instant (aucune page `/telechargements/`, PDF ni sitemap) ; l'impression se fait depuis les pages des activités, rendu inchangé. Garde-fou : `tests/extensions.test.mjs`. À rouvrir si on veut les publier (`plans/15-ceintures.md` §18).
+- [x] **Géométrie du cycle 2 : état des lieux et plan** (demande du 2026-10-12, après un « relier des points » qui ne collait pas au BO) — fait le 2026-10-13 : `plans/16-geometrie.md` ; `geometrie` coupé en `figures`, `solides`, `symetrie`, `reperage`, `tracer-regle` (moteur commun `src/moteurs/geometrie/`, fiches publiées gardées) ; `tracer-regle` et `reperage` refaits d'après le BO ; CP ouvert pour les figures et les solides ; compétence `alignements` ; `relier-points` abandonné. Regards critiques passés, corrections faites ; ce qui reste, ci-dessous.
+- [x] **Géométrie, suites des regards critiques (2026-10-13)** — fait le 2026-10-13 :
+  - `tracer-regle` : au CE2, « construire » (rectangle, carré, triangle rectangle de mesures données ; quadrillage à l'écran, papier uni en cm sur la fiche,
+    règle et équerre, codage des angles droits) et le losange à reproduire ; au CE1, « à la règle et à l'équerre » pour compléter ;
+  - points alignés : un écart fin au CP une fois sur quatre, la réponse « aucun » (une fois sur quatre, et toujours présente sur une fiche) ;
+  - reproduire, après une erreur : le modèle en pointillé et les traits en trop en rouge ;
+  - repérage CE1 : des rochers pour des programmes plus longs, au moins quatre instructions ; le robot rejoue le programme case par case ;
+    « tourne ta feuille » quand il ne regarde pas vers le haut ; étiquettes-flèches à découper sur la fiche ;
+  - solides : nature des faces (au CP à la place de « combien de faces »), « Lequel est un cylindre ? » avec des dessins, pavé plus allongé (affiches aussi) ;
+  - figures CP : rectangles presque carrés et le rectangle comme piège pour le carré ; fiches CP guidées (figures en double, mots à recopier, tableau
+    côtés / sommets ; solides en double, « entoure ceux qui roulent ») ;
+  - angles : fiche CE1-CE2 à six figures de 5 cm ; « aigu, droit ou obtus » (CE1, CE2) ; « Est-ce un rectangle ? Non : un de ses angles n'est pas droit »
+    (justifier, CE1, CE2, avec le losange au CE2).
+- [ ] **Géométrie, seconde relecture (2026-10-13)** — corrigé : case « aucun » lisible et à l'écart des croix ; « justifier » à une seule raison vraie
+  (test `geometrie-justifier`) ; robot : départ marqué, chemin juste par-dessus, plus d'enchaînement automatique ; étiquettes comptées d'après les
+  solutions, sur leur page, nombres déjà écrits au CE1 ; consigne CP sans rochers ; « tourne ta feuille » sur la fiche du CE1 ; construire ouvert au
+  CE1, codage des longueurs au CE2, corrigé dessiné, cadres assez grands ; « combien de faces » remis au CP avec un tableau ; dessins dans le tableau
+  du CP ; angles plus grands, deux de chaque sorte, proches de l'angle droit au CE2 ; fiche « justifier » du CE2 avec un losange. Reste :
+  - ~~compléter un triangle rectangle au CE1~~ fait : un côté de l'angle droit tracé, le sommet A de l'angle droit, « ses deux côtés de l'angle droit
+    ont la même longueur » (deux solutions, de part et d'autre, acceptées) ;
+  - ~~« suivre » : le chemin numéroté sur la fiche corrigée~~ fait ;
+  - relecture humaine de tous les textes bretons nouveaux de la géométrie.

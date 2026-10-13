@@ -21,7 +21,11 @@ import { module as fractions } from './fractions/index.ts'
 import { module as problemes } from './problemes/index.ts'
 import { module as mesures } from './mesures/index.ts'
 import { module as formes } from './formes/index.ts'
-import { module as geometrie } from './geometrie/index.ts'
+import { module as figures } from './figures/index.ts'
+import { module as solides } from './solides/index.ts'
+import { module as symetrie } from './symetrie/index.ts'
+import { module as reperage } from './reperage/index.ts'
+import { module as tracerRegle } from './tracer-regle/index.ts'
 import { module as motifs } from './motifs/index.ts'
 import { module as lettres } from './lettres/index.ts'
 import { module as orthographe } from './orthographe/index.ts'
@@ -62,7 +66,11 @@ const BASE: readonly EntreeRegistre[] = [
   problemes,
   mesures,
   formes,
-  geometrie,
+  figures,
+  solides,
+  symetrie,
+  reperage,
+  tracerRegle,
   motifs,
   lettres,
   orthographe,

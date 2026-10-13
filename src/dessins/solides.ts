@@ -24,7 +24,8 @@ function boite(a: readonly Point[], d: number, f: string): string {
 
 const DESSINS: Readonly<Record<SolideId, (f: string) => string>> = {
   cube: f => boite([[8, 22], [38, 22], [38, 52], [8, 52]], 14, f),
-  pave: f => boite([[4, 24], [42, 24], [42, 50], [4, 50]], 14, f),
+  // le pavé nettement plus long que haut : on ne le confond pas avec le cube
+  pave: f => boite([[2, 32], [44, 32], [44, 50], [2, 50]], 12, f),
   boule: f => `<circle cx="30" cy="30" r="24" fill="${f}" stroke="#222" stroke-width="1.2"/><ellipse cx="30" cy="30" rx="24" ry="7" fill="none" stroke="#222" stroke-width=".8" stroke-dasharray="2.5 2"/>`,
   cylindre: f => `<path d="M10 14 v32 a20 7 0 0 0 40 0 v-32" fill="${f}" stroke="#222" stroke-width="1.2"/><ellipse cx="30" cy="14" rx="20" ry="7" fill="${f}" fill-opacity=".6" stroke="#222" stroke-width="1.2"/>`,
   cone: f => `<path d="M10 44 L30 6 L50 44 a20 7 0 0 1 -40 0" fill="${f}" stroke="#222" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 44 a20 7 0 0 0 40 0" fill="none" stroke="#222" stroke-width=".8" stroke-dasharray="2.5 2"/>`,

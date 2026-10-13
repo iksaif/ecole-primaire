@@ -1,4 +1,5 @@
-// Les catalogues de contenu des exercices : src/exercices/<id>/textes.ts (`catalogue(…)` de src/langues/catalogue.ts).
+// Les catalogues de contenu des exercices : src/exercices/<id>/textes.ts (`catalogue(…)` de src/langues/catalogue.ts), et ceux des moteurs communs à
+// plusieurs exercices (src/moteurs/<id>/textes.ts), qu'un exercice reprend par `export { CONTENU } from …` (un fichier sans `catalogue(` est sauté).
 // Le compilateur vérifie déjà les clés du breton contre le français ; ici on compte les passages « à relire » (clé marquée sur
 // sa ligne, dans le bloc `br: { … }`) et on ajoute les textes au tableau de relecture. Sans bloc `br`, rien à relire.
 import { readdirSync, readFileSync } from 'node:fs'
@@ -15,10 +16,9 @@ interface Catalogue { sorte: 'catalogue', source: Arbre, traductions: Record<str
 const estCatalogue = (v: unknown): v is Catalogue => (v as { sorte?: unknown } | null)?.sorte === 'catalogue'
 
 export async function verifierContenu(relecture: boolean): Promise<Bilan & { catalogues: number }> {
-  const dossier = chemin('src/exercices')
   const bilan = { textes: 0, aRelire: 0, problemes: 0, lignes: [] as string[], catalogues: 0 }
-  for (const id of readdirSync(dossier).sort()) {
-    const f = join(dossier, id, 'textes.ts')
+  const fichiers = ['src/exercices', 'src/moteurs'].flatMap(d => readdirSync(chemin(d)).sort().map(id => ({ id, f: join(chemin(d), id, 'textes.ts') })))
+  for (const { id, f } of fichiers) {
     let source: string
     try { source = readFileSync(f, 'utf8') } catch { continue }
     if (!/catalogue\(/.test(source)) continue

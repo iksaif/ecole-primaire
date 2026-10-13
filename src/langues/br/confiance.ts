@@ -9,6 +9,9 @@ import type { TableConfiance } from '../confiance.ts'
 
 const MOTS_VERIFIES = 'Contenu imprimé : mots vérifiés (Wiktionnaire, Meurgorf, Kervarker, AGENTS.md). Titres et descriptions du catalogue : courts, automatiques.'
 
+// les exercices de géométrie partagent un catalogue (src/moteurs/geometrie/textes.ts) : évalué une fois, avant le découpage (« exercice:geometrie »)
+const NOTE_GEOMETRIE = 'karrez, kelc’h (Wiktionnaire), tric’horn et skouergorneg (académie) vérifiés. Une soixantaine de textes C : questions, propriétés, consignes, mutations après chiffre non faites, terminologie (hirgarrezeg, skin, treuzkiz).'
+
 export default {
   // ── affiches : mots vérifiés ──
   'affiche:alphabet': { niveau: 2, le: '2026-10-09', par: 'assistant', note: `Alphabet breton de 25 lettres. ${MOTS_VERIFIES}` },
@@ -51,7 +54,11 @@ export default {
   'exercice:problemes': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Énoncés générés avec verbes conjugués, genre, possessifs mutés (e vamm / he mamm), « en deus / he deus », unités : environ 50 textes C, aucun mot vérifié.' },
   'exercice:mesures': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Jours et mois repris d’AGENTS.md (vérifiés) ; tout le reste est en phrases (« Kempouez eo ar balañs… », explications) : environ 55 textes C. Vocabulaire de mesure non retrouvé en source en ligne.' },
   'exercice:formes': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'karrez (Wiktionnaire) et tric’horn (académie) vérifiés ; « hirgarrez » corrigé en « skouergorneg » (académie). pladenn et couleurs non retrouvés ; 3 consignes automatiques (« Liv pep stumm… », « Pet a zo ? ») : textes C.' },
-  'exercice:geometrie': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'karrez, kelc’h (Wiktionnaire), tric’horn et skouergorneg (académie) vérifiés. Une soixantaine de textes C : questions, propriétés, consignes, mutations après chiffre non faites, terminologie (hirgarrezeg, skin, treuzkiz).' },
+  'exercice:figures': { niveau: 0, le: '2026-10-09', par: 'assistant', note: NOTE_GEOMETRIE },
+  'exercice:solides': { niveau: 0, le: '2026-10-09', par: 'assistant', note: NOTE_GEOMETRIE },
+  'exercice:symetrie': { niveau: 0, le: '2026-10-09', par: 'assistant', note: NOTE_GEOMETRIE },
+  'exercice:reperage': { niveau: 0, le: '2026-10-09', par: 'assistant', note: NOTE_GEOMETRIE },
+  'exercice:tracer-regle': { niveau: 0, le: '2026-10-09', par: 'assistant', note: NOTE_GEOMETRIE },
   'exercice:motifs': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Titre et 3 consignes avec verbes et mutations : 4 C. « patromoù » : Wikeriadur donne patrom = image, pas motif.' },
   'exercice:lettres': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'Alphabet et voyelles vérifiés (A) ; titre « Al lizherennoù » (B) ; la consigne « Lak ul linenn etre… » est un C (verbe, mutations, tournure).' },
   'exercice:ecriture': { niveau: 0, le: '2026-10-09', par: 'assistant', note: 'A : « Skrivañ », « Deiziad » (Wikeriadur, Wiktionnaire). C : « Anv-bihan », « Skript », « A-stag » introuvables en ligne, et les 4 noms d’écritures qui les contiennent.' },

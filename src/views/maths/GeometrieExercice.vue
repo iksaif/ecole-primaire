@@ -1,24 +1,25 @@
 <template>
   <div class="container">
-    <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('geometrie.titre') }}</h1>
+    <h1 class="section-heading"><Icone v-if="definition.emoji" :nom="definition.emoji" /> {{ titrePage }}</h1>
 
     <!-- Config -->
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
-        <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
-        <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
-          :titre="t('communs.exercices')" :libelle="e => t(`geometrie.exercices.${e}`)" :icone="e => ICONE_EXERCICE[String(e)]" />
-        <ChoixReglage v-if="avecSymetrie" :definition="DEFINITION" :niveau="config.niveau"
+        <ChoixReglage :definition="definition" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
+        <ChoixReglage v-if="plusieursTypes" :definition="definition" :niveau="config.niveau" cle="exercices" v-model="config.exercices"
+          :titre="t('communs.exercices')" :libelle="libelleType" :icone="e => ICONE_EXERCICE[String(e)]" />
+        <ChoixReglage v-if="avecSymetrie" :definition="definition" :niveau="config.niveau"
           cle="axeHorizontal" v-model="config.axeHorizontal" :titre="t('geometrie.optionsSym')" :libelle="h => t(h ? 'geometrie.axeH' : 'geometrie.axeV')" />
-        <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
+        <ChoixReglage v-if="modeCourant === 'jouer'" :definition="definition" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
       </template>
     </CadreExercice>
 
     <!-- Exercice -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <div class="geo-box">
-        <div class="consigne">{{ consigne }}</div>
+        <!-- la consigne, lue à voix haute au clic (au CP, « Combien de sommets… » ne se déchiffre pas seul) -->
+        <ConsigneParlee class="consigne" :texte="consigne" :auto="false" />
 
         <!-- Symétrie -->
         <div v-if="q.type === 'symetrie'" class="grilles">
@@ -32,47 +33,10 @@
           </div>
         </div>
 
-        <!-- Reproduction -->
-        <div v-else-if="q.type === 'reproduction'" class="grilles">
-          <div class="grille-titre-wrap">
-            <div class="grille-titre">{{ t('geometrie.modele') }}</div>
-            <div class="grille" :style="styleGrille(q.cols)">
-              <template v-for="r in q.rows" :key="'m' + r">
-                <div v-for="c in q.cols" :key="r + '-' + c" class="case"
-                  :class="[modeleSet.has(k(c - 1, r - 1)) ? 'modele' : '', k(c - 1, r - 1) === q.repere ? 'repere' : '']"></div>
-              </template>
-            </div>
-          </div>
-          <div class="grille-titre-wrap">
-            <div class="grille-titre">{{ t('geometrie.aToi') }}</div>
-            <div class="grille" :style="styleGrille(q.cols)">
-              <template v-for="r in q.rows" :key="'a' + r">
-                <div v-for="c in q.cols" :key="r + '-' + c" class="case cliquable"
-                  :class="[etatCase(k(c - 1, r - 1)), k(c - 1, r - 1) === q.repere ? 'repere' : '']"
-                  @click="basculer(k(c - 1, r - 1))"></div>
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <!-- Repérage -->
-        <div v-else-if="q.type === 'reperage'" class="grilles">
-          <div class="grille" :style="styleGrille(q.cols + 1)">
-            <div class="case entete"></div>
-            <div v-for="c in q.cols" :key="'h' + c" class="case entete">{{ LETTRES[c - 1] }}</div>
-            <template v-for="r in q.rows" :key="'l' + r">
-              <div class="case entete">{{ r }}</div>
-              <div v-for="c in q.cols" :key="r + '-' + c" class="case"
-                :class="classeReperage(c - 1, r - 1)"
-                @click="clicReperage(c - 1, r - 1)"></div>
-            </template>
-          </div>
-        </div>
-
         <!-- Figures planes, solides, cercle, patrons -->
         <div v-else-if="dessin" class="dessin" v-html="dessin"></div>
 
-        <div v-if="(q.type === 'figure' && q.sous === 'angle') || q.type === 'angles'" class="astuce">
+        <div v-if="(q.type === 'figure' && q.sous === 'angle') || q.type === 'angles' || q.type === 'aigus' || q.type === 'justifier'" class="astuce">
           <Icone nom="ampoule" /> {{ t('geometrie.astuceEquerre') }}
         </div>
 
@@ -85,8 +49,13 @@
         </div>
 
         <!-- Choix -->
-        <ChoixReponses v-if="'options' in q" :titre="consigne" :options="q.options" :bonne="q.bonne" :repondu="repondu"
-          @choisir="choisir" />
+        <!-- « Lequel est un cylindre ? » : les propositions sont des dessins -->
+        <ChoixReponses v-if="q.type === 'solide' && q.proposes" images :titre="consigne" :options="q.options" :bonne="q.bonne" :repondu="repondu"
+          :libelle="i => q && 'options' in q ? q.options[i].label : ''" @choisir="choisir">
+          <template #default="{ index }"><span class="dessin-choix" v-html="svgSolide(q.proposes[index], 120)" /></template>
+        </ChoixReponses>
+        <ChoixReponses v-else-if="'options' in q" :titre="consigne" :options="q.options" :bonne="q.bonne" :repondu="repondu"
+          :colonne="q.type === 'justifier'" @choisir="choisir" />
 
         <RetourReponse :message="retour?.message" :etat="etat" />
 
@@ -118,9 +87,10 @@
 <script setup lang="ts">
 import type { NomIcone } from '../../images/icones.ts'
 import Icone from '../../images/Icone.vue'
-// La géométrie : la vue ne fait que les réglages et le rendu d'une question (cases à colorier, figures, lettres).
-// Niveaux, générateur, dessins et fiche : src/exercices/geometrie/ (definition.ts, generateur.ts, dessins.ts, fiche.ts…) ; les figures et
-// les solides se dessinent avec src/dessins/.
+// La géométrie : la vue ne fait que les réglages et le rendu d'une question (cases à colorier, figures, lettres). C'est le même composant
+// pour les exercices de géométrie (une vue mince par exercice : FiguresView.vue…), qui lui donnent leur définition et le nom de leur section
+// de textes (titre de la page). Niveaux : src/exercices/<id>/definition.ts ; générateur, dessins et fiche, communs : src/moteurs/geometrie/ ;
+// les figures et les solides se dessinent avec src/dessins/.
 import { ref, computed } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'
@@ -131,26 +101,43 @@ import QuestionJeu from '../../noyau/QuestionJeu.vue'
 import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import ResultatsJeu from '../../noyau/ResultatsJeu.vue'
 import RetourReponse from '../../noyau/RetourReponse.vue'
+import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
 import TableauCorrection from '../../noyau/TableauCorrection.vue'
 import { useReglages } from '../../noyau/useReglages.ts'
 import { useJeu } from '../../noyau/useJeu.ts'
 import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
-import DEFINITION from '../../exercices/geometrie/definition.ts'
-import { CONTENU } from '../../exercices/geometrie/textes.ts'
-import { questions as tirer, questionsFiche, verifier, decrire, messageErreur } from '../../exercices/geometrie/generateur.ts'
-import type { Question, QSymetrie, Reponse } from '../../exercices/geometrie/generateur.ts'
-import { LETTRES, k } from '../../exercices/geometrie/quadrillage.ts'
-import { svgFigure, svgSolide, svgCercle, svgPatron } from '../../exercices/geometrie/dessins.ts'
-import { fiche as ficheGeometrie } from '../../exercices/geometrie/fiche.ts'
+import type { DefinitionTypee } from '../../noyau/definir.ts'
+import { CONTENU } from '../../moteurs/geometrie/textes.ts'
+import { moteurGeometrie, typesDeDefinition, verifier, decrire, messageErreur } from '../../moteurs/geometrie/generateur.ts'
+import type { Question, QSymetrie, Reglages, Reponse } from '../../moteurs/geometrie/generateur.ts'
+import { k } from '../../moteurs/geometrie/quadrillage.ts'
+import { angleDroitAu } from '../../moteurs/geometrie/donnees.ts'
+import { svgFigure, svgSolide, svgCercle, svgPatron } from '../../moteurs/geometrie/dessins.ts'
+import { fiche as ficheGeometrie } from '../../moteurs/geometrie/fiche.ts'
+import { svgAngle } from '../../moteurs/geometrie/angles.ts'
 
 /** L'icône de chaque choix du réglage (src/images/icones.ts). */
-const ICONE_EXERCICE: Readonly<Record<string, NomIcone>> = { symetrie: 'papillon', reproduction: 'crayon', reperage: 'punaise', figures: 'losange', solides: 'glacon', angles: 'equerre', proprietes: 'presseFeuilles', cercle: 'cercle', patrons: 'de' }
+const ICONE_EXERCICE: Readonly<Record<string, NomIcone>> = { symetrie: 'papillon', aigus: 'equerre', justifier: 'presseFeuilles', figures: 'losange', solides: 'glacon', angles: 'equerre', proprietes: 'presseFeuilles', cercle: 'cercle', patrons: 'de' }
 
+const props = defineProps<{
+  definition: DefinitionTypee<Reglages>
+  /** la section de textes de l'interface de l'exercice (`figures` : son titre) */
+  section: string
+}>()
 const { t } = useLangue()
 // Réglages mémorisés, ajustés au changement de niveau (politique commune : src/noyau/useReglages.ts) ; maths : le contenu (questions,
 // fiche) suit la langue de l'interface
-const { config, langueContenu } = useReglages(DEFINITION)
+const { config, langueContenu } = useReglages(props.definition)
 const T = traducteur(CONTENU, () => langueContenu.value)
+// les types de questions des niveaux de l'exercice (sa définition)
+const typesDe = typesDeDefinition(props.definition)
+const { questions: tirer, questionsFiche } = moteurGeometrie(typesDe, [])
+/** le titre de la page : celui de la section de textes de l'exercice */
+const titrePage = computed(() => (t as (cle: string) => string)(`${props.section}.titre`))
+/** le nom d'un type de questions (réglage `exercices`) */
+const libelleType = (type: unknown): string => (t as (cle: string) => string)(`geometrie.exercices.${String(type)}`)
+// un seul type de questions au niveau : pas de réglage à montrer
+const plusieursTypes = computed(() => typesDe(config.value.niveau).length > 1)
 
 const avecSymetrie = computed(() => (config.value.exercices as readonly string[]).includes('symetrie'))
 
@@ -169,19 +156,22 @@ const { phase, questions, q, bonnes, historique, retour, repondu, etat, cleFin }
 const reussi = computed(() => !!retour.value?.ok)
 const consigne = computed(() => (q.value ? ('consigne' in q.value ? q.value.consigne : q.value.texte) : ''))
 // correction case par case, une fois la réponse donnée
-const estGrille = computed(() => !!q.value && (q.value.type === 'symetrie' || q.value.type === 'reproduction'
-  || (q.value.type === 'reperage' && q.value.sous === 'colorie')))
+const estGrille = computed(() => q.value?.type === 'symetrie')
 const corrige = computed(() => repondu.value && estGrille.value && historique.value.at(-1)?.rep != null)
 const modeleSet = computed(() => new Set(q.value && 'modele' in q.value ? q.value.modele : []))
 const cellulesSet = computed(() => new Set(q.value && 'cellules' in q.value ? q.value.cellules : []))
 const dessin = computed(() => {
   const x = q.value
   if (!x) return ''
-  if (x.type === 'figure') return svgFigure(x, x.sous === 'nom')
-  if (x.type === 'solide') return svgSolide(x.solide)
+  // le codage de l'angle droit : à partir du CE1 seulement
+  if (x.type === 'figure') return svgFigure(x, x.sous === 'nom' && angleDroitAu(config.value.niveau))
+  if (x.type === 'solide') return x.proposes ? '' : svgSolide(x.solide)
   if (x.type === 'angles') return svgFigure(x, repondu.value && !reussi.value)
   if (x.type === 'cercle') return svgCercle(x)
   if (x.type === 'patron') return svgPatron(x.cases)
+  if (x.type === 'aigus') return svgAngle(x)
+  // justifier : sans le codage des angles droits (c'est à l'élève de les vérifier)
+  if (x.type === 'justifier') return svgFigure(x, false)
   return ''
 })
 
@@ -237,19 +227,6 @@ function classeSymetrie(c: number, r: number): string | string[] {
 }
 function clicSymetrie(c: number, r: number): void {
   if (cliquableSymetrie(c, r)) basculer(k(c, r))
-}
-
-function classeReperage(c: number, r: number): string | string[] {
-  const x = q.value, cle = k(c, r)
-  if (x?.type !== 'reperage') return ''
-  if (x.sous === 'lire') return cle === x.cible ? 'modele' : ''
-  return ['cliquable', etatCase(cle)]
-}
-function clicReperage(c: number, r: number): void {
-  const x = q.value
-  if (x?.type !== 'reperage' || x.sous !== 'colorie' || repondu.value) return
-  const cle = k(c, r)
-  selection.value = selection.value[cle] ? {} : { [cle]: true }
 }
 
 function basculer(cle: string): void {
@@ -308,8 +285,6 @@ const { mode, fiche, nouvelle } = useFicheExercice({
   gap: 1.25rem;
   margin: .5rem 0;
 }
-.grille-titre-wrap { display: flex; flex-direction: column; align-items: center; gap: .3rem; }
-.grille-titre { font-weight: 800; color: #888; font-size: .9rem; text-transform: uppercase; letter-spacing: .05em; }
 
 .grille {
   display: grid;
@@ -344,9 +319,6 @@ const { mode, fiche, nouvelle } = useFicheExercice({
 .case.manquante::after { content: '•'; color: var(--orange); font-size: 1.4rem; }
 .case.entrop   { background: var(--rouge); }
 .case.entrop::after { content: '✕'; color: white; }
-.case.repere::after { content: '★'; color: #c0392b; font-size: .95rem; }
-.case.modele.repere::after { color: white; }
-.case.entete { background: var(--gris-bg); color: var(--texte); cursor: default; }
 
 .axe { position: absolute; background: var(--rouge); border-radius: 2px; pointer-events: none; }
 .axe-v { width: 4px; top: -10px; bottom: -10px; }

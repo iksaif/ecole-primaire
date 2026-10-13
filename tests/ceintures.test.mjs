@@ -9,7 +9,7 @@ import { traducteur } from '../src/langues/catalogue.ts'
 import { SUPPORTS } from '../src/exercices/ceintures/donnees.ts'
 import { CHOIX_PISTE, objectifsDe } from '../src/ceintures/pistes.ts'
 import { creerRng } from '../src/utils/hasard.ts'
-import { brevetDe, PISTES_AVEC_BREVET, NB_CEINTURES_BREVET } from '../src/ceintures/brevets.ts'
+import { brevetDe, tablesDuBrevet, PISTES_AVEC_BREVET, NB_CEINTURES_BREVET } from '../src/ceintures/brevets.ts'
 import { module as brevet } from '../src/exercices/ceintures-brevet/index.ts'
 import { LANGUES } from '../src/langues/registre.ts'
 import { verifier, nbEchecs } from './outils.mjs'
@@ -91,6 +91,7 @@ for (const langue of ['fr', 'br']) {
 }
 
 console.log('Brevets')
+const REGLAGES_BREVET = { niveau: 'ce2', piste: 'tables', ceinture: 1, tablesPerso: false, tables: [2, 5, 10], divisions: 'auto', jusqu: 10, prenom: '' }
 const tablesDe = lignes => [...new Set(lignes.map(l => Number(l.enonce.split(/ [×÷] /)[0])))]
 for (const [indice, attendues] of [[0, [2, 5, 10]], [1, [3, 4]], [2, [6, 7]], [3, [8, 9]]]) {
   const lignes = brevetDe('tables', indice, creerRng(3))
@@ -101,9 +102,20 @@ const dernieres = brevetDe('tables', 5, creerRng(3))
 verifier(dernieres.some(l => l.enonce.includes('÷')) && dernieres.every(l => (l.enonce.includes('÷') ? Number(l.enonce.split(' ÷ ')[0].replace(' =', '')) / Number(l.enonce.split(' ÷ ')[1].replace(' =', '')) : Number(l.enonce.split(' × ')[0]) * Number(l.enonce.split(' × ')[1].replace(' =', ''))) === Number(l.reponse)), 'tables, dernière ceinture : des divisions, réponses justes')
 verifier(JSON.stringify(brevetDe('tables', 2, creerRng(9))) === JSON.stringify(brevetDe('tables', 2, creerRng(9))) && JSON.stringify(brevetDe('tables', 2, creerRng(9))) !== JSON.stringify(brevetDe('tables', 2, creerRng(10))), 'brevet : la même graine, le même brevet ; une autre, un autre')
 verifier(PISTES_AVEC_BREVET.every(p => NB_CEINTURES_BREVET[p] >= 3), 'chaque piste avec brevet a ses ceintures')
+{
+  // options de la piste tables : ses propres tables, sans ou avec divisions, jusqu'à 12
+  const tirer = options => brevet.generateur.questionsFiche({ niveau: 'ce2', reglages: { ...REGLAGES_BREVET, ceinture: 2, ...options }, rng: creerRng(4) })
+  const perso = tirer({ tablesPerso: true, tables: [7, 11] })
+  verifier(perso.tables.join() === '7,11' && perso.questions.every(q => /^(7|11) × /.test(q.enonce)), 'tables choisies : seulement 7 et 11, au lieu de celles de la ceinture')
+  verifier(tirer({ tablesPerso: false, tables: [7] }).tables.join() === '3,4', 'sans « je choisis » : les tables de la ceinture')
+  verifier(tirer({ divisions: 'oui' }).questions.some(q => q.enonce.includes('÷')) && !tirer({ divisions: 'non', ceinture: 6 }).questions.some(q => q.enonce.includes('÷')), 'divisions : oui en ajoute, non n’en met jamais (même à la dernière ceinture)')
+  const douze = tirer({ jusqu: 12, tablesPerso: true, tables: [12] })
+  verifier(douze.questions.length === 12 && douze.questions.some(q => q.enonce === '12 × 12 =' && q.reponse === '144'), 'jusqu’à 12 : 12 × 12 = 144')
+  verifier(tablesDuBrevet(0, { tables: [], divisions: 'auto', jusqu: 10 }).join() === '2,5,10', 'aucune table choisie : celles de la ceinture')
+}
 for (const langue of ['fr', 'br']) {
   const T = traducteur(brevet.textes, langue)
-  const reglages = { niveau: 'ce2', piste: 'tables', ceinture: 4, prenom: '' }
+  const reglages = { ...REGLAGES_BREVET, ceinture: 4 }
   const x = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages, rng: creerRng(5) })
   const html = brevet.fiche.fiche({ questions: x, reglages, T, langue, ceintures: { ...DEFAUT_CEINTURES, questions: 10, seuil: 90 } })
   const manque = html.match(/\b(ceintures|ceinture|tables)\.[a-z-]+/)
@@ -115,7 +127,7 @@ for (const langue of ['fr', 'br']) {
   }
 }
 {
-  const hors = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages: { niveau: 'ce2', piste: 'tables', ceinture: 8, prenom: '' }, rng: creerRng(5) })
+  const hors = brevet.generateur.questionsFiche({ niveau: 'ce2', reglages: { ...REGLAGES_BREVET, ceinture: 6 }, rng: creerRng(5) })
   verifier(hors.indice === NB_CEINTURES_BREVET.tables - 1, 'numéro de ceinture au-delà de la piste : ramené à la dernière')
 }
 

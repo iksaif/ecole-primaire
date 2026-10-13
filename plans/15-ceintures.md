@@ -239,3 +239,13 @@ Fait (commits `63f513d`, `6a6116c`, `01d9e37`, `2cc63a0`, non poussés) :
   pistes de comportement), sans GS faute de compétence EMC au cycle 1.
 
 Reste : tableau de la classe (affiche A3), brevets des autres pistes (calcul mental, lettres), fiches publiées (slugs `/telechargements/`, voir §10), breton (table de confiance), regards critiques, version en ligne (§6).
+
+## 13. À réfléchir plus tard : les ceintures comme onglet de l'exercice (demande du 2026-10-13)
+
+Aujourd'hui les brevets sont des activités à part (`ceintures-brevet`). Idée : les ajouter comme un **onglet de l'exercice qui évalue déjà la compétence** (les tables de multiplication :
+« Faire l'exercice · Imprimer une fiche · **Ceintures** »), au lieu d'une page séparée. À peser :
+- pour : on passe le brevet là où on s'entraîne (mêmes réglages, mêmes questions que le jeu, la ceinture atteinte à côté du score) ; plus de page « brevet » à part, ni de compétence dupliquée (voir §12) ;
+- contre : le cadre commun `CadreExercice` n'a que deux onglets (`useModeExercice`), à étendre pour tous les exercices ou pour ceux qui ont une piste (option cachée `ceinturesActives`) ; les supports sans exercice
+  (livret, diplôme, passeport, tableau) gardent leur activité générale ;
+- point technique : le brevet « jeu » à l'écran (`useJeu`) et le brevet papier partageraient le générateur de l'exercice (`questions` / `questionsFiche`) avec les réglages de la ceinture (`Piste.ceintures[n].reglages`, §3 : à écrire).
+À reprendre quand le brevet à l'écran (§6) sera décidé.

@@ -4,7 +4,6 @@ import { catalogue } from '../../langues/catalogue.ts'
 
 export const CONTENU = catalogue({
   titre: 'Mes ceintures',
-  classe: 'Classe',
   signature: 'Signature',
   livret: 'Mon livret de ceintures',
   diplome: 'Diplôme',
@@ -25,7 +24,6 @@ export const CONTENU = catalogue({
 }, {
   br: {
     titre: 'Ma gourizioù', // br: à relire
-    classe: 'Klas', // br: à relire
     signature: 'Sinadur', // br: à relire
     livret: 'Ma levrig gourizioù', // br: à relire
     diplome: 'Diplom', // br: à relire

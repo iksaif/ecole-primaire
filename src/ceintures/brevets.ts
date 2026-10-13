@@ -20,12 +20,30 @@ const TABLES_PAR_CEINTURE: readonly (readonly number[])[] = [
 /** À partir de quelle ceinture (indice) une partie des questions sont des divisions. */
 const DIVISIONS_DES = 4
 
+/** Les options d'un brevet de tables (réglages de l'activité) : ses tables si on les choisit, les divisions, jusqu'où multiplier. */
+export interface OptionsTables {
+  /** `null` : les tables de la ceinture ; sinon celles qu'on a choisies */
+  tables: readonly number[] | null
+  /** `auto` : des divisions à partir des dernières ceintures ; `non` : jamais ; `oui` : une question sur deux */
+  divisions: 'auto' | 'non' | 'oui'
+  /** multiplier jusqu'à (10, ou 12 : bonus) */
+  jusqu: number
+}
+
+export const OPTIONS_TABLES_DEFAUT: OptionsTables = { tables: null, divisions: 'auto', jusqu: 10 }
+
+/** Les tables d'un brevet : celles que l'on a choisies, ou celles de la ceinture `indice`, dans l'ordre croissant. */
+export function tablesDuBrevet(indice: number, options: OptionsTables): number[] {
+  const choisies = options.tables?.length ? options.tables : TABLES_PAR_CEINTURE[Math.min(indice, TABLES_PAR_CEINTURE.length - 1)]
+  return [...choisies].sort((a, b) => a - b)
+}
+
 /** Les questions de la ceinture `indice` des tables, mélangées, sans doublon (au plus MAX_QUESTIONS). */
-function brevetTables(indice: number, rng: Rng): LigneBrevet[] {
-  const tables = TABLES_PAR_CEINTURE[Math.min(indice, TABLES_PAR_CEINTURE.length - 1)]
-  const calculs = tables.flatMap(a => Array.from({ length: 10 }, (_, i) => ({ a, b: i + 1 })))
+function brevetTables(indice: number, rng: Rng, options: OptionsTables): LigneBrevet[] {
+  const calculs = tablesDuBrevet(indice, options).flatMap(a => Array.from({ length: options.jusqu }, (_, i) => ({ a, b: i + 1 })))
+  const avecDivisions = options.divisions === 'oui' || (options.divisions === 'auto' && indice >= DIVISIONS_DES)
   return rng.melanger(calculs).slice(0, MAX_QUESTIONS).map(({ a, b }, i) => {
-    const division = indice >= DIVISIONS_DES && i % 2 === 1
+    const division = avecDivisions && i % 2 === 1
     return division ? { enonce: `${a * b} ÷ ${a} =`, reponse: String(b) } : { enonce: `${a} × ${b} =`, reponse: String(a * b) }
   })
 }
@@ -35,6 +53,6 @@ export const PISTES_AVEC_BREVET = ['tables'] as const satisfies readonly IdPiste
 export type PisteAvecBrevet = (typeof PISTES_AVEC_BREVET)[number]
 
 /** Les questions du brevet de la ceinture `indice` (0 pour la première) d'une piste. */
-export function brevetDe(piste: PisteAvecBrevet, indice: number, rng: Rng): LigneBrevet[] {
-  return brevetTables(indice, rng)
+export function brevetDe(piste: PisteAvecBrevet, indice: number, rng: Rng, options: OptionsTables = OPTIONS_TABLES_DEFAUT): LigneBrevet[] {
+  return brevetTables(indice, rng, options)
 }

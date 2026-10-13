@@ -4,6 +4,7 @@ import { catalogue } from '../../langues/catalogue.ts'
 export const CONTENU = catalogue({
   titre: 'Brevet',
   consigne: '{n} questions, sans calculatrice. Pour réussir : {bonnes} bonnes réponses sur {n}. Prends ton temps.',
+  tablesDe: 'tables : {liste}',
   resultat: 'Résultat',
   validee: 'Ceinture validée',
   pasEncore: 'Pas encore',
@@ -11,6 +12,7 @@ export const CONTENU = catalogue({
   br: {
     titre: 'Brevet',
     consigne: '{n} goulenn, hep jedoù. Evit tapout anezhañ : {bonnes} respont mat diwar {n}. Kemer da amzer.', // br: à relire
+    tablesDe: 'taolennoù : {liste}', // br: à relire
     resultat: 'Disoc’h', // br: à relire
     validee: 'Gouriz gounezet', // br: à relire
     pasEncore: 'N’eo ket c’hoazh', // br: à relire

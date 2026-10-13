@@ -23,7 +23,9 @@
       </template>
 
       <ChoixReglage v-if="config.support === 'bandes'" :definition="DEFINITION" :niveau="config.niveau" cle="copies" v-model="config.copies" :titre="t('ceintures.copies')" />
-      <ChoixReglage v-if="config.support === 'diplome'" :definition="DEFINITION" :niveau="config.niveau" cle="ceinture" v-model="config.ceinture" :titre="t('ceintures.numero')" />
+      <ChoixReglage v-if="config.support === 'diplome'" :definition="DEFINITION" :niveau="config.niveau" cle="ceinture" v-model="config.ceinture" :titre="t('ceintures.numero')">
+        <template #valeur="{ valeur, texte }">{{ texte }} <PastilleCeinture :indice="Number(valeur) - 1" /></template>
+      </ChoixReglage>
 
       <div class="config-section">
         <label :for="`${id}-prenom`" class="config-section-title">{{ t('ceintures.prenomTitre') }}</label>
@@ -43,6 +45,7 @@ import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import PastilleCeinture from '../../ceintures/PastilleCeinture.vue'
 import { useReglages } from '../../noyau/useReglages.ts'
 import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
 import DEFINITION from '../../exercices/ceintures/definition.ts'

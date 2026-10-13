@@ -62,21 +62,21 @@ verifier(!traductionAssezSure(exercice, 'regionale', 'br', 2), 'breton seul, bre
 verifier(traductionAssezSure({ ...exercice, confiance: 3 }, 'regionale', 'br', 2), 'breton seul, breton relu : affichée')
 verifier(!traductionAssezSure({ type: 'fiche', langues: ['fr', 'br'], confiance: 0 }, 'bilingue', 'br', 2), 'une fiche PDF bilingue imprime son breton : cachée sous le seuil')
 
-console.log('État d’une ressource selon le réglage (le français a toujours sa place)')
+console.log('État d’une ressource selon le réglage et la page (le français a toujours sa place)')
 {
   const exercice = { type: 'exercice', langues: ['fr', 'br'], confiance: 0 }
   const sur = { type: 'exercice', langues: ['fr', 'br'], confiance: 3 }
+  const seulFrancais = { type: 'exercice', langues: ['fr'], confiance: null }
   const seulBreton = { type: 'affiche', langues: ['br'], confiance: 0 }
   const fiche = { langues: ['fr', 'br'], confiance: 0 }   // un document figé (entrée de l'index des fiches)
-  verifier(etatDeLaTraduction(exercice, 'bilingue', 'br', 2) === 'francais', 'français + breton, breton peu sûr : l’exercice reste, en français seulement (jamais « masqué »)')
-  verifier(etatDeLaTraduction(sur, 'bilingue', 'br', 2) === 'sure' && etatDeLaTraduction(exercice, 'bilingue', 'br', 0) === 'sure', 'français + breton, breton assez sûr (ou sans seuil) : rien à signaler')
+  verifier(etatDeLaTraduction(exercice, 'bilingue', 'br', 2) === 'sure' && etatDeLaTraduction(seulFrancais, 'bilingue', 'br', 4) === 'sure', 'français + breton : une activité qui a le français est toujours là, avec ou sans breton, quel que soit le seuil')
   verifier(etatDeLaTraduction(exercice, 'regionale', 'br', 2) === 'masquee' && etatDeLaTraduction(sur, 'regionale', 'br', 2) === 'sure', 'breton seul : caché si le breton n’est pas assez sûr')
   verifier(etatDeLaTraduction(exercice, 'fr', 'br', 4) === 'sure' && etatDeLaTraduction(exercice, 'bilingue', null, 4) === 'sure', 'français seul, ou pas de langue régionale : rien')
   verifier(etatDeLaTraduction(seulBreton, 'bilingue', 'br', 2) === 'masquee' && etatDeLaTraduction({ ...seulBreton, confiance: 3 }, 'bilingue', 'br', 2) === 'sure', 'une affiche qui n’existe qu’en breton : cachée tant que le breton n’est pas assez sûr')
   verifier(etatDeLaTraduction(fiche, 'bilingue', 'br', 2) === 'masquee' && etatDeLaTraduction(fiche, 'fr', 'br', 2) === 'sure', 'une fiche PDF bilingue : cachée si son breton n’est pas sûr (elle l’imprime), pas en français seul')
-  // l'état est cohérent avec ce que `traductionAssezSure` refuse
-  const mode = ['fr', 'bilingue', 'regionale']
-  verifier([exercice, sur, seulBreton, fiche].every(r => mode.every(m => [0, 2, 4].every(seuil => (etatDeLaTraduction(r, m, 'br', seuil) === 'masquee') === !traductionAssezSure(r, m, 'br', seuil)))), 'masquée ⇔ traductionAssezSure refuse (tous modes, tous seuils)')
+  // la page de la langue régionale : seulement ce qui existe en breton ET assez sûr (même en « Français + Breton »)
+  verifier(etatDeLaTraduction(exercice, 'bilingue', 'br', 2, 'br') === 'masquee' && etatDeLaTraduction(sur, 'bilingue', 'br', 2, 'br') === 'sure' && etatDeLaTraduction(seulFrancais, 'bilingue', 'br', 0, 'br') === 'masquee', '/brezhoneg : un exercice au breton peu sûr, ou sans breton, n’y est pas ; un breton sûr, si')
+  verifier(etatDeLaTraduction(exercice, 'bilingue', 'br', 0, 'br') === 'sure', '/brezhoneg sans seuil : tout ce qui existe en breton')
 }
 
 process.exit(nbEchecs() ? 1 : 0)

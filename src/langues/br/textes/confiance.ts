@@ -15,7 +15,6 @@ export default {
   },
   pastille: 'Troidigezh {niveau}/4', // br: à relire
   masquee: 'kuzhet', // br: à relire
-  sansLangue: 'hep {langue}', // br: à relire
   masquees: '{n} follenn kuzhet : n\'eo ket reizh a-walc\'h o zroidigezh.', // br: à relire
   regler: 'Reoliñ', // br: à relire
 } satisfies Traductions<typeof fr>

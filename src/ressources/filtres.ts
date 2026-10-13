@@ -45,18 +45,18 @@ export function traductionAssezSure(r: AvecTraduction, mode: Mode, regionale: La
   return !traductionMontree(r, mode, regionale) || assezSure(r.confiance, seuil)
 }
 
-/** Ce que le réglage de fiabilité fait d'une ressource dans le mode courant : rien (`sure`), ne propose que le français (`francais`), ou la cache (`masquee`). */
-export type EtatTraduction = 'sure' | 'francais' | 'masquee'
+/** Ce que le réglage de fiabilité fait d'une ressource : rien (`sure`) ou la cache (`masquee`). */
+export type EtatTraduction = 'sure' | 'masquee'
 
 /**
- * L'état d'une ressource pour le réglage de fiabilité, selon le mode : une ressource dont on choisit la langue (exercice, affiche) qui a le français reste TOUJOURS là ; si la langue régionale du mode
- * n'est pas assez sûre, elle n'est pas proposée dans sa page (`francais`) ; elle est cachée seulement quand plus aucune langue du mode n'est sûre (breton seul, ou une ressource qui n'existe qu'en breton).
- * Un document figé (fiche PDF) est caché dès que sa traduction montrée n'est pas sûre. `masquee` est exactement ce que `traductionAssezSure` refuse.
+ * L'état d'une ressource pour le réglage de fiabilité. Partout (accueil, matières, recherche…), une activité qui a le français reste TOUJOURS là, même en « Français + Breton » : un breton pas assez sûr n'est
+ * simplement pas proposé dans sa page ; elle n'est cachée que si plus aucune langue du mode n'est sûre (breton seul, ou une activité qui n'existe qu'en breton). Sur la PAGE DE LA LANGUE RÉGIONALE (`pageRegionale` :
+ * /brezhoneg), on ne montre que ce qui existe dans cette langue ET dont la traduction est assez sûre : le français n'y compte pas. Un document figé (fiche PDF) est caché dès que sa traduction montrée n'est pas sûre.
+ * `masquee` est exactement ce que `affichable` refuse hors développement.
  */
-export function etatDeLaTraduction(r: AvecTraduction, mode: Mode, regionale: Langue | null, seuil: number | undefined): EtatTraduction {
-  if (!traductionAssezSure(r, mode, regionale, seuil)) return 'masquee'
-  if (langueAuChoix(r) && traductionMontree(r, mode, regionale) && !languesSures(r, mode, regionale, seuil).some(l => l !== LANGUE_SOURCE)) return 'francais'
-  return 'sure'
+export function etatDeLaTraduction(r: AvecTraduction, mode: Mode, regionale: Langue | null, seuil: number | undefined, pageRegionale: Langue | null = null): EtatTraduction {
+  if (pageRegionale) return r.langues.includes(pageRegionale) && assezSure(r.confiance, seuil) ? 'sure' : 'masquee'
+  return traductionAssezSure(r, mode, regionale, seuil) ? 'sure' : 'masquee'
 }
 
 /** Ce que la règle lit d'une ressource ou d'une entrée de fiche : ses langues, la confiance dans sa traduction, et son type (ressource du catalogue). */

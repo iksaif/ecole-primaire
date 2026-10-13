@@ -5,12 +5,16 @@
 // En développement (AVEC_DEV), tout est affichable (sauf une extension inactive) : `masque(r)` dit ce que le réglage aurait caché (pour la pastille).
 import { computed } from 'vue'
 import type { ComputedRef } from 'vue'
+import { useRoute } from 'vue-router'
 import { useContexte } from '../contexte/useContexte.ts'
+import { REGIONALES } from '../langues/registre.ts'
+import { cheminRegional } from '../router/chemins.ts'
 import { AVEC_DEV } from '../dev.ts'
 import { extensionActive } from '../extensions/activation.ts'
+import type { Langue } from '../langues/registre.ts'
 import { confianceMin } from '../langues/confianceReglage.ts'
 import type { NiveauConfiance } from '../langues/confiance.ts'
-import { etatDeLaTraduction, traductionAssezSure, traductionMontree } from './filtres.ts'
+import { etatDeLaTraduction, traductionMontree } from './filtres.ts'
 import type { EtatTraduction } from './filtres.ts'
 import type { AvecTraduction } from './filtres.ts'
 import { useRessources } from './useRessources.ts'
@@ -26,7 +30,7 @@ export interface UtilisationAffichable {
   masque: (x: Affichable) => boolean
   /** la liste, sans ce qui n'est pas affichable */
   filtrer: <T extends Affichable>(liste: readonly T[]) => T[]
-  /** ce que le réglage fait de l'élément dans le mode courant : rien, ne propose que le français, ou le cache (pastille, en développement) */
+  /** ce que le réglage fait de l'élément dans la page et le mode courants : rien, ou le cache (pastille, en développement) */
   etat: (x: Affichable) => EtatTraduction
   /** le niveau à montrer sur l'élément (pastille), `null` si sa traduction n'est pas lue dans ce mode */
   traduite: (x: Affichable) => NiveauConfiance | null
@@ -37,13 +41,15 @@ export interface UtilisationAffichable {
 export function useAffichable(): UtilisationAffichable {
   const { contexte } = useContexte()
   const { catalogue } = useRessources()
-  const verifie = (x: Affichable, seuil: number): boolean => traductionAssezSure(x, contexte.value.mode, contexte.value.regionale, seuil)
+  // sur la page de la langue régionale (/brezhoneg) on ne montre que ce qui existe dans cette langue et que son niveau permet : le français n'y compte pas
+  const route = useRoute()
+  const pageRegionale = (): Langue | null => REGIONALES.find(l => cheminRegional(l) === route?.path) ?? null
+  const etat = (x: Affichable): EtatTraduction => etatDeLaTraduction(x, contexte.value.mode, contexte.value.regionale, confianceMin.value, pageRegionale())
   // une ressource d'une extension n'est montrée que si l'extension est active
   const extensionOk = (x: Affichable): boolean => x.extension === undefined || extensionActive(x.extension)
   // en développement, tout est montré SAUF ce qui relève d'une extension inactive : cacher une extension est un vrai choix de l'utilisateur, pas une réserve sur une traduction
-  const affichable = (x: Affichable): boolean => extensionOk(x) && (AVEC_DEV || verifie(x, confianceMin.value))
-  const masque = (x: Affichable): boolean => !verifie(x, confianceMin.value)
-  const etat = (x: Affichable): EtatTraduction => etatDeLaTraduction(x, contexte.value.mode, contexte.value.regionale, confianceMin.value)
+  const affichable = (x: Affichable): boolean => extensionOk(x) && (AVEC_DEV || etat(x) === 'sure')
+  const masque = (x: Affichable): boolean => etat(x) === 'masquee'
   const traduite = (x: Affichable): NiveauConfiance | null => (traductionMontree(x, contexte.value.mode, contexte.value.regionale) ? (x.confiance ?? null) : null)
   const filtrer = <T extends Affichable>(liste: readonly T[]): T[] => liste.filter(affichable)
   return { affichable, masque, etat, filtrer, traduite, affichables: computed(() => filtrer(catalogue.value)) }

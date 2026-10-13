@@ -316,3 +316,63 @@ suivent pas ceux de l'exercice. À faire : suivre la classe de l'exercice, le br
 Les supports des ceintures s'impriment depuis leurs pages (activités `ceintures`, `ceintures-brevet`, onglet « Ceintures » des exercices, `/assemblage`), avec le rendu actuel (rien ne change à l'impression). On **ne publie aucune fiche toute prête** :
 pas de page `/telechargements/<slug>/`, pas de PDF, pas d'entrée au sitemap, donc pas de nouvelle adresse à tenir. Vérifié : `fichesDesRegistres` ne renvoie aucune fiche de ceintures, de brevets ni d'assemblage (745 fiches sur chaque site, comme avant) ;
 `tests/extensions.test.mjs` garde cette règle (`fiches: []`, `bilanParClasse: false` pour chaque activité d'extension). Le §10 (« publier mais masquer » ou non) est donc tranché pour l'instant : on ne publie pas. À rouvrir si on veut un jour des fiches publiées.
+
+## 19. Brevet construit sur l'assemblage de fiches : plan détaillé (2026-10-13)
+
+**Constat.** `src/exercices/ceintures-brevet/` et `src/ceintures/brevets.ts` refont, en plus petit, ce que font déjà les exercices `tables` et `calcul-mental` (tirage des calculs, mise en page, corrigé). Décision de l'utilisateur : le brevet d'une ceinture
+devient **un assemblage** : un en-tête de ceinture, le **fragment de la fiche de l'exercice** (ses vrais `questionsFiche` et `fiche`, avec les réglages de la ceinture), le cadre du résultat, un seul corrigé. On supprime l'exercice `ceintures-brevet`,
+sa page `/maths/ceintures-brevet`, son générateur et ses instantanés ; le brevet n'existe plus que dans l'**onglet « Ceintures »** de l'exercice (le « Brevet » de l'activité générale reste hors sujet : livret, bandes, diplôme, passeport).
+
+### 1. Modèle : une piste dit ce que chaque ceinture demande à l'exercice
+`src/ceintures/pistes.ts` (données pures) devient la source unique, utilisée par l'activité (livret…) et par le brevet :
+```ts
+interface Piste { id; exercice?: string            // l'exercice du registre qui l'évalue (tables, calcul-mental) ; absent : piste libre ou sans brevet
+  ceintures: { objectifs: string                    // texte de contenu (src/exercices/ceintures/textes.ts), ce que la ceinture valide
+               reglages?: (niveau: Classe) => Record<string, unknown> }[] }   // réglages de l'exercice pour son brevet
+```
+- Les objectifs décrivent ce que les réglages produisent (plus de « dans les deux sens » si l'exercice ne le fait pas).
+- Les valeurs de réglages sont celles des exercices (`ops`, `tables`, `jusqu`), stables par règle du projet (ce sont aussi les réglages mémorisés des visiteurs) ; les constantes d'opérations de `calcul-mental` sont exportées.
+- **Tables** (6 ceintures) : ×2 ×5 ×10 · ×3 ×4 · ×6 ×7 · ×8 ×9 · toutes les tables (mélange) · toutes les tables, sans hésiter (30 en 3 minutes). Plus de divisions ni de « sens » : l'exercice des tables n'en fait pas ; si on les veut, on les ajoute à l'exercice
+  (`ops` du calcul mental sait faire `÷` : la dernière ceinture pourra s'y appuyer plus tard).
+- **Calcul mental** (6 ceintures, d'après les `ops` de l'exercice) : 1 `+` `−` · 2 doubles et moitiés · 3 compléments (`Compléments à 10`, `Vers la dizaine`, et `Compléments à 100` dès le CE1) · 4 calcul astucieux (`± dizaines`, `± 9 / ± 11`, `Passage de dizaine`) ·
+  5 `× 10 / × 100` et tables (`×`) · 6 tout mêlé.
+- Une ceinture **indisponible à un niveau** (aucune de ses opérations n'est offerte : `× 10 / × 100` au CP, par exemple) est grisée dans le choix, jamais remplacée en silence par `+` (c'est ce que fait `opsDuNiveau`).
+
+### 2. Le brevet (`src/ceintures/brevet.ts`, pur)
+`brevetPapier({ module, piste, indice, niveau, graine, langue, ceintures, extensions, prenom })` :
+1. réglages de l'exercice = défauts du niveau + `ceinture.reglages(niveau)` (validés par `reglagesDuNiveau`) ; `nbFiche` (calcul mental) pris au plus petit choix ≥ nombre de questions voulu ;
+2. tirage = `questionsFiche` de l'exercice, puis **coupé** au nombre de questions des réglages communs (`ajuster` : tableau, ou tirage avec `questions`) : l'API de fragment de l'exercice reçoit un `ajuster?: (tirage) => tirage` ;
+3. fragment = `fiche` de l'exercice (`fragmentDe`) ; le nombre réel de questions fixe « {bonnes} bonnes réponses sur {n} » (seuil des réglages communs, `ceil`) ;
+4. `assemblerFiches` reçoit de quoi poser un en-tête et un pied : options `avant` / `apres` (HTML), `css` en plus, et `Bloc.sansTitre` (le titre de l'exercice est déjà dans l'en-tête de ceinture) ; le corrigé de l'exercice devient « Corrigé — Brevet … ».
+Les supports (`supports.ts`) gardent le dessin de ceinture, l'en-tête et le cadre du résultat ; `brevetHtml` et `LibellesBrevet` ne gardent que l'en-tête et le cadre.
+
+### 3. Interface : l'onglet « Ceintures » (`OngletCeintures.vue`)
+Sans exercice de brevet, plus de `useReglages(DEFINITION)` ni de `ChoixReglage` : de simples boutons (comme `AssemblageView`), dans `CadreExercice fiche-seule imbrique` (options « Sur la fiche » et aperçu).
+- **Classe** : celle de l'exercice hôte (lue dans ses réglages mémorisés, `cleReglages`), modifiable ici ; ceintures grisées selon le niveau.
+- **Ceinture** : numéro + couleur (`PastilleCeinture`).
+- **Tables** (seulement pour cette piste) : « celles de la ceinture » ou « je choisis » (×1 à ×10, bonus ×11 ×12), « multiplier jusqu'à » 10 / 12 ; ces choix passent aux réglages `tables` et `jusqu` de l'exercice.
+- **Prénom** (facultatif). Mémorisation : clé `ceintures_brevet` (corrompue : défaut, comme les autres réglages).
+
+### 4. À supprimer
+`src/exercices/ceintures-brevet/` (5 fichiers), l'entrée du registre (`exercices/index.ts`), la route (`views/exercices.ts`), `src/views/maths/CeinturesBrevetView.vue`, les sections de textes `ceinturesBrevet` (fr/br + `index.ts`),
+`tests/instantanes/ceintures-brevet.json`, `src/ceintures/brevets.ts`, `exercice:ceintures-brevet` dans `extension.ressources`. Les clés `ceinturesBrevet.*` encore utiles (tables, jusqu'à, prénom) passent dans `ceintures.*`.
+
+### 5. Tests
+- `tests/ceintures.test.mjs` : pour chaque piste avec exercice × ceinture × niveau disponible : réglages acceptés tels quels par `reglagesDuNiveau` (aucune coercition), tirage coupé au bon nombre, questions conformes à la ceinture (tables ⊂ celles de la ceinture ; opérations ⊂ celles de la ceinture), « n bonnes réponses sur n » cohérent, corrigé unique,
+  une seule ligne Prénom / Date, mêmes graine et même brevet ; une ceinture indisponible est refusée ; fr et br.
+- `tests/assemblage.test.mjs` : `avant` / `apres` / `sansTitre` / `ajuster`.
+- `tests/extensions.test.mjs` : onglet pour `tables` et `calcul-mental` ; plus de ressource `ceintures-brevet` ; la règle « aucune fiche publiée » (§18) garde `ceintures`.
+- `npm run instantanes` : les exercices existants ne bougent pas (on ne les modifie pas).
+
+### 6. Ordre des commits (chacun vert)
+1. API d'assemblage et de fragment (`avant`, `apres`, `css`, `sansTitre`, `ajuster`) + tests.
+2. Modèle de pistes (`pistes.ts`) avec réglages par ceinture, objectifs réécrits, validation par niveau + tests.
+3. `brevet.ts` (brevet pur) + tests.
+4. Onglet réécrit, suppression de `ceintures-brevet` et de ses restes, textes déplacés, documentation (§12, §17, §18, TODO).
+
+### 7. Points à confirmer / risques
+- Les ceintures des tables n'ont plus de divisions (l'exercice n'en fait pas). Acceptable ? Sinon : ajouter `÷` à l'exercice des tables d'abord (modifie une fiche existante : instantanés à justifier).
+- Les ceintures du calcul mental sont redéfinies d'après les `ops` de l'exercice (les anciens brevets « ± 1, 2, 10 » disparaissent : l'exercice n'a pas cette opération).
+- Pas de brevet au CP pour le calcul mental tant que les opérations du CP ne sont pas rangées en ceintures (à décider : 6 ceintures CP différentes, ou seulement CE1 à CM2).
+- La page `/maths/ceintures-brevet` disparaît ; les brevets ne se retrouvent plus que dans l'onglet (donc extension active).
+- Les tirages de `tables` et de `calcul-mental` ne sont pas conçus pour des brevets (tables : ordre mélangé, deux colonnes) : à regarder à l'écran avant de figer.

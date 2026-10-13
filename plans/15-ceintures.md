@@ -249,3 +249,39 @@ Aujourd'hui les brevets sont des activités à part (`ceintures-brevet`). Idée 
   (livret, diplôme, passeport, tableau) gardent leur activité générale ;
 - point technique : le brevet « jeu » à l'écran (`useJeu`) et le brevet papier partageraient le générateur de l'exercice (`questions` / `questionsFiche`) avec les réglages de la ceinture (`Piste.ceintures[n].reglages`, §3 : à écrire).
 À reprendre quand le brevet à l'écran (§6) sera décidé.
+
+## 14. Une vraie extension, pas des fuites (demande du 2026-10-13)
+
+Constat : pour aller vite, le code des ceintures a mis son nom dans les parties communes. Les « fuites » actuelles :
+`src/sites.ts` (`ceinturesVisibles`), `src/router/index.ts` (`appliquerAdresseCeintures`), `src/noyau/types.ts` (`ParamsFiche.ceintures`), `src/noyau/useFicheExercice.ts` (lit `useCeintures`),
+`src/noyau/CadreExercice.vue` et `OptionsFiche.vue` (prop `ceintures`, import de `src/ceintures/ChoixCeintures.vue` : le noyau importe une fonctionnalité, à l'envers des couches),
+`src/ressources/{types,filtres,catalogue,useAffichable}.ts` (`option: 'ceintures'`, `optionDe` qui connaît deux ids), `src/pages/ReglagesView.vue` (deux blocs ceintures).
+
+Cible : trois couches, dans le sens `noyau ← extensions ← fonctionnalités`.
+
+**1. Un mécanisme d'extension générique** (`src/extensions/`, petit, sans mot « ceinture »). Une extension se déclare (`definirExtension`) avec ce qu'elle apporte :
+- `id`, `actif` (le site la propose, ou l'appareil l'a activée : le patron de `enseignant.ts` devient générique : `?<id>=oui|non`, case dans « Appareil », `extensions: { <id>: boolean }` dans `sites.ts`) ;
+- des **options communes de fiche** (un composant montré dans « Sur la fiche » des exercices qui l'acceptent, et sa valeur injectée dans `ParamsFiche.extensions[<id>]`, typée par l'extension) ;
+- un **bloc de la page des réglages** (liste de sections par extension active) ;
+- des **onglets d'exercice** (voir 3) et des **activités** (exercices et affiches qu'elle ajoute au registre) ;
+- un **critère d'affichage** (`masque(ressource)` pour `useAffichable`, qui ne connaît plus que « ressource.extension = <id> » et demande au registre).
+Le noyau ne sait rien d'une extension précise : il parcourt le registre. Un exercice dit qu'il accepte une extension (`extensions: ['ceintures']` dans sa définition, vérifié à l'import) ; sans cela, rien ne change pour lui.
+
+**2. L'extension « ceintures »** (`src/ceintures/`) : tout ce qui est spécifique y reste (palettes, dessin, réglages, supports, pistes, brevets, pastille, textes), plus son déclaratif `extension.ts` qui branche les points ci-dessus.
+Les activités dédiées (livret, ceintures à découper, diplôme, passeport ; le tableau de classe en affiche A3) restent des **activités / affiches propres** : elles n'ont pas d'exercice parent, c'est leur place.
+
+**3. Ce qui est commun à tous les exercices** (donc générique, pas « ceintures ») :
+- **Onglets d'exercice en plus de « Faire » et « Imprimer »** : `useModeExercice` passe de deux valeurs à une liste fournie par les extensions actives pour cet exercice ; l'onglet « Ceintures » (brevet à l'écran, ceinture atteinte, brevet papier) est la contribution de l'extension aux exercices qui déclarent une piste.
+- **Options de fiche de l'extension** (palette, dessin, noir et blanc) : le slot « Sur la fiche » ci-dessus.
+
+**4. Une méta-activité « assemblage de fiches »** (générique, indépendante des ceintures) : une feuille composée de fragments de fiches de plusieurs exercices (chacun avec sa configuration), un en-tête, un seul corrigé.
+Elle suppose un **contrat de fragment** : aujourd'hui `fiche()` rend un document complet (`documentFiche`) ; il faudra une forme « corps + css » (par exemple `fiche(params, { fragment: true })` ou une fonction sœur), avec un CSS limité au fragment (CSS imbriqué `.fragment-n { … }`) pour que `.ligne` ou `.grid` de deux exercices ne se mélangent pas.
+Les ceintures en deviennent un **consommateur** : le brevet papier d'une ceinture = en-tête de ceinture + fragments des exercices de la piste + cadre du résultat ; `ceintures-brevet` n'a alors plus de générateur propre (aujourd'hui `src/ceintures/brevets.ts`).
+
+**Ordre proposé** (un commit chacun, sans changement visible pour l'utilisateur tant que l'option est coupée) :
+1. Le registre d'extensions et le patron d'activation générique ; le déclaratif des ceintures ; retirer les fuites listées (les tests existants doivent passer sans modification, plus un test « aucune mention de ceintures dans `src/noyau`, `src/ressources`, `src/shell`, `src/router`, `src/sites.ts` »).
+2. Les points d'accroche : options de fiche, réglages, critère d'affichage.
+3. Le contrat de fragment et l'assemblage (livrable seul, utile sans les ceintures), puis le brevet sur l'assemblage.
+4. Les onglets d'exercice.
+
+Risques : le contrat de fragment touche chaque `fiche()` (ou au moins le gabarit `documentFiche`) et les instantanés des fiches ne doivent pas bouger ; l'ordre des couches doit être vérifié (un test d'imports, comme celui du « noyau n'importe jamais affiches »).

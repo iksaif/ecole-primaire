@@ -23,9 +23,14 @@
       </template>
 
       <ChoixReglage v-if="config.support === 'bandes'" :definition="DEFINITION" :niveau="config.niveau" cle="copies" v-model="config.copies" :titre="t('ceintures.copies')" />
-      <ChoixReglage v-if="config.support === 'diplome'" :definition="DEFINITION" :niveau="config.niveau" cle="ceinture" v-model="config.ceinture" :titre="t('ceintures.numero')">
-        <template #valeur="{ valeur, texte }">{{ texte }} <PastilleCeinture :indice="Number(valeur) - 1" /></template>
-      </ChoixReglage>
+      <!-- la ceinture du diplôme : son numéro et sa couleur ; autant de choix que la piste, le réglage commun et la palette en montrent -->
+      <div v-if="config.support === 'diplome'" class="config-section" role="group" :aria-labelledby="`${id}-numero`" data-reglage="ceinture">
+        <div :id="`${id}-numero`" class="config-section-title">{{ t('ceintures.numero') }}</div>
+        <div class="btn-group">
+          <button v-for="k in nbCeintures" :key="k" type="button" class="level-btn" :class="{ active: ceintureDuDiplome === k }" :aria-pressed="ceintureDuDiplome === k" :data-valeur="k"
+            @click="config.ceinture = k as typeof config.ceinture">{{ k }} <PastilleCeinture :indice="k - 1" /></button>
+        </div>
+      </div>
 
       <div class="config-section">
         <label :for="`${id}-prenom`" class="config-section-title">{{ t('ceintures.prenomTitre') }}</label>
@@ -39,13 +44,17 @@
 // Les ceintures : une activité de fiches (pas de partie à l'écran). La vue ne fait que les réglages ; le contenu (pistes, objectifs) est dans
 // src/exercices/ceintures/ et les supports (livret, bandes, diplôme, passeport) dans src/ceintures/supports.ts. La palette, le dessin et le noir et blanc
 // sont les réglages communs des ceintures (« Sur la fiche », page des réglages).
-import { useId } from 'vue'
+import { computed, useId } from 'vue'
 import Icone from '../../images/Icone.vue'
 import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
 import PastilleCeinture from '../../ceintures/PastilleCeinture.vue'
+import { reglagesCeintures } from '../../ceintures/extension.ts'
+import { nbCeinturesDe } from '../../ceintures/reglages.ts'
+import { PISTES, objectifsDe } from '../../ceintures/pistes.ts'
+import { contextesDeFiche } from '../../extensions/contexte.ts'
 import { useReglages } from '../../noyau/useReglages.ts'
 import { useFicheExercice } from '../../noyau/useFicheExercice.ts'
 import DEFINITION from '../../exercices/ceintures/definition.ts'
@@ -57,6 +66,13 @@ const id = useId()
 const { t } = useLangue()
 const { config, langueContenu } = useReglages(DEFINITION)
 const T = traducteur(CONTENU, () => langueContenu.value)
+
+// les ceintures montrées : celles de la piste (ou les objectifs écrits), le nombre choisi dans les réglages communs et les couleurs de la palette
+const nbCeintures = computed(() => {
+  const nbPiste = config.value.piste === 'libre' ? objectifsDe(config.value.objectifs).length : PISTES[config.value.piste].ceintures.length
+  return nbCeinturesDe(reglagesCeintures(contextesDeFiche()), nbPiste)
+})
+const ceintureDuDiplome = computed(() => Math.min(config.value.ceinture, nbCeintures.value))
 
 /** Le nom d'une piste : le titre de son exercice, ou « Mes objectifs » pour la piste libre. */
 function nomPiste(piste: string | number | boolean): string {

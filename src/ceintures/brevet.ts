@@ -12,6 +12,7 @@ import type { Fragment } from '../impression/fragment.ts'
 import type { Classe } from '../data/classes.ts'
 import { ceintureDisponible } from './pistes.ts'
 import type { Piste } from './pistes.ts'
+import { nbCeinturesDe } from './reglages.ts'
 import { CSS_CEINTURES, ceinturesDe, enteteBrevetHtml, resultatBrevetHtml } from './supports.ts'
 import type { DonneesSupport } from './supports.ts'
 import type { ReglagesCeintures } from './types.ts'
@@ -73,6 +74,8 @@ export function tirageDuBrevet(d: DemandeBrevet): TirageBrevet {
   const ceinture = d.piste.ceintures[d.indice]
   const classes = Object.keys(d.module.definition.niveaux) as Classe[]
   if (!ceintureDisponible(d.piste, d.indice, d.niveau, classes)) throw new Error(`brevet : la ceinture ${d.indice + 1} de la piste « ${d.piste.id} » n’existe pas en ${d.niveau}`)
+  // une ceinture au-delà de celles que la palette et le réglage montrent n'existe pas (le choix de la page ne les propose pas)
+  if (d.indice >= nbCeinturesDe(d.ceintures, d.piste.ceintures.length)) throw new Error(`brevet : la ceinture ${d.indice + 1} n’existe pas avec cette palette (${nbCeinturesDe(d.ceintures, d.piste.ceintures.length)} ceintures)`)
   const voulues = ceinture.questions ?? d.ceintures.questions
   const demande: Record<string, unknown> = { ...(ceinture.reglages?.(d.niveau) ?? {}), ...d.reglages }
   // une fiche à nombre de calculs à choisir (calcul mental) : au moins autant que de questions voulues
@@ -104,7 +107,7 @@ export function brevetPapier(d: DemandeBrevet): string {
   const donnees: DonneesSupport = {
     titre: titreDeLExercice(l, d.piste.exercice ?? d.piste.id),
     // un nom par ceinture de la piste (les objectifs ne sont pas écrits sur le brevet)
-    ceintures: ceinturesDe(d.piste.ceintures.map(() => ''), couleur => i(`ceinture.${couleur.id}`), { ...d.ceintures, nbCeintures: d.piste.ceintures.length }),
+    ceintures: ceinturesDe(d.piste.ceintures.map(() => ''), couleur => i(`ceinture.${couleur.id}`), d.ceintures),
     reglages: d.ceintures,
     libelles: { prenom: '', classe: '', date: '', signature: '', livret: '', diplome: '', passeport: '', decerne: '', commentFaire: '' },
   }
@@ -112,7 +115,7 @@ export function brevetPapier(d: DemandeBrevet): string {
     ? i('brevet.consigneDuree', { n: nbQuestions, minutes: ceinture.duree, bonnes })
     : i('brevet.consigne', { n: nbQuestions, bonnes })
   return assemblerFiches({
-    titre: `${i('brevet.titre')} — ${i(`ceinture.${donnees.ceintures[Math.min(d.indice, donnees.ceintures.length - 1)].couleur.id}`)}`,
+    titre: `${i('brevet.titre')} — ${i(`ceinture.${donnees.ceintures[d.indice].couleur.id}`)}`,
     h1: null, langue: l, police: d.police, cssPolices: d.cssPolices, corrige: traduire(l, 'communs.corrige'),
     avant: enteteBrevetHtml(donnees, d.indice, i('brevet.titre'), consigne),
     apres: resultatBrevetHtml({ resultat: i('brevet.resultat'), validee: i('brevet.validee'), pasEncore: i('brevet.pasEncore') }, nbQuestions),

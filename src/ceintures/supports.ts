@@ -4,6 +4,7 @@
 import { echapper as e } from '../utils/html.js'
 import { ceintureSvg } from './dessin.ts'
 import { couleursDe } from './palettes.ts'
+import { nbCeinturesDe } from './reglages.ts'
 import type { CouleurCeinture, ReglagesCeintures } from './types.ts'
 
 /** Ce qu'un support écrit : les mots de la feuille, dans la langue du contenu. */
@@ -43,7 +44,7 @@ export interface DonneesSupport {
 
 /** Les ceintures d'une piste : les `nom`, objectifs et couleurs de la palette, au plus `nbCeintures` du réglage. */
 export function ceinturesDe(objectifs: readonly string[], noms: (couleur: CouleurCeinture) => string, reglages: ReglagesCeintures): CeintureAImprimer[] {
-  const nb = Math.min(objectifs.length, reglages.nbCeintures)
+  const nb = nbCeinturesDe(reglages, objectifs.length)
   return couleursDe(reglages.palette, nb).slice(0, nb).map((couleur, i) => ({ couleur, nom: noms(couleur), objectifs: [objectifs[i]] }))
 }
 

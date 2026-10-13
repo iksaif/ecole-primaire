@@ -46,3 +46,9 @@ export function assainirCeintures(valeur: unknown): ReglagesCeintures {
 
 /** Le brevet est-il réussi ? `bonnes` sur `total`, au seuil en pourcentage (une marge d'arrondi ne pénalise pas : 9 sur 10 vaut 90 %). */
 export const brevetReussi = (bonnes: number, total: number, seuil: number): boolean => total > 0 && bonnes * 100 >= seuil * total
+
+/**
+ * Combien de ceintures une piste de `nbPiste` ceintures montre avec ces réglages : au plus celles de la piste, le nombre choisi (`nbCeintures`) et les couleurs de la palette
+ * (cinq niveaux seulement pour « sans couleur »). Une ceinture au-delà n'existe pas : ni dans les choix, ni sur les fiches.
+ */
+export const nbCeinturesDe = (reglages: ReglagesCeintures, nbPiste: number): number => Math.max(1, Math.min(nbPiste, reglages.nbCeintures, PALETTES[reglages.palette].couleurs.length))

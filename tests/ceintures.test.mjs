@@ -1,6 +1,7 @@
 // Ceintures de compétences (node) : palettes, dessin (couleur et noir et blanc), réglages communs lus avec méfiance, seuil d'un brevet.
 import { PALETTES, IDS_PALETTES, couleursDe } from '../src/ceintures/palettes.ts'
 import { ceintureSvg } from '../src/ceintures/dessin.ts'
+import { nbCeinturesDe } from '../src/ceintures/reglages.ts'
 import { DEFAUT_CEINTURES, BORNES, STYLES_CEINTURE, assainirCeintures, brevetReussi } from '../src/ceintures/reglages.ts'
 import { demandeDeLAdresse, extensionActive, extensionActivePour } from '../src/extensions/activation.ts'
 import { SITES } from '../src/sites.ts'
@@ -168,6 +169,23 @@ for (const piste of Object.values(PISTES).filter(p => p.exercice)) {
   verifier(/n’existe pas en cp/.test(refus), '« × 10 et tables » au CP : refusé, pas de repli silencieux')
   const br = brevetPapier(brevetDe2('calcul-mental', 2, 'ce1', { langue: 'br' }))
   verifier(br.includes('lang="br"') && !/\b(ceintures|ceinture|brevet)\.[a-z-]+/.test(br), 'en breton : un document complet sans clé brute')
+}
+
+console.log('Nombre de ceintures montrées')
+verifier(nbCeinturesDe(DEFAUT_CEINTURES, 6) === 6 && nbCeinturesDe(DEFAUT_CEINTURES, 5) === 5 && nbCeinturesDe(DEFAUT_CEINTURES, 8) === 6, 'palette judo (7), 6 choisies : la piste, au plus 6')
+verifier(nbCeinturesDe({ ...DEFAUT_CEINTURES, palette: 'paliers', nbCeintures: 6 }, 6) === 5, 'palette sans couleur (5 niveaux) : 5 ceintures, même si on en a choisi 6')
+verifier(nbCeinturesDe({ ...DEFAUT_CEINTURES, nbCeintures: 4 }, 6) === 4 && nbCeinturesDe({ ...DEFAUT_CEINTURES, nbCeintures: 3 }, 2) === 2 && nbCeinturesDe(DEFAUT_CEINTURES, 0) === 1, 'le nombre choisi limite ; une piste plus courte aussi ; au moins une')
+verifier(nbCeinturesDe({ ...DEFAUT_CEINTURES, palette: 'judo-rouge', nbCeintures: 8 }, 8) === 8, 'palette à 8 couleurs : jusqu’à 8')
+{
+  const piste = PISTES.tables
+  const module = REGISTRE.find(m => m.definition.id === 'tables')
+  const demande = (ceintures, indice) => ({ module, piste, indice, niveau: 'ce2', graine: 5, langue: 'fr', ceintures })
+  const refus = (ceintures, indice) => { try { brevetPapier(demande(ceintures, indice)); return '' } catch (e) { return String(e.message) } }
+  const paliers = { ...DEFAUT_CEINTURES, palette: 'paliers', nbCeintures: 5 }
+  verifier(!refus(paliers, 4) && /n’existe pas avec cette palette/.test(refus(paliers, 5)), 'palette à 5 niveaux : le brevet de la 5e ceinture existe, celui de la 6e est refusé')
+  verifier(/n’existe pas avec cette palette \(4 ceintures\)/.test(refus({ ...DEFAUT_CEINTURES, nbCeintures: 4 }, 4)), 'quatre ceintures choisies : la 5e est refusée')
+  const html = brevetPapier(demande(paliers, 4))
+  verifier(html.includes('Niveau 5') && !html.includes('Ceinture marron'), 'palette sans couleur : l’en-tête dit « Niveau 5 », pas une ceinture marron')
 }
 
 console.log('Option (cachée par défaut)')

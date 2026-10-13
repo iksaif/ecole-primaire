@@ -26,7 +26,7 @@
       <div class="ligne">
         <label :for="`${idTitre}-nb`">{{ t('ceintures.reglage.nb') }}</label>
         <input :id="`${idTitre}-nb`" v-model.number="reglages.nbCeintures" type="range" :min="BORNES.nbCeintures.min" :max="maxCeintures" step="1">
-        <output>{{ reglages.nbCeintures }}</output>
+        <output>{{ Math.min(reglages.nbCeintures, maxCeintures) }}</output>
       </div>
       <div class="ligne">
         <label :for="`${idTitre}-seuil`">{{ t('ceintures.reglage.seuil') }}</label>
@@ -64,6 +64,7 @@ const idTitre = useId()
 const reglages = useCeintures()
 
 // une palette plus courte que le réglage ramène le nombre de ceintures à sa taille
+// le nombre choisi est gardé quand on passe à une palette plus courte (il revient avec une palette plus longue) ; ce qui compte est nbCeinturesDe (reglages.ts)
 const maxCeintures = computed(() => Math.min(BORNES.nbCeintures.max, PALETTES[reglages.value.palette].couleurs.length))
 
 /** Les couleurs d'une palette, en petites bandes (le bouton se choisit en voyant). */

@@ -19,8 +19,8 @@
       <div class="config-section" role="group" :aria-labelledby="`${id}-ceinture`" data-reglage="ceinture">
         <div :id="`${id}-ceinture`" class="config-section-title">{{ t('ceintures.choixCeinture') }}</div>
         <div class="btn-group">
-          <button v-for="(_, k) in piste.ceintures" :key="k" type="button" class="level-btn" :class="{ active: indice === k }" :aria-pressed="indice === k" :data-valeur="k + 1"
-            :disabled="!disponible(k)" @click="choix.ceinture = k + 1">{{ k + 1 }} <PastilleCeinture :indice="k" /></button>
+          <button v-for="k in nbCeintures" :key="k - 1" type="button" class="level-btn" :class="{ active: indice === k - 1 }" :aria-pressed="indice === k - 1" :data-valeur="k"
+            :disabled="!disponible(k - 1)" @click="choix.ceinture = k">{{ k }} <PastilleCeinture :indice="k - 1" /></button>
         </div>
       </div>
 
@@ -63,6 +63,7 @@ import PastilleCeinture from './PastilleCeinture.vue'
 import { brevetPapier } from './brevet.ts'
 import { reglagesCeintures } from './extension.ts'
 import { ceintureDisponible, pisteDeExercice } from './pistes.ts'
+import { nbCeinturesDe } from './reglages.ts'
 import type { Classe } from '../data/classes.ts'
 import type { ModuleQuelconque } from '../exercices/index.ts'
 
@@ -90,12 +91,14 @@ watch(module, m => {
 }, { immediate: true })
 
 const niveau = computed(() => (classes.value.includes(choix.value.niveau as Classe) ? choix.value.niveau as Classe : classes.value[0]))
-const disponible = (k: number): boolean => !!piste.value && ceintureDisponible(piste.value, k, niveau.value, classes.value)
+// les ceintures montrées : celles de la piste, le nombre choisi dans les réglages communs et les couleurs de la palette (src/ceintures/reglages.ts)
+const nbCeintures = computed(() => (piste.value ? nbCeinturesDe(reglagesCeintures(contextesDeFiche()), piste.value.ceintures.length) : 0))
+const disponible = (k: number): boolean => !!piste.value && k < nbCeintures.value && ceintureDisponible(piste.value, k, niveau.value, classes.value)
 // la ceinture choisie, ou la première qui existe dans cette classe
 const indice = computed(() => {
-  const voulue = Math.min(Math.max(choix.value.ceinture, 1), piste.value?.ceintures.length ?? 1) - 1
+  const voulue = Math.min(Math.max(choix.value.ceinture, 1), Math.max(nbCeintures.value, 1)) - 1
   if (disponible(voulue)) return voulue
-  return Math.max(0, (piste.value?.ceintures ?? []).findIndex((_, k) => disponible(k)))
+  return Math.max(0, Array.from({ length: nbCeintures.value }, (_, k) => k).findIndex(k => disponible(k)))
 })
 function basculerTable(n: number): void {
   const liste = choix.value.tables

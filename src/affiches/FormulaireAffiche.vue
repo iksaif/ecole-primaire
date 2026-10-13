@@ -242,7 +242,8 @@ const resultat = computed(() => {
 
 <style scoped>
 /* développement : une langue que le réglage de fiabilité ne proposerait pas aux visiteurs */
-.level-btn.masquee { outline: 2px solid #b3261e; background: #fde2e2; }
+.level-btn.masquee { outline: 2px solid #b3261e; }
+.level-btn.masquee:not(.active) { background: #fde2e2; color: #222; }
 .axe { margin-bottom: .6rem; }
 .axe-titre { font-size: .8rem; font-weight: 800; text-transform: uppercase; color: var(--texte-doux); margin-bottom: .3rem; }
 .axe-classes { font-size: .85rem; color: var(--texte-doux); margin: .2rem 0 0; }

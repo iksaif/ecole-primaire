@@ -31,5 +31,6 @@ const choix = injectLangueContenu()
 
 <style scoped>
 /* développement : une langue que le réglage de fiabilité ne proposerait pas aux visiteurs */
-.level-btn.masquee { outline: 2px solid #b3261e; background: #fde2e2; }
+.level-btn.masquee { outline: 2px solid #b3261e; }
+.level-btn.masquee:not(.active) { background: #fde2e2; color: #222; }
 </style>

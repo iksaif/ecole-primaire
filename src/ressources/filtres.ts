@@ -33,16 +33,40 @@ export function filtrerParMode<T extends { readonly langues: readonly Langue[] }
 }
 
 /**
- * La traduction de la ressource est-elle assez sûre pour le seuil ? Seulement si le mode MONTRE la langue régionale de la ressource : en français
- * seul, une ressource traduite en breton reste là, sa traduction n'étant pas lue. Sans seuil, tout passe. Même règle pour les ressources du
- * catalogue et pour les entrées de l'index des fiches (qui portent `langues` et `confiance`).
+ * La traduction de la ressource est-elle assez sûre pour le seuil ? Sans seuil, tout passe. Deux cas, selon qu'on choisit sa langue ou non :
+ * - un DOCUMENT FIGÉ (fiche PDF : entrée de l'index, ressource `fiche`) imprime toutes ses langues : il faut que sa traduction soit sûre dès que
+ *   le mode la montre (en français seul, une fiche traduite reste là, sa traduction n'étant pas lue) ; sa version française est une autre entrée ;
+ * - une ressource dont on CHOISIT LA LANGUE en l'ouvrant (exercice, affiche à personnaliser) reste là dès qu'une langue du mode est sûre : le
+ *   français l'est toujours. En « Français + Breton », un exercice dont le breton n'est pas assez sûr s'ouvre en français (sa page ne propose pas
+ *   le breton : langueContenu.ts, FormulaireAffiche) ; en « breton seul », il est caché.
  */
 export function traductionAssezSure(r: AvecTraduction, mode: Mode, regionale: Langue | null, seuil: number | undefined): boolean {
+  if (langueAuChoix(r)) return languesSures(r, mode, regionale, seuil).length > 0
   return !traductionMontree(r, mode, regionale) || assezSure(r.confiance, seuil)
 }
 
-/** Ce que la règle lit d'une ressource ou d'une entrée de fiche : ses langues et la confiance dans sa traduction. */
-export interface AvecTraduction { readonly langues: readonly string[], readonly confiance?: NiveauConfiance | null, readonly extension?: string }
+/** Ce que la règle lit d'une ressource ou d'une entrée de fiche : ses langues, la confiance dans sa traduction, et son type (ressource du catalogue). */
+export interface AvecTraduction {
+  readonly langues: readonly string[]
+  readonly confiance?: NiveauConfiance | null
+  readonly extension?: string
+  readonly type?: string
+}
+
+/** Les ressources dont on choisit la langue en les ouvrant ; une entrée de l'index des fiches (sans type) est un document figé. */
+const TYPES_LANGUE_AU_CHOIX: readonly string[] = ['exercice', 'affiche']
+
+/** On choisit la langue de cette ressource en l'ouvrant (exercice, affiche) ? */
+function langueAuChoix(r: AvecTraduction): boolean {
+  return r.type !== undefined && TYPES_LANGUE_AU_CHOIX.includes(r.type)
+}
+
+/** Les langues du mode que cette ressource offre avec assez de confiance : le français toujours, une traduction si elle passe le seuil. */
+function languesSures(r: AvecTraduction, mode: Mode, regionale: Langue | null, seuil: number | undefined): string[] {
+  const utilisables: readonly string[] = languesUtilisables(mode, regionale)
+  const duMode = r.langues.filter(l => utilisables.includes(l))
+  return duMode.filter(l => l === LANGUE_SOURCE || assezSure(r.confiance, seuil))
+}
 
 /** Le mode montre-t-il une langue régionale de cette ressource ? (français seul : non) */
 export function traductionMontree(r: AvecTraduction, mode: Mode, regionale: Langue | null): boolean {

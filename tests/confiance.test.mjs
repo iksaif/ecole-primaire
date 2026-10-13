@@ -54,4 +54,12 @@ verifier(traductionAssezSure({ langues: ['fr'], confiance: null }, 'bilingue', '
 verifier(traductionAssezSure(exo, 'bilingue', null, 4), 'sans langue régionale active : affichée')
 verifier(traductionMontree(exo, 'bilingue', 'br') && !traductionMontree(exo, 'fr', 'br'), 'traductionMontree : selon le mode')
 
+console.log('Ressource dont on choisit la langue (exercice, affiche) : ce qu’elle offre de sûr dans le mode')
+const exercice = { type: 'exercice', langues: ['fr', 'br'], confiance: 0 }
+verifier(traductionAssezSure(exercice, 'bilingue', 'br', 2), 'Français + Breton, breton sous le seuil : affichée (elle s’ouvre en français)')
+verifier(traductionAssezSure({ ...exercice, type: 'affiche' }, 'bilingue', 'br', 2), 'même règle pour une affiche')
+verifier(!traductionAssezSure(exercice, 'regionale', 'br', 2), 'breton seul, breton sous le seuil : cachée')
+verifier(traductionAssezSure({ ...exercice, confiance: 3 }, 'regionale', 'br', 2), 'breton seul, breton relu : affichée')
+verifier(!traductionAssezSure({ type: 'fiche', langues: ['fr', 'br'], confiance: 0 }, 'bilingue', 'br', 2), 'une fiche PDF bilingue imprime son breton : cachée sous le seuil')
+
 process.exit(nbEchecs() ? 1 : 0)

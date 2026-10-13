@@ -1,9 +1,10 @@
 // Le registre des extensions : l'UNIQUE endroit qui les liste (comme src/exercices/index.ts pour les exercices). Les parties communes (noyau, ressources, réglages…)
 // le parcourent et ne nomment jamais une extension : `tests/extensions.test.mjs` le vérifie. Une extension de plus : un dossier, son `extension.ts`, une ligne ici.
 import { extension as ceintures } from '../ceintures/extension.ts'
+import { extension as assemblage } from '../assemblage/extension.ts'
 import type { Extension } from './types.ts'
 
-export const EXTENSIONS: readonly Extension[] = [ceintures]
+export const EXTENSIONS: readonly Extension[] = [ceintures, assemblage]
 
 const parId = new Map(EXTENSIONS.map(e => [e.id, e]))
 

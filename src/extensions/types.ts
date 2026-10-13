@@ -1,6 +1,7 @@
 // Une extension : une fonctionnalité en option, cachée par défaut, qui s'accroche aux parties communes (fiches, réglages, listes) sans que celles-ci la connaissent.
 // Pur (aucun import de Vue ni de composant) : lu par node (tests, build des fiches) comme par le navigateur ; les composants s'importent à la demande.
 import type { Component } from 'vue'
+import type { RouteRecordRaw } from 'vue-router'
 import type { NomIcone } from '../images/icones.ts'
 import type { CleTexte } from '../langues/traduire.ts'
 
@@ -37,4 +38,6 @@ export interface Extension {
   contexteFiche?: () => unknown
   /** bloc de la page des réglages */
   reglages?: BlocReglages
+  /** pages qu'elle ajoute au routeur (accessibles seulement quand elle est active : `meta.extension`) */
+  routes?: readonly RouteRecordRaw[]
 }

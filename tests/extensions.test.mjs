@@ -29,9 +29,11 @@ console.log('Les parties communes ne nomment aucune extension')
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')
 const sources = c => statSync(c).isDirectory() ? readdirSync(c).flatMap(f => sources(join(c, f))) : /\.(js|ts|vue)$/.test(c) ? [c] : []
 // ce qui a le droit de nommer une extension : le dossier de la fonctionnalité, ses deux activités et leurs vues, les registres, les textes
-const PERMIS = [/^ceintures\//, /^extensions\//, /^exercices\/ceintures(-brevet)?\//, /^views\/(monde\/CeinturesView|maths\/CeinturesBrevetView)\.vue$/, /^exercices\/index\.ts$/, /^views\/exercices\.ts$/, /\/textes\//]
+const PERMIS = [/^ceintures\//, /^assemblage\//, /^extensions\//, /^exercices\/ceintures(-brevet)?\//, /^views\/(monde\/CeinturesView|maths\/CeinturesBrevetView)\.vue$/, /^exercices\/index\.ts$/, /^views\/exercices\.ts$/, /\/textes\//]
+// l'identifiant écrit comme texte ou comme chemin (`'ceintures'`, `/assemblage/`), et pour un nom qui n'est pas un mot courant du français, le mot lui-même
+const MOTS_PROPRES = { ceintures: 'ceinture' }
 for (const e of EXTENSIONS) {
-  const motif = new RegExp(e.id.replace(/s$/, ''), 'i')
+  const motif = new RegExp(`['"\`/]${e.id}['"\`/]${MOTS_PROPRES[e.id] ? `|${MOTS_PROPRES[e.id]}` : ''}`, 'i')
   const fuites = sources(src).map(f => relative(src, f)).filter(f => !PERMIS.some(p => p.test(f))).filter(f => motif.test(readFileSync(join(src, f), 'utf8')))
   verifier(!fuites.length, `${e.id} : aucune mention dans les parties communes ${fuites.join(', ')}`)
 }

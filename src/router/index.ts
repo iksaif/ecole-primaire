@@ -4,7 +4,8 @@
 // Les anciennes adresses `/#/chemin` sont réécrites en `/chemin` avant le démarrage par le script d'index.html.
 import { createRouter, createWebHistory } from 'vue-router'
 import { appliquerAdresseEnseignant } from '../contexte/enseignant.ts'
-import { appliquerAdresseExtensions } from '../extensions/activation.ts'
+import { appliquerAdresseExtensions, garderPageExtension } from '../extensions/activation.ts'
+import { EXTENSIONS } from '../extensions/registre.ts'
 import type { RouteRecordRaw } from 'vue-router'
 import { SITE } from '../sites.ts'
 import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
@@ -38,6 +39,9 @@ routes.push(...routesDesExercices(REGISTRE, routes, VUES))
 // « Reprendre » (accueil) : l'arrivée sur la page d'un exercice du registre est mémorisée sur l'appareil (src/ressources/recents.ts)
 const idsExercices = idsParRoute(REGISTRE)
 
+// Les pages que les extensions ajoutent (`meta.extension` : accessibles seulement quand l'extension est active)
+for (const e of EXTENSIONS) routes.push(...(e.routes ?? []).map(r => ({ ...r, meta: { ...r.meta, extension: e.id } }) as RouteRecordRaw))
+
 // Une adresse inconnue (ancienne route, lien externe) : page « introuvable » avec un lien vers l'accueil. Toujours en dernier.
 routes.push({ path: '/:chemin(.*)*', component: () => import('../pages/IntrouvableView.vue'), meta: { titre: 'routeur.titre.introuvable' } })
 
@@ -52,6 +56,7 @@ const router = createRouter({
 router.beforeEach(to => appliquerAdresseEnseignant(to))
 // Les extensions, en option : `?<id>=oui` / `?<id>=non` (src/extensions/activation.ts), même principe
 router.beforeEach(to => appliquerAdresseExtensions(to))
+router.beforeEach(to => garderPageExtension(to))
 
 // Une adresse qui porte son propre contexte (`?classes=cm1`) le garde d'une page à l'autre tant qu'on suit des liens du site :
 // les liens internes n'ont pas à le répéter. Un changement sur la même page (replace) est voulu tel quel : on n'y touche pas.

@@ -9,6 +9,7 @@
 import { estLangue, LANGUE_SOURCE } from '../langues/registre.ts'
 import { traduire } from '../langues/traduire.ts'
 import { echapper } from '../utils/html.js'
+import { signalerFragment } from './fragment.ts'
 
 // Police des fiches : celle choisie dans « Sur la fiche » (ChoixPolice, usePoliceFiche), Andika par défaut (police
 // scolaire du site, a et g simples, embarquée en woff2). L'appelant fournit les @font-face (`cssPolices`, côté
@@ -49,6 +50,8 @@ export interface OptionsDocumentFiche {
  * hérité par toute la fiche) : sans cela, le navigateur les retire à l'impression (les PDF du build, eux, gardent les fonds).
  */
 export function documentFiche({ titre, langue, corps, css = '', h1, police = POLICE_SCOLAIRE, cssPolices = '', largeur = '720px', marge = '1.5cm' }: OptionsDocumentFiche): string {
+  // une fiche réunie à d'autres (fragmentDe, src/impression/fragment.ts) remet ses morceaux au lieu de construire son document
+  if (signalerFragment({ titre, h1, css, cssPolices, corps })) return ''
   return `<!DOCTYPE html><html lang="${langue}"><head>
     <meta charset="UTF-8"><title>${echapper(titre)}</title>
     <style>${cssPolices ? `\n${cssPolices}` : ''}

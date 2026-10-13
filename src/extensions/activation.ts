@@ -61,3 +61,10 @@ export function appliquerAdresseExtensions(to: RouteLocationNormalized): RouteLo
   }
   return { path: to.path, query: reste, hash: to.hash, replace: true }
 }
+
+/** À brancher sur `router.beforeEach` : une page ajoutée par une extension (`meta.extension`) n'est accessible que si l'extension est active ; sinon, retour à l'accueil. */
+export function garderPageExtension(to: RouteLocationNormalized): RouteLocationRaw | undefined {
+  const id = to.meta.extension
+  if (typeof id === 'string' && !extensionActive(id)) return { path: '/', replace: true }
+  return undefined
+}

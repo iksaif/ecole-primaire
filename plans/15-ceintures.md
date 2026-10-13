@@ -293,3 +293,13 @@ Risques : le contrat de fragment touche chaque `fiche()` (ou au moins le gabarit
 `CadreExercice` / `OptionsFiche` (prop `extensions`, issue de `definition.extensions`), `useFicheExercice` et `ParamsFiche.extensions[<id>]`, `ReglagesView` (blocs génériques), `useAffichable` (`ressource.extension`), `sites.ts`, routeur.
 `tests/extensions.test.mjs` vérifie le registre et balaie les sources (aucune mention hors du dossier des ceintures, de ses deux activités, des registres et des textes). Les instantanés n'ont pas bougé.
 Écart : en développement, une extension inactive masque quand même ses ressources (c'est un choix de l'utilisateur, pas une réserve sur une traduction). Restent : l'assemblage de fiches (§14.4), les onglets d'exercice (§14.3).
+
+## 16. Étape 3 du §14 faite : l'assemblage de fiches (2026-10-13)
+
+- **Contrat de fragment** (`src/impression/fragment.ts`) : `fragmentDe(() => fiche(…))` récupère le titre, le CSS propre et le corps d'une fiche ; c'est `documentFiche` qui signale ses morceaux au collecteur, aucune fiche n'a été modifiée
+  (instantanés inchangés ; hors de `fragmentDe`, la fiche rend son document comme avant).
+- **Assemblage** (`src/impression/assemblage.ts`) : une ligne Prénom / Date, un seul corrigé (un sous-titre par bloc), CSS limité à chaque bloc (CSS imbriqué `.bloc-n { … }`, sans `@page`, `body` devient le bloc), un titre par bloc, saut de page facultatif.
+- **Fragment d'un exercice du registre** (`src/exercices/fragment.ts`) : mêmes `questionsFiche` et `fiche` que l'app et le build, avec les réglages par défaut d'un niveau.
+- **Consommateur : l'extension « assemblage »** (`src/assemblage/`, cachée, `?assemblage=oui`, page `/assemblage`) : on choisit une classe et des exercices, l'aperçu réunit leurs fiches. Le mécanisme d'extension a gagné des pages (`routes`, `meta.extension`, garde du routeur).
+- Reste : le brevet des ceintures construit sur l'assemblage (aujourd'hui `src/ceintures/brevets.ts` a son propre générateur, qui sait faire des divisions : l'exercice des tables n'en fait pas), des réglages par bloc (aujourd'hui les défauts du niveau), l'ordre des blocs,
+  les exercices dont la fiche demande la mesure du navigateur (écriture : signalés « pas assemblable ici »), puis les onglets d'exercice (§14.3).

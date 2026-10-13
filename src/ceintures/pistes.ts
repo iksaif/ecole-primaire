@@ -30,14 +30,28 @@ export interface CeintureDePiste {
   reglages?: (niveau: Classe) => Readonly<Record<string, unknown>>
   /** questions du brevet, à la place du réglage commun (la ceinture « sans hésiter » : 30) */
   questions?: number
+  /** plusieurs exercices dans un même brevet : un bloc par exercice (les `reglages` de la ceinture sont alors ignorés) ; absent : un bloc, l'exercice de la piste */
+  blocs?: readonly BlocDeCeinture[]
   /** durée conseillée, en minutes (écrite sur le brevet) */
   duree?: number
 }
 
+/** Un bloc d'un brevet : la fiche d'un exercice du registre, avec ses réglages et son nombre de questions. */
+export interface BlocDeCeinture {
+  exercice: string
+  /** les réglages de l'exercice pour ce bloc (en plus de ses défauts) */
+  reglages?: (niveau: Classe) => Readonly<Record<string, unknown>>
+  /** questions de ce bloc ; absent : le total du brevet partagé à parts égales entre les blocs */
+  questions?: number
+}
+
 export interface Piste {
-  id: IdPiste
-  /** l'exercice du registre qui évalue la piste ; absent : pas de brevet écrit */
+  /** une piste fournie, ou `sur-mesure` (construite par l'enseignant·e : src/ceintures/BrevetSurMesure.vue) */
+  id: IdPiste | 'sur-mesure'
+  /** l'exercice du registre qui évalue la piste (ses ceintures n'ont alors qu'un bloc, sauf mention contraire) ; absent : pas de brevet écrit */
   exercice?: string
+  /** titre écrit sur le brevet ; absent : celui de l'exercice de la piste */
+  titre?: string
   ceintures: readonly CeintureDePiste[]
 }
 
@@ -67,7 +81,8 @@ export const PISTES: Readonly<Record<IdPiste, Piste>> = {
       { reglages: ops([COMPLEMENTS_10, VERS_DIZAINE, COMPLEMENTS_100]) },
       { reglages: ops([DIZAINES, NEUF_ONZE, PASSAGE]) },
       { niveaux: CLASSES_CE1_PLUS, reglages: ops([FOIS_10_100, FOIS]) },
-      { reglages: niveau => ({ ops: opsOffertes(niveau) }) },
+      // la dernière ceinture mêle deux exercices : tout le calcul mental, et toutes les tables
+      { blocs: [{ exercice: 'calcul-mental', reglages: niveau => ({ ops: opsOffertes(niveau) }) }, { exercice: 'tables', reglages: tables(TOUTES_LES_TABLES) }], niveaux: CLASSES_CE1_PLUS },
     ],
   },
   lettres: { id: 'lettres', ceintures: [{}, {}, {}, {}, {}] },
@@ -79,8 +94,20 @@ export const pisteDeExercice = (exercice: string): Piste | undefined => Object.v
 /** Les identifiants des exercices qui ont un brevet. */
 export const EXERCICES_AVEC_BREVET: readonly string[] = Object.values(PISTES).flatMap(p => (p.exercice ? [p.exercice] : []))
 
-/** La ceinture `indice` de la piste existe-t-elle dans cette classe ? (`classes` : celles de l'exercice) */
-export function ceintureDisponible(piste: Piste, indice: number, niveau: Classe, classes: readonly Classe[]): boolean {
+/** Les blocs d'une ceinture : les siens, ou l'exercice de la piste avec les réglages de la ceinture (aucun bloc : la piste n'a pas de brevet). */
+export function blocsDe(piste: Piste, indice: number): BlocDeCeinture[] {
   const c = piste.ceintures[indice]
-  return !!c && classes.includes(niveau) && (c.niveaux ? c.niveaux.includes(niveau) : true)
+  if (!c) return []
+  if (c.blocs) return [...c.blocs]
+  return piste.exercice ? [{ exercice: piste.exercice, reglages: c.reglages }] : []
+}
+
+/**
+ * La ceinture `indice` de la piste existe-t-elle dans cette classe ? Il faut qu'elle ait des blocs, que chacun des exercices ait cette classe (`classesDe` : les classes d'un exercice
+ * du registre) et que la ceinture ne l'exclue pas.
+ */
+export function ceintureDisponible(piste: Piste, indice: number, niveau: Classe, classesDe: (exercice: string) => readonly Classe[]): boolean {
+  const c = piste.ceintures[indice]
+  const blocs = c ? blocsDe(piste, indice) : []
+  return !!c && blocs.length > 0 && blocs.every(b => classesDe(b.exercice).includes(niveau)) && (c.niveaux ? c.niveaux.includes(niveau) : true)
 }

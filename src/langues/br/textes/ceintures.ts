@@ -5,6 +5,15 @@ import type fr from '../../fr/textes/ceintures.ts'
 
 export default {
   titre: 'Gourizioù', // br: à relire
+  surMesure: { // br: à relire
+    titre: 'Brevet diouzh ar muzul',
+    intro: 'Dibabit ur c’hlas hag ekzerzhioù : ar brevet a strolla o fichennoù dindan penn ur gouriz, gant ur c’hador disoc’h hag ur reizhadur nemetañ. Ar boelladenn, ar vevenn hag al livioù a c’heller o reiñ e « Er fichenn » pe er reolennoù.',
+    exercices: 'Ekzerzhioù ar brevet',
+    aucun: 'Dibabit un ekzerzh da nebeutañ evit gwelout ar brevet.',
+    titreBrevet: 'Titl ar brevet',
+    titreAuto: 'Va ekzerzhioù',
+    lien: 'Ober ur brevet diouzh ar muzul',
+  },
   choixCeinture: 'Gouriz', // br: à relire
   tablesTitre: 'Taolennoù', // br: à relire
   tablesCeinture: 'Re ar gouriz', // br: à relire

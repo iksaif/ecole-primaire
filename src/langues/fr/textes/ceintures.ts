@@ -1,6 +1,15 @@
 // Textes de l'interface — les ceintures de compétences (français). Source des clés : br/textes/ceintures.ts doit avoir exactement les mêmes.
 export default {
   titre: 'Ceintures',
+  surMesure: {
+    titre: 'Brevet sur mesure',
+    intro: 'Choisis une classe et des exercices : le brevet réunit leurs fiches sous un en-tête de ceinture, avec un cadre de résultat et un seul corrigé. Le total des questions, le seuil et les couleurs se règlent dans « Sur la fiche » ou dans les réglages.',
+    exercices: 'Exercices du brevet',
+    aucun: 'Choisis au moins un exercice pour voir le brevet.',
+    titreBrevet: 'Titre du brevet',
+    titreAuto: 'Mes exercices',
+    lien: 'Faire un brevet sur mesure',
+  },
   choixCeinture: 'Ceinture',
   tablesTitre: 'Tables',
   tablesCeinture: 'Celles de la ceinture',

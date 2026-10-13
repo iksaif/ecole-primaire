@@ -14,6 +14,8 @@ export const extension: Extension = {
   contexteFiche: () => useCeintures().value,
   // l'onglet « Ceintures » : les exercices qui ont un brevet (les tables de multiplication, le calcul mental : src/ceintures/pistes.ts)
   onglets: [{ id: 'ceintures', icone: 'trophee', titre: 'ceintures.titre', pour: exercice => EXERCICES_AVEC_BREVET.includes(exercice), composant: () => import('./OngletCeintures.vue') }],
+  // le brevet sur mesure : une page à part, accessible seulement quand l'extension est active
+  routes: [{ path: '/ceintures/brevet', component: () => import('./BrevetSurMesure.vue'), meta: { titre: 'ceintures.surMesure.titre' } }],
   reglages: { icone: 'trophee', titre: 'ceintures.reglage.titre', aide: 'ceintures.reglage.aide', composant: () => import('./ReglagesCeintures.vue') },
 }
 

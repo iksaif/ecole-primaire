@@ -76,9 +76,13 @@ const TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 const piste = computed(() => pisteDeExercice(props.exercice))
 // le registre est un chunk à part (src/router/index.ts) : chargé à l'ouverture de l'onglet
-const module = ref<ModuleQuelconque | null>(null)
-void import('../exercices/index.ts').then(({ REGISTRE }) => { module.value = REGISTRE.find(m => m.definition.id === props.exercice) ?? null })
-const classes = computed(() => (module.value ? Object.keys(module.value.definition.niveaux) as Classe[] : []))
+const registre = ref<readonly ModuleQuelconque[]>([])
+void import('../exercices/index.ts').then(({ REGISTRE }) => { registre.value = REGISTRE })
+const module = computed(() => registre.value.find(m => m.definition.id === props.exercice) ?? null)
+/** Les classes d'un exercice du registre. */
+const classesDe = (exercice: string): Classe[] => Object.keys(registre.value.find(m => m.definition.id === exercice)?.definition.niveaux ?? {}) as Classe[]
+// les classes proposées : celles de l'exercice de la page
+const classes = computed(() => classesDe(props.exercice))
 
 // ce qu'on a choisi, mémorisé sur l'appareil ; la classe est reprise de l'exercice à chaque ouverture de l'onglet (modifiable ici)
 const choix = ref(chargerReglages('ceintures_brevet', { niveau: '' as string, ceinture: 1, tablesPerso: false, tables: [2, 5, 10] as number[], jusqu: 10 }))
@@ -93,7 +97,7 @@ watch(module, m => {
 const niveau = computed(() => (classes.value.includes(choix.value.niveau as Classe) ? choix.value.niveau as Classe : classes.value[0]))
 // les ceintures montrées : celles de la piste, le nombre choisi dans les réglages communs et les couleurs de la palette (src/ceintures/reglages.ts)
 const nbCeintures = computed(() => (piste.value ? nbCeinturesDe(reglagesCeintures(contextesDeFiche()), piste.value.ceintures.length) : 0))
-const disponible = (k: number): boolean => !!piste.value && k < nbCeintures.value && ceintureDisponible(piste.value, k, niveau.value, classes.value)
+const disponible = (k: number): boolean => !!piste.value && k < nbCeintures.value && ceintureDisponible(piste.value, k, niveau.value, classesDe)
 // la ceinture choisie, ou la première qui existe dans cette classe
 const indice = computed(() => {
   const voulue = Math.min(Math.max(choix.value.ceinture, 1), Math.max(nbCeintures.value, 1)) - 1
@@ -112,7 +116,7 @@ const fiche = computed(() => {
   const extensions = contextesDeFiche()
   const surcharges = p.id === 'tables' ? { ...(choix.value.tablesPerso ? { tables: choix.value.tables } : {}), jusqu: choix.value.jusqu } : {}
   return brevetPapier({
-    module: m, piste: p, indice: indice.value, niveau: niveau.value, graine: graine.value, langue: langueContenuDe(m.definition, langue.value),
+    modules: registre.value, piste: p, indice: indice.value, niveau: niveau.value, graine: graine.value, langue: langueContenuDe(m.definition, langue.value),
     ceintures: reglagesCeintures(extensions), extensions, reglages: surcharges, ...police.value,
   })
 })

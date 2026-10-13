@@ -44,6 +44,11 @@ verifier(EXTENSIONS.flatMap(e => e.onglets ?? []).every(o => o.id !== 'jouer' &&
 const routes = routesDesExercices(REGISTRE.map(m => ({ definition: m.definition })), [])
 verifier(routes.every(r => typeof r.meta.exercice === 'string') && routes.find(r => r.path === '/maths/tables').meta.exercice === 'tables', 'chaque route d’exercice porte son identifiant (meta.exercice)')
 
+console.log('Pages d’extension')
+const pages = EXTENSIONS.flatMap(e => (e.routes ?? []).map(r => ({ id: e.id, path: r.path })))
+verifier(pages.some(p => p.id === 'ceintures' && p.path === '/ceintures/brevet') && pages.some(p => p.id === 'assemblage' && p.path === '/assemblage'), 'les pages des extensions : /ceintures/brevet et /assemblage')
+verifier(new Set(pages.map(p => p.path)).size === pages.length && pages.every(p => !REGISTRE.some(m => m.definition.route === p.path)), 'aucune page d’extension ne reprend l’adresse d’une autre ou d’un exercice')
+
 console.log('Les parties communes ne nomment aucune extension')
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src')
 const sources = c => statSync(c).isDirectory() ? readdirSync(c).flatMap(f => sources(join(c, f))) : /\.(js|ts|vue)$/.test(c) ? [c] : []

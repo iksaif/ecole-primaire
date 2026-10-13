@@ -15,7 +15,7 @@ export const CONTENU = catalogue({
       objectifs: '×2, ×5 et ×10|×3 et ×4|×6 et ×7|×8 et ×9|Toutes les tables, dans le désordre|Toutes les tables, sans hésiter (30 en 3 minutes)',
     },
     'calcul-mental': {
-      objectifs: 'Additions et soustractions|Doubles et moitiés|Compléments à 10, à la dizaine et à 100|Calcul astucieux : ± dizaines, ± 9, passage de dizaine|× 10, × 100 et tables|Calculs mêlés, vite et juste',
+      objectifs: 'Additions et soustractions|Doubles et moitiés|Compléments à 10, à la dizaine et à 100|Calcul astucieux : ± dizaines, ± 9, passage de dizaine|× 10, × 100 et tables|Calculs mêlés (calcul mental et tables), vite et juste',
     },
     lettres: {
       objectifs: 'Reconnaître les voyelles|Reconnaître les consonnes|Relier capitales et minuscules|Relier script et attaché|Nommer toutes les lettres',
@@ -35,7 +35,7 @@ export const CONTENU = catalogue({
         objectifs: '×2, ×5 ha ×10|×3 ha ×4|×6 ha ×7|×8 ha ×9|An holl daolennoù, dre ar c’hemmesk|An holl daolennoù, hep ehan (30 e 3 munut)', // br: à relire
       },
       'calcul-mental': {
-        objectifs: 'Sammadennoù ha lamadennoù|Daouoù ha hanterioù|Klokaat da 10, d’an dekvedenn ha da 100|Jedadenn ijinus : ± dekvedennoù, ± 9, tremen dekvedenn|× 10, × 100 ha taolennoù|Jedadennoù kemmesk, buan ha mat', // br: à relire
+        objectifs: 'Sammadennoù ha lamadennoù|Daouoù ha hanterioù|Klokaat da 10, d’an dekvedenn ha da 100|Jedadenn ijinus : ± dekvedennoù, ± 9, tremen dekvedenn|× 10, × 100 ha taolennoù|Jedadennoù kemmesk (jedadenn e-pad ar sonjal ha taolennoù), buan ha mat', // br: à relire
       },
       lettres: {
         objectifs: 'Anavezout ar vogalennoù|Anavezout ar c’hensonennoù|Stagañ pennlizherennoù ha lizherennoù bihan|Stagañ skript ha a-stag|Envel an holl lizherennoù', // br: à relire

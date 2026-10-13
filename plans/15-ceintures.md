@@ -384,3 +384,12 @@ Plan du §19 exécuté. `src/ceintures/pistes.ts` dit, pour chaque ceinture d'un
 Supprimés : l'exercice `ceintures-brevet` (5 fichiers), sa page, son générateur (`brevets.ts`), ses textes et ses instantanés. L'onglet « Ceintures » (`OngletCeintures.vue`) a la classe de l'exercice, le choix de la ceinture (couleur ; grisée si elle n'existe pas dans la classe),
 et pour les tables leurs options (tables au choix, ×11 ×12 en bonus, jusqu'à 12). Pas de divisions (l'exercice des tables n'en fait pas) ; pas de ceinture « × 10 et tables » au CP du calcul mental. Prénom : la ligne Prénom / Date de la feuille.
 Tests : 100+ cas dans `tests/ceintures.test.mjs` (réglages acceptés tels quels par chaque exercice et chaque classe, tirage coupé, tables de la ceinture, corrigé unique, graine, breton).
+
+## 21. Fait : les deux « pas encore reliés » (2026-10-13)
+
+- **Plusieurs blocs par ceinture** : `CeintureDePiste.blocs` (exercice, réglages, questions) ; `blocsDe(piste, indice)` ; un brevet = un en-tête, un bloc par exercice (titre de l'exercice, total des questions partagé à parts égales, les premiers blocs prennent le reste), un cadre de résultat, un seul corrigé
+  (un sous-corrigé par exercice). Première utilisation : la dernière ceinture du calcul mental mêle le calcul mental et les tables (CE1 à CM2). `ceintureDisponible` demande que chaque exercice ait la classe.
+- **Brevet sur mesure** (`/ceintures/brevet`, page de l'extension, lien dans le bloc des réglages) : on choisit la classe, des exercices (ceux dont la fiche se compte et se coupe : `brevetPossible`), la ceinture (couleur) et un titre ; le brevet est l'assemblage de leurs fiches sous l'en-tête de ceinture.
+  C'est ce qui manquait à `/assemblage` (qui reste générique, sans mention des ceintures : la règle des extensions du §14 tient).
+- **Les choix de ceinture suivent la palette** (`nbCeinturesDe` : la piste, le nombre choisi, les couleurs de la palette) : onglet des exercices, diplôme, brevet sur mesure ; une ceinture au-delà est refusée par `brevetPapier`.
+Limites : les exercices en plusieurs parties (monnaie) ou sans questions (écriture) ne font pas de bloc ; pas de réglages d'exercice par bloc dans le brevet sur mesure (défauts de la classe) ; la piste « sur mesure » n'est pas mémorisée comme piste (seulement ses choix).

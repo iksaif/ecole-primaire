@@ -7,10 +7,10 @@ export default {
   titre: 'Renkañ an niveroù',
   description: "Eus ar bihanañ d'ar brasañ",
   nombresDe: '{niv} — niveroù 1 da {n}',
-  petitGrand: "Eus ar bihanañ d'ar brasañ",
-  croissant: 'O kreskiñ',
-  decroissant: 'O tigreskiñ',
-  melange: 'Kemmesket',
+  sens: 'E peseurt tu renkañ ?', // br: à relire
+  croissant: "Eus ar bihanañ d'ar brasañ", // br: à relire
+  decroissant: "Eus ar brasañ d'ar bihanañ", // br: à relire
+  melange: 'An daou, dre zegouezh', // br: à relire
   combien: 'Pet niver da renkañ ?',
   rangeCroissant: "Renk eus ar bihanañ d'ar brasañ",
   rangeDecroissant: "Renk eus ar brasañ d'ar bihanañ",

@@ -5,7 +5,7 @@
     <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" pictogrammes images
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" :libelle="libelleNiveau" :icone="iconeNiveau" />
-      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="sens" v-model="config.sens" :titre="t('ranger.petitGrand')"
+      <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="sens" v-model="config.sens" :titre="t('ranger.sens')"
         :libelle="s => t(`ranger.${s === 'mix' ? 'melange' : s}`)" :icone="s => ICONES_SENS[String(s)]" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="taille" v-model="config.taille" :titre="t('ranger.combien')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />

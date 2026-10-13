@@ -11,6 +11,8 @@ import type { Fragment } from './fragment.ts'
 export interface Bloc {
   /** titre du bloc ; absent : celui de la fiche */
   titre?: string
+  /** pas de titre pour ce bloc (ni dans le bloc ni dans le corrigé) : la feuille le dit déjà ailleurs */
+  sansTitre?: boolean
   fragment: Fragment
 }
 
@@ -28,6 +30,11 @@ export interface OptionsAssemblage {
   entete?: boolean
   /** chaque bloc commence une page (défaut : non) */
   pageParBloc?: boolean
+  /** HTML posé après la ligne Prénom / Date et avant les blocs (un en-tête de feuille) ; `css` : ses styles */
+  avant?: string
+  /** HTML posé après les blocs et avant le corrigé (un cadre de résultat) */
+  apres?: string
+  css?: string
 }
 
 const ENTETE = /<p class="entete">[\s\S]*?<\/p>/g
@@ -55,12 +62,13 @@ const CSS_ASSEMBLAGE = `
 
 /** Le titre affiché d'un bloc : le sien, ou le titre de la fiche (le sien propre : `h1` du fragment) ; vide si la fiche n'en a pas. */
 function titreDuBloc(b: Bloc): string {
+  if (b.sansTitre) return ''
   if (b.titre) return echapper(b.titre)
   if (b.fragment.h1 === null) return ''
   return b.fragment.h1 ?? echapper(b.fragment.titre)
 }
 
-export function assemblerFiches({ titre, langue, blocs, corrige, police, cssPolices, entete = true, pageParBloc = false }: OptionsAssemblage): string {
+export function assemblerFiches({ titre, langue, blocs, corrige, police, cssPolices, entete = true, pageParBloc = false, avant = '', apres = '', css: cssEnPlus = '' }: OptionsAssemblage): string {
   const parties = blocs.map(b => ({ bloc: b, titre: titreDuBloc(b), ...separer(b.fragment.corps) }))
   const html = parties.map((p, i) => `<section class="bloc bloc-${i}${pageParBloc ? ' bloc-page' : ''}">
       ${p.titre ? `<h2 class="titre-bloc">${p.titre}</h2>` : ''}${p.sans}</section>`).join('\n')
@@ -69,9 +77,9 @@ export function assemblerFiches({ titre, langue, blocs, corrige, police, cssPoli
   const sectionCorrige = corriges.length ? `<section class="corrige"><h2>${echapper(corrige)}</h2>${corriges.join('\n')}</section>` : ''
   // les @font-face des fragments, une fois chacun
   const polices = [...new Set([cssPolices ?? '', ...blocs.map(b => b.fragment.cssPolices)].filter(Boolean))].join('\n')
-  const css = [CSS_ASSEMBLAGE, ...blocs.map((b, i) => cssDuBloc(b.fragment.css, i))].join('\n')
+  const css = [CSS_ASSEMBLAGE, cssEnPlus, ...blocs.map((b, i) => cssDuBloc(b.fragment.css, i))].join('\n')
   return documentFiche({
     titre, langue, police, cssPolices: polices, css, largeur: '700px', marge: '1.2cm',
-    corps: `${entete ? ligneNomDate(langue) : ''}${html}${sectionCorrige}`,
+    corps: `${entete ? ligneNomDate(langue) : ''}${avant}${html}${apres}${sectionCorrige}`,
   })
 }

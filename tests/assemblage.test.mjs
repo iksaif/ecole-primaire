@@ -50,4 +50,19 @@ for (const langue of ['fr', 'br']) {
   verifier(page.includes('Mon titre') && !page.includes('class="entete"') && (page.match(/bloc-page/g) ?? []).length >= 2, 'titre du bloc donné, sans entête, une page par bloc')
 }
 
+console.log('En-tête, pied, bloc sans titre, tirage ajusté')
+{
+  const m = modules[0]
+  const fragment = fragmentDeExercice(m, { niveau: NIVEAU, graine: 3, langue: 'fr' })
+  const html = assemblerFiches({ titre: 'x', langue: 'fr', blocs: [{ sansTitre: true, fragment }], corrige: 'Corrigé', avant: '<div id="avant">A</div>', apres: '<div id="apres">B</div>', css: '#avant { color: red }' })
+  const iAvant = html.indexOf('id="avant"'), iBloc = html.indexOf('class="bloc bloc-0"'), iApres = html.indexOf('id="apres"'), iCorrige = html.indexOf('<section class="corrige"')
+  verifier(iAvant > 0 && iAvant < iBloc && iBloc < iApres && (iCorrige < 0 || iApres < iCorrige), 'avant, bloc, apres, puis le corrigé, dans cet ordre')
+  verifier(!html.includes('<h2 class="titre-bloc">') && !html.includes('<h3 class="titre-corrige">') && html.includes('#avant { color: red }'), 'sansTitre : ni titre de bloc ni titre de corrigé ; le CSS en plus est repris')
+  // ajuster : la fiche n'a que le début du tirage
+  const complet = fragmentDeExercice(m, { niveau: NIVEAU, graine: 3, langue: 'fr' })
+  const coupe = fragmentDeExercice(m, { niveau: NIVEAU, graine: 3, langue: 'fr', ajuster: t => (Array.isArray(t) ? t.slice(0, 3) : { ...t, questions: t.questions.slice(0, 3) }) })
+  const nbQuestions = f => (f.corps.match(/class="num"/g) ?? []).length
+  verifier(nbQuestions(coupe) === 3 && nbQuestions(complet) > 3 && coupe.corps !== complet.corps, `ajuster : ${nbQuestions(coupe)} questions au lieu de ${nbQuestions(complet)}`)
+}
+
 process.exit(nbEchecs() ? 1 : 0)

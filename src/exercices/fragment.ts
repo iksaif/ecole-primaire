@@ -15,15 +15,18 @@ export interface DemandeFragment {
   reglages?: Record<string, unknown>
   /** la préférence des extensions (ParamsFiche.extensions) */
   extensions?: Readonly<Record<string, unknown>>
+  /** transforme le tirage avant la mise en page (couper au nombre de questions voulu, par exemple) ; sans lui, la fiche est celle de l'exercice */
+  ajuster?: (tirage: unknown) => unknown
 }
 
 /** L'exercice a-t-il une fiche que l'on peut assembler ? */
 export const estAssemblable = (m: ModuleQuelconque): boolean => typeof m.generateur?.questionsFiche === 'function' && typeof m.fiche?.fiche === 'function'
 
 /** Le fragment de la fiche d'un exercice : mêmes appels que le build des PDF (`questionsFiche` puis `fiche`). */
-export function fragmentDeExercice(m: ModuleQuelconque, { niveau, graine, langue, reglages = {}, extensions }: DemandeFragment): Fragment {
+export function fragmentDeExercice(m: ModuleQuelconque, { niveau, graine, langue, reglages = {}, extensions, ajuster }: DemandeFragment): Fragment {
   const config = reglagesDuNiveau(m.definition, { ...reglages, niveau })
   const T = traducteurExercice(m.textes, langue)
-  const questions = m.generateur.questionsFiche({ niveau: config.niveau, reglages: config, rng: creerRng(graine), T, langue })
+  const tirage = m.generateur.questionsFiche({ niveau: config.niveau, reglages: config, rng: creerRng(graine), T, langue })
+  const questions = ajuster ? ajuster(tirage) : tirage
   return fragmentDe(() => m.fiche.fiche({ questions, reglages: config, T, langue, extensions }))
 }

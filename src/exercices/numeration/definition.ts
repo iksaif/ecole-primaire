@@ -33,9 +33,10 @@ export default definir({
   },
 
   niveaux: {
-    cp: { reglages: { types: cases(SANS_SUITES), plage: choix([100]) } },
-    ce1: { reglages: { types: cases(TYPES), plage: choix([100, 1000], { defaut: 1000 }) } },
-    ce2: { reglages: { types: cases(TYPES), plage: choix([1000, 10000], { defaut: 10000 }) } },
+    // « Nombres jusqu'à » : les valeurs proposées, ou n'importe quel entier de 20 au plus grand nombre du niveau (« Autre… »)
+    cp: { reglages: { types: cases(SANS_SUITES), plage: choix([100], { libre: { min: 20, max: 100 } }) } },
+    ce1: { reglages: { types: cases(TYPES), plage: choix([100, 1000], { defaut: 1000, libre: { min: 20, max: 1000 } }) } },
+    ce2: { reglages: { types: cases(TYPES), plage: choix([1000, 10000], { defaut: 10000, libre: { min: 20, max: 10000 } }) } },
   },
 
   // fiches par compétence (adresses historiques : `exercices-nombres-…`). Titres et descriptions : `fiche.<id>` de textes.ts.

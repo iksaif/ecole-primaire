@@ -29,7 +29,8 @@ export interface DonneesNiveau {
   lettresMax?: number
 }
 
-export interface Contexte { rng: Rng, T: Traducteur<Cle>, niv: DonneesNiveau, max: number }
+/** `max` : l'échelle (100, 1 000, 10 000) ; `borne` : le plus grand nombre voulu (« Nombres jusqu'à »), égal à `max` pour les plages d'origine. */
+export interface Contexte { rng: Rng, T: Traducteur<Cle>, niv: DonneesNiveau, max: number, borne: number }
 
 // ── Les questions ──
 interface Commune { cle: string, valeurs: number[], enLettres?: boolean, consigne: string, texte: string, texteLong?: boolean, libelle: string, attendu: string }
@@ -79,7 +80,13 @@ interface OptionsNombre { zeros?: boolean, dizainesDifficiles?: number }
 
 // Tire un nombre « intéressant » ayant le nombre de chiffres de la plage,
 // avec régulièrement des 0 (305, 340, 4 060) et des dizaines 70/80/90.
-function tirerNombre(rng: Rng, max: number, { zeros = true, dizainesDifficiles = 0.2 }: OptionsNombre = {}): number {
+function tirerNombre(rng: Rng, max: number, options: OptionsNombre = {}, borne = max): number {
+  let n = tirerNombreBrut(rng, max, options)
+  // une borne sous l'échelle : on retire (jamais pour une plage d'origine : le premier tirage passe, le flux de hasard est inchangé)
+  for (let i = 0; i < 200 && n > borne; i++) n = tirerNombreBrut(rng, max, options)
+  return Math.min(n, borne)
+}
+function tirerNombreBrut(rng: Rng, max: number, { zeros = true, dizainesDifficiles = 0.2 }: OptionsNombre): number {
   const k = nbChiffres(max)
   const ch = [rng.entier(1, 9), ...Array.from({ length: k - 1 }, () => rng.entier(0, 9))]
   if (rng.vrai(dizainesDifficiles)) ch[k - 2] = rng.entier(7, 9)
@@ -92,8 +99,8 @@ function tirerNombre(rng: Rng, max: number, { zeros = true, dizainesDifficiles =
 }
 
 // Nombre à écrire en lettres : au CP, pas au-delà de `lettresMax` (50) ; sinon tiré comme les autres
-function tirerNombreEnLettres({ rng, niv, max }: Contexte, options: OptionsNombre): number {
-  return niv.lettresMax && max > niv.lettresMax ? rng.entier(10, niv.lettresMax) : tirerNombre(rng, max, options)
+function tirerNombreEnLettres({ rng, niv, max, borne }: Contexte, options: OptionsNombre): number {
+  return niv.lettresMax && max > niv.lettresMax ? rng.entier(Math.min(10, borne), Math.min(niv.lettresMax, borne)) : tirerNombre(rng, max, options, borne)
 }
 
 /** Les pas d'un niveau pour une plage : une donnée manquante est une erreur de déclaration, pas un tirage au sort. */
@@ -103,8 +110,8 @@ function pasDe(table: DonneesNiveau['pasDroite'] | undefined, max: number, nom: 
   return pas
 }
 
-export function genDecomposer({ rng, T, max }: Contexte): QDecomposerCdu | QNombre {
-  const n = tirerNombre(rng, max)
+export function genDecomposer({ rng, T, max, borne }: Contexte): QDecomposerCdu | QNombre {
+  const n = tirerNombre(rng, max, undefined, borne)
   const dec = decomposer(n)
   const champs = champsPour(max)
   const reponse: Chiffres = Object.fromEntries(champs.map(ch => [ch, dec[ch]]))
@@ -130,8 +137,8 @@ export function genDecomposer({ rng, T, max }: Contexte): QDecomposerCdu | QNomb
   }
 }
 
-export function genRepresentation({ rng, T, max }: Contexte): QNombre {
-  const n = tirerNombre(rng, max, { dizainesDifficiles: 0 })
+export function genRepresentation({ rng, T, max, borne }: Contexte): QNombre {
+  const n = tirerNombre(rng, max, { dizainesDifficiles: 0 }, borne)
   const { milliers: m, centaines: c } = decomposer(n)
   let { dizaines: d, unites: u } = decomposer(n)
   // Parfois plus de 9 cubes : il faut faire un échange (1 dizaine = 10 unités)
@@ -213,8 +220,8 @@ export function genChiffresLettres(ctx: Contexte): QChoix {
   }
 }
 
-export function genComparer({ rng, T, max }: Contexte): QChoix {
-  const a = tirerNombre(rng, max, { dizainesDifficiles: 0 })
+export function genComparer({ rng, T, max, borne }: Contexte): QChoix {
+  const a = tirerNombre(rng, max, { dizainesDifficiles: 0 }, borne)
   const ch = chiffresDe(a), k = ch.length
   let b: number
   const r = rng()
@@ -227,7 +234,7 @@ export function genComparer({ rng, T, max }: Contexte): QChoix {
   else if (r < 0.75 && k > 2) b = tirerNombre(rng, Math.pow(10, k - 1))        // un chiffre de moins
   else b = a - a % Math.pow(10, k - 1) + rng.entier(0, Math.pow(10, k - 1) - 1)  // même premier chiffre
   if (b < 1 || (b === a && r >= 0.1)) b = a + (rng.vrai(0.5) ? 1 : 10)
-  if (b > max) b = a - 1
+  if (b > borne) b = a - 1
   const [x, y] = rng.vrai(0.5) ? [a, b] : [b, a]
   const reponse = x < y ? '<' : x > y ? '>' : '='
   return {
@@ -237,12 +244,12 @@ export function genComparer({ rng, T, max }: Contexte): QChoix {
   }
 }
 
-export function genSuites({ rng, T, niv, max }: Contexte): QNombre {
+export function genSuites({ rng, T, niv, max, borne }: Contexte): QNombre {
   const r = rng()
   if (r < 0.2) {
     // juste après / juste avant, souvent sur un passage de dizaine, centaine ou millier
     const apres = rng.vrai(0.5)
-    let n = tirerNombre(rng, max, { zeros: false, dizainesDifficiles: 0 })
+    let n = tirerNombre(rng, max, { zeros: false, dizainesDifficiles: 0 }, borne)
     if (rng.vrai(0.5)) n = apres ? n - n % 10 + 9 : n - n % 10
     if (max > 100 && rng.vrai(0.3)) n = apres ? n - n % 100 + 99 : n - n % 100
     if (max > 1000 && rng.vrai(0.3)) n = apres ? n - n % 1000 + 999 : n - n % 1000
@@ -314,25 +321,25 @@ export function genDroite({ rng, T, niv, max }: Contexte): QNombre {
   }
 }
 
-export function genRanger({ rng, T, niv, max }: Contexte): QOrdre {
+export function genRanger({ rng, T, niv, max, borne }: Contexte): QOrdre {
   const nb = niv.nbRanger
   const vus = new Set<number>()
-  const base = tirerNombre(rng, max, { dizainesDifficiles: 0 })
+  const base = tirerNombre(rng, max, { dizainesDifficiles: 0 }, borne)
   vus.add(base)
   const ch = chiffresDe(base), k = ch.length
   // deux derniers chiffres inversés (piège classique : 352 / 325)
   const tab = [...ch];
   [tab[k - 2], tab[k - 1]] = [tab[k - 1], tab[k - 2]]
   const inv = +tab.join('')
-  if (inv >= 10 && inv <= max) vus.add(inv)
+  if (inv >= 10 && inv <= borne) vus.add(inv)
   const unite = Math.pow(10, k - 1)          // 10, 100 ou 1000
   const tete = ch[0]
   let essais = 0
   while (vus.size < nb && essais++ < 200) {
     let v: number
-    if (k === 2) v = rng.entier(10, 99)
+    if (k === 2) v = rng.entier(10, Math.min(99, borne))
     else v = (rng.vrai(0.6) ? tete : rng.entier(Math.max(1, tete - 1), Math.min(9, tete + 1))) * unite + rng.entier(0, unite - 1)
-    if (v >= 1 && v <= max) vus.add(v)
+    if (v >= 1 && v <= borne) vus.add(v)
   }
   const nombres = rng.melanger([...vus])
   const reponse = [...nombres].sort((a, b) => a - b)

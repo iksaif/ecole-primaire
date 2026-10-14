@@ -26,9 +26,33 @@ const CSS = `
       .reponses { columns: 2; column-gap: 2rem; font-size: 1.05rem; line-height: 1.9; }
       .reponses li { break-inside: avoid; font-weight: 700; }`
 
+// la consigne commune (seulement quand elle est écrite : une fiche à types mélangés garde exactement son HTML d'avant)
+const CSS_CONSIGNE = `
+      .consigne-commune { font-size: 1.2rem; margin: .9rem 0 .2rem; }`
+
 const LIGNE = '<span class="case-ligne"></span>'
 
-function questionPapier(qu: Question, i: number, T: (cle: Cle, params?: Record<string, unknown>) => string): string {
+type Traduire = (cle: Cle, params?: Record<string, unknown>) => string
+
+/**
+ * La consigne d'une question, quand elle est la même pour toute une série (null : elle se confond avec la question, ou varie).
+ * Si toutes les questions de la fiche ont la même, elle s'écrit une seule fois en tête et les questions n'en gardent que le contenu.
+ */
+function consigneDe(qu: Question, T: Traduire): string | null {
+  switch (qu.type) {
+    case 'representation': return T('pRepresente')
+    case 'lettresChiffres': return T('uLettresChiffres')
+    case 'chiffresLettres': return T('uChiffresLettres')
+    case 'comparer': return T('uComparer')
+    case 'droite': return T('pFlecheQ')
+    case 'ranger': return T('pRange')
+    case 'suites': return qu.termes ? T('pSuite') : null   // « juste après », « + 10 » : la question EST la consigne
+    case 'decomposer': return null
+  }
+}
+
+/** `commune` : la consigne est déjà écrite en tête, la question n'en garde que le contenu. */
+function questionPapier(qu: Question, i: number, T: Traduire, commune: boolean): string {
   const num = `<span class="num">${i + 1}.</span>`
   switch (qu.type) {
     case 'decomposer':
@@ -38,36 +62,43 @@ function questionPapier(qu: Question, i: number, T: (cle: Cle, params?: Record<s
       }
       return `<div class="q">${num}<b>${qu.texte}</b> = ${LIGNE}</div>`
     case 'representation':
+      if (commune) return `<div class="q bloc">${num}<div class="svg">${qu.svg}</div>${T('pCestLeNombre')} ${LIGNE}</div>`
       return `<div class="q bloc">${num}${T('pRepresente')} <small>${T('pLegende', { m: qu.milliers ? T('pLegendeM') : '' })}</small><div class="svg">${qu.svg}</div>${T('pCestLeNombre')} ${LIGNE}</div>`
     case 'lettresChiffres':
-      return `<div class="q">${num}<b>${qu.texte}</b> → ${T('pEnChiffres')} ${LIGNE}</div>`
+      return `<div class="q">${num}<b>${qu.texte}</b> → ${commune ? '' : `${T('pEnChiffres')} `}${LIGNE}</div>`
     case 'chiffresLettres':
+      if (commune) return `<div class="q">${num}<b>${qu.texte}</b> <span class="case-ligne longue"></span></div>`
       return `<div class="q">${num}${T('pEcrisLettres', { n: `<b>${qu.texte}</b>` })} <span class="case-ligne longue"></span></div>`
     case 'comparer':
-      return `<div class="q">${num}<b>${qu.libelle.replace('…', '<span class="case"></span>')}</b> <small>${echapper(T('pComparerAide'))}</small></div>`
+      return `<div class="q">${num}<b>${qu.libelle.replace('…', '<span class="case"></span>')}</b>${commune ? '' : ` <small>${echapper(T('pComparerAide'))}</small>`}</div>`
     case 'suites':
       if (qu.termes) {
         // les suites à trou sont plus simples à reconstruire proprement
         const termes = qu.termes.map((v, k) => (k === qu.trou ? LIGNE : `<b>${fmt(v)}</b>`)).join(', ')
-        return `<div class="q">${num}${T('pSuite')} ${termes}</div>`
+        return `<div class="q">${num}${commune ? '' : `${T('pSuite')} `}${termes}</div>`
       }
       if (qu.texte.endsWith('= ?')) return `<div class="q">${num}<b>${qu.texte.replace('= ?', '=')}</b> ${LIGNE}</div>`
       return `<div class="q">${num}${qu.texte} : ${LIGNE}</div>`
     case 'droite':
-      return `<div class="q bloc">${num}${T('pFlecheQ')} <small>${T('pFlecheAide', { pas: fmt(qu.pas ?? 1) })}</small><div class="svg">${qu.svg}</div>${T('pFlecheMontre')} ${LIGNE}</div>`
+      return `<div class="q bloc">${num}${commune ? '' : `${T('pFlecheQ')} `}<small>${T('pFlecheAide', { pas: fmt(qu.pas ?? 1) })}</small><div class="svg">${qu.svg}</div>${T('pFlecheMontre')} ${LIGNE}</div>`
     case 'ranger':
-      return `<div class="q bloc">${num}${T('pRange')} <b>${qu.nombres.map(fmt).join(' &nbsp; ; &nbsp; ')}</b><div style="margin-top:.6rem;">${qu.nombres.map(() => LIGNE).join(' &lt; ')}</div></div>`
+      return `<div class="q bloc">${num}${commune ? '' : `${T('pRange')} `}<b>${qu.nombres.map(fmt).join(' &nbsp; ; &nbsp; ')}</b><div style="margin-top:.6rem;">${qu.nombres.map(() => LIGNE).join(' &lt; ')}</div></div>`
   }
 }
 
 export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const niv = reglages.niveau.toUpperCase()
   const titre = `${T('titre', { n: fmt(reglages.plage) })} — ${niv}`
+  // la même consigne pour toutes les questions (un seul type d'exercice) : écrite une fois, en tête
+  const consignes = new Set(qs.map(qu => consigneDe(qu, T)))
+  const unique = consignes.size === 1 ? [...consignes][0] : null
+  const legende = unique && qs.some(qu => qu.type === 'representation')
+    ? ` <small>${T('pLegende', { m: qs.some(qu => qu.type === 'representation' && qu.milliers) ? T('pLegendeM') : '' })}</small>` : ''
   return documentFiche({
-    titre, h1: titre, langue, police, cssPolices, css: CSS,
+    titre, h1: titre, langue, police, cssPolices, css: unique ? CSS + CSS_CONSIGNE : CSS,
     corps: `<p class="infos">${T('pNbQuestions', { n: qs.length })}</p>
-    ${ligneNomDate(langue)}
-    ${qs.map((qu, i) => questionPapier(qu, i, T)).join('')}
+    ${ligneNomDate(langue)}${unique ? `\n    <p class="consigne-commune"><b>${unique}</b>${legende}</p>` : ''}
+    ${qs.map((qu, i) => questionPapier(qu, i, T, !!unique)).join('')}
     <section class="corrige"><h2>${T('corrige')}</h2>
     <ol class="reponses">${qs.map(qu => `<li>${qu.attendu}</li>`).join('')}</ol></section>`,
   })

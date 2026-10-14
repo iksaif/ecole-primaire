@@ -56,6 +56,10 @@ export const CONTENU = catalogue({
   pFlecheMontre: 'La flèche montre',
   pRange: 'Range du plus petit au plus grand :',
   pSuite: 'Complète la suite :',
+  // la consigne écrite UNE fois en tête quand toutes les questions de la fiche sont du même type (fiche.ts)
+  uLettresChiffres: 'Écris ces nombres en chiffres :',
+  uChiffresLettres: 'Écris ces nombres en lettres :',
+  uComparer: 'Compare ces nombres avec < , = ou > :',
   pNbQuestions: '{n} questions',
 
   fiche: {
@@ -132,6 +136,9 @@ export const CONTENU = catalogue({
     pFlecheMontre: 'Ar bir a ziskouez',
     pRange: "Renk eus ar bihanañ d'ar brasañ :",
     pSuite: 'Kloka an heuliad :', // br: à relire
+    uLettresChiffres: 'Skriv an niveroù-mañ e sifroù :', // br: à relire
+    uChiffresLettres: 'Skriv an niveroù-mañ e lizherennoù :', // br: à relire
+    uComparer: 'Keñveriañ an niveroù-mañ gant < , = pe > :', // br: à relire
     pNbQuestions: '{n} goulenn',
 
     fiche: {

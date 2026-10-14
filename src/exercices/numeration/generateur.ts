@@ -53,10 +53,11 @@ const DONNEES: Readonly<Record<string, DonneesNiveau>> = {
     pasPlusMoins: { 100: [10], 1000: [10, 100] },
     nbRanger: 5,
   },
+  // (l'échelle 100 n'est atteinte que par un « Nombres jusqu'à » libre sous 100 : mêmes pas qu'au CE1)
   ce2: {
-    pasDroite: { 1000: [1, 10, 100], 10000: [10, 100, 1000] },
-    pasSuites: { 1000: [1, 10, 100], 10000: [10, 100, 1000] },
-    pasPlusMoins: { 1000: [10, 100], 10000: [10, 100, 1000] },
+    pasDroite: { 100: [1, 10], 1000: [1, 10, 100], 10000: [10, 100, 1000] },
+    pasSuites: { 100: [1, 2, 5, 10], 1000: [1, 10, 100], 10000: [10, 100, 1000] },
+    pasPlusMoins: { 100: [10], 1000: [10, 100], 10000: [10, 100, 1000] },
     nbRanger: 5,
   },
 }
@@ -74,8 +75,30 @@ const GENERATEURS: Readonly<Record<TypeQuestion, (ctx: Contexte) => Question>> =
 
 const niveauConnu = (niveau: Classe): Classe => (DEFINITION.niveaux[niveau] ? niveau : DEFINITION.niveauDefaut)
 
-/** Plages proposées au niveau (définition) : la plus grande est le défaut quand la plage demandée n'en fait pas partie. */
+/** Plages proposées au niveau (définition) : la plus grande est le plafond du niveau, et le défaut quand la plage demandée est invalide. */
 const plagesDu = (niveau: Classe): readonly number[] => DEFINITION.niveaux[niveau]?.options?.plage ?? []
+
+/** La plus petite « Nombres jusqu'à » libre : en dessous, il n'y a presque plus de nombres à tirer (voir `libre` de la définition). */
+export const PLAGE_MIN = 20
+
+/**
+ * « Nombres jusqu'à N » : N est la borne (un entier de PLAGE_MIN au plafond du niveau) ; son ÉCHELLE est la puissance de dix qui la
+ * contient (100, 1000, 10000) : elle donne le nombre de chiffres et les pas des droites et des suites, qui sont écrits pour ces trois
+ * échelles. Les générateurs tirent à l'échelle ; ce qui dépasse la borne est écarté (`depasse`).
+ */
+export const echelleDe = (borne: number): number => (borne <= 100 ? 100 : borne <= 1000 ? 1000 : 10000)
+
+/**
+ * Un nombre de la question dépasse-t-il la borne ? (les droites graduées montrent leurs deux extrémités : `valeurs`). Les fausses
+ * propositions d'un choix (« chiffres → lettres » : le nombre testé d'abord, puis ses distracteurs) ne comptent pas : une erreur
+ * plausible peut être juste au-dessus.
+ */
+export const depasse = (q: Question, borne: number): boolean => (q.type === 'chiffresLettres' ? q.valeurs.slice(0, 1) : q.valeurs).some(v => v > borne)
+
+/** La borne demandée, ou le plafond du niveau quand elle est invalide ou le dépasse (niveau changé : 10 000 mémorisé au CP). */
+export function borneDemandee(plage: unknown, plafond: number): number {
+  return typeof plage === 'number' && Number.isInteger(plage) && plage >= PLAGE_MIN && plage <= plafond ? plage : plafond
+}
 
 // Répartit les types pour bien mélanger, sans jamais répéter une question
 function genererSansRepetition({ niveau, reglages, rng, T }: Pick<ParamsGenerateur<Reglages, Cle>, 'niveau' | 'reglages' | 'rng' | 'T'>, nb: number): Question[] {
@@ -83,7 +106,8 @@ function genererSansRepetition({ niveau, reglages, rng, T }: Pick<ParamsGenerate
   const niv = DONNEES[classe]
   if (!niv) throw new Error(`numération : niveau « ${classe} » absent des données`)
   const plages = plagesDu(classe)
-  const max = plages.includes(reglages.plage) ? reglages.plage : plages[plages.length - 1]
+  const borne = borneDemandee(reglages.plage, Math.max(...plages))
+  const max = echelleDe(borne)
   const types = (reglages.types ?? []).filter(t => GENERATEURS[t])
   if (!types.length) throw new Error('numération : aucun type d’exercice choisi')
   // types mélangés d'abord : avec moins de questions que de types, pas toujours les mêmes oubliés
@@ -96,7 +120,11 @@ function genererSansRepetition({ niveau, reglages, rng, T }: Pick<ParamsGenerate
     precedent = rang
     const type = echecs > 20 ? types[rng.entier(0, types.length - 1)] : ordre[rang]
     // (un tirage, comme dans l'ancienne vue : le flux de hasard, donc les fiches, ne changent pas)
-    return GENERATEURS[rng.choisir([type])]({ rng, T, niv, max })
+    const tirage = (): Question => GENERATEURS[rng.choisir([type])]({ rng, T, niv, max, borne })
+    let q = tirage()
+    // une borne qui n'est pas une puissance de dix : on retire tant qu'un nombre la dépasse (jamais pour 100, 1 000, 10 000 : le premier tirage passe)
+    for (let i = 0; i < 400 && depasse(q, borne); i++) q = tirage()
+    return q
   }, { cle: q => q.cle, essais: nb * 50 })
 }
 

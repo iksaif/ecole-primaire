@@ -26,7 +26,7 @@ interface ChoixQuelconque {
   /** valeurs proposées en plus, hors programme, avec la raison (infobulle), affichées « (hors programme) » */
   readonly horsProgramme: readonly { option: ValeurOption, raison: string }[]
   /** un nombre entier libre en plus des valeurs (bouton « Autre »), bornes incluses : le nombre de questions */
-  readonly libre?: Libre
+  readonly libre?: Libre | false
 }
 
 /** Un nombre entier libre, entre deux bornes incluses. */
@@ -34,6 +34,13 @@ export interface Libre { readonly min: number, readonly max: number }
 
 /** Le nombre de questions libre de tous les exercices : de 1 à 50, en plus des choix proposés (bouton « Autre… »). */
 export const NB_LIBRE: Libre = { min: 1, max: 50 }
+/** Sur une fiche imprimée, on veut parfois beaucoup plus : de 1 à 100. */
+export const NB_LIBRE_FICHE: Libre = { min: 1, max: 100 }
+/**
+ * Les réglages qui comptent des questions ont un nombre libre PAR DÉFAUT, sans rien déclarer : `nbQ` (à l'écran) et `nbFiche` (sur la fiche).
+ * Un exercice qui ne veut pas d'un nombre libre l'écrit : `choix([5, 10], { libre: false })`. Les bornes s'élargissent aux valeurs proposées (même en dessous : 0 = « tous »).
+ */
+const LIBRE_PAR_DEFAUT: Readonly<Record<string, Libre>> = { nbQ: NB_LIBRE, nbFiche: NB_LIBRE_FICHE }
 
 // Sans `defaut` : s'il y était, TypeScript en tirerait un `T` élargi à ValeurOption pour chaque appel de choix().
 type ChoixLu = ChoixQuelconque & { readonly defaut: ValeurOption | ValeurOption[] }
@@ -50,7 +57,7 @@ interface Ecarts<B, H> {
 
 type OptionsChoix<V, B, H> = { defaut?: NoInfer<V> } & Ecarts<B, H>
 /** Un choix de nombres peut aussi proposer un nombre libre : `choix([5, 10, 15], { libre: { min: 1, max: 60 } })`. */
-type OptionsChoixNombre<V, B, H> = OptionsChoix<V, B, H> & { libre?: Libre }
+type OptionsChoixNombre<V, B, H> = OptionsChoix<V, B, H> & { libre?: Libre | false }
 type OptionsCases<V, B, H> = { defaut?: readonly NoInfer<V>[] } & Ecarts<B, H>
 
 /**
@@ -60,10 +67,11 @@ type OptionsCases<V, B, H> = { defaut?: readonly NoInfer<V>[] } & Ecarts<B, H>
  */
 export function choix<const V extends string, const B extends string = never, const H extends string = never>(valeurs: readonly V[], options?: OptionsChoix<V, B, H>): Choix<V | B | H>
 export function choix<const V extends number, const B extends number = never, const H extends number = never>(valeurs: readonly V[], options: OptionsChoixNombre<V, B, H> & { libre: Libre }): Choix<number>
+export function choix<const V extends number, const B extends number = never, const H extends number = never>(valeurs: readonly V[], options: OptionsChoix<V, B, H> & { libre: false }): Choix<V | B | H>
 export function choix<const V extends number, const B extends number = never, const H extends number = never>(valeurs: readonly V[], options?: OptionsChoix<V, B, H>): Choix<V | B | H>
 export function choix<const V extends boolean, const B extends boolean = never, const H extends boolean = never>(valeurs: readonly V[], options?: OptionsChoix<V, B, H>): Choix<V | B | H>
-export function choix(valeurs: readonly ValeurOption[], { defaut = valeurs[0], bonus = [], horsProgramme = [], libre }: { defaut?: ValeurOption, libre?: Libre } & Ecarts<ValeurOption, ValeurOption> = {}): Choix<ValeurOption> {
-  return { [MARQUE]: true, valeurs, defaut, bonus, horsProgramme, ...(libre ? { libre } : {}) }
+export function choix(valeurs: readonly ValeurOption[], { defaut = valeurs[0], bonus = [], horsProgramme = [], libre }: { defaut?: ValeurOption, libre?: Libre | false } & Ecarts<ValeurOption, ValeurOption> = {}): Choix<ValeurOption> {
+  return { [MARQUE]: true, valeurs, defaut, bonus, horsProgramme, ...(libre === undefined ? {} : { libre }) }
 }
 
 /** Choix multiple (cases à cocher) : `cases(['lire', 'placer'])`, tout coché par défaut (`defaut` pour une partie). Chaînes OU nombres. */
@@ -142,10 +150,22 @@ export function decrireChoix(cle: string, choix: ChoixQuelconque, ou: string, er
   }
   if (Array.isArray(v.defaut) && !v.defaut.length) erreur(`${lieu} : défaut vide`)
   for (const h of v.horsProgramme) if (!h.raison) erreur(`${lieu} : horsProgramme « ${h.option} » sans raison`)
-  if (v.libre) verifierLibre(v.libre, proposees, lieu, erreur)
-  return { defaut: v.defaut as ValeurReglage, options: proposees as ValeurOption[], libre: v.libre }
+  const libre = libreDe(cle, v, proposees)
+  if (libre) verifierLibre(libre, proposees, lieu, erreur)
+  return { defaut: v.defaut as ValeurReglage, options: proposees as ValeurOption[], libre }
 }
 
+
+/** Le nombre libre d'un réglage : celui qu'il déclare, aucun s'il écrit `libre: false`, sinon celui des réglages qui comptent des questions. */
+function libreDe(cle: string, v: ChoixLu, proposees: readonly ValeurOption[]): Libre | undefined {
+  if (v.libre === false) return undefined
+  if (v.libre) return v.libre
+  const parDefaut = LIBRE_PAR_DEFAUT[cle]
+  // seulement un choix unique de nombres entiers (un choix multiple n'a pas de « Autre »)
+  if (!parDefaut || Array.isArray(v.defaut) || !proposees.every(x => typeof x === 'number' && Number.isInteger(x))) return undefined
+  // les bornes s'élargissent aux valeurs proposées (tables : `nbFiche` 0 = « tous les calculs », une valeur à part que le nombre libre accepte aussi)
+  return { min: Math.min(parDefaut.min, ...(proposees as number[])), max: Math.max(parDefaut.max, ...(proposees as number[])) }
+}
 
 /** Un nombre libre : des bornes entières, min ≤ max, et toutes les valeurs proposées (des nombres entiers) entre les deux. */
 function verifierLibre(libre: Libre, proposees: readonly ValeurOption[], lieu: string, erreur: (message: string) => never): void {

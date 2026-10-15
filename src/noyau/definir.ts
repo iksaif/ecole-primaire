@@ -172,7 +172,7 @@ export function definir<C extends SpecReglages = {}, N extends Partial<Record<Cl
 
   // les types de ReglagesDe décrivent ce que les contrôles ci-dessus viennent de vérifier : un seul point de conversion
   return {
-    id: spec.id, route: spec.route, domaine: spec.domaine, emoji: spec.emoji, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, extensions: spec.extensions ?? [], niveauDefaut,
+    id: spec.id, route: spec.route, domaine: spec.domaine, autresDomaines: spec.autresDomaines ?? [], emoji: spec.emoji, contenu: spec.contenu ?? 'interface', jeu: spec.jeu ?? true, extensions: spec.extensions ?? [], niveauDefaut,
     aleatoire: spec.aleatoire ?? true, bilanParClasse: spec.bilanParClasse ?? true, corrige: spec.corrige ?? true,
     reglages, options, ...(Object.keys(libres).length ? { libres } : {}), niveaux, fiches,
   } as unknown as DefinitionTypee<ReglagesDe<C, N>>

@@ -105,6 +105,8 @@ export interface DefinitionExercice<R extends object = Reglages> {
   /** route de l'app (« /maths/heure ») */
   route: string
   domaine: DomaineId
+  /** domaines des autres compétences de l'exercice (déclarés : l'exercice en travaille plusieurs) */
+  autresDomaines?: readonly DomaineId[]
   /** emoji de la carte du catalogue (une icône de src/images/icones.ts) ; défaut : celui du domaine */
   emoji?: NomIcone
   /** langue du contenu : 'fr' pour un exercice de français (toujours en français), sinon celle de l'interface */

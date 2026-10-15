@@ -55,6 +55,14 @@ export const EMOJIS = {
   flecheBas: '2B07',
   // les objets de la balance (src/exercices/mesures/masses.ts) ; boîte, doudou, bonbon, orange plus haut
   cadeau: '1F381', cle: '1F511', pasteque: '1F349', citrouille: '1F383',
+  // trier les images (src/exercices/trier/) ; les animaux, fruits, objets et nourritures déjà plus haut ne sont pas répétés
+  patte: '1F43E', pas: '1F463', plume: '1FAB6', panier: '1F9FA', cintre: '1FA9D', route: '1F6E3',
+  tshirt: '1F455', pantalon: '1F456', robe: '1F457', echarpe: '1F9E3', gant: '1F9E4', chaussette: '1F9E6',
+  bus: '1F68C', velo: '1F6B2', avion: '2708', bateau: '26F5',
+  aigle: '1F985', requin: '1F988', cheval: '1F434', souris: '1F401', singe: '1F412',
+  buche: '1FAB5', chaise: '1FA91', porte: '1F6AA', echelle: '1FA9C', engrenage: '2699', cloche: '1F514', cuillere: '1F944',
+  pageBlanche: '1F4C4', journal: '1F4F0', enveloppe: '2709', pelote: '1F9F6', fenetre: '1FA9F', lunettes: '1F453', ampoule: '1F4A1', pot: '1FAD9',
+  os: '1F9B4', herbe: '1F33F', miel: '1F36F', fromage: '1F9C0',
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */

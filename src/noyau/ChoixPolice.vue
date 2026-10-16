@@ -39,7 +39,7 @@ import { supprimerPolicePerso, policesPerso } from '../utils/impression.js'
 import { useLangue } from '../langues/useLangue.ts'
 import type { CleTexte } from '../langues/traduire.ts'
 
-type CleCadre = Exclude<Extract<CleTexte, `cadre.${string}`>, 'cadre.toutesTrouvees' | 'cadre.nomTrouvee' | 'cadre.nomIntrouvable'>
+type CleCadre = Exclude<Extract<CleTexte, `cadre.${string}`>, 'cadre.toutesTrouvees' | 'cadre.nomTrouvee' | 'cadre.nomIntrouvable' | 'cadre.apercu.page'>
 
 // icone : devant le libellé (« Présentation de la fiche » : OptionsFiche)
 const props = withDefaults(defineProps<{ type?: TypePolice, modelValue?: string, libelle?: string, aide?: boolean, icone?: NomIcone }>(),

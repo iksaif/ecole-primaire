@@ -49,6 +49,8 @@ export default {
   apercu: {
     titre: 'Rakwel', paysage: 'gweledva', portrait: 'poltred', // br: à relire (gweledva = paysage)
     titreCadre: 'Rakwel a-raok moullañ',
+    voir: 'Gwelet ar rakwel', barre: 'Rakwel ha moullañ', // br: à relire
+    page: 'Pajenn {n}', // br: à relire
     // br: à relire — les libellés exacts de la fenêtre d'impression dépendent de la langue du navigateur
     conseil: 'Alioù : er prenestr moullañ, dibab ar ment gwir (100 %) ha na azasait ket ouzh ar bajenn.',
   },

@@ -47,6 +47,10 @@ export default {
   apercu: {
     titre: 'Aperçu', paysage: 'paysage', portrait: 'portrait',
     titreCadre: 'Aperçu avant impression',
+    // la barre en bas de l'écran, tant que l'aperçu est plus bas dans la page
+    voir: 'Voir l’aperçu', barre: 'Aperçu et impression',
+    // la séparation entre deux feuilles, dans l'aperçu d'une fiche (là où l'impression passe à une nouvelle page)
+    page: 'Page {n}',
     conseil: 'Conseil : dans la fenêtre d’impression, choisis « Taille réelle / 100 % » et désactive « Ajuster à la page ».',
   },
   // les pictogrammes des consignes (OptionsFiche.vue, src/images/consignes.ts) ; la mention est celle qu'impose leur licence

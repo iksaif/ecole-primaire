@@ -43,7 +43,7 @@ import { useLangue } from '../langues/useLangue.ts'
 import type { CleTexte } from '../langues/traduire.ts'
 
 // les clés sans paramètre (celles à `{n}`, `{nom}` demandent leurs valeurs)
-type CleCadre = Exclude<Extract<CleTexte, `cadre.${string}`>, 'cadre.toutesTrouvees' | 'cadre.nomTrouvee' | 'cadre.nomIntrouvable'>
+type CleCadre = Exclude<Extract<CleTexte, `cadre.${string}`>, 'cadre.toutesTrouvees' | 'cadre.nomTrouvee' | 'cadre.nomIntrouvable' | 'cadre.apercu.page'>
 
 const props = defineProps<{ type: TypePolice, manquantes: string[] }>()
 const emit = defineEmits<{ choisir: [police: string] }>()

@@ -14,5 +14,6 @@ export default {
   reponseFiche: 'War ar follenn, ar bugel…', // br: à relire
   ecrire: 'a skriv an niver', // br: à relire
   entourer: 'a gelc’h an niver mat', // br: à relire
+  revoir: 'Gwelout en-dro', // br: à relire
   laReponse: 'An respont : {n}', // br: à relire
 } satisfies Traductions<typeof fr>

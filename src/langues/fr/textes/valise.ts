@@ -12,5 +12,6 @@ export default {
   reponseFiche: "Sur la fiche, l'enfant…",
   ecrire: 'écrit le nombre',
   entourer: 'entoure le bon nombre',
+  revoir: 'Revoir',
   laReponse: 'La réponse : {n}',
 } as const

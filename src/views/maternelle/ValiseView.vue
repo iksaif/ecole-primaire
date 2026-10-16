@@ -17,7 +17,9 @@
     <!-- Exercice : la scène, puis les nombres à toucher -->
     <QuestionJeu v-if="phase === 'jeu' && q" :jeu="jeu">
       <ConsigneParlee :key="jeu.index.value" class="consigne" :texte="phrase(q)" :verbes="['compte']" :niveau="config.niveau" />
-      <div :key="jeu.index.value" class="scene" :class="{ revele: repondu }" v-html="htmlBande(q, images, repondu)"></div>
+      <div :key="`${jeu.index.value}-${relecture}`" class="scene" :class="{ revele: repondu }" v-html="htmlBande(q, images, repondu)"></div>
+      <!-- la bande se déroule une fois ; ce bouton la rejoue (avant la réponse) -->
+      <div v-if="!repondu" class="revoir"><button type="button" class="btn btn-secondary" @click="relecture++"><Icone nom="rejouer" /> {{ t('valise.revoir') }}</button></div>
 
       <!-- PS : la quantité en constellation de points (pas de chiffre seul) -->
       <ChoixReponses grand :titre="phrase(q)" :options="q.options" :bonne="q.bonne" :repondu="repondu" :libelle="ps ? libelleChoix : null" @choisir="i => jeu.repondre({ choix: i })">
@@ -37,7 +39,7 @@
 
 <script setup lang="ts">
 // La valise — la vue : mince. Elle règle, pose et affiche ; niveaux, questions, correction, scène et fiche sont dans src/exercices/valise/.
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'
 import type { CleContenu } from '../../langues/catalogue.ts'
@@ -71,6 +73,8 @@ const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true }
 const T = traducteur(CONTENU, () => langueContenu.value)
 const libelleNiveau = (n: string): string => t('compter.jusqua', { niv: n.toUpperCase(), n: TOTAL_MAX[n as keyof typeof TOTAL_MAX] ?? 0 })
 const ps = computed(() => config.value.niveau === 'ps')
+// chaque appui sur « Revoir » rejoue l'animation : la bande est redessinée (clé)
+const relecture = ref(0)
 /** La question dite et écrite : celle de ce problème, en quelques mots. */
 const phrase = (q: Question): string => T(`question.${q.type}` as Cle)
 // PS : le bouton est une constellation, son nom pour les lecteurs d'écran est le nombre
@@ -92,6 +96,7 @@ const { mode, fiche, nouvelle } = useFicheExercice({
 </script>
 
 <style scoped>
+.revoir { display: flex; justify-content: center; margin: -.75rem 0 1.25rem; }
 .consigne { font-size: 1.3rem; font-weight: 800; margin-bottom: 1.25rem; color: var(--texte); }
 .scene {
   display: flex; flex-wrap: wrap; justify-content: center; align-items: center; min-height: 8rem;

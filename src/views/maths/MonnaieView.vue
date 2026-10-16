@@ -10,10 +10,8 @@
           :titre="t('communs.exercices')" :libelle="e => libelleExercice(e as TypeExercice)" :icone="e => ICONE_TYPE[String(e)]" />
         <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="centimes" v-model="config.centimes"
           :titre="t('monnaie.options')" :libelle="c => t(c ? 'monnaie.avecCentimes' : 'monnaie.eurosEntiers')">
-          <div v-if="modeCourant === 'jouer'" class="btn-group" style="margin-top:.5rem;">
-            <button type="button" class="level-btn" :class="{ active: config.aideTotal }" :aria-pressed="config.aideTotal" @click="config.aideTotal = !config.aideTotal">
-              {{ config.aideTotal ? '✔' : '✖' }} {{ t('monnaie.afficherTotal') }}
-            </button>
+          <div v-if="modeCourant === 'jouer'" style="margin-top:.5rem;">
+            <CaseReglage v-model="config.aideTotal" :libelle="t('monnaie.afficherTotal')" />
           </div>
         </ChoixReglage>
         <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
@@ -197,6 +195,7 @@ import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import CaseReglage from '../../noyau/CaseReglage.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'
 import BoutonSuivant from '../../noyau/BoutonSuivant.vue'
 import SaisieReponse from '../../noyau/SaisieReponse.vue'

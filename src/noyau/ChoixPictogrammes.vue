@@ -1,6 +1,6 @@
 <!--
   Les pictogrammes des consignes (src/images/consignes.ts, options de fiche : optionsFiche.ts) : en maternelle seulement (défaut :
-  l'élève ne lit pas encore), toujours ou jamais ; puis la ligne de crédit qu'impose leur licence (Sergio Palao, ARASAAC), qu'on peut
+  l'élève ne lit pas encore), toujours ou jamais ; puis la ligne de crédit qu'impose leur licence (Sergio Palao, ARASAAC : une case à cocher), qu'on peut
   retirer en sachant qu'il faut alors citer l'auteur en partageant la fiche. Dans « Sur la fiche » (OptionsFiche), si les consignes de
   l'exercice passent par consignesDe. Le même réglage vaut pour les consignes parlées à l'écran (ConsigneParlee). Accessibilité : comme ChoixImages, des groupes de boutons nommés, l'état dans aria-pressed.
 -->
@@ -14,12 +14,7 @@
       </button>
     </div>
     <template v-if="options.pictogrammes !== 'non'">
-      <div class="btn-group">
-        <button type="button" class="level-btn" data-valeur="mention" :class="{ active: options.mentionPictos }"
-          :aria-pressed="options.mentionPictos" @click="options.mentionPictos = !options.mentionPictos">
-          {{ t('cadre.pictos.mention') }}
-        </button>
-      </div>
+      <div class="mention"><CaseReglage v-model="options.mentionPictos" :libelle="t('cadre.pictos.mention')" /></div>
       <p v-if="!options.mentionPictos" class="note">{{ t('cadre.pictos.avis') }}</p>
     </template>
   </div>
@@ -28,6 +23,7 @@
 <script setup lang="ts">
 import { useId } from 'vue'
 import Icone from '../images/Icone.vue'
+import CaseReglage from './CaseReglage.vue'
 import { CHOIX_PICTOGRAMMES } from '../images/consignes.ts'
 import { useOptionsFiche } from './optionsFiche.ts'
 import { useLangue } from '../langues/useLangue.ts'
@@ -38,6 +34,6 @@ const options = useOptionsFiche()
 </script>
 
 <style scoped>
-.btn-group + .btn-group { margin-top: .4rem; }
+.mention { margin-top: .4rem; }
 .note { font-size: .85rem; color: var(--texte-doux); margin: .35rem 0 0; }
 </style>

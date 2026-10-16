@@ -1,7 +1,7 @@
 <!--
   Bloc « Présentation de la fiche » (clé cadre.surLaFiche), sous un trait qui le sépare des réglages du contenu, replié par défaut
   (<details> : son titre et le résumé des choix en cours, « Prénom et date · Corrigé sur une autre page · Andika ») : options communes à toutes les fiches d'exercice du noyau (optionsFiche.ts, dernier choix
-  mémorisé) — une ligne par préoccupation : « Prénom et date » (case à cocher, le slot ajoute des boutons à côté), le
+  mémorisé) — une ligne par préoccupation : « Prénom et date » (CaseReglage, le slot ajoute des boutons à côté), le
   corrigé (sans / sur une autre page / en bas à l'envers : un seul choix, en boutons radio d'une seule pièce), puis la police, les images et
   les pictogrammes des consignes (`pictogrammes` : selon la classe / toujours / jamais, et la ligne de crédit qu'impose leur licence).
   Affiché par CadreExercice en mode impression. `police` : false pour un exercice sans texte à mettre en police ; `images` : true pour
@@ -17,10 +17,7 @@
       <span class="resume">{{ resume }}</span>
     </summary>
     <div class="rang rang-entete">
-      <label class="pastille" :class="{ choisi: options.entete }">
-        <input v-model="options.entete" type="checkbox">
-        <span v-if="options.entete" aria-hidden="true">✓</span>{{ t('cadre.entete') }}
-      </label>
+      <CaseReglage v-model="options.entete" :libelle="t('cadre.entete')" />
       <slot />
     </div>
     <fieldset v-if="avecCorrige" class="rang segmente">
@@ -42,6 +39,7 @@ import { computed, defineAsyncComponent, useId } from 'vue'
 import type { Component } from 'vue'
 import Icone from '../images/Icone.vue'
 import ChoixPolice from './ChoixPolice.vue'
+import CaseReglage from './CaseReglage.vue'
 import { useOptionsFiche, CHOIX_CORRIGE } from './optionsFiche.ts'
 import { usePolices } from './polices.ts'
 import ChoixPictogrammes from './ChoixPictogrammes.vue'

@@ -5,7 +5,7 @@
     <GroupeReglages titre="Contenu" aide="…"> <ChoixReglage …/> … </GroupeReglages>
 -->
 <template>
-  <div class="config-section" role="group" :aria-labelledby="titre ? idTitre : undefined" :data-groupe="id || undefined">
+  <div class="config-section groupe-reglages" role="group" :aria-labelledby="titre ? idTitre : undefined" :data-groupe="id || undefined">
     <div v-if="titre" :id="idTitre" class="config-section-title">{{ titre }}</div>
     <slot />
     <p v-if="aide" class="aide-reglage">{{ aide }}</p>

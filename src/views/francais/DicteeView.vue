@@ -26,11 +26,11 @@
         </div>
       </div>
 
-      <div v-if="mode === 'imprimer'" class="config-section">
-        <div class="config-section-title">{{ t('dictee.pagesFiche') }}</div>
+      <div v-if="mode === 'imprimer'" class="config-section choix-multiple">
+        <div class="config-section-title">{{ t('dictee.pagesFiche') }}<span class="indice-multiple">{{ t('communs.plusieursChoix') }}</span></div>
         <div class="btn-group">
-          <button type="button" class="level-btn" :class="{ active: config.liste }" :aria-pressed="config.liste" @click="basculerPage('liste')"><Icone nom="presseFeuilles" /> {{ t('dictee.pageListe') }}</button>
-          <button type="button" class="level-btn" :class="{ active: config.dictee }" :aria-pressed="config.dictee" @click="basculerPage('dictee')"><Icone nom="crayon" /> {{ t('dictee.pageDictee') }}</button>
+          <button type="button" class="level-btn" :class="{ active: config.liste }" :aria-pressed="config.liste" @click="basculerPage('liste')"><span class="coche" aria-hidden="true">{{ config.liste ? '✓' : '+' }}</span><Icone nom="presseFeuilles" /> {{ t('dictee.pageListe') }}</button>
+          <button type="button" class="level-btn" :class="{ active: config.dictee }" :aria-pressed="config.dictee" @click="basculerPage('dictee')"><span class="coche" aria-hidden="true">{{ config.dictee ? '✓' : '+' }}</span><Icone nom="crayon" /> {{ t('dictee.pageDictee') }}</button>
         </div>
       </div>
       <div v-if="chargement" class="loading-badge" role="status"><span class="spinner"></span> {{ t('dictee.generation') }}</div>

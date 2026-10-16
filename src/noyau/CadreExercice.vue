@@ -24,7 +24,7 @@
   tabulation (celui qui est actif) et le panneau est relié à son onglet.
 -->
 <template>
-  <div class="config-box cadre-exercice" :class="{ imbrique, large: coteACote }">
+  <div class="config-box cadre-exercice" :class="{ imbrique, 'boite-cote-a-cote': coteACote }">
     <div v-if="!ficheSeule" class="modes" role="tablist" :aria-label="t('cadre.modes')" @keydown="touche">
       <button v-for="o in onglets" :key="o.id" :id="`${id}-onglet-${o.id}`" ref="boutons" type="button" role="tab" :aria-selected="ongletActif === o.id"
         :aria-controls="`${id}-panneau`" :tabindex="ongletActif === o.id ? 0 : -1" :class="{ actif: ongletActif === o.id }"
@@ -37,7 +37,7 @@
       <!-- l'onglet d'une extension (src/extensions/) prend toute la place du panneau -->
       <component :is="composantExtension" v-if="ongletOuvert && composantExtension" :exercice="exerciceDeLaPage" />
       <div v-else class="contenu" :class="{ 'cote-a-cote': coteACote }">
-        <div class="formulaire">
+        <div class="formulaire formulaire-lisible">
           <ChoixLangueContenu />
           <slot :mode="modeCourant" />
 
@@ -49,7 +49,7 @@
         <div v-if="modeCourant === 'jouer'" class="actions">
           <button type="button" class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')"><Icone nom="commencer" /> {{ t('communs.commencer') }}</button>
         </div>
-        <ApercuImpression v-else class="apercu-fiche" :html="ficheFinale" :fluide="true" :page-entiere="coteACote" :reglages="reglages">
+        <ApercuImpression v-else :html="ficheFinale" :fluide="true" :page-entiere="coteACote" :reglages="reglages">
           <template v-if="aleatoire" #actions>
             <button type="button" class="btn btn-ghost" @click="$emit('regenerer')"><Icone nom="nouvelle" /> {{ t('cadre.nouvelle') }}</button>
           </template>
@@ -165,20 +165,10 @@ function touche(e: KeyboardEvent) {
 }
 .modes button:hover { color: var(--texte); }
 .modes button.actif { background: white; color: var(--texte); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
-/* Le formulaire : titres en casse normale, foncés (plus lisibles que de petites capitales grises), une seule hauteur de bouton */
-.formulaire :deep(.config-section) { margin-bottom: 1.4rem; }
-.formulaire :deep(.config-section-title) { text-transform: none; letter-spacing: 0; font-size: 1rem; color: var(--texte); margin-bottom: .45rem; }
-.formulaire :deep(.sous-titre-reglage) { font-size: .85rem; color: var(--texte-doux); }
-.formulaire :deep(.level-btn) { min-height: 40px; font-size: .9rem; }
 .signalement { text-align: right; margin: .25rem 0 -.5rem; }
 .actions { text-align: center; margin-top: 1.5rem; }
 
-/* Côte à côte (écran d'au moins LARGEUR_COTE_A_COTE, mode impression) : la page et la boîte s'élargissent, les réglages à gauche,
-   l'aperçu collé sous la barre du site à droite. L'ordre du document ne change pas (réglages puis aperçu) : clavier et lecteurs d'écran. */
-:global(.container:has(.cadre-exercice .cote-a-cote)) { max-width: 1680px; }
-.config-box.large { max-width: none; }
-.cote-a-cote { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 1fr); column-gap: 2.5rem; align-items: start; }
-.cote-a-cote .apercu-fiche { margin-top: 0; position: sticky; top: 76px; }
+/* côte à côte : la mise en page commune .cote-a-cote (style.css) */
 .cote-a-cote .signalement { margin-bottom: 0; }
 .btn-grand { font-size: 1.1rem; padding: .75rem 2rem; }
 </style>

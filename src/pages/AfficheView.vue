@@ -99,6 +99,8 @@ const maillons = computed((): Maillon[] => [
 <style scoped>
 /* l'en-tête a la largeur du formulaire (960 px, centré) : mêmes bords à gauche et à droite */
 .etroit { max-width: 960px; margin-left: auto; margin-right: auto; }
+/* réglages et aperçu côte à côte (FormulaireAffiche, grand écran) : l'en-tête prend la largeur de la boîte élargie */
+.container:has(.boite-cote-a-cote) .etroit { max-width: none; }
 .entete { display: flex; align-items: center; justify-content: space-between; gap: .75rem 1rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
 .titre { display: flex; align-items: center; gap: .6rem; font-size: 1.9rem; font-weight: 900; line-height: 1.2; margin: 0; }
 .titre .emoji { font-size: 1.9rem; line-height: 1; }

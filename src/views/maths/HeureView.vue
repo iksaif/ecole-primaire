@@ -20,12 +20,7 @@
         <!-- les minutes autour du cadran : pas au CP, qui ne lit que les heures entières -->
         <div v-if="minutesPossibles" class="config-section">
           <div class="config-section-title">{{ t('heure.aide') }}</div>
-          <div class="btn-group">
-            <button type="button" class="level-btn" :class="{ active: config.aideMinutes }" :aria-pressed="config.aideMinutes"
-              @click="config.aideMinutes = !config.aideMinutes">
-              {{ config.aideMinutes ? '✓ ' : '' }}{{ t('heure.afficherMinutes') }}
-            </button>
-          </div>
+          <CaseReglage v-model="config.aideMinutes" :libelle="t('heure.afficherMinutes')" />
         </div>
 
         <ChoixReglage v-if="modeCourant === 'jouer'" :definition="DEFINITION" cle="nbQ" v-model="config.nbQ" :titre="t('communs.nbQuestions')" />
@@ -189,6 +184,7 @@ import { useLangue } from '../../langues/useLangue.ts'
 import { traducteur } from '../../langues/catalogue.ts'
 import CadreExercice from '../../noyau/CadreExercice.vue'
 import ChoixReglage from '../../noyau/ChoixReglage.vue'
+import CaseReglage from '../../noyau/CaseReglage.vue'
 import ChoixReponses from '../../noyau/ChoixReponses.vue'
 import ConsigneParlee from '../../noyau/ConsigneParlee.vue'
 import QuestionJeu from '../../noyau/QuestionJeu.vue'

@@ -127,6 +127,13 @@ body {
 }
 .level-btn:hover  { border-color: var(--bleu); color: var(--bleu-fort); }
 .level-btn.active { background: var(--bleu-fort); border-color: var(--bleu-fort); color: white; }
+/* Choix multiple (plusieurs boutons enfoncés, ChoixReglage ou rangée faite main) : un choix coché est clair, avec une coche devant
+   (<span class="coche" aria-hidden="true">✓</span>, « + » devant les autres) : une rangée toute cochée n'est pas un mur de bleu ;
+   « plusieurs choix possibles » après le titre (.indice-multiple) */
+.choix-multiple .level-btn.active { background: #e3eefb; border-color: var(--bleu-fort); color: #245c9e; }
+.choix-multiple .coche { display: inline-block; width: .9em; margin-right: .3em; text-align: center; }
+.choix-multiple .level-btn:not(.active) .coche { color: var(--texte-doux); }
+.indice-multiple { margin-left: .5rem; font-size: .8rem; font-weight: 600; color: var(--texte-doux); text-transform: none; letter-spacing: 0; }
 
 /* ── Exercise box ── */
 .exercise-box {
@@ -240,6 +247,20 @@ body {
   margin: 0 auto;
 }
 .config-section { margin-bottom: 1.25rem; }
+/* Réglages et aperçu côte à côte (fiches : CadreExercice en mode impression ; affiches : FormulaireAffiche), sur une fenêtre d'au
+   moins LARGEUR_COTE_A_COTE (useEcranLarge.ts) : la page et la boîte s'élargissent, les réglages à gauche, l'aperçu collé sous la
+   barre du site à droite. L'ordre du document ne change pas (réglages puis aperçu) : clavier et lecteurs d'écran. */
+.container:has(.boite-cote-a-cote) { max-width: 1680px; }
+.config-box.boite-cote-a-cote { max-width: none; }
+.cote-a-cote { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 1fr); column-gap: 2.5rem; align-items: start; }
+.cote-a-cote > .apercu { position: sticky; top: 76px; }
+/* Formulaire d'une fiche ou d'une affiche : titres en casse normale et foncés (plus lisibles que de petites capitales grises), une
+   seule hauteur de bouton ; le titre d'un groupe de réglages (GroupeReglages, affiches) reste une petite étiquette au-dessus d'eux */
+.formulaire-lisible .config-section { margin-bottom: 1.4rem; }
+.formulaire-lisible .config-section-title { text-transform: none; letter-spacing: 0; font-size: 1rem; color: var(--texte); margin-bottom: .45rem; }
+.formulaire-lisible .config-section-title.sous-titre-reglage { font-size: .85rem; color: var(--texte-doux); }
+.formulaire-lisible .groupe-reglages > .config-section-title { text-transform: uppercase; letter-spacing: .05em; font-size: .8rem; color: var(--texte-doux); }
+.formulaire-lisible .level-btn { min-height: 40px; font-size: .9rem; }
 .config-section-title {
   font-weight: 800; font-size: .9rem;
   text-transform: uppercase; letter-spacing: .05em;

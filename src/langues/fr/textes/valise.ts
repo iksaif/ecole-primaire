@@ -3,11 +3,12 @@
 // catalogue de contenu de l'exercice : src/exercices/valise/textes.ts. Mots communs (niveau, nombre de questions…) : section `communs`.
 export default {
   titre: 'La valise',
-  description: 'On met, on enlève, on complète : combien dans la valise ?',
+  description: 'La valise se ferme : combien de peluches dedans ?',
   types: 'Quels problèmes ?',
   ajoute: 'On en met',
   retire: 'On en enlève',
-  complete: 'Combien en ajouter ?',
+  complete: 'Combien en mettre ?',
+  initial: 'Combien au début ?',
   reponseFiche: "Sur la fiche, l'enfant…",
   ecrire: 'écrit le nombre',
   entourer: 'entoure le bon nombre',

@@ -1,5 +1,5 @@
 <template>
-  <div class="apercu">
+  <div class="apercu" :class="{ 'page-entiere': pageEntiere }">
     <div class="apercu-barre">
       <span class="apercu-info">{{ t('cadre.apercu.titre') }}<template v-if="!fluide"> — {{ format }} {{ orientation === 'landscape' ? t('cadre.apercu.paysage') : t('cadre.apercu.portrait') }}
         <template v-if="nbPages > 1"> · {{ t('fichesPretes.pages', { n: nbPages }) }}</template></template></span>
@@ -66,9 +66,14 @@ const echelle = computed(() => {
   return Math.min(enLargeur, hauteurVisible.value / hauteurPage.value)
 })
 const decalage = computed(() => Math.max(0, (largeurCadre.value - largeurPx.value * echelle.value) / 2))
-const hauteurCadre = computed(() => (props.pageEntiere ? hauteurVisible.value : hauteurPx.value * echelle.value))
+// page entière : la hauteur de la fenêtre, sans dépasser celle du document réduit (une page en paysage est moins haute)
+const hauteurCadre = computed(() => {
+  const hauteurReduite = hauteurPx.value * echelle.value
+  if (!props.pageEntiere) return hauteurReduite
+  return Math.min(hauteurVisible.value, hauteurReduite)
+})
 // hauteur de l'iframe, avant réduction : en page entière, elle remplit le cadre
-const hauteurIframe = computed(() => (props.pageEntiere ? hauteurVisible.value / echelle.value : hauteurPx.value))
+const hauteurIframe = computed(() => (props.pageEntiere ? hauteurCadre.value / echelle.value : hauteurPx.value))
 
 let obs: ResizeObserver | null = null
 const suivreFenetre = () => { hauteurFenetre.value = window.innerHeight }
@@ -90,6 +95,8 @@ function imprimer(): void {
 
 <style scoped>
 .apercu { margin-top: 1.5rem; }
+/* page entière : à côté des réglages (.cote-a-cote, style.css), en haut de sa colonne */
+.apercu.page-entiere { margin-top: 0; }
 .apercu-barre { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: .75rem; }
 .apercu-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
 .apercu-info { font-weight: 700; color: var(--texte-doux); font-size: .9rem; }

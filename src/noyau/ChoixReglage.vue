@@ -28,7 +28,7 @@
   multiple : plusieurs boutons enfoncés) ; la marque « (bonus) » fait partie du nom du bouton.
 -->
 <template>
-  <div v-if="!niveauFige" ref="boite" class="config-section" :class="{ multiple: !!choisies, colles: boutonsColles }" role="group"
+  <div v-if="!niveauFige" ref="boite" class="config-section" :class="{ 'choix-multiple': !!choisies, colles: boutonsColles }" role="group"
     :aria-labelledby="titre ? idTitre : undefined" :data-reglage="cle">
     <div v-if="titre" :id="idTitre" class="config-section-title"><template v-if="iconeDuTitre"><Icone :nom="iconeDuTitre" />&nbsp;</template>{{ titre }}<span v-if="choisies && liste.length > 1" class="indice-multiple">{{ t('communs.plusieursChoix') }}</span></div>
     <div v-if="cartes" class="cartes-reglage" :class="{ nombreuses: liste.length > 2 }" :style="{ '--nb-cartes': liste.length }">
@@ -193,11 +193,7 @@ function choisir(v: Valeur) {
 /* le niveau est LE choix de départ : un bloc à part (comme la « version » d'une affiche), les autres réglages le personnalisent */
 .config-section[data-reglage="niveau"] { background: #eef5fd; border-left: 5px solid var(--bleu-fort); border-radius: var(--radius); padding: .9rem 1.1rem .7rem; margin-bottom: 1.6rem; }
 .config-section[data-reglage="niveau"] .config-section-title { color: var(--texte); }
-/* choix multiple : un choix coché est clair, avec une coche (une rangée toute cochée n'est pas un mur de bleu) ; « + » devant les autres */
-.multiple .level-btn.active { background: #e3eefb; border-color: var(--bleu-fort); color: #245c9e; }
-.coche { display: inline-block; width: .9em; margin-right: .3em; text-align: center; }
-.multiple .level-btn:not(.active) .coche { color: var(--texte-doux); }
-.indice-multiple { margin-left: .5rem; font-size: .8rem; font-weight: 600; color: var(--texte-doux); text-transform: none; letter-spacing: 0; }
+/* choix multiple : style commun .choix-multiple (style.css) */
 /* choix unique court : les boutons collés en une pièce (comme le corrigé dans OptionsFiche) */
 .colles .btn-group { gap: 0; }
 .colles .level-btn { border-radius: 0; margin-left: -2px; }

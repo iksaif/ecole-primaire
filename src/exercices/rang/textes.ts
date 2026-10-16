@@ -6,7 +6,7 @@ export const CONTENU = catalogue({
   titre: 'Le premier, le dernier',
   montre: 'Montre le {mot}, en partant de la flèche.',
   consigneFiche: 'Dans chaque file, colorie la case de l’objet que l’adulte te dit, en partant de la flèche.',
-  colorie: 'Colorie le {mot}, en partant de la flèche.',
+  colorie: 'Colorie le {mot}.',
   corrigeCase: 'le {mot} : la case {n}',
   ordinal: {
     premier: 'premier', deuxieme: 'deuxième', troisieme: 'troisième', quatrieme: 'quatrième', cinquieme: 'cinquième', sixieme: 'sixième',
@@ -17,7 +17,7 @@ export const CONTENU = catalogue({
     titre: 'Ar c’hentañ, an diwezhañ', // br: à relire
     montre: 'Diskouez ar {mot}, o kregiñ gant ar benn.', // br: à relire
     consigneFiche: 'E pep renkad, liv ar gael eus an tra a lâr an hini deuet da oad dit, o kregiñ gant ar benn.', // br: à relire
-    colorie: 'Liv ar {mot}, o kregiñ gant ar benn.', // br: à relire
+    colorie: 'Liv ar {mot}.', // br: à relire
     corrigeCase: 'ar {mot} : ar gael {n}', // br: à relire
     ordinal: {
       premier: 'kentañ', deuxieme: 'eil', troisieme: 'trede', quatrieme: 'pevare', cinquieme: 'pempvet', sixieme: 'c’hwec’hvet', // br: à relire

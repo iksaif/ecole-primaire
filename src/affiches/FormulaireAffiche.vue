@@ -7,13 +7,15 @@
   (ordre, titre, aide, « visible si ») : réglages à choix (« (bonus) », « (hors programme) », valeurs qui dépendent des
   autres réglages), champs libres (texte, nombre), langues affichées, polices, hasard ; puis la feuille (langue, format et
   orientation s'ils ne sont pas fixes, titre personnalisé ; les images (ChoixImages) si le dessin a rendu des emojis : une préférence
-  de l'appareil, partagée avec les fiches, qui n'entre pas dans l'adresse) ; aperçu et impression. `depart` : réglages du lien
+  de l'appareil, partagée avec les fiches, qui n'entre pas dans l'adresse) ; aperçu et impression (sur un écran large, à droite des
+  réglages : .cote-a-cote, style.css). `depart` : réglages du lien
   (?variante=…&langues=fr,br).
   Langue : le formulaire (titres, noms des variantes, aides) est dans la langue de l'INTERFACE ; seul l'aperçu est dans
   la langue de l'affiche. Une langue sans traduction d'un texte retombe sur le français.
 -->
 <template>
-  <div class="config-box large">
+  <div class="config-box large" :class="{ 'boite-cote-a-cote': coteACote, 'cote-a-cote': coteACote }">
+    <div class="formulaire-affiche formulaire-lisible">
     <!-- 1. la version : une fiche toute prête (ses réglages de départ) ; 2. le reste : ce qu'on ajuste pour cette version -->
     <section class="bloc bloc-version" data-reglage="variante" :aria-labelledby="`${idBase}-version`">
       <h2 class="bloc-titre" :id="`${idBase}-version`"><span class="num" aria-hidden="true">1</span> {{ t('formulaireAffiche.version') }}</h2>
@@ -115,8 +117,9 @@
       <ChoixImages v-if="resultat.avecImages" />
     </div>
     </section>
+    </div>
 
-    <ApercuImpression :reglages="config" :html="resultat.html" :format="config.format" :orientation="config.orientation" :nb-pages="resultat.nbPages" />
+    <ApercuImpression :reglages="config" :page-entiere="coteACote" :html="resultat.html" :format="config.format" :orientation="config.orientation" :nb-pages="resultat.nbPages" />
   </div>
 </template>
 
@@ -124,6 +127,7 @@
 import { ref, computed, watch, useId } from 'vue'
 import { texteClasses } from '../data/classes.ts'
 import ApercuImpression from '../noyau/ApercuImpression.vue'
+import { useEcranLarge, LARGEUR_COTE_A_COTE } from '../noyau/useEcranLarge.ts'
 import ChoixPolice from '../noyau/ChoixPolice.vue'
 import ChoixImages from '../noyau/ChoixImages.vue'
 import ChoixReglage from '../noyau/ChoixReglage.vue'
@@ -153,6 +157,8 @@ const props = withDefaults(defineProps<{
 // chaque changement de réglages : la page qui porte le formulaire peut écrire l'adresse (lien partageable)
 const emit = defineEmits<{ reglages: [config: Readonly<Record<string, unknown>>] }>()
 const { t, langue: langueInterface } = useLangue()
+// grand écran : les réglages à gauche, l'aperçu à droite (la page entière, toujours visible), comme les fiches (CadreExercice)
+const coteACote = useEcranLarge(LARGEUR_COTE_A_COTE)
 const definition = props.module.definition
 /** les langues de l'affiche dont le bouton est proposé : une traduction pas assez sûre pour le réglage de la fiabilité n'y est pas (sauf en développement) */
 const languesProposees = computed(() => definition.langues.filter(l => estLangue(l) && langueProposable(l, 'affiche', definition.id)))
@@ -236,6 +242,7 @@ const resultat = computed(() => {
 .axe-titre { font-size: .8rem; font-weight: 800; text-transform: uppercase; color: var(--texte-doux); margin-bottom: .3rem; }
 .axe-classes { font-size: .85rem; color: var(--texte-doux); margin: .2rem 0 0; }
 .config-box.large { max-width: 960px; }
+.config-box.large.boite-cote-a-cote { max-width: none; }
 /* deux blocs : la version (une fiche toute prête, sur fond teinté) puis tout ce qui la personnalise */
 .bloc-version { background: #eef5fd; border-left: 5px solid var(--bleu-fort); border-radius: var(--radius); padding: 1rem 1.1rem .6rem; margin-bottom: 1.5rem; }
 .bloc-reglages { border-top: 2px solid var(--gris-brd); padding-top: 1.1rem; margin-bottom: .5rem; }

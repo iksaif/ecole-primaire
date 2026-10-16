@@ -58,10 +58,15 @@ function patron(r: Reglages, zone: Zone): string {
   s += rect(-h, 0, h, p, COULEURS.cotes) + rect(l, 0, h, p, COULEURS.cotes) + rect(0, -h - p, l, p, COULEURS.couvercle)
   s += languetteLaterale(0, p, h, true) + languetteLaterale(l, p, h, false)
   s += languetteLaterale(0, -h, h, true) + languetteLaterale(l, -h, h, false)
-  s += languetteLaterale(0, -h - p, p, true) + languetteLaterale(l, -h - p, p, false)
-  // la languette de fermeture, au bord libre du couvercle
+  // les rabats du couvercle : plus courts que les côtés, aux coins coupés et de la couleur du couvercle ; ils ne se collent pas, ils se glissent dans la boîte
+  const rabat = (xBord: number, versGauche: boolean): string => {
+    const d = versGauche ? -1 : 1, haut = -h - p, bas = -h, ecart = 3, chanfrein = 8, largeurRabat = 7
+    return `<polygon points="${pts([[X(xBord), Y(haut + ecart)], [X(xBord) + d * largeurRabat * f, Y(haut + ecart) + chanfrein * f], [X(xBord) + d * largeurRabat * f, Y(bas - ecart) - chanfrein * f], [X(xBord), Y(bas - ecart)]])}" ${style(COULEURS.couvercle)}/>`
+  }
+  s += rabat(0, true) + rabat(l, false)
+  // la languette de fermeture, au bord libre du couvercle (couleur du couvercle : elle ne se colle pas)
   const bord = -h - p
-  s += `<polygon points="${pts([[X(l * 0.08), Y(bord)], [X(l * 0.15), Y(bord - fermeture)], [X(l * 0.85), Y(bord - fermeture)], [X(l * 0.92), Y(bord)]])}" ${style(COULEURS.languette)}/>`
+  s += `<polygon points="${pts([[X(l * 0.08), Y(bord)], [X(l * 0.15), Y(bord - fermeture)], [X(l * 0.85), Y(bord - fermeture)], [X(l * 0.92), Y(bord)]])}" ${style(COULEURS.couvercle)}/>`
   // les pliures : le contour du fond, la charnière du couvercle, les languettes
   const plier = (x1: number, y1: number, x2: number, y2: number): string => pli(X(x1), Y(y1), X(x2), Y(y2))
   s += plier(0, 0, l, 0) + plier(0, p, l, p) + plier(0, 0, 0, p) + plier(l, 0, l, p) + plier(0, -h, l, -h) + plier(l * 0.08, bord, l * 0.92, bord)

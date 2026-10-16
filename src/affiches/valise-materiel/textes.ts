@@ -17,7 +17,7 @@ export const TEXTES: TextesAffiche = {
     'valeur.objet.fleur': 'Des fleurs',
     'valeur.objet.chat': 'Des chats',
     'patron.titre': 'La boîte opaque',
-    'patron.consigne': 'Découpe sur les traits pleins, plie sur les pointillés, colle les languettes. Perce la fente avec la pointe des ciseaux : on glisse les jetons sans ouvrir. Le couvercle s’ouvre et se ferme. Tu peux la colorier.',
+    'patron.consigne': 'Découpe sur les traits pleins, plie sur les pointillés, colle les languettes des murs. Les rabats du couvercle ne se collent pas : ils se glissent dans la boîte. Perce la fente avec la pointe des ciseaux : on glisse les jetons sans ouvrir. Le couvercle s’ouvre et se ferme. Tu peux la colorier.',
     'jetons.titre': 'Les jetons',
     'jetons.consigne': 'Découpe les jetons sur les traits : on les met dans la boîte, on en ajoute, on en retire.',
     'variante.des.court': 'Dés à plier',
@@ -47,7 +47,7 @@ export const TEXTES: TextesAffiche = {
     'valeur.objet.fleur': 'Bleunioù', // br: à relire
     'valeur.objet.chat': 'Kizhier', // br: à relire
     'patron.titre': 'Ar voest dall', // br: à relire
-    'patron.consigne': 'Troc’h war al linennoù leun, plij war ar pikoù, peg ar bizhierioù. Toull ar fent gant beg ar gwerzhidi : lakaat a reer ar jetonoù hep digeriñ. Digeriñ ha serriñ a c’haller ar c’holo. Liv ar voest.', // br: à relire
+    'patron.consigne': 'Troc’h war al linennoù leun, plij war ar pikoù, peg bizhierioù ar mogerioù. Ar skoazelloù eus ar c’holo ne vezont ket peget : lakaat a reer anezho e-barzh ar voest. Toull ar fent gant beg ar gwerzhidi : lakaat a reer ar jetonoù hep digeriñ. Digeriñ ha serriñ a c’haller ar c’holo. Liv ar voest.', // br: à relire
     'jetons.titre': 'Ar jetonoù', // br: à relire
     'jetons.consigne': 'Troc’h ar jetonoù war al linennoù : lakaat a reer anezho er voest, ouzhpennañ, tennañ.', // br: à relire
     'variante.des.court': 'Deizioù da blegañ', // br: à relire

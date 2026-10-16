@@ -40,6 +40,9 @@ export const CONTENU = catalogue({
     banane: 'banane',
     fromage: 'fromage',
     miel: 'miel',
+    salade: 'salade',
+    viande: 'viande',
+    plastique: 'plastique',
   },
   mot: {
     chien: 'chien',
@@ -63,21 +66,16 @@ export const CONTENU = catalogue({
     pantalon: 'pantalon',
     robe: 'robe',
     echarpe: 'écharpe',
-    gant: 'gant',
-    chaussette: 'chaussette',
+        chaussette: 'chaussette',
     chaise: 'chaise',
     porte: 'porte',
-    echelle: 'échelle',
-    cle: 'clé',
+        cle: 'clé',
     conserve: 'boîte de conserve',
-    cloche: 'cloche',
-    cuillere: 'cuillère',
-    journal: 'journal',
+            journal: 'journal',
     enveloppe: 'enveloppe',
     cahier: 'cahier',
     livre: 'livre',
-    lunettes: 'lunettes',
-    ampoule: 'ampoule',
+        ampoule: 'ampoule',
     pot: 'pot en verre',
     papillon: 'papillon',
     abeille: 'abeille',
@@ -94,6 +92,7 @@ export const CONTENU = catalogue({
     souris: 'souris',
     poule: 'poule',
     singe: 'singe',
+    chaussure: 'chaussure', buche: 'bûche', ancre: 'ancre', ecrou: 'écrou', seau: 'seau', gobelet: 'gobelet', brosseADents: 'brosse à dents', verreAVin: 'verre à pied', canard: 'canard', tortue: 'tortue',
   },
 }, {
   br: {
@@ -132,6 +131,7 @@ export const CONTENU = catalogue({
       banane: 'bananenn', // br: à relire
       fromage: 'fourmaj', // br: à relire
       miel: 'mel', // br: à relire
+      salade: 'saladenn', viande: 'kig', plastique: 'plastik', // br: à relire
     },
     mot: {
       chien: 'ki', // br: à relire
@@ -155,20 +155,20 @@ export const CONTENU = catalogue({
       pantalon: 'bragoù', // br: à relire
       robe: 'sae', // br: à relire
       echarpe: 'gwilioud', // br: à relire
-      gant: 'maneg', // br: à relire
+      // br: à relire
       chaussette: 'chaousetenn', // br: à relire
       chaise: 'kador', // br: à relire
       porte: 'dor', // br: à relire
-      echelle: 'skeul', // br: à relire
+      // br: à relire
       cle: "alc'hwez", // br: à relire
       conserve: 'boestad-gwarez', // br: à relire
-      cloche: "klec'h", // br: à relire
-      cuillere: 'loa', // br: à relire
+      // br: à relire
+      // br: à relire
       journal: 'kazetenn', // br: à relire
       enveloppe: 'golo-lizher', // br: à relire
       cahier: 'kaier', // br: à relire
       livre: 'levr', // br: à relire
-      lunettes: 'lunedoù', // br: à relire
+      // br: à relire
       ampoule: 'goulaouenn', // br: à relire
       pot: 'pod gwer', // br: à relire
       papillon: 'balafenn', // br: à relire
@@ -186,6 +186,7 @@ export const CONTENU = catalogue({
       souris: 'logodenn', // br: à relire
       poule: 'yar', // br: à relire
       singe: 'marmouz', // br: à relire
+      chaussure: 'botez', buche: 'bouchenn', ancre: 'eorioù', ecrou: 'skoulm-vis', seau: 'sal', gobelet: 'gwerenn', brosseADents: 'broust-dent', verreAVin: 'gwerenn-win', canard: 'houad', tortue: 'melc’hwedenn-vor', // br: à relire
     },
   },
 })

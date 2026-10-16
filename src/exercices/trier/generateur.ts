@@ -26,8 +26,9 @@ export const THEMES_PAR_NIVEAU: Readonly<Partial<Record<Classe, readonly ThemeId
   ms: ['groupes', 'matieres', 'deplacements', 'mange'],
   gs: ['groupes', 'matieres', 'deplacements', 'mange'],
 }
-/** Nombre de boîtes proposées : deux en PS, trois ensuite. */
-const nbBoites = (niveau: Classe): number => (niveau === 'ps' ? 2 : 3)
+/** Nombre de boîtes proposées : deux en PS, trois en MS, quatre en GS (quand le thème en a autant). */
+const NB_BOITES: Readonly<Partial<Record<Classe, number>>> = { ps: 2, ms: 3, gs: 4 }
+const nbBoites = (niveau: Classe): number => NB_BOITES[niveau] ?? 3
 
 /** Une boîte proposée : son image et son nom (lu sur le bouton). */
 export interface Boite { id: string, emoji: NomEmoji, label: string }
@@ -56,6 +57,7 @@ const nomBoite = (id: string, T: Traducteur<Cle>): string => T(`boite.${id}` as 
 function boitesDe(theme: ThemeId, entree: Entree, nb: number, rng: Rng, T: Traducteur<Cle>): Boite[] {
   const { boites } = CORPUS[theme]
   const leurres = Object.keys(boites).filter(id => id !== entree.boite && !entree.pas?.includes(id))
+  // un thème qui a moins de boîtes que la classe n'en permet (déplacements : trois) les propose toutes
   const ids = rng.melanger([entree.boite, ...rng.melanger(leurres).slice(0, nb - 1)])
   return ids.map(id => ({ id, emoji: boites[id], label: nomBoite(id, T) }))
 }

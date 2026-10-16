@@ -63,6 +63,9 @@ export const EMOJIS = {
   buche: '1FAB5', chaise: '1FA91', porte: '1F6AA', echelle: '1FA9C', engrenage: '2699', cloche: '1F514', cuillere: '1F944',
   pageBlanche: '1F4C4', journal: '1F4F0', enveloppe: '2709', pelote: '1F9F6', fenetre: '1FA9F', lunettes: '1F453', ampoule: '1F4A1', pot: '1FAD9',
   os: '1F9B4', herbe: '1F33F', miel: '1F36F', fromage: '1F9C0',
+  // corrections après relecture : exemples des boîtes de « trier », valise, balance
+  chapeau: '1F452', chaussure: '1F45F', viande: '1F356', flacon: '1F9F4', seau: '1FAA3', gobelet: '1F964', ancre: '2693', ecrou: '1F529', verreAVin: '1F377',
+  pierre: '1FAA8', valise: '1F9F3',
 } as const
 
 /** Les emojis qui sont une scène en carré plein (la ville au coucher du soleil) : rendus aux coins arrondis, pas comme un objet détouré. */

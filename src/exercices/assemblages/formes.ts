@@ -73,13 +73,11 @@ export function boiteDe(pieces: readonly Piece[]): { x: number, y: number, l: nu
   return { x, y, l: Math.max(...xs) - x, h: Math.max(...ys) - y }
 }
 
-/** Combien de pièces de chaque forme il faut pour fabriquer les modèles un par un : le maximum sur les modèles. */
+/** Combien de pièces de chaque forme il faut pour coller tous les modèles : la somme sur les modèles (chaque modèle est collé, on ne réutilise rien). */
 export function jeuDePieces(modeles: readonly Modele[]): Record<FormePiece, number> {
   const jeu: Record<FormePiece, number> = { carre: 0, rectangle: 0, triangle: 0 }
   for (const m of modeles) {
-    for (const forme of Object.keys(jeu) as FormePiece[]) {
-      jeu[forme] = Math.max(jeu[forme], m.pieces.filter(p => p.forme === forme).length)
-    }
+    for (const p of m.pieces) jeu[p.forme]++
   }
   return jeu
 }

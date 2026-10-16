@@ -158,9 +158,9 @@ console.log('Interprétation (Le monde)')
 
 console.log('Page d’une compétence')
 {
-  const k = COMPETENCES.find(c => c.id === 'composer-decomposer')
+  const k = COMPETENCES.find(c => c.id === 'ordinaux')   // une compétence encore sans ressource : à changer quand elle en aura
   const { ctx, page, erreurs } = await ouvrir()
-  await page.goto(app('/competence/composer-decomposer?classes=ms'))
+  await page.goto(app('/competence/ordinaux?classes=cp'))
   await pret(page)
   verifier((await page.locator('main h1').textContent()).includes(k.libelle) && await page.locator('main h1').count() === 1, 'h1 : l’intitulé de la compétence')
   await page.waitForFunction(l => document.title.startsWith(l), k.libelle)

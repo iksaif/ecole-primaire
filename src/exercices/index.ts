@@ -43,6 +43,9 @@ import { module as quiz } from './quiz/index.ts'
 import { module as ceintures } from './ceintures/index.ts'
 import { module as trier } from './trier/index.ts'
 import { module as assemblages } from './assemblages/index.ts'
+import { module as valise } from './valise/index.ts'
+import { module as rang } from './rang/index.ts'
+import { module as lourd } from './lourd/index.ts'
 // nouveau:imports
 
 /** Un exercice, quelles que soient ses questions et ses réglages (le registre les mêle ; chaque module reste typé précisément). */
@@ -90,6 +93,9 @@ const BASE: readonly EntreeRegistre[] = [
   ceintures,
   trier,
   assemblages,
+  valise,
+  rang,
+  lourd,
   // nouveau:registre
 ]
 

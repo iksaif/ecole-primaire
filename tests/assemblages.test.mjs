@@ -1,5 +1,5 @@
 // Assemblages de formes : chaque modèle est réalisable avec les pièces (aucune pièce n'en recouvre une autre, toutes se touchent par un
-// côté), a le bon nombre de pièces pour sa classe, et la fiche contient autant de pièces à découper que le plus grand modèle en demande.
+// côté), a le bon nombre de pièces pour sa classe, et la fiche contient autant de pièces à découper que tous ses modèles en demandent (on les colle toutes).
 //   node tests/assemblages.test.mjs
 import { MODELES, jeuDePieces, sommets } from '../src/exercices/assemblages/formes.ts'
 import { PIECES_MAX, questionsFiche } from '../src/exercices/assemblages/generateur.ts'
@@ -74,7 +74,7 @@ for (const [classe, modeles] of Object.entries(MODELES)) {
   const html = fiche({ questions: tirage, reglages, T, langue: 'fr', police: 'Arial', cssPolices: '' })
   const jeu = jeuDePieces(tirage.modeles)
   const decoupees = (html.split('<h2 class="partie">')[1] ?? '').split('<h2 class="partie">')[0]
-  verifier((decoupees.match(/<svg/g) ?? []).length === jeu.carre + jeu.rectangle + jeu.triangle, `${classe} : la page des formes a toutes les pièces du jeu`)
+  verifier((decoupees.match(/<svg/g) ?? []).length === jeu.carre + jeu.rectangle + jeu.triangle, `${classe} : la page des formes a toutes les pièces des modèles`)
   verifier(html.includes('section class="corrige"'), `${classe} : le corrigé est présent`)
   verifier(tirage.modeles.length === Math.min(reglages.nbFiche, modeles.length), `${classe} : ${tirage.modeles.length} modèle(s) sur la fiche`)
   const memes = questionsFiche({ niveau: classe, reglages, rng: creerRng(3) }).modeles.map(m => m.id).join() === tirage.modeles.map(m => m.id).join()

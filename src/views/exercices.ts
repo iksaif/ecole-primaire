@@ -41,5 +41,8 @@ export const VUES: Readonly<Record<string, VueExercice>> = {
   '/monde/ceintures': () => import('./monde/CeinturesView.vue'),
   '/maternelle/trier': () => import('./maternelle/TrierView.vue'),
   '/maternelle/assemblages': () => import('./maternelle/AssemblagesView.vue'),
+  '/maternelle/valise': () => import('./maternelle/ValiseView.vue'),
+  '/maternelle/rang': () => import('./maternelle/RangView.vue'),
+  '/maternelle/lourd': () => import('./maternelle/LourdView.vue'),
   // nouveau:vues
 }

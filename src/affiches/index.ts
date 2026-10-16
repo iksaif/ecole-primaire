@@ -26,6 +26,7 @@ import { module as espace } from './espace/index.ts'
 import { module as bandeNumerique } from './bande-numerique/index.ts'
 import { module as pronoms } from './pronoms/index.ts'
 import { module as phrase } from './phrase/index.ts'
+import { module as decompositions } from './decompositions/index.ts'
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'
@@ -53,6 +54,7 @@ export const REGISTRE: ModuleAffiche<Reglages>[] = [
   bandeNumerique,
   pronoms,
   phrase,
+  decompositions,
   // nouveau:registre
 ]
 

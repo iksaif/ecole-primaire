@@ -6,10 +6,10 @@ export const TEXTES: TextesAffiche = {
     titre: 'La bande numérique',
     'variante.ms.court': 'Bande numérique 1 à 6',
     'variante.ms.titre': 'Bande numérique de 1 à 6 à imprimer',
-    'variante.ms.description': 'La bande numérique de 1 à 6, une case par nombre, avec les objets à dénombrer.',
+    'variante.ms.description': 'La bande numérique de 1 à 6, une case par nombre, avec les objets à dénombrer. Le nombre en lettres est possible en option.',
     'variante.gs.court': 'Bande numérique 1 à 10',
     'variante.gs.titre': 'Bande numérique de 1 à 10 à imprimer',
-    'variante.gs.description': 'La bande numérique de 1 à 10, une case par nombre, avec les objets à dénombrer.',
+    'variante.gs.description': 'La bande numérique de 1 à 10, une case par nombre, avec les objets à dénombrer. Le nombre en lettres est possible en option.',
     'variante.gs-comptine.court': 'Bande numérique 1 à 30',
     'variante.gs-comptine.titre': 'Bande numérique de 1 à 30 à imprimer',
     'variante.gs-comptine.description': 'La comptine numérique jusqu’à 30, en trois rangées de dix, pour réciter et repérer les nombres.',
@@ -32,10 +32,10 @@ export const TEXTES: TextesAffiche = {
     titre: 'Ar vandenn niveroù', // br: à relire
     'variante.ms.court': 'Bandenn niveroù 1 da 6', // br: à relire
     'variante.ms.titre': 'Bandenn niveroù eus 1 da 6 da voullañ', // br: à relire
-    'variante.ms.description': 'Ar vandenn niveroù eus 1 da 6, ur gael evit pep niver, gant an traoù da gontañ.', // br: à relire
+    'variante.ms.description': 'Ar vandenn niveroù eus 1 da 6, ur gael evit pep niver, gant an traoù da gontañ. Posubl eo ouzhpennañ an niver e lizherennoù.', // br: à relire
     'variante.gs.court': 'Bandenn niveroù 1 da 10', // br: à relire
     'variante.gs.titre': 'Bandenn niveroù eus 1 da 10 da voullañ', // br: à relire
-    'variante.gs.description': 'Ar vandenn niveroù eus 1 da 10, ur gael evit pep niver, gant an traoù da gontañ.', // br: à relire
+    'variante.gs.description': 'Ar vandenn niveroù eus 1 da 10, ur gael evit pep niver, gant an traoù da gontañ. Posubl eo ouzhpennañ an niver e lizherennoù.', // br: à relire
     'variante.gs-comptine.court': 'Bandenn niveroù 1 da 30', // br: à relire
     'variante.gs-comptine.titre': 'Bandenn niveroù eus 1 da 30 da voullañ', // br: à relire
     'variante.gs-comptine.description': 'Ar gontadenn niveroù betek 30, e teir renkad a zek, evit adlavar ha kavout ar niveroù.', // br: à relire

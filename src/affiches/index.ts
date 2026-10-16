@@ -27,6 +27,7 @@ import { module as bandeNumerique } from './bande-numerique/index.ts'
 import { module as pronoms } from './pronoms/index.ts'
 import { module as phrase } from './phrase/index.ts'
 import { module as decompositions } from './decompositions/index.ts'
+import { module as valiseMateriel } from './valise-materiel/index.ts'
 // nouveau:imports
 import type { Reglages } from '../noyau/types.ts'
 import type { ModuleAffiche } from './types.ts'
@@ -55,6 +56,7 @@ export const REGISTRE: ModuleAffiche<Reglages>[] = [
   pronoms,
   phrase,
   decompositions,
+  valiseMateriel,
   // nouveau:registre
 ]
 

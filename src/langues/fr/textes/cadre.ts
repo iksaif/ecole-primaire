@@ -3,7 +3,7 @@ export default {
   jouer: 'Faire l’exercice',
   imprimer: 'Imprimer une fiche',
   nouvelle: 'Nouvelle fiche',
-  surLaFiche: 'Sur la fiche',
+  surLaFiche: 'Présentation de la fiche',
   entete: 'Prénom et date',
   corrige_non: 'Sans corrigé',
   corrige_page: 'Corrigé sur une autre page',

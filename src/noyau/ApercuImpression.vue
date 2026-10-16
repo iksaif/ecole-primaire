@@ -10,7 +10,7 @@
     </div>
     <div ref="cadre" class="apercu-cadre" :style="{ height: hauteurCadre + 'px' }">
       <iframe v-if="html" :srcdoc="document" sandbox="allow-same-origin" :class="{ fluide }" :title="t('cadre.apercu.titreCadre')"
-        :style="{ width: largeurPx + 'px', height: hauteurPx + 'px', transform: `scale(${echelle})`, left: decalage + 'px' }"></iframe>
+        :style="{ width: largeurPx + 'px', height: hauteurIframe + 'px', transform: `scale(${echelle})`, left: decalage + 'px' }"></iframe>
     </div>
     <p class="apercu-note">{{ t('cadre.apercu.conseil') }}</p>
   </div>
@@ -36,7 +36,9 @@ const props = withDefaults(defineProps<{
   fluide?: boolean
   /** réglages de la fiche, envoyés (anonymement) dans les statistiques quand on imprime */
   reglages?: object | null
-}>(), { html: '', format: 'A4', orientation: 'portrait', nbPages: 1, fluide: false, reglages: null })
+  /** la première page tient entière dans la hauteur de la fenêtre (aperçu à côté des réglages : CadreExercice) */
+  pageEntiere?: boolean
+}>(), { html: '', format: 'A4', orientation: 'portrait', nbPages: 1, fluide: false, reglages: null, pageEntiere: false })
 
 const { t } = useLangue()
 // les anciennes fiches embarquaient un script qui lançait l'impression à l'ouverture : on le retire (le bouton Imprimer s'en charge)
@@ -46,21 +48,39 @@ const route = useRoute()
 const MM = 96 / 25.4
 const cadre = ref<HTMLElement | null>(null)
 const largeurCadre = ref(600)
+const hauteurFenetre = ref(typeof window === 'undefined' ? 900 : window.innerHeight)
+// page entière : place laissée au-dessus et au-dessous de l'aperçu (barre du site, boutons, conseil), et hauteur minimale
+const RESERVE_FENETRE = 190
+const HAUTEUR_MIN = 360
 
 const dims = computed(() => dimensionsPage(props.format, props.orientation))
 // marge d'affichage autour des feuilles dans l'iframe
 const largeurPx = computed(() => dims.value.w * MM + 24)
 const hauteurPx = computed(() => (dims.value.h + 8) * MM * (props.fluide ? 1.25 : Math.min(props.nbPages, 1.6)) + 8)
-const echelle = computed(() => Math.min(1, largeurCadre.value / largeurPx.value))
+// Page entière : la hauteur visible est celle de la fenêtre, et l'échelle fait tenir une page (le reste défile dans l'aperçu)
+const hauteurVisible = computed(() => Math.max(HAUTEUR_MIN, hauteurFenetre.value - RESERVE_FENETRE))
+const hauteurPage = computed(() => (dims.value.h + 8) * MM)
+const echelle = computed(() => {
+  const enLargeur = Math.min(1, largeurCadre.value / largeurPx.value)
+  if (!props.pageEntiere) return enLargeur
+  return Math.min(enLargeur, hauteurVisible.value / hauteurPage.value)
+})
 const decalage = computed(() => Math.max(0, (largeurCadre.value - largeurPx.value * echelle.value) / 2))
-const hauteurCadre = computed(() => hauteurPx.value * echelle.value)
+const hauteurCadre = computed(() => (props.pageEntiere ? hauteurVisible.value : hauteurPx.value * echelle.value))
+// hauteur de l'iframe, avant réduction : en page entière, elle remplit le cadre
+const hauteurIframe = computed(() => (props.pageEntiere ? hauteurVisible.value / echelle.value : hauteurPx.value))
 
 let obs: ResizeObserver | null = null
+const suivreFenetre = () => { hauteurFenetre.value = window.innerHeight }
 onMounted(() => {
   obs = new ResizeObserver(([e]) => { largeurCadre.value = e.contentRect.width })
   if (cadre.value) obs.observe(cadre.value)
+  window.addEventListener('resize', suivreFenetre)
 })
-onUnmounted(() => obs?.disconnect())
+onUnmounted(() => {
+  obs?.disconnect()
+  window.removeEventListener('resize', suivreFenetre)
+})
 
 function imprimer(): void {
   imprimerDocument(document.value)

@@ -12,7 +12,7 @@
 <template>
   <div class="choix-police">
     <div class="ligne">
-      <label class="lib" :for="idSelect">{{ libelle || t('cadre.police') }}</label>
+      <label class="lib" :for="idSelect"><template v-if="icone"><Icone :nom="icone" />&nbsp;</template>{{ libelle || t('cadre.police') }}</label>
       <select :id="idSelect" :value="valeur" class="select" @change="valeur = ($event.target as HTMLSelectElement).value">
         <optgroup v-for="g in groupesAffiches" :key="g.titre" :label="g.titre">
           <option v-for="e in g.entrees" :key="e.id" :value="e.id" :disabled="e.etat === 'manquante'" :style="aperu(e)">{{ libelleDe(e) }}</option>
@@ -29,6 +29,8 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
 import AjoutPolice from './AjoutPolice.vue'
+import Icone from '../images/Icone.vue'
+import type { NomIcone } from '../images/icones.ts'
 import { usePolices, groupesDe, memoriserSysteme } from './polices.ts'
 import { estEmbarquee } from './groupesPolices.ts'
 import type { EntreePolice } from './groupesPolices.ts'
@@ -39,7 +41,9 @@ import type { CleTexte } from '../langues/traduire.ts'
 
 type CleCadre = Exclude<Extract<CleTexte, `cadre.${string}`>, 'cadre.toutesTrouvees' | 'cadre.nomTrouvee' | 'cadre.nomIntrouvable'>
 
-const props = withDefaults(defineProps<{ type?: TypePolice, modelValue?: string, libelle?: string, aide?: boolean }>(), { type: undefined, modelValue: undefined, libelle: '', aide: true })
+// icone : devant le libellé (« Présentation de la fiche » : OptionsFiche)
+const props = withDefaults(defineProps<{ type?: TypePolice, modelValue?: string, libelle?: string, aide?: boolean, icone?: NomIcone }>(),
+  { type: undefined, modelValue: undefined, libelle: '', aide: true, icone: undefined })
 const emit = defineEmits<{ 'update:modelValue': [police: string] }>()
 const { choix, pret } = usePolices()
 const { t } = useLangue()

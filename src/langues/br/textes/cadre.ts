@@ -6,7 +6,7 @@ export default {
   jouer: 'Ober ar boelladenn',
   imprimer: 'Moullañ ur fichenn',
   nouvelle: 'Fichenn nevez',
-  surLaFiche: 'War ar fichenn', // br: à relire
+  surLaFiche: 'Kinnig ar fichenn', // br: à relire
   entete: 'Anv-bihan ha deiziad', // br: à relire
   corrige_non: 'Hep reizhadenn', // br: à relire
   corrige_page: 'Reizhadenn war ur bajenn all', // br: à relire

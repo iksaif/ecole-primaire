@@ -6,7 +6,7 @@
 -->
 <template>
   <div class="config-section choix-pictogrammes" data-reglage="pictogrammes" role="group" :aria-labelledby="idTitre">
-    <div :id="idTitre" class="config-section-title">{{ t('cadre.pictos.titre') }}</div>
+    <div :id="idTitre" class="config-section-title"><Icone nom="puzzle" /> {{ t('cadre.pictos.titre') }}</div>
     <div class="btn-group" role="group" :aria-labelledby="idTitre">
       <button v-for="c in CHOIX_PICTOGRAMMES" :key="c" type="button" class="level-btn" :data-valeur="c"
         :class="{ active: options.pictogrammes === c }" :aria-pressed="options.pictogrammes === c" @click="options.pictogrammes = c">
@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import { useId } from 'vue'
+import Icone from '../images/Icone.vue'
 import { CHOIX_PICTOGRAMMES } from '../images/consignes.ts'
 import { useOptionsFiche } from './optionsFiche.ts'
 import { useLangue } from '../langues/useLangue.ts'

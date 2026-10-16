@@ -59,6 +59,13 @@
   locales non redistribuables (Belle Allure, Écolier : usage local seulement, `polices-locales/`) ne sont jamais embarquées : à dire dans
   l'interface.
 - [ ] Page programme : les mêmes icônes que `/imprimer` pour « À afficher » et « Pour s'entraîner ».
+- [ ] **Formulaire des fiches, suite** (après la mise en page en deux colonnes et le formulaire plus lisible du 2026-10-16) : une vraie case
+  à cocher pour les réglages oui / non (« Afficher les minutes », « Prénom et date », « Mention des pictogrammes ») ; un titre propre au
+  mode impression (« Que veux-tu trier ? » parle à l'enfant ; la description « L'élève entend le mot et le tape » de la dictée) ;
+  « Présentation de la fiche » repliable ; l'aperçu page par page (« Corrigé sur une autre page » s'affiche aujourd'hui sous les
+  exercices), fiche et corrigé côte à côte sur un très grand écran ; une barre « Voir l'aperçu ↓ / Imprimer » sur écran moyen ; la même
+  mise en page pour les affiches (`FormulaireAffiche.vue`) ; les rangées de boutons faites main dans les vues (« Pages de la fiche » de la
+  dictée, « Aide » de l'heure…) n'ont pas le nouveau style des choix multiples (`ChoixReglage`) : les y faire passer.
 
 ## Images et iconographie
 

@@ -5,7 +5,8 @@
     - le formulaire de réglages (slot par défaut, reçoit { mode }) : un réglage propre à un mode
       s'écrit <div v-if="mode === 'jouer'">…</div>
     - en mode jeu : bouton Commencer ; en mode impression : le bloc « Sur la fiche » (prénom et date, corrigé,
-      police), l'aperçu en direct, Imprimer et « Nouvelle fiche ».
+      police), l'aperçu en direct, Imprimer et « Nouvelle fiche » ; sur un écran large (useEcranLarge.ts), les réglages à gauche
+      et l'aperçu à droite, qui montre la page entière et reste visible quand on fait défiler les réglages.
   Usage : <CadreExercice v-model:mode="mode" :fiche="fiche" :config="config" @commencer="jeu.demarrer" @regenerer="nouvelle">
   Le texte de la fiche est un document HTML complet (documentFiche) ; ses options (prénom et date, corrigé) sont
   appliquées ici (optionsFiche.ts), avant l'aperçu et l'impression.
@@ -23,7 +24,7 @@
   tabulation (celui qui est actif) et le panneau est relié à son onglet.
 -->
 <template>
-  <div class="config-box cadre-exercice" :class="{ imbrique }">
+  <div class="config-box cadre-exercice" :class="{ imbrique, large: coteACote }">
     <div v-if="!ficheSeule" class="modes" role="tablist" :aria-label="t('cadre.modes')" @keydown="touche">
       <button v-for="o in onglets" :key="o.id" :id="`${id}-onglet-${o.id}`" ref="boutons" type="button" role="tab" :aria-selected="ongletActif === o.id"
         :aria-controls="`${id}-panneau`" :tabindex="ongletActif === o.id ? 0 : -1" :class="{ actif: ongletActif === o.id }"
@@ -35,23 +36,25 @@
     <div :id="`${id}-panneau`" :role="ficheSeule ? undefined : 'tabpanel'" :aria-labelledby="ficheSeule ? undefined : `${id}-onglet-${ongletActif}`">
       <!-- l'onglet d'une extension (src/extensions/) prend toute la place du panneau -->
       <component :is="composantExtension" v-if="ongletOuvert && composantExtension" :exercice="exerciceDeLaPage" />
-      <template v-else>
-      <ChoixLangueContenu />
-      <slot :mode="modeCourant" />
+      <div v-else class="contenu" :class="{ 'cote-a-cote': coteACote }">
+        <div class="formulaire">
+          <ChoixLangueContenu />
+          <slot :mode="modeCourant" />
 
-      <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" :pictogrammes="pictogrammes" :extensions="extensions" />
+          <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" :pictogrammes="pictogrammes" :extensions="extensions" />
 
-      <div class="signalement"><SignalerErreur :reglages="config ?? undefined" /></div>
+          <div class="signalement"><SignalerErreur :reglages="config ?? undefined" /></div>
+        </div>
 
-      <div v-if="modeCourant === 'jouer'" class="actions">
-        <button type="button" class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')"><Icone nom="commencer" /> {{ t('communs.commencer') }}</button>
+        <div v-if="modeCourant === 'jouer'" class="actions">
+          <button type="button" class="btn btn-primary btn-grand" :disabled="desactive" @click="$emit('commencer')"><Icone nom="commencer" /> {{ t('communs.commencer') }}</button>
+        </div>
+        <ApercuImpression v-else class="apercu-fiche" :html="ficheFinale" :fluide="true" :page-entiere="coteACote" :reglages="reglages">
+          <template v-if="aleatoire" #actions>
+            <button type="button" class="btn btn-ghost" @click="$emit('regenerer')"><Icone nom="nouvelle" /> {{ t('cadre.nouvelle') }}</button>
+          </template>
+        </ApercuImpression>
       </div>
-      <ApercuImpression v-else :html="ficheFinale" :fluide="true" :reglages="reglages">
-        <template v-if="aleatoire" #actions>
-          <button type="button" class="btn btn-ghost" @click="$emit('regenerer')"><Icone nom="nouvelle" /> {{ t('cadre.nouvelle') }}</button>
-        </template>
-      </ApercuImpression>
-      </template>
     </div>
   </div>
 </template>
@@ -67,6 +70,7 @@ import SignalerErreur from './SignalerErreur.vue'
 import OptionsFiche from './OptionsFiche.vue'
 import ChoixLangueContenu from './ChoixLangueContenu.vue'
 import { useOptionsFiche, appliquerOptionsFiche, aUnCorrige } from './optionsFiche.ts'
+import { useEcranLarge, LARGEUR_COTE_A_COTE } from './useEcranLarge.ts'
 import type { ModeExercice } from './useFicheExercice.ts'
 import { useLangue } from '../langues/useLangue.ts'
 
@@ -106,6 +110,10 @@ const options = useOptionsFiche()
 const avecCorrige = computed(() => aUnCorrige(props.fiche))
 const ficheFinale = computed(() => appliquerOptionsFiche(props.fiche, options.value, t('cadre.mentionPictos')))
 const reglages = computed(() => (props.config ? { ...props.config, ...options.value } : options.value))
+
+// Grand écran, en mode impression : les réglages à gauche, l'aperçu à droite (il reste visible pendant qu'on fait défiler les réglages)
+const ecranLarge = useEcranLarge(LARGEUR_COTE_A_COTE)
+const coteACote = computed(() => modeCourant.value === 'imprimer' && ecranLarge.value && !props.imbrique)
 
 // Les onglets : « Faire l'exercice » et « Imprimer une fiche », puis ceux des extensions actives pour cet exercice (src/extensions/onglets.ts : `?mode=<id>`)
 interface OngletAffiche { id: string, icone: NomIcone, titre: string }
@@ -157,7 +165,20 @@ function touche(e: KeyboardEvent) {
 }
 .modes button:hover { color: var(--texte); }
 .modes button.actif { background: white; color: var(--texte); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+/* Le formulaire : titres en casse normale, foncés (plus lisibles que de petites capitales grises), une seule hauteur de bouton */
+.formulaire :deep(.config-section) { margin-bottom: 1.4rem; }
+.formulaire :deep(.config-section-title) { text-transform: none; letter-spacing: 0; font-size: 1rem; color: var(--texte); margin-bottom: .45rem; }
+.formulaire :deep(.sous-titre-reglage) { font-size: .85rem; color: var(--texte-doux); }
+.formulaire :deep(.level-btn) { min-height: 40px; font-size: .9rem; }
 .signalement { text-align: right; margin: .25rem 0 -.5rem; }
 .actions { text-align: center; margin-top: 1.5rem; }
+
+/* Côte à côte (écran d'au moins LARGEUR_COTE_A_COTE, mode impression) : la page et la boîte s'élargissent, les réglages à gauche,
+   l'aperçu collé sous la barre du site à droite. L'ordre du document ne change pas (réglages puis aperçu) : clavier et lecteurs d'écran. */
+:global(.container:has(.cadre-exercice .cote-a-cote)) { max-width: 1680px; }
+.config-box.large { max-width: none; }
+.cote-a-cote { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 1fr); column-gap: 2.5rem; align-items: start; }
+.cote-a-cote .apercu-fiche { margin-top: 0; position: sticky; top: 76px; }
+.cote-a-cote .signalement { margin-bottom: 0; }
 .btn-grand { font-size: 1.1rem; padding: .75rem 2rem; }
 </style>

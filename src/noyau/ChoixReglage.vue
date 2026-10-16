@@ -19,14 +19,18 @@
     <ChoixReglage … :groupes="[{ titre: 'La phrase', valeurs: ['ordre', 'phrase'] }, …]" />
   Variante « cartes » (un choix qui change la nature de l'exercice : mode lacunes / complet, entraînement / chrono…) :
     <ChoixReglage cartes … :icone="m => m === 'lacunes' ? 'crayon' : 'blocNotes'" :description="m => t(m + 'Desc')" />
+  `iconeTitre` : l'icône devant le titre ; par défaut, celle des réglages communs (niveau, nombre de questions : ICONES_TITRE).
   `icone` (cartes et boutons) : l'icône de chaque valeur (src/images/icones.ts), dessinée devant le libellé par <Icone> ; le
   libellé reste du texte, sans emoji.
+  Lisibilité : un choix multiple porte « plusieurs choix possibles » après son titre, une coche devant chaque valeur cochée (en clair) et
+  « + » devant les autres ; un choix unique d'au plus MAX_BOUTONS_COLLES valeurs a ses boutons collés en une seule pièce, tant que la rangée tient sur une ligne.
   Accessibilité : la section est un `role="group"` nommé par son titre ; chaque bouton porte `aria-pressed` (choix
   multiple : plusieurs boutons enfoncés) ; la marque « (bonus) » fait partie du nom du bouton.
 -->
 <template>
-  <div v-if="!niveauFige" class="config-section" role="group" :aria-labelledby="titre ? idTitre : undefined" :data-reglage="cle">
-    <div v-if="titre" :id="idTitre" class="config-section-title">{{ titre }}</div>
+  <div v-if="!niveauFige" ref="boite" class="config-section" :class="{ multiple: !!choisies, colles: boutonsColles }" role="group"
+    :aria-labelledby="titre ? idTitre : undefined" :data-reglage="cle">
+    <div v-if="titre" :id="idTitre" class="config-section-title"><template v-if="iconeDuTitre"><Icone :nom="iconeDuTitre" />&nbsp;</template>{{ titre }}<span v-if="choisies && liste.length > 1" class="indice-multiple">{{ t('communs.plusieursChoix') }}</span></div>
     <div v-if="cartes" class="cartes-reglage" :class="{ nombreuses: liste.length > 2 }" :style="{ '--nb-cartes': liste.length }">
       <button v-for="v in liste" :key="String(v)" type="button" class="carte-reglage" :class="{ active: actif(v) }" :data-valeur="String(v)"
         :aria-pressed="actif(v)" :title="raison(v)" @click="choisir(v)">
@@ -40,7 +44,7 @@
       <div class="btn-group" role="group" :aria-label="section.titre || undefined">
         <button v-for="v in section.valeurs" :key="String(v)" type="button" class="level-btn" :class="{ active: actif(v) }" :data-valeur="String(v)"
           :aria-pressed="actif(v)" :title="raison(v)"
-          @click="choisir(v)"><template v-if="icone?.(v)"><Icone :nom="icone(v)!" />&nbsp;</template><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></button>
+          @click="choisir(v)"><span v-if="choisies" class="coche" aria-hidden="true">{{ actif(v) ? '✓' : '+' }}</span><template v-if="icone?.(v)"><Icone :nom="icone(v)!" />&nbsp;</template><slot name="valeur" :valeur="v" :texte="texte(v)">{{ texte(v) }}</slot><span v-if="marque(v)" class="marque-reglage"> ({{ t(marque(v)!) }})</span></button>
         <template v-if="libre && k === sections.length - 1">
           <button type="button" class="level-btn" :class="{ active: autreActif }" data-valeur="autre" :aria-pressed="autreActif" @click="ouvrirAutre">{{ t('communs.nombreAutre') }}</button>
           <input v-if="autreOuvert || autreActif" ref="champAutre" class="nombre-libre" type="number" inputmode="numeric" :min="libre.min" :max="libre.max" step="1"
@@ -57,7 +61,7 @@
 import Icone from '../images/Icone.vue'
 import type { NomIcone } from '../images/icones.ts'
 // textes : section `communs` (bonus, horsProgramme) ; marques lues dans la définition (src/noyau/reglages.ts)
-import { computed, nextTick, ref, useId } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, useId } from 'vue'
 import { useLangue } from '../langues/useLangue.ts'
 import { classeVerrouillee } from '../contexte/useContexte.ts'
 import { estBonus, nombreLibre, raisonHorsProgramme, valeursDe } from './reglages.ts'
@@ -89,7 +93,9 @@ const props = withDefaults(defineProps<{
   cartes?: boolean
   icone?: ((v: Valeur) => NomIcone | undefined) | null
   description?: ((v: Valeur) => string) | null
-}>(), { niveau: '', titre: '', libelle: null, libelles: null, valeurs: null, groupes: null, cartes: false, icone: null, description: null })
+  // icône devant le titre (par défaut, celle des réglages communs : ICONES_TITRE)
+  iconeTitre?: NomIcone | null
+}>(), { niveau: '', titre: '', libelle: null, libelles: null, valeurs: null, groupes: null, cartes: false, icone: null, description: null, iconeTitre: null })
 // profil « enfant » : le niveau est figé sur la classe verrouillée (useReglages) : pas de choix à montrer
 const niveauFige = computed(() => { const c = classeVerrouillee(); return props.cle === 'niveau' && !!c && c in props.definition.niveaux })
 const emit = defineEmits<{ 'update:modelValue': [valeur: Modele] }>()
@@ -101,6 +107,10 @@ defineSlots<{
 }>()
 const { t } = useLangue()
 const idTitre = useId()
+
+// Les réglages qu'on retrouve d'un exercice à l'autre ont une icône devant leur titre : des repères (les autres n'en ont pas)
+const ICONES_TITRE: Readonly<Record<string, NomIcone>> = { niveau: 'classe', nbQ: 'chiffres', nbFiche: 'chiffres', nb: 'chiffres' }
+const iconeDuTitre = computed<NomIcone | null>(() => props.iconeTitre ?? ICONES_TITRE[props.cle] ?? null)
 
 // En interne, les valeurs sont lues comme des ValeurOption (le typage fin sert aux appelants)
 const brut = (v: Valeur) => v as unknown as ValeurOption
@@ -136,6 +146,30 @@ async function ouvrirAutre() {
   champAutre.value?.focus()
 }
 
+// Choix unique, avec peu de valeurs : les boutons sont collés en une seule pièce, qui se lit « un seul parmi », tant que la rangée tient
+// sur une ligne (mesuré : écran étroit, case étroite d'une grille de réglages) ; sinon la pièce se casserait : boutons séparés.
+const MAX_BOUTONS_COLLES = 6
+const boite = ref<HTMLElement | null>(null)
+const surUneLigne = ref(true)
+const boutonsColles = computed(() => {
+  if (choisies.value || props.cartes || props.groupes || !surUneLigne.value) return false
+  return liste.value.length + (libre.value ? 1 : 0) <= MAX_BOUTONS_COLLES
+})
+
+/** Les boutons de la rangée sont-ils tous sur la même ligne ? */
+function rangeeSurUneLigne(element: HTMLElement): boolean {
+  const hauts = [...element.querySelectorAll<HTMLElement>('.btn-group > .level-btn')].map(b => b.offsetTop)
+  return new Set(hauts).size <= 1
+}
+// À chaque changement de largeur. Collés et cassés : on les sépare ; séparés et sur une ligne : collés, ils tiennent aussi (plus étroits).
+let observateur: ResizeObserver | null = null
+onMounted(() => {
+  if (!boite.value || typeof ResizeObserver === 'undefined') return
+  observateur = new ResizeObserver(() => { if (boite.value) surUneLigne.value = rangeeSurUneLigne(boite.value) })
+  observateur.observe(boite.value)
+})
+onUnmounted(() => observateur?.disconnect())
+
 /** Le nombre saisi, arrondi et ramené dans les bornes ; un champ vide ou illisible ne change rien. */
 function saisirAutre(e: Event) {
   const bornes = libre.value
@@ -159,6 +193,19 @@ function choisir(v: Valeur) {
 /* le niveau est LE choix de départ : un bloc à part (comme la « version » d'une affiche), les autres réglages le personnalisent */
 .config-section[data-reglage="niveau"] { background: #eef5fd; border-left: 5px solid var(--bleu-fort); border-radius: var(--radius); padding: .9rem 1.1rem .7rem; margin-bottom: 1.6rem; }
 .config-section[data-reglage="niveau"] .config-section-title { color: var(--texte); }
+/* choix multiple : un choix coché est clair, avec une coche (une rangée toute cochée n'est pas un mur de bleu) ; « + » devant les autres */
+.multiple .level-btn.active { background: #e3eefb; border-color: var(--bleu-fort); color: #245c9e; }
+.coche { display: inline-block; width: .9em; margin-right: .3em; text-align: center; }
+.multiple .level-btn:not(.active) .coche { color: var(--texte-doux); }
+.indice-multiple { margin-left: .5rem; font-size: .8rem; font-weight: 600; color: var(--texte-doux); text-transform: none; letter-spacing: 0; }
+/* choix unique court : les boutons collés en une pièce (comme le corrigé dans OptionsFiche) */
+.colles .btn-group { gap: 0; }
+.colles .level-btn { border-radius: 0; margin-left: -2px; }
+.colles .level-btn:first-child { border-radius: 20px 0 0 20px; margin-left: 0; }
+.colles .level-btn:last-of-type { border-radius: 0 20px 20px 0; }
+.colles .level-btn:only-of-type { border-radius: 20px; }
+.colles .level-btn.active, .colles .level-btn:focus-visible { position: relative; z-index: 1; }
+.colles .nombre-libre { margin-left: .5rem; }
 /* cartes : autant de colonnes que de valeurs (une seule sur petit écran au-delà de deux) */
 .sous-titre-reglage { margin: .6rem 0 .4rem; text-transform: none; font-weight: 600; color: var(--texte-doux); }
 .cartes-reglage { display: grid; grid-template-columns: repeat(var(--nb-cartes), 1fr); gap: .75rem; }

@@ -147,6 +147,11 @@ for (const largeur of [1280, 360]) {
   const page = await ctx.newPage()
   const erreurs = surveiller(page)
   await page.goto(appDev('/dev/exemple?mode=imprimer'))
+  // « Présentation de la fiche » est replié : son titre et le résumé des choix, puis on le déplie
+  await page.waitForSelector('.options-fiche > summary')
+  verifier(await page.locator('.options-fiche').evaluate(d => !d.open), '« Présentation de la fiche » : replié par défaut')
+  verifier((await page.locator('.options-fiche .resume').textContent()).includes('Prénom et date'), 'replié : le résumé dit les choix en cours')
+  await page.locator('.options-fiche > summary').click()
   await page.waitForSelector('.options-fiche .choix-police select')
   await page.waitForFunction(() => document.querySelector('.options-fiche option[value="BelleAllure CM"]'))
   const mise = await page.evaluate(() => {
@@ -195,7 +200,8 @@ for (const largeur of [1280, 360]) {
   await page.waitForFunction(() => document.querySelector('.choix-police select')?.value === 'Verdana')
   verifier(true, 'après rechargement, la police de l\'ordinateur est conservée')
 
-  // saisie du nom d'une police installée : trouvée ou non
+  // saisie du nom d'une police installée : trouvée ou non (le bloc est de nouveau replié après rechargement)
+  await page.locator('.options-fiche > summary').click()
   await page.locator('.aide summary').click()
   await page.getByLabel('Nom d’une police installée').fill('Introuvable XYZ')
   await page.getByRole('button', { name: 'Chercher', exact: true }).click()

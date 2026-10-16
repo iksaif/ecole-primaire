@@ -54,4 +54,6 @@ export default {
   // un nombre libre en plus des choix (le nombre de questions)
   nombreAutre: 'Autre…',
   nombreLibre: 'Nombre, de {min} à {max}',
+  // après le titre d'un réglage à choix multiple (ChoixReglage)
+  plusieursChoix: 'plusieurs choix possibles',
 } as const

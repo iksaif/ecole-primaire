@@ -52,11 +52,15 @@ export interface OptionsDocumentFiche {
 export function documentFiche({ titre, langue, corps, css = '', h1, police = POLICE_SCOLAIRE, cssPolices = '', largeur = '720px', marge = '1.5cm' }: OptionsDocumentFiche): string {
   // une fiche réunie à d'autres (fragmentDe, src/impression/fragment.ts) remet ses morceaux au lieu de construire son document
   if (signalerFragment({ titre, h1, css, cssPolices, corps })) return ''
+  // Une fiche qui règle ses marges avec `@page` (body sans marge) : à l'écran, `@page` ne s'applique pas. L'aperçu reprend alors la même marge en rembourrage, pour montrer la zone
+  // réellement imprimée (sans cela, la feuille touche les bords et paraît plus large qu'elle ne l'est). Seulement à l'écran : l'impression garde `@page`.
+  const margePage = /@page[^{]*\{[^}]*?margin:\s*([^;}]+)/.exec(css)?.[1]?.trim()
+  const margeApercu = margePage && marge === '0' ? `\n      @media screen { body { padding: ${margePage}; } }` : ''
   return `<!DOCTYPE html><html lang="${langue}"><head>
     <meta charset="UTF-8"><title>${echapper(titre)}</title>
     <style>${cssPolices ? `\n${cssPolices}` : ''}
       body { font-family: ${police}; max-width: ${largeur}; margin: ${marge} auto; color: #222;
-        -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        -webkit-print-color-adjust: exact; print-color-adjust: exact; }${margeApercu}
       h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: .4rem; margin-bottom: .5rem; }
 ${css}
     </style></head><body>

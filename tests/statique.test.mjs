@@ -178,6 +178,14 @@ verifier(new Set(locs).size === locs.length && locs.every(l => l.startsWith(ctx.
   const app = adressesApp(ctx)
   verifier(app.includes('') && app.includes('maths') && app.includes('programme') && app.some(a => a.startsWith('competence/')) && !app.includes('parametres') && !app.some(a => a.startsWith('dev')), 'adresses de l’app : accueil, matières, programme, compétences ; ni réglages ni /dev')
   verifier(adressesStatiques(ctx)[0] === 'telechargements/', 'l’index des fiches est une page statique du sitemap')
+  // chaque page de l'app du sitemap a sa coquille : le même index.html, avec SON canonical (sinon un moteur la lit comme un double de l'accueil)
+  const canonical = html => (/<link rel="canonical" href="([^"]+)"/.exec(html) ?? [])[1]
+  const coquilles = fichiersS.filter(f => app.filter(a => a !== '').some(a => f.chemin === `${a}/index.html`))
+  verifier(coquilles.length === app.filter(a => a !== '').length, `une coquille par page de l'app du sitemap (${coquilles.length})`)
+  verifier(coquilles.every(f => locs.includes(canonical(f.contenu))), 'le canonical de chaque coquille est son adresse du sitemap')
+  verifier(coquilles.every(f => f.contenu.replace(/<link rel="canonical"[^>]*>/, '') === MODELE.replace(/<link rel="canonical"[^>]*>/, '')), 'une coquille ne diffère de l’index.html que par son canonical')
+  verifier(new Set(fichiersS.map(f => f.chemin)).size === fichiersS.length, 'aucun fichier statique écrit deux fois (une coquille ne recouvre pas une page de fiche)')
+  verifier(!fichiersS.some(f => /^(parametres|dev)\//.test(f.chemin)), 'aucune coquille pour une page qui ne s’indexe pas')
   const skoolik = { ...ctx, site: SITES.skoolik }
   verifier(adressesApp(skoolik).includes('brezhoneg'), 'la page de la langue régionale vient du registre de langues (« brezhoneg »)')
 }
@@ -215,7 +223,8 @@ if (existsSync(join(racine, 'public/fiches/index.json'))) {
   symlinkSync(join(racine, 'public/fiches'), join(d2, 'fiches'))
   const c2 = lireContexte({ mode: 'developpement', outDir: d2, avecExemples: true })
   const f2 = fichiersStatiques(c2)
-  verifier(c2.index.entrees.length > 0 && f2.length === c2.index.entrees.length + 4, `${c2.index.entrees.length} exemples : une page chacun, plus l’index, sitemap, robots et 404`)
+  const nbCoquilles = adressesApp(c2).filter(a => a !== '').length
+  verifier(c2.index.entrees.length > 0 && f2.length === c2.index.entrees.length + 4 + nbCoquilles, `${c2.index.entrees.length} exemples : une page chacun, plus l’index, sitemap, robots, 404 et ${nbCoquilles} coquilles de l'app`)
   const p2 = pagesStatiques(c2)
   verifier(p2.every(p => /<script type="application\/ld\+json">/.test(p.html) || p.adresse === 'telechargements/'), 'chaque page d’exemple a son JSON-LD')
   rmSync(d2, { recursive: true, force: true })

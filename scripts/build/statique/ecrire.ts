@@ -1,8 +1,10 @@
 // Assemble puis écrit les pages statiques : `telechargements/index.html`, `telechargements/<slug>/index.html`, `sitemap.xml`,
-// `robots.txt`, `404.html`. Le dossier `telechargements/` existant est vidé d'abord (ce qui n'est plus produit ne reste pas publié).
+// `robots.txt`, `404.html`, et une coquille `<route>/index.html` par page de l'app (coquilles.ts). Le dossier `telechargements/` existant est vidé d'abord
+// (ce qui n'est plus produit ne reste pas publié).
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { pageIntrouvable } from './introuvable.ts'
+import { coquillesApp } from './coquilles.ts'
 import { pageIndex } from './index.ts'
 import { pageFiche } from './page.ts'
 import { robots } from './robots.ts'
@@ -29,6 +31,7 @@ export function pagesStatiques(ctx: ContexteStatique): PageStatique[] {
 export function fichiersStatiques(ctx: ContexteStatique): FichierStatique[] {
   return [
     ...pagesStatiques(ctx).map(p => ({ chemin: `${p.adresse}index.html`, contenu: p.html })),
+    ...coquillesApp(ctx),
     { chemin: 'sitemap.xml', contenu: sitemap(ctx) },
     { chemin: 'robots.txt', contenu: robots(ctx) },
     { chemin: '404.html', contenu: pageIntrouvable(ctx) },

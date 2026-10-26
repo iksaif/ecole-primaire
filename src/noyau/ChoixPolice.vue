@@ -70,7 +70,8 @@ const groupesAffiches = computed(() => [
 
 // Textes des polices incluses, écrits en français dans src/utils/impression.js : clé du catalogue par id
 const INCLUSES: Record<string, CleCadre> = {
-  'Playwrite FR Trad': 'cadre.policeAttache', Andika: 'cadre.policeAndika', Luciole: 'cadre.policeLuciole', OpenDyslexic: 'cadre.policeOpenDyslexic',
+  Marelle: 'cadre.policeMarelle', 'Marelle 2': 'cadre.policeMarelle2', 'Marelle Baton': 'cadre.policeMarelleBaton', 'Marelle Baton 2': 'cadre.policeMarelleBaton2',
+  'Playwrite FR Trad': 'cadre.policePlaywrite', Andika: 'cadre.policeAndika', Luciole: 'cadre.policeLuciole', OpenDyslexic: 'cadre.policeOpenDyslexic',
 }
 function libelleDe(e: EntreePolice): string {
   if (e.etat === 'incluse') { const cle = INCLUSES[e.id]; return cle ? t(cle) : e.label }

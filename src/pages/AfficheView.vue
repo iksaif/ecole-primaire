@@ -11,7 +11,7 @@
     - un réglage de la définition sous son nom : choix unique `cle=valeur` (true/false, nombre ou texte), choix multiple
       `cle=a,b,c`, champ texte ou nombre `cle=…` (catalogue.ts : `CLES_DE_LA_FEUILLE`, aucun réglage ne porte ces noms) ;
     - `police` (mode unique) ou `police.script`, `police.attache` (mode par type) : seulement une police LIVRÉE (Andika, Luciole,
-      OpenDyslexic, Playwrite FR Trad) ; une police de l'ordinateur ou ajoutée depuis un fichier ne passe pas (défaut chez l'autre) ;
+      OpenDyslexic, Marelle et ses variantes, Playwrite FR Trad) ; une police de l'ordinateur ou ajoutée depuis un fichier ne passe pas (défaut chez l'autre) ;
     - `titre` : titre personnalisé ; `graine` : affiche à hasard seulement.
   Écrite par queryDeReglages, relue par lireLien (catalogue.ts) et validée par reglagesDe : une valeur invalide est ignorée. Ce
   que porte l'adresse l'emporte sur les réglages mémorisés ; avec une variante (lien partagé, « Personnaliser » d'une fiche toute

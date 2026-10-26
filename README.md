@@ -199,7 +199,7 @@ route (`scripts/deploiement/redirection-gh-pages.mjs`, publiée à chaque push s
 
 Toutes les polices utilisées sont livrées avec le site, sous licence libre :
 
-- Playwrite FR Trad (écriture cursive scolaire), Andika (script, pensée pour l'apprentissage de la lecture)
+- Marelle (écriture cursive scolaire libre de l'Éducation nationale), Playwrite FR Trad, Andika (script, pensée pour l'apprentissage de la lecture)
   et OpenDyslexic, sous licence SIL OFL ;
 - Luciole © Laurent Bourcellier & Jonathan Perez, sous licence CC BY 4.0.
 

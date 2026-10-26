@@ -25,6 +25,7 @@
       <p>{{ t('mentions.codeSource') }} <a :href="SITE.depot" target="_blank" rel="noopener">GitHub</a>{{ t('mentions.codeLicence') }}
         <a :href="`${SITE.depot}/blob/main/LICENSE`" target="_blank" rel="noopener">AGPL 3.0</a>.</p>
       <p>{{ t('mentions.polices') }}
+        <a href="https://marelle.forge.apps.education.fr/" target="_blank" rel="noopener">Marelle</a> © Ministère de l’Éducation nationale, Laurent Bourcellier, Jonathan Fabreguettes &amp; Rosalie Wagner,
         <a href="https://fonts.google.com/specimen/Playwrite+FR+Trad" target="_blank" rel="noopener">Playwrite FR Trad</a>,
         <a href="https://software.sil.org/andika/" target="_blank" rel="noopener">Andika</a>,
         <a href="https://opendyslexic.org/" target="_blank" rel="noopener">OpenDyslexic</a>

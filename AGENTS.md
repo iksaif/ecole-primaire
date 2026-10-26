@@ -116,7 +116,7 @@ qui importe des modules du projet doit être placé **dans le dépôt** le temps
   2026-10-06)** : la Dictée (des phrases) et la Lecture (des histoires) peuvent demander un texte à Mistral (api.mistral.ai)
   avec la clé que l'utilisateur saisit lui-même (`src/noyau/mistral.ts`, `CleMistral.vue`) ; sans clé, rien ne sort du navigateur
   (`tests/vie-privee.test.mjs` le vérifie pour chacun).
-- Polices : seulement celles livrées (OFL / CC BY). Belle Allure et Écolier ne sont pas redistribuables.
+- Polices : seulement celles livrées (OFL / CC BY). Belle Allure et Écolier ne sont pas redistribuables. **Cursive par défaut : Marelle** (police libre de l'Éducation nationale, OFL, nom réservé : les webfonts officiels de `src/assets/fonts/marelle/` ne se modifient ni ne se sous-ensemblent ; décision du 2026-10-26, après Playwrite FR Trad qui reste proposée) : `POLICE_ATTACHE` de `src/utils/impression.js` ; métriques des affiches à refaire avec `node scripts/generer/metriques-polices.mjs` (facteur de correction des lettres liées).
 - `brouillons/` : plans temporaires, maquettes et études (ignoré par git : jamais commité ni poussé ; ex. `brouillons/iconographie/`).
 - `plans/` et `AGENTS.md` sont versionnés depuis le 2026-10-07 (reprise du travail sur plusieurs machines). Ne pas commiter
   `i18n-relecture.html` ni `couverture.html` (générés), ni rien qui contienne un identifiant, un hôte réel ou une clé (`.deploy.env`).

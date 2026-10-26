@@ -16,7 +16,7 @@ const res = await page.evaluate(async chemin => {
   const m = await import(`${chemin}src/utils/impression.js`)
   await m.chargerPolices()
   const CAR = [...Array(95)].map((_, i) => String.fromCharCode(32 + i)).join('') + 'àâäçéèêëîïôöùûüÿœæÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŒÆñÑ«»’‘“”–—…°€·'
-  const polices = ['Andika', 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']
+  const polices = ['Andika', 'Luciole', 'OpenDyslexic', 'Marelle', 'Marelle 2', 'Marelle Baton', 'Marelle Baton 2', 'Playwrite FR Trad']
   const arrondi = v => Math.round(v * 1000) / 1000
   const out = { CAR, largeurs: {}, proportions: {}, tests: [] }
   for (const p of polices) {
@@ -30,6 +30,16 @@ const res = await page.evaluate(async chemin => {
 }, base)
 await nav.close()
 
+// Marelle (et ses variantes) lie les lettres : ligatures et formes contextuelles la rendent plus étroite que la somme des largeurs de ses lettres isolées
+// (de 5 à 12 % sur du texte courant). Pour elle seule, un facteur de correction : la moyenne de mesure / estimation sur les trois phrases de texte courant des
+// phrases d'essai, en normal. mesure.ts le multiplie à l'estimation. Les autres polices n'en ont pas (facteur 1) : leurs tables, et les affiches qui en dépendent, ne changent pas.
+const estimation = (police, texte) => { const l = res.largeurs[police]; return [...texte].reduce((s, c) => s + (res.CAR.includes(c) ? l[res.CAR.indexOf(c)] : l.reduce((a, b) => a + b, 0) / l.length), 0) }
+const CORRECTIONS = {}
+for (const police of Object.keys(res.proportions).filter(p => p.startsWith('Marelle'))) {
+  const rapports = res.tests.filter(([p]) => p === police).slice(0, 3).map(([, texte, mesure]) => mesure / estimation(police, texte))
+  CORRECTIONS[police] = Math.round(rapports.reduce((a, b) => a + b, 0) / rapports.length * 1000) / 1000
+}
+
 const fichier = `// Généré par scripts/generer/metriques-polices.mjs (mesuré dans Chrome) : ne pas modifier à la main.
 // Largeur de chaque caractère (en em) des polices livrées, en normal et en gras (« :700 »), et leurs proportions (hauteur
 // d'x, de majuscule, de hampe, de jambage). Lues par mesure.ts, sans canvas, donc par node.
@@ -39,15 +49,18 @@ export const LARGEURS: Readonly<Record<string, readonly number[]>> = {
 ${Object.entries(res.largeurs).map(([k, v]) => `  ${JSON.stringify(k)}: [${v.join(',')}],`).join('\n')}
 }
 
-export const PROPORTIONS: Readonly<Record<string, { x: number, majuscule: number, hampe: number, jambage: number }>> = ${JSON.stringify(res.proportions, null, 2).replace(/"(\w+)":/g, '$1:').replace(/"(Playwrite FR Trad)":/, "'$1':")}
+export const PROPORTIONS: Readonly<Record<string, { x: number, majuscule: number, hampe: number, jambage: number }>> = ${JSON.stringify(res.proportions, null, 2).replace(/"(\w+)":/g, '$1:').replace(/"(\w+(?: \w+)+)":/g, "'$1':")}
+
+// Facteur de correction de l'estimation des polices dont les lettres se lient (mesure / somme des largeurs) : mesure.ts le multiplie. Absent : 1.
+export const CORRECTIONS: Readonly<Record<string, number>> = ${JSON.stringify(CORRECTIONS, null, 2).replace(/"(\w+(?: \w+)*)":/g, (_, k) => /^\w+$/.test(k) ? `${k}:` : `'${k}':`)}
 `
 writeFileSync(new URL('../../src/affiches/metriques.ts', import.meta.url), fichier)
 
-// écart de l'estimation (somme des largeurs, sans crénage) avec la mesure du canvas
+// écart de l'estimation (somme des largeurs, sans crénage, corrigée pour les polices liées) avec la mesure du canvas
 const ecarts = {}
 for (const [police, texte, mesure] of res.tests) {
   const l = res.largeurs[police]
   const estime = [...texte].reduce((s, c) => s + (res.CAR.includes(c) ? l[res.CAR.indexOf(c)] : l.reduce((a, b) => a + b, 0) / l.length), 0)
-  ecarts[police] = Math.max(ecarts[police] ?? 0, Math.abs(estime - mesure) / mesure * 100)
+  ecarts[police] = Math.max(ecarts[police] ?? 0, Math.abs(estime * (CORRECTIONS[police.replace(/:700$/, '')] ?? 1) - mesure) / mesure * 100)
 }
 console.log('écart maximal de l’estimation sur les phrases d’essai (%) :', Object.fromEntries(Object.entries(ecarts).map(([k, v]) => [k, +v.toFixed(1)])))

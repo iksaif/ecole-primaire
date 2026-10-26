@@ -38,7 +38,7 @@ const definition = definirAffiche({
   marge: MARGE,
   hTitre: H_TITRE,
   // le mot illustré et le titre sont en script ; l'attaché a sa police, avec son lignage facultatif
-  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
+  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Marelle' } },
   // chaque variante garde celles qui sont au programme de TOUTES ses classes
   competences: [K.nomLettres, K.cursive, K.accentsLettres, K.alphabetLangueRegionale, K.epelerLangueRegionale],
   reglages: {

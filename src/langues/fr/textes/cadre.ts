@@ -32,7 +32,11 @@ export default {
   nomIntrouvable: '« {nom} » n’a pas été trouvée sur cet ordinateur : vérifiez l’orthographe exacte du nom.',
   noteSysteme: 'Cette police est celle de l’ordinateur : elle n’est pas incluse dans la fiche. Elle ne s’imprime bien que depuis cet ordinateur (pas dans un PDF téléchargé, ni depuis un autre appareil).',
   // polices incluses et notes sur les polices à obtenir ailleurs (ChoixPolice)
-  policeAttache: 'Playwrite FR Trad — cursive scolaire française',
+  policeMarelle: 'Marelle — cursive scolaire libre de l’Éducation nationale',
+  policeMarelle2: 'Marelle 2 — montantes et descendantes plus hautes',
+  policeMarelleBaton: 'Marelle Bâton — majuscules bâton',
+  policeMarelleBaton2: 'Marelle Bâton 2 — majuscules bâton, montantes plus hautes',
+  policePlaywrite: 'Playwrite FR Trad — cursive scolaire française',
   policeAndika: 'Andika — conçue pour apprendre à lire (a et g simples)',
   policeLuciole: 'Luciole — très lisible, conçue pour les enfants malvoyants',
   policeOpenDyslexic: 'OpenDyslexic — pour les lecteurs dyslexiques',

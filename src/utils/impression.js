@@ -4,7 +4,11 @@ import { fournirPolices } from './page.ts'
 
 // Outils communs aux documents imprimables (fiches, affiches).
 // Les polices sont embarquées dans le build : tout fonctionne hors ligne.
-import attacheUrl from '@fontsource/playwrite-fr-trad/files/playwrite-fr-trad-latin-400-normal.woff2?url'
+import playwriteUrl from '@fontsource/playwrite-fr-trad/files/playwrite-fr-trad-latin-400-normal.woff2?url'
+import marelleUrl from '../assets/fonts/marelle/Marelle-Regular.woff2?url'
+import marelle2Url from '../assets/fonts/marelle/Marelle2-Regular.woff2?url'
+import marelleBatonUrl from '../assets/fonts/marelle/MarelleBaton-Regular.woff2?url'
+import marelleBaton2Url from '../assets/fonts/marelle/MarelleBaton2-Regular.woff2?url'
 import scriptUrl from '@fontsource/andika/files/andika-latin-400-normal.woff2?url'
 import scriptGrasUrl from '@fontsource/andika/files/andika-latin-700-normal.woff2?url'
 import lucioleUrl from '../assets/fonts/luciole/Luciole-Regular.woff2?url'
@@ -14,8 +18,9 @@ import dysGrasUrl from '@fontsource/opendyslexic/files/opendyslexic-latin-700-no
 
 // Écriture « script » : a et g à un seul œil, comme les lettres apprises en classe
 export const POLICE_SCRIPT = 'Andika'
-// Écriture cursive (attachée) incluse
-export const POLICE_ATTACHE = 'Playwrite FR Trad'
+// Écriture cursive (attachée) incluse : Marelle, la police cursive libre de l'Éducation nationale (OFL, avril 2026), par défaut ; Playwrite FR Trad reste proposée
+export const POLICE_ATTACHE = 'Marelle'
+export const POLICE_PLAYWRITE = 'Playwrite FR Trad'
 
 // Polices scolaires courantes que l'on peut avoir installées sur l'ordinateur. Leur licence
 // (usage personnel / en classe) ne permet pas de les rediffuser avec le site :
@@ -30,13 +35,23 @@ export const POLICES_CONNUES = {
 }
 // Polices livrées avec le site (licences libres : OFL ou CC BY)
 const FICHIERS_INCLUS = {
-  [POLICE_ATTACHE]: { 400: attacheUrl },
+  [POLICE_ATTACHE]: { 400: marelleUrl },
+  'Marelle 2': { 400: marelle2Url },
+  'Marelle Baton': { 400: marelleBatonUrl },
+  'Marelle Baton 2': { 400: marelleBaton2Url },
+  [POLICE_PLAYWRITE]: { 400: playwriteUrl },
   [POLICE_SCRIPT]: { 400: scriptUrl, 700: scriptGrasUrl },
   Luciole: { 400: lucioleUrl, 700: lucioleGrasUrl },
   OpenDyslexic: { 400: dysUrl, 700: dysGrasUrl },
 }
 export const POLICES_INCLUSES = {
-  attache: [{ id: POLICE_ATTACHE, label: 'Playwrite FR Trad — cursive scolaire française' }],
+  attache: [
+    { id: POLICE_ATTACHE, label: 'Marelle — cursive scolaire libre de l’Éducation nationale' },
+    { id: 'Marelle 2', label: 'Marelle 2 — montantes et descendantes plus hautes' },
+    { id: 'Marelle Baton', label: 'Marelle Bâton — majuscules bâton' },
+    { id: 'Marelle Baton 2', label: 'Marelle Bâton 2 — majuscules bâton, montantes plus hautes' },
+    { id: POLICE_PLAYWRITE, label: 'Playwrite FR Trad — cursive scolaire française' },
+  ],
   script: [
     { id: POLICE_SCRIPT, label: 'Andika — conçue pour apprendre à lire (a et g simples)' },
     { id: 'Luciole', label: 'Luciole — très lisible, conçue pour les enfants malvoyants' },

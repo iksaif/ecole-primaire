@@ -13,7 +13,7 @@ export const estMajuscule = (style: Style): boolean => style.endsWith('maj')
  * Les polices livrées avec le site (OFL), celles des PDF publiés : la fiche les prend quand on ne lui en donne pas. Les mêmes noms que
  * POLICE_SCRIPT et POLICE_ATTACHE de src/utils/impression.js, que node ne peut pas lire (il importe les fichiers de police).
  */
-export const POLICES_LIVREES = { script: 'Andika', attache: 'Playwrite FR Trad' } as const
+export const POLICES_LIVREES = { script: 'Andika', attache: 'Marelle' } as const
 
 export const CONTENUS = ['lettres', 'mots', 'texte'] as const
 export type Contenu = (typeof CONTENUS)[number]

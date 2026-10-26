@@ -14,7 +14,7 @@ export const POLICE_BASE = 'Andika'
  * ajoutée depuis un fichier n'existerait pas chez un autre). Les mêmes que POLICES_INCLUSES de src/utils/impression.js, qui
  * importe les fichiers et ne se lit pas sous node ; le test les compare à la table des métriques (metriques.ts).
  */
-export const POLICES_LIVREES: readonly string[] = [POLICE_BASE, 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']
+export const POLICES_LIVREES: readonly string[] = [POLICE_BASE, 'Luciole', 'OpenDyslexic', 'Marelle', 'Marelle 2', 'Marelle Baton', 'Marelle Baton 2', 'Playwrite FR Trad']
 /** Le titre personnalisé est limité (il tient sur une ligne). */
 export const LONGUEUR_TITRE = 80
 export const GRAINE_DEFAUT = 1

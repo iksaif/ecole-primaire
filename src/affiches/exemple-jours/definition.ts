@@ -13,7 +13,7 @@ const definition = definirAffiche({
   route: '/dev/affiches',
   langues: CODES,
   // la police du mot (script) et celle du tracé (attaché) se choisissent séparément ; les défauts sont ceux du site
-  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
+  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Marelle' } },
   competences: [K.exempleLire, K.exempleCompter],
   variantes: { semaine: { classes: ['cp'] } },
 })

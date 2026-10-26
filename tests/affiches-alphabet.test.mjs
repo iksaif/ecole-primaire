@@ -1,4 +1,4 @@
-// L'affiche de l'alphabet dans Chrome, avec les vraies polices (Andika, Playwrite FR Trad) : le document de chaque fiche publiée
+// L'affiche de l'alphabet dans Chrome, avec les vraies polices (Andika, Marelle) : le document de chaque fiche publiée
 // (18 entrées : variantes × français, breton, les deux) dans chaque format et chaque sens ne dépasse pas de la feuille, et
 // aucun texte ne sort de sa carte. Le test node (affiches-modele) fait le même contrôle avec la mesure ESTIMÉE ; celui-ci
 // vérifie qu'elle ne se trompe pas assez pour déborder (l'attaché, la police la plus irrégulière).

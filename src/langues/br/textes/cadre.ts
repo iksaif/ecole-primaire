@@ -35,7 +35,11 @@ export default {
   nomIntrouvable: '« {nom} » n\'eo ket bet kavet war an urzhiataer-mañ : gwiriit reizhskrivadur egzakt an anv.', // br: à relire
   noteSysteme: 'Nodrezh an urzhiataer eo : n\'emañ ket er fichenn. Moulet mat e vez nemet adal an urzhiataer-mañ (ket en ur PDF pellgarget, na adal ur benveg all).', // br: à relire
   // polices incluses et notes sur les polices à obtenir ailleurs (ChoixPolice) : repris à l'identique des anciens textes
-  policeAttache: 'Playwrite FR Trad — skritur a-stag skol Bro-C\'hall', // br: à relire
+  policeMarelle: 'Marelle — skritur a-stag libr evit ar skolioù', // br: à relire
+  policeMarelle2: 'Marelle 2 — brec\'h hag izili uheloc\'h', // br: à relire
+  policeMarelleBaton: 'Marelle Bâton — pennlizherennoù bazh', // br: à relire
+  policeMarelleBaton2: 'Marelle Bâton 2 — pennlizherennoù bazh, uheloc\'h', // br: à relire
+  policePlaywrite: 'Playwrite FR Trad — skritur a-stag skol Bro-C\'hall', // br: à relire
   policeAndika: 'Andika — savet evit deskiñ lenn (a ha g eeun)',
   policeLuciole: 'Luciole — lennus-tre, savet evit ar vugale a wel fall', // br: à relire
   policeOpenDyslexic: 'OpenDyslexic — evit al lennerien dislekseg', // br: à relire

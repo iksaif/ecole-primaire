@@ -14,7 +14,7 @@ type Cle = CleContenu<typeof CONTENU>
 
 // Mêmes polices que POLICE_SCRIPT et POLICE_ATTACHE de src/utils/impression.js (module qui lit le navigateur : pas ici)
 const SCRIPT = 'Andika'
-const ATTACHE = 'Playwrite FR Trad'
+const ATTACHE = 'Marelle'
 
 const css = (phrases: boolean): string => `
       section + section:not(.corrige) { page-break-before: always; break-before: page; }

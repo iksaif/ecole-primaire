@@ -32,7 +32,7 @@ const definition = definirAffiche({
   // fixes : un seul format, une seule orientation
   formats: ['A4'],
   orientations: ['portrait'],
-  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
+  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Marelle' } },
   competences: [K.exempleLire],
   reglages: {
     serie: choix(['alphabet', 'mot', 'nombres']),

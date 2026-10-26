@@ -366,7 +366,7 @@ console.log('\nExemple riche')
   const p5 = []
   if (!eq(typesDePoliceVisibles(d, lu({ styles: ['script'] })), ['script'])) p5.push('seul le script')
   if (!eq(typesDePoliceVisibles(d, lu()), ['script', 'attache'])) p5.push('les deux')
-  if (lu({ styles: ['script'], polices: { attache: 'Autre' } }).polices.attache !== 'Playwrite FR Trad') p5.push('police d’un type invisible remise au défaut')
+  if (lu({ styles: ['script'], polices: { attache: 'Autre' } }).polices.attache !== 'Marelle') p5.push('police d’un type invisible remise au défaut')
   controler(p5, 'types de police visibles selon un autre réglage (polices.<type>)')
 
   // pointillés : visibles selon ET + OU
@@ -382,7 +382,7 @@ console.log('\nExemple riche')
   const largeLarge = taille({ serie: 'mot', mot: 'Léa', styles: ['script'] }, { largeur: () => 100, metriques: mesureEstimee.metriques })
   if (!(largeLarge < court)) p6.push('la mesure injectée est ignorée')
   // la même police : estimée = largeur × taille ≤ 90 % de la zone, quelle que soit la police
-  for (const police of ['Andika', 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']) {
+  for (const police of ['Andika', 'Luciole', 'OpenDyslexic', 'Marelle', 'Marelle Baton 2', 'Playwrite FR Trad']) {
     const lettres = riche.alphabetDe('fr')
     const t = taille({ serie: 'alphabet', styles: ['script'], lettres, polices: { script: police } })
     if (mesureEstimee.largeur(lettres.join(' '), police) * t > mesuresAffiche({ format: 'A4', orientation: 'portrait' }).W * 0.9 + 0.01) p6.push(`${police} : le texte dépasse 90 % de la largeur`)
@@ -473,7 +473,7 @@ console.log('\nAlphabet')
 
   // une police inconnue (installée sur l'ordinateur) est estimée comme Andika ; une police très large reste dans la carte
   const g = []
-  for (const police of ['Andika', 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']) {
+  for (const police of ['Andika', 'Luciole', 'OpenDyslexic', 'Marelle', 'Marelle Baton 2', 'Playwrite FR Trad']) {
     const config = reglagesDe(d, { variante: 'a4-portrait', polices: { script: police, attache: police } })
     const m = mesuresAffiche({ format: 'A4', orientation: 'portrait', marge: d.marge, hTitre: d.hTitre })
     for (const page of module.rendu.dessin(config, { W: m.W, H: m.H }, traducteurAffiche(module.textes, 'fr'), { ...contextes(module, config)[1], nomPolice: () => police, police: () => `'${police}', Arial, sans-serif` })) {
@@ -493,7 +493,10 @@ console.log('\nMesure de texte')
   if (m.largeur('', 'Andika') !== 0) p.push('texte vide')
   if (m.largeur('abc', 'Police Inconnue') !== m.largeur('abc', 'Andika')) p.push('police inconnue estimée comme Andika')
   if (!(m.largeur('ñ « c’h » 😀', 'Andika') > 0)) p.push('caractères hors de la table')
-  if (!(m.metriques('Playwrite FR Trad').hampe > m.metriques('Andika').hampe)) p.push('proportions de l’attaché')
+  if (!(m.metriques('Marelle').hampe > m.metriques('Andika').hampe) || !(m.metriques('Playwrite FR Trad').hampe > m.metriques('Andika').hampe)) p.push('proportions de l’attaché')
+  // Marelle lie ses lettres : l'estimation est corrigée (CORRECTIONS, facteur ≈ 0,9). Canvas de Chrome : 20,93 em pour la même phrase ; sans correction l'estimation en donnerait 23,8
+  const wM = m.largeur('Les nombres en lettres : quarante-sept', 'Marelle')
+  if (Math.abs(wM - 20.93) / 20.93 > 0.08) p.push(`Marelle : ${wM.toFixed(2)} em au lieu de 20,93 (à 8 % près)`)
   // écart avec le canvas, mesuré dans Chrome quand la table a été faite (scripts/generer/metriques-polices.mjs) : Andika, 17,95 em pour
   // 'Les nombres en lettres : quarante-sept' ; le canvas n'existe pas sous node, on vérifie à 1 % près en Andika
   const attendue = 17.95

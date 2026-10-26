@@ -13,7 +13,7 @@ export default {
   images: 'Images',
   imagesTexte: 'Les images des affiches sont des emojis OpenMoji (openmoji.org), sous licence CC BY-SA 4.0 : le projet open source d’emojis et d’icônes. Ils sont inclus dans le site et s’impriment tels quels ; leur crédit est écrit dans les propriétés des PDF. Les icônes des boutons et des menus sont les emojis de votre appareil, ou les mêmes dessins OpenMoji (page des réglages). En maternelle, les consignes des fiches imprimées depuis le site peuvent porter un pictogramme ARASAAC (arasaac.org), de Sergio Palao, sous licence CC BY-NC-SA 4.0 (non commerciale) : leur mention est écrite en bas de la feuille ; les PDF à télécharger n’en ont pas.',
   polices: 'Polices',
-  policesTexte: 'Les polices Playwrite FR Trad, Andika, OpenDyslexic (licence OFL) et Luciole (CC BY 4.0) sont incluses. Pour l’écriture attachée, on conseille Belle Allure ou Écolier : leur licence ne permet pas de les livrer avec le site, il faut les installer ou ajouter le fichier dans le choix de la police d’une fiche.',
+  policesTexte: 'Les polices Marelle (la cursive libre de l’Éducation nationale, avec ses variantes), Playwrite FR Trad, Andika, OpenDyslexic (licence OFL) et Luciole (CC BY 4.0) sont incluses ; Marelle est la police d’écriture attachée par défaut. Belle Allure et Écolier restent possibles, mais leur licence ne permet pas de les livrer avec le site : il faut les installer ou ajouter le fichier dans le choix de la police d’une fiche.',
   contribuer: 'Contribuer',
   contribuerTexte: 'Le site est libre et ouvert : tout le code est sur {depot}. Toute aide est la bienvenue, même sans savoir programmer :',
   contribuerErreur: 'Signaler une erreur (une réponse fausse, une faute, un bug) : ouvrir une issue ou écrire à {contact}.',

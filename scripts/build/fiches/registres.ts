@@ -28,7 +28,7 @@ import type { Classe, CompetenceId, DefinitionExercice, FicheExercice, ModuleExe
 import { competencesDeFiche } from '../../../src/noyau/definir.ts'
 import { mesureEstimee } from '../../../src/affiches/mesure.ts'
 import type { DefinitionAffiche, ModuleAffiche, TextesAffiche } from '../../../src/affiches/types.ts'
-import { cssPoliceScolaire } from './polices.ts'
+import { cssPoliceAttache, cssPoliceScolaire } from './polices.ts'
 import type { DocumentSource, FicheSource, MetaFiche } from './types.ts'
 
 /** Langues dont on écrit les textes (titres, descriptions) et pour lesquelles les exercices ont une entrée : celles du registre de langues. */
@@ -148,11 +148,11 @@ function fichesAffiche(module: ModuleAffiche, publiees: readonly string[]): Fich
 export function avecOptionsParDefaut(html: string): string {
   return html
     .replace(/<section class="corrige">/g, '<section class="corrige sur-page">')
-    .replace('<style>', `<style>${CSS_OPTIONS_FICHE}`)
+    .replace('<style>', `<style>${CSS_OPTIONS_FICHE}${cssPoliceAttache(html)}`)   // la cursive que la fiche nomme (dictée, lettres…) : embarquée, sinon le PDF prend une police de repli
 }
 
-/** Les polices des fiches à plusieurs écritures (fiches d'écriture) : celles des PDF publiés (décision du 2026-10-06). */
-const POLICES_PUBLIEES = { script: 'Andika', attache: 'Playwrite FR Trad' }
+/** Les polices des fiches à plusieurs écritures (fiches d'écriture) : celles des PDF publiés (Andika et Marelle : décision du 2026-10-26, après Playwrite FR Trad). */
+const POLICES_PUBLIEES = { script: 'Andika', attache: 'Marelle' }
 
 /** HTML complet d'une fiche d'exercice : questions tirées avec la graine, mises en page avec Andika embarquée. */
 function htmlFicheExercice(module: ModuleExercice, niveau: Classe, reglagesFiche: Record<string, unknown>, langue: string, graine: number): string {

@@ -16,7 +16,7 @@ type Cle = CleContenu<typeof CONTENU>
 // Même police que POLICE_SCRIPT de src/utils/impression.js (module qui lit le navigateur : pas ici)
 const SCRIPT = 'Andika'
 // Même police que POLICE_ATTACHE : celle de l'écriture attachée, quand la vue n'en fournit pas d'autre (`polices.attache`)
-const ATTACHE = 'Playwrite FR Trad'
+const ATTACHE = 'Marelle'
 
 const CSS = (attache: string): string => `
       .consigne { font-weight: 700; font-size: 1.1rem; margin: .4rem 0 1rem; }

@@ -130,7 +130,7 @@ for (const largeur of [1280, 360]) {
   const ctx = await contexte(nav, { viewport: { width: largeur, height: 900 } })
   await ctx.addInitScript(simulees => {
     const mesurer = CanvasRenderingContext2D.prototype.measureText
-    const INCLUSES = ['Andika', 'Luciole', 'OpenDyslexic', 'Playwrite FR Trad']
+    const INCLUSES = ['Andika', 'Luciole', 'OpenDyslexic', 'Marelle', 'Marelle 2', 'Marelle Baton', 'Marelle Baton 2', 'Playwrite FR Trad']
     // seules les polices simulées sont « installées » : toute autre police inconnue est mesurée comme son repli
     CanvasRenderingContext2D.prototype.measureText = function (t) {
       const m = /^\d+px "?([^",]+)"?, ([\w-]+)$/.exec(this.font)
@@ -219,6 +219,11 @@ for (const largeur of [1280, 360]) {
   await page.reload()
   await page.waitForFunction(() => document.querySelector('.choix-police select')?.value === 'Andika')
   verifier(await page.locator('.choix-police option[value="Disparue"]').count() === 0, 'police mémorisée disparue : retour à Andika, sans erreur')
+  // une cursive mémorisée mais absente (Belle Allure choisie sur un autre ordinateur) : Marelle, la cursive livrée
+  await page.evaluate(() => localStorage.setItem('ep_polices', JSON.stringify({ attache: 'BelleAllure CE', script: 'Absente', unique: 'Andika' })))
+  await page.reload()
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem('ep_polices') ?? '{}').attache === 'Marelle')
+  verifier(await page.evaluate(() => JSON.parse(localStorage.getItem('ep_polices')).script) === 'Andika', 'cursive mémorisée absente : retour à Marelle (et script absent : Andika)')
   verifier(erreurs.length === 0, `aucune erreur JavaScript${erreurs.length ? ' : ' + erreurs[0] : ''}`)
   await ctx.close()
 }

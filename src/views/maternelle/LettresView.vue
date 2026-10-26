@@ -73,7 +73,7 @@ import type { Question, Reponse } from '../../exercices/lettres/generateur.ts'
 import { fiche as ficheLettres } from '../../exercices/lettres/fiche.ts'
 
 const { t, langue } = useLangue()
-// les lettres s'affichent dans les écritures de la classe : Andika (capitale, script : a et g à un œil), Playwrite FR Trad (attaché)
+// les lettres s'affichent dans les écritures de la classe : Andika (capitale, script : a et g à un œil), Marelle (attaché)
 chargerPolicesEcran()
 const { peutParler, parler } = useTTS()
 const { config, langueContenu } = useReglages(DEFINITION, { suivreClasse: true })
@@ -112,7 +112,7 @@ const { mode, fiche, nouvelle } = useFicheExercice({
   font-size: 5rem; font-weight: 900; color: var(--bleu);
   line-height: 1.15; margin: .5rem 0 1.5rem;
 }
-/* écritures : capitale et script en Andika, attaché en Playwrite FR Trad (v-bind : familles de policesEcran.ts) */
+/* écritures : capitale et script en Andika, attaché en Marelle (v-bind : familles de policesEcran.ts) */
 .lettre-display, .lettre-choix { font-family: v-bind(FAMILLE_SCRIPT); }
 .lettre-display.cursive, .lettre-choix.cursive { font-family: v-bind(FAMILLE_CURSIVE); font-weight: 400; }
 .lettre-choix { font-size: 2.2rem; font-weight: 700; }

@@ -1,0 +1,7 @@
+Marelle (police cursive scolaire libre), version 1.005 — webfonts officiels (woff2), NON modifiés.
+Source : https://marelle.forge.apps.education.fr/ (sources et webfonts : https://forge.apps.education.fr/marelle/marelle.forge.apps.education.fr)
+Licence : SIL Open Font License 1.1 (OFL.txt), nom réservé « Marelle ». Ne pas sous-ensemble ni modifier ces fichiers : une version modifiée ne pourrait plus
+s'appeler « Marelle ». Mention : © Ministère de l'Éducation nationale, de l'Enseignement supérieur et de la Recherche, Laurent Bourcellier,
+Jonathan Fabreguettes et Rosalie Wagner, 2026.
+Variantes livrées (sans lignage Seyès intégré : nos fiches dessinent leurs lignes) : Marelle, Marelle 2 (ascendantes et descendantes plus hautes),
+Marelle Bâton, Marelle Bâton 2 (majuscules bâton).

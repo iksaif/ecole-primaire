@@ -18,7 +18,7 @@ const definition = definirAffiche({
   bilingue: true,
   orientations: ['portrait', 'landscape'],
   formats: ['A4', 'A3'],
-  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Playwrite FR Trad' } },
+  police: { mode: 'parType', types: ['script', 'attache'], defauts: { script: 'Andika', attache: 'Marelle' } },
   // chaque variante garde celles qui sont au programme de toutes ses classes
   competences: [K.joursMois, K.calendrierMesureTemps, K.jourNuitSaisons, K.moisSaisonsLangueRegionale],
   reglages: {

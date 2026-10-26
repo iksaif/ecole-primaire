@@ -20,7 +20,7 @@ type T = ParamsGenerateur<Reglages, Cle>['T']
 
 export const PAR_BLOC = 6        // lettres d'un bloc de la fiche
 
-/** Une écriture d'une lettre : capitale (A), script (a, Andika) ou cursive (a, Playwrite FR Trad). */
+/** Une écriture d'une lettre : capitale (A), script (a, Andika) ou cursive (a, Marelle). */
 export type Ecriture = 'capitale' | 'script' | 'cursive'
 /** La lettre `l` (en capitale dans l'alphabet) écrite dans une écriture : capitale telle quelle, script et cursive en minuscules. */
 export const ecrire = (l: string, e: Ecriture): string => (e === 'capitale' ? l : l.toLowerCase())

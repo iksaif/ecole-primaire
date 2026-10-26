@@ -4,7 +4,7 @@
 import { LANGUE_SOURCE } from '../langues/registre.ts'
 import type { Langue } from '../langues/registre.ts'
 import type { Mode } from '../contexte/types.ts'
-import { languesUtilisables, traductionAssezSure, voisines } from '../ressources/filtres.ts'
+import { dansLeMode, traductionAssezSure, voisines } from '../ressources/filtres.ts'
 import type { RessourceDeContenu, RessourceFiche } from '../ressources/types.ts'
 import { normaliser } from './recherche.ts'
 import type { Classe, Entree, EntreeIndex, Format, IndexFiches, Matiere, Orientation, Usage, Variante } from './types.ts'
@@ -61,16 +61,7 @@ export const matieresDe = (e: Pick<EntreeIndex, 'domaine' | 'matieres'>, index: 
 /** Les fiches de la langue régionale sont dans cette langue (seule ou avec le français) : pas l'affiche de la météo en français seul. */
 const estDansLaLangue = (e: Pick<EntreeIndex, 'langues'>, regionale: Langue | null): boolean => !!regionale && e.langues.includes(regionale)
 
-/**
- * Une fiche se lit dans une des langues de l'entrée : celle du mode doit en faire partie. Mode français : français seulement, donc ni les
- * fiches bretonnes ni les fiches bilingues (qui montreraient du breton) ; les autres modes gardent les fiches bilingues.
- */
-export function dansLeMode(e: Pick<EntreeIndex, 'langues'>, mode: Mode, regionale: Langue | null): boolean {
-  const utilisables: readonly string[] = languesUtilisables(mode, regionale)
-  const francaisSeulement = mode === 'fr' || !regionale
-  if (francaisSeulement) return e.langues.every(l => utilisables.includes(l))
-  return e.langues.some(l => utilisables.includes(l))
-}
+export { dansLeMode }
 
 /** La valeur de filtre de langue (`'fr'`, `'br'`, `LANGUE_BILINGUE`) qui retient cette entrée ? */
 export const correspondALangue = (e: Pick<EntreeIndex, 'langues'>, valeur: string): boolean =>
@@ -212,6 +203,15 @@ export function jeuDeLaFiche(entree: Pick<Entree, 'personnaliser'>, catalogue: r
 export function memeFiche(e: EntreeIndex, entrees: readonly EntreeIndex[]): EntreeIndex[] {
   const soeurs = entreesSoeurs(e, entrees)
   return soeurs.length ? [e, ...soeurs].sort(parLangues) : []
+}
+
+/**
+ * « Même fiche » tel que le lecteur doit le voir : la fiche où il est (toujours) et ses sœurs que le mode de langue permet de lire (`dansLeMode` : en français
+ * seul, ni le breton ni le bilingue) et que `montrable` laisse passer (la traduction est assez sûre pour son réglage). Moins de deux langues : rien.
+ */
+export function memeFicheMontree(e: EntreeIndex, entrees: readonly EntreeIndex[], contexte: { mode: Mode, regionale: Langue | null }, montrable: (x: EntreeIndex) => boolean): EntreeIndex[] {
+  const langues = memeFiche(e, entrees).filter(x => x.slug === e.slug || (dansLeMode(x, contexte.mode, contexte.regionale) && montrable(x)))
+  return langues.length > 1 ? langues : []
 }
 
 /** Adresses de la page d'une matière et de ses fiches prêtes ; la langue régionale n'a pas de page de fiches (`null`). */

@@ -5,7 +5,8 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useRessources } from '../ressources/useRessources.ts'
 import { useAffichable } from '../ressources/useAffichable.ts'
-import { memeFiche, matiereDe, pageVoisine, pdfDe, jeuDeLaFiche, proposeUnChoixDeFormat, proposeUnChoixDeSens, voisinesDeFiche } from './pages.ts'
+import { useContexte } from '../contexte/useContexte.ts'
+import { memeFicheMontree, matiereDe, pageVoisine, pdfDe, jeuDeLaFiche, proposeUnChoixDeFormat, proposeUnChoixDeSens, voisinesDeFiche } from './pages.ts'
 import type { EntreeIndex, Format, Orientation } from './types.ts'
 import { useFiche, useFiches } from './useFiches.ts'
 
@@ -14,6 +15,7 @@ export function useFeuille(slug: () => string) {
   const { etat: etatIndex, index, entreeDe, recharger } = useFiches()
   const { catalogue, pret } = useRessources()
   const { affichables, affichable } = useAffichable()
+  const { contexte } = useContexte()
 
   const iVariante = ref(0)
   const iPage = ref(0)
@@ -33,7 +35,8 @@ export function useFeuille(slug: () => string) {
   const domaine = computed(() => index.value?.filtres.domaines.find(d => d.id === entree.value?.domaine) ?? null)
   /** liens du programme officiel du domaine qui concernent les classes de la fiche */
   const programme = computed(() => domaine.value?.programme.filter(p => p.classes.some(c => entree.value?.niveaux.includes(c))) ?? [])
-  const langues = computed(() => (entree.value && index.value ? memeFiche(entree.value, index.value.entrees).filter(e => e.slug === entree.value?.slug || affichable(e)) : []))
+  // « Même fiche » : les langues que le mode de langue du lecteur permet de lire (pas de breton en français seul) et dont la traduction est assez sûre pour son réglage
+  const langues = computed(() => (entree.value && index.value ? memeFicheMontree(entree.value, index.value.entrees, contexte.value, affichable) : []))
 
   const voisines = computed(() => (entree.value && pret.value ? voisinesDeFiche(entree.value, affichables.value) : { competence: [], domaine: [] }))
   const entreesDe = (rs: readonly { slug: string }[]): EntreeIndex[] => rs.flatMap(r => entreeDe(r.slug) ?? [])

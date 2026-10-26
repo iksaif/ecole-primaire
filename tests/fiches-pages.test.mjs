@@ -1,5 +1,5 @@
 // Logique pure des pages de fiches prêtes (node, sans Chrome) : filtres, langues proposées, entrées sœurs, formats, pages, voisines.
-import { orientationsDe, proposeUnChoixDeSens, filtrerFiches, languesProposees, domainesProposes, entreesSoeurs, memeFiche, slugDeBase, formatsDe, pdfDe, proposeUnChoixDeFormat,
+import { orientationsDe, proposeUnChoixDeSens, filtrerFiches, languesProposees, domainesProposes, entreesSoeurs, memeFiche, memeFicheMontree, slugDeBase, formatsDe, pdfDe, proposeUnChoixDeFormat,
   pageVoisine, voisinesDeFiche, jeuDeLaFiche, grouperParMatiere, parTitre, matiereDe, dansLeMode, CRITERES_PAGE_VIDES, LANGUE_BILINGUE, cheminFiches, usageDeLAdresse, usageEnAdresse, toutesLesClassesDeLAdresse } from '../src/telechargements/pages.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -50,6 +50,15 @@ verifier(slugDeBase(e('tables-br', { langues: ['br'] })) === 'tables' && slugDeB
 verifier(slugs(entreesSoeurs(index.entrees[0], index.entrees)) === 'tables-br,tables-fr-br', 'sœurs du français : une langue puis bilingue')
 verifier(slugs(memeFiche(index.entrees[1], index.entrees)) === 'tables,tables-br,tables-fr-br', 'même fiche : française d’abord, la fiche comprise')
 verifier(memeFiche(index.entrees[3], index.entrees).length === 0, 'aucune sœur : pas de « Même fiche »')
+{
+  // « Même fiche » suit le mode de langue : en français seul, ni le breton ni le bilingue (la ligne disparaît) ; en bilingue, ce qui est assez sûr
+  const toutes = () => true
+  verifier(memeFicheMontree(index.entrees[0], index.entrees, ctx(), toutes).length === 0, 'mode français : pas de « Même fiche » (aucune sœur lisible)')
+  verifier(slugs(memeFicheMontree(index.entrees[0], index.entrees, ctx('bilingue', 'br'), toutes)) === 'tables,tables-br,tables-fr-br', 'mode bilingue : les trois langues')
+  verifier(slugs(memeFicheMontree(index.entrees[0], index.entrees, ctx('bilingue', 'br'), x => x.langues.length > 1 || x.slug === 'tables-br' ? x.slug !== 'tables-br' : true)) === 'tables,tables-fr-br', 'bilingue : une traduction pas assez sûre est cachée')
+  verifier(slugs(memeFicheMontree(index.entrees[1], index.entrees, ctx(), toutes)) === 'tables,tables-br', 'sur la page bretonne en mode français : la fiche courante et le français, pas le bilingue')
+  verifier(slugs(memeFicheMontree(index.entrees[1], index.entrees, ctx('regionale', 'br'), toutes)) === 'tables-br,tables-fr-br', 'mode régional : le breton et le bilingue, pas le français seul')
+}
 
 console.log('Formats et pages')
 const v1 = { pdfs: [{ format: 'A4', orientation: 'portrait', chemin: 'a' }, { format: 'A3', orientation: 'portrait', chemin: 'b' }] }

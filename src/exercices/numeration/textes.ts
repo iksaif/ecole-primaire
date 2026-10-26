@@ -11,7 +11,9 @@ import { REGIONALES } from '../../langues/registre.ts'
 
 export const CONTENU = catalogue({
   langue: 'fr',
-  titre: "Les nombres jusqu'à {n}",
+  // `titre` : le nom de l'exercice (index des fiches, pages /telechargements/, cartes : sans paramètre) ; `titrePlage` : le titre d'une fiche, avec la plage choisie
+  titre: 'Les nombres',
+  titrePlage: "Les nombres jusqu'à {n}",
   lib: { milliers: 'milliers', centaines: 'centaines', dizaines: 'dizaines', unites: 'unités' },
   // unités de numération dans « 3 centaines 4 dizaines 7 unités »
   cdu: {
@@ -93,7 +95,8 @@ export const CONTENU = catalogue({
   br: {
     // le code de la langue régionale vient du registre (aucun littéral de langue en dur)
     langue: REGIONALES[0],
-    titre: 'An niveroù betek {n}',
+    titre: 'An niveroù', // br: à relire
+    titrePlage: 'An niveroù betek {n}',
     lib: { milliers: 'miladoù', centaines: 'kantadoù', dizaines: 'degadoù', unites: 'unanennoù' },
     // le nom reste au singulier après un nombre (« 3 kantad »)
     cdu: {

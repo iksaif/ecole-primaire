@@ -26,6 +26,17 @@ export function languesUtilisables(mode: Mode, regionale: Langue | null): readon
   return mode === 'bilingue' ? [LANGUE_SOURCE, regionale] : [regionale]
 }
 
+/**
+ * Un document figé (fiche PDF, entrée de l'index) se lit dans une des langues de l'entrée : celle du mode doit en faire partie. Mode français (ou sans langue
+ * régionale) : français seulement, donc ni les fiches bretonnes ni les fiches bilingues (qui montreraient du breton) ; les autres modes gardent les fiches bilingues.
+ */
+export function dansLeMode(r: { readonly langues: readonly string[] }, mode: Mode, regionale: Langue | null): boolean {
+  const utilisables: readonly string[] = languesUtilisables(mode, regionale)
+  const francaisSeulement = mode === 'fr' || !regionale
+  if (francaisSeulement) return r.langues.every(l => utilisables.includes(l))
+  return r.langues.some(l => utilisables.includes(l))
+}
+
 /** Les ressources qui ont au moins une langue utilisable dans ce mode. */
 export function filtrerParMode<T extends { readonly langues: readonly Langue[] }>(ressources: readonly T[], mode: Mode, regionale: Langue | null): T[] {
   const utilisables = languesUtilisables(mode, regionale)
@@ -34,14 +45,16 @@ export function filtrerParMode<T extends { readonly langues: readonly Langue[] }
 
 /**
  * La traduction de la ressource est-elle assez sûre pour le seuil ? Sans seuil, tout passe. Deux cas, selon qu'on choisit sa langue ou non :
- * - un DOCUMENT FIGÉ (fiche PDF : entrée de l'index, ressource `fiche`) imprime toutes ses langues : il faut que sa traduction soit sûre dès que
- *   le mode la montre (en français seul, une fiche traduite reste là, sa traduction n'étant pas lue) ; sa version française est une autre entrée ;
+ * - un DOCUMENT FIGÉ (fiche PDF : entrée de l'index, ressource `fiche`) imprime toutes ses langues : il faut qu'il se lise dans le mode (`dansLeMode` : en
+ *   français seul, ni fiche bretonne ni bilingue) et que sa traduction soit sûre dès que le mode la montre ; sa version française est une autre entrée ;
  * - une ressource dont on CHOISIT LA LANGUE en l'ouvrant (exercice, affiche à personnaliser) reste là dès qu'une langue du mode est sûre : le
  *   français l'est toujours. En « Français + Breton », un exercice dont le breton n'est pas assez sûr s'ouvre en français (sa page ne propose pas
  *   le breton : langueContenu.ts, FormulaireAffiche) ; en « breton seul », il est caché.
  */
 export function traductionAssezSure(r: AvecTraduction, mode: Mode, regionale: Langue | null, seuil: number | undefined): boolean {
   if (langueAuChoix(r)) return languesSures(r, mode, regionale, seuil).length > 0
+  // un document figé n'est montré que s'il se lit dans le mode : pas de fiche bretonne ni bilingue en français seul, pas de fiche française seule en breton seul
+  if (r.type === 'fiche' && !dansLeMode(r, mode, regionale)) return false
   return !traductionMontree(r, mode, regionale) || assezSure(r.confiance, seuil)
 }
 

@@ -93,6 +93,10 @@ for (const { definition: d, generateur: g, fiche: f, textes } of TOUS) {
   if (jeu !== ('questions' in g && 'verifier' in g)) pbs.push(jeu ? 'jeu en ligne : questions et verifier attendus' : 'fiche seule (jeu: false) : ni questions ni verifier')
   controler(pbs, `définition valide (${Object.keys(d.niveaux).join(', ')} ; ${COMPETENCES.length} compétences connues)`)
 
+  // le titre de l'exercice (index des fiches, pages /telechargements/, cartes) est lu sans paramètre : un titre de fiche qui en a (« jusqu'à {n} ») est une autre clé
+  const titresAvecParametre = LANGUES.map(l => [l, traducteurExercice(textes, langueContenuDe(d, l))('titre')]).filter(([, t]) => /\{\w+\}/.test(t))
+  controler(titresAvecParametre.map(([l, t]) => `${l} : « ${t} »`), 'le titre de l’exercice n’a aucun paramètre non remplacé')
+
   // ── Questions et fiches, par niveau ──
   for (const n of Object.keys(d.niveaux)) {
     const k = contraintesDe(n)

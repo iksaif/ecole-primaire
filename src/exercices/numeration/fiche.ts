@@ -88,7 +88,7 @@ function questionPapier(qu: Question, i: number, T: Traduire, commune: boolean):
 
 export function fiche({ questions: qs, reglages, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const niv = reglages.niveau.toUpperCase()
-  const titre = `${T('titre', { n: fmt(reglages.plage) })} — ${niv}`
+  const titre = `${T('titrePlage', { n: fmt(reglages.plage) })} — ${niv}`
   // la même consigne pour toutes les questions (un seul type d'exercice) : écrite une fois, en tête
   const consignes = new Set(qs.map(qu => consigneDe(qu, T)))
   const unique = consignes.size === 1 ? [...consignes][0] : null

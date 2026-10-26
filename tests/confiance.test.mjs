@@ -79,4 +79,17 @@ console.log('État d’une ressource selon le réglage et la page (le français 
   verifier(etatDeLaTraduction(exercice, 'bilingue', 'br', 0, 'br') === 'sure', '/brezhoneg sans seuil : tout ce qui existe en breton')
 }
 
+// Un document figé du catalogue (type « fiche ») suit le mode de langue comme l'index des fiches : pas de fiche bretonne ni bilingue en français seul (compétences,
+// recherche, voisines…), pas de fiche française seule en breton seul ; un exercice ou une affiche (langue au choix) n'est pas concerné.
+{
+  const fiche = langues => ({ type: 'fiche', langues, confiance: 4 })
+  verifier(!traductionAssezSure(fiche(['br']), 'fr', 'br', 0) && !traductionAssezSure(fiche(['fr', 'br']), 'fr', 'br', 0), 'français seul : ni fiche bretonne ni fiche bilingue')
+  verifier(traductionAssezSure(fiche(['fr']), 'fr', 'br', 0), 'français seul : la fiche française reste')
+  verifier(!traductionAssezSure(fiche(['br']), 'fr', null, 0), 'sans langue régionale active : pas de fiche bretonne')
+  verifier(traductionAssezSure(fiche(['br']), 'bilingue', 'br', 0) && traductionAssezSure(fiche(['fr', 'br']), 'bilingue', 'br', 0) && traductionAssezSure(fiche(['fr']), 'bilingue', 'br', 0), 'bilingue : les trois')
+  verifier(traductionAssezSure(fiche(['br']), 'regionale', 'br', 0) && traductionAssezSure(fiche(['fr', 'br']), 'regionale', 'br', 0) && !traductionAssezSure(fiche(['fr']), 'regionale', 'br', 0), 'breton seul : pas la fiche française seule')
+  verifier(!traductionAssezSure({ type: 'fiche', langues: ['br'], confiance: 1 }, 'bilingue', 'br', 2), 'bilingue : une fiche bretonne sous le seuil est cachée')
+  verifier(traductionAssezSure({ type: 'affiche', langues: ['fr', 'br'], confiance: 4 }, 'fr', 'br', 0), 'une affiche (langue au choix) reste en français seul')
+}
+
 process.exit(nbEchecs() ? 1 : 0)

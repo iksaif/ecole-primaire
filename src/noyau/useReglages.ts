@@ -60,9 +60,26 @@ function appliquerFicheDuLien<R extends object>(definition: DefinitionExercice<R
   const router = useRouter()
   const niveau = route.query.niveau
   const fiche = definition.fiches.find(f => f.id === id && (typeof niveau !== 'string' || f.niveau === niveau))
-  if (fiche) config.value = reglagesDuNiveau(definition, { niveau: fiche.niveau, ...fiche.reglages })
+  if (fiche) {
+    config.value = reglagesDuNiveau(definition, { niveau: fiche.niveau, ...fiche.reglages })
+    oublierTitreSiReglagesChangent(config)
+  }
   const reste = { ...route.query }
   delete reste.fiche
   delete reste.niveau
   void router.replace({ query: reste })
+}
+
+/**
+ * Le titre d'une fiche publiée (« La lettre E e ») ne décrit plus la fiche dès qu'un autre réglage change : il est alors retiré
+ * (un titre que l'utilisateur a retapé, lui, reste).
+ */
+function oublierTitreSiReglagesChangent<R extends object>(config: Ref<Config<R>>): void {
+  const titreDeLaFiche = (config.value as { titre?: unknown }).titre
+  if (typeof titreDeLaFiche !== 'string' || titreDeLaFiche === '') return
+  const sansTitre = (c: Config<R>): string => JSON.stringify({ ...c, titre: undefined })
+  watch(() => sansTitre(config.value), () => {
+    const actuel = config.value as { titre?: unknown }
+    if (actuel.titre === titreDeLaFiche) config.value = { ...config.value, titre: '' }
+  })
 }

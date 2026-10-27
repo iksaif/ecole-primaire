@@ -273,5 +273,18 @@ console.log('Liens directs : le filtre d\'usage et « toutes les classes » dans
   await ctx.close()
 }
 
+// « Personnaliser » une fiche publiée : son titre (« La lettre E e ») saute dès qu'un autre réglage change
+{
+  const { ctx, page } = await ouvrir()
+  await page.goto(app('/francais/ecriture?mode=imprimer&fiche=lettre-e&niveau=gs'))
+  const titre = page.locator('input[id$="-titre"]')
+  await titre.waitFor({ state: 'attached' })
+  verifier(await titre.inputValue() === 'La lettre E e', 'Personnaliser la lettre E : le titre de la fiche est repris')
+  await page.locator('.lettre-btn', { hasText: /^s$/ }).click()
+  await page.waitForFunction(() => document.querySelector('input[id$="-titre"]').value === '')
+  verifier(true, 'une lettre de plus : le titre « La lettre E e » est retiré')
+  await ctx.close()
+}
+
 await nav.close()
 process.exit(nbEchecs() ? 1 : 0)

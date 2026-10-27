@@ -3,6 +3,8 @@
 // Les pages de fiches ont aussi une page statique à la même adresse (scripts/build/statique/) : mêmes adresses (barre finale sous
 // /telechargements), même règle d'indexation (`estIndexable`, partagée avec le sitemap).
 import type { RouteLocationNormalizedLoaded, RouteMeta } from 'vue-router'
+import type { Langue } from '../langues/registre.ts'
+import { cheminRegional } from './chemins.ts'
 
 /** Préfixes d'adresses que les moteurs ne doivent pas indexer. */
 const NON_INDEXABLES = ['/parametres', '/dev']
@@ -16,10 +18,27 @@ export function cheminCanonique(chemin: string): string {
   return chemin === '/' ? chemin : chemin.replace(/\/+$/, '')
 }
 
-/** Adresse canonique absolue d'un chemin, sur le site `urlSite` (avec barre finale), ou null si la page ne s'indexe pas. */
-export function adresseCanonique(chemin: string, meta: RouteMeta, urlSite: string): string | null {
+/**
+ * Cette page est-elle propre à un site régional : son accueil et la page de la langue régionale (et ses sous-pages) ? Les autres pages de l'app (matières,
+ * exercices, compétences…) sont les mêmes sur tous les sites : un site régional les déclare chez le site de référence (`referenceFrancais`, sites.ts). Les pages
+ * de compétence qui ont du contenu régional sûr sont propres aussi : elles dépendent du catalogue, donc se décident au build (scripts/build/statique/indexation.ts).
+ */
+export function estPropreAuSite(chemin: string, regionales: readonly Langue[]): boolean {
+  const sansBarre = chemin === '/' ? chemin : chemin.replace(/\/+$/, '')
+  return sansBarre === '/' || regionales.some(l => sansBarre === cheminRegional(l) || sansBarre.startsWith(`${cheminRegional(l)}/`))
+}
+
+/** Les adresses des pages propres à un site régional et celles du site de référence : ce qu'il faut pour choisir le canonical d'une page de l'app. */
+export interface ReferenceFrancais { url: string | null, regionales: readonly Langue[] }
+
+/**
+ * Adresse canonique absolue d'un chemin, sur le site `urlSite` (avec barre finale), ou null si la page ne s'indexe pas. Sur un site régional (`reference.url`), une
+ * page qui n'est pas propre au site a pour canonical la même page du site de référence.
+ */
+export function adresseCanonique(chemin: string, meta: RouteMeta, urlSite: string, reference: ReferenceFrancais = { url: null, regionales: [] }): string | null {
   if (!estIndexable(chemin) || meta.titre === 'routeur.titre.introuvable') return null
-  return `${urlSite}${cheminCanonique(chemin).slice(1)}`
+  const ailleurs = reference.url !== null && !estPropreAuSite(chemin, reference.regionales)
+  return `${ailleurs ? reference.url : urlSite}${cheminCanonique(chemin).slice(1)}`
 }
 
 /** Retire le canonical et pose `noindex` : la page (feuille ou compétence inconnue) ne doit pas s'indexer. */
@@ -35,8 +54,8 @@ export function poserNonIndexable(doc: Document = document): void {
 }
 
 /** Pose `<link rel="canonical">` et `<meta name="robots">` d'après la route. */
-export function poserIndexation(route: RouteLocationNormalizedLoaded, urlSite: string, doc: Document = document): void {
-  const adresse = adresseCanonique(route.path, route.meta, urlSite)
+export function poserIndexation(route: RouteLocationNormalizedLoaded, urlSite: string, doc: Document = document, reference?: ReferenceFrancais): void {
+  const adresse = adresseCanonique(route.path, route.meta, urlSite, reference)
   if (!adresse) return poserNonIndexable(doc)
   let lien = doc.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
   if (!lien) {

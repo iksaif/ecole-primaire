@@ -6,6 +6,7 @@
       <p v-if="!enseignant" class="sous-titre">{{ t('accueil.sousTitre') }}</p>
       <AccueilClasses />
       <AccueilLangue />
+      <AvisVersionRegionale />
       <BandeauConstruction />
       <AccueilCopierLien v-if="enseignant" />
     </header>
@@ -35,6 +36,7 @@ import AccueilLangue from './AccueilLangue.vue'
 import AccueilCopierLien from './AccueilCopierLien.vue'
 import AccueilReprendre from './AccueilReprendre.vue'
 import AccueilTuile from './AccueilTuile.vue'
+import AvisVersionRegionale from './AvisVersionRegionale.vue'
 import { useTuilesAccueil } from './useTuilesAccueil.ts'
 
 const { tuiles, regionale, classesTexte, t } = useTuilesAccueil()

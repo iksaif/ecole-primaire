@@ -131,7 +131,7 @@ console.log('Feuille ouverte à froid')
     const bi = await ouvrir({ regionale: 'br' })
     await bi.page.goto(app(`/telechargements/${SLUG}`))
     await pret(bi.page)
-    await bi.page.waitForTimeout(500)
+    await bi.page.waitForLoadState('networkidle')   // absence à constater : on attend que la page soit posée
     verifier(await bi.page.locator('.langues').count() === 0, '« Même fiche » : « Français + Breton », traduction non vérifiée (réglage par défaut) : cachée')
     await bi.page.evaluate(() => localStorage.setItem('ep_confiance_min', '0'))
     await bi.page.reload()

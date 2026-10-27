@@ -33,4 +33,11 @@ export default {
   copierAide: 'Les familles arrivent sur le site déjà réglé sur {classes}.',
   copie: 'Lien copié : les familles arriveront sur {classes}.',
   copieEchec: 'Copie impossible. Voici le lien à envoyer :',
+  // le site régional (skoolik) : ce qu'il est, ce qui manque, comment aider ; {nom} : son nom, {reference} : le site de référence (adresse sans https://)
+  versionRegionale: {
+    titre: '{nom}, la version franco-bretonne d’{reference}',
+    texte: '{nom} propose les mêmes exercices, affiches et fiches que sur {reference}, avec les textes en breton quand ils existent. Le site est en construction : une partie des traductions bretonnes est automatique et n’a pas encore été relue.',
+    aide: 'Nous cherchons de l’aide pour relire et améliorer les traductions. Si vous parlez breton, si vous enseignez en classe bilingue ou si vous avez une remarque, écrivez-nous :',
+    sujet: 'Aide pour les traductions bretonnes',
+  },
 } as const

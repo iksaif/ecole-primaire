@@ -10,8 +10,9 @@ import { spawnSync } from 'node:child_process'
 import { lireContexte } from '../scripts/build/statique/lire.ts'
 import { fichiersStatiques, pagesStatiques } from '../scripts/build/statique/ecrire.ts'
 import { adressesApp, adressesStatiques } from '../scripts/build/statique/sitemap.ts'
+import { adressesIndexees, alternativesApp, canoniqueApp, competencesAvecLangue } from '../scripts/build/statique/indexation.ts'
 import { racineDeSlug, siteDeReference } from '../scripts/build/statique/adresses.ts'
-import { adresseCanonique, estIndexable } from '../src/router/canonique.ts'
+import { adresseCanonique, estIndexable, estPropreAuSite } from '../src/router/canonique.ts'
 import { SITES } from '../src/sites.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
@@ -183,9 +184,29 @@ verifier(new Set(locs).size === locs.length && locs.every(l => l.startsWith(ctx.
   const coquilles = fichiersS.filter(f => app.filter(a => a !== '').some(a => f.chemin === `${a}/index.html`))
   verifier(coquilles.length === app.filter(a => a !== '').length, `une coquille par page de l'app du sitemap (${coquilles.length})`)
   verifier(coquilles.every(f => locs.includes(canonical(f.contenu))), 'le canonical de chaque coquille est son adresse du sitemap')
-  verifier(coquilles.every(f => f.contenu.replace(/<link rel="canonical"[^>]*>/, '') === MODELE.replace(/<link rel="canonical"[^>]*>/, '')), 'une coquille ne diffère de l’index.html que par son canonical')
+  const neutre = html => html.replace(/<link rel="canonical"[^>]*>/, '').replace(' data-canonical', '').replace(/\s*<link rel="alternate" hreflang="[^"]*"[^>]*>/g, '')
+  verifier(coquilles.every(f => f.contenu.includes('<html data-canonical ') && neutre(f.contenu) === neutre(MODELE)), 'une coquille ne diffère de l’index.html que par son canonical, son drapeau data-canonical et ses hreflang')
+  const alt = html => [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)].map(m => `${m[1]} ${m[2]}`)
+  verifier(alt(fichiersS.find(f => f.chemin === 'index.html').contenu).join() === 'fr https://ecoleprimaire.app/,br https://skoolik.app/,x-default https://ecoleprimaire.app/', 'l’accueil (index.html réécrit) déclare ses versions de langue')
+  verifier(alt(fichiersS.find(f => f.chemin === 'maths/index.html').contenu).length === 0 && alt(fichiersS.find(f => f.chemin === 'brezhoneg/index.html').contenu).length === 3, 'hreflang sur l’accueil et la page de la langue régionale seulement')
   verifier(new Set(fichiersS.map(f => f.chemin)).size === fichiersS.length, 'aucun fichier statique écrit deux fois (une coquille ne recouvre pas une page de fiche)')
   verifier(!fichiersS.some(f => /^(parametres|dev)\//.test(f.chemin)), 'aucune coquille pour une page qui ne s’indexe pas')
+  {
+    // le site régional (skoolik) : le sitemap ne liste que sa surface régionale, ses autres coquilles pointent le site de référence
+    const regional = { ...ctx, site: SITES.skoolik }
+    const miennes = adressesIndexees(regional)
+    verifier(miennes.includes('') && miennes.includes('brezhoneg') && !miennes.includes('maths') && !miennes.includes('programme') && !miennes.some(a => a.startsWith('maternelle/')), 'skoolik : accueil et langue régionale, ni matières ni exercices')
+    verifier(miennes.filter(a => a.startsWith('competence/')).every(a => adressesApp(regional).includes(a)), 'skoolik : des compétences seulement parmi les pages de l’app')
+    verifier(adressesIndexees(ctx).length === adressesApp(ctx).length, 'ecoleprimaire : toutes les pages de l’app')
+    const f = fichiersStatiques(regional)
+    const loc = f.find(x => x.chemin === 'sitemap.xml').contenu.match(/<loc>([^<]+)<\/loc>/g).map(x => x.replace(/<\/?loc>/g, ''))
+    verifier(!loc.includes('https://skoolik.app/maths') && loc.includes('https://skoolik.app/') && loc.includes('https://skoolik.app/brezhoneg'), 'sitemap de skoolik : sans les pages françaises, avec l’accueil et la langue régionale')
+    verifier(canonical(f.find(x => x.chemin === 'maths/index.html').contenu) === 'https://ecoleprimaire.app/maths' && canonical(f.find(x => x.chemin === 'brezhoneg/index.html').contenu) === 'https://skoolik.app/brezhoneg', 'skoolik : la coquille de /maths pointe ecoleprimaire.app, celle de /brezhoneg elle-même')
+    verifier(canoniqueApp(ctx, 'maths') === 'https://ecoleprimaire.app/maths' && alternativesApp('maths').length === 0 && alternativesApp('').length === 3, 'canoniqueApp et alternativesApp')
+    const c = (langues, confiance, competences) => ({ type: 'fiche', langues, confiance, competences })
+    const brs = competencesAvecLangue([c(['fr', 'br'], 3, ['a']), c(['fr', 'br'], 1, ['b']), c(['fr'], null, ['c']), c(['br'], 2, ['d'])], 'br', 2)
+    verifier([...brs].sort().join() === 'a,d' && [...competencesAvecLangue([c(['fr', 'br'], 1, ['b'])], 'br', 0)].join() === 'b', 'compétences avec du breton sûr : au seuil ou au-dessus, pas le français seul')
+  }
   const skoolik = { ...ctx, site: SITES.skoolik }
   verifier(adressesApp(skoolik).includes('brezhoneg'), 'la page de la langue régionale vient du registre de langues (« brezhoneg »)')
 }
@@ -214,6 +235,11 @@ console.log('Adresse canonique de l’app')
   const u = 'https://ecoleprimaire.app/'
   verifier(adresseCanonique('/', {}, u) === u && adresseCanonique('/maths/', {}, u) === `${u}maths` && adresseCanonique('/telechargements', {}, u) === `${u}telechargements/` && adresseCanonique('/telechargements/x', {}, u) === `${u}telechargements/x/`, 'adresses canoniques : barre finale seulement sous /telechargements (comme les pages statiques)')
   verifier(adresseCanonique('/parametres', {}, u) === null && adresseCanonique('/dev/exemple', {}, u) === null && adresseCanonique('/nimporte', { titre: 'routeur.titre.introuvable' }, u) === null, 'réglages, développement et page introuvable : pas de canonical (noindex)')
+  // site régional : seule sa surface régionale s'indexe pour lui-même, le reste a pour canonical le site de référence
+  const ref = { url: 'https://ecoleprimaire.app/', regionales: ['br'] }, sk = 'https://skoolik.app/'
+  verifier(estPropreAuSite('/', ['br']) && estPropreAuSite('/brezhoneg', ['br']) && estPropreAuSite('/brezhoneg/fiches/', ['br']) && !estPropreAuSite('/maths', ['br']) && !estPropreAuSite('/competence/x', ['br']) && !estPropreAuSite('/', []) === false, 'pages propres à un site régional : accueil et langue régionale')
+  verifier(adresseCanonique('/maths/numeration', {}, sk, ref) === 'https://ecoleprimaire.app/maths/numeration' && adresseCanonique('/', {}, sk, ref) === sk && adresseCanonique('/brezhoneg', {}, sk, ref) === `${sk}brezhoneg` && adresseCanonique('/maths', {}, u) === `${u}maths`, 'canonical d’un site régional : le site de référence sauf accueil et langue régionale ; le site de référence : lui-même')
+  verifier(adresseCanonique('/parametres', {}, sk, ref) === null, 'les pages qui ne s’indexent pas restent sans canonical sur un site régional')
 }
 
 console.log('Exemples (public/fiches)')
@@ -224,7 +250,7 @@ if (existsSync(join(racine, 'public/fiches/index.json'))) {
   const c2 = lireContexte({ mode: 'developpement', outDir: d2, avecExemples: true })
   const f2 = fichiersStatiques(c2)
   const nbCoquilles = adressesApp(c2).filter(a => a !== '').length
-  verifier(c2.index.entrees.length > 0 && f2.length === c2.index.entrees.length + 4 + nbCoquilles, `${c2.index.entrees.length} exemples : une page chacun, plus l’index, sitemap, robots, 404 et ${nbCoquilles} coquilles de l'app`)
+  verifier(c2.index.entrees.length > 0 && f2.length === c2.index.entrees.length + 4 + nbCoquilles + 1, `${c2.index.entrees.length} exemples : une page chacun, plus l’index, sitemap, robots, 404 et ${nbCoquilles} coquilles de l'app et l’accueil réécrit`)
   const p2 = pagesStatiques(c2)
   verifier(p2.every(p => /<script type="application\/ld\+json">/.test(p.html) || p.adresse === 'telechargements/'), 'chaque page d’exemple a son JSON-LD')
   rmSync(d2, { recursive: true, force: true })

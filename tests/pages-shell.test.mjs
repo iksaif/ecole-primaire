@@ -281,6 +281,17 @@ if (URL_SKOOLIK) {
   verifier((await page.locator('nav.rubriques a').allTextContents()).some(t => /Brezhoneg/i.test(t)), 'skoolik : onglet Brezhoneg par défaut (bilingue)')
   await verifierAxe(page, 'skoolik : barre et pied', ENVELOPPE)
   await ctx.close()
+
+  // l'accueil adulte de skoolik explique ce qu'est le site (version franco-bretonne, en construction, aide aux traductions) ; celui d'ecoleprimaire.app n'en a pas
+  const accueilRegional = await ouvrir({ route: '/', langue: 'fr', base: r => `${URL_SKOOLIK}${r.replace(/^\//, '')}` })
+  const avis = accueilRegional.page.locator('[data-avis-regional]')
+  verifier(await avis.count() === 1, 'skoolik : avis « version franco-bretonne » sur l\'accueil')
+  verifier(/ecoleprimaire\.app/.test(await avis.innerText()), 'skoolik : l\'avis nomme le site de référence')
+  verifier((await avis.locator('a[href^="mailto:"]').count()) === 1, 'skoolik : l\'avis donne un contact')
+  await accueilRegional.ctx.close()
+  const accueilReference = await ouvrir({ route: '/', langue: 'fr' })
+  verifier(await accueilReference.page.locator('[data-avis-regional]').count() === 0, 'ecoleprimaire.app : pas d\'avis régional sur l\'accueil')
+  await accueilReference.ctx.close()
 }
 
 await nav.close()

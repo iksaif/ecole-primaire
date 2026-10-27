@@ -27,6 +27,12 @@ export interface Site {
   languesRegionales: readonly Langue[]
   /** langue régionale active par défaut ('' : aucune) */
   langueRegionale: Langue | ''
+  /**
+   * Le site qui fait référence pour le français (adresse avec la barre finale) : un site régional n'indexe que sa surface régionale (accueil, page de la langue
+   * régionale, fiches dans cette langue, compétences qui ont du contenu régional sûr) ; ses autres pages sont les mêmes que sur ce site, qu'elles déclarent comme
+   * canonical (src/router/canonique.ts). `null` : ce site est la référence.
+   */
+  referenceFrancais: string | null
   /** adresse de contact affichée (redirigée vers la boîte de l'auteur) */
   contact: string
   /** dépôt du code (contributions, signalements) */
@@ -60,6 +66,7 @@ export const SITES = {
     langueInterface: 'fr',
     languesRegionales: ['br'],
     langueRegionale: '',
+    referenceFrancais: null,
     contact: CONTACT,
     depot: DEPOT,
     enseignantVisible: false,
@@ -78,6 +85,7 @@ export const SITES = {
     langueInterface: 'fr',   // décision du 2026-10-06 : interface en français, breton + français pour les contenus (changeable dans les réglages)
     languesRegionales: ['br'],
     langueRegionale: 'br',
+    referenceFrancais: 'https://ecoleprimaire.app/',
     contact: CONTACT,
     depot: DEPOT,
     enseignantVisible: false,

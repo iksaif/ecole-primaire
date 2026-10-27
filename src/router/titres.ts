@@ -46,6 +46,10 @@ export function useTitreDePage(titre: () => string): void {
 export function installerTitres(router: Router, site: Site = SITE, urlSite: string = import.meta.env.VITE_SITE_URL || site.url): void {
   let gardeStatique = document.documentElement.hasAttribute('data-statique')
   let cheminStatique = ''
+  // une coquille du build (`<html data-canonical>`, scripts/build/statique/coquilles.ts) a déjà le canonical de sa route, décidé avec le catalogue : le titre suit la route, pas le canonical, avant la première navigation
+  let canonicalDuServeur = document.documentElement.hasAttribute('data-canonical')
+  let cheminDuServeur = ''
+  const reference = { url: site.referenceFrancais, regionales: site.languesRegionales }
   watchEffect(() => {
     const route = router.currentRoute.value
     if (!route.matched.length) return
@@ -56,6 +60,11 @@ export function installerTitres(router: Router, site: Site = SITE, urlSite: stri
     }
     const propre = titreDePage.value?.chemin === route.path ? titreDePage.value.titre : ''
     document.title = propre ? `${propre} — ${site.nom}` : titreDeDocument(route.meta, langueAffichee.value, site)
-    poserIndexation(route, urlSite)
+    if (canonicalDuServeur) {
+      cheminDuServeur ||= route.path
+      if (route.path === cheminDuServeur) return
+      canonicalDuServeur = false
+    }
+    poserIndexation(route, urlSite, document, reference)
   })
 }

@@ -35,4 +35,10 @@ export default {
   copierAide: 'Ar familhoù a zeu war al lec\'hienn dija reizhet war {classes}.', // br: à relire
   copie: 'Liamm eilet : ar familhoù a zeuio war {classes}.', // br: à relire
   copieEchec: 'Ne c\'haller ket eilañ. Setu al liamm da gas :', // br: à relire
+  versionRegionale: {
+    titre: '{nom}, stumm galleg-brezhonek {reference}', // br: à relire
+    texte: '{nom} a ginnig an hevelep strivadennoù, kartennoù ha fichennoù ha {reference}, gant an destennoù e brezhoneg pa vezont. E kempenn emañ al lec\'hienn : un darn eus an droidigezhioù e brezhoneg a zo emgefreek ha n\'int ket bet adlennet c\'hoazh.', // br: à relire
+    aide: 'Skoazell a glaskomp evit adlenn ha gwellaat an droidigezhioù. M\'ho peus komzet brezhoneg, m\'ho peus kelenn e klasoù divyezhek pe ur remarkenn, skrivit deomp :', // br: à relire
+    sujet: 'Skoazell evit an droidigezhioù e brezhoneg', // br: à relire
+  },
 } satisfies Traductions<typeof fr>

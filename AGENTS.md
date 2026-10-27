@@ -67,6 +67,7 @@ qui importe des modules du projet doit être placé **dans le dépôt** le temps
   `useLangue().t('section.cle', params)`. **Aucun `'br'` en dur** hors de ces deux endroits : on interroge le registre
   (`donneesRegionales`, `voix`, `traductionRelue`) ou le réglage. Nouveau texte : dans les deux langues, breton marqué
   `// br: à relire` ; `npm run i18n` compte les passages à relire. Navigation et pages de la base : `src/shell/`, `src/pages/`.
+- **Indexation de skoolik** : `referenceFrancais` (`src/sites.ts`) ; skoolik n'indexe que sa surface bretonne (accueil, page du breton, fiches et compétences avec du breton sûr), le reste a pour canonique ecoleprimaire.app, avec hreflang pour les pages communes (`scripts/build/statique/indexation.ts`, `src/router/canonique.ts`). Avis « version franco-bretonne, en construction » sur son accueil : `src/pages/AvisVersionRegionale.vue`.
 - **Mode « enseignant » : caché par défaut** (une idée en construction, pas encore validée) : `enseignantVisible` dans `src/sites.ts`, activé sur un appareil par l'adresse spéciale
   `?enseignant=oui` (`?enseignant=non` pour le cacher) ou par la case de la page des réglages ; `src/contexte/enseignant.ts`. Quand il est actif : pastille « bêta » sur le profil, bandeau
   `BandeauConstruction` sur ses pages. Un test qui a besoin du profil enseignant met `ep_enseignant` à `true` dans le stockage de l'appareil.

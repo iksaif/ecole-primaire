@@ -21,6 +21,7 @@ const GENERALES = [
   '/maths/fiches?classes=ce1',                         // fiches toutes prêtes d'une matière
   '/telechargements/exercices-exemple-ce1',            // une feuille (fiche prête, aperçu)
   '/programme',                                        // le programme
+  '/programme/officiel',                               // les textes officiels, page du PDF par page
   '/competence/composer-decomposer?classes=ms',        // une compétence
   '/parametres',                                       // réglages
   '/imprimer/affiches?affiche=alphabet',               // formulaire d'une affiche réelle

@@ -46,6 +46,7 @@ export function routesDeBase(regionales: readonly Langue[]): RouteRecordRaw[] {
     { path: '/telechargements', component: () => import('../pages/FichesPretesIndexView.vue'), meta: { titre: 'fichesPretes.titreIndex' } },
     { path: '/telechargements/:slug', component: () => import('../pages/FeuilleView.vue'), meta: { titre: 'routeur.titre.fiche' } },
     { path: '/programme', component: () => import('../pages/ProgrammeView.vue'), meta: { titre: 'routeur.titre.programme' } },
+    { path: '/programme/officiel', component: () => import('../pages/ProgrammeOfficielView.vue'), meta: { titre: 'competence.parcours.titre' } },
     { path: '/competence/:id', component: () => import('../pages/CompetenceView.vue'), meta: { titre: 'routeur.titre.competence' } },
     { path: '/parametres', component: () => import('../pages/ReglagesView.vue'), meta: { titre: 'nav.reglages' } },
     { path: '/about', component: () => import('../pages/AProposView.vue'), meta: { titre: 'nav.apropos' } },

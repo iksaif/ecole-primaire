@@ -6,7 +6,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { appliquerAdresseEnseignant } from '../contexte/enseignant.ts'
 import { appliquerAdresseExtensions, garderPageExtension } from '../extensions/activation.ts'
 import { EXTENSIONS } from '../extensions/registre.ts'
-import type { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw, RouterScrollBehavior } from 'vue-router'
 import { SITE } from '../sites.ts'
 import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
 import { useContexte } from '../contexte/useContexte.ts'
@@ -45,11 +45,18 @@ for (const e of EXTENSIONS) routes.push(...(e.routes ?? []).map(r => ({ ...r, me
 // Une adresse inconnue (ancienne route, lien externe) : page « introuvable » avec un lien vers l'accueil. Toujours en dernier.
 routes.push({ path: '/:chemin(.*)*', component: () => import('../pages/IntrouvableView.vue'), meta: { titre: 'routeur.titre.introuvable' } })
 
+/** Où va la page après un changement d'adresse : la position retenue (retour), l'ancre `#…` si elle existe, sinon le haut ; un changement de contexte ou de filtre (même page) ne ramène pas en haut. */
+const defilement: RouterScrollBehavior = (to, from, enregistree) => {
+  if (enregistree) return enregistree
+  if (to.hash) return { el: to.hash }
+  if (to.path === from.path) return false
+  return { top: 0 }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  // un changement de contexte ou de filtre (même page) ne ramène pas en haut
-  scrollBehavior: (to, from, enregistree) => enregistree ?? (to.path === from.path ? false : { top: 0 }),
+  scrollBehavior: defilement,
 })
 
 // Le mode enseignant, caché par défaut, s'active ou se désactive par `?enseignant=oui` / `?enseignant=non` (src/contexte/enseignant.ts) : le paramètre est retiré de l'adresse.

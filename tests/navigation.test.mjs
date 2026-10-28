@@ -20,7 +20,7 @@ console.log('Adresses ouvertes à froid')
   const page = await ctx.newPage()
   const erreurs = surveiller(page)
   const titres = new Map()
-  const ROUTES = ['/', '/maths', '/francais', '/monde', '/brezhoneg', '/maths/fiches', '/francais/fiches', '/monde/fiches', '/telechargements/', '/programme',
+  const ROUTES = ['/', '/maths', '/francais', '/monde', '/brezhoneg', '/maths/fiches', '/francais/fiches', '/monde/fiches', '/telechargements/', '/programme', '/programme/officiel',
     '/competence/ce1-nombres', '/parametres', '/about', '/nouveautes', '/une/adresse/inconnue']
   for (const route of ROUTES) {
     await page.goto(adresse(URL_SITE, route))

@@ -13,6 +13,7 @@
       <TableauProgramme v-if="affichage === 'tableau'" :lignes="lignes" :classes="contexte.classes" :domaine="etat.domaine" :refs="contexte.refs" :reportes="reportes" />
       <ListeProgramme v-else :lignes="lignes" :classes="contexte.classes" :refs="contexte.refs" :reportes="reportes" />
     </section>
+    <p class="officiel"><RouterLink :to="{ path: ADRESSE_PROGRAMME_OFFICIEL, query: reportes }">{{ t('competence.versTextes') }}</RouterLink></p>
     <p class="adresse">{{ t('programme.adresse') }} : <code>{{ lienDeCetteVue() }}</code></p>
   </div>
 </template>
@@ -31,6 +32,7 @@ import { useLangue } from '../langues/useLangue.ts'
 import { EMOJI_DOMAINE } from '../ressources/emojis.ts'
 import BarreProgramme from '../programme/BarreProgramme.vue'
 import { domainesProposes } from '../programme/etat.ts'
+import { ADRESSE_PROGRAMME_OFFICIEL } from '../programme/officiel.ts'
 import ListeProgramme from '../programme/ListeProgramme.vue'
 import { nomDuDomaine } from '../programme/noms.ts'
 import TableauProgramme from '../programme/TableauProgramme.vue'
@@ -50,6 +52,7 @@ const classesTexte = computed(() => texteClasses(contexte.value.classes))
 <style scoped>
 .container :deep(a:not(.classe):not(.case)) { color: var(--bleu-fort); }
 .chapeau { color: #555; margin: -.5rem 0 .5rem; }
+.officiel { margin-top: 1rem; font-weight: 700; }
 .adresse { margin-top: 1rem; font-size: .85rem; color: var(--texte-doux); }
 .adresse code { word-break: break-all; }
 .domaine h2 { font-size: 1.15rem; margin-bottom: .6rem; }

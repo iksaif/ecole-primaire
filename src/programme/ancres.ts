@@ -5,24 +5,24 @@
 import type { Ancre } from './lecteur.ts'
 
 export const ANCRES: Readonly<Record<string, Ancre>> = {
-  "denombrer-6": { debut: "Écrire en chiffres les nombres de", fin: "différentes (couleur, fonction et surtout taille)." },
-  "denombrer-10": { debut: "de verbalisation par un élève Pour", fin: "nombres dans des situations de communication." },
-  "denombrer-3": { debut: "Utiliser les compositions un et un,", fin: "de la main, constellations de points)" },
+  "denombrer-6": { debut: "Écrire en chiffres les nombres de", fin: "de façon ordonnée et segmentée" }, // relue à la main
+  "denombrer-10": { debut: "Associer une quantité, le nom d’un nombre et une écriture chiffrée", fin: "dans des situations de communication" }, // relue à la main
+  "denombrer-3": { debut: "Dénombrer une collection d’objets (jusqu’à trois, voire quatre)", fin: "(constellation de points)" }, // relue à la main
   "comparer-quantites": { debut: "Comparer globalement (sans dénombrer) des cardinaux", fin: "pas se limiter aux petites collections." },
   "composer-decomposer": { debut: "et un font deux deux et", fin: "une représentation analogique et vice versa." },
   "bande-numerique": { debut: "Se familiariser avec le début de", fin: "ses différentes représentations (constellation, doigts, chiffre)." },
   "rang-maternelle": { debut: "Repérer à l’aide d’une procédure de", fin: "ou d’un recul d’une ou de" },
-  "problemes-maternelle": { debut: "Ainsi, à partir de 5 ans,", fin: "en retire deux devant l’élève et" },
+  "problemes-maternelle": { debut: "Recherche du tout ou d’une partie dans un problème de parties-tout", fin: "Combien y a-t-il de crayons dans la boite maintenant" }, // relue à la main
   "numeration-100": { debut: "Nombres, calcul et résolution de problèmes", fin: "concernent les nombres entiers jusqu’à cent." },
   "numeration-1000": { debut: "Cours élémentaire première année Les nombres", fin: "attendus concernent les nombres jusqu’à mille." },
   "numeration-10000": { debut: "montant de la facture Cours élémentaire", fin: "concernent les nombres jusqu’à 10 000." },
   "numeration-6-chiffres": { debut: "l’approfondissement de l’étude des fractions et", fin: "période 3 ou du début de" },
   "numeration-9-chiffres": { debut: "connaissances et les savoir-faire attendus en", fin: "s’écrivent avec au plus six chiffres." },
-  "nombres-en-lettres": { debut: "L’élève sait écrire en chiffres un", fin: "nombre que 32 bien que les" },
+  "nombres-en-lettres": { debut: "L’élève sait écrire en chiffres un nombre dicté", fin: "jusqu’à cinquante" }, // relue à la main
   "comparer-ranger": { debut: "Comparer, encadrer, intercaler des nombres entiers", fin: "demi-droite graduée de un en un." },
   "droite-graduee": { debut: "Savoir placer des nombres sur une", fin: "demi-droite graduée de un en un." },
   "ordinaux": { debut: "Connaitre les nombres ordinaux jusqu’à vingtième", fin: "sens de parcours de la file" },
-  "suites-nombres": { debut: "conduit en lien étroit avec la", fin: "symboles, de lettres ou de nombres." },
+  "suites-nombres": { debut: "Dans la suite répétitive", fin: "quel est le vingtième" }, // relue à la main
   "parite-multiples": { debut: "Connaitre la notion de parité d’un", fin: "la notion de parité d’un nombre." },
   "criteres-divisibilite": { debut: "Seuls les critères de divisibilité par", fin: "et par 10 figurent au programme." },
   "diviseurs": { debut: "nombre entier inférieur ou égal à", fin: "Les fractions Au CM2 les élèves" },
@@ -36,8 +36,8 @@ export const ANCRES: Readonly<Record<string, Ancre>> = {
   "fraction-quantite": { debut: "entiers déjà connus au CM1, les", fin: "ou un quart de 100 mètres." },
   "decimaux": { debut: "Au CM1, les nombres décimaux rencontrés", fin: "période 1 dans le cadre de" },
   "tables-addition": { debut: "Connaitre dans les deux sens les tables", fin: "les tables d’addition." },
-  "tables-multiplication": { debut: "des résultats des tables d’addition se", fin: "au long de l’année du CE1." },
-  "doubles-moities": { debut: "de calcul mental sont menés sur", fin: "tous inférieurs ou égaux à cent." },
+  "tables-multiplication": { debut: "Connaitre dans les deux sens les tables de multiplication", fin: "compris entre 0 et 10" }, // relue à la main
+  "doubles-moities": { debut: "Connaitre les doubles et les moitiés de nombres usuels", fin: "moitié de … = 8" }, // relue à la main
   "complement-dizaine": { debut: "dizaine supérieure, il peut utiliser les", fin: "c’est 7 dizaines et 4 unités." },
   "ajouter-dizaines": { debut: "30, 40, 50, 60, 70, 80", fin: "76 30 30, c’est 3 dizaines." },
   "ajouter-9": { debut: "L’élève sait que, pour ajouter 9", fin: "peut ajouter 10 puis soustraire 1." },
@@ -47,11 +47,11 @@ export const ANCRES: Readonly<Record<string, Ancre>> = {
   "multiplication-posee": { debut: "sait calculer 16 548 ou 548", fin: "nombre à un ou deux chiffres." },
   "division-posee": { debut: "décimaux Poser et effectuer des multiplications", fin: "avec un diviseur à un chiffre" },
   "operations-decimaux": { debut: "résultat d’une opération Savoir effectuer un", fin: "entier inférieur à 10 Poser et" },
-  "sens-multiplication": { debut: "L’élève utilise de façon pertinente les", fin: "lors de la résolution de problèmes." },
+  "sens-multiplication": { debut: "Comprendre le sens de la multiplication", fin: "dans le cadre d’additions itérées" }, // relue à la main
   "sens-division": { debut: "et Les nombres impairs ne sont", fin: "lors de la résolution de problèmes." },
   "egalites-a-trous": { debut: "d’équation, comme dans l’égalité à compléter", fin: "programme de calcul Identifier et formuler" },
   "problemes-additifs": { debut: "y a-t-il de passagers au total", fin: "composé de plusieurs parties de même" },
-  "problemes-multiplicatifs": { debut: "résoudre des problèmes comme les suivants", fin: "besoin sur des manipulations d’objets tangibles" },
+  "problemes-multiplicatifs": { debut: "Résoudre des problèmes multiplicatifs en une étape", fin: "utiliser des additions itérées" }, // relue à la main
   "problemes-etapes": { debut: "bonbons dans la boite avant que", fin: "numérique inférieur ou égal à 30)." },
   "comparer-longueurs-maternelle": { debut: "Pour les comparaisons indirectes, les élèves", fin: "en trois groupes selon leur longueur." },
   "comparer-masses-maternelle": { debut: "locutions plus lourd que plus léger", fin: "alors a c verbaliser le résultat." },
@@ -60,7 +60,7 @@ export const ANCRES: Readonly<Record<string, Ancre>> = {
   "contenances": { debut: "L’élève sait effectuer des conversions en", fin: "80 cL 7 L 80 cL." },
   "perimetre": { debut: "Savoir ce qu’est le périmètre d’une", fin: "polygone en utilisant une règle graduée." },
   "aires": { debut: "L’aire est introduite au CM1, en", fin: "longueur de l’un de ses côtés." },
-  "angles": { debut: "Au CM1, le travail sur la", fin: "ou d’une distance Savoir ce qu’est" },
+  "angles": { debut: "Au CM1, le travail sur la grandeur « angle » se généralise", fin: "des angles saillants" }, // relue à la main
   "monnaie-euros": { debut: "Les montants sont des nombres entiers", fin: "toujours inférieurs ou égaux à cent." },
   "monnaie-centimes": { debut: "Les centimes d’euro sont introduits au", fin: "à partir de la période 3." },
   "heure-entiere": { debut: "Au CP, le travail mené sur", fin: "(uniquement des heures entières inférieures ou" },
@@ -120,22 +120,22 @@ export const ANCRES: Readonly<Record<string, Ancre>> = {
   "environnement-proche": { debut: "ou dès que les apprentissages précédents", fin: "familiers. Observer l’habitat proche de l’école." },
   "parties-animaux-plantes": { debut: "Découvrir les animaux et les végétaux", fin: "observés avec la plantes, notamment classe." },
   "cycle-vie-vivants": { debut: "les apprentissages précédents ont pu être", fin: "rampe, saute, grimpe, court ou nage." },
-  "deplacements-animaux": { debut: "Observer et nommer le mode de", fin: "animaux élevés ou étudiés en classe." },
-  "besoins-vivants": { debut: "Constater et décrire des changements liés", fin: "œufs et d'élevage, de cultures de" },
+  "deplacements-animaux": { debut: "Observer et nommer le mode de", fin: "en relation avec leur milieu de vie" }, // relue à la main
+  "besoins-vivants": { debut: "Identifier et décrire les besoins essentiels de quelques", fin: "et des soins prodigués" }, // relue à la main
   "vivant-non-vivant": { debut: "Unité et diversité du vivant Objectifs", fin: "œufs, laine, fibres végétales, soie, etc.)." },
-  "observer-environnement": { debut: "catégories vivant, non vivant, élaboré par", fin: "les caractéristiques du milieu de vie." },
+  "observer-environnement": { debut: "Observer son environnement proche : décrire les êtres", fin: "Se repérer dans son environnement proche" }, // relue à la main
   "chaines-alimentaires": { debut: "Identifier le régime alimentaire d’animaux. L’élève", fin: "parmi les herbivores, carnivores et omnivores." },
   "croissance-reproduction": { debut: "Reproduction, croissance et développement Objectifs d’apprentissage", fin: "mue) et discontinue (avec des mues)." },
   "classer-especes": { debut: "démarches et d’activités Classification du vivant", fin: "en utilisant une clé de détermination." },
   "proteger-environnement": { debut: "Commencer à agir de manière autonome", fin: "compte les risques de l’environnement familier." },
   "meteo-climat": { debut: "La Terre, une planète active Objectifs", fin: "du temps (journée, semaine, mois, saison)." },
-  "parties-corps": { debut: "apprentissages précédents ont pu être observés", fin: "l’avant-bras, le poignet, la main, etc." },
-  "cinq-sens": { debut: "Se laver les mains après le", fin: "et le toucher, l’oreille et l’audition." },
-  "hygiene-vie": { debut: "Se laver les mains après le", fin: "tête, le cou, le tronc, etc." },
+  "parties-corps": { debut: "Identifier et nommer les parties du corps humain", fin: "la tête, le cou, le tronc, etc" }, // relue à la main
+  "cinq-sens": { debut: "Identifier et nommer des organes sensoriels et les", fin: "l’oreille et l’audition" }, // relue à la main
+  "hygiene-vie": { debut: "Connaitre quelques règles d’hygiène corporelle et de", fin: "se laver les mains, se moucher, etc." }, // relue à la main
   "croissance-corps": { debut: "Observer des changements liés à sa", fin: "fournies par la famille, toise personnelle)." },
   "aliments-equilibre": { debut: "Cours préparatoire Alimentation Objectifs d’apprentissage Découvrir", fin: "origines animale végétale minérale produit transformé." },
   "mouvement-effort": { debut: "Cours élémentaire deuxième année Croissance et", fin: "pouls, transpiration, rougeur de la peau." },
-  "cerveau-attention": { debut: "les différences entre dents de lait", fin: "activité ou encore à une personne)." },
+  "cerveau-attention": { debut: "Prendre conscience du rôle que joue l'attention cognitive", fin: "déséquilibrent son attention" }, // relue à la main
   "digestion": { debut: "Nommer et localiser les différents organes", fin: "dans l’approvisionnement des organes en nutriments." },
   "eau-etats": { debut: "que les apprentissages précédents ont pu", fin: "flaque, mer, glacier, neige, givre etc.)." },
   "air-existe": { debut: "faire fondre des glaçons par exemple", fin: "(feuille qui ne se dissolvent pas." },
@@ -172,12 +172,12 @@ export const ANCRES: Readonly<Record<string, Ancre>> = {
   "regions-departements": { debut: "Localiser et nommer sur un fond", fin: "l’élève. Mots-clés commune, département, région, TGV." },
   "modes-de-vie-monde": { debut: "Thème 2 Les inégalités dans le", fin: "de l’Est. Europe. Océanie. Mots-clés inégalités." },
   "union-europeenne": { debut: "période) Question Qu’est-ce que l’Union européenne", fin: "Comment représenter le monde et se" },
-  "regles-vie-ecole": { debut: "Contenus d’enseignement Démarches et situations d’apprentissage", fin: "droits et leurs devoirs au sein" },
-  "emotions-respect": { debut: "à développer la confiance en eux-mêmes", fin: "soi acquérir une estime de soi." },
+  "regles-vie-ecole": { debut: "S’approprier les règles de l’école (droits et devoirs)", fin: "que ses droits impliquent des devoirs" }, // relue à la main
+  "emotions-respect": { debut: "Comprendre ses émotions et ses sentiments : leur origine et leurs manifestations", fin: "sa relation avec les autres" }, // relue à la main
   "symboles-republique": { debut: "la République Notions abordées Contenus d’enseignement", fin: "le drapeau français reconnaitre La Marseillaise." },
-  "laicite": { debut: "Repérer la présence de symboles de", fin: "de la laïcité (notamment les art." },
-  "dangers-alerter": { debut: "identifier les dangers au sein des", fin: "première éducation à la route (APER)." },
-  "bien-commun-institutions": { debut: "les premières notions de gestion responsable", fin: "pour tous, l’environnement, la sécurité, l’information." },
+  "laicite": { debut: "aborder le principe de la liberté de conscience", fin: "notamment les art. 6 et 8" }, // relue à la main
+  "dangers-alerter": { debut: "identifier les dangers au sein des situations dans lesquelles on se trouve", fin: "même dans un environnement familier" }, // relue à la main
+  "bien-commun-institutions": { debut: "Service public savoir qu’il existe des", fin: "au service de l’intérêt général" }, // relue à la main
   "democratie-vote": { debut: "Démocratie apprendre la signification du terme", fin: "de souveraineté populaire, de volonté générale," },
   "alphabet-langue-regionale": { debut: "ar skol https://www.reseau-canope.fr/tes/skeudennaoueg/index.php?/category/14 L’alphabet Après avoir", fin: "2018 https://www.reseau-canope.fr/tes/aaa/dl/Skritellou_al_lizherenneg/lizherenneg_2019.pdf «ABCD»*, «1, 2, 3..." },
   "epeler-langue-regionale": { debut: "Réalisation des adoucissements durcissements de consonnes", fin: "Phonologie Prononciation des lettres de l’alphabet." },

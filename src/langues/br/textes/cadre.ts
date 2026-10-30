@@ -24,6 +24,8 @@ export default {
   groupeNotres: 'Hon nodrezhoù', // br: à relire
   groupeInstallees: 'Staliet war an urzhiataer-mañ', // br: à relire
   groupeAjoutees: 'Ouzhpennet diwar ur restr', // br: à relire
+  groupeAutresAttachees: 'Skritur a-stag (kursiv)', // br: à relire
+  groupeAutresScript: 'Skritur voull', // br: à relire
   aideLiens: 'Da gaout (n\'int ket staliet c\'hoazh war an urzhiataer-mañ) :', // br: à relire
   ajouterFichier: 'Ouzhpennañ ur restr nodrezh', // br: à relire
   toutesPolices: 'Diskouez holl nodrezhoù an urzhiataer-mañ', // br: à relire

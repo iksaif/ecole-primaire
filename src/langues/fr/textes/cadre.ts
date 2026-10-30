@@ -21,6 +21,8 @@ export default {
   groupeNotres: 'Nos polices',
   groupeInstallees: 'Installées sur cet ordinateur',
   groupeAjoutees: 'Ajoutées depuis un fichier',
+  groupeAutresAttachees: 'Écritures attachées (cursives)',
+  groupeAutresScript: 'Écritures script',
   aideLiens: 'À obtenir (pas encore installées sur cet ordinateur) :',
   ajouterFichier: 'Ajouter un fichier de police',
   toutesPolices: 'Afficher toutes les polices de cet ordinateur',

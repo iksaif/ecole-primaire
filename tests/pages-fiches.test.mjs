@@ -286,5 +286,24 @@ console.log('Liens directs : le filtre d\'usage et « toutes les classes » dans
   await ctx.close()
 }
 
+// Écriture : un seul sélecteur de police (une seule écriture choisie) propose aussi les polices de l'autre, en bas, et le choix tient
+{
+  const { ctx, page } = await ouvrir()
+  await page.goto(app('/francais/ecriture?mode=imprimer'))
+  await page.waitForSelector('.choix-police select')
+  const groupes = () => page.locator('.choix-police select').first().evaluate(s => [...s.querySelectorAll('optgroup')].map(g => g.label))
+  verifier((await groupes()).includes('Écritures script'), 'attaché seul : les polices script sont proposées en bas')
+  await page.locator('button[aria-pressed]', { hasText: 'Script minuscule' }).click()
+  verifier(await page.locator('.choix-police select').count() === 2, 'script et attaché : un sélecteur chacun')
+  await page.locator('button[aria-pressed]', { hasText: 'Attaché minuscule' }).click()
+  await page.waitForFunction(() => document.querySelectorAll('.choix-police select').length === 1)
+  verifier((await groupes()).includes('Écritures attachées (cursives)'), 'script seul : les polices attachées sont proposées en bas')
+  await page.locator('.choix-police select').first().selectOption('Marelle')
+  await page.reload()
+  await page.waitForSelector('.choix-police select')
+  verifier(await page.locator('.choix-police select').first().inputValue() === 'Marelle', 'une police attachée choisie dans le sélecteur script est gardée au rechargement')
+  await ctx.close()
+}
+
 await nav.close()
 process.exit(nbEchecs() ? 1 : 0)

@@ -42,13 +42,27 @@ import type { CleTexte } from '../langues/traduire.ts'
 type CleCadre = Exclude<Extract<CleTexte, `cadre.${string}`>, 'cadre.toutesTrouvees' | 'cadre.nomTrouvee' | 'cadre.nomIntrouvable' | 'cadre.apercu.page'>
 
 // icone : devant le libellé (« Présentation de la fiche » : OptionsFiche)
-const props = withDefaults(defineProps<{ type?: TypePolice, modelValue?: string, libelle?: string, aide?: boolean, icone?: NomIcone }>(),
-  { type: undefined, modelValue: undefined, libelle: '', aide: true, icone: undefined })
+// autres : propose aussi, en bas de la liste, les polices de l'autre écriture (quand la page n'a qu'un seul sélecteur : script seul, attaché seul)
+const props = withDefaults(defineProps<{ type?: TypePolice, modelValue?: string, libelle?: string, aide?: boolean, icone?: NomIcone, autres?: boolean }>(),
+  { type: undefined, modelValue: undefined, libelle: '', aide: true, icone: undefined, autres: false })
 const emit = defineEmits<{ 'update:modelValue': [police: string] }>()
 const { choix, pret } = usePolices()
 const { t } = useLangue()
 // sans type : le choix des fiches, toutes les polices connues (script et attaché)
 const groupes = groupesDe(props.type ?? 'tous')
+// les polices de l'autre écriture (incluses ou installées, pas les « non installées »), sans celles déjà proposées
+const autreType = computed((): TypePolice | null => {
+  if (!props.autres || !props.type) return null
+  return props.type === 'script' ? 'attache' : 'script'
+})
+const groupeScript = groupesDe('script')
+const groupeAttache = groupesDe('attache')
+const entreesAutres = computed((): EntreePolice[] => {
+  if (!autreType.value) return []
+  const groupesAutres = autreType.value === 'script' ? groupeScript : groupeAttache
+  const deja = new Set([...groupes.value.favorites, ...groupes.value.installees, ...groupes.value.ajoutees].map(e => e.id))
+  return [...groupesAutres.value.favorites, ...groupesAutres.value.ajoutees].filter(e => e.etat !== 'manquante' && !deja.has(e.id))
+})
 const idSelect = useId()
 // la police choisie : celle du parent (v-model), sinon le choix commun des fiches
 const valeur = computed({
@@ -59,13 +73,14 @@ const valeur = computed({
     if (props.modelValue === undefined) choix.value.unique = v; else emit('update:modelValue', v)
   },
 })
-const tous = computed(() => [...groupes.value.favorites, ...groupes.value.installees, ...groupes.value.ajoutees])
+const tous = computed(() => [...groupes.value.favorites, ...groupes.value.installees, ...groupes.value.ajoutees, ...entreesAutres.value])
 const choisie = computed(() => tous.value.find(e => e.id === valeur.value))
 const estPerso = computed(() => policesPerso.value.some(p => p.id === valeur.value))
 const groupesAffiches = computed(() => [
   { titre: t('cadre.groupeNotres'), entrees: groupes.value.favorites },
   { titre: t('cadre.groupeInstallees'), entrees: groupes.value.installees },
   { titre: t('cadre.groupeAjoutees'), entrees: groupes.value.ajoutees },
+  { titre: t(autreType.value === 'attache' ? 'cadre.groupeAutresAttachees' : 'cadre.groupeAutresScript'), entrees: entreesAutres.value },
 ].filter(g => g.entrees.length))
 
 // Textes des polices incluses, écrits en français dans src/utils/impression.js : clé du catalogue par id

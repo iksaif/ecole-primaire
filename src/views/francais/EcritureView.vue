@@ -68,8 +68,8 @@
       <!-- deux polices : celle du script et celle de l'attaché (seulement celles des écritures choisies) -->
       <div class="config-section" role="group" :aria-labelledby="`${id}-polices`">
         <div :id="`${id}-polices`" class="config-section-title">{{ t('ecriture.polices') }}</div>
-        <ChoixPolice v-if="config.styles.some(s => !estAttache(s))" v-model="choixPolices.script" type="script" :libelle="t('ecriture.policeScript')" />
-        <ChoixPolice v-if="config.styles.some(s => estAttache(s))" v-model="choixPolices.attache" type="attache" :libelle="t('ecriture.policeAttache')" />
+        <ChoixPolice v-if="config.styles.some(s => !estAttache(s))" v-model="choixPolices.script" type="script" :libelle="t('ecriture.policeScript')" :autres="!config.styles.some(s => estAttache(s))" />
+        <ChoixPolice v-if="config.styles.some(s => estAttache(s))" v-model="choixPolices.attache" type="attache" :libelle="t('ecriture.policeAttache')" :autres="!config.styles.some(s => !estAttache(s))" />
       </div>
     </CadreExercice>
   </div>

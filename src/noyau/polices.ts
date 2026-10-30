@@ -99,13 +99,13 @@ export function ajouterPoliceInstallee(nom: string): boolean {
 
 // Si la police mémorisée n'est plus disponible (autre ordinateur…), on revient à celle incluse : Andika pour les fiches et le script, Marelle pour l'attaché
 // (une Belle Allure choisie sur un autre ordinateur ne laisse donc pas une police absente, que le navigateur remplacerait au hasard)
-const disponiblesAttache = disponiblesDe('attache')
-const disponiblesScript = disponiblesDe('script')
-watch([disponibles, disponiblesAttache, disponiblesScript, pret], () => {
+// (n'importe quelle police disponible convient au choix script comme au choix attaché : le sélecteur d'une écriture seule propose aussi l'autre, ChoixPolice `autres`)
+watch([disponibles, pret], () => {
   if (!pret.value) return
-  if (!disponibles.value.some(p => p.id === choix.value.unique)) choix.value.unique = POLICE_REPLI
-  if (!disponiblesAttache.value.some(p => p.id === choix.value.attache)) choix.value.attache = DEFAUT.attache
-  if (!disponiblesScript.value.some(p => p.id === choix.value.script)) choix.value.script = DEFAUT.script
+  const existe = (id: string): boolean => disponibles.value.some(p => p.id === id)
+  if (!existe(choix.value.unique)) choix.value.unique = POLICE_REPLI
+  if (!existe(choix.value.attache)) choix.value.attache = DEFAUT.attache
+  if (!existe(choix.value.script)) choix.value.script = DEFAUT.script
 })
 
 /** La police des fiches, `unique` si elle est disponible, sinon Andika. */

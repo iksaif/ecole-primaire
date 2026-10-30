@@ -25,5 +25,11 @@ les colonnes. Chaque fichier a une section « Page N » par page du PDF : ce son
 Les adresses des PDF sont dans `SOURCES` (`src/data/programme.ts`) et en tête de chaque fichier. Ce sont des textes
 officiels publiés par le ministère de l'Éducation nationale ; ils sont repris ici tels quels, pour référence.
 
+Ces textes sont aussi lus dans l'app (`/programme/officiel/<texte>/<page>?competence=<id>`, passage de la compétence surligné) :
+`node scripts/generer/programmes.ts` copie les pages citées par une compétence dans `public/programmes/<texte>/<page>.txt` ; les
+ancres (début et fin du passage, `src/programme/ancres.ts`) sont proposées par `node scripts/generer/programmes.ts --ancres` (jamais
+d'écrasement d'une ancre déjà là) puis relues. `tests/programme-navigation.test.mjs` vérifie que chaque ancre se retrouve dans sa page.
+Le texte est repris sans modification, avec la mention de sa source sur chaque page ; il n'est pas indexé par les moteurs.
+
 Pour les régénérer : télécharger chaque PDF de `SOURCES` puis `pdftotext -enc UTF-8 fichier.pdf -` (Poppler,
 `brew install poppler`), une section par saut de page (`\f`).

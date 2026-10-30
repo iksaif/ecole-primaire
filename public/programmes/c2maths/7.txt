@@ -1,0 +1,100 @@
+- Ajouter un nombre inférieur
+à 9 à un nombre.
+
+Pour ajouter un nombre inférieur à 9, l’élève sait utiliser une procédure adaptée aux
+nombres en jeu.
+Si l’ajout des nouvelles unités ne conduit pas à la formation d’une nouvelle dizaine, il sait
+qu’il suffit d’agir sur le chiffre des unités du nombre initial. Par exemple 32 + 4 = 36 car
+2 + 4 = 6.
+Si l’ajout des nouvelles unités conduit à changer le nombre de dizaines, par exemple,
+pour calculer 47 + 8, l’élève cherche d’abord combien il faut ajouter à 47 pour aller à la
+dizaine supérieure, c’est-à-dire à 50 : il faut ajouter 3.
++8
+
++8
+
+47
+
+47
+
++3
+
+50
+
+L’élève poursuit en cherchant ce qu’il reste à additionner afin d’avoir ajouté 8 : il faut
+encore additionner 5 à 50, parce que 8 c’est 3 + 5. Cela fait 55.
++8
+
+47
+
++3
+
+50
+
++8
+
+47
+
++5
+
++3
+
+50
+
++5
+
+55
+
+Donc 47 + 8 = 55.
+- Ajouter 9 à un nombre.
+
+L’élève sait que, pour ajouter 9 à un nombre, il peut ajouter 10 puis soustraire 1. Il sait
+aussi qu’il n’est pas utile de mettre en œuvre cette procédure quand le nombre a 0 ou 1
+comme chiffre des unités.
+Sur son ardoise, l’élève peut simplement écrire le résultat intermédiaire permettant
+d’alléger sa mémoire de travail.
+Ainsi, pour ajouter 9 à 37, le contenu de l’ardoise pourra évoluer chronologiquement,
+comme indiqué ci-dessous :
+
+37
+
+- Ajouter deux nombres
+inférieurs à 100.
+
+37
+47
+
+37
+47
+46
+
+L’élève sait que, pour ajouter deux nombres inférieurs à 100, il peut les décomposer pour
+ajouter les dizaines entre elles et les unités entre elles, puis additionner les deux nombres
+trouvés en utilisant la procédure apprise pour ajouter des dizaines entières à un nombre.
+Exemple : 47 + 28 = ?
+Le contenu de l’ardoise pourra évoluer chronologiquement, comme indiqué ci-dessous :
+
+47 + 28
+
+47 + 28
+
+47 + 28
+
+60
+
+60 15
+
+60 15
+75
+
+47 + 28 = 75.
+- Déterminer la moitié d’un
+nombre pair.
+
+L’élève sait que, pour déterminer la moitié d’un nombre pair, il peut le décomposer en
+dizaines et en unités pour faire apparaitre des nombres dont il a mémorisé les moitiés.
+Par exemple : Quelle est la moitié de 46 ?
+46 = 40 + 6.
+La moitié de 40 est 20. La moitié de 6 est 3.
+20 + 3 = 23.
+La moitié de 46 est 23.

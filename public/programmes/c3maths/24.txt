@@ -1,0 +1,53 @@
+natures portant sur des assemblages de cubes : passage, dans les deux sens, entre l’objet à trois dimensions et ses diverses
+représentations à deux dimensions, dénombrements.
+Automatismes
+L’élève identifie dans un ensemble de solides lesquels sont des pyramides, des boules, des cubes, des cylindres, des pavés, des
+cônes ou des prismes droits.
+Connaissances et capacités attendues
+Objectifs d’apprentissage
+Voir dans l’espace des assemblages de cubes
+
+Organisation et gestion de données et probabilités
+Cours moyen première année
+Organisation et gestion de données
+Au CM1, les caractères statistiques étudiés peuvent être aussi bien qualitatifs comme un moyen de transport, une couleur ou un
+sport pratiqué, que quantitatifs comme le nombre de frères et sœurs, l’âge exprimé en années entières, la hauteur d’une plante
+ou la masse d’un animal.
+Les élèves résolvent des problèmes dont les données peuvent être prélevées dans des tableaux, dans des diagrammes en barres
+ou sur des courbes.
+Cette partie du programme fournit l’occasion de confronter les élèves à des données réelles relatives à des sujets d’actualité,
+comme le changement climatique, la pollution ou la perte de biodiversité.
+Les connaissances et les compétences acquises sont renforcées lors de travaux réalisés dans les autres disciplines : EPS, histoire
+et géographie, sciences et technologie, etc. Ceci permet la confrontation à divers types de données et à des représentations
+graphiques variées.
+Objectifs d’apprentissage
+Recueillir des données et produire un tableau, un diagramme en barres ou un ensemble de points dans un repère pour les
+présenter
+Lire et interpréter les données d’un tableau à simple ou double entrée, d’un diagramme en barres ou d’une courbe
+Résoudre des problèmes en une ou plusieurs étapes en utilisant les données d’un tableau à simple ou double entrée, d’un
+diagramme en barres ou d’une courbe
+Les probabilités
+Au CM1, les élèves bénéficient d’une première familiarisation avec des expériences aléatoires. Un des objectifs de cet
+enseignement est de comprendre qu’il existe des évènements dont la réalisation est certaine, d’autres dont la réalisation est
+impossible, et d’autres encore dont on ne peut pas affirmer a priori s’ils se réaliseront ou pas.
+Un autre objectif porte sur la comparaison de probabilités d’évènements. Certains évènements, comme « obtenir pile » en
+lançant une pièce de monnaie, « obtenir un nombre pair » en lançant un dé ou « obtenir une carte rouge » en tirant une carte au
+hasard dans un jeu de 32 cartes ont une chance sur deux de se réaliser, ce qui signifie que la probabilité qu’ils se réalisent est la
+même que celle qu’ils ne se réalisent pas. D’autres évènements, comme « obtenir un 2 » en lançant un dé, ont plus de chances de
+ne pas se réaliser que de se réaliser. Les élèves apprennent à estimer les probabilités d’évènements sur une échelle allant de
+« impossible » à « certain », en distinguant les évènements « peu probables » qui ont moins d’une chance sur deux de se réaliser,
+des évènements « probables » qui ont plus d’une chance sur deux de se réaliser.
+Un autre objectif de l’enseignement des probabilités au CM1 est de familiariser les élèves avec quelques modèles classiques
+d’expériences aléatoires (jet d’une pièce de monnaie, lancer de dé, tirages dans une urne, tirage d’une carte dans un jeu de 52
+cartes, etc.).
+Dans des cas simples, les élèves apprennent à recenser toutes les issues possibles d’une expérience aléatoire. Ils découvrent ainsi
+en particulier que, selon les cas, toutes les issues peuvent avoir, ou non, la même chance de se réaliser. Ils se familiarisent ainsi
+avec la notion d’équiprobabilité.
+Objectifs d’apprentissage
+Identifier des expériences aléatoires
+Identifier toutes les issues possibles lors d’une expérience aléatoire simple
+Comprendre et utiliser le vocabulaire approprié : « impossible », « possible », « certain », « probable », « peu probable », « une
+chance sur deux »
+Comparer des issues d’expériences aléatoires ou des évènements selon leur probabilité de réalisation
+Comprendre que ce n’est pas parce qu’il y a deux issues possibles que chacune a une chance sur deux de se réaliser
+Reconnaître des situations d’équiprobabilité

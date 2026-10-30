@@ -1,0 +1,77 @@
+Déterminer le cardinal d’une collection à partir de celui d’une autre et de
+l’écart entre les deux
+Par exemple, l’élève est capable de résoudre le problème suivant, dont
+l’énoncé est en concordance avec l’opération à effectuer : « Pierre a cinq billes.
+Julie a trois billes de plus que Pierre. Combien Julie a-t-elle de billes ? » Il est
+également capable de résoudre le problème suivant, dont l’énoncé est en
+discordance avec l’opération à effectuer : « Pierre a cinq billes. Il a trois billes
+de moins que Julie. Combien Julie a-t-elle de billes ? »
+Déterminer le tout dans un problème de groupements
+Par exemple, si quatre assiettes sont placées sur une table et qu’une grande
+collection de gâteaux (symbolisés par des jetons) est placée sur une autre table
+éloignée, l’élève est capable d’aller chercher en un seul voyage la quantité
+exacte de gâteaux pour qu’il y ait deux gâteaux dans chaque assiette.
+Problèmes de partage en parts égales avec éventuellement un reste
+Par exemple, si deux poupées sont positionnées devant une table et que
+l’enseignant déclare « Je veux partager dix gâteaux entre mes deux poupées
+pour que chacune reçoive le même nombre de gâteaux », l’élève, qui dispose
+de dix jetons symbolisant les gâteaux, est capable de déterminer combien de
+gâteaux va recevoir chaque poupée.
+Ou encore, l’élève, qui dispose de dix images, est capable de demander le
+nombre d’enveloppes nécessaires pour ranger deux images par enveloppe.
+
+Explorer les solides et les formes planes
+Introduction
+À l’école maternelle, l’exploration d’objets (à trois dimensions) et de formes planes (à deux dimensions) par la manipulation
+et la verbalisation a plusieurs objectifs, intrinsèquement liés à l’apprentissage des mathématiques :
+
+ s’abstraire progressivement de propriétés qualitatives (couleur, texture, fonction, etc.) pour ne retenir que celles de la
+géométrie : identifier les caractéristiques géométriques de solides à trois dimensions (cube, pavé, pyramide, cylindre,
+cône, boule) et celles de formes géométriques planes (carré, triangle, rectangle, disque) ;
+
+ développer le sens de l’espace et de l’orientation, notamment à travers des jeux de construction, d’encastrement et de
+puzzle ;
+
+ développer la logique à travers des situations de tri et de classement ;
+ enrichir le vocabulaire.
+En début d’apprentissage, si les élèves peuvent recourir à un vocabulaire du quotidien, par exemple dire « rond » au lieu de
+« disque », il importe que l’enseignant s’exprime à l’aide du lexique mathématique adapté. Cependant, on veillera à ne pas
+faire nommer les objets géométriques de manière prématurée. La nécessité de recourir au vocabulaire spécifique prend son
+sens dans des situations de communication. Les principaux objectifs visés sont la reconnaissance des objets géométriques
+et leur description. À ce stade, savoir les nommer n’est pas la priorité.
+Points de vigilance
+
+ Les solides dont l’épaisseur est très faible sont assimilés à des formes planes et, parmi les formes planes, on distingue les
+formes géométriques (carré, triangle, rectangle, disque) des formes non géométriques (pièces de puzzle).
+
+ Les représentations en perspective de solides ne sont pas abordées ou utilisées en maternelle.
+ On sera particulièrement attentif à varier les configurations et les orientations (ne pas présenter uniquement des
+triangles équilatéraux ou des triangles ayant un côté horizontal ou des carrés à côtés horizontaux ou verticaux).
+
+ Le travail sur les empreintes a pour objectifs d’identifier les faces planes des solides et de faire comprendre aux élèves
+qu’une même empreinte peut correspondre à plusieurs solides.
+
+ Les empreintes de sommets, d’arêtes et de faces non planes ne constituent pas un objectif d’apprentissage.
+ Les manipulations peuvent mettre en jeu des solides et des formes planes dont la connaissance n’est pas un objectif
+d’apprentissage.
+
+ Le tri se différencie du classement : trier des objets selon un critère (par exemple « être un cube ») revient à les répartir
+
+en deux groupes : ceux qui vérifient le critère et ceux qui ne le vérifient pas. Classer des objets selon leur forme revient à
+les répartir en plusieurs groupes, de manière à ce que tous ceux qui sont dans le même groupe aient la même forme.
+
+• À aborder avant 4 ans
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Reconnaitre, trier et classer des objets
+selon leur forme.
+- Percevoir l’invariance de la forme d’un
+objet par rapport aux déplacements
+qu’il peut subir.
+
+- Reconnaitre visuellement et tactilement des objets de même forme qu’un
+objet donné.
+- Classer selon leur forme des objets qui diffèrent aussi par d’autres critères.
+- Encastrer des objets.

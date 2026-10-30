@@ -1,0 +1,64 @@
+—
+
+—
+
+le travail sur la mesure de longueurs à l’aide de fractions permet d’introduire le repérage de points sur une demi-droite
+graduée par des fractions, et contribue ainsi à donner aux fractions le statut de nombres, qui s’intercalent entre les
+nombres entiers déjà connus ;
+au CM1, les fractions acquièrent également le statut d’opérateur multiplicatif pour le cas particulier des fractions unitaires ;
+les élèves apprennent à calculer des fractions de quantités ou de grandeurs comme un tiers de 12 billes ou un quart de
+100 mètres.
+
+Dans la continuité du cycle 2, les élèves travaillent avec des fractions dès la période 1 et les utilisent tout au long de l’année
+scolaire.
+Les fractions rencontrées au CM1 ont toutes un dénominateur inférieur ou égal à 20, hormis les fractions décimales qui peuvent
+avoir un dénominateur égal à 100.
+Objectifs d’apprentissage
+Savoir interpréter, représenter, écrire et lire des fractions
+Savoir écrire une fraction supérieure à 1 comme la somme d’un entier et d’une fraction inférieure à 1
+Savoir écrire la somme d’un entier et d’une fraction inférieure à 1 comme une unique fraction
+Savoir encadrer une fraction par deux nombres entiers consécutifs
+Savoir placer une fraction ou la somme d’un nombre entier et d’une fraction inférieure à un sur une demi-droite graduée
+Savoir repérer un point d’une demi-droite graduée par une fraction ou par la somme d’un nombre entier et d’une fraction
+Comparer des fractions
+Additionner et soustraire des fractions
+Déterminer une fraction d’une quantité ou d’une grandeur
+Les nombres décimaux
+Les nombres décimaux, abordés au cycle 2 par leurs écritures à virgule dans le cas particulier de la monnaie, sont réintroduits de
+manière plus générale au CM1 sous la forme de fractions décimales. L’écriture à virgule est réintroduite dans un second temps,
+comme un codage conventionnel de la décomposition canonique d’un nombre écrit sous la forme d’une somme de fractions
+7
+8
+décimales : ainsi l’écriture décimale 35,78 est présentée comme un codage destiné à simplifier l’écriture du nombre 35 + + .
+10
+
+100
+
+Cette section du programme entretient des liens forts avec :
+— la partie « Grandeurs et mesures » où les nombres décimaux sont largement utilisés ;
+— les sous-parties « Calcul mental » et « Les quatre opérations » où sont présentées des compétences calculatoires que
+doivent développer les élèves sur les nombres décimaux ;
+— la sous-partie « Résolution de problèmes » où les nombres décimaux prennent tout leur sens.
+Au CM1, les nombres décimaux rencontrés ne vont pas au-delà des centièmes et s’écrivent donc avec au plus deux chiffres après
+la virgule.
+Des nombres décimaux exprimés avec une écriture à virgule sont rencontrés dès la période 1 dans le cadre de problèmes sur la
+monnaie prolongeant le travail mené au cycle 2. L’étude plus générale des nombres décimaux, introduits sous la forme de
+fractions décimales puis exprimés avec une écriture à virgule, est menée dès la période 2 du CM1.
+Objectifs d’apprentissage
+Interpréter, représenter, écrire et lire des fractions décimales
+Connaître et utiliser les relations entre unités simples, dixièmes et centièmes
+Placer une fraction décimale sur une demi-droite graduée et repérer un point d’une demi-droite graduée par une fraction
+décimale
+Écrire une fraction décimale supérieure à 1 comme la somme d’un nombre entier et d’une fraction décimale inférieure à 1
+Écrire une fraction décimale supérieure à 1 comme la somme d’un nombre entier et de fractions décimales ayant un numérateur
+inférieur à 10
+Comparer, encadrer, intercaler des fractions décimales en utilisant les symboles =, < et >
+Ordonner des fractions décimales dans l’ordre croissant ou décroissant
+Passer d’une écriture sous forme d’une fraction décimale ou d’une somme de fractions décimales à une écriture à virgule et
+réciproquement
+Interpréter, représenter, écrire et lire des nombres décimaux (écriture à virgule)
+Placer un nombre décimal en écriture à virgule sur une demi-droite graduée et repérer un point d’une demi-droite graduée par
+un nombre décimal
+Savoir donner la partie entière et l’arrondi à l’entier d’un nombre décimal
+Comparer, encadrer, intercaler, ordonner, par ordre croissant ou décroissant, des nombres décimaux donnés par leur écriture à
+virgule en utilisant les symboles =, < et >

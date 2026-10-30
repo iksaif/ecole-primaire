@@ -1,0 +1,103 @@
+ des représentations symboliques des objets en jeu, en représentant un à un les objets
+mentionnés (croix, ronds), en les plaçant successivement dans chacune des parts,
+jusqu’à l’obtention du nombre total d’éléments à distribuer. Par exemple, pour le
+problème « Trois enfants se partagent 18 images. Chaque enfant doit avoir le même
+nombre d’images. Combien d’images aura chaque enfant ? », l’élève sait inscrire 18
+croix en les distribuant successivement à chacun des enfants ;
+
+enfant 1
+enfant 2
+enfant 3
+
+x
+
+enfant 1
+enfant 2
+enfant 3
+
+x
+x
+x
+
+enfant 1
+enfant 2
+enfant 3
+
+x x x x x x
+x x x x x x
+x x x x x x
+
+ sa maitrise du calcul mental.
+L’élève sait, par exemple, résoudre des problèmes comme les suivants :
+ Dans l’école, il y a 200 élèves. Les professeurs veulent constituer 40 équipes comportant
+toutes le même nombre d’élèves. Combien y aura-t-il d’élèves par équipe ?
+ Enzo veut partager 9,60 euros avec ses deux sœurs de façon à ce que chacun des trois
+enfants dispose du même montant. Combien doit-il donner à chacune de ses sœurs ?
+- Résoudre des problèmes
+mixtes en deux étapes (une
+étape additive et une étape
+multiplicative).
+
+L’élève sait résoudre des problèmes comme les suivants :
+ Abi achète sept litres d’huile à deux euros le litre. Elle donne vingt euros au vendeur.
+Combien le vendeur va-t-il lui rendre ?
+ Un cahier coute quatre euros et un protège-cahier deux euros. Jérôme doit acheter
+vingt cahiers et autant de protège-cahiers. Quel sera le montant de la facture ?
+
+Cours élémentaire deuxième année
+Les nombres entiers
+Les connaissances et savoir-faire attendus concernent les nombres jusqu’à 10 000.
+La compréhension des aspects décimal (base dix) et positionnel (la valeur d’un chiffre dépend de sa position) étudiés depuis
+le CP se renforce et se généralise au CE2.
+Des nombres supérieurs à mille sont rencontrés dès le début de la période 1.
+Au plus tard en période 2, les élèves travaillent avec des quantités et des nombres allant jusqu’à 10 000.
+Les élèves qui en ont besoin peuvent être invités à manipuler des objets tangibles comme du matériel multibase : cubes de
+mille unités, plaques de cent unités, barres de dix unités, cubes unités). Les élèves continuent, comme au cours des années
+précédentes, à utiliser des représentations du matériel multibase lors des travaux menés sur les nombres ou pour effectuer
+des calculs.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Dénombrer des collections.
+- Construire des collections de
+cardinal donné.
+- Connaitre et utiliser les
+relations entre les unités de
+numération.
+
+L’élève construit des collections d’un cardinal donné en s’appuyant sur des groupes de
+dix, de cent ou de mille déjà constitués ou qu’il a lui-même constitués.
+L’élève dénombre des collections en utilisant des groupes de dix, de cent ou de mille. Les
+collections à dénombrer contiennent régulièrement des nombres supérieurs à dix pour
+l’une des unités de numération, par exemple une collection composée de 17 unités, 8
+dizaines, 32 centaines et 2 milliers.
+L’élève sait résoudre un problème comme le suivant. Une entreprise a besoin de
+1 235 filtres à air. Pour obtenir un tarif intéressant, l’entreprise souhaite acheter
+uniquement des lots de cent filtres. Combien l’entreprise doit-elle acheter de lots pour
+en avoir suffisamment ?
+
+- Connaitre la suite écrite et la
+suite orale des nombres
+jusqu’à dix-mille.
+- Connaitre et utiliser diverses
+représentations d’un nombre
+et passer de l’une à l’autre.
+- Connaitre la valeur des
+chiffres en fonction de leur
+position dans un nombre.
+
+L’élève sait écrire en chiffres un nombre dicté. Il sait également lire un nombre écrit en
+chiffres et l’écrire en lettres.
+L’élève comprend et utilise différentes écritures possibles pour un même nombre,
+notamment :
+ représentations avec du matériel de numération (quatre gros cubes, six plaques, trois
+barres et cinq petits cubes) ;
+ écriture en chiffres (4 635) ;
+ nom à l’oral (« quatre-mille-six-cent-trente-cinq ») ;
+ écritures en unités de numération (4 milliers et 6 centaines et 3 dizaines et 5 unités ou
+463 dizaines et 5 unités ou 4 635 unités, mais aussi d’autres écritures comme 3 dizaines
+et 46 centaines et 5 unités) ;
+ décomposition du type : (4 × 1 000) + (6 × 100) + (3 × 10) + (5 × 1) ;
+ décomposition additive sous la forme 4 000 + 600 + 30 + 5 ;
+ écriture en lettres (quatre-mille-six-cent-trente-cinq).

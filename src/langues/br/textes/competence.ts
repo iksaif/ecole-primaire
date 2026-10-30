@@ -60,4 +60,20 @@ export default {
     retour: 'Gwelout ar programm hervez ar c’hlas', // br: à relire
   },
   versTextes: 'Ar programm ofisiel, skrid ha skrid', // br: à relire
+  lecteur: {
+    titre: 'Skrid ofisiel, {page}', // br: à relire
+    lire: 'Lenn ar pennad amañ', // br: à relire
+    sourceTexte: 'Skrid eus ar programm ofisiel gant ar ministrerezh Deskadurezh broadel, adtapet hep cheñch netra (mammenn : {texte}).', // br: à relire
+    avertissement: 'Ar skrid a zeu eus ar PDF : kemmesket e c’hall bezañ bannoù an taolennoù, ha ar pennad dispar a zo diskouezet evit skouer. Ar PDF eo a ra dave.', // br: à relire
+    passage: 'Ar pennad miret evit ar vareghezh-mañ', // br: à relire
+    sansPassage: 'Pennad ebet merket evit ar vareghezh-mañ : diskouezet eo ar bajenn a-bezh.', // br: à relire
+    ouvrirPdf: 'Digeriñ ar PDF d’ar bajenn-mañ', // br: à relire
+    autres: 'Barregezhioù all eus ar bajenn-mañ', // br: à relire
+    precedente: 'Pajenn meneget a-raok', // br: à relire
+    suivante: 'Pajenn meneget war-lerc’h', // br: à relire
+    chargement: 'O kargañ ar bajenn…', // br: à relire
+    indisponible: 'N’eo ket hegerz ar bajenn-mañ amañ : digorit ar PDF.', // br: à relire
+    retour: 'Distro d’ar vareghezh', // br: à relire
+    texteDeLaPage: 'Skrid ar bajenn', // br: à relire
+  },
 } satisfies Traductions<typeof fr>

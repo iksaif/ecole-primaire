@@ -1,0 +1,97 @@
+aux autres ou par rapport à
+d’autres repères dans un
+espace familier.
+- Construire et utiliser des
+représentations d’un espace
+familier pour localiser,
+mémoriser ou communiquer
+un emplacement.
+
+L’élève produit un plan de l’école sur lequel il positionne sa classe, la cantine, les
+toilettes, le bureau du directeur ou de la directrice, etc.
+
+- Construire des assemblages
+de cubes et de pavés.
+
+L’élève construit des assemblages de cubes et de pavés à partir d’un modèle physique en
+trois dimensions ou d’une représentation plane (une photographie ou une représentation
+en perspective cavalière).
+
+- Comprendre, utiliser et
+produire une suite
+d’instructions qui codent un
+déplacement en utilisant un
+vocabulaire spatial précis.
+
+L’élève sait représenter sur un plan de la ville, du quartier ou de l’école un itinéraire qu’il
+a effectué.
+
+L’élève représente, sur un plan ou sur une photo aérienne (via un site internet) du
+quartier, du village ou de la ville, des lieux connus : école, mairie, bibliothèque, piscine,
+boulangerie, etc.
+
+L’élève sait coder un déplacement qu’un autre élève doit tracer ensuite sur un plan.
+Si un robot est disponible, l’élève sait programmer son déplacement sur un tapis
+quadrillé. Pour ces déplacements, il dispose des instructions « avancer de », « pivoter d’un
+quart de tour à droite », « pivoter d’un quart de tour à gauche ».
+Les déplacements à programmer comprennent au maximum quinze instructions, dont
+quatre virages.
+
+Cours élémentaire deuxième année
+Les solides
+Les connaissances et les savoir-faire attendus se construisent à partir de résolutions de problèmes associées à une
+verbalisation mobilisant du vocabulaire géométrique : il est particulièrement important que le professeur comme les élèves
+s’expriment dans un langage précis, en utilisant le lexique approprié. Les élèves doivent pouvoir justifier la nature
+géométrique d’un solide en ayant recours aux propriétés géométriques de ses faces.
+En CE2, les élèves travaillent aussi avec des représentations en perspective des solides dont ils sont familiers. Ils
+comprennent que certaines faces, certaines arêtes et certains sommets ne sont pas visibles dans de telles représentations
+et que les arêtes non visibles sont éventuellement tracées en pointillés. S’ils ne construisent pas eux-mêmes de telles
+représentations, ils savent néanmoins identifier un solide connu à partir d’une représentation en perspective.
+La connaissance des solides continue à se développer à travers des activités de construction, de description et de tri
+d’objets.
+Dans ce programme, le terme de « pavé » est utilisé pour désigner le parallélépipède rectangle. En classe, les termes de
+« pavé droit » ou de « pavé » peuvent être utilisés indifféremment.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Nommer un cube, une boule,
+un pavé, un cône, une
+pyramide ou un cylindre.
+- Décrire un cube, un pavé ou
+une pyramide en utilisant les
+termes « face », « sommet »
+et « arête ».
+- Connaitre le nombre et la
+nature des faces d’un cube
+ou d’un pavé.
+- Connaitre la nature des faces
+d’une pyramide.
+
+Un ensemble de solides étant donné, l’élève sait identifier lesquels sont des pyramides,
+des boules, des cubes, des cylindres, des pavés ou des cônes.
+
+- Construire un cube, un pavé
+ou une pyramide.
+- Construire un cube à partir
+d’un patron.
+
+À partir d’un modèle en trois dimensions ou d’une représentation plane, l’élève assemble
+les faces d’un cube, d’un pavé ou d’une pyramide pour le reproduire.
+
+Un pavé, un cube ou une pyramide à base polygonale lui étant donné, l’élève sait le
+nommer et justifier sa nature en indiquant le nombre et la nature de ses faces (carrés,
+rectangles, triangles, polygones) et le nombre de ses sommets et de ses arêtes.
+L’élève sait que les faces d’une pyramide sont des triangles ayant un sommet commun, à
+l’exception éventuelle d’une face, appelée la base de la pyramide, qui est un polygone
+ayant trois côtés ou plus.
+À travers des activités telles que des recherches d’intrus, des jeux de Kim ou des jeux du
+portrait, l’élève reconnait, décrit avec le vocabulaire approprié, compare et nomme les
+solides.
+
+L’élève sait construire un cube, un pavé ou une pyramide à partir de tiges à assembler.
+L’élève sait dire si un assemblage de polygones est ou non un patron d’un cube en
+argumentant sur le nombre de faces, la nature des faces et la position des faces les unes
+par rapport aux autres.
+La question est toujours posée à partir d’assemblages de polygones manipulables
+permettant, dans un second temps, de vérifier la réponse par des pliages effectifs.

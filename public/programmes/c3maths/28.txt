@@ -1,0 +1,80 @@
+Ces premiers apprentissages qui contribuent au développement de la pensée informatique se poursuivent au cours moyen :
+algorithmes des opérations posées, programmes de constructions géométriques, programmes de calcul, suites évolutives. Ces
+éléments, abordés dans les autres domaines de ce programme, sont résumés dans les paragraphes ci-après.
+
+Cours moyen première année
+Au CM1, l’élève continue d’utiliser et de produire des codages de déplacements en élargissant les environnements dans lesquels
+ces déplacements ont lieu (quartier, ville, etc.). La programmation de robot est également toujours envisagée lorsque l’école en
+est équipée.
+Dans le cadre de l’initiation à la pensée algébrique, l’élève continue de travailler sur des suites évolutives qui s’appuient sur des
+algorithmes plus en plus complexes comme « 80 ; 85 ; 83 ; 88 ; 86 ; 91 ; 89 ; 94 ; 92, etc. » ou « 1 ; 2 ; 6 ; 7 ; 11 ; 12 ; 16 ; etc. » et il peut
+utiliser des logiciels de programmation par blocs ou un tableur pour déterminer des termes éloignés. Il exécute également des
+programmes de calcul comme le suivant :
+— choisir un nombre entier ;
+— ajouter 2 au nombre choisi ;
+— multiplier le résultat trouvé à l’étape précédente par 4 ;
+— écrire le nombre obtenu.
+Ces programmes peuvent aussi être codés avec un logiciel de programmation par bloc comme Scratch ou sur une feuille d’un
+tableur en faisant apparaître les différentes étapes, de manière à vérifier les résultats obtenus.
+La réalisation de figures géométriques s’appuyant sur des programmes de construction comme « Trace un rectangle ABCD tel
+que AB = 5 cm et BC = 3 cm. Trace le cercle de centre A qui passe par le milieu du côté [AB]. » contribue également au
+développement de la pensée informatique.
+
+Cours moyen deuxième année
+Les activités menées au CM1 qui contribuent au développement de la pensée informatique se poursuivent au CM2 en se
+complexifiant.
+L’élève continue d’utiliser et de produire des codages de déplacements en élargissant les environnements dans lesquels ces
+déplacements ont lieu (quartier, ville, etc.) et en augmentant le nombre d’instructions des programmes utilisés ou produits. La
+programmation de robots est également toujours envisagée lorsque l’école en est équipée.
+Dans le cadre de l’initiation à la pensée algébrique, l’élève continue de travailler sur des suites évolutives de nombres ou de
+motifs qui s’appuient sur des algorithmes de plus en plus complexes comme « 7 ; 15 ; 31 ; 63 ; 127, etc. » ou
+
+
+étape 1
+
+
+
+
+
+étape 2
+
+
+
+
+
+
+
+étape 3
+
+
+
+
+
+
+
+
+
+étape 4
+
+et il peut utiliser des logiciels de programmation par blocs ou un tableur pour déterminer des termes éloignés. Il exécute
+également des programmes de calcul ayant jusqu’à trois instructions comme le suivant :
+— choisir un nombre entier ;
+— ajouter 2 au nombre choisi ;
+— multiplier le résultat trouvé à l’étape précédente par 4 ;
+— retirer 3 au nombre obtenu à l’étape précédente ;
+— écrire le nombre obtenu.
+Ces programmes peuvent aussi être codés avec un logiciel de programmation par bloc comme Scratch ou sur une feuille d’un
+tableur en faisant apparaître les différentes étapes, de manière à vérifier les résultats obtenus.
+La réalisation de figures géométriques s’appuyant sur des programmes de construction contribue également au développement
+de la pensée informatique. Au CM2, l’élève apprend à produire des programmes de construction dans des cas simples.
+
+Sixième
+En plus de la consolidation des raisonnements précédents, le programme de 6e permet l’initiation progressive à la compréhension
+de notions plus spécifiques de l’informatique : instructions, séquences d’instructions, entrées, sorties, répétitions. Les activités
+proposées peuvent être réalisées avec ou sans machine (robot ou logiciel de programmation graphique par blocs comme Scratch).
+L’utilisation d’un tableur peut également être envisagée pour l’étude des suites évolutives de nombres.
+Objectifs d’apprentissage
+Identifier une instruction ou une séquence d’instructions
+Produire et exécuter une séquence d’instructions
+Répéter à la main une séquence d’instructions pour accomplir une tâche imposée
+Programmer la construction d’un chemin simple

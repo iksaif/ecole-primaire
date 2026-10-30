@@ -100,6 +100,7 @@ qui importe des modules du projet doit être placé **dans le dépôt** le temps
 - `src/data/programme.ts` : référentiel des programmes officiels (domaines, compétences, contraintes par
   niveau, avec sources). **Il fait foi** pour les niveaux. Une option d'exercice ou une fiche qui sort du
   programme d'un niveau est un bug.
+- `src/programme/` : navigation dans le programme depuis une compétence (`navigation.ts` : place dans le domaine, autres classes, texte officiel), page « Parcourir le programme officiel » et **lecteur de texte officiel** (`lecteur.ts`, `ancres.ts`, pages dans `public/programmes/`, `docs/programmes/README.md`) : un texte de `docs/programmes/` ajouté ou une compétence nouvelle demande `node scripts/generer/programmes.ts` puis `--ancres`.
 - `scripts/` : rangé par rôle (`build/` PDF, JSON et pages statiques `/telechargements/` (SEO) et sitemap ; `verifier/`, `generer/`, `deploiement/`, `dev/`, `ponctuel/`), voir `scripts/README.md`.
 - `tests/` : `exercices` (définitions, node sans Chrome), `instantanes` (empreintes des fiches, node), `logique`, `routes`, `cadre`, `memorises` (réglages corrompus), `statiques`, `affiches` (rien ne
   dépasse des feuilles), `reglages` (complet).

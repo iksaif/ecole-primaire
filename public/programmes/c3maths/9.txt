@@ -1,0 +1,56 @@
+amenés à identifier et à généraliser des structures, notamment dans le cadre de suites de motifs ou de suites de nombres ou de
+symboles en exprimant la relation entre deux éléments consécutifs ou entre le rang d’un élément et la valeur associée.
+Les nombres dont la valeur n’est pas connue peuvent être représentés par des symboles dans deux cas de figure. D’une part
+dans des situations où on cherche à trouver leur valeur. Par exemple, on peut écrire
+pour traduire que
+2 paires de ciseaux et 3 stylos coûtent 20 euros. D’autre part, dans des situations où le symbole a un caractère générique et
+représente différentes valeurs que le nombre peut prendre ; par exemple, si on achète des tee-shirts à 12 € et si le coût de la
+livraison est 5 € alors, quel que soit le nombre de tee-shirts achetés, le prix à payer, en euro, peut s’écrire (N × 12) + 5, où N est le
+nombre de tee-shirts achetés. Des relations faisant intervenir des nombres inconnus peuvent aussi être représentées par des
+schémas en barre dans le cadre de la résolution de problèmes.
+Le travail mené conduit à étendre le sens du signe « = » : il n’est pas simplement un symbole placé entre une opération et son
+résultat. Il peut être placé entre deux expressions qui sont égales, ce qui conduit notamment à faire poindre la notion
+d’équation, comme dans l’égalité à compléter suivante : « 178 – … = 6 × 8 ».
+Objectifs d’apprentissage
+Trouver le nombre manquant dans une égalité à trous
+Déterminer la valeur d’un nombre inconnu en utilisant un symbole ou une lettre pour le représenter
+Résoudre des problèmes algébriques
+Exécuter un programme de calcul
+Identifier et formuler une règle de calcul pour poursuivre une suite de nombres
+Identifier des régularités et poursuivre une suite de motifs évolutive
+
+Cours moyen deuxième année
+Les nombres entiers
+Au CM2, la compréhension des aspects décimal (base dix) et positionnel (la valeur d’un chiffre dépend de sa position) de la
+numération se renforce et s’étend avec l’introduction de trois nouveaux rangs dans l’écriture chiffrée : ceux des millions, des
+dizaines de millions et des centaines de millions. Ainsi, les connaissances et les savoir-faire attendus en fin de CM2 concernent les
+nombres s’écrivant avec au plus neuf chiffres. Toutefois, afin de privilégier en début d’année le travail sur les fractions et les
+nombres décimaux, les nombres entiers rencontrés pendant les deux premières périodes de l’année seront ceux qui ont été
+étudiés au CM1 et qui s’écrivent avec au plus six chiffres.
+La connaissance des notions de diviseur et de multiple est renforcée en vue de leur utilisation lors de travaux sur les fractions
+(comparaison de fractions, additions et soustractions). Seuls les critères de divisibilité par 2, 5 et 10 figurent au programme. Dans
+les autres cas, les élèves s’appuient sur la connaissance des tables de multiplication ou effectuent des divisions ou des
+multiplications.
+Objectifs d’apprentissage
+Connaître et utiliser les relations entre les unités de numération
+Connaître la suite écrite et la suite orale des nombres jusqu’à 999 999 999
+Connaître et utiliser diverses représentations d’un nombre et passer de l’une à l’autre
+Connaître la valeur des chiffres en fonction de leur position dans un nombre
+Comparer, encadrer, intercaler des nombres entiers en utilisant les symboles =, < et >
+Ordonner des nombres dans l’ordre croissant ou décroissant
+Placer des nombres et repérer des points sur une demi-droite graduée
+Déterminer si un nombre entier inférieur ou égal à 10 est un diviseur d’un nombre entier donné ou si un nombre entier donné est
+un multiple d’un nombre entier inférieur ou égal à 10
+Déterminer des diviseurs d’un nombre entier inférieur ou égal à 100
+Déterminer tous les diviseurs d’un nombre entier inférieur ou égal à 30
+Déterminer les diviseurs communs à deux nombres entiers inférieurs ou égaux à 30
+Déterminer des multiples communs à deux nombres entiers inférieurs à 15
+Les fractions
+Au CM2 les élèves renforcent les connaissances et les savoir-faire acquis les années précédentes.
+Les fractions sont utilisées avec différents sens :
+— comme au CE1, les fractions sont utilisées pour représenter une partie d’un tout dans le cadre d’un partage de ce tout
+en parts égales, la fraction étant alors le rapport entre la partie et le tout ;
+— dans la continuité du CE2, les fractions sont utilisées pour mesurer des grandeurs, lorsque les nombres entiers ne sont
+pas suffisants ;
+— comme au CM1, le repérage de points sur une demi-droite graduée par des fractions contribue à donner aux fractions le
+statut de nombres qui s’intercalent entre les nombres entiers déjà connus ;

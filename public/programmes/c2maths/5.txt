@@ -1,0 +1,96 @@
+- Repérer un rang ou une
+position dans une file
+orientée ou dans une liste
+d’objets ou de personnes.
+- Faire le lien entre le rang d’un
+objet dans une liste et le
+nombre d’éléments qui le
+précèdent.
+- Utiliser les nombres ordinaux
+dans le cadre de l’étude de
+suites de symboles, de
+formes, de lettres ou de
+nombres.
+
+L’élève sait repérer le nombre qui occupe une position donnée dans une liste de
+nombres ; il sait énoncer le rang d’un nombre donné dans une liste de nombres (par
+exemple, pour la liste 2, 6, 10, 14, 18, il sait dire que 10 est en troisième position et que le
+quatrième nombre est 14).
+L’élève sait répondre à la question suivante : « Il y a six personnes qui font la queue à la
+caisse. Je suis le troisième dans la file. Combien y a-t-il de personnes devant moi ? »
+L’élève sait répondre à des questions comme les suivantes :
+ Dans la suite répétitive « ABABAB… », quelle est la dix-neuvième lettre ?
+ Dans la suite répétitive « ∆ ▢ O △ ▢ O △… », quel est le vingtième symbole ?
+ Dans la suite répétitive « 1, 3, 5, 7, 9… », quel est le septième nombre ?
+ Dans la suite répétitive « △ ✕ ▢ O △ ✕ ▢ O △ ✕… », quel est le vingtième symbole ?
+ Dans la suite répétitive « ABGFABGFAB… », quelle est la dix-septième lettre ?
+
+Les quatre opérations
+Les quatre opérations sont mobilisées au CP lors de la résolution de problèmes qui fournit un cadre permettant de donner
+du sens aux opérations. Cette partie entretient également, de façon naturelle, un lien fort avec les autres parties du
+programme relatives aux nombres et au calcul mental.
+Au CP, l’addition posée n’est introduite qu’en période 4 ou 5 ; avant cette introduction, les élèves effectuent des additions
+en utilisant des faits numériques mémorisés ou en mettant en œuvre des procédures de calcul par étapes.
+Des soustractions par manipulation et cassage de dizaines sont effectuées dès la période 3 dans le cadre de la résolution de
+problèmes.
+La calculatrice n’est pas utilisée au cycle 2 en dehors d’un usage prescrit pour des élèves à besoins particuliers.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Comprendre le sens de
+l’addition et de la
+soustraction.
+- Comprendre et utiliser les
+symboles « + », « - » et « = ».
+
+L’élève montre sa compréhension du sens de l’addition et de la soustraction lors de la
+résolution de problèmes.
+La soustraction est comprise par l’élève comme l’opération inverse de l’addition.
+On a 32 + 15 = 47, donc 47 - 32 = 15 et 47 - 15 = 32.
+L’élève comprend que l’ordre des termes n’a pas d’importance pour l’addition, mais qu’il
+n’en est pas de même pour la soustraction.
+L’élève utilise de façon pertinente les symboles « + », « - » et « = ».
+L’élève sait que le symbole « = » ne peut être placé qu’entre deux termes égaux. Ainsi, il
+comprend que, pour calculer 47 + 8 en décomposant 8 en 3 + 5, l’écriture
+« 47 + 3 = 50 + 5 = 55 » est incorrecte.
+
+- Poser et effectuer des
+additions en colonnes.
+
+L’élève sait poser une addition de deux ou trois nombres à un ou deux chiffres, en
+positionnant les unités sous les unités, les dizaines sous les dizaines, et en calculer le
+résultat. Par exemple, 45 + 37 ou 28 + 8 + 56.
+
+- Comprendre le sens de la
+multiplication.
+
+L’élève montre sa compréhension du sens de la multiplication lors de la résolution de
+problèmes.
+L’élève comprend et utilise le mot « fois » dans le cadre d’additions itérées.
+Par exemple, pour le problème « Jan a trois paquets de biscuits. Chaque paquet contient
+20 biscuits. Combien Jan a-t-il de biscuits ? », l’élève comprend et dit que « Jan a trois fois
+vingt biscuits » et écrit 20 + 20 + 20.
+
+Le calcul mental
+L’enseignement du calcul mental au cycle 2 est constitué de trois types d’apprentissages :
+
+
+
+
+mémoriser des faits numériques de manière à les restituer de façon quasi instantanée ;
+
+
+
+élaborer des stratégies et maitriser des procédures de calcul mental efficaces qui seront progressivement automatisées.
+
+utiliser les connaissances sur la numération pour effectuer rapidement des calculs en s’appuyant notamment sur la
+position des chiffres dans les nombres ;
+
+Certaines procédures de calcul mental peuvent nécessiter de garder des résultats intermédiaires en mémoire, ce qui peut
+être difficile pour certains élèves. Ceux-ci seront encouragés, au début des apprentissages, à noter par écrit ces résultats
+intermédiaires, puis à alléger progressivement le recours à l’écrit, jusqu’à s’en libérer totalement dès qu’ils n’en auront plus
+besoin, ce qui peut advenir au cours du CP ou plus tard.
+Les procédures indiquées dans le programme doivent faire l’objet de séquences d’enseignement explicite et donner lieu à
+une trace écrite. D’autres procédures peuvent être enseignées explicitement ou être simplement rencontrées et présentées
+sans faire l’objet d’une séquence d’enseignement spécifique.

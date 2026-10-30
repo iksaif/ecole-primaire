@@ -1,0 +1,73 @@
+- Se familiariser avec le début de la
+bande numérique.
+
+- Positionner des représentations (constellation de points, doigts, écriture
+chiffrée) des nombres inférieurs ou égaux à six dans les premières cases de la
+bande numérique.
+- Placer un objet dans une case correspondant à une position donnée sur la
+bande numérique.
+- Compléter une bande numérique lacunaire.
+Par exemple, si l’enseignant juxtapose à l’horizontale des boites de même taille,
+l’élève est capable de construire la boite de chacun des nombres de un à six en
+y introduisant la quantité correspondante et en rendant visibles ses différentes
+représentations (constellation, doigts, chiffre).
+
+• À partir de 5 ans ou dès que les apprentissages précédents ont pu être observés
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Comprendre la notion de rang d’un
+objet.
+
+- Repérer par perception visuelle le premier, le dernier, le deuxième et l’avantdernier des éléments d’une suite ordonnée.
+- Repérer à l’aide d’une procédure de comptage le rang d’un élément d’une
+suite ordonnée comportant au plus dix éléments.
+- Déterminer un rang dans une suite ordonnée (contenant jusqu’à dix objets)
+dont on a changé le point de départ ou le sens du parcours.
+Par exemple, si l’enseignant aligne dix cartes identiques sur une table, qu’à
+l’une des extrémités il positionne un disque bleu, à l’autre un disque rouge et
+qu’il cache sous l’une des cartes un dessin d’escargot, l’élève est capable de
+décrire oralement la position de celui-ci. Différentes verbalisations sont
+possibles. Par exemple : « Je pars du disque rouge et je compte neuf cartes »,
+« je compte les cartes en partant du disque rouge, quand je suis arrivé à neuf,
+c’est la bonne carte », « l’escargot est sous la sixième carte en partant du
+disque bleu », « l’escargot est sous la neuvième carte en partant du disque
+rouge ».
+Ou encore, si l’enseignant présente au tableau un modèle de suite orientée (un
+train, une chainette, etc.) contenant des symboles et fournit à l’élève une
+feuille représentant le même dispositif, mais vide, l’élève est capable de
+positionner dans le dispositif, au même endroit que sur le modèle, un symbole
+qu’il a tiré au hasard. Différentes variantes organisationnelles peuvent être
+progressivement proposées :
+ modèle visible ;
+ modèle caché mais accessible en se déplaçant (pour travailler la mémoire
+des positions) ;
+ un élève ayant connaissance du modèle doit communiquer les
+informations aux autres pour qu’ils le reproduisent.
+
+- Verbaliser la procédure permettant de déterminer la position résultant d’un
+- Déterminer l’effet d’un déplacement
+avancement ou d’un recul à partir d’une position initiale.
+sur une position.
+- Exploiter les compositions et les décompositions des nombres jusqu’à dix.
+- Comprendre le lien entre un ajout et
+un avancement et celui entre un retrait
+et un recul.
+- Construire la bande numérique jusqu’à - Positionner des représentations (constellation du dé, doigts, écriture chiffrée,
+représentation verticale de la quantité associée) des nombres inférieurs ou
+dix.
+égaux à dix dans les premières cases de la bande numérique.
+- Placer un objet dans une case correspondant à une position donnée.
+- Compléter une bande numérique lacunaire.
+
+Utiliser les nombres pour résoudre des problèmes
+Introduction
+On appelle problème une situation aboutissant à une question dont la réponse, apportée sous forme de solution, nécessite
+un traitement mathématique. La notion de problème suppose également la présence d’un obstacle : la réponse à un
+problème n’est pas immédiate. Elle nécessite la mise en place d’une stratégie. Il en résulte qu’un problème à un niveau
+scolaire n’en est plus un à un niveau scolaire plus élevé. À l’école maternelle, les problèmes proposés sont tous des
+problèmes de nature arithmétique dont la résolution ne comporte qu’une seule étape.
+Les élèves prennent plaisir à résoudre ces problèmes, véritables défis à relever, donnant lieu à des mises en scène et à des
+manipulations. Pour résoudre un problème, les élèves sont amenés à chercher, à faire des essais, à formuler une réponse et
+à vérifier qu’elle convient, à recommencer si ce n’est pas le cas et toujours à verbaliser les procédures mises à l’œuvre. La

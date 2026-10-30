@@ -15,7 +15,7 @@
         :to="adresseCompetence(competence.id, c, reportes)" :aria-current="contexte.classes.includes(c) ? 'true' : undefined">{{ c.toUpperCase() }}</RouterLink>
     </p>
 
-    <CompetenceOfficiel :reference="referenceDe(competence.source)" :interpretation="interpretationDe(competence)" />
+    <CompetenceOfficiel :reference="referenceDe(competence.source)" :interpretation="interpretationDe(competence)" :lecture="lectureDisponible(competence.source.texte) ? adresseDeLaPage(competence.source.texte, competence.source.page, competence.id) : undefined" />
     <CompetenceRessources :ressources="ressources" :classes="contexte.classes" :competence="competence.libelle" />
 
     <CompetenceDomaine :position="position" :courante="competence.id" :nombres="nombres" :vers="versCompetence" :vers-le-programme="adresseDuProgramme" />
@@ -52,7 +52,7 @@ import CompetenceTexte from '../programme/CompetenceTexte.vue'
 import { classeDeLecture, dansLesAutresClasses, nombreDeRessources, placeDansLeTexte as placerDansLeTexte, positionDansLeDomaine } from '../programme/navigation.ts'
 import CompetenceRessources from '../programme/CompetenceRessources.vue'
 import { adresseCompetence, adresseProgramme } from '../programme/adresse.ts'
-import { ADRESSE_PROGRAMME_OFFICIEL } from '../programme/officiel.ts'
+import { ADRESSE_PROGRAMME_OFFICIEL, adresseDeLaPage, lectureDisponible } from '../programme/officiel.ts'
 import { MATIERES_PROGRAMME } from '../programme/etat.ts'
 import { nomDuDomaine } from '../programme/noms.ts'
 import { interpretationDe, referenceDe } from '../programme/references.ts'

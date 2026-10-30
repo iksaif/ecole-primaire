@@ -1,0 +1,103 @@
+- Connaitre, utiliser et
+distinguer les heures du matin
+et celles de l’après-midi.
+- Connaitre les unités de
+mesure de durée, heure et
+minute, et les symboles
+associés (h et min).
+- Comparer et mesurer des
+durées écoulées entre deux
+instants affichés sur une
+horloge (pour des intervalles
+de temps situés dans une
+même journée, avec des
+heures données en heures
+entières, en heures et demiheure ou en heures et quarts
+d’heure).
+
+Lorsqu’il est interrogé sur la durée qu’il a consacrée à une action, l’élève en parle avec les
+unités adaptées (minute ou heure) : « J’ai mis cinq minutes pour réaliser cet exercice » ;
+« Je suis resté deux heures à la piscine » ; « Nous sommes restés quatre heures au musée ».
+L’élève connait les relations : 1 heure = 60 minutes ; 1 demi-heure = 30 minutes ; 1 quart
+d’heure = 15 minutes.
+L’élève sait que deux quarts d’heure font une demi-heure, que deux demi-heures ou quatre
+quarts d’heure font une heure. Il sait aussi que trois quarts d’heure c’est un quart d’heure
+plus un quart d’heure plus un quart d’heure, c’est-à-dire trois fois un quart d’heure.
+L’élève sait ajouter ou soustraire des durées. Il sait résoudre des problèmes comme
+« Mamie a passé un quart d’heure à tailler ses rosiers et une demi-heure à bêcher son
+potager. Combien de temps est-elle restée dans le jardin ? ».
+L’élève sait déterminer la durée qui s’écoule entre 8 h 30 min et 8 h 45 min et celle entre
+15 h 45 min et 16 h 15 min. Il sait dire laquelle des deux est la plus longue. Il sait dire que
+8 heures est la durée qui s’écoule entre midi et 20 h.
+L’élève sait comparer des durées comme 2 heures et 130 minutes.
+
+Cours élémentaire deuxième année
+Les longueurs, les masses et les contenances
+Les connaissances et les savoir-faire sur les mesures de longueurs, de masses et de contenances sont réinvestis dans le cadre
+de l’enseignement de la résolution de problèmes.
+Les connaissances et les savoir-faire sur les longueurs sont réinvestis en géométrie plane lors des constructions.
+L’utilisation de l’écriture à virgule n’est pas attendue dans le cadre de l’étude des longueurs, des masses et des contenances.
+Les élèves n’utilisent pas de tableaux de conversion au cycle 2, mais s’appuient sur les relations connues entre les unités
+pour effectuer des conversions.
+Les longueurs
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Connaitre et utiliser les
+unités mètre, décimètre,
+centimètre, millimètre,
+kilomètre et les symboles
+associés (m, dm, cm,
+mm, km).
+- Connaitre les relations entre
+les unités de longueur.
+- Choisir l’unité la mieux
+adaptée pour exprimer une
+longueur.
+- Comparer des longueurs.
+- Tracer un segment de
+longueur donnée.
+
+L’élève sait que 1 cm = 10 mm et 1 m = 1 000 mm.
+
+- Disposer de quelques
+longueurs de référence.
+- Estimer la longueur d’un
+objet ou une distance.
+
+L’élève connait quelques longueurs d’objets familiers et quelques distances (distance
+entre chez lui et une ville proche, distance entre chez lui et Paris, etc.) qu’il utilise comme
+références pour estimer d’autres longueurs.
+
+- Savoir ce qu’est le périmètre
+d’une figure plane.
+- Comparer le périmètre de
+plusieurs polygones sans
+règle graduée, en utilisant un
+compas.
+- Déterminer le périmètre d’un
+polygone en utilisant une
+règle graduée.
+
+L’élève sait que le périmètre d’une figure plane est la longueur de son contour.
+
+L’élève sait effectuer des conversions (cm-mm ; m-dm-cm et km-m), notamment pour
+pouvoir effectuer des calculs avec des longueurs qui ne sont pas données dans la même
+unité :
+ 3 cm + 4 mm = 30 mm + 4 mm = 34 mm ;
+ 6 cm = 60 mm ;
+ 215 cm = 200 cm + 15 cm = 2 m + 15 cm = 2 m + 10 cm + 5 cm = 2 m + 1 dm + 5 cm ;
+ 16 m = 1 600 cm = 160 dm ;
+ 6 km = 6 000 m ;
+ 5 km + 750 m = 5 750 m.
+L’élève mesure la longueur de segments ou trace des segments de longueur donnée. Les
+longueurs en jeu peuvent être données sous différentes formes : 6 cm ; 5 cm et 3 mm ;
+72 mm.
+
+L’élève sait reporter au compas les longueurs des côtés d’un polygone sur une droite afin
+d’obtenir un segment ayant une longueur égale au périmètre du polygone.
+L’élève sait déterminer le périmètre d’un polygone en mesurant la longueur de chacun de
+ses côtés.
+Dans le cas du carré et du rectangle, aucune formule n’est enseignée, mais l’élève sait
+qu’il n’est pas nécessaire de mesurer la longueur de chacun des côtés.

@@ -1,0 +1,60 @@
+domaines incluent également une rubrique « Mises en perspective historiques ou culturelles » pour enrichir les enseignements et
+contribuer à la culture générale des élèves. Ces éléments permettent aux enseignants de donner du sens aux apprentissages,
+d’éveiller la curiosité des élèves et d’inscrire les notions mathématiques dans une dimension historique et culturelle.
+Des exemples de réussite pour éclairer les objectifs d’apprentissage sont mis à disposition des professeurs, à titre indicatif, sur le
+site pédagogique du ministère :
+—
+—
+—
+
+classe de CM1 ;
+classe de CM2 ;
+classe de 6e.
+
+Nombres, calcul et résolution de problèmes
+Au cycle 3, l'objectif est de poursuivre la compréhension de notre système de numération et de mobiliser ses propriétés lors de calculs.
+L’apprentissage des techniques opératoires et la compréhension des nombres se développent alors conjointement. En effet,
+l’enseignement des procédures utilisées pour effectuer des opérations ou des calculs dans toutes leurs modalités fournit des occasions
+aux élèves de faire évoluer leur compréhension du nombre. Il s’agit d’amener l’élève à adopter la procédure la plus efficace en fonction
+de ses connaissances ainsi que des nombres et des opérations mis en jeu dans les calculs. De même, si la maîtrise des techniques
+opératoires écrites permet à l’élève d’obtenir un résultat, la construction de ces techniques est l’occasion de retravailler les propriétés
+de la numération et de rencontrer des exemples d’algorithmes complexes. Les problèmes arithmétiques proposés au cycle 3 permettent
+d’enrichir le sens des opérations déjà abordées au cycle 2 et d’en étudier de nouvelles.
+
+Cours moyen première année
+Les nombres entiers
+Au CM1, la compréhension des aspects décimal (base dix) et positionnel (la valeur d’un chiffre dépend de sa position) de la
+numération, étudiés depuis le CP, se renforce et s’étend avec l’introduction de deux nouveaux rangs dans l’écriture chiffrée :
+ceux des dizaines de milliers et des centaines de milliers. Ainsi, les connaissances et les savoir-faire attendus en fin de CM1
+concernent les nombres s’écrivant avec au plus six chiffres. Toutefois, afin de renforcer les connaissances sur la numération
+relevant du cycle 2 et de privilégier en début d’année l’approfondissement de l’étude des fractions et des nombres décimaux, on
+se limite, pendant les deux premières périodes de l’année, aux nombres entiers s’écrivant avec au plus quatre chiffres. Les
+nombres écrits avec cinq ou six chiffres ne sont abordés qu’à partir de la période 3 ou du début de la période 4.
+Les élèves utilisent, comme au cours des années précédentes, des représentations du matériel multibase lors des travaux menés
+sur les nombres. Les élèves qui en ont besoin peuvent être invités à manipuler des objets tangibles, comme des cubes de mille
+unités, des plaques de cent unités, des barres de dix unités, des cubes unités.
+La notion de multiple, introduite au cycle 2, est réactivée. Seuls les critères de divisibilité par 2, par 5 et par 10 figurent au
+programme. Dans les autres cas, les élèves s’appuient sur la connaissance des tables de multiplication ou effectuent des divisions
+ou des multiplications.
+Objectifs d’apprentissage
+Comparer et dénombrer des collections en les organisant
+Construire des collections de cardinal donné
+Connaître et utiliser les relations entre les unités de numération
+Connaître la suite écrite et la suite orale des nombres jusqu’à 999 999
+Connaître la valeur des chiffres en fonction de leur position dans un nombre
+Connaître et utiliser diverses représentations d’un nombre et passer de l’une à l’autre
+Comprendre et savoir utiliser les expressions « égal à », « supérieur à », « inférieur à », « compris entre … et … »
+Comparer, encadrer, intercaler des nombres entiers en utilisant les symboles =, < et >
+Ordonner des nombres dans l’ordre croissant ou décroissant
+Savoir placer des nombres et repérer des points sur une demi-droite graduée
+Savoir reconnaître les multiples de 2, de 5 et de 10 à partir de leur écriture chiffrée
+Savoir déterminer si un nombre entier donné est un multiple d’un nombre entier inférieur ou égal à 10
+Savoir déterminer si un nombre entier inférieur ou égal à 10 est un diviseur d’un nombre entier donné
+Les fractions
+Au CM1 les élèves renforcent les connaissances et les savoir-faire acquis au cycle 2 sur les fractions en étendant leur étude aux
+fractions supérieures à 1.
+Les fractions sont utilisées avec différents sens :
+— comme au CE1, les fractions sont utilisées pour représenter une partie d’un tout dans le cadre d’un partage de ce tout en
+parts égales, la fraction étant alors le rapport entre la partie et le tout ;
+— dans la continuité du CE2, les fractions sont utilisées pour mesurer des grandeurs lorsque les nombres entiers ne sont pas
+suffisants ;

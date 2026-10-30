@@ -1,0 +1,174 @@
+- Comparer, encadrer,
+intercaler des nombres
+entiers en utilisant les
+symboles (=, <, >).
+- Ordonner des nombres dans
+l’ordre croissant ou
+décroissant.
+- Comprendre et savoir utiliser
+les expressions « égal à »,
+« supérieur à », « inférieur à »,
+« compris entre … et … ».
+- Savoir placer des nombres
+sur une demi-droite graduée.
+
+L’élève sait ordonner dans l’ordre croissant ou décroissant un ensemble pouvant aller
+jusqu’à cinq nombres, par exemple : 6 234, 6 243, 6 239, 6 300 et 5 229.
+Sur une bande numérique ou une demi-droite graduée de 1 en 1, l’élève intercale et
+positionne des nombres manquants. Par exemple, il sait compléter la bande lacunaire cidessous :
+2 391 2 392 2 393
+
+2 396 2 397 2 398
+
+Sur une demi-droite graduée incomplète, l’élève place des nombres demandés.
+L’élève sait placer un nombre ou déterminer le nombre correspondant à un point sur une
+portion de demi-droite graduée de un en un, ou de dix en dix, ou de cent en cent, ou de
+mille en mille.
+L’élève sait faire le lien entre le nombre associé à un point et la distance entre ce point et
+l’origine de la demi-droite.
+
+Les fractions
+Au début du CE2, les élèves réinvestissent les fractions d’un tout étudiées au CE1 afin d’établir des égalités entre fractions
+5
+1
+comme = .
+10
+
+2
+
+À partir de la période 3, le travail sur les fractions d’un tout permet de considérer une fraction d’une unité de longueur. Ceci
+conduit à graduer une bande-unité en fractions de cette unité et à constituer ainsi un outil de mesure pour des longueurs
+non entières. Les élèves peuvent alors mobiliser les fractions dans des situations de mesurage de longueurs par rapport à
+une unité donnée, quand les entiers ne suffisent plus pour coder ces mesures. Les élèves sont ainsi capables de mesurer ou
+de tracer des segments de longueur « une demi-unité » ou « deux unités plus un quart d’unité ».
+La graduation d’une règle par des fractions permet également de reconsidérer la comparaison des fractions déjà travaillée
+comme fractions d’un tout : positionnement de fractions égales au niveau de la même graduation, positionnement des
+fractions dans l’ordre croissant sur la règle graduée, etc.
+Le travail sur les fractions d’un tout et sur les fractions de l’unité permettent d’illustrer et de fournir des représentations
+pour les additions et les soustractions de fractions.
+Les fractions rencontrées au CE2 ont un dénominateur inférieur ou égal à douze et sont toutes inférieures ou égales à un.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Savoir établir des égalités de L’élève sait expliquer pourquoi six huitièmes d’un tout est égal à trois quarts de ce tout,
+fractions inférieures ou égales en s’appuyant sur des manipulations, sur des représentations géométriques et sur des
+à 1.
+verbalisations : « Si, pour un même tout, je fais des parts deux fois plus petites et si je
+prends deux fois plus de parts, alors j’en prends la même quantité ».
+3
+6
+4
+8
+1
+
+2
+
+3
+
+2
+
+3
+
+3
+
+4
+
+4
+
+6
+
+6
+
+L’élève sait répondre à la question suivante : « Parmi les fractions , , , et quelles
+1
+
+sont les fractions égales à ? ».
+2
+
+?
+
+1
+
+8
+
+2
+
+L’élève sait déterminer le numérateur manquant dans l’égalité = et il sait justifier sa
+réponse.
+
+- Partager une unité de
+Une unité de longueur étant donnée, l’élève sait construire par pliage une règle graduée
+longueur en fractions d’unité en quarts d’unité.
+et mesurer des longueurs non
+1
+2
+3
+entières par rapport à cette
+0
+1
+4
+4
+4
+unité.
+Une unité de longueur étant donnée, l’élève sait construire une règle graduée en
+dixièmes d’unité, en s’appuyant sur un quadrillage.
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+10
+
+10
+
+10
+
+10
+
+10
+
+10
+
+10
+
+10
+
+10
+
+1
+
+L’élève sait mesurer des longueurs de bandes ou de segments en utilisant une règle
+graduée en fractions d’unité et donner le résultat sous la forme : « La longueur du
+segment est égale à trois quarts d’unité. », « La longueur de la bande est comprise en
+sept dixièmes d’unité et huit dixièmes d’unité. », « La longueur du segment est égale à
+3
+deux unités et un quart d’unité. » ou « La bande a pour longueur 1 unité + d’unité. »
+10
+
+L’élève sait utiliser des égalités de fractions pour tracer des segments d’une longueur
+donnée. Par exemple, avec une règle graduée en dixièmes, il sait tracer des segments
+1
+1
+3
+ayant les longueurs suivantes : unité ; 1 unité + d’unité ; 2 unités + d’unité.
+2
+
+5
+
+5

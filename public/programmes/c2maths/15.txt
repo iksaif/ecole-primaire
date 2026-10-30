@@ -1,0 +1,198 @@
+Utiliser ses connaissances en numération pour calculer mentalement
+- Ajouter ou soustraire un
+nombre entier de dizaines à
+un nombre. Ajouter ou
+soustraire un nombre entier
+de centaines à un nombre.
+
+L’élève s’appuie sur la numération pour effectuer rapidement et mentalement des
+calculs sans retenue comme les suivants : 234 + 60 ; 541 - 20 ; 354 + 500 ; 765 - 200.
+
+- Multiplier par 10 un nombre
+inférieur à 100.
+
+L’élève sait que, lors d’une multiplication par 10, une unité devient une dizaine et une
+dizaine devient une centaine. Ainsi, chaque chiffre du nombre initial prend une valeur
+10 fois plus grande : le chiffre des unités devient le chiffre des dizaines et le chiffre des
+dizaines devient le chiffre des centaines.
+
+L’élève s’appuie sur la numération pour effectuer rapidement et mentalement des
+additions avec retenue comme la suivante : 746 + 80.
+
+un
+
+ité
+s
+
+2
+
+za
+in
+di
+
+es
+
+es
+ce
+nt
+ain
+
+za
+in
+e
+m s de
+illi
+er
+s
+m
+illi
+er
+s
+
+di
+
+7
+un
+
+7
+
+2
+
+0
+
+ité
+s
+
+es
+di
+za
+in
+
+s
+
+2
+ce
+nt
+ain
+e
+
+un
+
+ité
+s
+
+di
+
+za
+in
+
+es
+
+es
+
+7
+
+di
+za
+in
+e
+m s de
+illi
+er
+s
+m
+illi
+er
+s
+
+ce
+nt
+ain
+
+di
+
+za
+in
+e
+m s de
+illi
+er
+s
+m
+illi
+er
+s
+
+Un outil du type « glisse-nombres » peut être utilisé pour accompagner les premières
+multiplications par 10, en complément de la verbalisation de la procédure en termes
+d’unités de numération. Progressivement, l’élève apprend à s’en détacher. Exemple :
+multiplication de 72 par 10.
+
+10 × 72 = 720.
+Apprendre des procédures de calcul mental
+- Ajouter 9, 19 ou 29 à un
+nombre.
+
+L’élève sait ajouter 9, 19 ou 29 à un nombre en ajoutant 10, 20 ou 30, puis en
+retranchant 1.
+L’élève sait qu’il n’est pas utile d’avoir recours à cette procédure quand on peut ajouter
+directement 9, 19 ou 29 au nombre initial quand le chiffre des unités du nombre initial
+est 0 ou 1, par exemple pour 60 + 29.
+
+- Soustraire 9 à un nombre.
+
+L’élève sait que, pour soustraire 9 à un nombre, il peut lui retrancher 10 puis ajouter 1.
+
+- Soustraire un nombre
+inférieur à 9 à un nombre.
+
+L’élève sait utiliser une procédure appropriée pour soustraire un nombre inférieur à 9 à
+un nombre.
+S’il n’y a pas de « changement de dizaine », il suffit de retirer le nombre à soustraire aux
+unités.
+157 - 5 = ?
+7 - 5 = 2. Donc 157 - 5 = 152.
+Si le retrait de nouvelles unités implique un changement de dizaine, l’élève sait qu’il peut
+passer par la dizaine inférieure pour décomposer son calcul. Il soustrait d’abord ce qu’il
+faut pour atteindre la dizaine inférieure, puis déterminer ce qu’il reste à soustraire et le
+retrancher aux dizaines entières trouvées.
+523 - 7 = ?
+« Je pars de 523 et je veux soustraire 7. La dizaine inférieure est 520, il faut donc retirer 3
+pour passer de 523 à 520. »
+-7
+
+516
+
+523
+
+-7
+
+516
+
+520
+
+523
+-3
+
+« Je dois soustraire 7 et j’ai déjà soustrait 3, il faut donc soustraire encore 4 car 7 = 3 + 4. »
+L’élève utilise ensuite la procédure apprise au CP pour soustraire un nombre inférieur à 9
+à un nombre entier de dizaines.
+-7
+
+-4
+523 - 7 = 516.
+
+520
+
+523
+-3
+
+-7
+
+516
+-4
+
+520
+
+523
+-3

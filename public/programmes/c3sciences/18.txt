@@ -1,0 +1,74 @@
+Cours moyen deuxième année
+La classe de CM2 permet l’élaboration et la réalisation d’une maquette en suivant une démarche technologique.
+Les activités menées au CM1 qui contribuent au développement de la pensée informatique se poursuivent au CM2 en se
+complexifiant.
+
+Démarche de conception et de réalisation d’un objet technique
+Objectifs d’apprentissage
+
+Propositions de démarches et d’activités
+
+- Rechercher des idées de solutions à l’aide de croquis pour
+résoudre un problème technique donné.
+
+- En partant d’une solution à apporter, l’élève imagine et
+représente une solution éventuelle au problème donné. Par
+exemple :
+ comment soulever facilement un objet lourd, faire
+avancer un véhicule, fabriquer un pont ?
+
+- Associer une contrainte à un choix de matériau en fonction
+de ses propriétés physiques.
+
+- En partant d’une solution à apporter, l’élève identifie les
+contraintes (étanchéité, résistance, isolation thermique et
+électrique, durée de vie, etc.), et opère les choix répondant
+à ces critères. Par exemple :
+ choisir des matériaux pour maintenir un objet au chaud
+ou au froid, au sec (étanchéité d’un cartable ou de bottes
+de pluie), alléger un objet (tente, cartable, valise, etc.)
+pour pouvoir le transporter facilement.
+
+- Organiser le travail de conception d’une maquette et la
+fabriquer.
+
+- L’élève sait planifier le travail au sein de l’équipe, participe
+au déroulement du projet (coopérer, communiquer,
+prendre en compte les consignes de sécurité).
+- L’élève vérifie que la solution répond au problème posé et
+apporte des modifications si nécessaire (essai/erreur). Par
+exemple : voiture à propulsion, balance romaine, pont.
+
+- Comparer des solutions par une analyse critique
+(notamment dans le cadre de la transition écologique et du
+développement durable).
+
+- À partir des réalisations proposées par les élèves, l’élève est
+en capacité de comparer leur efficacité, leur durée de vie,
+leur esthétique. Par exemple : comparaison des ponts
+(matériaux utilisés, capacité à soutenir une masse plus ou
+moins importante).
+
+Programmation d’objets techniques
+Objectifs d’apprentissage
+Algorithmes et programmation
+- Comprendre un algorithme agissant sur le comportement
+d’un objet technique.
+- Modifier, tester et valider un programme au regard du
+comportement de l’objet programmé.
+
+Propositions de démarches et d’activités
+- L’élève utilise un programme par blocs permettant à un
+robot de se déplacer ou à un personnage virtuel d’évoluer
+au sein d’une application. L’élève repère les boucles et les
+conditions.
+- L’élève teste et améliore un programme par essai-erreur
+pour répondre à un objectif (modifier une fonction, corriger
+un fonctionnement).
+
+Sixième
+Consolidée en classe de sixième au travers des applications des notions scientifiques abordées, la culture technologique se
+nourrit de la mise en relation des concepts scientifiques et de leurs applications technologiques présentes dans le quotidien
+des élèves.
+Les propositions de démarches et d’activités proposées pour la classe de sixième facilitent la mise en relation de notions
+scientifiques et d’environnements technologiques.

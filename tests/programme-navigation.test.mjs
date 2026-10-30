@@ -2,6 +2,11 @@
 import { COMPETENCES, COMPETENCES_EXEMPLE, SOURCES, competenceDe, competencesDu } from '../src/data/programme.ts'
 import { NIVEAUX } from '../src/data/classes.ts'
 import { classeDeLecture, dansLesAutresClasses, nombreDeRessources, placeDansLeTexte, positionDansLeDomaine, textesOfficiels } from '../src/programme/navigation.ts'
+import { existsSync, readFileSync } from 'node:fs'
+import { ANCRES } from '../src/programme/ancres.ts'
+import { decouper, normaliser, surligner, trouverPassage } from '../src/programme/lecteur.ts'
+import { adresseDeLaPage, lectureDisponible } from '../src/programme/officiel.ts'
+import { estIndexable } from '../src/router/canonique.ts'
 import { verifier, nbEchecs } from './outils.mjs'
 
 console.log('Navigation dans le programme')
@@ -41,5 +46,35 @@ verifier(textes.every(x => x.pages.every(pg => pg.url.startsWith('https://') && 
 // ressources par compétence
 const n = nombreDeRessources([{ competences: ['a', 'b'] }, { competences: ['a'] }])
 verifier(n.get('a') === 2 && n.get('b') === 1 && n.get('c') === undefined, 'nombre de ressources par compétence')
+
+// ── Lire un passage dans l'app ──
+console.log('Lecteur de texte officiel')
+verifier(normaliser('Hugues,') === 'hugues' && normaliser('Éléments') === 'elements' && normaliser('- ') === '' && normaliser('J.-C.') === 'jc', 'normaliser : sans casse, accents ni ponctuation')
+const d = decouper('Un  texte,\n- avec des mots.')
+verifier(d.morceaux.map(m => m.texte).join('') === 'Un  texte,\n- avec des mots.' && d.mots.join(' ') === 'un texte avec des mots', 'découper : le texte se retrouve bout à bout, les mots sont normalisés')
+const passage = trouverPassage(d.mots, { debut: 'TEXTE avec', fin: 'des mots' })
+verifier(passage?.debut === 1 && passage?.fin === 4, 'passage : du début de la première ancre à la fin de la seconde')
+verifier(trouverPassage(d.mots, { debut: 'absent', fin: 'mots' }) === null && trouverPassage(d.mots, { debut: 'mots', fin: 'un texte' }) === null, 'passage : une ancre absente ou une fin avant le début → aucun passage')
+const tranches = surligner(d.morceaux, passage)
+verifier(tranches.map(t => t.texte).join('') === 'Un  texte,\n- avec des mots.' && tranches.filter(t => t.surligne).map(t => t.texte).join('|') === 'texte,\n- avec des mots.' && surligner(d.morceaux, null).length === 1, 'surligner : le texte entier est gardé, le passage (espaces compris) est surligné')
+
+// chaque ancre retrouve son passage dans le texte de sa page ; le texte des pages est publié
+const sansAncre = COMPETENCES.filter(c => !ANCRES[c.id]).map(c => c.id)
+verifier(sansAncre.length === 0, `ancres : chaque compétence en a une (sans : ${sansAncre.join(', ') || 'aucune'})`)
+const perdues = [], absentes = []
+for (const c of COMPETENCES) {
+  const fichier = `public/programmes/${c.source.texte}/${c.source.page}.txt`
+  // un texte dont la reprise n'est pas confirmée n'a pas de page publiée
+  if (!lectureDisponible(c.source.texte)) { if (existsSync(fichier)) absentes.push(`${fichier} (ne doit pas être publié)`); continue }
+  if (!existsSync(fichier)) { absentes.push(fichier); continue }
+  if (ANCRES[c.id] && !trouverPassage(decouper(readFileSync(fichier, 'utf8')).mots, ANCRES[c.id])) perdues.push(c.id)
+}
+verifier(absentes.length === 0, `chaque page lisible a son texte dans public/programmes/, aucune page d'un texte à confirmer (${absentes[0] ?? 'oui'} : node scripts/generer/programmes.ts)`)
+verifier(!lectureDisponible('bretonA1') && !lectureDisponible('c1consolide') && lectureDisponible('bo41') && lectureDisponible('lvc2'), 'lecture désactivée pour le breton de l’académie et le texte consolidé d’Éduscol, active pour les BO')
+verifier(perdues.length === 0, `chaque ancre se retrouve dans sa page (perdues : ${perdues.join(', ') || 'aucune'})`)
+
+// adresses
+verifier(adresseDeLaPage('c2histgeo', 5, 'royaume-de-france') === '/programme/officiel/c2histgeo/5?competence=royaume-de-france' && adresseDeLaPage('bo41', 26) === '/programme/officiel/bo41/26', 'adresse d’une page lue')
+verifier(estIndexable('/programme/officiel') && !estIndexable('/programme/officiel/c2histgeo/5') && estIndexable('/programme'), 'la page des textes s’indexe, la lecture d’une page non')
 
 process.exit(nbEchecs() ? 1 : 0)

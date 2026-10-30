@@ -190,6 +190,27 @@ console.log('Page d’une compétence')
   await ctx.close()
 }
 
+console.log('Lecteur du texte officiel')
+{
+  const { ctx, page, erreurs } = await ouvrir()
+  await page.goto(app('/competence/royaume-de-france'))
+  await pret(page)
+  await page.getByRole('link', { name: 'Lire le passage ici' }).click()
+  await page.waitForSelector('mark')
+  const k = COMPETENCES.find(c => c.id === 'royaume-de-france')
+  verifier(page.url().includes(`/programme/officiel/${k.source.texte}/${k.source.page}?competence=royaume-de-france`), 'le lien mène à la page du texte, avec la compétence')
+  verifier((await page.locator('mark').allTextContents()).join(' ').includes('royaume de France'), 'le passage de la compétence est surligné')
+  verifier(await page.locator('mark').first().evaluate(m => { const r = m.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight }), 'la page défile jusqu’au passage surligné')
+  verifier(await page.locator('a[href*="#page="]').count() === 1, 'lien vers le PDF à cette page')
+  verifier(await page.locator('meta[name="robots"][content="noindex"]').count() === 1, 'la lecture d’une page ne s’indexe pas')
+  await verifierAxe(page, 'lecteur du texte officiel', { exclure: [['nav.nav'], ['footer.pied']] })
+  verifier(!erreurs.length, `aucune erreur JavaScript${erreurs.length ? ` (${erreurs[0]})` : ''}`)
+  await page.goto(app(`/programme/officiel/${k.source.texte}/9999`))
+  await pret(page)
+  verifier((await page.locator('main h1').textContent()).includes('introuvable'), 'page inconnue : message clair')
+  await ctx.close()
+}
+
 console.log('Compétence avec des exemples (développement)')
 {
   const { ctx, page } = await ouvrir()

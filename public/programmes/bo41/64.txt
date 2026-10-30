@@ -1,0 +1,76 @@
+- Connaitre et utiliser la comptine
+numérique jusqu’à trente.
+
+- Réciter la comptine numérique de un à trente de façon ordonnée et
+segmentée.
+- Réciter la comptine numérique jusqu’à un nombre donné.
+- Réciter la comptine numérique jusqu’à trente en partant d’un nombre autre
+que un (en vue du surcomptage).
+- Réciter la comptine numérique à rebours de dix à un (en vue du
+décomptage).
+- Réciter les comptines numériques (jusqu’à vingt) de deux en deux en partant
+de un et en partant de deux.
+
+Exprimer un rang ou une position par un nombre
+Introduction
+Si le nombre sert à exprimer une quantité, il sert aussi à repérer un rang dans une file ou une position dans un dispositif
+ordonné, à condition d’avoir choisi un point de départ et un sens de parcours. Cette conception spatiale du nombre est un
+élément essentiel en mathématiques. À l’école maternelle, l’élève découvre cette nouvelle fonction du nombre en
+manipulant des suites ordonnées d’objets ou de personnes et en jouant à des jeux de plateau comme le jeu de l’oie ou celui
+des petits chevaux. La transformation mentale permettant de relier un nombre à une position est facilitée par l’utilisation
+d’une bande à l’intérieur de laquelle s’organise la suite des nombres, de la gauche vers la droite, chaque nombre occupant
+une case, à un rang bien déterminé. La conception spatiale des nombres et leur représentation sur la bande numérique
+présentent plusieurs intérêts en termes d’apprentissage :
+
+ visualiser que les nombres entiers sont répartis de manière régulière : quelle que soit leur valeur, deux nombres entiers
+consécutifs diffèrent de un. La bande numérique préfigure la ligne numérique qui permettra à l’école élémentaire de
+représenter d’autres types de nombres (les fractions et les décimaux) ;
+
+ élargir le sens des opérations entre nombres entiers : l’addition, déjà perçue comme l’ajout d’une quantité, est
+
+maintenant associée à un déplacement (dans le sens du parcours sur le plateau d’un jeu de l’oie, vers la droite sur une
+bande numérique).
+
+Le fait qu’un nombre soit perçu à la fois comme une quantité et comme une position permet de résoudre des problèmes de
+deux natures différentes (d’une part ajout ou retrait, d’autre part déplacement dans un sens ou dans l’autre), mais relevant
+de la même procédure opératoire. Cette double conception du nombre aide à sa compréhension et facilite l’accès à son
+caractère abstrait.
+Points de vigilance
+De même que la connaissance de la comptine numérique (un, deux, trois, quatre, etc.) n’assure pas la compréhension du
+sens cardinal du nombre (exprimer une quantité), la récitation de la comptine des nombres ordinaux (premier, deuxième,
+troisième, quatrième, etc.) ne révèle pas la compréhension de la conception spatiale d’un nombre (un rang dans une file,
+une position dans un dispositif ordonné).
+Pour calculer l’effet d’un déplacement sur une position, il est d’ailleurs accepté d’utiliser le nom des nombres sous forme
+cardinale et non ordinale : ainsi, dans un jeu de l’oie ou de petits chevaux, une procédure de déplacement pourra être
+verbalisée par un élève sous la forme « si je suis sur le quatre et que j’avance de deux, je me retrouve sur le six », sans que
+l’élève recouvre nécessairement aux adjectifs ordinaux « quatrième » et « sixième ». En revanche, ces termes sont utilisés par
+l’enseignant.
+• À partir de 4 ans ou dès que les apprentissages précédents ont pu être observés
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Comprendre la notion de rang.
+
+- Repérer par perception visuelle le rang d’un objet dans une suite ordonnée
+de cardinal inférieur ou égal à trois.
+- Repérer à l’aide d’une procédure de comptage le rang d’un objet dans une
+suite ordonnée de cardinal inférieur ou égal à six en montrant le premier, le
+deuxième, le troisième, jusqu’au sixième élément.
+Par exemple, l’élève est capable de se déplacer pour occuper un rang donné
+dans une file.
+Ou encore, l’élève est capable de montrer le premier animal, le quatrième et le
+dernier en partant de la mare ou en partant de l’arbre sur un chemin délimité
+par une mare et un arbre sur lequel sont positionnés différents animaux.
+Ou encore, l’élève est capable de communiquer à un camarade la position de
+la perle rouge dans un collier composé de cinq perles bleues et d’une perle
+rouge.
+
+- Déterminer l’effet d’un déplacement
+sur une position.
+
+- À partir d’une position initiale, déterminer la position résultant d’un
+avancement ou d’un recul d’une ou de deux unités. Exemple de procédure
+d’avancement de deux cases à partir du quatre : l’élève part du quatre et
+surcompte de deux : « cinq, six » en levant un doigt pour chaque nombre du
+surcomptage tout en avançant le pion d’une case à chaque fois.

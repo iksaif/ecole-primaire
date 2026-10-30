@@ -1,0 +1,77 @@
+Au CP, la phase « Calculer » peut se limiter à réunir deux collections ou à identifier la quantité à retirer d’une collection, puis
+à dénombrer les éléments restants, sans effectuer réellement de calculs.
+La phase « Répondre » conduit à quitter le domaine des mathématiques pour revenir au problème initialement posé en
+communiquant une solution. Cette phase est importante et doit être mise en lien avec la « Régulation » qui permet
+d’adopter une attitude critique sur le résultat trouvé. Cette attitude se manifeste notamment par des questions du type :
+« Le nombre de jetons rouges trouvé est inférieur au nombre de jetons verts, est-ce possible ? », « Le nombre de jetons
+rouges trouvé est supérieur au nombre total de jetons, est-ce possible ? », que l’élève doit apprendre à se poser
+systématiquement. La phase d’institutionnalisation permet d’expliciter les connaissances en jeu suite à la résolution d’un
+problème par les élèves (construction d’affichages, traces écrites sur les notions importantes).
+Les données numériques des problèmes proposés aux élèves sont dans le champ numérique maitrisé au CP, à savoir les
+nombres entiers jusqu’à cent.
+Les élèves doivent traiter au moins dix problèmes par semaine, une partie d’entre eux pouvant être des problèmes
+élémentaires, à l’énoncé bref, proposés oralement, la réponse étant simplement notée sur l’ardoise.
+Au cours de l’année, les élèves doivent apprendre à résoudre des problèmes ayant les structures répertoriées dans le
+programme. Cela n’exclut pas que des problèmes relevant d’autres structures puissent être également être proposés tout
+au long de l’année.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Résoudre des problèmes
+L’élève sait résoudre des problèmes de parties-tout en une étape en mettant en œuvre
+additifs en une étape du type des démarches qui évoluent au fil de l’année. Tant que des procédures de calcul ne sont
+parties-tout.
+pas disponibles, il peut prendre appui sur des manipulations d’objets tangibles (cubes et
+barres de dix cubes, pièces de monnaie et billets fictifs) symbolisant ce qui est en jeu
+dans l’énoncé, ou sur des représentations schématiques.
+Par exemple, pour le problème « Anna avait 43 cerises. Elle en a mangé 18. Combien
+Anna a-t-elle de cerises maintenant ? », l’élève sait représenter les 43 cerises par quatre
+barres de dix cubes et trois cubes isolés, puis simuler le retrait de 18 cerises en « cassant »
+une barre de dix cubes en dix cubes unités afin d’entourer dix-huit cubes pour obtenir le
+résultat cherché, 25 cerises, en dénombrant sur les cubes qui n’ont pas été entourés.
+10
+
+10
+
+10
+
+10
+cerises
+mangées
+
+L’élève traite les problèmes de transformation (ajout, retrait), tels que le problème cidessus, comme des problèmes de parties-tout.
+L’élève sait résoudre des problèmes comme les suivants :
+ Léa a 53 euros dans son portemonnaie. Elle achète un livre à 7 euros. Combien lui
+reste-t-il ?
+ Il y avait 36 oiseaux dans l’arbre. Il n’en reste plus que 21. Combien d’oiseaux se sont
+envolés ?
+ Dans la boite, il y avait des bonbons. J’en ai mangé 6 et il en reste encore 21. Combien y
+avait-il de bonbons dans la boite avant que j’en mange ?
+ Dans un train comportant trois wagons, il y a 25 passagers dans le premier wagon, 32
+passagers dans le deuxième wagon et 18 dans le troisième wagon. Combien y a-t-il de
+passagers au total dans ce train ?
+- Résoudre des problèmes
+additifs en deux étapes
+(champ numérique inférieur
+ou égal à 30).
+
+L’élève sait résoudre des problèmes comme les suivants :
+
+- Résoudre des problèmes
+multiplicatifs en une étape
+(champ numérique inférieur
+ou égal à 30).
+
+L’élève sait résoudre des problèmes multiplicatifs consistant à rechercher la valeur d’un
+tout composé de plusieurs parties de même valeur, en s’appuyant si besoin sur des
+manipulations d’objets tangibles (jetons ou cubes) symbolisant chacun des éléments ou
+sur des représentations symboliques des objets en jeu (croix, ronds). L’élève peut aussi
+utiliser des additions itérées.
+
+ Il y avait 29 enfants dans un bus. Au premier arrêt, 12 enfants sont descendus. Au
+deuxième arrêt, 7 enfants sont montés. Combien y a-t-il d’enfants dans le bus
+maintenant ?
+ Sur le présentoir de la bibliothèque de la classe, il y a 24 livres, dont 7 albums et 6
+bandes dessinées, le reste étant constitué de livres documentaires. Combien y a-t-il de
+livres documentaires ?

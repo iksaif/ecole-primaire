@@ -9,8 +9,12 @@ import { cheminRegional } from './chemins.ts'
 /** Préfixes d'adresses que les moteurs ne doivent pas indexer. */
 const NON_INDEXABLES = ['/parametres', '/dev']
 
+/** Les pages de lecture d'un texte officiel (/programme/officiel/<texte>/<page>) : le texte du PDF, déjà publié par le ministère ; seule la page qui les liste s'indexe. */
+const LECTURE_TEXTE_OFFICIEL = /^\/programme\/officiel\/[^/]+/
+
 /** Cette adresse (chemin de l'app, avec « / » initial) s'indexe-t-elle ? */
-export const estIndexable = (chemin: string): boolean => !NON_INDEXABLES.some(p => chemin === p || chemin.startsWith(`${p}/`))
+export const estIndexable = (chemin: string): boolean =>
+  !NON_INDEXABLES.some(p => chemin === p || chemin.startsWith(`${p}/`)) && !LECTURE_TEXTE_OFFICIEL.test(chemin)
 
 /** Les pages sous /telechargements ont une barre finale (les adresses déjà indexées) ; les autres n'en ont pas, sauf l'accueil. */
 export function cheminCanonique(chemin: string): string {

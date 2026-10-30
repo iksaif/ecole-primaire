@@ -1,0 +1,101 @@
+Dans ce programme, le terme de « pavé » est utilisé pour désigner le parallélépipède rectangle. En classe, les termes de
+« pavé droit » ou de « pavé » peuvent être utilisés indifféremment.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Reconnaitre les solides usuels Un ensemble de solides étant donné, l’élève sait identifier lesquels sont des boules, des
+suivants : cube, boule, cône, cubes, des cylindres, des pavés ou des cônes.
+cylindre, pavé.
+L’élève sait repérer des solides simples dans son environnement. Par exemple, il sait dire
+- Nommer un cube, un pavé et qu’une boite à chaussures a la forme d’un pavé, qu’une boite de conserve a la forme d’un
+une boule.
+cylindre, et qu’une balle de tennis a la forme d’une boule.
+- Décrire un cube ou un pavé
+Un cube ou un pavé lui étant donné, l’élève sait le nommer et le décrire en parlant de ses
+en utilisant le terme « face ». faces : nombre de faces et nature des faces (carré ou rectangle).
+Connaitre le nombre et la
+nature des faces d’un cube et
+d’un pavé.
+- Construire des cubes et des
+pavés.
+
+À partir d’un modèle, l’élève assemble les différentes faces d’un cube ou d’un pavé pour
+le reproduire.
+
+La géométrie plane
+Les connaissances sur les figures de référence (carré, rectangle, triangle, cercle) s’acquièrent à partir de manipulations, de
+descriptions et de résolutions de problèmes.
+Les concepts généraux de la géométrie plane (droite, point, segment) sont introduits en situation, sans faire l’objet de
+définitions formelles.
+Il est particulièrement important que le professeur s’exprime dans un langage précis, utilisant le vocabulaire géométrique
+approprié, et qu’il encourage les élèves à se l’approprier et, progressivement, à l’utiliser. Ce vocabulaire prend son sens
+grâce aux manipulations et aux situations d’action proposées.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Reconnaitre des formes
+planes (disque, carré,
+rectangle et triangle) dans un
+assemblage et dans son
+environnement proche.
+- Nommer le disque, le carré,
+le rectangle et le triangle.
+- Donner une première
+description du carré, du
+rectangle, du triangle en
+utilisant les termes
+« sommet » et « côté ».
+
+Un ensemble de formes planes lui étant donné (pièces d’un puzzle géométrique comme
+le tangram, figures découpées en carton, etc.), l’élève sait les identifier (disque, carré,
+rectangle et triangle).
+
+- Repérer visuellement des
+alignements.
+- Utiliser la règle pour repérer
+ou vérifier des alignements.
+- Utiliser la règle comme
+instrument de tracé.
+
+Les problèmes proposés portent d’abord sur des objets réels (par exemple, dans la cour,
+l’élève sait aligner des plots pour délimiter une zone), puis sur des points (représentés par
+des petites croix) sur une feuille de papier.
+
+- Construire un carré, un
+rectangle, un triangle ou un
+assemblage de ces figures sur
+du papier quadrillé ou
+pointé.
+
+L’élève trace des figures simples (en particulier des carrés, des rectangles, des cercles, des
+triangles) à l’aide de gabarits et de pochoirs.
+
+L’élève sait décrire des relations entre des formes planes manipulées et des figures planes
+représentées, qu’elles soient juxtaposées (« Il y a deux triangles qui forment un
+rectangle. » ou superposées ; « Je vois deux carrés avec un côté en commun. ») ou entre
+des formes planes superposées (« Il y un triangle dans un carré. Deux sommets du triangle
+sont des sommets du carré. Un sommet du triangle est sur un côté du carré. »).
+Un triangle, un carré ou un rectangle lui étant donné, l’élève sait le nommer, compléter sa
+réponse et la justifier en donnant son nombre de côtés et en mentionnant les longueurs
+de côtés égales pour le carré et le rectangle.
+L’élève sait donner le nombre de sommets et le nombre de côtés d’un polygone qui lui
+est présenté.
+
+L’élève sait dire si trois points sont alignés ou non en utilisant la règle dans les cas où la
+réponse n’est pas perceptible de façon évidente.
+L’élève trace une droite passant par deux points à l’aide d’une règle. Cette droite peut
+être horizontale, verticale ou oblique.
+
+L’élève reproduit, complète et construit des figures simples ; le travail est mené d’abord à
+main levée puis avec une règle. Sur du papier quadrillé ou pointé, les rectangles et les
+carrés ont des côtés qui suivent les lignes du quadrillage. L’élève sait compléter un
+rectangle dont deux côtés consécutifs sont déjà tracés, et compléter un carré dont un
+côté est déjà tracé.
+
+Le repérage dans l’espace
+Les élèves consolident les compétences développées au cycle 1 pour décrire des positions et des déplacements en utilisant
+différents types de repères, en se limitant à l’espace de la classe.
+Les élèves apprennent aussi à faire le lien entre un déplacement et des instructions correspondant à ce déplacement, que
+ces instructions soient données oralement ou par écrit.

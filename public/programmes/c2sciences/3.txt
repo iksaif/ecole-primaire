@@ -1,0 +1,64 @@
+comportements responsables envers eux-mêmes, les autres, l’environnement et leur santé. Des gestes simples favorisent la
+connaissance et l’acquisition de règles d’hygiène (propreté, alimentation, activité physique, sommeil, temps d’écran) et de
+protection de l’environnement. Il est l’occasion de familiariser les élèves aux techniques de l’information et de la
+communication, ce qui contribue à développer leurs capacités à rechercher l’information, à la partager, à développer les
+premières explicitations et argumentations et à porter un jugement critique. Cet enseignement participe au développement
+de compétences psychosociales par la pratique collaborative du travail en groupe, le respect de la pensée d’autrui, la prise en
+compte des émotions que suscite un rapport sensible à la nature ou encore l’exercice de la pensée critique.
+
+Contribution au développement de la pensée informatique
+Les activités menées au cycle 2 dans le cadre de l’enseignement des sciences et de la technologie contribuent, de manière très
+progressive, au développement d’habiletés numériques. Les élèves apprennent les bases de la programmation d’objets
+techniques par des algorithmes et explorent les technologies numériques présentes dans les objets techniques ; au CE2, ils
+apprennent à utiliser un ordinateur ou une tablette numérique pour saisir un texte, un moteur de recherche ou encore des
+applications numériques. L’usage d’outils numériques permet aux élèves de prendre conscience de leur place dans
+l’environnement, d’en découvrir les règles de communication. Les professeurs veillent à sensibiliser les élèves à un usage
+responsable du numérique et aux risques associés.
+
+Organisation du programme
+Le programme est structuré en quatre domaines interdépendants dont les objectifs d’apprentissage sont explicités.
+Les propositions de démarches et d’activités sont ouvertes et non prescriptives. Les professeurs ont la possibilité de proposer
+d’autres démarches ou activités permettant d’atteindre les objectifs d’apprentissages.
+Les quatre domaines sont les suivants : « La matière, les mesures, l’électricité », « Le corps humain et la santé », « Les êtres
+vivants dans leur environnement », « Les objets techniques au cœur de la société ».
+
+La matière, les mesures, l’électricité
+Au cycle 2, l’élève se familiarise avec les différents états de la matière et les grandeurs physiques qui permettent de la décrire.
+Il commence par manipuler et comparer des objets volumineux, mais peu pesants (par exemple, en polystyrène) avec des
+objets pesants, mais peu volumineux (bille en verre) pour distinguer « gros » et « lourd », « petit » et « léger ». L’état gazeux est
+abordé par la mise en évidence de la matérialité de l’air. Les propriétés de l’état liquide sont abordées en transvasant un
+liquide d’un récipient à un autre (d’une taille et d’une forme différentes) pour constater que le liquide prend la forme du
+récipient et qu’il conserve son volume lors du transvasement inverse. La manipulation de récipients fermés permet de
+constater l’horizontalité du niveau du liquide au repos.
+L’étude de circuits électriques simples et de dispositifs permettant la mesure de durées offre l’opportunité aux élèves
+d’émettre des hypothèses et de les tester dans le cadre d’une démarche scientifique. La comparaison des résultats obtenus
+pour une même expérience par les différents groupes d’élèves permet de tester sa reproductibilité. Les élèves peuvent tester
+la robustesse de leur expérience, c’est-à-dire s’assurer que son résultat ne change pas lors de la modification d’un élément
+considéré par les élèves comme n’influant pas le résultat (la nature de la matière d’un contenant (un verre), la forme d’un
+saladier, la couleur d’une ampoule ou d’un fil électrique).
+Les grandeurs physiques permettant de mesurer une masse, un volume et une durée seront introduites à partir de
+manipulations expérimentales et coordonnées avec la progression du thème « grandeurs et mesures » en mathématiques.
+
+Cours préparatoire
+Masse, volumes et mesure de température
+Objectifs d’apprentissage
+- Comparer les masses de différents objets.
+- Utiliser le vocabulaire associé aux masses.
+
+Propositions de démarches et d’activités
+- L’élève compare et classe des objets (boule de pâte à
+modeler, contenant (pot, sac) rempli de sucre, sable, farine,
+graines, etc.) dont les masses peuvent être aisément
+différenciées lorsqu’il les soupèse.
+- L’élève classe du plus léger ou plus lourd des objets en
+utilisant une balance de Roberval ou une « balance à solides
+et à liquides ».
+
+- Lire la valeur de la température avec un thermomètre à
+liquide.
+
+- L’élève lit/relève sur un thermomètre gradué la température
+dans la classe, en mettant son œil au niveau du ménisque et
+en tenant le thermomètre par le haut.
+- L’élève utilise le vocabulaire spécifique et en particulier
+l’unité degré Celsius.

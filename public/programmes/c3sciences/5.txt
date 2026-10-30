@@ -1,0 +1,87 @@
+Signaux
+Objectifs d’apprentissage
+Lumière
+- Observer et classer des matériaux selon qu’ils sont
+transparents, opaques à la lumière ou translucides.
+- Produire expérimentalement une ombre (déficit de lumière
+associé à une source) à l’aide d’un objet opaque et
+distinguer ombre propre et ombre portée (sur le sol ou sur
+un écran).
+- Produire des ombres et associer leurs positions et leurs
+tailles à celles de la source lumineuse et de l’objet opaque.
+- Observer, schématiser et nommer les phases de la Lune.
+
+Propositions de démarches et d’activités
+- L’élève justifie un tri réalisé entre des matériaux
+transparents, opaques ou translucides.
+- L’élève rend compte de l’observation de l’ombre d’un objet
+opaque par un schéma. Il précise la source de lumière,
+l’ombre propre de l’objet (partie non éclairée) et son ombre
+portée.
+- L’élève fait le lien entre la position de la source de lumière
+et celle de l’ombre portée et utilise le lexique adapté
+« entre », « à l’opposé de ».
+- L’élève observe la position de l’ombre d’un bâton sur le sol au
+cours d’une journée ensoleillée et l’associe au déplacement
+du Soleil dans le ciel du point de vue de la cour de récréation.
+- L’élève fait varier la taille d’une ombre portée en déplaçant
+soit l’écran, soit la source, soit l’obstacle tout en gardant les
+deux autres éléments constants.
+- L’élève observe et schématise pendant deux lunaisons les
+phases de la Lune. Il constate l’existence d’un cycle et
+nomme les différentes phases.
+
+Cours moyen deuxième année
+L’étude des mélanges offre l’occasion de constater que s’il y a toujours conservation de la masse lorsqu’un solide est dissous
+dans un liquide, le volume final n’est pas la somme du volume des deux éléments (non conservation de volume lors d’une
+dissolution). Il y a conservation du volume lorsqu’un solide plein non soluble est entièrement immergé dans un liquide.
+La séparation par évaporation trouve une application immédiate dans la récolte du sel et permet d’aborder les problématiques
+de la désalinisation de l’eau de mer et de la disponibilité de l’eau potable, en lien avec l’éducation au développement durable.
+Depuis le cycle 1, l’élève construit la distinction entre matière/matériau et objet. Les activités portant sur l’étude des propriétés
+de la matière permettent de consolider cette distinction. En fin de CM2, l’élève a découvert différentes propriétés
+macroscopiques de la matière (masse, volume, changement d’état, conductivité électrique, opacité, solubilité, miscibilité).
+Cette découverte le prépare à l’introduction des concepts microscopiques d’espèce chimique ou de corps pur au cycle 4.
+L’utilisation de différentes matières solides et liquides et la réalisation de mélanges conduisent à sensibiliser les élèves aux
+contraintes de sécurité relatives à l’usage de certains produits présents dans leur environnement quotidien.
+Le mouvement d’un objet est toujours décrit par rapport à un observateur. Le professeur veille donc à systématiser la
+formulation « par rapport à » pour initier les élèves au caractère relatif du mouvement.
+Les grandeurs physiques permettant de mesurer une masse, un volume, une distance et une durée seront introduites à partir
+de manipulations expérimentales et coordonnées avec la progression du thème « grandeurs et mesures » en mathématiques.
+
+États et constitution de la matière à l’échelle macroscopique
+Masse et volume
+
+Objectifs d’apprentissage
+
+Propositions de démarches et d’activités
+
+- Effectuer des conversions d’unités de masse (en se limitant
+à des unités usuelles : tonne, kilogramme, gramme et
+milligramme).
+
+- Lors d’une mesure de masse, l’élève convertit en gramme ou
+en kilogramme une masse donnée dans une autre unité
+usuelle.
+
+- Mesurer le volume d’un liquide et mesurer celui d’un solide
+(plein non soluble) par déplacement de liquide.
+
+- En transvasant un liquide entre différents récipients
+gradués, l’élève constate que son volume se conserve et
+indique le volume mesuré.
+- Lorsqu’il place un solide de volume non identifié dans un
+liquide de volume connu, l’élève justifie la variation de
+volume et en déduit le volume du solide.
+
+- Mettre en évidence expérimentalement que la masse totale - L’élève conçoit un protocole expérimental pour tester la
+se conserve lors du mélange d’un solide dans un liquide.
+conservation de la masse lorsqu’il mélange un solide
+(soluble ou non) dans un liquide.
+- Mettre en évidence expérimentalement que, lorsqu’un
+solide est dissout dans un liquide, le volume total n’est pas
+nécessairement la somme du volume du solide et du
+liquide.
+
+- L’élève conçoit un protocole expérimental pour observer
+que le volume total du mélange n’est pas nécessairement la
+somme du volume initial du solide (soluble) et du liquide.

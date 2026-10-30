@@ -1,0 +1,87 @@
+Des tests en temps limité sont indispensables d’une part pour renforcer la mémorisation des résultats et l’automatisation
+des procédures, et d’autre part pour évaluer l’état des connaissances et des savoir-faire des élèves. Ils permettent
+également d’encourager les élèves à abandonner des procédures peu efficaces au profit des procédures enseignées par le
+professeur. Ces tests, qui mesurent la fluence en calcul, permettent également aux élèves de prendre conscience de leurs
+progrès en comparant, sur la durée, le nombre de résultats corrects qu’ils sont capables de restituer en un temps donné.
+Pour les calculs effectués mentalement en s’appuyant sur la numération ou sur des procédures apprises, la fluence attendue
+en fin de CP est la restitution de neuf résultats en trois minutes.
+Une grande partie des résultats des tables d’addition à apprendre au CP a été rencontrée à l’école maternelle soit sous
+forme d’apprentissages structurés, notamment dans le cadre du travail sur les différentes décompositions des nombres
+inférieurs à dix, soit de manière moins systématique lors de jeux où les nombres sont présents. Ces résultats sont réintroduits
+progressivement pendant les deux premières périodes du CP, mais en les écrivant désormais avec les symboles « + » et « = ».
+Tous les travaux de calcul mental sont menés sur le champ numérique du CP (nombres jusqu’à 100), dans le sens où les
+nombres en jeu et les résultats cherchés sont tous inférieurs ou égaux à cent.
+Mémoriser des faits numériques
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Connaitre dans les deux sens
+les tables d’addition.
+
+L’élève sait donner oralement et par écrit l’un des trois nombres d’une égalité du type
+A + B = C ou C = A + B, où A et B sont des nombres entiers compris entre 0 et 10 et où les
+deux autres nombres de l’égalité sont connus.
+L’élève peut ainsi compléter des « égalités à trou » du type : 4 + … = 12 ; 5 + 3 = … ;
+10 = 7 + …
+À la fin du CP, l’élève peut compléter huit égalités de ce type en une minute.
+Les « égalités à trou » comportant un signe « - » comme « 13 – 7 = … » ou « 13 - … = 7 »
+nécessitent généralement plus de temps de traitement, elles ne seront donc pas proposées
+dans un test de fluence de faits numériques mémorisés, mais pourront être proposées dans
+un test de fluence d’utilisation de procédures de calcul mental.
+
+- Connaitre les doubles et les
+moitiés de nombres usuels.
+
+L’élève sait donner oralement ou par écrit :
+ les doubles des nombres de 1 à 10 ;
+ les doubles des dizaines entières 20, 30, 40 et 50.
+ les moitiés des nombres pairs de 2 à 20 ;
+ les moitiés des dizaines entières 40, 60, 80 et 100.
+L’élève sait ainsi compléter des « égalités à trou » du type : double de 40 = … ;
+double de … = 12 ; moitié de 60 = … ; moitié de … = 8.
+À la fin du CP, l’élève peut compléter huit égalités de ce type en une minute.
+
+Utiliser ses connaissances en numération pour calculer mentalement
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Ajouter ou soustraire 1 ou 2 à L’élève sait que, pour ajouter 1 à un nombre, il peut énoncer le nombre qui vient « juste
+un nombre.
+après » dans la comptine orale ou dans la suite écrite des nombres.
+L’élève sait que, pour soustraire 2 à un nombre, il peut soustraire 1 et encore 1.
+Par exemple : 17 - 2 = ?
+« Le nombre qui précède 17 est 16. Le nombre qui précède 16 est 15. Donc 17 - 2 = 15. »
+- Ajouter ou soustraire 10 à un
+nombre.
+
+L’élève sait qu’ajouter 10 à un nombre, c’est ajouter une dizaine, et que soustraire 10 à un
+nombre, c’est soustraire une dizaine.
+Par exemple : 37 - 10 = ?
+« J’enlève une dizaine aux trois dizaines, cela fait deux dizaines. Donc 37 - 10 = 27. »
+
+- Ajouter ou soustraire 20, 30,
+40, 50, 60, 70, 80 ou 90 à un
+nombre.
+
+L’élève sait qu’ajouter ou soustraire 20, 30, 40, 50, 60, 70, 80 ou 90 à un nombre, c’est
+ajouter ou soustraire 2, 3, 4, 5, 6, 7, 8 ou 9 dizaines à ce nombre.
+Par exemple : 76 - 30 = ?
+« 30, c’est 3 dizaines. 7 dizaines – 3 dizaines = 4 dizaines. Donc 76 - 30 = 46. »
+
+Apprendre des procédures de calcul mental
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Trouver le complément d’un
+nombre à la dizaine
+supérieure.
+
+L’élève sait que, pour trouver le complément d’un nombre à la dizaine supérieure, il peut
+utiliser les compléments à dix pour déterminer le nombre d’unités à ajouter pour former
+une nouvelle dizaine.
+Par exemple, pour trouver le complément de 74 à la dizaine supérieure, il peut dire : « 74,
+c’est 7 dizaines et 4 unités. Le complément à 10 de 4 est 6. Il faut donc ajouter 6 unités
+aux 4 unités de 74 pour obtenir la dizaine supérieure. »

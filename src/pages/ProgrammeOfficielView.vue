@@ -20,7 +20,11 @@
       </p>
       <ol class="pages">
         <li v-for="p in texte.pages" :key="p.page">
-          <a class="numero" :href="p.url" target="_blank" rel="noopener noreferrer" :aria-label="`${t('programme.reference.page', { page: p.page })}, ${t('competence.officiel.ouvre')}`">{{ t('programme.reference.page', { page: p.page }) }} ↗</a>
+          <span class="numero">
+            <RouterLink v-if="lectureDisponible(texte.source)" :to="adresseDeLaPage(texte.source, p.page)">{{ t('programme.reference.page', { page: p.page }) }}</RouterLink>
+            <span v-else class="sans-lecture">{{ t('programme.reference.page', { page: p.page }) }}</span>
+            <a class="pdf" :href="p.url" target="_blank" rel="noopener noreferrer" :aria-label="`PDF, ${t('programme.reference.page', { page: p.page })}, ${t('competence.officiel.ouvre')}`">PDF ↗</a>
+          </span>
           <ul class="competences">
             <li v-for="k in p.competences" :key="k.id"><RouterLink :to="versCompetence(k.id)" :lang="LANGUE_SOURCE">{{ k.libelle }}</RouterLink></li>
           </ul>
@@ -45,6 +49,7 @@ import FilAriane from '../shell/FilAriane.vue'
 import type { Maillon } from '../shell/FilAriane.vue'
 import { adresseCompetence } from '../programme/adresse.ts'
 import { textesOfficiels } from '../programme/navigation.ts'
+import { adresseDeLaPage, lectureDisponible } from '../programme/officiel.ts'
 import { nomDeSource } from '../programme/references.ts'
 
 const { t, langueAffichee } = useLangue()
@@ -71,7 +76,10 @@ h2 { font-size: 1.05rem; margin-bottom: .3rem; }
 .precision { color: var(--texte-doux); align-self: center; }
 .pages { list-style: none; display: grid; gap: .5rem; }
 .pages > li { display: grid; grid-template-columns: 7rem 1fr; gap: .3rem .8rem; border-top: 1px solid var(--gris-brd); padding-top: .5rem; }
-.numero { font-weight: 700; display: inline-flex; align-items: center; min-height: 44px; }
+.numero { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .6rem; }
+.numero a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; }
+.numero .sans-lecture { font-weight: 700; }
+.numero .pdf { font-weight: 600; font-size: .85rem; }
 .competences { list-style: none; display: grid; gap: .25rem; align-content: center; }
 .competences a { font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; }
 .retour { margin-top: 1rem; font-weight: 700; }

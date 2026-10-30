@@ -1,0 +1,88 @@
+• À partir de 4 ans ou dès que les apprentissages précédents ont pu être observés
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Percevoir visuellement le classement (en trois groupes) de plusieurs objets
+selon leur longueur lorsque celles-ci sont très différentes.
+- Comparer directement des longueurs
+Déplacer des objets pour les mettre à la même origine que l’un d’eux afin de
+d’objets rectilignes et verbaliser le
+comparer leur longueur lorsqu’elles diffèrent de peu.
+résultat.
+Utiliser à bon escient les locutions « plus long que », « plus court que », « de
+- Classer des objets rectilignes selon leur
+même longueur que ».
+longueur.
+La longueur
+
+- Ordonner des objets rectilignes selon
+leur longueur et verbaliser le résultat.
+
+Par exemple, l’élève est capable de classer selon leur longueur quatre bandes
+de papier différant à la fois par leur longueur et par leur couleur et de
+verbaliser le résultat.
+
+Ou encore, l’élève est capable de superposer six briques par ordre décroissant
+de taille afin de construire un escalier.
+La masse
+- Comparer les masses de deux objets.
+
+- Soupeser des objets pour les classer selon leur masse lorsque celles-ci sont
+très différentes. Veiller à comparer des objets de masses volumiques
+différentes afin de différencier masse et volume.
+Par exemple, l’élève est capable de comparer les masses d’une balle de tennis
+et d’une boule de pétanque, d’un sachet rempli de coton et d’un sachet de
+même volume rempli de sable.
+
+ Utiliser une balance de type Roberval pour comparer des objets dont les
+masses diffèrent de peu.
+
+ Utiliser à bon escient les locutions « plus lourd que », « plus léger que », « de
+même masse que ».
+
+• À partir de 5 ans ou dès que les apprentissages précédents ont pu être observés
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Utiliser une bande témoin pour y reporter différentes longueurs afin de les
+comparer.
+- Comparer indirectement des longueurs
+Utiliser une bande témoin pour y reporter différentes longueurs afin de les
+d’objets rectilignes.
+ordonner.
+- Ordonner des objets rectilignes selon
+leur longueur (au maximum cinq).
+- Produire un objet rectiligne de même
+longueur qu’un objet donné.
+- Utiliser une balance de type Roberval pour comparer des masses.
+La masse
+- Réaliser l’équilibre sur une balance de type Roberval.
+- Ordonner les masses de trois objets.
+- Utiliser à bon escient les locutions « plus lourd que », « plus léger que », « de
+Verbaliser les résultats.
+même masse que ».
+- Reconnaitre l’égalité de deux masses et
+Utiliser la transitivité : si a ˂ b et b ˂ c alors a ˂ c
+verbaliser le résultat.
+La longueur
+
+Se familiariser avec les motifs organisés
+Introduction
+Un motif est une configuration d’éléments organisés selon des règles bien définies. Les motifs peuvent être de différentes
+natures (la répétition de l’alternance de deux perles rouges et de trois perles bleues dans un collier, celle de deux sons aigus
+et de trois sons graves dans un morceau sonore, ou celle de deux pas en avant et de trois pas sur le côté gauche dans un
+mouvement). La structure d’un motif découle de l’application d’une règle de prolongement à un motif de base. Cette
+structure est représentable par un modèle formel (ainsi, la structure commune aux trois exemples précédents peut être
+représentée par le modèle formel AABBBAABBB…). Selon la règle appliquée, on distingue les motifs répétitifs (par exemple
+AABBAABBAA) des motifs évolutifs (par exemple ABAABBAAABBB). Les motifs évolutifs ne seront travaillés qu’à partir de
+cinq ans.
+Dès l’école maternelle, copier, identifier, mémoriser, compléter, prolonger un motif permet de stimuler des compétences
+mathématiques, notamment dans les domaines de la géométrie, de la logique et de l’algorithmique. Repérer un même
+motif dans une suite de sons, dans un enchainement de mouvements et dans une rangée de perles attire l’attention de
+l’élève sur l’existence d’une structure commune et par là même constitue un premier accès à l’abstraction.
+Enfin, la représentation mentale d’un motif (par exemple sous la forme « rouge, bleu, rouge, bleu, etc. » pour un motif
+répétitif avec une alternance) prend moins de place en mémoire que celle du motif complet (un collier de vingt perles
+alternant une perle rouge et une perle bleue). L’acquisition de cette procédure intellectuelle de « compression du motif »
+sous la forme d’un programme mental est utile à la mémorisation.

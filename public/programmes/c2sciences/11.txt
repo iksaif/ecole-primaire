@@ -1,0 +1,91 @@
+ Comment venir à l’école (se déplacer) ?
+- L’élève identifie à quels besoins les objets techniques
+apportent des solutions.
+
+Cours élémentaire première année
+Au CE1, on observe de plus près l’objet technique : de quoi est-il composé, comment fonctionne-t-il ? On découvre l’utilisation
+de l’électricité pour faire fonctionner un objet technique.
+
+Objectifs d’apprentissage
+
+Propositions de démarches et d’activités
+
+- Identifier les différentes parties d’un objet technique en les
+caractérisant par leur forme, leur matériau et leur fonction.
+
+- L’élève observe et nomme les différentes parties d’un objet
+technique. Par exemple :
+ en le manipulant, il repère sur un manteau la présence
+d’une doublure, de fermetures de poches, etc. ;
+ sur un casque de vélo, l’élève repère la coque rigide pour
+protéger la tête, la sangle de réglage pour faire tenir le
+casque, etc.
+- L’élève relie les caractéristiques des différentes parties à
+leurs rôles.
+
+- Différencier les objets selon qu’ils utilisent ou non une
+source d’énergie électrique. Identifier le cas échéant
+l’intérêt de l’utilisation de l’énergie électrique.
+
+- L’élève repère et trie des objets techniques suivant
+l’utilisation ou non d’une source d’énergie électrique pour
+son fonctionnement (lampe torche, fouet de cuisine
+manuel, ordinateur, lunettes, etc.).
+- L’élève prend conscience que l’utilisation de l’énergie
+électrique rend souvent l’utilisation des objets plus
+confortable et/ou plus efficace. Par exemple, il compare
+l’utilisation d’un batteur électrique et d’un batteur manuel,
+un vélo avec ou sans assistance électrique, un tournevis et
+une visseuse électrique, et indique l’intérêt de l’utilisation
+d’énergie électrique.
+
+- Réaliser une maquette simple avec un circuit électrique.
+Identifier les composants et leurs fonctions.
+
+- L’élève réalise une maquette d’objet technique utilisant un
+circuit électrique simple (une maquette de l’éclairage d’une
+voiture ou d’un lampadaire de rue).
+- L’élève assemble correctement une pile électrique, des
+câbles, un interrupteur et une ampoule (ou autre
+récepteur).
+
+- Commander un robot avec des consignes simples en
+programmant un déplacement.
+
+- L’élève obtient le déplacement d’un robot en lui donnant
+des consignes simples (bouton avancer, pivoter, etc.).
+
+Cours élémentaire deuxième année
+Au CE2, les élèves explorent les technologies numériques présentes dans les objets techniques ; ils prennent conscience de la
+place du numérique dans leur environnement.
+Conditions favorables aux apprentissages des élèves
+Les élèves ont accès à du contenu numérique où leur analyse critique est nécessaire. Une sensibilisation aux usages du
+numérique est envisagée lors des séances.
+
+Objectifs d’apprentissage
+
+Propositions de démarches et d’activités
+
+- Identifier les dispositifs permettant la saisie, le traitement
+et la restitution d’informations (clavier, processeur, écran,
+etc.).
+
+- L’élève observe et nomme les différents éléments d’un
+ordinateur.
+
+- Utiliser un ordinateur ou tablette numérique, pour saisir un
+texte.
+
+- L’élève saisit un texte à l’aide d’un logiciel de traitement de
+texte.
+
+- L’élève fait le lien avec des technologies plus compactes
+(tablettes, smartphones).
+
+- L’élève utilise le correcteur orthographique et adapte la
+mise en forme et la mise en page.
+- L’élève sauvegarde son travail.
+- Utiliser un moteur de recherche.
+
+- L’élève exploite un moteur de recherche pour obtenir une
+information.

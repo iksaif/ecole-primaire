@@ -1,0 +1,98 @@
+- Poursuivre la compréhension des faits
+suivants :
+ si on ajoute un objet à une
+collection, le nombre qui désigne sa
+quantité est le suivant dans la suite
+orale des noms des nombres ;
+ dans la suite orale des nombres,
+chaque nombre s’obtient en ajoutant
+un au nombre précédent.
+
+- Réaliser une collection contenant un objet de plus qu’une collection donnée.
+- Réaliser une collection contenant un objet de moins qu’une collection
+donnée.
+- Nommer les nombres correspondant au cardinal d’une collection avant et
+après l’ajout ou le retrait d’un élément.
+
+- Poursuivre les stratégies de parcours
+d’une collection en passant une et une
+seule fois par chacun de ses éléments.
+
+- Séparer les éléments déjà pointés de ceux qui ne le sont pas encore.
+- Pointer du doigt ou marquer les éléments déjà parcourus (le nombre d’objets
+peut être supérieur à dix).
+- Créer un parcours passant une et une seule fois par chaque élément.
+
+- Dénombrer une collection d’objets
+(jusqu’à dix, voire au-delà).
+
+- Utiliser le principe de cardinalité pour dénombrer une collection par
+énumération.
+Utiliser des compositions et des décompositions pour dénombrer.
+Par exemple, si l’enseignant positionne huit objets en les organisant en deux
+constellations de quatre et demande de dénombrer la collection, l’élève est
+capable de :
+ compter de un en un ;
+ « mettre quatre dans sa tête », surcompter en utilisant ses doigts : « cinq,
+six, sept, huit » et annoncer qu’il y a huit objets ;
+- utiliser la connaissance d’une composition et verbaliser « ça fait huit parce
+que quatre et quatre font huit ».
+
+- Constituer une collection d’un cardinal - Réaliser une collection :
+donné (jusqu’à dix, voire au-delà).
+ contenant la même quantité d’objets qu’une collection donnée ;
+ contenant la même quantité d’objets qu’une représentation analogique
+donnée (doigts des deux mains, constellations de points) ;
+ dont la quantité d’objets est énoncée oralement ;
+ dont la quantité d’objets est représentée par son écriture chiffrée.
+Réaliser une collection (jusqu’à dix, voire au-delà) en réunissant des
+collections plus petites.
+- Comparer des quantités.
+
+- Comparer globalement (sans dénombrer) les cardinaux de deux collections
+dont les quantités d’objets diffèrent d’un facteur au moins égal à deux et
+utiliser les locutions « plus que », « moins que », « autant que ». On ne se
+limite pas aux petites collections.
+- Comparer par correspondance terme à terme les cardinaux de deux
+collections.
+- Comparer les cardinaux de deux collections en dénombrant chacune d’elles.
+- Comparer des quantités données par leur écriture chiffrée ou par le nom des
+nombres.
+
+- Composer et décomposer des
+nombres inférieurs ou égaux à dix,
+voire au-delà.
+- Manipuler et verbaliser des
+compositions et des décompositions
+de nombres. Cela permet d’installer le
+fait que, dans une composition, l’ordre
+ne compte pas.
+- Surcompter (c’est-à-dire compter de
+un en un à partir d’un nombre donné).
+
+- Mobiliser des compositions et des décompositions de nombres pour
+résoudre des problèmes.
+- Réaliser des compositions et des décompositions de nombres avec les doigts
+des deux mains.
+- Verbaliser les compositions de nombres. Parmi elles, figurent les doubles :
+« deux et deux font quatre », « deux fois deux font quatre », « trois et trois
+font six », « deux fois trois font six », « quatre et quatre font huit », « deux fois
+quatre font huit », « cinq et cinq font dix », « deux fois cinq font dix ».
+- Verbaliser les décompositions des nombres compris entre deux et dix.
+- Pour ajouter deux nombres, surcompter à partir du plus grand.
+Exemple de verbalisation par un élève : « Pour ajouter quatre et cinq, je mets
+cinq dans ma tête et je compte quatre sur mes doigts à partir de cinq : six,
+sept, huit, neuf. Donc quatre et cinq font neuf ».
+
+- Associer une quantité, le nom d’un
+nombre et une écriture chiffrée.
+
+- Nommer le nombre (jusqu’à dix, voire au-delà) correspondant à une quantité
+d’objets ou à une représentation analogique et vice versa.
+- Représenter par une écriture chiffrée une quantité, une représentation
+analogique, le nom d’un nombre et vice versa.
+
+- Écrire en chiffres les nombres de un à
+dix.
+
+- Écrire des nombres dans des situations de communication.

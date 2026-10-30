@@ -1,0 +1,94 @@
+La géométrie plane
+L’acquisition des connaissances sur les figures de référence se poursuit à partir de descriptions, de constructions et de
+résolutions de problèmes.
+Il est particulièrement important que le professeur s’exprime dans un langage précis utilisant le vocabulaire géométrique
+approprié et qu’il encourage les élèves à se l’approprier et, progressivement, à l’utiliser. Ce vocabulaire prend son sens grâce
+aux manipulations et aux situations d’action proposées.
+Les tracés à la règle, à l’équerre et au compas présentent des difficultés ; ils nécessitent un apprentissage spécifique et un
+entrainement régulier. Il s’agit de développer l’habileté manuelle, la concentration et l’attention.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Utiliser le vocabulaire
+géométrique approprié.
+- Reconnaitre, nommer et
+décrire le carré, le rectangle,
+le triangle, le triangle
+rectangle et le losange.
+- Connaitre les propriétés des
+angles et les égalités de
+longueur pour les carrés, les
+rectangles et les losanges.
+
+Dans le cadre des activités géométriques menées et de la résolution de problèmes,
+l’élève utilise à bon escient le vocabulaire géométrique usuel :
+ polygone, triangle, quadrilatère, pentagone et hexagone ;
+ carré, rectangle, losange, triangle, triangle rectangle, côté, sommet, angle ;
+ diagonale (pour un quadrilatère), longueur du rectangle, largeur du rectangle ;
+ disque, cercle, centre, rayon, diamètre ;
+ point, droite, segment, milieu d’un segment ;
+ angle droit, angle aigu, angle obtus.
+Un ensemble de formes planes lui étant donné (pièces d’un puzzle géométrique comme
+le Tangram, figures découpées en carton, etc.), l’élève sait identifier lesquelles sont des
+disques, des carrés, des rectangles, des losanges, des triangles ou des triangles rectangles.
+Un triangle, un triangle rectangle, un carré, un losange ou un rectangle représenté sur
+papier lui étant donné, il sait le nommer et justifier sa réponse en donnant des arguments
+s’appuyant sur le nombre et la longueur de ses côtés et en identifiant les éventuels angles
+droits.
+L’élève sait dire qu’un losange a quatre sommets et quatre côtés de même longueur.
+L’élève sait dire qu’un quadrilatère est un polygone ayant quatre côtés et quatre
+sommets.
+L’élève sait dire qu’un quadrilatère n’est pas d’une nature donnée en s’appuyant sur l’une
+des propriétés de ce quadrilatère. Par exemple : « Ce n’est pas un carré car l’un de ses
+angles n’est pas un angle droit. Or un carré a ses quatre angles qui sont des angles
+droits. »
+
+- Reproduire ou construire un
+carré, un rectangle, un
+triangle, un triangle rectangle
+et un cercle ou des
+assemblages de ces figures
+sur tout support (papier
+quadrillé ou pointé ou papier
+uni), avec une règle graduée,
+une équerre ou un compas.
+- Connaitre et utiliser le
+codage d’un angle droit et
+celui qui indique que des
+segments ont la même
+longueur.
+
+L’élève sait reproduire sur papier quadrillé des figures usuelles, à main levée ou avec la
+règle, en utilisant le quadrillage.
+
+- Reconnaitre si une figure
+possède un ou plusieurs axes
+de symétrie en utilisant des
+pliages ou du papier calque.
+- Compléter, sur une feuille
+quadrillée ou pointée, une
+figure simple pour la rendre
+symétrique par rapport à un
+axe donné.
+
+L’élève reconnait des figures ayant un axe de symétrie. Il s’en assure en effectuant des
+pliages ou en utilisant du papier calque. L’élève repère les éventuels axes de symétrie sur
+des représentations planes d’objets usuels (cœur, carreau, pique, trèfle, cerf-volant,
+rectangle, panneaux routiers (sens interdit, sens unique, stationnement interdit, danger,
+etc.), lettres majuscules, etc.) et il les trace.
+
+L’élève sait, par exemple, construire sur papier uni les figures suivantes :
+ Un rectangle de longueur 7 cm et de largeur 3 cm.
+ Un carré dont les côtés ont pour longueur 6 cm et un cercle de rayon 4 cm ayant pour
+centre un des sommets du carré.
+ Un triangle rectangle dont les côtés de l’angle droit mesurent 10 cm et 4 cm.
+L’élève sait dire si chacun des angles d’un polygone est ou non un angle droit en utilisant
+l’équerre si la réponse n’est pas évidente.
+L’élève sait indiquer sur un rectangle les codes pour les quatre angles droits et des codes
+signalant l’égalité des longueurs des côtés opposés.
+
+L’élève complète une figure pour la rendre symétrique en s’appuyant sur le pliage de la
+feuille.
+L’élève complète une figure sur une feuille quadrillée ou pointée pour la rendre
+symétrique (l’axe étant vertical ou horizontal).

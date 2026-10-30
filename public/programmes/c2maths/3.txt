@@ -1,0 +1,63 @@
+Afin de privilégier le développement d’habiletés et de compétences solides en calcul, tant mental que posé, les élèves ne
+seront pas amenés à utiliser de calculatrice au cycle 2.
+La résolution de problèmes est au cœur de l’activité mathématique. Mais pour être en capacité de résoudre des problèmes,
+il faut savoir prendre des initiatives, imaginer des pistes de solution et s’y engager sans s’égarer. Un moyen pour y parvenir
+consiste à procéder par analogie en rattachant une situation particulière à une classe plus générale de problèmes. C’est
+pourquoi le programme identifie des types de problèmes basiques (par exemple, pour les problèmes additifs en une étape,
+les problèmes de parties-tout et les problèmes de comparaison) que les élèves doivent être en mesure de reconnaitre et
+pour lesquels ils doivent disposer de stratégies et d’outils efficaces permettant de les résoudre : problèmes de référence,
+schémas pour soutenir la modélisation, etc. La maitrise de ces compétences spécifiques renforce la confiance des élèves en
+leur capacité de résoudre des problèmes et constitue un appui précieux pour aborder des situations plus complexes ou
+sortant du cadre évoqué.
+3
+
+Les fractions sont introduites au cycle 2. Au CE1, les élèves comprennent, par exemple, que les d’un tout correspondent à
+8
+
+trois parts lorsque ce tout est partagé en huit parts égales. Ils comparent des fractions et effectuent des opérations sur les
+fractions, toujours en les considérant comme des parts d’un tout. Au CE2, le partage d’une unité de longueur en fractions
+de cette unité permet de positionner des fractions sur une bande-unité graduée. Cette approche contribue à s’affranchir
+du « tout » et à donner aux fractions un statut de nombre.
+Le cycle 2 est également une étape importante pour l’enseignement des grandeurs et des mesures. Si plusieurs grandeurs
+sont travaillées dès la maternelle, leur étude au cycle 2 permet l’introduction de mesures pour les grandeurs usuelles :
+durée, monnaie, longueur, masse (confondue à tort avec le poids dans le langage courant) et contenance. La
+compréhension de ces grandeurs est indispensable pour pouvoir donner du sens aux unités de mesure introduites. Les
+activités sur les mesures sont des appuis importants pour les travaux sur la numération. L’écriture à virgule des nombres
+décimaux est introduite dans le cadre de la monnaie. Ceci permet d’effectuer les premières comparaisons, additions et
+soustractions de nombres écrits avec une virgule dans des contextes concrets. Ce travail prépare les élèves à l’introduction
+plus formelle des nombres décimaux à partir des fractions décimales, qui sera menée au cycle 3.
+En géométrie, les élèves renforcent leur maitrise du vocabulaire spécifique et apprennent à manipuler les outils permettant
+de réaliser des constructions géométriques avec précision : règle, compas et équerre. Ils apprennent progressivement à
+passer d’une géométrie où les formes planes sont reconnues perceptivement à une géométrie où elles sont caractérisées
+par des propriétés contrôlées par des instruments. L’utilisation combinée des outils de construction et de la connaissance
+des propriétés des figures planes permet aux élèves d’argumenter sur la nature de celles-ci.
+Au cycle 2, les élèves sont également initiés au recueil de données, notamment via des enquêtes, et à leur présentation sous
+forme de tableaux et de diagrammes en barres.
+Des évaluations, courtes mais fréquentes, sont attendues en mathématiques pour aider les élèves à identifier leurs réussites,
+leurs progrès et leurs besoins et pour permettre au professeur d’adapter ses séances d’enseignement afin d’encourager
+chaque élève à s’engager et à progresser dans les apprentissages dans le but d’atteindre in fine les objectifs attendus.
+Le programme de mathématiques de cycle 2 privilégie l’activité des élèves pour l’acquisition des apprentissages.
+L’enseignement explicite des attendus, notamment en calcul et en résolution de problèmes, doit leur permettre de réaliser
+les tâches proposées, d’abord en étant guidés par l’enseignant, puis en devenant progressivement autonomes, en travaillant
+seuls ou en collaborant avec d’autres élèves. L’aptitude à réaliser des tâches en autonomie contribue à renforcer la
+confiance des élèves en leur capacité à réussir en mathématiques. La mise en activité des élèves est donc recherchée à
+chaque occasion qui s’y prête, en veillant à ce qu’elle ne conduise pas à réduire les attentes du programme en termes
+d’objectifs d’apprentissage. Les progrès et les réussites des élèves donnent lieu à des encouragements et des félicitations de
+la part de l’enseignant : ce sont des facteurs essentiels pour entretenir l’estime de soi, la motivation et la dynamique de
+progrès des élèves. La mise en activité, la qualité des échanges avec l’enseignant et avec les autres élèves, la confiance en
+ses capacités à réussir sont autant de facteurs qui contribuent au plaisir de faire des mathématiques. Ce sentiment positif
+doit être éprouvé par tous les élèves. Au-delà de ce qui a été mentionné pour le calcul mental, l’enseignant veille, par le
+choix des situations qu’il propose, le regard qu’il porte sur chacun de ses élèves et les opportunités qu’il lui offre de
+s’exprimer, à favoriser l’égalité entre les filles et les garçons.
+Le programme est présenté en deux colonnes. La première colonne indique les objectifs d’apprentissage. La seconde
+colonne fournit des exemples de connaissances et de savoir-faire attendus des élèves, mais aussi des repères d’acquisition,
+notamment en calcul mental. Elle rend plus explicites et plus opérationnels les objectifs indiqués dans la première colonne
+afin d’aider les professeurs dans la préparation et la mise en œuvre des séquences d’enseignement.
+
+Nombres, calcul et résolution de problèmes
+Cours préparatoire
+Les nombres entiers
+Les connaissances et les savoir-faire attendus concernent les nombres entiers jusqu’à cent.
+L’aspect décimal (base dix) et l’aspect positionnel (dans l’écriture d’un nombre, la valeur d’un chiffre dépend de sa position)
+sont abordés dès la période 1 : les élèves comparent, dénombrent et constituent des collections organisées en groupes de
+dix unités et en unités isolées.

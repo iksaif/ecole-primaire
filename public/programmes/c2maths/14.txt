@@ -1,0 +1,80 @@
+- Connaitre la notion de parité
+d’un nombre.
+
+L’élève sait dire si un nombre est pair ou impair.
+L’élève sait donner tous les nombres pairs compris en 767 et 778.
+
+Le calcul mental
+L’enseignement du calcul mental au cycle 2 est constitué de trois types d’apprentissages :
+
+
+
+
+mémoriser des faits numériques qui peuvent être restitués de façon quasi instantanée ;
+
+
+
+élaborer des stratégies et maitriser des procédures de calcul mental efficaces qui seront progressivement automatisées.
+
+utiliser les connaissances sur la numération pour effectuer des calculs rapidement en s’appuyant notamment sur la
+position des chiffres dans les nombres ;
+
+Certaines procédures de calcul mental peuvent nécessiter de garder des résultats intermédiaires en mémoire, ce qui peut
+être difficile pour certains élèves. Ceux-ci seront encouragés, au début des apprentissages, à noter par écrit ces résultats
+intermédiaires, puis à alléger progressivement le recours à l’écrit, jusqu’à s’en libérer totalement dès qu’ils n’en ont plus
+besoin.
+Les procédures indiquées dans le programme doivent faire l’objet de séquences d’enseignement explicite et donner lieu à
+une trace écrite. D’autres procédures peuvent être enseignées explicitement ou simplement rencontrées et présentées sans
+faire l’objet d’une séquence d’enseignement dédiée.
+Des tests en temps limité sont indispensables, d’une part pour renforcer la mémorisation des résultats et l’automatisation
+des procédures, d’autre part pour évaluer l’état des connaissances et des savoir-faire des élèves. Ils permettent également
+d’encourager les élèves à abandonner des procédures peu efficaces au profit des procédures enseignées par le professeur.
+Ces tests, qui mesurent la fluence en calcul des élèves, permettent également à ces derniers de prendre conscience de leurs
+progrès, en se référant au nombre de résultats corrects qu’ils sont capables de restituer en une durée donnée. Pour les
+calculs effectués mentalement en s’appuyant sur la numération ou sur des procédures apprises, la fluence attendue en fin
+de CE1 est la restitution de douze résultats en trois minutes.
+La mémorisation des résultats des tables d’addition se poursuit avec une fluence qui se renforce tout au long de l’année du
+CE1.
+Les procédures de calcul mental enseignées au CP sont utilisées tout au long du CE1, afin de renforcer leur automatisation.
+L’apprentissage des tables de multiplication s’étale sur l’année scolaire tout entière, de manière progressive. Les premiers
+résultats disponibles servent de points d’appui pour en construire d’autres qui seront à terme mémorisés. La mémorisation
+des résultats des tables étudiées en fin d’année pourra être encore imparfaite en fin de CE1 ; elle sera renforcée au CE2.
+Tous les travaux de calcul mental sont menés sur le champ numérique du CE1, dans le sens où les nombres en jeu et les
+résultats cherchés sont tous inférieurs ou égaux à 1 000.
+Mémoriser des faits numériques
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Connaitre dans les deux sens
+les tables d’addition.
+
+L’élève sait compléter des « égalités à trou » du type : 4 + … = 12 ; 5 + 3 = … ; 10 = 7 + …
+
+- Connaitre dans les deux sens
+les tables de multiplication.
+
+L’élève sait donner oralement et par écrit l’un des trois nombres d’une égalité de type
+A × B = C ou C = A × B, où A et B sont des nombres entiers compris entre 0 et 10 et où les
+deux autres nombres de l’égalité sont connus.
+
+À la fin du CE1, l’élève sait compléter douze égalités de ce type en une minute.
+
+L’élève peut ainsi compléter des « égalités à trou » du type : 4 × … = 12 ; 5 × 3 = … ;
+10 = 2 × …
+À la fin du CE1, l’élève peut compléter huit égalités de ce type en une minute.
+- Connaitre des faits
+multiplicatifs usuels.
+
+L’élève sait donner oralement et par écrit :
+ les doubles des nombres de 1 à 15 ;
+ les doubles des nombres 20, 25, 30, 35, 40, 45 et 50 ;
+ les doubles des nombres 100, 150, 200, 250, 300 et 500 ;
+ les moitiés des nombres pairs de 2 à 30 ;
+ les moitiés des dizaines entières 40, 50, 60, 70, 80, 90 et 100 ;
+ les moitiés des centaines entières 200, 300, 400, 500, 600 et 1 000.
+L’élève connait les multiples de 25 suivants : 1 × 25 = 25, 2 × 25 = 50, 3 × 25 = 75 et
+4 × 25 = 100.
+L’élève sait ainsi compléter des « égalités à trou » du type : 2 × … = 12 ; 2 × 16 = … ;
+2 × … = 70 ; 2 × 25 = … ; 1 000 = 2 × … ; 2 × 150 = … ; 3 × 25 = … ; 100 = 4 × …
+À la fin du CE1, l’élève sait compléter huit égalités de ce type en une minute.

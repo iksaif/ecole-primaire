@@ -1,0 +1,100 @@
+- Construire un cube, un pavé
+droit ou une pyramide.
+
+À partir d’un modèle, l’élève reproduit un polyèdre en assemblant ses faces ou ses arêtes
+et ses sommets.
+
+La géométrie plane
+L’acquisition des connaissances sur les figures de référence (carré, rectangle, triangle, cercle, disque) se poursuit à partir de
+manipulations, de descriptions et la résolution de problèmes.
+Les concepts généraux de la géométrie plane (droites, points, segments) sont introduits en situation, sans faire l’objet de
+définitions formelles.
+Il est particulièrement important que le professeur s’exprime dans un langage précis utilisant le vocabulaire géométrique
+approprié et qu’il encourage les élèves à se l’approprier et, progressivement, à l’utiliser. Ce vocabulaire prend son sens grâce
+aux manipulations et aux situations d’action proposées.
+Les tracés à la règle, à l’équerre et au compas présentent des difficultés ; ils nécessitent un apprentissage spécifique et un
+entrainement régulier. Il s’agit de développer l’habileté manuelle, la concentration et l’attention.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Utiliser le vocabulaire
+géométrique approprié.
+- Reconnaitre, nommer et
+décrire un cercle, un carré,
+un rectangle, un triangle, un
+triangle rectangle en utilisant
+le vocabulaire approprié.
+- Connaitre les propriétés des
+angles et des égalités de
+longueur pour les carrés et
+les rectangles.
+- Reproduire ou construire un
+carré, un rectangle, un
+triangle, un triangle rectangle
+et un cercle ou un
+assemblage de ces figures.
+
+Dans le cadre des activités géométriques menées et de la résolution de problèmes,
+l’élève utilise à bon escient le vocabulaire géométrique usuel :
+ carré, rectangle, triangle, triangle rectangle, côté, sommet, angle, disque, cercle, centre ;
+ point, droite, segment, milieu d’un segment ;
+ angle droit, angle aigu, angle obtus.
+Lorsqu’un polygone est présenté à un élève, il sait en donner le nombre de sommets et le
+nombre de côtés.
+Un ensemble de formes planes lui étant donné (pièces d’un puzzle géométrique comme
+le Tangram, figures découpées en carton, etc.), l’élève sait identifier lesquelles sont des
+disques, des carrés, des rectangles, des triangles, des triangles rectangles.
+Un triangle, un triangle rectangle, un carré ou un rectangle tracé sur papier lui étant
+présenté, l’élève sait le nommer et justifier sa réponse en s’appuyant sur le nombre de
+ses côtés, les éventuelles égalités de longueurs de ses côtés et les éventuels angles droits.
+L’élève sait dire qu’un rectangle a quatre sommets, quatre angles droits, quatre côtés et
+que les côtés opposés ont la même longueur. L’élève sait dire qu’un polygone n’est pas
+un rectangle en le justifiant par une des propriétés du rectangle : « Ce n’est pas un
+rectangle car l’un de ses angles n’est pas droit. »
+L’élève confirme qu’une figure est un carré, un rectangle ou un triangle rectangle en
+s’assurant, avec l’équerre et la règle, qu’elle vérifie les propriétés connues sur les angles et
+les égalités de longueurs.
+Sur du papier quadrillé, pointé ou uni, l’élève sait compléter ou tracer un carré, un
+rectangle, un triangle ou un triangle rectangle avec une règle (graduée ou non) et une
+équerre ; les côtés peuvent suivre les lignes du quadrillage ou être obliques.
+
+- Utiliser la règle pour vérifier
+des alignements et l’équerre
+pour vérifier qu’un angle est
+droit.
+- Utiliser la règle graduée,
+l’équerre et le compas
+comme instruments de tracé.
+- Connaitre et utiliser le code
+pour les angles droits.
+
+L’élève sait repérer et tracer des points alignés. L’élève sait dire que des points ne sont
+pas alignés sans utiliser la règle quand il n’y a aucun doute.
+L’élève sait identifier et tracer des angles droits avec un gabarit en carton, puis avec une
+équerre. L’élève sait dire qu’un angle n’est pas droit sans équerre quand il n’y a aucun
+doute. Il sait alors dire si l’angle est aigu (plus petit qu’un angle droit) ou obtus (plus grand
+qu’un angle droit).
+L’élève sait tracer un cercle avec un compas. Il sait tracer le cercle de centre un point
+donné et passant par un autre point donné.
+L’élève sait trouver le milieu d’un segment (par pliage).
+L’élève sait indiquer qu’un angle est droit en utilisant le code usuel.
+
+Le repérage dans l’espace
+Au CE1, les élèves étendent leurs apprentissages en enrichissant le lexique acquis à la maternelle et au CP. Ils apprennent à
+établir des relations entre des espaces familiers et des représentations de ces espaces (maquettes, plans, photographies).
+Les élèves comprennent, utilisent et produisent des instructions correspondant à des déplacements.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Connaitre et utiliser le
+vocabulaire lié aux positions
+relatives.
+- Situer des personnes ou des
+objets les uns par rapport
+
+L’élève comprend et utilise le vocabulaire suivant :
+ à gauche, à droite ;
+ sur, sous, entre, devant, derrière, au-dessus, en dessous ;
+ près, loin.

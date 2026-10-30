@@ -1,0 +1,63 @@
+Par exemple, pour le problème « Paul apporte 3 paquets de biscuits. Il y a 7 biscuits dans
+chaque paquet. Combien y a-t-il de biscuits en tout ? », l’élève peut représenter les
+biscuits de chacun des trois paquets par des croix et dénombrer ensuite l’ensemble des
+croix, par comptage de un en un ou en regroupant par dix les éléments de la collection.
+
+xxxxx xx
+xxxxx xx
+xxxxx xx
+L’élève sait résoudre des problèmes consistant, dans un partage équitable, à chercher le
+nombre de parts à partir de la quantité totale d’objets et de la quantité de chaque part,
+en s’appuyant si besoin sur des manipulations d’objets tangibles (jetons ou cubes)
+symbolisant les éléments à partager ou sur des représentations symboliques des objets à
+partager. L’élève représente la totalité des éléments (croix, ronds) et entoure des groupes
+de ces symboles de cardinal égal à la valeur d’une part.
+Par exemple, pour le problème « Il y a 24 élèves dans la classe. Pour participer à des
+rencontres sportives, le professeur constitue des équipes de 4 élèves. Combien y aura-t-il
+d’équipes ? », l’élève peut représenter les vingt-quatre élèves par vingt-quatre croix et
+faire ensuite des groupements de quatre croix pour symboliser les équipes.
+
+xxxxx xxxxx
+xxxxx xxxxx
+xxxx
+L’élève sait résoudre des problèmes consistant à rechercher la valeur d’une part dans un
+partage équitable, en s’appuyant, si besoin, sur des manipulations d’objets tangibles
+(jetons ou cubes) symbolisant des éléments qu’il distribue un à un, équitablement, dans
+chacune des parts. Par exemple, pour le problème « 3 enfants se partagent 18 images.
+Tous les enfants doivent avoir le même nombre d’images. Combien d’images aura
+chaque enfant ? », l’élève sait répartir dix-huit images ou dix-huit jetons qui lui sont
+fournis en trois paquets de six images ou jetons, en les distribuant un à un.
+
+Cours élémentaire première année
+Les nombres entiers
+Les connaissances et savoir-faire attendus concernent les nombres jusqu’à mille.
+La compréhension des aspects décimal (base dix) et positionnel (la valeur d’un chiffre dépend de sa position) étudiés au CP
+se renforce et s’étend.
+La centaine est abordée dès le début de la période 1.
+Le travail sur les nombres supérieurs à cent contribue à renforcer la connaissance des nombres inférieurs à cent et celle des
+relations entre les unités et les dizaines.
+Dès la période 1, les élèves comparent, dénombrent et constituent des collections organisées en centaines, dizaines et
+unités isolées.
+Au plus tard en période 2, les élèves travaillent avec des quantités et des nombres allant jusqu’à mille.
+À chaque fois que cela leur est utile, les élèves utilisent différents types d’objets tangibles permettant de représenter des
+unités, des dizaines et des centaines : matériel multibase (plaques de cent cubes, barres de dix cubes, cubes unités),
+monnaie fictive (billets de cent euros et de dix euros et pièces d’un euro), etc. Les élèves continuent, comme au CP, à
+produire et à utiliser des représentations du matériel multibase lors des travaux menés sur les nombres ou pour effectuer
+des calculs.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Dénombrer des collections
+en les organisant.
+- Construire des collections de
+cardinal donné.
+- Connaitre et utiliser la
+relation entre unités et
+
+L’élève dénombre des collections en utilisant des groupes de dix ou de cent. Les
+collections à dénombrer contiennent régulièrement des nombres supérieurs à dix pour
+l’une des unités de numération, par exemple :
+ 17 unités, 8 dizaines et 2 centaines ;
+ 9 dizaines, 23 unités et 4 centaines ;
+ 2 centaines, 27 dizaines et 14 unités.

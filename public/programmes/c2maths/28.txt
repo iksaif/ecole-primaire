@@ -1,0 +1,86 @@
+La monnaie contribue à renforcer la compréhension du système de numération décimale que nous utilisons : dix pièces de
+1 € valent 10 €, dix billets de 10 € valent 100 €, dix pièces de un centime valent dix centimes et dix pièces de dix centimes
+valent un euro.
+Les premiers problèmes sont résolus en simulant les situations par des manipulations effectives de pièces et de billets
+fictifs. Ensuite, progressivement, les élèves sont mis en situation d’anticiper les résultats de ces actions en ayant recours aux
+opérations et au calcul.
+Le travail sur la monnaie est réinvesti dans le cadre de l’enseignement de la résolution de problèmes.
+Les centimes d’euro sont introduits au plus tard en période 2. L’écriture à virgule est utilisée à partir de la période 3. Le
+travail sur la monnaie est poursuivi et renforcé à chaque période, à l’occasion d’activités ritualisées.
+Objectifs d’apprentissage
+
+Exemples de réussite
+
+- Connaitre le lien entre les
+euros et les centimes.
+
+L’élève doit savoir qu’une pièce d’un euro a la même valeur que cent pièces d’un
+centime.
+L’élève sait constituer une somme de 1 € de différentes manières avec des pièces qui lui
+sont fournies ou en représentant les pièces utilisées.
+
+- Comparer les valeurs en euro L’élève compare des sommes contenues dans deux portemonnaie en faisant bien la
+de deux ensembles constitués différence entre le nombre de pièces et de billets et la valeur en euro et en centime
+de pièces et de billets.
+d’euro de ces pièces et ces billets. Il comprend ainsi que trois pièces de 2 € valent plus
+- Déterminer la valeur en euro que 50 pièces de 10 centimes. Il comprend également que 12 € c’est plus que
+et centime d’euro d’un
+60 centimes bien que 12 soit plus petit que 60.
+ensemble constitué de
+L’élève sait ordonner quatre prix dans l’ordre croissant ou décroissant, quelles que soient
+pièces et de billets.
+les écritures de ces prix.
+- Constituer avec des euros et L’élève exprime la valeur d’un ensemble constitué de pièces et de billets en euro et en
+des centimes d’euro une
+centime d’euro, avec un nombre final de centimes strictement inférieur à 100 ou en
+somme d’argent d’une valeur utilisant l’écriture à virgule.
+donnée.
+L’élève est en mesure de constituer un montant donné avec des pièces et des billets. Les
+- Simuler des achats en
+nombres de pièces et de billets disponibles pourront être des contraintes utiles à la
+manipulant des pièces et des
+réflexion, par exemple, l’absence de pièces de un euro permet de contraindre à utiliser
+billets fictifs. Rendre la
+des pièces de 10, 20 ou 50 centimes pour constituer des euros. L’élève sait rendre la
+monnaie.
+monnaie lors d’un achat.
+- Connaitre le sens de
+l’écriture à virgule d’une
+somme d’argent.
+
+L’élève sait utiliser différentes écritures et passer d’une écriture à une autre (dans les
+deux sens) :
+ 200 centimes = 2 × 100 centimes = 2 € ;
+ 345 centimes = 300 centimes + 45 centimes = 3 € + 45 centimes ;
+ 2 € et 17 centimes s’écrit aussi 2,17 € ;
+ 2 € et 5 centimes s’écrit 2,05 € ;
+ 2 € et 50 centimes s’écrit 2,50 € ;
+ 85 centimes = 0,85 € ;
+ 3 € + 45 centimes = 3,45 € ;
+ 17 € = 17,00 € ;
+ 1 € et 120 centimes = 1 € + 1 € + 20 centimes = 2 € + 20 centimes = 2,20 €.
+
+Le repérage dans le temps et les durées
+Le travail sur le repérage dans le temps et les durées est mené en lien avec l’enseignement « Questionner le monde ».
+Au CE1, en mathématiques, l’enseignement relatif au repérage dans le temps et aux durées s’applique aux temps courts,
+exprimés en heure et en minute. Le travail sur les heures initié au CP s’étend au CE1 aux heures entières supérieures à douze
+ainsi qu’à la demi-heure et aux quarts d’heure, en lien avec l’introduction des fractions.
+- Lire l’heure sur une horloge à
+aiguilles (lorsque l’heure est
+donnée en heures entières,
+en heures et demi-heure ou
+en heures et quarts d’heure).
+- Positionner les aiguilles d’une
+horloge correspondant à une
+heure donnée en heures
+entières, en heures et demiheure ou en heures et quart
+d’heure.
+
+L’élève comprend et utilise les expressions « trois heures du matin », « trois heures de
+l’après-midi ».
+Sachant qu’on parle d’un instant de l’après-midi, l’élève sait lire sur une horloge à aiguilles
+qu’il est « 2 heures et quart » ou « 14 heures et 15 minutes » et il sait que sur une horloge
+digitale, il est alors écrit « 14 : 15 ».
+L’élève sait positionner les aiguilles d’une horloge correspondant à une heure exprimée
+en heures entières inférieures à vingt-quatre, en heures et demi-heure et en heures et
+quarts d’heure.

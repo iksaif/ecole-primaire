@@ -154,20 +154,28 @@ for (const largeur of [1280, 360]) {
   await page.locator('.options-fiche > summary').click()
   await page.waitForSelector('.options-fiche .choix-police select')
   await page.waitForFunction(() => document.querySelector('.options-fiche option[value="BelleAllure CM"]'))
+  // le corrigé s'empile s'il ne tient pas sur une ligne : mesuré par un ResizeObserver, qui répond à l'image suivante
+  await page.evaluate(() => new Promise(fini => requestAnimationFrame(() => requestAnimationFrame(fini))))
   const mise = await page.evaluate(() => {
     const haut = s => Math.round(document.querySelector(s).getBoundingClientRect().top)
     const pastilles = [...document.querySelectorAll('.options-fiche .pastille')]
     return {
       debord: document.documentElement.scrollWidth > window.innerWidth,
       uneLigne: pastilles.every(p => p.getBoundingClientRect().height < 60 && p.scrollWidth <= p.clientWidth + 1),
-      topsCorrige: new Set([...document.querySelectorAll('.segmente .pastille')].map(p => Math.round(p.getBoundingClientRect().top))).size,
+      // d'une pièce : tous sur une ligne, ou empilés (un par ligne, même bord gauche) ; jamais deux sur une ligne et un dessous
+      corrigeDUnePiece: (() => {
+        const cadres = [...document.querySelectorAll('.segmente .pastille')].map(p => p.getBoundingClientRect())
+        const hauts = new Set(cadres.map(c => Math.round(c.top))).size
+        const gauches = new Set(cadres.map(c => Math.round(c.left))).size
+        return hauts === 1 || (hauts === cadres.length && gauches === 1)
+      })(),
       rangs: haut('.options-fiche .rang-entete') < haut('.options-fiche .segmente') && haut('.options-fiche .segmente') < haut('.options-fiche .choix-police'),
     }
   })
   verifier(!mise.debord, 'aucun débordement horizontal')
   verifier(mise.uneLigne, 'chaque libellé tient sur une seule ligne (« Prénom et date », corrigé)')
   verifier(mise.rangs, 'une ligne par préoccupation : en-tête, corrigé, police')
-  if (largeur >= 1000) verifier(mise.topsCorrige === 1, 'le corrigé tient sur une ligne (contrôle d\'une seule pièce)')
+  verifier(mise.corrigeDUnePiece, 'le corrigé reste d\'une pièce : sur une ligne, ou empilé')
   const radios = page.locator('.segmente input[type=radio]')
   await radios.nth(0).focus()
   await page.keyboard.press('ArrowRight')

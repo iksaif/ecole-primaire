@@ -7,7 +7,8 @@
   Affiché par CadreExercice en mode impression. `police` : false pour un exercice sans texte à mettre en police ; `images` : true pour
   une fiche qui dessine des emojis avec le rendu reçu (ParamsFiche.images), qui propose alors leur famille et leur style (ChoixImages).
   Accessibilité : éléments natifs (<details> / <summary> pour déplier, case à cocher, radios dans un <fieldset> nommé : flèches du clavier natives), focus visible
-  sur le bouton entier, libellés sur une seule ligne, le groupe passe entier à la ligne si l'écran est étroit.
+  sur le bouton entier, libellés sur une seule ligne ; le groupe du corrigé reste d'une pièce : sur une ligne s'il y tient, sinon empilé
+  (mesuré : la largeur des libellés dépend de la police de l'appareil).
 -->
 <template>
   <details class="config-section options-fiche">
@@ -20,7 +21,7 @@
       <CaseReglage v-model="options.entete" :libelle="t('cadre.entete')" />
       <slot />
     </div>
-    <fieldset v-if="avecCorrige" class="rang segmente">
+    <fieldset v-if="avecCorrige" ref="corrige" class="rang segmente">
       <legend class="sr-only">{{ t('communs.corrige') }}</legend>
       <label v-for="c in CHOIX_CORRIGE" :key="c" class="pastille" :class="{ choisi: options.corrige === c }">
         <input v-model="options.corrige" type="radio" :name="nomCorrige" :value="c">{{ t(`cadre.corrige_${c}`) }}
@@ -35,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, useId } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, useId } from 'vue'
 import type { Component } from 'vue'
 import Icone from '../images/Icone.vue'
 import ChoixPolice from './ChoixPolice.vue'
@@ -77,6 +78,40 @@ const resume = computed(() => {
   return morceaux.join(' · ')
 })
 
+// Le corrigé : trois boutons collés sur une ligne s'ils y tiennent, sinon empilés (jamais deux sur une ligne et un sous eux). Mesuré à
+// chaque changement de taille : on essaie la ligne, et si un bouton passe dessous, on empile (avant que l'écran soit redessiné).
+const corrige = ref<HTMLElement | null>(null)
+
+/** Les boutons du corrigé, posés en ligne, passent-ils sur plusieurs lignes ou débordent-ils du groupe ? */
+function ligneCassee(groupe: HTMLElement): boolean {
+  const boutons = [...groupe.querySelectorAll<HTMLElement>('.pastille')]
+  const hauts = boutons.map(b => b.offsetTop)
+  if (new Set(hauts).size > 1) return true
+  // un <fieldset> s'élargit à ses boutons sans se compter comme débordant : on compare au bord intérieur du bloc qui le contient
+  return boutons.some(b => b.getBoundingClientRect().right > bordInterieurDroit(groupe.parentElement) + 1)
+}
+
+/** Le bord droit du contenu d'un bloc (sans sa marge intérieure ni sa bordure). */
+function bordInterieurDroit(bloc: HTMLElement | null): number {
+  if (!bloc) return Infinity
+  const style = getComputedStyle(bloc)
+  return bloc.getBoundingClientRect().right - parseFloat(style.paddingRight) - parseFloat(style.borderRightWidth)
+}
+
+/** Empile les boutons du corrigé si leur ligne ne tient pas. */
+function ajusterCorrige(groupe: HTMLElement) {
+  groupe.classList.remove('empile')
+  groupe.classList.toggle('empile', ligneCassee(groupe))
+}
+
+let observateur: ResizeObserver | null = null
+onMounted(() => {
+  if (!corrige.value || typeof ResizeObserver === 'undefined') return
+  observateur = new ResizeObserver(() => { if (corrige.value) ajusterCorrige(corrige.value) })
+  observateur.observe(corrige.value)
+})
+onUnmounted(() => observateur?.disconnect())
+
 // un composant asynchrone par extension, créé une fois (un nouveau à chaque calcul remonterait le choix)
 const parExtension = new Map<string, Component>()
 const composantsExtensions = computed(() => extensionsActives.value
@@ -106,7 +141,7 @@ const composantsExtensions = computed(() => extensionsActives.value
 .options-fiche[open] .resume { display: none; }
 .options-fiche[open] summary { margin-bottom: .75rem; }
 .rang { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 .6rem; padding: 0; border: 0; min-width: 0; }
-/* le corrigé : un seul groupe d'une pièce (boutons collés), qui passe entier à la ligne si la place manque */
+/* le corrigé : un seul groupe d'une pièce (boutons collés), empilé si sa ligne ne tient pas (classe « empile », mesurée) */
 .segmente { gap: 0; width: fit-content; max-width: 100%; border-radius: 22px; }
 .pastille {
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .3em; white-space: nowrap;
@@ -120,11 +155,9 @@ const composantsExtensions = computed(() => extensionsActives.value
 .segmente .pastille { border-radius: 0; margin-left: -2px; }
 .segmente .pastille:first-of-type { border-radius: 22px 0 0 22px; margin-left: 0; }
 .segmente .pastille:last-of-type { border-radius: 0 22px 22px 0; }
-@media (max-width: 560px) {
-  /* écran étroit : les trois boutons s'empilent en pleine largeur, chacun sur une seule ligne */
-  .segmente { flex-direction: column; width: 100%; }
-  .segmente .pastille, .segmente .pastille:first-of-type, .segmente .pastille:last-of-type { border-radius: 0; margin-left: 0; margin-top: -2px; }
-  .segmente .pastille:first-of-type { border-radius: 22px 22px 0 0; margin-top: 0; }
-  .segmente .pastille:last-of-type { border-radius: 0 0 22px 22px; }
-}
+/* empilé : les trois boutons en pleine largeur, chacun sur une seule ligne */
+.segmente.empile { flex-direction: column; width: 100%; }
+.segmente.empile .pastille, .segmente.empile .pastille:first-of-type, .segmente.empile .pastille:last-of-type { border-radius: 0; margin-left: 0; margin-top: -2px; }
+.segmente.empile .pastille:first-of-type { border-radius: 22px 22px 0 0; margin-top: 0; }
+.segmente.empile .pastille:last-of-type { border-radius: 0 0 22px 22px; }
 </style>

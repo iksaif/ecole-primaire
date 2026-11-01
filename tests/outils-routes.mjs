@@ -10,6 +10,8 @@ import { routesDeBase, routesDesExercices } from '../src/router/routes.ts'
 import { REGISTRE } from '../src/exercices/index.ts'
 import { COMPETENCES } from '../src/data/programme.ts'
 import { SITES } from '../src/sites.ts'
+import { textesOfficiels } from '../src/programme/navigation.ts'
+import { lectureDisponible } from '../src/programme/officiel.ts'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -45,9 +47,15 @@ const lireJson = url => new Promise((ok, ko) => {
   }).on('error', ko)
 })
 
-/** Valeurs valides des paramètres de la table : une compétence du programme ; une fiche lue dans l'index du site testé. */
+/** Une page d'un texte officiel qui se lit dans l'app (/programme/officiel/:source/:page). */
+function pageOfficielle() {
+  const texte = textesOfficiels().find(x => lectureDisponible(x.source))
+  return { source: texte.source, page: String(texte.pages[0].page) }
+}
+
+/** Valeurs valides des paramètres de la table : une compétence du programme ; une page d'un texte officiel ; une fiche lue dans l'index du site testé. */
 export async function valeursValides(urlSite) {
   const index = await lireJson(`${urlSite}fiches/index.json`).catch(() => null)
   const slug = index?.entrees?.[0]?.slug
-  return { id: COMPETENCES[0].id, ...(slug ? { slug } : {}) }
+  return { id: COMPETENCES[0].id, ...pageOfficielle(), ...(slug ? { slug } : {}) }
 }

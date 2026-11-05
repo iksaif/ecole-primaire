@@ -16,6 +16,8 @@
     - `images` : la fiche dessine des emojis avec le rendu reçu (ParamsFiche.images) : choix des images dans « Sur la fiche » ;
     - `pictogrammes` : les consignes de la fiche passent par consignesDe (src/images/consignes.ts) : choix des pictogrammes des
       consignes et de leur ligne de crédit dans « Sur la fiche » ;
+    - `seyes` : la fiche a des lignes d'écriture (mots à recopier, dictée), dessinées par ligneEcriture (src/impression/seyes.ts) :
+      case « Lignes Seyès » dans « Sur la fiche » ;
     - `fiche-seule` : exercice sans partie à l'écran (une fiche à imprimer) : ni onglets ni « Commencer », le mode est
       toujours « imprimer » (le tirage de la fiche se fait alors quel que soit `?mode=`, voir useFicheExercice).
   Pour une partie chronométrée, le temps restant s'affiche avec <Chronometre> (dans la question : useMinuteur).
@@ -41,7 +43,7 @@
           <ChoixLangueContenu />
           <slot :mode="modeCourant" />
 
-          <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" :pictogrammes="pictogrammes" :extensions="extensions" />
+          <OptionsFiche v-if="modeCourant === 'imprimer'" :avec-corrige="avecCorrige" :police="police" :images="images" :pictogrammes="pictogrammes" :seyes="seyes" :extensions="extensions" />
 
           <div class="signalement"><SignalerErreur :reglages="config ?? undefined" /></div>
         </div>
@@ -91,13 +93,15 @@ const props = withDefaults(defineProps<{
   images?: boolean
   // le choix des pictogrammes des consignes est proposé dans « Sur la fiche »
   pictogrammes?: boolean
+  // la fiche a des lignes d'écriture : « Lignes Seyès » est proposé dans « Sur la fiche »
+  seyes?: boolean
   // les extensions que l'exercice accepte (`extensions` de sa définition) : leurs choix communs sont proposés dans « Sur la fiche » quand elles sont actives
   extensions?: readonly string[]
   // pas de partie à l'écran : une fiche seulement (pas d'onglets)
   ficheSeule?: boolean
   // le cadre est dans un autre cadre (le contenu d'un onglet d'extension) : sans sa boîte
   imbrique?: boolean
-}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, pictogrammes: false, extensions: () => [], ficheSeule: false, imbrique: false })
+}>(), { fiche: '', config: null, desactive: false, aleatoire: true, police: true, images: false, pictogrammes: false, seyes: false, extensions: () => [], ficheSeule: false, imbrique: false })
 const emit = defineEmits<{ 'update:mode': [mode: ModeExercice], commencer: [], regenerer: [] }>()
 // le formulaire de réglages reçoit le mode courant
 defineSlots<{ default?(props: { mode: ModeExercice }): unknown }>()

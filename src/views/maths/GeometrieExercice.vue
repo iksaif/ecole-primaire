@@ -3,7 +3,8 @@
     <h1 class="section-heading"><Icone v-if="definition.emoji" :nom="definition.emoji" /> {{ titrePage }}</h1>
 
     <!-- Config -->
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images
+    <!-- seyes : les figures et les solides ont une ligne sous chaque dessin pour écrire son nom (la symétrie n'en a pas) -->
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" images :seyes="section !== 'symetrie'"
       @commencer="jeu.demarrer" @regenerer="nouvelle">
       <template #default="{ mode: modeCourant }">
         <ChoixReglage :definition="definition" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />

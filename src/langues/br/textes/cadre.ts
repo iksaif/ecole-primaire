@@ -8,6 +8,7 @@ export default {
   nouvelle: 'Fichenn nevez',
   surLaFiche: 'Kinnig ar fichenn', // br: à relire
   entete: 'Anv-bihan ha deiziad', // br: à relire
+  seyes: 'Linennoù Seyès', // br: à relire
   corrige_non: 'Hep reizhadenn', // br: à relire
   corrige_page: 'Reizhadenn war ur bajenn all', // br: à relire
   corrige_dessous: 'Reizhadenn en traoñ, tu gin', // br: à relire

@@ -77,29 +77,31 @@ const DONNEES: Partial<Record<Classe, DonneesNiveau>> = {
   cp: {
     notation: 'ec',
     saisieDecimale: false,
-    compter: { entiers: { valeurs: [100, 200, 500, 1000, 2000], nb: [2, 5], min: 300, max: 5000 } },
-    composer: { entiers: { min: 200, max: 5000, pas: 100 } },
+    compter: { entiers: { valeurs: [100, 200, 500, 1000, 2000, 5000, 10000], nb: [2, 5], min: 300, max: 10000 } },
+    composer: { entiers: { min: 200, max: 10000, pas: 100 } },
     moins: { minPieces: { entiers: 2 } },
     rendre: {
       entiers: [
         { paye: 500,  rendu: [100, 400], pas: 100 },
         { paye: 1000, rendu: [100, 900], pas: 100 },
         { paye: 2000, rendu: [100, 1000], pas: 100 },
+        { paye: 5000, rendu: [100, 2500], pas: 100 },
+        { paye: 10000, rendu: [500, 5000], pas: 500 },
       ],
     },
-    comparer: { entiers: { valeurs: [100, 200, 500, 1000], nb: [2, 5], max: 3000 }, probaEgal: 0.15 },
-    palette: { entiers: [100, 200, 500, 1000, 2000, 5000] },
+    comparer: { entiers: { valeurs: [100, 200, 500, 1000, 2000, 5000], nb: [2, 5], max: 10000 }, probaEgal: 0.15 },
+    palette: { entiers: [100, 200, 500, 1000, 2000, 5000, 10000] },
   },
   ce1: {
     notation: 'ec',
     saisieDecimale: false,
     compter: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000], nb: [2, 6], min: 300, max: 9900 },
+      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000, 10000], nb: [2, 6], min: 300, max: 19900 },
       centimes: { euros: [100, 200, 500, 1000], nbEuros: [1, 3], maxEuros: 2000,
                   cents: [1, 2, 5, 10, 20, 50], nbCents: [2, 5], maxCents: 99 },
     },
     composer: {
-      entiers:  { min: 300, max: 9900, pas: 100 },
+      entiers:  { min: 300, max: 19900, pas: 100 },
       centimes: { euros: [1, 20], cents: [1, 99] },
     },
     moins: { minPieces: { entiers: 2, centimes: 3 } },
@@ -109,6 +111,7 @@ const DONNEES: Partial<Record<Classe, DonneesNiveau>> = {
         { paye: 1000, rendu: [100, 900],  pas: 100 },
         { paye: 2000, rendu: [100, 1000], pas: 100 },
         { paye: 5000, rendu: [100, 2500], pas: 100 },
+        { paye: 10000, rendu: [100, 5000], pas: 100 },
       ],
       centimes: [
         { paye: 100, rendu: [5, 95],  pas: 5 },
@@ -117,27 +120,28 @@ const DONNEES: Partial<Record<Classe, DonneesNiveau>> = {
       ],
     },
     comparer: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000], nb: [2, 6], max: 5000 },
+      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000, 10000], nb: [2, 6], max: 20000 },
       centimes: { valeurs: [5, 10, 20, 50, 100, 200, 500], nb: [3, 6], max: 1000 },
       probaEgal: 0.15,
     },
     palette: {
-      entiers:  [100, 200, 500, 1000, 2000, 5000],
-      centimes: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000],
+      entiers:  [100, 200, 500, 1000, 2000, 5000, 10000],
+      centimes: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000],
     },
   },
-  // CE2 : euros et centimes, 1 € = 100 c, écriture « 3,50 € », sommes jusqu'à 200 €, billet de 100 €
+  // CE2 : euros et centimes, 1 € = 100 c, écriture « 3,50 € », sommes jusqu'à 500 €, tous les billets (200 € compris ; le billet de 500 €
+  // n'est plus émis depuis 2019)
   ce2: {
     notation: 'les2',
     saisieDecimale: true,
     compter: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000, 10000], nb: [3, 8], min: 1000, max: 19900 },
+      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000, 10000, 20000], nb: [3, 8], min: 1000, max: 49900 },
       // plus de 1 € en pièces de centimes : il faut regrouper 100 c = 1 €
       centimes: { euros: [100, 200, 500, 1000, 2000, 5000], nbEuros: [2, 4], maxEuros: 10000,
                   cents: [1, 2, 5, 10, 20, 50], nbCents: [3, 7], maxCents: 250 },
     },
     composer: {
-      entiers:  { min: 1000, max: 19900, pas: 100 },
+      entiers:  { min: 1000, max: 49900, pas: 100 },
       centimes: { euros: [1, 99], cents: [1, 99] },
     },
     moins: { minPieces: { entiers: 3, centimes: 4 } },
@@ -146,6 +150,7 @@ const DONNEES: Partial<Record<Classe, DonneesNiveau>> = {
         { paye: 2000,  rendu: [100, 1000], pas: 100 },
         { paye: 5000,  rendu: [100, 2500], pas: 100 },
         { paye: 10000, rendu: [100, 5000], pas: 100 },
+        { paye: 20000, rendu: [100, 10000], pas: 100 },
       ],
       centimes: [
         { paye: 500,  rendu: [5, 300],  pas: 5 },
@@ -154,14 +159,14 @@ const DONNEES: Partial<Record<Classe, DonneesNiveau>> = {
       ],
     },
     comparer: {
-      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000], nb: [3, 7], max: 20000 },
+      entiers:  { valeurs: [100, 200, 500, 1000, 2000, 5000, 10000, 20000], nb: [3, 7], max: 50000 },
       centimes: { valeurs: [5, 10, 20, 50, 100, 200, 500, 1000], nb: [4, 7], max: 3000 },
       probaEgal: 0.15,
     },
     convertir: { min: 105, max: 995 },
     palette: {
-      entiers:  [100, 200, 500, 1000, 2000, 5000, 10000],
-      centimes: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000],
+      entiers:  [100, 200, 500, 1000, 2000, 5000, 10000, 20000],
+      centimes: [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000],
     },
   },
 }
@@ -521,7 +526,9 @@ export function questionsFiche({ niveau, reglages, rng, T }: Omit<ParamsGenerate
   }
   if (!Object.values(parties).some(Boolean)) parties = { compter: true, entoure: true, moins: false, rendre: true, comparer: false, convertir: types.includes('convertir') }
   const centimes = avecCentimes(ctx.niveau, reglages)
-  const valeursPapier = palette(ctx.niveau, centimes).filter(v => v <= 2000)
+  // tous les billets du niveau, jusqu'aux gros (100 € au CP et au CE1, 200 € au CE2)
+  const valeursPapier = palette(ctx.niveau, centimes)
+  const plageEntoure = ctx.niv.composer.entiers
 
   const compter = genererDuType(ctx, 'compter', 6, centimes)
 
@@ -529,7 +536,8 @@ export function questionsFiche({ niveau, reglages, rng, T }: Omit<ParamsGenerate
   // tirage : tirerUniques la refuse, et le flux du hasard reste celui d'avant.
   const vues = new Set<number>()
   const entoure = tirerUniques(3, (): Entoure => {
-    const cible = centimes ? rng.entier(1, 9) * 100 + aleatoirePas(rng, 10, 90, 5) : rng.entier(6, 45) * 100
+    // une somme en euros entiers dans la plage du niveau (« composer ») : 6 € à 100 € au CP, jusqu'à 199 € au CE1, 499 € au CE2
+    const cible = centimes ? rng.entier(1, 9) * 100 + aleatoirePas(rng, 10, 90, 5) : rng.entier(6, plageEntoure.max / 100) * 100
     if (vues.has(cible)) return { cible, bons: [], items: [] }
     vues.add(cible)
     const bons = decomposerAuHasard(rng, cible, valeursPapier, 6)

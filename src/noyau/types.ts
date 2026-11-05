@@ -228,6 +228,11 @@ export interface ParamsFiche<R extends object = Reglages, F = unknown, Cle exten
    */
   pictogrammes?: ChoixPictogrammes
   /**
+   * les lignes d'écriture en lignage Seyès (option de « Sur la fiche », useFicheExercice) ; la fiche les dessine avec `ligneEcriture`
+   * (src/impression/seyes.ts) ; absent (build des PDF publiés, instantanés) : un simple trait
+   */
+  seyes?: boolean
+  /**
    * ce que les extensions actives (src/extensions/) donnent à la fiche, par identifiant d'extension (useFicheExercice) : leurs réglages communs ; absent (build des PDF
    * publiés, instantanés) : chaque extension reprend ses valeurs par défaut
    */

@@ -42,8 +42,8 @@ export function useModeExercice(): WritableComputedRef<ModeExercice> {
   })
 }
 
-/** Ce que reçoit la mise en page en plus des questions : la police, les images et les pictogrammes choisis dans « Sur la fiche ». */
-export type MiseEnPageFiche = PoliceFiche & { images: ImagesFiche, pictogrammes: ChoixPictogrammes, extensions: Readonly<Record<string, unknown>> }
+/** Ce que reçoit la mise en page en plus des questions : la police, les images, les pictogrammes et le lignage Seyès choisis dans « Sur la fiche ». */
+export type MiseEnPageFiche = PoliceFiche & { images: ImagesFiche, pictogrammes: ChoixPictogrammes, seyes: boolean, extensions: Readonly<Record<string, unknown>> }
 
 /**
  * Q : ce que tire `tirer` (les questions de la fiche). mettreEnPage rend le document HTML complet.
@@ -73,7 +73,7 @@ export function useFicheExercice<Q>({ tirer, mettreEnPage, ficheSeule = false }:
     if (!tirage.value) return ''
     // lu pour que la fiche se redessine quand les pictogrammes arrivent
     void pictogrammesPrets.value
-    return mettreEnPage(tirage.value, { ...police.value, images: images.value, pictogrammes: options.value.pictogrammes, extensions: contextesDeFiche() })
+    return mettreEnPage(tirage.value, { ...police.value, images: images.value, pictogrammes: options.value.pictogrammes, seyes: options.value.seyes, extensions: contextesDeFiche() })
   })
   return { mode, fiche, nouvelle, graine }
 }

@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="section-heading"><Icone v-if="DEFINITION.emoji" :nom="DEFINITION.emoji" /> {{ t('dictee.titre') }}</h1>
 
-    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config"
+    <CadreExercice v-if="phase === 'config'" v-model:mode="mode" :fiche="fiche" :config="config" seyes
       :desactive="chargement" @commencer="commencer" @regenerer="nouvelle">
       <ChoixReglage :definition="DEFINITION" cle="niveau" v-model="config.niveau" :titre="t('communs.niveau')" />
       <ChoixReglage :definition="DEFINITION" :niveau="config.niveau" cle="cats" v-model="config.cats"

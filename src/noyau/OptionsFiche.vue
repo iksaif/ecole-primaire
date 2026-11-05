@@ -19,6 +19,7 @@
     </summary>
     <div class="rang rang-entete">
       <CaseReglage v-model="options.entete" :libelle="t('cadre.entete')" />
+      <CaseReglage v-if="seyes" v-model="options.seyes" :libelle="t('cadre.seyes')" />
       <slot />
     </div>
     <fieldset v-if="avecCorrige" ref="corrige" class="rang segmente">
@@ -59,9 +60,11 @@ const props = withDefaults(defineProps<{
   images?: boolean
   // le choix des pictogrammes des consignes (selon la classe, toujours, jamais) et de leur ligne de crédit est proposé
   pictogrammes?: boolean
+  // la fiche a des lignes où l'on écrit (mots à recopier, dictée) : « Lignes Seyès » est proposé
+  seyes?: boolean
   // les extensions que l'exercice accepte (`extensions` de sa définition) : leurs choix communs sont proposés quand elles sont actives
   extensions?: readonly string[]
-}>(), { avecCorrige: true, police: true, images: false, pictogrammes: false, extensions: () => [] })
+}>(), { avecCorrige: true, police: true, images: false, pictogrammes: false, seyes: false, extensions: () => [] })
 defineSlots<{ default?(): unknown }>()
 
 const { t } = useLangue()
@@ -73,6 +76,7 @@ const { choix: choixPolice } = usePolices()
 const resume = computed(() => {
   const morceaux: string[] = []
   if (options.value.entete) morceaux.push(t('cadre.entete'))
+  if (props.seyes && options.value.seyes) morceaux.push(t('cadre.seyes'))
   if (props.avecCorrige) morceaux.push(t(`cadre.corrige_${options.value.corrige}`))
   if (props.police) morceaux.push(choixPolice.value.unique)
   return morceaux.join(' · ')

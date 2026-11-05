@@ -5,6 +5,8 @@
 //   corrige : 'non' | 'page' (sur une nouvelle page) | 'dessous' (en bas, à l'envers, à découper)
 //   pictogrammes : pictogrammes des consignes (src/images/consignes.ts) : 'classe' (en maternelle), 'oui', 'non' ; lu par la fiche
 //   mentionPictos : la ligne de crédit des pictogrammes en bas de la feuille (leur licence demande de citer l'auteur)
+//   seyes   : les lignes où l'on écrit (mots à recopier, dictée…) en lignage Seyès plutôt qu'un simple trait ; lu par la fiche
+//             (src/impression/seyes.ts), proposé seulement aux fiches qui ont des lignes d'écriture (<CadreExercice seyes>)
 //
 // Une fiche n'a qu'à baliser :
 //   ${ligneNomDate(langue)}                 → <p class="entete">…</p>   (documentFiche, src/impression/document.ts)
@@ -17,9 +19,9 @@ import { assainirPictogrammes, CSS_PICTOGRAMMES, DEFAUT_PICTOGRAMMES, MARQUE_ARA
 import type { ChoixPictogrammes } from '../images/consignes.ts'
 
 export type ChoixCorrige = 'non' | 'page' | 'dessous'
-export interface OptionsDeFiche { entete: boolean, corrige: ChoixCorrige, pictogrammes: ChoixPictogrammes, mentionPictos: boolean }
+export interface OptionsDeFiche { entete: boolean, corrige: ChoixCorrige, pictogrammes: ChoixPictogrammes, mentionPictos: boolean, seyes: boolean }
 
-export const OPTIONS_FICHE_DEFAUT: OptionsDeFiche = { entete: true, corrige: 'page', pictogrammes: DEFAUT_PICTOGRAMMES, mentionPictos: true }
+export const OPTIONS_FICHE_DEFAUT: OptionsDeFiche = { entete: true, corrige: 'page', pictogrammes: DEFAUT_PICTOGRAMMES, mentionPictos: true, seyes: false }
 export const CHOIX_CORRIGE: readonly ChoixCorrige[] = ['non', 'page', 'dessous']
 
 const lire = (): OptionsDeFiche => {
@@ -28,6 +30,7 @@ const lire = (): OptionsDeFiche => {
   if (typeof lues.entete !== 'boolean') lues.entete = OPTIONS_FICHE_DEFAUT.entete
   lues.pictogrammes = assainirPictogrammes(lues.pictogrammes)
   if (typeof lues.mentionPictos !== 'boolean') lues.mentionPictos = OPTIONS_FICHE_DEFAUT.mentionPictos
+  if (typeof lues.seyes !== 'boolean') lues.seyes = OPTIONS_FICHE_DEFAUT.seyes
   return lues
 }
 

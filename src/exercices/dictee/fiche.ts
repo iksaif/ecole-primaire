@@ -8,6 +8,7 @@ import type { CleContenu } from '../../langues/catalogue.ts'
 import type DEFINITION from './definition.ts'
 import type { CONTENU } from './textes.ts'
 import { phraseDe } from './generateur.ts'
+import { CSS_LIGNES_ECRITURE, ligneEcriture } from '../../impression/seyes.ts'
 import type { TirageFiche } from './generateur.ts'
 
 type Cle = CleContenu<typeof CONTENU>
@@ -34,15 +35,23 @@ const css = (phrases: boolean): string => `
       section.corrige h2 { background: none; padding: 0; }
       .a-dicter { columns: ${phrases ? 1 : 3}; font-size: 1.05rem; line-height: 1.9; font-family: '${SCRIPT}', Arial, sans-serif; }`
 
+/** Les lignes Seyès (option de « Sur la fiche ») : la ligne prend la hauteur de la bande. */
+const CSS_SEYES = `
+      td.recopie-seyes { padding: .2rem 0 0; vertical-align: bottom; }
+      .ligne:has(.avec-seyes) { height: auto; align-items: center; margin-bottom: .2rem; }${CSS_LIGNES_ECRITURE}`
+
 /** La clé d'une catégorie : son nom français sans accents, en minuscules et tirets bas (« Corps humain » → corps_humain). */
 export function cleCategorie(cat: string): string {
   const sansAccents = cat.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   return sansAccents.replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
 }
 
-export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
+export function fiche({ questions: x, T, langue, police, cssPolices, seyes }: ParamsFiche<ReglagesDeDefinition<typeof DEFINITION>, TirageFiche, Cle>): string {
   const nomCat = (cat: string): string => T(`cat.${cleCategorie(cat)}` as Cle)
   const { niveau, mots, parCat, phrases } = x
+  // la case « Je recopie » et les lignes de la dictée : un trait, ou une bande Seyès (option de « Sur la fiche »)
+  const recopie = seyes ? `<td class="recopie-seyes">${ligneEcriture({ seyes, niveau })}</td>` : '<td class="recopie"></td>'
+  const trait = ligneEcriture({ seyes, niveau }, 'trait')
   // CM1 et CM2 ont le même corpus : « CM » (fiche publiée exercices-dictee-cm1-cm2)
   const titre = `${T('titre')} — ${niveau.startsWith('cm') ? 'CM' : niveau.toUpperCase()}`
   const entete = `<h1>${e(titre)}</h1>
@@ -56,7 +65,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
     ms.forEach(m => dejaListes.add(m))
     if (!ms.length) return ''
     return `<h2>${e(nomCat(g.cat))}</h2>
-      <table><tbody>${ms.map(m => `<tr><td class="script">${e(m)}</td><td class="attache">${e(m)}</td><td class="recopie"></td></tr>`).join('')}</tbody></table>`
+      <table><tbody>${ms.map(m => `<tr><td class="script">${e(m)}</td><td class="attache">${e(m)}</td>${recopie}</tr>`).join('')}</tbody></table>`
   }).join('')
   const pageListe = `<section>${entete}
     <p class="consigne">${T('fConsigneListe')}</p>
@@ -64,7 +73,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
     ${liste}</section>`
 
   // Page 2 : lignes numérotées, l'adulte dicte
-  const lignes = mots.map((_, i) => `<div class="ligne"><span class="num">${i + 1}.</span><span class="trait"></span></div>`).join('')
+  const lignes = mots.map((_, i) => `<div class="ligne"><span class="num">${i + 1}.</span>${trait}</div>`).join('')
   const pageDictee = `<section>${entete}
     <p class="consigne">${T(phrases ? 'fConsignePhrases' : 'fConsigneMots')}</p>
     <div class="${phrases ? 'lignes-phrases' : 'lignes-mots'}">${lignes}</div></section>`
@@ -75,5 +84,5 @@ export function fiche({ questions: x, T, langue, police, cssPolices }: ParamsFic
     <ol class="a-dicter">${mots.map(m => `<li>${phrases ? e(phraseDe(m)).replace(e(m), `<b>${e(m)}</b>`) : `<b>${e(m)}</b>`}</li>`).join('')}</ol></section>`
 
   const pages = [x.liste && pageListe, x.dictee && pageDictee, x.dictee && corrige].filter(Boolean)
-  return documentFiche({ titre, langue, police, cssPolices, css: css(phrases), h1: null, largeur: '700px', corps: pages.join('\n') })
+  return documentFiche({ titre, langue, police, cssPolices, css: seyes ? css(phrases) + CSS_SEYES : css(phrases), h1: null, largeur: '700px', corps: pages.join('\n') })
 }

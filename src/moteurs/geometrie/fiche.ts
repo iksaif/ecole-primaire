@@ -9,6 +9,7 @@ import type { Cle, TirageFiche } from './types.ts'
 import type { Reglages } from './generateur.ts'
 import { angleDroitAu, ficheGuidee, FIGURES, SOLIDES } from './donnees.ts'
 import { imagesDe } from '../../images/rendu.ts'
+import { CSS_LIGNES_ECRITURE, ligneEcriture } from '../../impression/seyes.ts'
 
 const CSS = `
       @page { size: A4; margin: 1.2cm; }
@@ -53,7 +54,9 @@ function motsARecopier(mots: readonly string[], T: Parameters<typeof fiche>[0]['
   return `<p class="mots-a-recopier">${T('ficheMots')} : ${mots.map(m => `<span>${m}</span>`).join('')}</p>`
 }
 
-export function fiche({ questions: x, T, langue, police, cssPolices , images: preference }: ParamsFiche<Reglages, TirageFiche, Cle>): string {
+export function fiche({ questions: x, T, langue, police, cssPolices , images: preference, seyes }: ParamsFiche<Reglages, TirageFiche, Cle>): string {
+  // la ligne où l'on écrit le nom sous chaque dessin : un trait, ou une bande Seyès (option de « Sur la fiche »)
+  const ligneEcrite = ligneEcriture({ seyes, niveau: x.niveau }, 'ligne', 'div')
   // les marqueurs des titres : OpenMoji, ou l'emoji de l'appareil (préférence « Images ») ; OpenMoji pour les PDF publiés
   const images = imagesDe({ images: preference })
   let corps = ''
@@ -73,7 +76,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices , images: pr
   if (x.figures) {
     corps += `<h2>${images.html('losangeBleu')} ${T('ficheFigures')}</h2><p class="consigne">${T('ficheFiguresConsigne')}</p>`
       + (guidee ? motsARecopier([...new Set(x.figures.map(f => T(`figure.${f.forme}` as Cle)))], T) : '')
-      + `<div class="bloc galerie">${x.figures.map(f => `<div class="item">${svgFigure(f, angleDroitAu(x.niveau), 110)}<div class="ligne"></div></div>`).join('')}</div>`
+      + `<div class="bloc galerie">${x.figures.map(f => `<div class="item">${svgFigure(f, angleDroitAu(x.niveau), 110)}${ligneEcrite}</div>`).join('')}</div>`
     ligneCorrige(T('ficheFigures'), numeros(x.figures.map(f => T(`figure.${f.forme}` as Cle))))
     if (guidee) {
       // CP : « donner une première description du carré, du rectangle, du triangle en utilisant les termes « sommet » et « côté » » (p. 32)
@@ -89,7 +92,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices , images: pr
   if (x.solides) {
     corps += `<h2>${images.html('glacon')} ${T('ficheSolides')}</h2><p class="consigne">${T('ficheSolidesConsigne')}</p>`
       + (guidee ? motsARecopier([...new Set(x.solides.map(s => T(`solide.${s}` as Cle)))], T) : '')
-      + `<div class="bloc galerie">${x.solides.map(s => `<div class="item">${svgSolide(s, 110)}<div class="ligne"></div></div>`).join('')}</div>`
+      + `<div class="bloc galerie">${x.solides.map(s => `<div class="item">${svgSolide(s, 110)}${ligneEcrite}</div>`).join('')}</div>`
     ligneCorrige(T('ficheSolides'), numeros(x.solides.map(s => T(`solide.${s}` as Cle))))
   }
   if (x.solides && guidee) {
@@ -105,7 +108,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices , images: pr
   }
   if (x.angles) {
     corps += `<h2>${images.html('equerre')} ${T('ficheAngles')}</h2><p class="consigne">${T('ficheAnglesConsigne')}</p><div class="bloc galerie">`
-      + x.angles.map(q => `<div class="item grand">${svgFigure(q, false, 200)}<div class="ligne"></div></div>`).join('') + `</div>`
+      + x.angles.map(q => `<div class="item grand">${svgFigure(q, false, 200)}${ligneEcrite}</div>`).join('') + `</div>`
     ligneCorrige(T('ficheAngles'), numeros(x.angles.map(q => q.attendu)))
   }
   if (x.aigus) {
@@ -145,7 +148,7 @@ export function fiche({ questions: x, T, langue, police, cssPolices , images: pr
   const aLaTailleReelle = Boolean(x.symetrie || x.patrons || x.cercle)
   const titre = `${T('titre')} — ${x.niveau.toUpperCase()}`
   return documentFiche({
-    titre, langue, police, cssPolices, css: CSS, largeur: 'none', marge: '0',
+    titre, langue, police, cssPolices, css: seyes ? CSS + CSS_LIGNES_ECRITURE : CSS, largeur: 'none', marge: '0',
     corps: `${ligneNomDate(langue)}
     ${aLaTailleReelle ? `<p class="avertissement">${images.html('attention')} ${T('ficheAvertissement')}</p>` : ''}
     ${corps}

@@ -5,6 +5,7 @@ export default {
   nouvelle: 'Nouvelle fiche',
   surLaFiche: 'Présentation de la fiche',
   entete: 'Prénom et date',
+  seyes: 'Lignes Seyès',
   corrige_non: 'Sans corrigé',
   corrige_page: 'Corrigé sur une autre page',
   corrige_dessous: 'Corrigé en bas, à l’envers',

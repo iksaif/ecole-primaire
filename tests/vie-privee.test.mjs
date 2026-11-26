@@ -104,8 +104,27 @@ const lecture = base => exerciceMistral(base, {
   },
 })
 
+/** L'origine de la visite : une catégorie, à la première page seulement, jamais l'adresse d'où l'on vient (src/utils/origine.ts, src/utils/journal.js ; envoyée en production seulement). */
+async function origine(base) {
+  const ctx = await contexte(nav)
+  const page = await ctx.newPage()
+  const envois = []
+  await page.route('**/journal?**', r => { envois.push(new URL(r.request().url()).searchParams); r.fulfill({ status: 204 }) })
+  await page.goto(`${base}maths`, { referer: 'https://ent.monecole-secrete.fr/classe/12?eleve=7' })
+  await page.waitForSelector('header.nav')
+  await page.getByRole('link', { name: /Français/ }).first().click()
+  // le deuxième signal part à la navigation ; en développement il n'y en a aucun : on attend au plus 2 s
+  for (let i = 0; i < 20 && envois.length < 2; i++) await new Promise(fin => setTimeout(fin, 100))
+  if (!envois.length) { verifier(true, 'origine : pas de signal en développement (envoyé en production seulement)'); await ctx.close(); return }
+  const vues = envois.filter(p => p.get('e') === 'vue')
+  verifier(vues.length >= 2 && vues[0].get('o') === 'autre' && vues.slice(1).every(p => !p.has('o')), 'origine : une catégorie, à la première page seulement')
+  verifier(!envois.some(p => /secrete|monecole|eleve/.test(p.toString())), 'origine : jamais l’adresse du site d’où l’on vient')
+  await ctx.close()
+}
+
 console.log('Vie privée')
 await Promise.all(SITES.map(visiter))
+await origine(URL_SITE)
 await dictee(URL_SITE)
 await lecture(URL_SITE)
 await nav.close()

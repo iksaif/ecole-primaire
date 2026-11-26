@@ -30,6 +30,7 @@ for (const site of config.sites) {
   afficher('Fiches imprimées (page)', s.imprimes, 15)
   afficher('Réglages les plus imprimés (à pré-générer ?)', s.reglages, 15)
   afficher('PDF tout prêts téléchargés', s.pdfs, 20)
+  afficher('Origine des visites (première page vue ; depuis le 2026-11-24)', s.origines, 6)
   afficher('Langues', s.langues, 6)
   console.log(`\nActivité par jour : ${plusFrequents(s.parJour, 999).sort().map(([j, n]) => `${j.slice(5)}:${n}`).join('  ') || '(rien)'}`)
 }

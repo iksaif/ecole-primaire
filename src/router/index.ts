@@ -10,7 +10,7 @@ import type { RouteRecordRaw, RouterScrollBehavior } from 'vue-router'
 import { SITE } from '../sites.ts'
 import { extraireParamsContexte, sansContexte } from '../contexte/url.ts'
 import { useContexte } from '../contexte/useContexte.ts'
-import { journaliser } from '../utils/journal.js'
+import { journaliser, origineDeLEntree } from '../utils/journal.js'
 import { routesDeBase, routesDesExercices } from './routes.ts'
 import { VUES } from '../views/exercices.ts'
 import { idsParRoute } from '../ressources/recents.ts'
@@ -83,7 +83,7 @@ router.afterEach(to => {
 router.afterEach((to, from) => {
   if (to.path === from.path) return
   const contexte = useContexte().contexteDeLAdresse(to)
-  journaliser('vue', { r: to.path, m: contexte.mode, l: lu('langue_interface'), g: contexte.regionale ?? undefined, c: contexte.classes.join(',') })
+  journaliser('vue', { o: origineDeLEntree(), r: to.path, m: contexte.mode, l: lu('langue_interface'), g: contexte.regionale ?? undefined, c: contexte.classes.join(',') })
 })
 
 export default router

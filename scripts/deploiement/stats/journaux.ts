@@ -1,6 +1,7 @@
 // Lire les journaux d'un site : ce qu'en dit le serveur (nginx), sans adresse IP ni cookie (src/utils/journal.js, deploy/setup-nginx.sh).
 //   <domaine>.journal.log*  un signal par ligne, JSON { t: date ISO, q: requête } : `e=vue` (page vue : r route, m mode, l langue
-//                           d'interface, g langue régionale) ou `e=imprimer` (r route ou /telechargements/<slug>, d réglages)
+//                           d'interface, g langue régionale, o origine de la visite, seulement à la première page : direct, recherche,
+//                           reseau, education, autre ; src/utils/origine.ts) ou `e=imprimer` (r route ou /telechargements/<slug>, d réglages)
 //   <domaine>.access.log*   le journal d'accès habituel (format « combined ») : les téléchargements de PDF
 import type { ConfigDeploiement } from '../config.ts'
 
@@ -14,6 +15,8 @@ export interface Statistiques {
   /** « route  réglages » : les réglages les plus imprimés, à pré-générer */
   reglages: Decompte
   langues: Decompte
+  /** d'où viennent les visites (première page vue) : catégorie → nombre */
+  origines: Decompte
   pdfs: Decompte
   /** signaux par jour (AAAA-MM-JJ) */
   parJour: Decompte
@@ -21,7 +24,7 @@ export interface Statistiques {
 
 /** Lit les journaux de `domaine` depuis `depuis` (millisecondes). `zcat -f` lit aussi bien les fichiers tournés (.gz) que le courant. */
 export function lireStatistiques(serveur: Pick<ConfigDeploiement, 'ssh'>, domaine: string, depuis: number): Statistiques {
-  const s: Statistiques = { vues: new Map(), imprimes: new Map(), reglages: new Map(), langues: new Map(), pdfs: new Map(), parJour: new Map() }
+  const s: Statistiques = { vues: new Map(), imprimes: new Map(), reglages: new Map(), langues: new Map(), origines: new Map(), pdfs: new Map(), parJour: new Map() }
 
   const journal = serveur.ssh(`zcat -f /var/log/nginx/${domaine}.journal.log* 2>/dev/null || true`)
   for (const ligne of journal.split('\n')) {
@@ -33,6 +36,7 @@ export function lireStatistiques(serveur: Pick<ConfigDeploiement, 'ssh'>, domain
     compter(s.parJour, e.t.slice(0, 10))
     if (q.get('e') === 'vue') {
       compter(s.vues, `${q.get('r')}${q.get('m') ? ` (${q.get('m')})` : ''}`)
+      if (q.get('o')) compter(s.origines, String(q.get('o')))
       compter(s.langues, `interface ${q.get('l') || '?'} · régionale ${q.get('g') || 'aucune'}`)
     } else if (q.get('e') === 'imprimer') {
       compter(s.imprimes, String(q.get('r')))
